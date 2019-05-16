@@ -13,14 +13,14 @@ namespace DwarfCorp
     public class DeconstructObjectTool : PlayerTool
     {
         [ToolFactory("DeconstructObjects")] // Todo: Normalize name
-        private static PlayerTool _factory(GameMaster Master)
+        private static PlayerTool _factory(WorldManager World)
         {
-            return new DeconstructObjectTool(Master);
+            return new DeconstructObjectTool(World);
         }
 
-        public DeconstructObjectTool(GameMaster Master)
+        public DeconstructObjectTool(WorldManager World)
         {
-            Player = Master;
+            this.World = World;
         }
 
         public override void OnBegin()
@@ -30,7 +30,7 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-            Player.VoxSelector.Clear();
+            World.Master.VoxSelector.Clear();
         }
 
 
@@ -50,7 +50,7 @@ namespace DwarfCorp
                 {
                     if (body.IsReserved)
                     {
-                        Player.World.ShowToolPopup(string.Format("Can't destroy this {0}. It is being used.", body.Name));
+                        World.ShowToolPopup(string.Format("Can't destroy this {0}. It is being used.", body.Name));
                         continue;
                     }
                     body.Die();
@@ -73,10 +73,10 @@ namespace DwarfCorp
                 {
                     if (body.IsReserved)
                     {
-                        Player.World.ShowTooltip("Can't destroy this this " + body.Name + "\nIt is being used.");
+                        World.ShowTooltip("Can't destroy this this " + body.Name + "\nIt is being used.");
                         continue;
                     }
-                    Player.World.ShowTooltip("Left click to destroy this " + body.Name);
+                    World.ShowTooltip("Left click to destroy this " + body.Name);
                     body.SetVertexColorRecursive(Color.Red);
                 }
             }
@@ -97,26 +97,26 @@ namespace DwarfCorp
             if (selectedBodies.Count != 0)
                 return;
 
-            var v = Player.VoxSelector.VoxelUnderMouse;
+            var v = World.Master.VoxSelector.VoxelUnderMouse;
 
-            if (Player.World.PlayerFaction.RoomBuilder.IsBuildDesignation(v))
+            if (World.PlayerFaction.RoomBuilder.IsBuildDesignation(v))
             {
-                BuildVoxelOrder vox = Player.World.PlayerFaction.RoomBuilder.GetBuildDesignation(v);
+                BuildVoxelOrder vox = World.PlayerFaction.RoomBuilder.GetBuildDesignation(v);
                 if (vox != null && vox.Order != null)
                 {
                     vox.Order.Destroy();
                     if (vox.Order.DisplayWidget != null)
-                        Player.World.Gui.DestroyWidget(vox.Order.DisplayWidget);
-                    Player.World.PlayerFaction.RoomBuilder.BuildDesignations.Remove(vox.Order);
-                    Player.World.PlayerFaction.RoomBuilder.DesignatedRooms.Remove(vox.Order.ToBuild);
+                        World.Gui.DestroyWidget(vox.Order.DisplayWidget);
+                    World.PlayerFaction.RoomBuilder.BuildDesignations.Remove(vox.Order);
+                    World.PlayerFaction.RoomBuilder.DesignatedRooms.Remove(vox.Order.ToBuild);
                 }
             }
-            else if (Player.World.PlayerFaction.RoomBuilder.IsInRoom(v))
+            else if (World.PlayerFaction.RoomBuilder.IsInRoom(v))
             {
-                Room existingRoom = Player.World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(v);
+                Room existingRoom = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(v);
 
                 if (existingRoom != null)
-                    Player.World.Gui.ShowModalPopup(new Gui.Widgets.Confirm
+                    World.Gui.ShowModalPopup(new Gui.Widgets.Confirm
                     {
                         Text = "Do you want to destroy this " + existingRoom.RoomData.Name + "?",
                         OnClose = (sender) => destroyDialog_OnClosed((sender as Gui.Widgets.Confirm).DialogResult, existingRoom)
@@ -129,9 +129,9 @@ namespace DwarfCorp
         {
             if (status == Gui.Widgets.Confirm.Result.OKAY)
             {
-                Player.World.PlayerFaction.RoomBuilder.DesignatedRooms.Remove(room);
+                World.PlayerFaction.RoomBuilder.DesignatedRooms.Remove(room);
 
-                List<BuildVoxelOrder> existingDesignations = Player.World.PlayerFaction.RoomBuilder.GetDesignationsAssociatedWithRoom(room);
+                List<BuildVoxelOrder> existingDesignations = World.PlayerFaction.RoomBuilder.GetDesignationsAssociatedWithRoom(room);
                 BuildRoomOrder buildRoomDes = null;
                 foreach (BuildVoxelOrder des in existingDesignations)
                 {
@@ -140,9 +140,9 @@ namespace DwarfCorp
                 }
                 if (buildRoomDes != null && buildRoomDes.DisplayWidget != null)
                 {
-                    Player.World.Gui.DestroyWidget(buildRoomDes.DisplayWidget);
+                    World.Gui.DestroyWidget(buildRoomDes.DisplayWidget);
                 }
-                Player.World.PlayerFaction.RoomBuilder.BuildDesignations.Remove(buildRoomDes);
+                World.PlayerFaction.RoomBuilder.BuildDesignations.Remove(buildRoomDes);
 
                 room.Destroy();
             }
@@ -156,27 +156,27 @@ namespace DwarfCorp
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
-            if (Player.World.IsMouseOverGui)
-                Player.World.SetMouse(Player.World.MousePointer);
+            if (World.IsMouseOverGui)
+                World.SetMouse(World.MousePointer);
             else
-                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 9));
+                World.SetMouse(new Gui.MousePointer("mouse", 1, 9));
 
-            Player.VoxSelector.Enabled = true;
-            Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
-            Player.VoxSelector.DrawBox = false;
-            Player.VoxSelector.DrawVoxel = false;
-            Player.BodySelector.Enabled = true;
-            Player.BodySelector.AllowRightClickSelection = true;
+            World.Master.VoxSelector.Enabled = true;
+            World.Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+            World.Master.VoxSelector.DrawBox = false;
+            World.Master.VoxSelector.DrawVoxel = false;
+            World.Master.BodySelector.Enabled = true;
+            World.Master.BodySelector.AllowRightClickSelection = true;
         }
 
         public override void Render3D(DwarfGame game, DwarfTime time)
         {
             if (selectedBodies.Count == 0)
             {
-                var v = Player.VoxSelector.VoxelUnderMouse;
+                var v = World.Master.VoxSelector.VoxelUnderMouse;
                 if (v.IsValid && !v.IsEmpty)
                 {
-                    var room = Player.World.PlayerFaction.RoomBuilder.GetRoomThatContainsVoxel(v);
+                    var room = World.PlayerFaction.RoomBuilder.GetRoomThatContainsVoxel(v);
                     if (room != null)
                         Drawer3D.DrawBox(room.GetBoundingBox(), GameSettings.Default.Colors.GetColor("Positive", Color.Green), 0.2f, true);
                 }

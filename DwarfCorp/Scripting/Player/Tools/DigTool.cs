@@ -12,27 +12,27 @@ namespace DwarfCorp
     public class DigTool : PlayerTool
     {
         [ToolFactory("Dig")]
-        private static PlayerTool _factory(GameMaster Master)
+        private static PlayerTool _factory(WorldManager World)
         {
-            return new DigTool(Master);
+            return new DigTool(World);
         }
 
-        public DigTool(GameMaster Master)
+        public DigTool(WorldManager World)
         {
-            Player = Master;
+            this.World = World;
         }
 
         public override void OnBegin()
         {
-            Player.VoxSelector.SelectionColor = Color.White;
-            Player.VoxSelector.DrawBox = true;
-            Player.VoxSelector.DrawVoxel = true;
-            Player.World.Tutorial("mine");
+            World.Master.VoxSelector.SelectionColor = Color.White;
+            World.Master.VoxSelector.DrawBox = true;
+            World.Master.VoxSelector.DrawVoxel = true;
+            World.Tutorial("mine");
         }
 
         public override void OnEnd()
         {
-            Player.VoxSelector.Clear();
+            World.Master.VoxSelector.Clear();
         }
 
         public override void OnVoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
@@ -40,9 +40,9 @@ namespace DwarfCorp
 
             if (button == InputManager.MouseButton.Left)
             {
-                int count = Player.World.PlayerFaction.Designations.EnumerateDesignations(DesignationType.Dig).Count();
+                int count = World.PlayerFaction.Designations.EnumerateDesignations(DesignationType.Dig).Count();
 
-                Player.World.Tutorial("slice");
+                World.Tutorial("slice");
                 List<Task> assignments = new List<Task>();
                 foreach (var v in refs)
                 {
@@ -50,18 +50,18 @@ namespace DwarfCorp
                         continue;
 
                     var boundingBox = v.GetBoundingBox().Expand(-0.1f);
-                    var entities = Player.World.EnumerateIntersectingObjects(boundingBox, CollisionType.Static);
+                    var entities = World.EnumerateIntersectingObjects(boundingBox, CollisionType.Static);
                     if (entities.OfType<IVoxelListener>().Any())
                         continue;
 
                     if (count >= GameSettings.Default.MaxVoxelDesignations)
                     {
-                        Player.World.ShowToolPopup("Too many dig designations!");
+                        World.ShowToolPopup("Too many dig designations!");
                         break;
                     }
 
                     // Todo: Should this be removed from the existing compound task and put in the new one?
-                    if (!Player.World.PlayerFaction.Designations.IsVoxelDesignation(v, DesignationType.Dig) && !(Player.World.PlayerFaction.RoomBuilder.IsInRoom(v) || Player.World.PlayerFaction.RoomBuilder.IsBuildDesignation(v)))
+                    if (!World.PlayerFaction.Designations.IsVoxelDesignation(v, DesignationType.Dig) && !(World.PlayerFaction.RoomBuilder.IsInRoom(v) || World.PlayerFaction.RoomBuilder.IsBuildDesignation(v)))
                     {
                         var task = new KillVoxelTask(v);
                         task.Hidden = true;
@@ -71,13 +71,13 @@ namespace DwarfCorp
 
                 }
 
-                Player.TaskManager.AddTasks(assignments);
+                World.Master.TaskManager.AddTasks(assignments);
 
                 var compoundTask = new CompoundTask("DIG A HOLE", Task.TaskCategory.Dig, Task.PriorityType.Medium);
                 compoundTask.AddSubTasks(assignments);
-                Player.TaskManager.AddTask(compoundTask);
+                World.Master.TaskManager.AddTask(compoundTask);
 
-                var minions = Faction.FilterMinionsWithCapability(Player.World.PlayerFaction.SelectedMinions, Task.TaskCategory.Dig);
+                var minions = Faction.FilterMinionsWithCapability(World.PlayerFaction.SelectedMinions, Task.TaskCategory.Dig);
                 OnConfirm(minions);
             }
             else
@@ -86,9 +86,9 @@ namespace DwarfCorp
                 {
                     if (r.IsValid)
                     {
-                        var designation = Player.World.PlayerFaction.Designations.GetVoxelDesignation(r, DesignationType.Dig);
+                        var designation = World.PlayerFaction.Designations.GetVoxelDesignation(r, DesignationType.Dig);
                         if (designation != null && designation.Task != null)
-                            Player.TaskManager.CancelTask(designation.Task);
+                            World.Master.TaskManager.CancelTask(designation.Task);
                     }
                 }
             }
@@ -101,28 +101,28 @@ namespace DwarfCorp
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
-            if (Player.IsCameraRotationModeActive())
+            if (World.Master.IsCameraRotationModeActive())
             {
-                Player.VoxSelector.Enabled = false;
-                Player.BodySelector.Enabled = false;
-                Player.World.SetMouse(null);
+                World.Master.VoxSelector.Enabled = false;
+                World.Master.BodySelector.Enabled = false;
+                World.SetMouse(null);
                 return;
             }
 
-            Player.VoxSelector.Enabled = true;
+            World.Master.VoxSelector.Enabled = true;
 
-            if (Player.VoxSelector.VoxelUnderMouse.IsValid && !Player.World.IsMouseOverGui)
+            if (World.Master.VoxSelector.VoxelUnderMouse.IsValid && !World.IsMouseOverGui)
             {
-                Player.World.ShowTooltip(Player.VoxSelector.VoxelUnderMouse.IsExplored ? Player.VoxSelector.VoxelUnderMouse.Type.Name : "???");
+                World.ShowTooltip(World.Master.VoxSelector.VoxelUnderMouse.IsExplored ? World.Master.VoxSelector.VoxelUnderMouse.Type.Name : "???");
             }
 
-            if (Player.World.IsMouseOverGui)
-                Player.World.SetMouse(Player.World.MousePointer);
+            if (World.IsMouseOverGui)
+                World.SetMouse(World.MousePointer);
             else
-                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 1));
+                World.SetMouse(new Gui.MousePointer("mouse", 1, 1));
 
-            Player.BodySelector.Enabled = false;
-            Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+            World.Master.BodySelector.Enabled = false;
+            World.Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
         }
 
         public override void Render2D(DwarfGame game, DwarfTime time)

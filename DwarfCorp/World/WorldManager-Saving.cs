@@ -33,11 +33,10 @@ namespace DwarfCorp
         public void Save(WorldManager.SaveCallback callback = null)
         {
             Paused = true;
-            WaitState waitforsave = new WaitState(Game, "Saving...", gameState.StateManager,
-                () => SaveThreadRoutine());
+            WaitState waitforsave = new WaitState(Game, "Saving...", UserInterface.StateManager, () => SaveThreadRoutine());
             if (callback != null)
                 waitforsave.OnFinished += (bool b, WaitStateException e) => callback(b, e);
-            gameState.StateManager.PushState(waitforsave);
+            UserInterface.StateManager.PushState(waitforsave);
         }
 
         private bool SaveThreadRoutine()

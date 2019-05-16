@@ -422,8 +422,6 @@ namespace DwarfCorp
             // Render simple geometry (boxes, etc.)
             Drawer3D.Render(GraphicsDevice, DefaultShader, Camera, DesignationDrawer, World.PlayerFaction.Designations, World);
 
-            World.Master.Render3D(Game, gameTime);
-
             DefaultShader.EnableShadows = false;
 
             DefaultShader.View = Camera.ViewMatrix;
@@ -434,9 +432,9 @@ namespace DwarfCorp
                 ComponentRenderer.WaterRenderType.None, lastWaterHeight);
             InstanceRenderer.Flush(GraphicsDevice, DefaultShader, Camera, InstanceRenderMode.Normal);
 
-            if (World.Master.CurrentToolMode == "BuildZone" // Todo: ??
-                || World.Master.CurrentToolMode == "BuildWall" ||
-                World.Master.CurrentToolMode == "BuildObject")
+            if (World.UserInterface.CurrentToolMode == "BuildZone" // Todo: ??
+                || World.UserInterface.CurrentToolMode == "BuildWall" ||
+                World.UserInterface.CurrentToolMode == "BuildObject")
             {
                 DefaultShader.View = Camera.ViewMatrix;
                 DefaultShader.Projection = Camera.ProjectionMatrix;
@@ -524,12 +522,8 @@ namespace DwarfCorp
                 }
             }
 
-
-            World.Master.Render2D(Game, gameTime);
-
             DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle =
                 DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;
-
 
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;

@@ -13,14 +13,14 @@ namespace DwarfCorp
     public class MoveObjectTool : PlayerTool
     {
         [ToolFactory("MoveObjects")] // Todo: Normalize name
-        private static PlayerTool _factory(GameMaster Master)
+        private static PlayerTool _factory(WorldManager World)
         {
-            return new MoveObjectTool(Master);
+            return new MoveObjectTool(World);
         }
 
-        public MoveObjectTool(GameMaster Master)
+        public MoveObjectTool(WorldManager World)
         {
-            Player = Master;
+            this.World = World;
         }
 
         private enum ToolState
@@ -104,16 +104,16 @@ namespace DwarfCorp
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
-            if (Player.IsCameraRotationModeActive())
+            if (World.Master.IsCameraRotationModeActive())
                 return;
 
-            Player.VoxSelector.Enabled = false;
-            Player.BodySelector.Enabled = false;
+            World.Master.VoxSelector.Enabled = false;
+            World.Master.BodySelector.Enabled = false;
 
-            if (Player.World.IsMouseOverGui)
-                Player.World.SetMouse(Player.World.MousePointer);
+            if (World.IsMouseOverGui)
+                World.SetMouse(World.MousePointer);
             else
-                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 9));
+                World.SetMouse(new Gui.MousePointer("mouse", 1, 9));
 
             MouseState mouse = Mouse.GetState();
 
@@ -127,17 +127,17 @@ namespace DwarfCorp
                         tinter.Stipple = false;
                     }
                 
-                SelectedBody = Player.World.ComponentManager.SelectRootBodiesOnScreen(new Rectangle(mouse.X, mouse.Y, 1, 1), Player.World.Renderer.Camera)
+                SelectedBody = World.ComponentManager.SelectRootBodiesOnScreen(new Rectangle(mouse.X, mouse.Y, 1, 1), World.Renderer.Camera)
                     .Where(body => body.Tags.Contains("Moveable"))
                     .FirstOrDefault();
 
                 if (SelectedBody != null)
                 {
                     if (SelectedBody.IsReserved)
-                        Player.World.ShowTooltip("Can't move this " + SelectedBody.Name + "\nIt is being used.");
+                        World.ShowTooltip("Can't move this " + SelectedBody.Name + "\nIt is being used.");
                     else
                     {
-                        Player.World.ShowTooltip("Left click and drag to move this " + SelectedBody.Name);
+                        World.ShowTooltip("Left click and drag to move this " + SelectedBody.Name);
                         foreach (var tinter in SelectedBody.GetRoot().EnumerateAll().OfType<Tinter>())
                         {
                             tinter.VertexColorTint = Color.Blue;
@@ -159,10 +159,10 @@ namespace DwarfCorp
                 if (craftDetails != null && Library.GetCraftable(craftDetails.CraftType).AllowRotation)
                 {
                     HandleOrientation();
-                    Player.World.ShowTooltip(String.Format("Press {0}/{1} to rotate.", ControlSettings.Mappings.RotateObjectLeft, ControlSettings.Mappings.RotateObjectRight));
+                    World.ShowTooltip(String.Format("Press {0}/{1} to rotate.", ControlSettings.Mappings.RotateObjectLeft, ControlSettings.Mappings.RotateObjectRight));
                 }
 
-                var voxelUnderMouse = Player.VoxSelector.VoxelUnderMouse;
+                var voxelUnderMouse = World.Master.VoxSelector.VoxelUnderMouse;
                 if (voxelUnderMouse.IsValid && voxelUnderMouse.IsEmpty)
                 {
                     var spawnOffset = Vector3.Zero;
@@ -193,7 +193,7 @@ namespace DwarfCorp
 
                     SelectedBody.PropogateTransforms();
 
-                    var validPlacement = ObjectHelper.IsValidPlacement(voxelUnderMouse, craftItem, Player.World, SelectedBody, "move", "moved");
+                    var validPlacement = ObjectHelper.IsValidPlacement(voxelUnderMouse, craftItem, World, SelectedBody, "move", "moved");
 
                     foreach (var tinter in SelectedBody.GetRoot().EnumerateAll().OfType<Tinter>())
                     {
@@ -228,10 +228,9 @@ namespace DwarfCorp
         private void HandleOrientation()
         {
             // Don't attempt any camera control if the user is trying to type intoa focus item.
-            if (Player.World.Gui.FocusItem != null && !Player.World.Gui.FocusItem.IsAnyParentTransparent() && !Player.World.Gui.FocusItem.IsAnyParentHidden())
-            {
+            if (World.Gui.FocusItem != null && !World.Gui.FocusItem.IsAnyParentTransparent() && !World.Gui.FocusItem.IsAnyParentHidden())
                 return;
-            }
+
             KeyboardState state = Keyboard.GetState();
             bool leftKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectLeft);
             bool rightKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectRight);

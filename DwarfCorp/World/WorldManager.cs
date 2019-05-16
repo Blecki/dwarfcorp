@@ -40,6 +40,7 @@ namespace DwarfCorp
         public GameMaster Master = null;
         public Events.Scheduler EventScheduler;
         public int MaxViewingLevel = 0;
+        private Timer checkFoodTimer = new Timer(60.0f, false, Timer.TimerMode.Real);
 
         #region Tutorial Hooks
 
@@ -145,12 +146,12 @@ namespace DwarfCorp
 
         public bool ShowingWorld { get; set; }
 
-        public GameState gameState;
+        public PlayState UserInterface;
 
-        public Gui.Root Gui;
+        public Gui.Root Gui; // Todo: Remove
         private QueuedAnnouncement SleepPrompt = null;
 
-        public Action<String> ShowTooltip = null;
+        public Action<String> ShowTooltip = null; //Todo: Kill! Move to PlayState
         public Action<String> ShowInfo = null;
         public Action<String> ShowToolPopup = null;
         
@@ -325,6 +326,16 @@ namespace DwarfCorp
             HandleAmbientSound();
 
             Master.Update(Game, gameTime);
+
+            // Should we display the out of food message?
+            checkFoodTimer.Update(gameTime);
+            if (checkFoodTimer.HasTriggered)
+            {
+                var food = PlayerFaction.CountResourcesWithTag(Resource.ResourceTags.Edible);
+                if (food == 0)
+                    MakeAnnouncement("We're out of food!", null, () => { return PlayerFaction.CountResourcesWithTag(Resource.ResourceTags.Edible) == 0; });
+            }
+
             GamblingState.Update(gameTime);
             EventScheduler.Update(this, Time.CurrentDate);
 

@@ -22,7 +22,7 @@ namespace DwarfCorp.ContextCommands
 
         public override bool CanBeAppliedTo(GameComponent Entity, WorldManager World)
         {
-            return (World.Master.Tools["Attack"] as AttackTool).CanAttack(Entity);
+            return (World.UserInterface.Tools["Attack"] as AttackTool).CanAttack(Entity);
         }
 
         public override void Apply(GameComponent Entity, WorldManager World)

@@ -15,14 +15,14 @@ namespace DwarfCorp
     public class BuildObjectTool : PlayerTool
     {
         [ToolFactory("BuildObject")]
-        private static PlayerTool _factory(GameMaster Master)
+        private static PlayerTool _factory(WorldManager World)
         {
-            return new BuildObjectTool(Master);
+            return new BuildObjectTool(World);
         }
 
-        public BuildObjectTool(GameMaster Master)
+        public BuildObjectTool(WorldManager World)
         {
-            Player = Master;
+            this.World = World;
         }
 
         public CraftItem CraftType { get; set; }
@@ -42,9 +42,6 @@ namespace DwarfCorp
         public PlacementMode Mode;
         public String ExistingPlacement;
 
-        [JsonIgnore]
-        public WorldManager World { get; set; }
-
         private GameComponent CreatePreviewBody()
         {
             Blackboard blackboard = new Blackboard();
@@ -55,8 +52,8 @@ namespace DwarfCorp
             blackboard.SetData<string>("CraftType", CraftType.Name);
 
             var previewBody = EntityFactory.CreateEntity<GameComponent>(
-                CraftType.EntityName, 
-                Player.VoxSelector.VoxelUnderMouse.WorldPosition,
+                CraftType.EntityName,
+                World.Master.VoxSelector.VoxelUnderMouse.WorldPosition,
                 blackboard).GetRoot() as GameComponent;
             previewBody.SetFlagRecursive(GameComponent.Flag.Active, false);
             previewBody.SetVertexColorRecursive(Color.White);
@@ -70,17 +67,17 @@ namespace DwarfCorp
             {
                 case (InputManager.MouseButton.Left):
                     {
-                        if (ObjectHelper.IsValidPlacement(Player.VoxSelector.VoxelUnderMouse, CraftType, Player.World, PreviewBody, "build", "built"))
+                        if (ObjectHelper.IsValidPlacement(World.Master.VoxSelector.VoxelUnderMouse, CraftType, World, PreviewBody, "build", "built"))
                         {
                             PreviewBody.SetFlag(GameComponent.Flag.ShouldSerialize, true);
 
-                            Vector3 pos = Player.VoxSelector.VoxelUnderMouse.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + CraftType.SpawnOffset;
+                            Vector3 pos = World.Master.VoxSelector.VoxelUnderMouse.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + CraftType.SpawnOffset;
                             Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f);
 
                             CraftDesignation newDesignation = new CraftDesignation()
                             {
                                 ItemType = CraftType,
-                                Location = Player.VoxSelector.VoxelUnderMouse,
+                                Location = World.Master.VoxSelector.VoxelUnderMouse,
                                 Orientation = Orientation,
                                 OverrideOrientation = OverrideOrientation,
                                 Valid = true,
@@ -114,7 +111,7 @@ namespace DwarfCorp
                     }
                 case (InputManager.MouseButton.Right):
                     {
-                        var designation = World.PlayerFaction.Designations.EnumerateEntityDesignations(DesignationType.Craft).Select(d => d.Tag as CraftDesignation).FirstOrDefault(d => d.Location == Player.VoxSelector.VoxelUnderMouse);
+                        var designation = World.PlayerFaction.Designations.EnumerateEntityDesignations(DesignationType.Craft).Select(d => d.Tag as CraftDesignation).FirstOrDefault(d => d.Location == World.Master.VoxSelector.VoxelUnderMouse);
                         if (designation != null)
                         {
                             var realDesignation = World.PlayerFaction.Designations.GetEntityDesignation(designation.Entity, DesignationType.Craft);
@@ -153,25 +150,12 @@ namespace DwarfCorp
             SelectedResources = new List<ResourceAmount>();
             SelectedResources.AddRange(ResourceLibrary.GetResourceByName(ExistingPlacement).CraftInfo.Resources);
             return true;
-
-            /*
-            var resource = World.PlayerFaction.ListResources().First(r => ResourceLibrary.GetResourceByName(r.Value.String).CraftItnfo.CraftItemType == CraftType.Name);
-            if (resource.Value != null)
-            {
-                ExistingPlacement = resource.Key;
-                SelectedResources = ResourceLibrary.GetResourceByName(ExistingPlacement).CraftItnfo.Resources;
-                return true;
-            }
-            ExistingPlacement = null;
-            SelectedResources = null;
-            return false;
-            */
         }
 
         public override void OnBegin()
         {
-            Player.VoxSelector.DrawBox = false;
-            Player.VoxSelector.DrawVoxel = false;
+            World.Master.VoxSelector.DrawBox = false;
+            World.Master.VoxSelector.DrawVoxel = false;
 
             if (CraftType == null)
                 throw new InvalidOperationException();
@@ -192,8 +176,8 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-            Player.VoxSelector.DrawBox = true;
-            Player.VoxSelector.DrawVoxel = true;
+            World.Master.VoxSelector.DrawBox = true;
+            World.Master.VoxSelector.DrawVoxel = true;
 
             if (PreviewBody != null)
             {
@@ -211,28 +195,28 @@ namespace DwarfCorp
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
-            if (Player.IsCameraRotationModeActive())
+            if (World.Master.IsCameraRotationModeActive())
             {
-                Player.VoxSelector.Enabled = false;
-                Player.World.SetMouse(null);
-                Player.BodySelector.Enabled = false;
+                World.Master.VoxSelector.Enabled = false;
+                World.SetMouse(null);
+                World.Master.BodySelector.Enabled = false;
                 return;
             }
 
-            Player.VoxSelector.Enabled = true;
-            Player.BodySelector.Enabled = false;
+            World.Master.VoxSelector.Enabled = true;
+            World.Master.BodySelector.Enabled = false;
 
-            if (Player.World.IsMouseOverGui)
-                Player.World.SetMouse(Player.World.MousePointer);
+            if (World.IsMouseOverGui)
+                World.SetMouse(World.MousePointer);
             else
-                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
+                World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
 
-            if (PreviewBody == null || !Player.VoxSelector.VoxelUnderMouse.IsValid)
+            if (PreviewBody == null || !World.Master.VoxSelector.VoxelUnderMouse.IsValid)
                 return;
 
             HandleOrientation();
 
-            PreviewBody.LocalPosition = Player.VoxSelector.VoxelUnderMouse.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + CraftType.SpawnOffset;
+            PreviewBody.LocalPosition = World.Master.VoxSelector.VoxelUnderMouse.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + CraftType.SpawnOffset;
             PreviewBody.UpdateTransform();
             PreviewBody.PropogateTransforms();
 
@@ -244,7 +228,7 @@ namespace DwarfCorp
             else
                 PreviewBody.OrientToWalls();
 
-            var valid = ObjectHelper.IsValidPlacement(Player.VoxSelector.VoxelUnderMouse, CraftType, Player.World, PreviewBody, "build", "built");
+            var valid = ObjectHelper.IsValidPlacement(World.Master.VoxSelector.VoxelUnderMouse, CraftType, World, PreviewBody, "build", "built");
             PreviewBody.SetVertexColorRecursive(valid ? GameSettings.Default.Colors.GetColor("Positive", Color.Green) : GameSettings.Default.Colors.GetColor("Negative", Color.Red));
 
             if (valid && CraftType.AllowRotation)

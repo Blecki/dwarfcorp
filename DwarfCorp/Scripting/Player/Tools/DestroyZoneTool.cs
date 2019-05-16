@@ -13,44 +13,41 @@ namespace DwarfCorp
     public class DestroyZoneTool : PlayerTool
     {
         [ToolFactory("DestroyZone")]
-        private static PlayerTool _factory(GameMaster Master)
+        private static PlayerTool _factory(WorldManager World)
         {
-            return new DestroyZoneTool(Master);
+            return new DestroyZoneTool(World);
         }
 
-        public DestroyZoneTool(GameMaster Master)
+        public DestroyZoneTool(WorldManager World)
         {
-            Player = Master;
+            this.World = World;
         }
-
-        private Faction Faction { get { return Player.World.PlayerFaction; } }
-        private WorldManager World { get { return Player.World; } }
 
         public override void OnVoxelsSelected(List<VoxelHandle> Voxels, InputManager.MouseButton button)
         {
-            var v = Player.VoxSelector.VoxelUnderMouse;
+            var v = World.Master.VoxSelector.VoxelUnderMouse;
 
-            if (Faction.RoomBuilder.IsBuildDesignation(v))
+            if (World.PlayerFaction.RoomBuilder.IsBuildDesignation(v))
             {
-                BuildVoxelOrder vox = Faction.RoomBuilder.GetBuildDesignation(v);
+                BuildVoxelOrder vox = World.PlayerFaction.RoomBuilder.GetBuildDesignation(v);
                 if (vox != null && vox.Order != null)
                 {
                     vox.Order.Destroy();
                     if (vox.Order.DisplayWidget != null)
                         World.Gui.DestroyWidget(vox.Order.DisplayWidget);
-                    Faction.RoomBuilder.BuildDesignations.Remove(vox.Order);
-                    Faction.RoomBuilder.DesignatedRooms.Remove(vox.Order.ToBuild);
+                    World.PlayerFaction.RoomBuilder.BuildDesignations.Remove(vox.Order);
+                    World.PlayerFaction.RoomBuilder.DesignatedRooms.Remove(vox.Order.ToBuild);
                 }
             }
-            else if (Faction.RoomBuilder.IsInRoom(v))
+            else if (World.PlayerFaction.RoomBuilder.IsInRoom(v))
             {
-                Room existingRoom = Faction.RoomBuilder.GetMostLikelyRoom(v);
+                Room existingRoom = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(v);
 
                 if (existingRoom != null)
                     World.Gui.ShowModalPopup(new Gui.Widgets.Confirm
                     {
                         Text = "Do you want to destroy this " + existingRoom.RoomData.Name + "?",
-                        OnClose = (sender) => DestroyRoom((sender as Gui.Widgets.Confirm).DialogResult, existingRoom, Faction, World)
+                        OnClose = (sender) => DestroyRoom((sender as Gui.Widgets.Confirm).DialogResult, existingRoom, World.PlayerFaction, World)
                     });
             }
         }
@@ -84,7 +81,7 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-            Player.VoxSelector.Clear();
+            World.Master.VoxSelector.Clear();
         }
 
         public override void OnMouseOver(IEnumerable<GameComponent> bodies)
@@ -94,33 +91,33 @@ namespace DwarfCorp
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
-            if (Player.IsCameraRotationModeActive())
+            if (World.Master.IsCameraRotationModeActive())
             {
-                Player.VoxSelector.Enabled = false;
-                Player.World.SetMouse(null);
-                Player.BodySelector.Enabled = false;
+                World.Master.VoxSelector.Enabled = false;
+                World.SetMouse(null);
+                World.Master.BodySelector.Enabled = false;
                 return;
             }
 
-            Player.VoxSelector.Enabled = true;
-            Player.BodySelector.Enabled = false;
-            Player.VoxSelector.DrawVoxel = true;
-            Player.VoxSelector.DrawBox = false;
-            Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+            World.Master.VoxSelector.Enabled = true;
+            World.Master.BodySelector.Enabled = false;
+            World.Master.VoxSelector.DrawVoxel = true;
+            World.Master.VoxSelector.DrawBox = false;
+            World.Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
             
 
-            if (Player.World.IsMouseOverGui)
-                Player.World.SetMouse(Player.World.MousePointer);
+            if (World.IsMouseOverGui)
+                World.SetMouse(World.MousePointer);
             else
-                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
+                World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
         }
 
         public override void Render3D(DwarfGame game, DwarfTime time)
         {
-            var v = Player.VoxSelector.VoxelUnderMouse;
+            var v = World.Master.VoxSelector.VoxelUnderMouse;
             if (v.IsValid && !v.IsEmpty)
             {
-                var room = Faction.RoomBuilder.GetRoomThatContainsVoxel(v);
+                var room = World.PlayerFaction.RoomBuilder.GetRoomThatContainsVoxel(v);
                 if (room != null)
                     Drawer3D.DrawBox(room.GetBoundingBox(), GameSettings.Default.Colors.GetColor("Positive", Color.Green), 0.2f, true);
             }
@@ -139,11 +136,11 @@ namespace DwarfCorp
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            var v = Player.VoxSelector.VoxelUnderMouse;
+            var v = World.Master.VoxSelector.VoxelUnderMouse;
 
-            if (Faction.RoomBuilder.IsBuildDesignation(v))
+            if (World.PlayerFaction.RoomBuilder.IsBuildDesignation(v))
             {
-                var order = Faction.RoomBuilder.GetBuildDesignation(v);
+                var order = World.PlayerFaction.RoomBuilder.GetBuildDesignation(v);
                 if (order == null || order.Order == null)
                     return;
 
@@ -152,9 +149,9 @@ namespace DwarfCorp
                 else
                     order.ToBuild.SetTint(GameSettings.Default.Colors.GetColor("Negative", Color.Red));
             }
-            else if (Faction.RoomBuilder.IsInRoom(v))
+            else if (World.PlayerFaction.RoomBuilder.IsInRoom(v))
             {
-                Room existingRoom = Faction.RoomBuilder.GetMostLikelyRoom(v);
+                Room existingRoom = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(v);
                 if (existingRoom != null)
                     existingRoom.SetTint(GameSettings.Default.Colors.GetColor("Negative", Color.Red));
             }

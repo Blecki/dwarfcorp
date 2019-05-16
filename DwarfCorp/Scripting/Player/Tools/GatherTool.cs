@@ -12,14 +12,14 @@ namespace DwarfCorp
     public class GatherTool : PlayerTool
     {
         [ToolFactory("Gather")]
-        private static PlayerTool _factory(GameMaster Master)
+        private static PlayerTool _factory(WorldManager World)
         {
-            return new GatherTool(Master);
+            return new GatherTool(World);
         }
 
-        public GatherTool(GameMaster Master)
+        public GatherTool(WorldManager World)
         {
-            Player = Master;
+            this.World = World;
         }
 
         public GatherTool()
@@ -43,7 +43,7 @@ namespace DwarfCorp
             return c.Tags.Contains("Resource") &&
                 c.Active &&
                 c.IsVisible &&
-                c.Parent == Player.World.ComponentManager.RootComponent;
+                c.Parent == World.ComponentManager.RootComponent;
         }
 
         public override void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)
@@ -52,7 +52,7 @@ namespace DwarfCorp
 
             foreach (var resource in bodies.Where(body => CanGather(body)))
             {
-                if (Player.World.ChunkManager.IsAboveCullPlane(resource.BoundingBox)) continue;
+                if (World.ChunkManager.IsAboveCullPlane(resource.BoundingBox)) continue;
 
                 if (button == InputManager.MouseButton.Left)
                 {
@@ -60,15 +60,15 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    var designation = Player.World.PlayerFaction.Designations.GetEntityDesignation(resource, DesignationType.Gather);
+                    var designation = World.PlayerFaction.Designations.GetEntityDesignation(resource, DesignationType.Gather);
                     if (designation != null)
-                        Player.TaskManager.CancelTask(designation.Task);
+                        World.Master.TaskManager.CancelTask(designation.Task);
                 }
             }
 
-            Player.TaskManager.AddTasks(assignments);
+            World.Master.TaskManager.AddTasks(assignments);
 
-            OnConfirm(Faction.FilterMinionsWithCapability(Player.World.PlayerFaction.SelectedMinions, Task.TaskCategory.Gather));
+            OnConfirm(Faction.FilterMinionsWithCapability(World.PlayerFaction.SelectedMinions, Task.TaskCategory.Gather));
         }
 
         public override void OnMouseOver(IEnumerable<GameComponent> bodies)
@@ -88,24 +88,24 @@ namespace DwarfCorp
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
-            if (Player.IsCameraRotationModeActive())
+            if (World.Master.IsCameraRotationModeActive())
                 return;
 
-            Player.VoxSelector.Enabled = false;
-            Player.BodySelector.Enabled = true;
-            Player.BodySelector.AllowRightClickSelection = true;
+            World.Master.VoxSelector.Enabled = false;
+            World.Master.BodySelector.Enabled = true;
+            World.Master.BodySelector.AllowRightClickSelection = true;
 
-            if (Player.World.IsMouseOverGui)
-                Player.World.SetMouse(Player.World.MousePointer);
+            if (World.IsMouseOverGui)
+                World.SetMouse(World.MousePointer);
             else
-                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 6));
+                World.SetMouse(new Gui.MousePointer("mouse", 1, 6));
         }
 
         public override void Render3D(DwarfGame game, DwarfTime time)
         {
             NamedImageFrame frame = new NamedImageFrame("newgui/pointers", 32, 6, 0);
 
-            foreach (var body in Player.BodySelector.CurrentBodies)
+            foreach (var body in World.Master.BodySelector.CurrentBodies)
             {
                 if (body.Tags.Contains("Resource"))
                 {

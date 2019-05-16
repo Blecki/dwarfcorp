@@ -12,14 +12,14 @@ namespace DwarfCorp
     public class AttackTool : PlayerTool
     {
         [ToolFactory("Attack")]
-        private static PlayerTool _factory(GameMaster Master)
+        private static PlayerTool _factory(WorldManager World)
         {
-            return new AttackTool(Master);
+            return new AttackTool(World);
         }
 
-        public AttackTool(GameMaster Master)
+        public AttackTool(WorldManager World)
         {
-            Player = Master;
+            this.World = World;
         }
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
@@ -50,7 +50,7 @@ namespace DwarfCorp
                 return false;
             }
 
-            if (Player.World.Diplomacy.GetPolitics(creature.Faction, Player.World.PlayerFaction).GetCurrentRelationship() ==
+            if (World.Diplomacy.GetPolitics(creature.Faction, World.PlayerFaction).GetCurrentRelationship() ==
                 Relationship.Loving)
             {
                 return false;
@@ -69,14 +69,14 @@ namespace DwarfCorp
                     continue;
                 }
 
-                if (Player.World.Diplomacy.GetPolitics(creature.Faction, Player.World.PlayerFaction).GetCurrentRelationship() ==
+                if (World.Diplomacy.GetPolitics(creature.Faction, World.PlayerFaction).GetCurrentRelationship() ==
                     Relationship.Loving)
                 {
-                    Player.World.PlayerFaction.World.ShowTooltip("We refuse to attack allies.");
+                    World.ShowTooltip("We refuse to attack allies.");
                     shown = true;
                     continue;
                 }
-                Player.World.PlayerFaction.World.ShowTooltip("Click to attack this " + creature.Stats.CurrentClass.Name);
+                World.ShowTooltip("Click to attack this " + creature.Stats.CurrentClass.Name);
                 shown = true;
             }
             if (!shown)
@@ -85,23 +85,23 @@ namespace DwarfCorp
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
-            if (Player.IsCameraRotationModeActive())
+            if (World.Master.IsCameraRotationModeActive())
             {
-                Player.VoxSelector.Enabled = false;
-                Player.BodySelector.Enabled = false;
-                Player.World.SetMouse(null);
+                World.Master.VoxSelector.Enabled = false;
+                World.Master.BodySelector.Enabled = false;
+                World.SetMouse(null);
                 return;
             }
 
-            Player.VoxSelector.Enabled = false;
-            Player.BodySelector.Enabled = true;
-            Player.BodySelector.AllowRightClickSelection = true;
+            World.Master.VoxSelector.Enabled = false;
+            World.Master.BodySelector.Enabled = true;
+            World.Master.BodySelector.AllowRightClickSelection = true;
 
 
-            if (Player.World.IsMouseOverGui)
-                Player.World.SetMouse(Player.World.MousePointer);
+            if (World.IsMouseOverGui)
+                World.SetMouse(World.MousePointer);
             else
-                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 2));
+                World.SetMouse(new Gui.MousePointer("mouse", 1, 2));
         }
 
         public override void Render3D(DwarfGame game, DwarfTime time)
@@ -125,9 +125,9 @@ namespace DwarfCorp
                     continue;
                 }
 
-                if (Player.World.Diplomacy.GetPolitics(creature.Faction, Player.World.PlayerFaction).GetCurrentRelationship() == Relationship.Loving)
+                if (World.Diplomacy.GetPolitics(creature.Faction, World.PlayerFaction).GetCurrentRelationship() == Relationship.Loving)
                 {
-                    Player.World.PlayerFaction.World.ShowToolPopup("We refuse to attack allies.");
+                    World.PlayerFaction.World.ShowToolPopup("We refuse to attack allies.");
                     continue;
                 }
 
@@ -136,17 +136,17 @@ namespace DwarfCorp
                 if (button == InputManager.MouseButton.Left)
                 {
                     var task = new KillEntityTask(other, KillEntityTask.KillType.Attack);
-                    Player.TaskManager.AddTask(task);
-                    Player.World.PlayerFaction.World.ShowToolPopup("Will attack this " + creature.Stats.CurrentClass.Name);
-                    OnConfirm(Player.World.PlayerFaction.SelectedMinions);
+                    World.Master.TaskManager.AddTask(task);
+                    World.PlayerFaction.World.ShowToolPopup("Will attack this " + creature.Stats.CurrentClass.Name);
+                    OnConfirm(World.PlayerFaction.SelectedMinions);
                 }
                 else if (button == InputManager.MouseButton.Right)
                 {
-                    var designation = Player.World.PlayerFaction.Designations.GetEntityDesignation(other, DesignationType.Attack);
+                    var designation = World.PlayerFaction.Designations.GetEntityDesignation(other, DesignationType.Attack);
                     if (designation != null)
                     {
-                        Player.TaskManager.CancelTask(designation.Task);
-                        Player.World.PlayerFaction.World.ShowToolPopup("Attack cancelled for " + creature.Stats.CurrentClass.Name);
+                        World.Master.TaskManager.CancelTask(designation.Task);
+                        World.PlayerFaction.World.ShowToolPopup("Attack cancelled for " + creature.Stats.CurrentClass.Name);
                     }
                 }
             }

@@ -14,14 +14,14 @@ namespace DwarfCorp
     public class BuildWallTool : PlayerTool
     {
         [ToolFactory("BuildWall")]
-        private static PlayerTool _factory(GameMaster Master)
+        private static PlayerTool _factory(WorldManager World)
         {
-            return new BuildWallTool(Master);
+            return new BuildWallTool(World);
         }
 
-        public BuildWallTool(GameMaster Master)
+        public BuildWallTool(WorldManager World)
         {
-            Player = Master;
+            this.World = World;
         }
 
         public Shader Effect;
@@ -31,35 +31,32 @@ namespace DwarfCorp
 
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            var Faction = Player.World.PlayerFaction;
-
             if (CurrentVoxelType == 0)
-            {
                 return;
-            }
+
             if (Selected == null)
-            {
                 Selected = new List<VoxelHandle>();
-            }
+
             Selected.Clear();
+
             switch (button)
             {
                 case (InputManager.MouseButton.Left):
                     {
 
                         List<Task> assignments = new List<Task>();
-                        var validRefs = voxels.Where(r => !Faction.Designations.IsVoxelDesignation(r, DesignationType.Put)
-                            && Player.World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? r.IsEmpty : !r.IsEmpty).ToList();
+                        var validRefs = voxels.Where(r => !World.PlayerFaction.Designations.IsVoxelDesignation(r, DesignationType.Put)
+                            && World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? r.IsEmpty : !r.IsEmpty).ToList();
 
                         foreach (var r in voxels)
                         {
                             // Todo: Mode should be a property of the tool, not grabbed out of the vox selector.
-                            if (Player.World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty && !r.IsEmpty) continue;
-                            if (Player.World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectFilled && r.IsEmpty) continue;
+                            if (World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty && !r.IsEmpty) continue;
+                            if (World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectFilled && r.IsEmpty) continue;
 
-                            var existingDesignation = Player.World.PlayerFaction.Designations.GetVoxelDesignation(r, DesignationType.Put);
+                            var existingDesignation = World.PlayerFaction.Designations.GetVoxelDesignation(r, DesignationType.Put);
                             if (existingDesignation != null)
-                                Player.TaskManager.CancelTask(existingDesignation.Task);
+                                World.Master.TaskManager.CancelTask(existingDesignation.Task);
 
                             var above = VoxelHelpers.GetVoxelAbove(r);
 
@@ -72,16 +69,16 @@ namespace DwarfCorp
                         }
 
                         //TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(Player.World.Master.SelectedMinions, GameMaster.ToolMode.BuildZone));
-                        Player.TaskManager.AddTasks(assignments);
+                        World.Master.TaskManager.AddTasks(assignments);
                         break;
                     }
                 case (InputManager.MouseButton.Right):
                     {
                         foreach (var r in voxels)
                         {
-                            var designation = Faction.Designations.GetVoxelDesignation(r, DesignationType.Put);
+                            var designation = World.PlayerFaction.Designations.GetVoxelDesignation(r, DesignationType.Put);
                             if (designation != null)
-                                Player.TaskManager.CancelTask(designation.Task);
+                                World.Master.TaskManager.CancelTask(designation.Task);
                         }
                         break;
                     }
@@ -98,7 +95,7 @@ namespace DwarfCorp
             if (Selected != null)
                 Selected.Clear();
             CurrentVoxelType = 0;
-            Player.VoxSelector.Clear();
+            World.Master.VoxSelector.Clear();
         }
 
         public override void OnMouseOver(IEnumerable<GameComponent> bodies)
@@ -108,33 +105,33 @@ namespace DwarfCorp
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
-            if (Player.IsCameraRotationModeActive())
+            if (World.Master.IsCameraRotationModeActive())
             {
-                Player.VoxSelector.Enabled = false;
-                Player.World.SetMouse(null);
+                World.Master.VoxSelector.Enabled = false;
+                World.SetMouse(null);
                 return;
             }
 
-            Player.VoxSelector.Enabled = true;
-            Player.BodySelector.Enabled = false;
+            World.Master.VoxSelector.Enabled = true;
+            World.Master.BodySelector.Enabled = false;
 
-            if (Player.World.IsMouseOverGui)
-                Player.World.SetMouse(Player.World.MousePointer);
+            if (World.IsMouseOverGui)
+                World.SetMouse(World.MousePointer);
             else
-                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
+                World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
 
             MouseState mouse = Mouse.GetState();
             if (mouse.RightButton == ButtonState.Pressed)
-                Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+                World.Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
             else
-                Player.VoxSelector.SelectionType = BuildFloor ? VoxelSelectionType.SelectFilled : VoxelSelectionType.SelectEmpty;
+                World.Master.VoxSelector.SelectionType = BuildFloor ? VoxelSelectionType.SelectFilled : VoxelSelectionType.SelectEmpty;
 
         }
 
         private void DrawVoxels(float alpha, IEnumerable<VoxelHandle> selected)
         {
             Effect.VertexColorTint = new Color(0.5f, 1.0f, 0.5f, alpha);
-            Vector3 offset = Player.World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? Vector3.Zero : Vector3.Up * 0.15f;
+            Vector3 offset = World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? Vector3.Zero : Vector3.Up * 0.15f;
 
             foreach (var voxel in selected)
             {
@@ -150,7 +147,7 @@ namespace DwarfCorp
         private void DrawVoxels(DwarfTime time, IEnumerable<VoxelHandle> selected)
         {
             GameState.Game.GraphicsDevice.DepthStencilState = DepthStencilState.None;
-            Effect = Player.World.Renderer.DefaultShader;
+            Effect = World.Renderer.DefaultShader;
 
             float t = (float)time.TotalGameTime.TotalSeconds;
             float st = (float)Math.Sin(t * 4) * 0.5f + 0.5f;
@@ -193,10 +190,10 @@ namespace DwarfCorp
             }
             else if (mouse.RightButton != ButtonState.Pressed)
             {
-                var underMouse = Player.VoxSelector.VoxelUnderMouse;
+                var underMouse = World.Master.VoxSelector.VoxelUnderMouse;
                 if (underMouse.IsValid)
                 {
-                    DrawVoxels(time, new List<VoxelHandle>() { Player.VoxSelector.VoxelUnderMouse });
+                    DrawVoxels(time, new List<VoxelHandle>() { World.Master.VoxSelector.VoxelUnderMouse });
                 }
             }
         }
@@ -212,9 +209,9 @@ namespace DwarfCorp
                 return;
 
             if (Mouse.GetState().LeftButton == ButtonState.Pressed)
-                Player.World.ShowTooltip("Release to build.");
+                World.ShowTooltip("Release to build.");
             else
-                Player.World.ShowTooltip("Release to cancel.");
+                World.ShowTooltip("Release to cancel.");
 
             if (Selected == null)
             {

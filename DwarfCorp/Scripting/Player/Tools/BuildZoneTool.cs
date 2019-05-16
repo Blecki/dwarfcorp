@@ -14,14 +14,14 @@ namespace DwarfCorp
     public class BuildZoneTool : PlayerTool
     {
         [ToolFactory("BuildZone")]
-        private static PlayerTool _factory(GameMaster Master)
+        private static PlayerTool _factory(WorldManager World)
         {
-            return new BuildZoneTool(Master);
+            return new BuildZoneTool(World);
         }
 
-        public BuildZoneTool(GameMaster Master)
+        public BuildZoneTool(WorldManager World)
         {
-            Player = Master;
+            this.World = World;
         }
 
         private DestroyZoneTool DestroyZoneTool; // I should probably be fired for this.
@@ -29,24 +29,24 @@ namespace DwarfCorp
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
             if (button == InputManager.MouseButton.Left)
-                Player.World.PlayerFaction.RoomBuilder.VoxelsSelected(voxels, button);
+                World.PlayerFaction.RoomBuilder.VoxelsSelected(voxels, button);
             else
                 DestroyZoneTool.OnVoxelsSelected(voxels, button);
         }
 
         public override void OnBegin()
         {
-            Player.World.PlayerFaction.RoomBuilder.OnEnter();
+            World.PlayerFaction.RoomBuilder.OnEnter();
 
             if (DestroyZoneTool == null)
-                DestroyZoneTool = new DestroyZoneTool(Player);
+                DestroyZoneTool = new DestroyZoneTool(World);
         }
 
         public override void OnEnd()
         {
-            Player.World.PlayerFaction.RoomBuilder.End();
-            Player.VoxSelector.Clear();
-            Player.World.PlayerFaction.RoomBuilder.OnExit();
+            World.PlayerFaction.RoomBuilder.End();
+            World.Master.VoxSelector.Clear();
+            World.PlayerFaction.RoomBuilder.OnExit();
         }
 
         public override void OnMouseOver(IEnumerable<GameComponent> bodies)
@@ -61,23 +61,23 @@ namespace DwarfCorp
                 DestroyZoneTool.Update(game, time);
             else
             {
-                if (Player.IsCameraRotationModeActive())
+                if (World.Master.IsCameraRotationModeActive())
                 {
-                    Player.VoxSelector.Enabled = false;
-                    Player.World.SetMouse(null);
-                    Player.BodySelector.Enabled = false;
+                    World.Master.VoxSelector.Enabled = false;
+                    World.SetMouse(null);
+                    World.Master.BodySelector.Enabled = false;
                     return;
                 }
 
-                Player.VoxSelector.Enabled = true;
-                Player.BodySelector.Enabled = false;
-                Player.VoxSelector.DrawBox = true;
-                Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+                World.Master.VoxSelector.Enabled = true;
+                World.Master.BodySelector.Enabled = false;
+                World.Master.VoxSelector.DrawBox = true;
+                World.Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
 
-                if (Player.World.IsMouseOverGui)
-                    Player.World.SetMouse(Player.World.MousePointer);
+                if (World.IsMouseOverGui)
+                    World.SetMouse(World.MousePointer);
                 else
-                    Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
+                    World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
             }
         }
 
@@ -95,7 +95,7 @@ namespace DwarfCorp
                 DestroyZoneTool.Render3D(game, time);
             else
             {
-                Player.World.PlayerFaction.RoomBuilder.Render(time, GameState.Game.GraphicsDevice);
+                World.PlayerFaction.RoomBuilder.Render(time, GameState.Game.GraphicsDevice);
             }
         }
 
@@ -111,7 +111,7 @@ namespace DwarfCorp
                 DestroyZoneTool.OnVoxelsDragged(voxels, button);
             else
             {
-                Player.World.PlayerFaction.RoomBuilder.OnVoxelsDragged(voxels, button);
+                World.PlayerFaction.RoomBuilder.OnVoxelsDragged(voxels, button);
             }
         }
     }

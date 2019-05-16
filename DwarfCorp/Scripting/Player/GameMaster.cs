@@ -12,39 +12,11 @@ namespace DwarfCorp
 {
     public class GameMaster
     {
-        public OrbitCamera Camera;
-
         [JsonIgnore]
         public VoxelSelector VoxSelector { get; set; }
 
         [JsonIgnore]
         public BodySelector BodySelector { get; set; }
-
-        #region  Player tool management
-
-        [JsonIgnore]
-        public Dictionary<String, PlayerTool> Tools { get; set; }
-
-        [JsonIgnore]
-        public PlayerTool CurrentTool { get { return Tools[CurrentToolMode]; } }
-
-        public String CurrentToolMode = "SelectUnits";
-
-        public void ChangeTool(String NewTool)
-        {
-            if (NewTool != "SelectUnits")
-            {
-                SelectedObjects = new List<GameComponent>();
-            }
-
-            // Todo: Should probably clean up existing tool even if they are the same tool.
-            Tools[NewTool].OnBegin();
-            if (CurrentToolMode != NewTool)
-                CurrentTool.OnEnd();
-            CurrentToolMode = NewTool;
-        }
-
-        #endregion
 
         [JsonIgnore]
         public List<GameComponent> SelectedObjects = new List<GameComponent>();
@@ -76,50 +48,21 @@ namespace DwarfCorp
             this.World = World;
             
             Initialize();
-            VoxSelector.Selected += OnSelected;
-            VoxSelector.Dragged += OnDrag;
-            BodySelector.Selected += OnBodiesSelected;
-            BodySelector.MouseOver += OnMouseOver;
             World.Master = this;
             World.Time.NewDay += Time_NewDay;
         }
 
         public void Initialize()
         {
-            Camera = World.Renderer.Camera;
             VoxSelector = new VoxelSelector(World);
-            BodySelector = new BodySelector(Camera, GameState.Game.GraphicsDevice, World.ComponentManager);
-            CreateTools();
+            BodySelector = new BodySelector(World.Renderer.Camera, GameState.Game.GraphicsDevice, World.ComponentManager);
         }
 
         public void Destroy()
         {
-            VoxSelector.Selected -= OnSelected;
-            VoxSelector.Dragged -= OnDrag;
-            BodySelector.Selected -= OnBodiesSelected;
-            BodySelector.MouseOver -= OnMouseOver;
             World.Time.NewDay -= Time_NewDay;
-            Tools["God"].Destroy();
-            Tools["SelectUnits"].Destroy();
-            Tools.Clear();
             VoxSelector = null;
             BodySelector = null;
-        }
-
-        // Todo: Give these the mod hook treatment.
-        private void CreateTools()
-        {
-            Tools = new Dictionary<String, PlayerTool>();
-
-            foreach (var method in AssetManager.EnumerateModHooks(typeof(ToolFactoryAttribute), typeof(PlayerTool), new Type[]
-            {
-                typeof(GameMaster)
-            }))
-            {
-                var attribute = method.GetCustomAttributes(false).FirstOrDefault(a => a is ToolFactoryAttribute) as ToolFactoryAttribute;
-                if (attribute == null) continue;
-                Tools[attribute.Name] = method.Invoke(null, new Object[] { this }) as PlayerTool;
-            }
         }
 
         void Time_NewDay(DateTime time)
@@ -127,59 +70,7 @@ namespace DwarfCorp
             World.PlayerFaction.PayEmployees();
         }
 
-        public void OnMouseOver(IEnumerable<GameComponent> bodies)
-        {
-            CurrentTool.OnMouseOver(bodies);
-        }
-
-        public void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)
-        {
-            CurrentTool.OnBodiesSelected(bodies, button);
-            if (CurrentToolMode == "SelectUnits")
-                SelectedObjects = bodies;
-        }
-
-        public void OnDrag(List<VoxelHandle> voxels, InputManager.MouseButton button)
-        {
-            CurrentTool.OnVoxelsDragged(voxels, button);
-        }
-
-        public void OnSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
-        {
-            CurrentTool.OnVoxelsSelected(voxels, button);
-        }
-
-        public void Render2D(DwarfGame game, DwarfTime time)
-        {
-            CurrentTool.Render2D(game, time);
-            
-            foreach (CreatureAI creature in World.PlayerFaction.SelectedMinions)
-            {
-                foreach (Task task in creature.Tasks)
-                    if (task.IsFeasible(creature.Creature) == Task.Feasibility.Feasible)
-                        task.Render(time);
-
-                if (creature.CurrentTask != null)
-                    creature.CurrentTask.Render(time);
-            }
-
-            DwarfGame.SpriteBatch.Begin();
-            BodySelector.Render(DwarfGame.SpriteBatch);
-            DwarfGame.SpriteBatch.End();
-        }
-
-        public void Render3D(DwarfGame game, DwarfTime time)
-        {
-            CurrentTool.Render3D(game, time);
-            VoxSelector.Render();
-
-            foreach (var obj in SelectedObjects)
-                if (obj.IsVisible && !obj.IsDead)
-                    Drawer3D.DrawBox(obj.GetBoundingBox(), Color.White, 0.01f, true);
-        }
-
         private Timer orphanedTaskRateLimiter = new Timer(10.0f, false, Timer.TimerMode.Real);
-        private Timer checkFoodTimer = new Timer(60.0f, false, Timer.TimerMode.Real);
 
         // This hack exists to find orphaned tasks not assigned to any dwarf, and to then
         // put them on the task list.
@@ -227,12 +118,11 @@ namespace DwarfCorp
         {
             // Todo: All input handling should be in one spot. PlayState!
             TaskManager.Update(World.PlayerFaction.Minions);
-            CurrentTool.Update(game, time);
             World.PlayerFaction.RoomBuilder.Update();
             UpdateOrphanedTasks();
 
             if (World.Paused)
-                Camera.LastWheel = Mouse.GetState().ScrollWheelValue;
+                World.Renderer.Camera.LastWheel = Mouse.GetState().ScrollWheelValue;
 
             UpdateInput(game, time);
 
@@ -252,16 +142,6 @@ namespace DwarfCorp
             }
 
             World.PlayerFaction.Minions.RemoveAll(m => m.IsDead);
-
-            checkFoodTimer.Update(time);
-            if (checkFoodTimer.HasTriggered)
-            {
-                var food = World.PlayerFaction.CountResourcesWithTag(Resource.ResourceTags.Edible);
-                if (food == 0)
-                {
-                    World.PlayerFaction.World.MakeAnnouncement("We're out of food!", null, () => { return World.PlayerFaction.CountResourcesWithTag(Resource.ResourceTags.Edible) == 0; });
-                }
-            }
 
             foreach(var minion in World.PlayerFaction.Minions)
             {
@@ -290,25 +170,12 @@ namespace DwarfCorp
 
         }
 
-
-        public void UpdateMouse(MouseState mouseState, KeyboardState keyState, DwarfGame game, DwarfTime time)
-        {
-            if (KeyManager.RotationEnabled(World.Renderer.Camera))
-            {
-                World.SetMouse(null);
-            }
-
-        }
-
         public void UpdateInput(DwarfGame game, DwarfTime time)
         {
-            KeyboardState keyState = Keyboard.GetState();
-            MouseState mouseState = Mouse.GetState();
-
-
             if (!World.IsMouseOverGui)
             {
-                UpdateMouse(Mouse.GetState(), Keyboard.GetState(), game, time);
+                if (KeyManager.RotationEnabled(World.Renderer.Camera))
+                    World.SetMouse(null);
                 VoxSelector.Update();
                 BodySelector.Update();
             }

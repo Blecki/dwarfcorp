@@ -9,29 +9,29 @@ namespace DwarfCorp
     public class CancelTasksTool : PlayerTool
     {
         [ToolFactory("CancelTasks")]
-        private static PlayerTool _factory(GameMaster Master)
+        private static PlayerTool _factory(WorldManager World)
         {
-            return new CancelTasksTool(Master);
+            return new CancelTasksTool(World);
         }
 
-        public CancelTasksTool(GameMaster Master)
+        public CancelTasksTool(WorldManager World)
         {
-            Player = Master;
+            this.World = World;
         }
 
         public Gui.Widgets.CancelToolOptions Options;
 
         public override void OnBegin()
         {
-            Player.World.Tutorial("cancel-tasks");
-            Player.VoxSelector.SelectionColor = Color.Red;
-            Player.VoxSelector.DrawBox = true;
-            Player.VoxSelector.DrawVoxel = true;
+            World.Tutorial("cancel-tasks");
+            World.Master.VoxSelector.SelectionColor = Color.Red;
+            World.Master.VoxSelector.DrawBox = true;
+            World.Master.VoxSelector.DrawVoxel = true;
         }
 
         public override void OnEnd()
         {
-            Player.VoxSelector.Clear();
+            World.Master.VoxSelector.Clear();
         }
 
         public override void OnVoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
@@ -41,10 +41,10 @@ namespace DwarfCorp
                 {
                     if (r.IsValid)
                     {
-                        var designations = Player.World.PlayerFaction.Designations.EnumerateDesignations(r).ToList();
+                        var designations = World.PlayerFaction.Designations.EnumerateDesignations(r).ToList();
                         foreach (var des in designations)
                             if (des.Task != null)
-                                Player.TaskManager.CancelTask(des.Task);
+                                World.Master.TaskManager.CancelTask(des.Task);
                     }
                 }
         }
@@ -55,22 +55,22 @@ namespace DwarfCorp
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
-            if (Player.IsCameraRotationModeActive())
+            if (World.Master.IsCameraRotationModeActive())
             {
-                Player.VoxSelector.Enabled = false;
-                Player.BodySelector.Enabled = false;
-                Player.World.SetMouse(null);
+                World.Master.VoxSelector.Enabled = false;
+                World.Master.BodySelector.Enabled = false;
+                World.SetMouse(null);
                 return;
             }
 
-            Player.VoxSelector.Enabled = Options.Voxels.CheckState;
-            Player.BodySelector.Enabled = Options.Entities.CheckState;
-            Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+            World.Master.VoxSelector.Enabled = Options.Voxels.CheckState;
+            World.Master.BodySelector.Enabled = Options.Entities.CheckState;
+            World.Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
 
-            if (Player.World.IsMouseOverGui)
-                Player.World.SetMouse(Player.World.MousePointer);
+            if (World.IsMouseOverGui)
+                World.SetMouse(World.MousePointer);
             else
-                Player.World.SetMouse(new Gui.MousePointer("mouse", 0, 0));
+                World.SetMouse(new Gui.MousePointer("mouse", 0, 0));
 
         }
 
@@ -87,9 +87,9 @@ namespace DwarfCorp
             if (Options.Entities.CheckState)
                 foreach (var body in bodies)
                 {
-                    foreach (var des in Player.World.PlayerFaction.Designations.EnumerateEntityDesignations(body).ToList())
+                    foreach (var des in World.PlayerFaction.Designations.EnumerateEntityDesignations(body).ToList())
                         if (des.Task != null)
-                            Player.TaskManager.CancelTask(des.Task);
+                            World.Master.TaskManager.CancelTask(des.Task);
                 }
         }
 

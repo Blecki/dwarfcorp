@@ -10,14 +10,14 @@ namespace DwarfCorp
     public class WrangleTool : PlayerTool
     {
         [ToolFactory("Wrangle")]
-        private static PlayerTool _factory(GameMaster Master)
+        private static PlayerTool _factory(WorldManager World)
         {
-            return new WrangleTool(Master);
+            return new WrangleTool(World);
         }
 
-        public WrangleTool(GameMaster Master)
+        public WrangleTool(WorldManager World)
         {
-            Player = Master;
+            this.World = World;
         }
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
@@ -39,19 +39,19 @@ namespace DwarfCorp
             if (!animal.GetRoot().Tags.Contains("DomesticAnimal"))
                 return false;
 
-            var pens = Player.World.PlayerFaction.GetRooms().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.IsBuilt &&
+            var pens = World.PlayerFaction.GetRooms().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.IsBuilt &&
                             (pen.Species == "" || pen.Species == creature.Stats.CurrentClass.Name));
 
             if (pens.Any())
             {
                 if (print)
-                    Player.World.ShowTooltip("Will wrangle this " + animal.GetRoot().GetComponent<Creature>().Stats.CurrentClass.Name);
+                    World.ShowTooltip("Will wrangle this " + animal.GetRoot().GetComponent<Creature>().Stats.CurrentClass.Name);
                 return true;
             }
             else
             {
                 if (print)
-                    Player.World.ShowTooltip("Can't wrangle this " + animal.GetRoot().GetComponent<Creature>().Stats.CurrentClass.Name + " : need more animal pens.");
+                    World.ShowTooltip("Can't wrangle this " + animal.GetRoot().GetComponent<Creature>().Stats.CurrentClass.Name + " : need more animal pens.");
             }
 
             return false;
@@ -76,9 +76,9 @@ namespace DwarfCorp
                         break;
                     case InputManager.MouseButton.Right:
                         {
-                            var existingOrder = Player.World.PlayerFaction.Designations.GetEntityDesignation(animal, DesignationType.Wrangle);
+                            var existingOrder = World.PlayerFaction.Designations.GetEntityDesignation(animal, DesignationType.Wrangle);
                             if (existingOrder != null)
-                                Player.TaskManager.CancelTask(existingOrder.Task);
+                                World.Master.TaskManager.CancelTask(existingOrder.Task);
                         }
                         break;
                 }
@@ -86,8 +86,8 @@ namespace DwarfCorp
 
             if (tasks.Count > 0)
             {
-                Player.TaskManager.AddTasks(tasks);
-                OnConfirm(Player.World.PlayerFaction.SelectedMinions);
+                World.Master.TaskManager.AddTasks(tasks);
+                OnConfirm(World.PlayerFaction.SelectedMinions);
             }
         }
 
@@ -109,27 +109,27 @@ namespace DwarfCorp
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
-            if (Player.IsCameraRotationModeActive())
+            if (World.Master.IsCameraRotationModeActive())
             {
-                Player.VoxSelector.Enabled = false;
-                Player.World.SetMouse(null);
-                Player.BodySelector.Enabled = false;
+                World.Master.VoxSelector.Enabled = false;
+                World.SetMouse(null);
+                World.Master.BodySelector.Enabled = false;
                 return;
             }
 
-            Player.BodySelector.AllowRightClickSelection = true;
-            Player.VoxSelector.Enabled = false;
-            Player.BodySelector.Enabled = true;
+            World.Master.BodySelector.AllowRightClickSelection = true;
+            World.Master.VoxSelector.Enabled = false;
+            World.Master.BodySelector.Enabled = true;
 
-            if (Player.World.IsMouseOverGui)
-                Player.World.SetMouse(Player.World.MousePointer);
+            if (World.IsMouseOverGui)
+                World.SetMouse(World.MousePointer);
             else
-                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 7));
+                World.SetMouse(new Gui.MousePointer("mouse", 1, 7));
         }
 
         public override void Render3D(DwarfGame game, DwarfTime time)
         {
-            foreach (var animal in Player.BodySelector.CurrentBodies)
+            foreach (var animal in World.Master.BodySelector.CurrentBodies)
                 if (animal.Tags.Contains("DomesticAnimal"))
                     Drawer3D.DrawBox(animal.BoundingBox, Color.LightGreen, 0.1f, false);
         }

@@ -13,9 +13,9 @@ namespace DwarfCorp
     public class GodModeTool : PlayerTool
     {
         [ToolFactory("God")]
-        private static PlayerTool _factory(GameMaster Master)
+        private static PlayerTool _factory(WorldManager World)
         {
-            return new GodModeTool(Master);
+            return new GodModeTool(World);
         }
 
         public String Command;
@@ -23,7 +23,7 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
-            Player.VoxSelector.SelectionType = GetSelectionTypeBySelectionBoxValue(Command);
+            World.Master.VoxSelector.SelectionType = GetSelectionTypeBySelectionBoxValue(Command);
         }
 
         public override void OnEnd()
@@ -36,10 +36,10 @@ namespace DwarfCorp
 
         }
 
-        public GodModeTool(GameMaster master)
+        public GodModeTool(WorldManager World)
         {
-            Player = master;
-            Chunks = Player.World.ChunkManager;
+            this.World = World;
+            Chunks = World.ChunkManager;
         }
 
         private VoxelSelectionType GetSelectionTypeBySelectionBoxValue(string arg)
@@ -58,7 +58,7 @@ namespace DwarfCorp
 
         private void SelectorBox_OnSelectionModified(string arg)
         {
-            Player.VoxSelector.SelectionType = GetSelectionTypeBySelectionBoxValue(arg);
+            World.Master.VoxSelector.SelectionType = GetSelectionTypeBySelectionBoxValue(arg);
         }
 
         public override void OnVoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
@@ -66,8 +66,8 @@ namespace DwarfCorp
             if(Command.Contains("Build/"))
             {
                 string type = Command.Substring(6);
-                var room = RoomLibrary.CreateRoom(Player.World.PlayerFaction, type, Player.World);
-                Player.World.PlayerFaction.RoomBuilder.DesignatedRooms.Add(room);
+                var room = RoomLibrary.CreateRoom(World.PlayerFaction, type, World);
+                World.PlayerFaction.RoomBuilder.DesignatedRooms.Add(room);
                 RoomLibrary.CompleteRoomImmediately(room, refs);
             }
             if (Command.Contains("Spawn/"))
@@ -91,7 +91,7 @@ namespace DwarfCorp
                             if (craftItem != null)
                             {
                                 if (craftItem.AddToOwnedPool)
-                                    Player.World.PlayerFaction.OwnedObjects.Add(body);
+                                    World.PlayerFaction.OwnedObjects.Add(body);
 
                                 if (craftItem.Moveable)
                                     body.Tags.Add("Moveable");
@@ -117,8 +117,8 @@ namespace DwarfCorp
                 {
                     if (vox.IsEmpty)
                     {
-                        var entity = new Rail.RailEntity(Player.World.ComponentManager, vox, junction);
-                        Player.World.ComponentManager.RootComponent.AddChild(entity);
+                        var entity = new Rail.RailEntity(World.ComponentManager, vox, junction);
+                        World.ComponentManager.RootComponent.AddChild(entity);
                     }
                 }
             }
@@ -148,8 +148,8 @@ namespace DwarfCorp
 
                         if (type == "Magic")
                         {
-                            Player.World.ComponentManager.RootComponent.AddChild(
-                                new DestroyOnTimer(Player.World.ComponentManager, Player.World.ChunkManager, vox)
+                            World.ComponentManager.RootComponent.AddChild(
+                                new DestroyOnTimer(World.ComponentManager, World.ChunkManager, vox)
                                 {
                                     DestroyTimer = new Timer(5.0f + MathFunctions.Rand(-0.5f, 0.5f), true)
                                 });
@@ -160,16 +160,16 @@ namespace DwarfCorp
                             case "Delete Block":
                                 {
                                     var v = vox;
-                                    Player.World.PlayerFaction.OnVoxelDestroyed(vox);
+                                    World.PlayerFaction.OnVoxelDestroyed(vox);
                                     v.Type = Library.EmptyVoxelType;
                                     v.QuickSetLiquid(LiquidType.None, 0);
                                 }
                                 break;
                             case "Nuke Column":
                                 {
-                                    for (var y = 1; y < Player.World.WorldSizeInVoxels.Y; ++y)
+                                    for (var y = 1; y < World.WorldSizeInVoxels.Y; ++y)
                                     {
-                                        var v = Player.World.ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(vox.Coordinate.X, y, vox.Coordinate.Z));
+                                        var v = World.ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(vox.Coordinate.X, y, vox.Coordinate.Z));
                                         v.Type = Library.EmptyVoxelType;
                                         v.QuickSetLiquid(LiquidType.None, 0);
                                     }
@@ -179,7 +179,7 @@ namespace DwarfCorp
                                 foreach (var selected in refs)
                                 {
                                     if (!selected.IsEmpty)
-                                        VoxelHelpers.KillVoxel(Player.World, selected);
+                                        VoxelHelpers.KillVoxel(World, selected);
                                 }
                                 break;
                             case "Fill Water":
@@ -202,20 +202,20 @@ namespace DwarfCorp
                                 break;
                             case "Fire":
                                 {
-                                    foreach (var flam2 in Player.World.EnumerateIntersectingObjects(vox.GetBoundingBox(), CollisionType.Both).OfType<Flammable>())
+                                    foreach (var flam2 in World.EnumerateIntersectingObjects(vox.GetBoundingBox(), CollisionType.Both).OfType<Flammable>())
                                         flam2.Heat = flam2.Flashpoint + 1;
                                 }
                                 break;
 
                             case "Kill Things":
                                 {
-                                    foreach (var comp in Player.World.EnumerateIntersectingObjects(vox.GetBoundingBox(), CollisionType.Both))
+                                    foreach (var comp in World.EnumerateIntersectingObjects(vox.GetBoundingBox(), CollisionType.Both))
                                         comp.Die();
                                 }
                                 break;
                             case "Disease":
                                 {
-                                    foreach (var creature in Player.World.EnumerateIntersectingObjects(vox.GetBoundingBox(), CollisionType.Both).OfType<Creature>())
+                                    foreach (var creature in World.EnumerateIntersectingObjects(vox.GetBoundingBox(), CollisionType.Both).OfType<Creature>())
                                     {
                                         creature.Stats.AcquireDisease(DiseaseLibrary.GetRandomDisease());
                                     }
@@ -234,22 +234,22 @@ namespace DwarfCorp
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
-            if (Player.IsCameraRotationModeActive())
+            if (World.Master.IsCameraRotationModeActive())
             {
-                Player.VoxSelector.Enabled = false;
-                Player.World.SetMouse(null);
+                World.Master.VoxSelector.Enabled = false;
+                World.SetMouse(null);
                 return;
             }
 
-            Player.VoxSelector.Enabled = true;
-            Player.BodySelector.Enabled = false;
-            Player.World.SetMouse(Player.World.MousePointer);
+            World.Master.VoxSelector.Enabled = true;
+            World.Master.BodySelector.Enabled = false;
+            World.SetMouse(World.MousePointer);
 
             if (Command == "Repulse")
             {
-                var location = Player.VoxSelector.VoxelUnderMouse;
+                var location = World.Master.VoxSelector.VoxelUnderMouse;
                 var center = location.GetBoundingBox().Center();
-                foreach (var body in Player.World.EnumerateIntersectingObjects(location.GetBoundingBox(), CollisionType.Dynamic))
+                foreach (var body in World.EnumerateIntersectingObjects(location.GetBoundingBox(), CollisionType.Dynamic))
                 {
                     var delta = center - body.Position;
                     delta.Normalize();

@@ -12,14 +12,14 @@ namespace DwarfCorp
     public class ChopTool : PlayerTool
     {
         [ToolFactory("Chop")]
-        private static PlayerTool _factory(GameMaster Master)
+        private static PlayerTool _factory(WorldManager World)
         {
-            return new ChopTool(Master);
+            return new ChopTool(World);
         }
 
-        public ChopTool(GameMaster Master)
+        public ChopTool(WorldManager World)
         {
-            Player = Master;
+            this.World = World;
         }
 
         public override void OnBegin()
@@ -46,37 +46,37 @@ namespace DwarfCorp
             var treesPicked = bodies.Where(c => c != null && c.Tags.Contains("Vegetation"));
 
             if (treesPicked.Any())
-                Player.World.ShowTooltip("Click to harvest this plant. Right click to cancel.");
+                World.ShowTooltip("Click to harvest this plant. Right click to cancel.");
             else
                 DefaultOnMouseOver(bodies);   
         }
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
-            if (Player.IsCameraRotationModeActive())
+            if (World.Master.IsCameraRotationModeActive())
             {
-                Player.VoxSelector.Enabled = false;
-                Player.BodySelector.Enabled = false;
-                Player.World.SetMouse(null);
+                World.Master.VoxSelector.Enabled = false;
+                World.Master.BodySelector.Enabled = false;
+                World.SetMouse(null);
                 return;
             }
 
-            Player.VoxSelector.Enabled = false;
-            Player.BodySelector.Enabled = true;
-            Player.BodySelector.AllowRightClickSelection = true;
+            World.Master.VoxSelector.Enabled = false;
+            World.Master.BodySelector.Enabled = true;
+            World.Master.BodySelector.AllowRightClickSelection = true;
 
-            Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 0));
+            World.SetMouse(new Gui.MousePointer("mouse", 1, 0));
 
-            if (Player.World.IsMouseOverGui)
-                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 0));
+            if (World.IsMouseOverGui)
+                World.SetMouse(new Gui.MousePointer("mouse", 1, 0));
             else
-                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 5));
+                World.SetMouse(new Gui.MousePointer("mouse", 1, 5));
         }
 
         public override void Render3D(DwarfGame game, DwarfTime time)
         {
             NamedImageFrame frame = new NamedImageFrame("newgui/pointers", 32, 5, 0);
-            foreach (GameComponent tree in Player.BodySelector.CurrentBodies)
+            foreach (GameComponent tree in World.Master.BodySelector.CurrentBodies)
             {
                 if (tree.Tags.Contains("Vegetation"))
                 {
@@ -102,17 +102,17 @@ namespace DwarfCorp
 
             if (button == InputManager.MouseButton.Left)
             {
-                List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.World.PlayerFaction.SelectedMinions, Task.TaskCategory.Chop);
+                List<CreatureAI> minions = Faction.FilterMinionsWithCapability(World.PlayerFaction.SelectedMinions, Task.TaskCategory.Chop);
                 List<Task> tasks = new List<Task>();
 
                 foreach (var plant in plantsPicked)
                 {
                     if (!plant.IsVisible) continue;
-                    if (Player.World.ChunkManager.IsAboveCullPlane(plant.BoundingBox)) continue;
+                    if (World.ChunkManager.IsAboveCullPlane(plant.BoundingBox)) continue;
                     tasks.Add(new ChopEntityTask(plant));
                 }
 
-                Player.TaskManager.AddTasks(tasks);
+                World.Master.TaskManager.AddTasks(tasks);
                 if (tasks.Count > 0 && minions.Count > 0)
                     OnConfirm(minions);
             }
@@ -121,10 +121,10 @@ namespace DwarfCorp
                 foreach (var plant in plantsPicked)
                 {
                     if (!plant.IsVisible) continue;
-                    if (Player.World.ChunkManager.IsAboveCullPlane(plant.BoundingBox)) continue;
-                    var designation = Player.World.PlayerFaction.Designations.GetEntityDesignation(plant, DesignationType.Chop);
+                    if (World.ChunkManager.IsAboveCullPlane(plant.BoundingBox)) continue;
+                    var designation = World.PlayerFaction.Designations.GetEntityDesignation(plant, DesignationType.Chop);
                     if (designation != null)
-                        Player.TaskManager.CancelTask(designation.Task);
+                        World.Master.TaskManager.CancelTask(designation.Task);
                 }
             }
         }

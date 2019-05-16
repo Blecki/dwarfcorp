@@ -72,6 +72,11 @@ namespace DwarfCorp.GameStates
         private Widget BottomBackground;
         private Widget MinimapIcon;
 
+        public Dictionary<String, PlayerTool> Tools { get; set; }
+
+        public PlayerTool CurrentTool { get { return Tools[CurrentToolMode]; } }
+        public String CurrentToolMode = "SelectUnits";
+
         private class ToolbarItem
         {
             public Gui.Widgets.FramedIcon Icon;
@@ -102,15 +107,23 @@ namespace DwarfCorp.GameStates
                 ToolHiliteItems.Add(Mode, Icon as Gui.Widgets.FramedIcon);
         }
 
-        private void ChangeTool(String Mode)
+        public void ChangeTool(String Mode)
         {
             if (MultiContextMenu != null)
             {
                 MultiContextMenu.Close();
                 MultiContextMenu = null;
             }
-            //ManaBar.Hidden = Mode != GameMaster.ToolMode.Magic;
-            Master.ChangeTool(Mode);
+
+            if (Mode != "SelectUnits")
+                World.Master.SelectedObjects = new List<GameComponent>();
+
+            // Todo: Should probably clean up existing tool even if they are the same tool.
+            Tools[Mode].OnBegin();
+            if (CurrentToolMode != Mode)
+                CurrentTool.OnEnd();
+            CurrentToolMode = Mode;
+
             foreach (var icon in ToolHiliteItems)
                 icon.Value.Hilite = icon.Key == Mode;
         }
@@ -166,6 +179,26 @@ namespace DwarfCorp.GameStates
             {
                 EnterTime = DateTime.Now;
 
+                // Setup tool list.
+                Tools = new Dictionary<String, PlayerTool>();
+
+                foreach (var method in AssetManager.EnumerateModHooks(typeof(ToolFactoryAttribute), typeof(PlayerTool), new Type[] { typeof(WorldManager) }))
+                {
+                    var attribute = method.GetCustomAttributes(false).FirstOrDefault(a => a is ToolFactoryAttribute) as ToolFactoryAttribute;
+                    if (attribute == null) continue;
+                    Tools[attribute.Name] = method.Invoke(null, new Object[] { World }) as PlayerTool;
+                }
+
+                Master.VoxSelector.Selected += (voxels, button) => CurrentTool.OnVoxelsSelected(voxels, button);
+                Master.VoxSelector.Dragged += (voxels, button) => CurrentTool.OnVoxelsDragged(voxels, button);
+                Master.BodySelector.Selected += (bodies, button) =>
+                {
+                    CurrentTool.OnBodiesSelected(bodies, button);
+                    if (CurrentToolMode == "SelectUnits")
+                        Master.SelectedObjects = bodies;
+                };
+                Master.BodySelector.MouseOver += (bodies) => CurrentTool.OnMouseOver(bodies);
+
                 // Ensure game is not paused.
                 Paused = false;
                 DwarfTime.LastTime.Speed = 1.0f;
@@ -219,7 +252,7 @@ namespace DwarfCorp.GameStates
                 };
 
 
-                World.gameState = this;
+                World.UserInterface = this;
                 World.OnLoseEvent += World_OnLoseEvent;
                 CreateGUIComponents();
                 //InputManager.KeyReleasedCallback += TemporaryKeyPressHandler;
@@ -422,6 +455,7 @@ namespace DwarfCorp.GameStates
             World.Update(gameTime);
             Renderer.Update(gameTime);
             Input.Update();
+            CurrentTool.Update(Game, gameTime);
             ControlPosessedMinion();
 
             #region Update time label
@@ -565,6 +599,29 @@ namespace DwarfCorp.GameStates
                     MinimapRenderer.PreRender(DwarfGame.SpriteBatch);
 
                 Renderer.Render(gameTime);
+
+                CurrentTool.Render3D(Game, gameTime);
+                Master.VoxSelector.Render();
+
+                foreach (var obj in Master.SelectedObjects)
+                    if (obj.IsVisible && !obj.IsDead)
+                        Drawer3D.DrawBox(obj.GetBoundingBox(), Color.White, 0.01f, true);
+
+                CurrentTool.Render2D(Game, gameTime);
+
+                foreach (CreatureAI creature in World.PlayerFaction.SelectedMinions)
+                {
+                    foreach (Task task in creature.Tasks)
+                        if (task.IsFeasible(creature.Creature) == Task.Feasibility.Feasible)
+                            task.Render(gameTime);
+
+                    if (creature.CurrentTask != null)
+                        creature.CurrentTask.Render(gameTime);
+                }
+
+                DwarfGame.SpriteBatch.Begin();
+                Master.BodySelector.Render(DwarfGame.SpriteBatch);
+                DwarfGame.SpriteBatch.End();
 
                 if (GuiRoot.RenderData.RealScreen.Width != GuiRoot.RenderData.Device.Viewport.Width || GuiRoot.RenderData.RealScreen.Height != GuiRoot.RenderData.Device.Viewport.Height)
                 {
@@ -1434,7 +1491,7 @@ namespace DwarfCorp.GameStates
                             {
                                 World.PlayerFaction.RoomBuilder.CurrentRoomData = null;
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                                var tool = Master.Tools["BuildWall"] as BuildWallTool;
+                                var tool = Tools["BuildWall"] as BuildWallTool;
                                 tool.BuildFloor = false;
                                 tool.CurrentVoxelType = (byte)data.ID;
                                 ChangeTool("BuildWall");
@@ -1484,7 +1541,7 @@ namespace DwarfCorp.GameStates
                             {
                                 World.PlayerFaction.RoomBuilder.CurrentRoomData = null;
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
-                                var tool = Master.Tools["BuildWall"] as BuildWallTool;
+                                var tool = Tools["BuildWall"] as BuildWallTool;
                                 tool.BuildFloor = true;
                                 tool.CurrentVoxelType = (byte)data.ID;
                                 ChangeTool("BuildWall"); // Wut
@@ -1598,7 +1655,7 @@ namespace DwarfCorp.GameStates
                                     if (buildInfo == null)
                                         return;
                                     sender.Parent.Parent.Hidden = true;
-                                    var tool = Master.Tools["BuildObject"] as BuildObjectTool;
+                                    var tool = Tools["BuildObject"] as BuildObjectTool;
                                     tool.SelectedResources = buildInfo.GetSelectedResources();
                                     World.PlayerFaction.RoomBuilder.CurrentRoomData = null;
                                     Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
@@ -1621,7 +1678,7 @@ namespace DwarfCorp.GameStates
                                     if (buildInfo == null)
                                         return;
                                     sender.Parent.Parent.Hidden = true;
-                                    var tool = Master.Tools["BuildObject"] as BuildObjectTool;
+                                    var tool = Tools["BuildObject"] as BuildObjectTool;
                                     tool.SelectedResources = null;
                                     World.PlayerFaction.RoomBuilder.CurrentRoomData = null;
                                     Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
@@ -1852,7 +1909,7 @@ namespace DwarfCorp.GameStates
                 OnClick = (widget, args) =>
                 {
                     Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty; // This should be set by the tool.
-                    var railTool = Master.Tools["PaintRail"] as Rail.PaintRailTool;
+                    var railTool = Tools["PaintRail"] as Rail.PaintRailTool;
                     railTool.SelectedResources = new List<ResourceAmount>
                                     {
                                         new ResourceAmount("Rail", 1)
@@ -1885,7 +1942,7 @@ namespace DwarfCorp.GameStates
                                 OnClick = (sender, args) =>
                                 {
                                     Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty; // This should be set by the tool.
-                                    var railTool = Master.Tools["BuildRail"] as Rail.BuildRailTool;
+                                    var railTool = Tools["BuildRail"] as Rail.BuildRailTool;
                                     railTool.Pattern = data;
                                     ChangeTool("BuildRail");
                                 },
@@ -2259,7 +2316,7 @@ namespace DwarfCorp.GameStates
                             {
                                 World.ShowToolPopup("Click and drag to plant " + resource.Type + ".");
                                 ChangeTool("Plant");
-                                var plantTool = Master.Tools["Plant"] as PlantTool;
+                                var plantTool = Tools["Plant"] as PlantTool;
                                 plantTool.PlantType = resource.Type;
                                 plantTool.RequiredResources = new List<ResourceAmount>()
                                     {
@@ -2347,7 +2404,7 @@ namespace DwarfCorp.GameStates
                 OnClick = (sender, args) =>
                 {
                     ChangeTool("CancelTasks");
-                    (Master.Tools["CancelTasks"] as CancelTasksTool).Options = (sender as FlatToolTray.Icon).PopupChild as CancelToolOptions;
+                    (Tools["CancelTasks"] as CancelTasksTool).Options = (sender as FlatToolTray.Icon).PopupChild as CancelToolOptions;
                 },
                 Behavior = FlatToolTray.IconBehavior.ShowClickPopupAndLeafIcon,
                 KeepChildVisible = true, // So the player can interact with the popup.
@@ -2438,7 +2495,7 @@ namespace DwarfCorp.GameStates
             GodMenu.BringToFront();
 
             Master.BodySelector.LeftReleased += BodySelector_LeftReleased;
-            (Master.Tools["SelectUnits"] as DwarfSelectorTool).DrawSelectionRect = b => ContextCommands.Any(c => c.CanBeAppliedTo(b, World));
+            (Tools["SelectUnits"] as DwarfSelectorTool).DrawSelectionRect = b => ContextCommands.Any(c => c.CanBeAppliedTo(b, World));
         }
 
         private List<GameComponent> BodySelector_LeftReleased()
@@ -2449,7 +2506,7 @@ namespace DwarfCorp.GameStates
                 MultiContextMenu = null;
             }
 
-            if (Master.CurrentToolMode != "SelectUnits")
+            if (CurrentToolMode != "SelectUnits")
                 return null;
 
             Master.SelectedObjects.RemoveAll(b => !ContextCommands.Any(c => c.CanBeAppliedTo(b, World)));
@@ -2532,7 +2589,7 @@ namespace DwarfCorp.GameStates
 
                 if (MainMenu.Hidden && PausePanel == null)
                     (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(FlatToolTray.Tray.Hotkeys[0]);
-                else if (Master.CurrentToolMode != "SelectUnits" && PausePanel == null)
+                else if (CurrentToolMode != "SelectUnits" && PausePanel == null)
                     ChangeTool("SelectUnits");
                 else if (PausePanel != null)
                 {

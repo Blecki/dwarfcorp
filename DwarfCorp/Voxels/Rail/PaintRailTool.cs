@@ -10,13 +10,12 @@ namespace DwarfCorp.Rail
     public class PaintRailTool : PlayerTool
     {
         [ToolFactory("PaintRail")]
-        private static PlayerTool _factory(GameMaster Master)
+        private static PlayerTool _factory(WorldManager World)
         {
-            return new PaintRailTool(Master);
+            return new PaintRailTool(World);
         }
 
         private List<RailEntity> PreviewBodies = new List<RailEntity>();
-        private Faction Faction;
         public List<ResourceAmount> SelectedResources;
         public bool GodModeSwitch = false;
         private bool Dragging = false;
@@ -30,10 +29,9 @@ namespace DwarfCorp.Rail
         private bool OverrideEndingOrientation = false;
         private bool CanPlace = false;
         
-        public PaintRailTool(GameMaster Player)
+        public PaintRailTool(WorldManager World)
         {
-            this.Player = Player;
-            this.Faction = Player.World.PlayerFaction;
+            this.World = World;
         }
 
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
@@ -46,7 +44,7 @@ namespace DwarfCorp.Rail
                 if (button == InputManager.MouseButton.Left)
                 {
                     if (CanPlace)
-                        RailHelper.Place(Player.World, PreviewBodies, GodModeSwitch);
+                        RailHelper.Place(World, PreviewBodies, GodModeSwitch);
                     else
                         foreach (var piece in PreviewBodies)
                             piece.GetRoot().Delete();
@@ -60,7 +58,7 @@ namespace DwarfCorp.Rail
 
         public override void OnBegin()
         {
-            Faction.World.Tutorial("paint rail");
+            World.Tutorial("paint rail");
             global::System.Diagnostics.Debug.Assert(SelectedResources != null);
             GodModeSwitch = false;
             Dragging = false;
@@ -74,8 +72,8 @@ namespace DwarfCorp.Rail
             PreviewBodies.Clear();
             PathVoxels.Clear();
             SelectedResources = null;
-            Player.VoxSelector.DrawVoxel = true;
-            Player.VoxSelector.DrawBox = true;
+            World.Master.VoxSelector.DrawVoxel = true;
+            World.Master.VoxSelector.DrawBox = true;
         }
 
         public override void OnMouseOver(IEnumerable<GameComponent> bodies)
@@ -85,27 +83,27 @@ namespace DwarfCorp.Rail
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
-            if (Player.IsCameraRotationModeActive())
+            if (World.Master.IsCameraRotationModeActive())
             {
-                Player.VoxSelector.Enabled = false;
-                Player.World.SetMouse(null);
-                Player.BodySelector.Enabled = false;
+                World.Master.VoxSelector.Enabled = false;
+                World.SetMouse(null);
+                World.Master.BodySelector.Enabled = false;
                 return;
             }
 
-            Player.VoxSelector.Enabled = true;
-            Player.BodySelector.Enabled = false;
-            Player.VoxSelector.DrawBox = false;
-            Player.VoxSelector.DrawVoxel = true;
-            Player.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+            World.Master.VoxSelector.Enabled = true;
+            World.Master.BodySelector.Enabled = false;
+            World.Master.VoxSelector.DrawBox = false;
+            World.Master.VoxSelector.DrawVoxel = true;
+            World.Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
 
-            if (Player.World.IsMouseOverGui)
-                Player.World.SetMouse(Player.World.MousePointer);
+            if (World.IsMouseOverGui)
+                World.SetMouse(World.MousePointer);
             else
-                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
+                World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
 
             // Don't attempt any camera control if the user is trying to type intoa focus item.
-            if (Player.World.Gui.FocusItem != null && !Player.World.Gui.FocusItem.IsAnyParentTransparent() && !Player.World.Gui.FocusItem.IsAnyParentHidden())
+            if (World.Gui.FocusItem != null && !World.Gui.FocusItem.IsAnyParentTransparent() && !World.Gui.FocusItem.IsAnyParentHidden())
             {
                 return;
             }
@@ -182,7 +180,7 @@ namespace DwarfCorp.Rail
             }
             else
             {
-                var voxelUnderMouse = Player.VoxSelector.VoxelUnderMouse;
+                var voxelUnderMouse = World.Master.VoxSelector.VoxelUnderMouse;
                 if (voxelUnderMouse == DragStartVoxel)
                 {
                     // Create single straight preview piece
@@ -279,7 +277,7 @@ namespace DwarfCorp.Rail
                                 };
 
                                 if (PreviewBodies.Count <= bodyCounter)
-                                   PreviewBodies.Add(RailHelper.CreatePreviewBody(Player.World.ComponentManager, DragStartVoxel, newPiece));
+                                   PreviewBodies.Add(RailHelper.CreatePreviewBody(World.ComponentManager, DragStartVoxel, newPiece));
                                 else
                                     PreviewBodies[bodyCounter].UpdatePiece(newPiece, DragStartVoxel);
 
@@ -326,7 +324,7 @@ namespace DwarfCorp.Rail
                 }
             }
 
-            CanPlace = RailHelper.CanPlace(Player, PreviewBodies);
+            CanPlace = RailHelper.CanPlace(World, PreviewBodies);
             if (CanPlace)
                 tint = GameSettings.Default.Colors.GetColor("Positive", Color.Green);
             else
@@ -347,7 +345,7 @@ namespace DwarfCorp.Rail
             };
 
             if (PreviewBodies.Count <= bodyCounter)
-                PreviewBodies.Add(RailHelper.CreatePreviewBody(Player.World.ComponentManager, DragStartVoxel, firstEdgePiece));
+                PreviewBodies.Add(RailHelper.CreatePreviewBody(World.ComponentManager, DragStartVoxel, firstEdgePiece));
             else
                 PreviewBodies[bodyCounter].UpdatePiece(firstEdgePiece, DragStartVoxel);
 
@@ -374,7 +372,7 @@ namespace DwarfCorp.Rail
             if (!Dragging)
             {
                 Dragging = true;
-                DragStartVoxel = Player.VoxSelector.FirstVoxel;
+                DragStartVoxel = World.Master.VoxSelector.FirstVoxel;
                 StartingOppositeOrientation = CompassOrientation.North;
                 OverrideStartingOrientation = false;
                 EndingOppositeOrientation = CompassOrientation.North;

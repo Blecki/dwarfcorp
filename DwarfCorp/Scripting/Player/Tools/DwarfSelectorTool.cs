@@ -14,17 +14,17 @@ namespace DwarfCorp
     public class DwarfSelectorTool : PlayerTool
     {
         [ToolFactory("SelectUnits")]
-        private static PlayerTool _factory(GameMaster Master)
+        private static PlayerTool _factory(WorldManager World)
         {
-            return new DwarfSelectorTool(Master);
+            return new DwarfSelectorTool(World);
         }
         
         public Func<GameComponent, bool> DrawSelectionRect = (b) => true;
         private List<GameComponent> underMouse = null;
 
-        public DwarfSelectorTool(GameMaster master)
+        public DwarfSelectorTool(WorldManager World)
         {
-            Player = master;
+            this.World = World;
             InputManager.MouseClickedCallback += InputManager_MouseClickedCallback;
         }
 
@@ -45,15 +45,15 @@ namespace DwarfCorp
 
         void InputManager_MouseClickedCallback(InputManager.MouseButton button)
         {
-            if(button != InputManager.MouseButton.Right || Player.CurrentTool != this || KeyManager.RotationEnabled(Player.World.Renderer.Camera))
+            if(button != InputManager.MouseButton.Right || World.UserInterface.CurrentTool != this || KeyManager.RotationEnabled(World.Renderer.Camera))
                 return;
 
             var mouseState = KeyManager.TrueMousePos;
 
             var vox = VoxelHelpers.FindFirstVisibleVoxelOnScreenRay(
-                Player.World.ChunkManager,
+                World.ChunkManager,
                 mouseState.X, mouseState.Y,
-                Player.World.Renderer.Camera, 
+                World.Renderer.Camera, 
                 GameState.Game.GraphicsDevice.Viewport,
                 150.0f, 
                 false,
@@ -62,7 +62,7 @@ namespace DwarfCorp
             if (!vox.IsValid)
                 return;
 
-            foreach(CreatureAI minion in Player.World.PlayerFaction.SelectedMinions)
+            foreach(CreatureAI minion in World.PlayerFaction.SelectedMinions)
             {
                 if (minion.Creature.Stats.IsAsleep) continue;
                 if(minion.CurrentTask != null)
@@ -75,9 +75,9 @@ namespace DwarfCorp
                 minion.CurrentTask.AutoRetry = false;
                 minion.CurrentTask.Priority = Task.PriorityType.Urgent;
             }
-            OnConfirm(Player.World.PlayerFaction.SelectedMinions);
+            OnConfirm(World.PlayerFaction.SelectedMinions);
 
-            if (Player.World.PlayerFaction.SelectedMinions.Count > 0)
+            if (World.PlayerFaction.SelectedMinions.Count > 0)
                 IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.DownArrow, vox.WorldPosition + Vector3.One * 0.5f, 0.5f, 2.0f, new Vector2(0, -50), Color.LightGreen);
         }
 
@@ -102,7 +102,7 @@ namespace DwarfCorp
                 return false;
 
             Creature dwarf = dwarves[0];
-            return dwarf.Faction == Player.World.PlayerFaction && !Player.World.PlayerFaction.SelectedMinions.Contains(dwarf.AI);
+            return dwarf.Faction == World.PlayerFaction && !World.PlayerFaction.SelectedMinions.Contains(dwarf.AI);
         }
 
         bool IsDwarf(GameComponent body)
@@ -115,7 +115,7 @@ namespace DwarfCorp
             if (dwarves.Count <= 0)
                 return false;
 
-            return dwarves[0].Faction == Player.World.PlayerFaction;
+            return dwarves[0].Faction == World.PlayerFaction;
         }
 
         protected void SelectDwarves(List<GameComponent> bodies)
@@ -123,7 +123,7 @@ namespace DwarfCorp
             KeyboardState keyState = Keyboard.GetState();
 
             if(!keyState.IsKeyDown(Keys.LeftShift))
-                Player.World.PlayerFaction.SelectedMinions.Clear();
+                World.PlayerFaction.SelectedMinions.Clear();
 
             var newDwarves = new List<CreatureAI>();
 
@@ -131,10 +131,10 @@ namespace DwarfCorp
             {
                 if (IsNotSelectedDwarf(body))
                 {
-                    Player.World.PlayerFaction.SelectedMinions.Add(body.GetRoot().GetComponent<CreatureAI>());
+                    World.PlayerFaction.SelectedMinions.Add(body.GetRoot().GetComponent<CreatureAI>());
                     newDwarves.Add(body.GetRoot().GetComponent<CreatureAI>());
 
-                    Player.World.Tutorial("dwarf selected");
+                    World.Tutorial("dwarf selected");
                 }
             }
 
@@ -180,7 +180,7 @@ namespace DwarfCorp
 
         public override void DefaultOnMouseOver(IEnumerable<GameComponent> bodies)
         {
-            Player.World.ShowTooltip(GetMouseOverText(bodies));
+            World.ShowTooltip(GetMouseOverText(bodies));
             underMouse = bodies.ToList();
         }
 
@@ -191,11 +191,11 @@ namespace DwarfCorp
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
-            Player.VoxSelector.Enabled = false;
-            Player.BodySelector.Enabled = true;
-            Player.BodySelector.AllowRightClickSelection = false;
+            World.Master.VoxSelector.Enabled = false;
+            World.Master.BodySelector.Enabled = true;
+            World.Master.BodySelector.AllowRightClickSelection = false;
 
-            Player.World.SetMouse(Player.World.MousePointer);
+            World.SetMouse(World.MousePointer);
         }
 
         public Rectangle GetScreenRect(BoundingBox Box, Camera Camera)
@@ -220,13 +220,13 @@ namespace DwarfCorp
         {
             DwarfGame.SpriteBatch.Begin();
 
-            foreach (var body in Player.BodySelector.CurrentBodies.Where(DrawSelectionRect))
+            foreach (var body in World.Master.BodySelector.CurrentBodies.Where(DrawSelectionRect))
             {
-                Drawer2D.DrawRect(DwarfGame.SpriteBatch, GetScreenRect(body.BoundingBox, Player.World.Renderer.Camera), Color.White, 1.0f);
+                Drawer2D.DrawRect(DwarfGame.SpriteBatch, GetScreenRect(body.BoundingBox, World.Renderer.Camera), Color.White, 1.0f);
             }
             if (underMouse != null)
                 foreach (var body in underMouse.Where(DrawSelectionRect))
-                    Drawer2D.DrawRect(DwarfGame.SpriteBatch, GetScreenRect(body.BoundingBox, Player.World.Renderer.Camera), Color.White, 1.0f);
+                    Drawer2D.DrawRect(DwarfGame.SpriteBatch, GetScreenRect(body.BoundingBox, World.Renderer.Camera), Color.White, 1.0f);
 
             DwarfGame.SpriteBatch.End();
         }

@@ -13,8 +13,8 @@ namespace DwarfCorp.Gui.Widgets
 
         private void ActivateGodTool(String Command)
         {
-            (World.Master.Tools["God"] as GodModeTool).Command = Command;
-            World.Master.ChangeTool("God");
+            (World.UserInterface.Tools["God"] as GodModeTool).Command = Command;
+            World.UserInterface.ChangeTool("God");
         }
 
         public override void Construct()
@@ -188,9 +188,9 @@ namespace DwarfCorp.Gui.Widgets
                                             Text = p.Name,
                                             OnClick = (sender, args) =>
                                             {
-                                                var railTool = World.Master.Tools["BuildRail"] as Rail.BuildRailTool;
+                                                var railTool = World.UserInterface.Tools["BuildRail"] as Rail.BuildRailTool;
                                                 railTool.Pattern = p;
-                                                World.Master.ChangeTool("BuildRail");
+                                                World.UserInterface.ChangeTool("BuildRail");
                                                 railTool.GodModeSwitch = true;
                                             }
                                         })
@@ -202,9 +202,9 @@ namespace DwarfCorp.Gui.Widgets
                                 Text = "PAINT",
                                 OnClick = (sender, args) =>
                                 {
-                                    var railTool = World.Master.Tools["PaintRail"] as Rail.PaintRailTool;
+                                    var railTool = World.UserInterface.Tools["PaintRail"] as Rail.PaintRailTool;
                                     railTool.SelectedResources = new List<ResourceAmount>(new ResourceAmount[] { new ResourceAmount("Rail", 1) });
-                                    World.Master.ChangeTool("PaintRail");
+                                    World.UserInterface.ChangeTool("PaintRail");
                                     railTool.GodModeSwitch = true;
                                 }
                             }
@@ -216,7 +216,7 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "AUTO SAVE",
                     OnClick = (sender, args) =>
                     {
-                        World.Master.World.gameState.StateManager.GetState<GameStates.PlayState>().AutoSave();
+                        World.UserInterface.AutoSave();
                     }
                 },
                 new HorizontalMenuTray.MenuItem
