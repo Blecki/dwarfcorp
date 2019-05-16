@@ -95,10 +95,10 @@ namespace DwarfCorp
             World.Master.BodySelector.Enabled = true;
             World.Master.BodySelector.AllowRightClickSelection = true;
 
-            if (World.IsMouseOverGui)
-                World.SetMouse(World.MousePointer);
+            if (World.UserInterface.IsMouseOverGui)
+                World.UserInterface.SetMouse(World.UserInterface.MousePointer);
             else
-                World.SetMouse(new Gui.MousePointer("mouse", 1, 6));
+                World.UserInterface.SetMouse(new Gui.MousePointer("mouse", 1, 6));
         }
 
         public override void Render3D(DwarfGame game, DwarfTime time)

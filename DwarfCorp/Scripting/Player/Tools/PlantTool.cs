@@ -34,7 +34,7 @@ namespace DwarfCorp
         {
             if (!voxel.Type.IsSoil)
             {
-                World.ShowTooltip("Can only plant on soil!");
+                World.UserInterface.ShowTooltip("Can only plant on soil!");
                 return false;
             }
 
@@ -42,7 +42,7 @@ namespace DwarfCorp
             {
                 if (voxel.Sunlight == false)
                 {
-                    World.ShowTooltip("Can only plant " + PlantType + " above ground.");
+                    World.UserInterface.ShowTooltip("Can only plant " + PlantType + " above ground.");
                     return false;
                 }
             }
@@ -50,7 +50,7 @@ namespace DwarfCorp
             {
                 if (voxel.Sunlight)
                 {
-                    World.ShowTooltip("Can only plant " + PlantType + " below ground.");
+                    World.UserInterface.ShowTooltip("Can only plant " + PlantType + " below ground.");
                     return false;
                 }
             }
@@ -59,7 +59,7 @@ namespace DwarfCorp
 
             if (designation != null)
             {
-                World.ShowTooltip("You're already planting here.");
+                World.UserInterface.ShowTooltip("You're already planting here.");
                 return false;
             }
 
@@ -74,18 +74,18 @@ namespace DwarfCorp
                         Drawer3D.DrawBox((entity as GameComponent).GetBoundingBox(), Color.Yellow, 0.03f, false);
                 }
 
-                World.ShowTooltip("There's something in the way.");
+                World.UserInterface.ShowTooltip("There's something in the way.");
                 return false;
             }
 
             // We have to shrink the bounding box used because for some reason zones overflow their bounds a little during their collision check.
             if (World.PlayerFaction.GetIntersectingRooms(voxel.GetBoundingBox().Expand(-0.2f)).Count > 0)
             {
-                World.ShowTooltip("Can't plant inside zones.");
+                World.UserInterface.ShowTooltip("Can't plant inside zones.");
                 return false;
             }
 
-            World.ShowTooltip("Click to plant.");
+            World.UserInterface.ShowTooltip("Click to plant.");
 
             return true;
         }
@@ -101,7 +101,7 @@ namespace DwarfCorp
                 {
                     if (count >= 1024)
                     {
-                        World.ShowToolPopup("Too many planting tasks.");
+                        World.UserInterface.ShowToolPopup("Too many planting tasks.");
                         break;
                     }
                     if (ValidatePlanting(voxel))
@@ -169,7 +169,7 @@ namespace DwarfCorp
             if (World.Master.IsCameraRotationModeActive())
             {
                 World.Master.VoxSelector.Enabled = false;
-                World.SetMouse(null);
+                World.UserInterface.SetMouse(null);
                 World.Master.BodySelector.Enabled = false;
                 return;
             }
@@ -181,10 +181,10 @@ namespace DwarfCorp
             World.Master.BodySelector.Enabled = false;
             ValidatePlanting(World.Master.VoxSelector.VoxelUnderMouse);
 
-            if (World.IsMouseOverGui)
-                World.SetMouse(World.MousePointer);
+            if (World.UserInterface.IsMouseOverGui)
+                World.UserInterface.SetMouse(World.UserInterface.MousePointer);
             else
-                World.SetMouse(new Gui.MousePointer("mouse", 1, 12));
+                World.UserInterface.SetMouse(new Gui.MousePointer("mouse", 1, 12));
         }
 
         public override void Render2D(DwarfGame game, DwarfTime time)

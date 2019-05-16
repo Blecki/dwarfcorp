@@ -97,7 +97,7 @@ namespace DwarfCorp.Gui.Widgets
                             TextVerticalAlign = VerticalAlign.Center,
                             OnClick = (_sender, args) =>
                             {
-                                World.Gui.ShowModalPopup(new Gui.Widgets.Confirm
+                                World.UserInterface.Gui.ShowModalPopup(new Gui.Widgets.Confirm
                                 {
                                     Text = "Do you want to destroy this " + lambdaCopy.RoomData.Name + "?",
                                     OnClose = (_sender2) => DestroyZoneTool.DestroyRoom((_sender2 as Gui.Widgets.Confirm).DialogResult, lambdaCopy, World.PlayerFaction, World)

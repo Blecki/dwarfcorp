@@ -237,13 +237,13 @@ namespace DwarfCorp
             if (World.Master.IsCameraRotationModeActive())
             {
                 World.Master.VoxSelector.Enabled = false;
-                World.SetMouse(null);
+                World.UserInterface.SetMouse(null);
                 return;
             }
 
             World.Master.VoxSelector.Enabled = true;
             World.Master.BodySelector.Enabled = false;
-            World.SetMouse(World.MousePointer);
+            World.UserInterface.SetMouse(World.UserInterface.MousePointer);
 
             if (Command == "Repulse")
             {

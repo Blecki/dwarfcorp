@@ -108,17 +108,17 @@ namespace DwarfCorp
             if (World.Master.IsCameraRotationModeActive())
             {
                 World.Master.VoxSelector.Enabled = false;
-                World.SetMouse(null);
+                World.UserInterface.SetMouse(null);
                 return;
             }
 
             World.Master.VoxSelector.Enabled = true;
             World.Master.BodySelector.Enabled = false;
 
-            if (World.IsMouseOverGui)
-                World.SetMouse(World.MousePointer);
+            if (World.UserInterface.IsMouseOverGui)
+                World.UserInterface.SetMouse(World.UserInterface.MousePointer);
             else
-                World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
+                World.UserInterface.SetMouse(new Gui.MousePointer("mouse", 1, 4));
 
             MouseState mouse = Mouse.GetState();
             if (mouse.RightButton == ButtonState.Pressed)
@@ -209,9 +209,9 @@ namespace DwarfCorp
                 return;
 
             if (Mouse.GetState().LeftButton == ButtonState.Pressed)
-                World.ShowTooltip("Release to build.");
+                World.UserInterface.ShowTooltip("Release to build.");
             else
-                World.ShowTooltip("Release to cancel.");
+                World.UserInterface.ShowTooltip("Release to cancel.");
 
             if (Selected == null)
             {

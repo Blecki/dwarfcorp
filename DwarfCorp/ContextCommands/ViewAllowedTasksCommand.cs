@@ -26,8 +26,8 @@ namespace DwarfCorp.ContextCommands
             if (creature == null)
                 return;
 
-            var screen = World.Gui.RenderData.VirtualScreen;
-            World.Gui.ShowMinorPopup(new AllowedTaskFilter
+            var screen = World.UserInterface.Gui.RenderData.VirtualScreen;
+            World.UserInterface.Gui.ShowMinorPopup(new AllowedTaskFilter
             {
                 Employee = creature,
                 Tag = "selected-employee-allowable-tasks",

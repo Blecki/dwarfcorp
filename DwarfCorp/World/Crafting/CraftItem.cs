@@ -101,7 +101,7 @@ namespace DwarfCorp
             if (ResourceLibrary.Exists(resourceName))
                 return ResourceLibrary.GetResourceByName(resourceName);
 
-            var sheet = world.Gui.RenderData.SourceSheets[Icon.Sheet];
+            var sheet = world.UserInterface.Gui.RenderData.SourceSheets[Icon.Sheet];
 
             var tex = AssetManager.GetContentTexture(sheet.Texture);
             var numTilesX = tex.Width / sheet.TileWidth;

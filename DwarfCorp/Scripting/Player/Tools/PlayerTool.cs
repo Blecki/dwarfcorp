@@ -63,7 +63,7 @@ namespace DwarfCorp
                     sb.Append("\n");
                 }
             }
-            World.ShowTooltip(sb.ToString());
+            World.UserInterface.ShowTooltip(sb.ToString());
         }
 
         public virtual void Destroy()

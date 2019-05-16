@@ -64,7 +64,7 @@ namespace DwarfCorp
                 if (World.Master.IsCameraRotationModeActive())
                 {
                     World.Master.VoxSelector.Enabled = false;
-                    World.SetMouse(null);
+                    World.UserInterface.SetMouse(null);
                     World.Master.BodySelector.Enabled = false;
                     return;
                 }
@@ -74,10 +74,10 @@ namespace DwarfCorp
                 World.Master.VoxSelector.DrawBox = true;
                 World.Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
 
-                if (World.IsMouseOverGui)
-                    World.SetMouse(World.MousePointer);
+                if (World.UserInterface.IsMouseOverGui)
+                    World.UserInterface.SetMouse(World.UserInterface.MousePointer);
                 else
-                    World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
+                    World.UserInterface.SetMouse(new Gui.MousePointer("mouse", 1, 4));
             }
         }
 

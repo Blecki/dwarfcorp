@@ -148,24 +148,7 @@ namespace DwarfCorp
 
         public PlayState UserInterface;
 
-        public Gui.Root Gui; // Todo: Remove
         private QueuedAnnouncement SleepPrompt = null;
-
-        public Action<String> ShowTooltip = null; //Todo: Kill! Move to PlayState
-        public Action<String> ShowInfo = null;
-        public Action<String> ShowToolPopup = null;
-        
-        public Action<Gui.MousePointer> SetMouse = null;
-        public Action<String, int> SetMouseOverlay = null;
-        public Gui.MousePointer MousePointer = new Gui.MousePointer("mouse", 1, 0);
-        public bool IsMouseOverGui
-        {
-            get
-            {
-                return Gui.HoverItem != null;
-                // Don't detect tooltips and tool popups.
-            }
-        }
 
         // event that is called when the world is done loading
         public delegate void OnLoaded();
@@ -347,7 +330,7 @@ namespace DwarfCorp
                 foreach (var popup in LastWorldPopup)
                 {
                     popup.Value.Update(gameTime, Renderer.Camera, GraphicsDevice.Viewport);
-                    if (popup.Value.Widget == null || !Gui.RootItem.Children.Contains(popup.Value.Widget) 
+                    if (popup.Value.Widget == null || !UserInterface.Gui.RootItem.Children.Contains(popup.Value.Widget) 
                         || popup.Value.BodyToTrack == null || popup.Value.BodyToTrack.IsDead)
                     {
                         removals.Add(popup.Key);
@@ -356,9 +339,9 @@ namespace DwarfCorp
 
                 foreach (var removal in removals)
                 {
-                    if (LastWorldPopup[removal].Widget != null && Gui.RootItem.Children.Contains(LastWorldPopup[removal].Widget))
+                    if (LastWorldPopup[removal].Widget != null && UserInterface.Gui.RootItem.Children.Contains(LastWorldPopup[removal].Widget))
                     {
-                        Gui.DestroyWidget(LastWorldPopup[removal].Widget);
+                        UserInterface.Gui.DestroyWidget(LastWorldPopup[removal].Widget);
                     }
                     LastWorldPopup.Remove(removal);
                 }
@@ -367,13 +350,13 @@ namespace DwarfCorp
             if (Paused)
             {
                 ComponentManager.UpdatePaused(gameTime, ChunkManager, Renderer.Camera);
-                TutorialManager.Update(Gui);
+                TutorialManager.Update(UserInterface.Gui);
             }
             // If not paused, we want to just update the rest of the game.
             else
             {
                 ParticleManager.Update(gameTime, this);
-                TutorialManager.Update(Gui);
+                TutorialManager.Update(UserInterface.Gui);
 
                 foreach (var updateSystem in UpdateSystems)
                 {
@@ -484,6 +467,7 @@ namespace DwarfCorp
             OnLoseEvent();
         }
 
+        // Todo: Belongs in PlayState.
         public WorldPopup MakeWorldPopup(string text, GameComponent body, float screenOffset = -10, float time = 30.0f)
         {
             return MakeWorldPopup(new TimedIndicatorWidget() { Text = text, DeathTimer = new Timer(time, true, Timer.TimerMode.Real) }, body, new Vector2(0, screenOffset));
@@ -492,9 +476,9 @@ namespace DwarfCorp
         public WorldPopup MakeWorldPopup(Widget widget, GameComponent body, Vector2 ScreenOffset)
         {
             if (LastWorldPopup.ContainsKey(body.GlobalID))
-                Gui.DestroyWidget(LastWorldPopup[body.GlobalID].Widget);
+                UserInterface.Gui.DestroyWidget(LastWorldPopup[body.GlobalID].Widget);
 
-            Gui.RootItem.AddChild(widget);
+            UserInterface.Gui.RootItem.AddChild(widget);
 
             // Todo: Uh - what cleans these up if the body is destroyed?
             LastWorldPopup[body.GlobalID] = new WorldPopup()
@@ -504,7 +488,7 @@ namespace DwarfCorp
                 ScreenOffset = ScreenOffset 
             };
 
-            Gui.RootItem.SendToBack(widget);
+            UserInterface.Gui.RootItem.SendToBack(widget);
 
             return LastWorldPopup[body.GlobalID];
         }

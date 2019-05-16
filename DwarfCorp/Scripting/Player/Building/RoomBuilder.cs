@@ -1,35 +1,3 @@
-// RoomBuilder.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -50,7 +18,6 @@ namespace DwarfCorp
     /// The BuildRoom designator keeps track of voxels selected by the player and turns
     /// them into BuildRoom designations (so that dwarves can build BuildRoom).
     /// </summary>
-    [JsonObject(IsReference = true)]
     public class RoomBuilder
     {
         public List<Room> DesignatedRooms { get; set; }
@@ -182,7 +149,7 @@ namespace DwarfCorp
             {
                 if (build.DisplayWidget != null)
                 {
-                    World.Gui.DestroyWidget(build.DisplayWidget);
+                    World.UserInterface.Gui.DestroyWidget(build.DisplayWidget);
                 }
                 BuildDesignations.Remove(build);
             }
@@ -244,7 +211,7 @@ namespace DwarfCorp
                                 resourceList.Append(resource.Type);
                             }
                             var order = buildOrder;
-                            buildOrder.DisplayWidget = World.Gui.RootItem.AddChild(new Gui.Widget()
+                            buildOrder.DisplayWidget = World.UserInterface.Gui.RootItem.AddChild(new Gui.Widget()
                             {
                                 Border = "border-dark",
                                 TextColor = Color.White.ToVector4(),
@@ -259,7 +226,7 @@ namespace DwarfCorp
                                 }
                             });
 
-                            World.Gui.RootItem.SendToBack(buildOrder.DisplayWidget);
+                            World.UserInterface.Gui.RootItem.SendToBack(buildOrder.DisplayWidget);
                         }
                     }
                     else
@@ -347,7 +314,7 @@ namespace DwarfCorp
                         tip += "\n";
                     }
 
-                    World.ShowTooltip("Release to build here.");
+                    World.UserInterface.ShowTooltip("Release to build here.");
                 }
                 else
                 {

@@ -89,7 +89,7 @@ namespace DwarfCorp.Events
                     {
                         if (entity == null)
                         {
-                            world.Gui.ShowModalPopup(new Gui.Widgets.Confirm()
+                            world.UserInterface.Gui.ShowModalPopup(new Gui.Widgets.Confirm()
                             {
                                 Text = scheduledEvent.AnnouncementDetails
                             });

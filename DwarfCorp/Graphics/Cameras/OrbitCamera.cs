@@ -1,35 +1,3 @@
-// OrbitCamera.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,8 +26,8 @@ namespace DwarfCorp
             Active = true;
             _lightActive = GameSettings.Default.CursorLightEnabled;
             GameSettings.Default.CursorLightEnabled = false;
-            world.Gui.RootItem.Hidden = true;
-            world.Gui.RootItem.Invalidate();
+            world.UserInterface.Gui.RootItem.Hidden = true;
+            world.UserInterface.Gui.RootItem.Invalidate();
             
             camera.Control = OrbitCamera.ControlType.Overhead;
             camera.EnableControl = false;
@@ -69,8 +37,8 @@ namespace DwarfCorp
         {
             Active = false;
             GameSettings.Default.CursorLightEnabled = _lightActive;
-            world.Gui.RootItem.Hidden = false;
-            world.Gui.RootItem.Invalidate();
+            world.UserInterface.Gui.RootItem.Hidden = false;
+            world.UserInterface.Gui.RootItem.Invalidate();
             camera.Control = OrbitCamera.ControlType.Overhead;
             camera.EnableControl = true;
         }
@@ -245,7 +213,7 @@ namespace DwarfCorp
                 }
             }
             // Don't attempt any camera control if the user is trying to type intoa focus item.
-            if (World.Gui.FocusItem != null && !World.Gui.FocusItem.IsAnyParentTransparent() && !World.Gui.FocusItem.IsAnyParentHidden())
+            if (World.UserInterface.Gui.FocusItem != null && !World.UserInterface.Gui.FocusItem.IsAnyParentTransparent() && !World.UserInterface.Gui.FocusItem.IsAnyParentHidden())
             {
                 return;
             }
@@ -309,7 +277,7 @@ namespace DwarfCorp
 
             if (KeyManager.RotationEnabled(this))
             {
-                World.Gui.MouseVisible = false;
+                World.UserInterface.Gui.MouseVisible = false;
                 Mouse.SetPosition(mouseOnRotate.X, mouseOnRotate.Y);
 
                 if (!switchState)
@@ -356,7 +324,7 @@ namespace DwarfCorp
             }
             else
             {
-                World.Gui.MouseVisible = true;
+                World.UserInterface.Gui.MouseVisible = true;
             }
 
             Vector3 velocityToSet = Vector3.Zero;
@@ -517,7 +485,7 @@ namespace DwarfCorp
         public void OverheadUpdate(DwarfTime time, ChunkManager chunks)
         {
             // Don't attempt any camera control if the user is trying to type into a focus item.
-            if (World.Gui.FocusItem != null && !World.Gui.FocusItem.IsAnyParentTransparent() && !World.Gui.FocusItem.IsAnyParentHidden())
+            if (World.UserInterface.Gui.FocusItem != null && !World.UserInterface.Gui.FocusItem.IsAnyParentTransparent() && !World.UserInterface.Gui.FocusItem.IsAnyParentHidden())
             {
                 return;
             }
@@ -577,7 +545,7 @@ namespace DwarfCorp
             SnapToBounds(new BoundingBox(World.ChunkManager.Bounds.Min, World.ChunkManager.Bounds.Max + Vector3.UnitY * 20));
             if (KeyManager.RotationEnabled(this))
             {
-                World.Gui.MouseVisible = false;
+                World.UserInterface.Gui.MouseVisible = false;
                 if (!shiftPressed)
                 {
                     shiftPressed = true;
@@ -632,7 +600,7 @@ namespace DwarfCorp
                     KeyManager.TrueMousePos = new Point(mouse.X, mouse.Y);
                 }
                 shiftPressed = false;
-                World.Gui.MouseVisible = true;
+                World.UserInterface.Gui.MouseVisible = true;
             }
 
             Vector3 velocityToSet = Vector3.Zero;
@@ -687,7 +655,7 @@ namespace DwarfCorp
 
             if (!KeyManager.RotationEnabled(this))
             {
-                if (!World.IsMouseOverGui)
+                if (!World.UserInterface.IsMouseOverGui)
                 {
 
                     if (mouse.X < edgePadding || mouse.X > GameState.Game.GraphicsDevice.Viewport.Width - edgePadding)
@@ -750,7 +718,7 @@ namespace DwarfCorp
                 scroll = (int)(diffY * 10) + LastWheel;
             }
 
-            if (scroll != LastWheel && !World.IsMouseOverGui)
+            if (scroll != LastWheel && !World.UserInterface.IsMouseOverGui)
             {
                 int change = scroll - LastWheel;
 

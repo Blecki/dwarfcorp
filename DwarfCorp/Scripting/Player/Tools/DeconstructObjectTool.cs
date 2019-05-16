@@ -50,7 +50,7 @@ namespace DwarfCorp
                 {
                     if (body.IsReserved)
                     {
-                        World.ShowToolPopup(string.Format("Can't destroy this {0}. It is being used.", body.Name));
+                        World.UserInterface.ShowToolPopup(string.Format("Can't destroy this {0}. It is being used.", body.Name));
                         continue;
                     }
                     body.Die();
@@ -73,10 +73,10 @@ namespace DwarfCorp
                 {
                     if (body.IsReserved)
                     {
-                        World.ShowTooltip("Can't destroy this this " + body.Name + "\nIt is being used.");
+                        World.UserInterface.ShowTooltip("Can't destroy this this " + body.Name + "\nIt is being used.");
                         continue;
                     }
-                    World.ShowTooltip("Left click to destroy this " + body.Name);
+                    World.UserInterface.ShowTooltip("Left click to destroy this " + body.Name);
                     body.SetVertexColorRecursive(Color.Red);
                 }
             }
@@ -106,7 +106,7 @@ namespace DwarfCorp
                 {
                     vox.Order.Destroy();
                     if (vox.Order.DisplayWidget != null)
-                        World.Gui.DestroyWidget(vox.Order.DisplayWidget);
+                        World.UserInterface.Gui.DestroyWidget(vox.Order.DisplayWidget);
                     World.PlayerFaction.RoomBuilder.BuildDesignations.Remove(vox.Order);
                     World.PlayerFaction.RoomBuilder.DesignatedRooms.Remove(vox.Order.ToBuild);
                 }
@@ -116,7 +116,7 @@ namespace DwarfCorp
                 Room existingRoom = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(v);
 
                 if (existingRoom != null)
-                    World.Gui.ShowModalPopup(new Gui.Widgets.Confirm
+                    World.UserInterface.Gui.ShowModalPopup(new Gui.Widgets.Confirm
                     {
                         Text = "Do you want to destroy this " + existingRoom.RoomData.Name + "?",
                         OnClose = (sender) => destroyDialog_OnClosed((sender as Gui.Widgets.Confirm).DialogResult, existingRoom)
@@ -140,7 +140,7 @@ namespace DwarfCorp
                 }
                 if (buildRoomDes != null && buildRoomDes.DisplayWidget != null)
                 {
-                    World.Gui.DestroyWidget(buildRoomDes.DisplayWidget);
+                    World.UserInterface.Gui.DestroyWidget(buildRoomDes.DisplayWidget);
                 }
                 World.PlayerFaction.RoomBuilder.BuildDesignations.Remove(buildRoomDes);
 
@@ -156,10 +156,10 @@ namespace DwarfCorp
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
-            if (World.IsMouseOverGui)
-                World.SetMouse(World.MousePointer);
+            if (World.UserInterface.IsMouseOverGui)
+                World.UserInterface.SetMouse(World.UserInterface.MousePointer);
             else
-                World.SetMouse(new Gui.MousePointer("mouse", 1, 9));
+                World.UserInterface.SetMouse(new Gui.MousePointer("mouse", 1, 9));
 
             World.Master.VoxSelector.Enabled = true;
             World.Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;

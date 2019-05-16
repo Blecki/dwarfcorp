@@ -101,13 +101,13 @@ namespace DwarfCorp
 
             if (Faction.GetRooms().Where(room => room.RoomData.Name == this.Name).Count() + 1 > MaxNumRooms)
             {
-                World.ShowTooltip(String.Format("We can only build {0} {1}. Destroy the existing to build a new one.", MaxNumRooms, Name));
+                World.UserInterface.ShowTooltip(String.Format("We can only build {0} {1}. Destroy the existing to build a new one.", MaxNumRooms, Name));
                 return false;
             }
 
             if (Voxels.Any(v => Faction.Designations.GetVoxelDesignation(v, DesignationType._All) != null))
             {
-                World.ShowTooltip("Something else is designated for this area.");
+                World.UserInterface.ShowTooltip("Something else is designated for this area.");
                 return false;
             }
 
@@ -121,7 +121,7 @@ namespace DwarfCorp
 
             if (maxExtents < MinimumSideLength || minExtents < MinimumSideWidth)
             {
-                World.ShowTooltip("Room is too small (minimum is " + MinimumSideLength + " x " + MinimumSideWidth + ")!");
+                World.UserInterface.ShowTooltip("Room is too small (minimum is " + MinimumSideLength + " x " + MinimumSideWidth + ")!");
                 return false;
             }
 
@@ -131,7 +131,7 @@ namespace DwarfCorp
             {
                 if (voxel.IsEmpty)
                 {
-                    World.ShowTooltip("Room must be built on solid ground.");
+                    World.UserInterface.ShowTooltip("Room must be built on solid ground.");
                     return false;
                 }
 
@@ -139,7 +139,7 @@ namespace DwarfCorp
 
                 if (above.IsValid && !above.IsEmpty)
                 {
-                    World.ShowTooltip("Room must be built in free space.");
+                    World.UserInterface.ShowTooltip("Room must be built in free space.");
                     return false;
                 }
 
@@ -147,25 +147,25 @@ namespace DwarfCorp
 
                 if (height != (int)voxel.Coordinate.Y)
                 {
-                    World.ShowTooltip("Room must be on flat ground!");
+                    World.UserInterface.ShowTooltip("Room must be on flat ground!");
                     return false;
                 }
                 
                 if (!CanBuildAboveGround && voxel.Sunlight)
                 {
-                    World.ShowTooltip("Room can't be built aboveground!");
+                    World.UserInterface.ShowTooltip("Room can't be built aboveground!");
                     return false;
                 }
 
                 if (!CanBuildBelowGround && !voxel.Sunlight)
                 {
-                    World.ShowTooltip("Room can't be built belowground!");
+                    World.UserInterface.ShowTooltip("Room can't be built belowground!");
                     return false;
                 }
 
                 if (Faction.RoomBuilder.IsInRoom(voxel) || Faction.RoomBuilder.IsBuildDesignation(voxel))
                 {
-                    World.ShowTooltip("Room's can't overlap!");
+                    World.UserInterface.ShowTooltip("Room's can't overlap!");
                     return false;
                 }
             }

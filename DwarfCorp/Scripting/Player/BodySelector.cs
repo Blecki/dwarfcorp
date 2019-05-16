@@ -197,7 +197,7 @@ namespace DwarfCorp
                 first = false;
             }
             // Create a description of the body and display it on the screen.
-            World.ShowInfo(desc);
+            World.UserInterface.ShowInfo(desc);
         }
         private List<GameComponent> SelectedEntities = new List<GameComponent>();
         /// <summary>

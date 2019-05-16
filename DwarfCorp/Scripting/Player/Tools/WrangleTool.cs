@@ -45,13 +45,13 @@ namespace DwarfCorp
             if (pens.Any())
             {
                 if (print)
-                    World.ShowTooltip("Will wrangle this " + animal.GetRoot().GetComponent<Creature>().Stats.CurrentClass.Name);
+                    World.UserInterface.ShowTooltip("Will wrangle this " + animal.GetRoot().GetComponent<Creature>().Stats.CurrentClass.Name);
                 return true;
             }
             else
             {
                 if (print)
-                    World.ShowTooltip("Can't wrangle this " + animal.GetRoot().GetComponent<Creature>().Stats.CurrentClass.Name + " : need more animal pens.");
+                    World.UserInterface.ShowTooltip("Can't wrangle this " + animal.GetRoot().GetComponent<Creature>().Stats.CurrentClass.Name + " : need more animal pens.");
             }
 
             return false;
@@ -112,7 +112,7 @@ namespace DwarfCorp
             if (World.Master.IsCameraRotationModeActive())
             {
                 World.Master.VoxSelector.Enabled = false;
-                World.SetMouse(null);
+                World.UserInterface.SetMouse(null);
                 World.Master.BodySelector.Enabled = false;
                 return;
             }
@@ -121,10 +121,10 @@ namespace DwarfCorp
             World.Master.VoxSelector.Enabled = false;
             World.Master.BodySelector.Enabled = true;
 
-            if (World.IsMouseOverGui)
-                World.SetMouse(World.MousePointer);
+            if (World.UserInterface.IsMouseOverGui)
+                World.UserInterface.SetMouse(World.UserInterface.MousePointer);
             else
-                World.SetMouse(new Gui.MousePointer("mouse", 1, 7));
+                World.UserInterface.SetMouse(new Gui.MousePointer("mouse", 1, 7));
         }
 
         public override void Render3D(DwarfGame game, DwarfTime time)

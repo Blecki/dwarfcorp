@@ -46,7 +46,7 @@ namespace DwarfCorp
             var treesPicked = bodies.Where(c => c != null && c.Tags.Contains("Vegetation"));
 
             if (treesPicked.Any())
-                World.ShowTooltip("Click to harvest this plant. Right click to cancel.");
+                World.UserInterface.ShowTooltip("Click to harvest this plant. Right click to cancel.");
             else
                 DefaultOnMouseOver(bodies);   
         }
@@ -57,7 +57,7 @@ namespace DwarfCorp
             {
                 World.Master.VoxSelector.Enabled = false;
                 World.Master.BodySelector.Enabled = false;
-                World.SetMouse(null);
+                World.UserInterface.SetMouse(null);
                 return;
             }
 
@@ -65,12 +65,12 @@ namespace DwarfCorp
             World.Master.BodySelector.Enabled = true;
             World.Master.BodySelector.AllowRightClickSelection = true;
 
-            World.SetMouse(new Gui.MousePointer("mouse", 1, 0));
+            World.UserInterface.SetMouse(new Gui.MousePointer("mouse", 1, 0));
 
-            if (World.IsMouseOverGui)
-                World.SetMouse(new Gui.MousePointer("mouse", 1, 0));
+            if (World.UserInterface.IsMouseOverGui)
+                World.UserInterface.SetMouse(new Gui.MousePointer("mouse", 1, 0));
             else
-                World.SetMouse(new Gui.MousePointer("mouse", 1, 5));
+                World.UserInterface.SetMouse(new Gui.MousePointer("mouse", 1, 5));
         }
 
         public override void Render3D(DwarfGame game, DwarfTime time)

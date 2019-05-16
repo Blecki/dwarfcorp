@@ -110,10 +110,10 @@ namespace DwarfCorp
             World.Master.VoxSelector.Enabled = false;
             World.Master.BodySelector.Enabled = false;
 
-            if (World.IsMouseOverGui)
-                World.SetMouse(World.MousePointer);
+            if (World.UserInterface.IsMouseOverGui)
+                World.UserInterface.SetMouse(World.UserInterface.MousePointer);
             else
-                World.SetMouse(new Gui.MousePointer("mouse", 1, 9));
+                World.UserInterface.SetMouse(new Gui.MousePointer("mouse", 1, 9));
 
             MouseState mouse = Mouse.GetState();
 
@@ -134,10 +134,10 @@ namespace DwarfCorp
                 if (SelectedBody != null)
                 {
                     if (SelectedBody.IsReserved)
-                        World.ShowTooltip("Can't move this " + SelectedBody.Name + "\nIt is being used.");
+                        World.UserInterface.ShowTooltip("Can't move this " + SelectedBody.Name + "\nIt is being used.");
                     else
                     {
-                        World.ShowTooltip("Left click and drag to move this " + SelectedBody.Name);
+                        World.UserInterface.ShowTooltip("Left click and drag to move this " + SelectedBody.Name);
                         foreach (var tinter in SelectedBody.GetRoot().EnumerateAll().OfType<Tinter>())
                         {
                             tinter.VertexColorTint = Color.Blue;
@@ -159,7 +159,7 @@ namespace DwarfCorp
                 if (craftDetails != null && Library.GetCraftable(craftDetails.CraftType).AllowRotation)
                 {
                     HandleOrientation();
-                    World.ShowTooltip(String.Format("Press {0}/{1} to rotate.", ControlSettings.Mappings.RotateObjectLeft, ControlSettings.Mappings.RotateObjectRight));
+                    World.UserInterface.ShowTooltip(String.Format("Press {0}/{1} to rotate.", ControlSettings.Mappings.RotateObjectLeft, ControlSettings.Mappings.RotateObjectRight));
                 }
 
                 var voxelUnderMouse = World.Master.VoxSelector.VoxelUnderMouse;
@@ -228,7 +228,7 @@ namespace DwarfCorp
         private void HandleOrientation()
         {
             // Don't attempt any camera control if the user is trying to type intoa focus item.
-            if (World.Gui.FocusItem != null && !World.Gui.FocusItem.IsAnyParentTransparent() && !World.Gui.FocusItem.IsAnyParentHidden())
+            if (World.UserInterface.Gui.FocusItem != null && !World.UserInterface.Gui.FocusItem.IsAnyParentTransparent() && !World.UserInterface.Gui.FocusItem.IsAnyParentHidden())
                 return;
 
             KeyboardState state = Keyboard.GetState();

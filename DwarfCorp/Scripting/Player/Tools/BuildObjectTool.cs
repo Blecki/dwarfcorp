@@ -100,7 +100,7 @@ namespace DwarfCorp
 
                             if (Mode == PlacementMode.PlaceExisting && !HandlePlaceExistingUpdate())
                             {
-                                World.ShowToolPopup("Unable to place any more.");
+                                World.UserInterface.ShowToolPopup("Unable to place any more.");
                                 Mode = PlacementMode.BuildNew;
                             }
 
@@ -165,7 +165,7 @@ namespace DwarfCorp
                 if (!HandlePlaceExistingUpdate())
                 {
                     Mode = PlacementMode.BuildNew;
-                    World.ShowToolPopup("Unable to place any more.");
+                    World.UserInterface.ShowToolPopup("Unable to place any more.");
                 }
             }
 
@@ -198,7 +198,7 @@ namespace DwarfCorp
             if (World.Master.IsCameraRotationModeActive())
             {
                 World.Master.VoxSelector.Enabled = false;
-                World.SetMouse(null);
+                World.UserInterface.SetMouse(null);
                 World.Master.BodySelector.Enabled = false;
                 return;
             }
@@ -206,10 +206,10 @@ namespace DwarfCorp
             World.Master.VoxSelector.Enabled = true;
             World.Master.BodySelector.Enabled = false;
 
-            if (World.IsMouseOverGui)
-                World.SetMouse(World.MousePointer);
+            if (World.UserInterface.IsMouseOverGui)
+                World.UserInterface.SetMouse(World.UserInterface.MousePointer);
             else
-                World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
+                World.UserInterface.SetMouse(new Gui.MousePointer("mouse", 1, 4));
 
             if (PreviewBody == null || !World.Master.VoxSelector.VoxelUnderMouse.IsValid)
                 return;
@@ -232,7 +232,7 @@ namespace DwarfCorp
             PreviewBody.SetVertexColorRecursive(valid ? GameSettings.Default.Colors.GetColor("Positive", Color.Green) : GameSettings.Default.Colors.GetColor("Negative", Color.Red));
 
             if (valid && CraftType.AllowRotation)
-                World.ShowTooltip("Click to build. Press R/T to rotate.");
+                World.UserInterface.ShowTooltip("Click to build. Press R/T to rotate.");
         }
 
         public override void Render2D(DwarfGame game, DwarfTime time)
@@ -263,7 +263,7 @@ namespace DwarfCorp
         private void HandleOrientation()
         {
             // Don't attempt any control if the user is trying to type into a focus item.
-            if (World.Gui.FocusItem == null || World.Gui.FocusItem.IsAnyParentTransparent() || World.Gui.FocusItem.IsAnyParentHidden())
+            if (World.UserInterface.Gui.FocusItem == null || World.UserInterface.Gui.FocusItem.IsAnyParentTransparent() || World.UserInterface.Gui.FocusItem.IsAnyParentHidden())
             {
                 KeyboardState state = Keyboard.GetState();
                 bool leftKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectLeft);

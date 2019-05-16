@@ -101,7 +101,7 @@ namespace DwarfCorp.Rail
             if (World.Master.IsCameraRotationModeActive())
             {
                 World.Master.VoxSelector.Enabled = false;
-                World.SetMouse(null);
+                World.UserInterface.SetMouse(null);
                 World.Master.BodySelector.Enabled = false;
                 return;
             }
@@ -112,13 +112,13 @@ namespace DwarfCorp.Rail
             World.Master.VoxSelector.DrawVoxel = false;
             World.Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
 
-            if (World.IsMouseOverGui)
-                World.SetMouse(World.MousePointer);
+            if (World.UserInterface.IsMouseOverGui)
+                World.UserInterface.SetMouse(World.UserInterface.MousePointer);
             else
-                World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
+                World.UserInterface.SetMouse(new Gui.MousePointer("mouse", 1, 4));
 
             // Don't attempt any control if the user is trying to type into a focus item.
-            if (World.Gui.FocusItem != null && !World.Gui.FocusItem.IsAnyParentTransparent() && !World.Gui.FocusItem.IsAnyParentHidden())
+            if (World.UserInterface.Gui.FocusItem != null && !World.UserInterface.Gui.FocusItem.IsAnyParentTransparent() && !World.UserInterface.Gui.FocusItem.IsAnyParentHidden())
             {
                 return;
             }

@@ -180,7 +180,7 @@ namespace DwarfCorp
 
         public override void DefaultOnMouseOver(IEnumerable<GameComponent> bodies)
         {
-            World.ShowTooltip(GetMouseOverText(bodies));
+            World.UserInterface.ShowTooltip(GetMouseOverText(bodies));
             underMouse = bodies.ToList();
         }
 
@@ -195,7 +195,7 @@ namespace DwarfCorp
             World.Master.BodySelector.Enabled = true;
             World.Master.BodySelector.AllowRightClickSelection = false;
 
-            World.SetMouse(World.MousePointer);
+            World.UserInterface.SetMouse(World.UserInterface.MousePointer);
         }
 
         public Rectangle GetScreenRect(BoundingBox Box, Camera Camera)

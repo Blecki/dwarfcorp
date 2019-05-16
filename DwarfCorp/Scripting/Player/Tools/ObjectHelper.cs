@@ -30,7 +30,7 @@ namespace DwarfCorp
             if (!String.IsNullOrEmpty(CraftType.CraftLocation) 
                 && World.PlayerFaction.FindNearestItemWithTags(CraftType.CraftLocation, Location.WorldPosition, false, null) == null)
             {
-                World.ShowTooltip("Can't " + Verb + ", need " + CraftType.CraftLocation);
+                World.UserInterface.ShowTooltip("Can't " + Verb + ", need " + CraftType.CraftLocation);
                 return false;
             }
 
@@ -46,7 +46,7 @@ namespace DwarfCorp
 
                             if (!neighborFound)
                             {
-                                World.ShowTooltip("Must be " + PastParticple + " next to wall!");
+                                World.UserInterface.ShowTooltip("Must be " + PastParticple + " next to wall!");
                                 return false;
                             }
 
@@ -58,7 +58,7 @@ namespace DwarfCorp
 
                             if (!below.IsValid || below.IsEmpty)
                             {
-                                World.ShowTooltip("Must be " + PastParticple + " on solid ground!");
+                                World.UserInterface.ShowTooltip("Must be " + PastParticple + " on solid ground!");
                                 return false;
                             }
                             break;
@@ -86,7 +86,7 @@ namespace DwarfCorp
                     if (objectRoot == PreviewBody) continue; 
                     if (objectRoot != null && objectRoot.GetRotatedBoundingBox().Intersects(previewBox))
                     {
-                        World.ShowTooltip("Can't " + Verb + " here: intersects " + objectRoot.Name);
+                        World.UserInterface.ShowTooltip("Can't " + Verb + " here: intersects " + objectRoot.Name);
                         return false;
                     }
                 }
@@ -102,17 +102,17 @@ namespace DwarfCorp
                 bool underwater = current.IsValid && current.LiquidType != LiquidType.None;
                 if (underwater)
                 {
-                    World.ShowTooltip("Can't " + Verb + " here: underwater or in lava.");
+                    World.UserInterface.ShowTooltip("Can't " + Verb + " here: underwater or in lava.");
                     return false;
                 }
                 if (intersectsWall && !CraftType.Prerequisites.Contains(CraftItem.CraftPrereq.NearWall))
                 {
-                    World.ShowTooltip("Can't " + Verb + " here: intersects wall.");
+                    World.UserInterface.ShowTooltip("Can't " + Verb + " here: intersects wall.");
                     return false;
                 }
 
             }
-            World.ShowTooltip("");
+            World.UserInterface.ShowTooltip("");
             return true;
         }
     }

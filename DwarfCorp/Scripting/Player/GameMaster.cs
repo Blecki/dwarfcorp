@@ -172,10 +172,10 @@ namespace DwarfCorp
 
         public void UpdateInput(DwarfGame game, DwarfTime time)
         {
-            if (!World.IsMouseOverGui)
+            if (!World.UserInterface.IsMouseOverGui)
             {
                 if (KeyManager.RotationEnabled(World.Renderer.Camera))
-                    World.SetMouse(null);
+                    World.UserInterface.SetMouse(null);
                 VoxSelector.Update();
                 BodySelector.Update();
             }

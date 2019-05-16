@@ -56,7 +56,7 @@ namespace DwarfCorp
 
                     if (count >= GameSettings.Default.MaxVoxelDesignations)
                     {
-                        World.ShowToolPopup("Too many dig designations!");
+                        World.UserInterface.ShowToolPopup("Too many dig designations!");
                         break;
                     }
 
@@ -105,21 +105,21 @@ namespace DwarfCorp
             {
                 World.Master.VoxSelector.Enabled = false;
                 World.Master.BodySelector.Enabled = false;
-                World.SetMouse(null);
+                World.UserInterface.SetMouse(null);
                 return;
             }
 
             World.Master.VoxSelector.Enabled = true;
 
-            if (World.Master.VoxSelector.VoxelUnderMouse.IsValid && !World.IsMouseOverGui)
+            if (World.Master.VoxSelector.VoxelUnderMouse.IsValid && !World.UserInterface.IsMouseOverGui)
             {
-                World.ShowTooltip(World.Master.VoxSelector.VoxelUnderMouse.IsExplored ? World.Master.VoxSelector.VoxelUnderMouse.Type.Name : "???");
+                World.UserInterface.ShowTooltip(World.Master.VoxSelector.VoxelUnderMouse.IsExplored ? World.Master.VoxSelector.VoxelUnderMouse.Type.Name : "???");
             }
 
-            if (World.IsMouseOverGui)
-                World.SetMouse(World.MousePointer);
+            if (World.UserInterface.IsMouseOverGui)
+                World.UserInterface.SetMouse(World.UserInterface.MousePointer);
             else
-                World.SetMouse(new Gui.MousePointer("mouse", 1, 1));
+                World.UserInterface.SetMouse(new Gui.MousePointer("mouse", 1, 1));
 
             World.Master.BodySelector.Enabled = false;
             World.Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;

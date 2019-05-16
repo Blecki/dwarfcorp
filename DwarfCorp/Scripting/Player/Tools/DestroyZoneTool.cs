@@ -34,7 +34,7 @@ namespace DwarfCorp
                 {
                     vox.Order.Destroy();
                     if (vox.Order.DisplayWidget != null)
-                        World.Gui.DestroyWidget(vox.Order.DisplayWidget);
+                        World.UserInterface.Gui.DestroyWidget(vox.Order.DisplayWidget);
                     World.PlayerFaction.RoomBuilder.BuildDesignations.Remove(vox.Order);
                     World.PlayerFaction.RoomBuilder.DesignatedRooms.Remove(vox.Order.ToBuild);
                 }
@@ -44,7 +44,7 @@ namespace DwarfCorp
                 Room existingRoom = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(v);
 
                 if (existingRoom != null)
-                    World.Gui.ShowModalPopup(new Gui.Widgets.Confirm
+                    World.UserInterface.Gui.ShowModalPopup(new Gui.Widgets.Confirm
                     {
                         Text = "Do you want to destroy this " + existingRoom.RoomData.Name + "?",
                         OnClose = (sender) => DestroyRoom((sender as Gui.Widgets.Confirm).DialogResult, existingRoom, World.PlayerFaction, World)
@@ -67,7 +67,7 @@ namespace DwarfCorp
                 }
                 if (buildRoomDes != null && buildRoomDes.DisplayWidget != null)
                 {
-                    World.Gui.DestroyWidget(buildRoomDes.DisplayWidget);
+                    World.UserInterface.Gui.DestroyWidget(buildRoomDes.DisplayWidget);
                 }
                 Faction.RoomBuilder.BuildDesignations.Remove(buildRoomDes);
 
@@ -94,7 +94,7 @@ namespace DwarfCorp
             if (World.Master.IsCameraRotationModeActive())
             {
                 World.Master.VoxSelector.Enabled = false;
-                World.SetMouse(null);
+                World.UserInterface.SetMouse(null);
                 World.Master.BodySelector.Enabled = false;
                 return;
             }
@@ -106,10 +106,10 @@ namespace DwarfCorp
             World.Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
             
 
-            if (World.IsMouseOverGui)
-                World.SetMouse(World.MousePointer);
+            if (World.UserInterface.IsMouseOverGui)
+                World.UserInterface.SetMouse(World.UserInterface.MousePointer);
             else
-                World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
+                World.UserInterface.SetMouse(new Gui.MousePointer("mouse", 1, 4));
         }
 
         public override void Render3D(DwarfGame game, DwarfTime time)
