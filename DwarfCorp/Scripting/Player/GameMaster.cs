@@ -219,7 +219,6 @@ namespace DwarfCorp
                 }
 
                 if (orphanedTasks.Count > 0)
-                    //TaskManager.AssignTasksGreedy(orphanedTasks, Faction.Minions);
                     TaskManager.AddTasks(orphanedTasks);
             }
         }
@@ -254,8 +253,6 @@ namespace DwarfCorp
 
             World.PlayerFaction.Minions.RemoveAll(m => m.IsDead);
 
-            HandlePosessedDwarf();
-
             checkFoodTimer.Update(time);
             if (checkFoodTimer.HasTriggered)
             {
@@ -282,102 +279,6 @@ namespace DwarfCorp
 
                 minion.ResetPositionConstraint();
             }
-        }
-
-        public void HandlePosessedDwarf()
-        {
-            // Don't attempt any control if the user is trying to type intoa focus item.
-            if (World.Gui.FocusItem != null && !World.Gui.FocusItem.IsAnyParentTransparent() && !World.Gui.FocusItem.IsAnyParentHidden())
-            {
-                return;
-            }
-            KeyboardState keyState = Keyboard.GetState();
-            if (World.PlayerFaction.SelectedMinions.Count != 1)
-            {
-                Camera.FollowAutoTarget = false;
-                Camera.EnableControl = true;
-                foreach (var creature in World.PlayerFaction.Minions)
-                {
-                    creature.IsPosessed = false;
-                }
-                return;
-            }
-
-            var dwarf = World.PlayerFaction.SelectedMinions[0];
-            if (!dwarf.IsPosessed)
-            {
-                Camera.FollowAutoTarget = false;
-                Camera.EnableControl = true;
-                return;
-            }
-            Camera.EnableControl = false;
-            Camera.AutoTarget = dwarf.Position;
-            Camera.FollowAutoTarget = true;
-
-            if (dwarf.Velocity.Length() > 0.1)
-            {
-                var above = VoxelHelpers.FindFirstVoxelAbove(new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(dwarf.Position)));
-
-                if (above.IsValid)
-                    World.Renderer.SetMaxViewingLevel(above.Coordinate.Y);
-                else
-                    World.Renderer.SetMaxViewingLevel(World.WorldSizeInVoxels.Y);
-            }
-
-            Vector3 forward = Camera.GetForwardVector();
-            Vector3 right = Camera.GetRightVector();
-            Vector3 desiredVelocity = Vector3.Zero;
-            bool hadCommand = false;
-            bool jumpCommand = false;
-            if (keyState.IsKeyDown(ControlSettings.Mappings.Forward) || keyState.IsKeyDown(Keys.Up))
-            {
-                hadCommand = true;
-                desiredVelocity += forward * 10;
-            }
-
-            if (keyState.IsKeyDown(ControlSettings.Mappings.Back) || keyState.IsKeyDown(Keys.Down))
-            {
-                hadCommand = true;
-                desiredVelocity -= forward * 10;
-            }
-
-            if (keyState.IsKeyDown(ControlSettings.Mappings.Right) || keyState.IsKeyDown(Keys.Right))
-            {
-                hadCommand = true;
-                desiredVelocity += right * 10;
-            }
-
-            if (keyState.IsKeyDown(ControlSettings.Mappings.Left) || keyState.IsKeyDown(Keys.Left))
-            {
-                hadCommand = true;
-                desiredVelocity -= right * 10;
-            }
-
-            if (keyState.IsKeyDown(ControlSettings.Mappings.Jump))
-            {
-                jumpCommand = true;
-                hadCommand = true;
-            }
-
-            if (hadCommand)
-            {
-                dwarf.CancelCurrentTask();
-                dwarf.TryMoveVelocity(desiredVelocity, jumpCommand);
-            }
-            else if (dwarf.CurrentTask == null)
-            {
-                if (dwarf.Creature.IsOnGround)
-                {
-                    if (dwarf.Physics.Velocity.LengthSquared() < 1)
-                    {
-                        dwarf.Creature.CurrentCharacterMode = DwarfCorp.CharacterMode.Idle;
-                    }
-                    dwarf.Physics.Velocity = new Vector3(dwarf.Physics.Velocity.X * 0.9f, dwarf.Physics.Velocity.Y,
-                        dwarf.Physics.Velocity.Z * 0.9f);
-                    dwarf.TryMoveVelocity(Vector3.Zero, false);
-                }
-            }
-
         }
 
         #region input
