@@ -16,7 +16,7 @@ namespace DwarfCorp.Scripting
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (agent.Stats.IsAsleep || agent.IsDead || agent.Stats.Money < 10.0m || agent.World.Master.GamblingState.Participants.Count > 4 || agent.Stats.Boredom.IsSatisfied())
+            if (agent.Stats.IsAsleep || agent.IsDead || agent.Stats.Money < 10.0m || agent.World.GamblingState.Participants.Count > 4 || agent.Stats.Boredom.IsSatisfied())
             {
                 return Feasibility.Infeasible;
             }
@@ -25,7 +25,7 @@ namespace DwarfCorp.Scripting
 
         public override bool IsComplete(Faction faction)
         {
-            return faction.World.Master.GamblingState.State == Gambling.Status.Ended;
+            return faction.World.GamblingState.State == Gambling.Status.Ended;
         }
 
         public override bool ShouldRetry(Creature agent)
@@ -35,7 +35,7 @@ namespace DwarfCorp.Scripting
 
         public override Act CreateScript(Creature agent)
         {
-            return new GambleAct() { Agent = agent.AI, Game = agent.World.Master.GamblingState };
+            return new GambleAct() { Agent = agent.AI, Game = agent.World.GamblingState };
         }
     }
 

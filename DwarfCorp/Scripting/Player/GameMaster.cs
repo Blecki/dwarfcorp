@@ -54,8 +54,6 @@ namespace DwarfCorp
 
         public TaskManager TaskManager { get; set; }
 
-        public Scripting.Gambling GamblingState = new Scripting.Gambling(); // Todo: Belongs in WorldManager?
-
         [OnDeserialized]
         protected void OnDeserialized(StreamingContext context)
         {
@@ -229,7 +227,6 @@ namespace DwarfCorp
         public void Update(DwarfGame game, DwarfTime time)
         {
             // Todo: All input handling should be in one spot. PlayState!
-            GamblingState.Update(time);
             TaskManager.Update(World.PlayerFaction.Minions);
             CurrentTool.Update(game, time);
             World.PlayerFaction.RoomBuilder.Update();

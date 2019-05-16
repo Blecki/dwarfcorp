@@ -54,6 +54,7 @@ namespace DwarfCorp
         #endregion
 
         public Diplomacy Diplomacy;
+        public Scripting.Gambling GamblingState = new Scripting.Gambling();
 
         public ContentManager Content;
         public DwarfGame Game;
@@ -96,7 +97,6 @@ namespace DwarfCorp
             }
         }
 
-        public Action<QueuedAnnouncement> OnAnnouncement;
 
         public EventLog EventLog = new EventLog();
 
@@ -325,6 +325,7 @@ namespace DwarfCorp
             HandleAmbientSound();
 
             Master.Update(Game, gameTime);
+            GamblingState.Update(gameTime);
             EventScheduler.Update(this, Time.CurrentDate);
 
             Time.Update(gameTime);

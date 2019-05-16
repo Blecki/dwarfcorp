@@ -399,8 +399,8 @@ namespace DwarfCorp
 
         private Task SatisfyBoredom()
         {
-            if (World.Master.GamblingState.State == Scripting.Gambling.Status.Gaming ||
-                World.Master.GamblingState.State == Scripting.Gambling.Status.WaitingForPlayers && World.Master.GamblingState.Participants.Count > 0)
+            if (World.GamblingState.State == Scripting.Gambling.Status.Gaming ||
+                World.GamblingState.State == Scripting.Gambling.Status.WaitingForPlayers && World.GamblingState.Participants.Count > 0)
             {
                 var task = new Scripting.GambleTask() { Priority = Task.PriorityType.High };
                 if (task.IsFeasible(Creature) == Task.Feasibility.Feasible)
@@ -866,8 +866,8 @@ namespace DwarfCorp
 
             if (Stats.CanGetBored)
             {
-                if (World.Master.GamblingState.State == Scripting.Gambling.Status.Gaming ||
-                    World.Master.GamblingState.State == Scripting.Gambling.Status.WaitingForPlayers && World.Master.GamblingState.Participants.Count > 0)
+                if (World.GamblingState.State == Scripting.Gambling.Status.Gaming ||
+                    World.GamblingState.State == Scripting.Gambling.Status.WaitingForPlayers && World.GamblingState.Participants.Count > 0)
                 {
                     var task = new Scripting.GambleTask() { Priority = Task.PriorityType.High };
                     if (task.IsFeasible(Creature) == Task.Feasibility.Feasible)

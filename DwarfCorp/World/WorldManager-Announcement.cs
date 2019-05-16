@@ -6,6 +6,8 @@ namespace DwarfCorp
 {
     public partial class WorldManager : IDisposable
     {
+        public Action<QueuedAnnouncement> OnAnnouncement;
+
         public void MakeAnnouncement(String Message, Action<Gui.Root, QueuedAnnouncement> ClickAction = null, Func<bool> Keep = null, bool logEvent = true, String eventDetails = "")
         {
             MakeAnnouncement(Message, Color.Black, ClickAction, Keep, logEvent, eventDetails);
@@ -30,8 +32,7 @@ namespace DwarfCorp
         public void MakeAnnouncement(QueuedAnnouncement Announcement)
         {
             LogEvent(Announcement.Text);
-            if (OnAnnouncement != null)
-                OnAnnouncement(Announcement);
+            OnAnnouncement?.Invoke(Announcement);
         }
     }
 }
