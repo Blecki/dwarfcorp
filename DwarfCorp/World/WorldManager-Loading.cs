@@ -332,7 +332,7 @@ namespace DwarfCorp
 
                 SetLoadingMessage("Creating GameMaster ...");
             PlayerFaction = Factions.Factions["Player"];
-                Master = new GameMaster(PlayerFaction, Game, ComponentManager, ChunkManager, Renderer.Camera, GraphicsDevice);
+                Master = new GameMaster(this);
 
                 if (gameFile == null)
                 {

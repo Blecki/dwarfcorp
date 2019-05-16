@@ -12,7 +12,7 @@ namespace DwarfCorp
 {
     public class GameMaster
     {
-        public OrbitCamera CameraController { get; set; }
+        public OrbitCamera Camera;
 
         [JsonIgnore]
         public VoxelSelector VoxSelector { get; set; }
@@ -64,7 +64,7 @@ namespace DwarfCorp
         protected void OnDeserialized(StreamingContext context)
         {
             World = (WorldManager)(context.Context);
-            Initialize(GameState.Game, World.ComponentManager, World.ChunkManager, World.Renderer.Camera, GameState.Game.GraphicsDevice);
+            Initialize();
             World.Master = this;
             TaskManager.Faction = World.PlayerFaction;
         }
@@ -74,13 +74,14 @@ namespace DwarfCorp
         }
 
         // Todo: Clean up construction
-        public GameMaster(Faction faction, DwarfGame game, ComponentManager components, ChunkManager chunks, OrbitCamera camera, GraphicsDevice graphics)
+        public GameMaster(WorldManager World)
         {
             TaskManager = new TaskManager();
-            TaskManager.Faction = faction;
+            TaskManager.Faction = World.PlayerFaction;
 
-            World = components.World;
-            Initialize(game, components, chunks, camera, graphics);
+            this.World = World;
+            
+            Initialize();
             VoxSelector.Selected += OnSelected;
             VoxSelector.Dragged += OnDrag;
             BodySelector.Selected += OnBodiesSelected;
@@ -89,11 +90,11 @@ namespace DwarfCorp
             World.Time.NewDay += Time_NewDay;
         }
 
-        public void Initialize(DwarfGame game, ComponentManager components, ChunkManager chunks, OrbitCamera camera, GraphicsDevice graphics)
+        public void Initialize()
         {
-            CameraController = camera;
+            Camera = World.Renderer.Camera;
             VoxSelector = new VoxelSelector(World);
-            BodySelector = new BodySelector(CameraController, GameState.Game.GraphicsDevice, components);
+            BodySelector = new BodySelector(Camera, GameState.Game.GraphicsDevice, World.ComponentManager);
             SelectedMinions = new List<CreatureAI>();
 
             CreateTools();
@@ -247,7 +248,7 @@ namespace DwarfCorp
             UpdateOrphanedTasks();
 
             if (World.Paused)
-                CameraController.LastWheel = Mouse.GetState().ScrollWheelValue;
+                Camera.LastWheel = Mouse.GetState().ScrollWheelValue;
 
             UpdateInput(game, time);
 
@@ -308,8 +309,8 @@ namespace DwarfCorp
             KeyboardState keyState = Keyboard.GetState();
             if (SelectedMinions.Count != 1)
             {
-                CameraController.FollowAutoTarget = false;
-                CameraController.EnableControl = true;
+                Camera.FollowAutoTarget = false;
+                Camera.EnableControl = true;
                 foreach (var creature in World.PlayerFaction.Minions)
                 {
                     creature.IsPosessed = false;
@@ -320,13 +321,13 @@ namespace DwarfCorp
             var dwarf = SelectedMinions[0];
             if (!dwarf.IsPosessed)
             {
-                CameraController.FollowAutoTarget = false;
-                CameraController.EnableControl = true;
+                Camera.FollowAutoTarget = false;
+                Camera.EnableControl = true;
                 return;
             }
-            CameraController.EnableControl = false;
-            CameraController.AutoTarget = dwarf.Position;
-            CameraController.FollowAutoTarget = true;
+            Camera.EnableControl = false;
+            Camera.AutoTarget = dwarf.Position;
+            Camera.FollowAutoTarget = true;
 
             if (dwarf.Velocity.Length() > 0.1)
             {
@@ -338,8 +339,8 @@ namespace DwarfCorp
                     World.Renderer.SetMaxViewingLevel(World.WorldSizeInVoxels.Y);
             }
 
-            Vector3 forward = CameraController.GetForwardVector();
-            Vector3 right = CameraController.GetRightVector();
+            Vector3 forward = Camera.GetForwardVector();
+            Vector3 right = Camera.GetRightVector();
             Vector3 desiredVelocity = Vector3.Zero;
             bool hadCommand = false;
             bool jumpCommand = false;
