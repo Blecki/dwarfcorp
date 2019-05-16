@@ -185,17 +185,9 @@ namespace DwarfCorp.Scripting.Adventure
 
         private void DestroyCreature(CreatureAI creature)
         {
-            //if (!creature.Active)
-            {
-            //    return;
-            }
-
             var owner = creature.World.Factions.Factions[OwnerFaction];
             owner.Minions.Remove(creature);
-            if (creature.World.Master.SelectedMinions.Contains(creature))
-            {
-                creature.World.Master.SelectedMinions.Remove(creature);
-            }
+            creature.World.PlayerFaction.SelectedMinions.Remove(creature);
             creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Active, false);
             creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
         }

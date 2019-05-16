@@ -376,7 +376,7 @@ namespace DwarfCorp
                 Factions.Update(gameTime);
                 ComponentManager.Update(gameTime, ChunkManager, Renderer.Camera);
                 MonsterSpawner.Update(gameTime);
-                bool allAsleep = Master.AreAllEmployeesAsleep();
+                bool allAsleep = PlayerFaction.AreAllEmployeesAsleep();
 
 #if !UPTIME_TEST
                 if (SleepPrompt == null && allAsleep && !FastForwardToDay && Time.IsNight())
@@ -391,7 +391,7 @@ namespace DwarfCorp
                         },
                         ShouldKeep = () =>
                         {
-                            return FastForwardToDay == false && Time.IsNight() && Master.AreAllEmployeesAsleep();
+                            return FastForwardToDay == false && Time.IsNight() && PlayerFaction.AreAllEmployeesAsleep();
                         }
                     };
                     MakeAnnouncement(SleepPrompt);

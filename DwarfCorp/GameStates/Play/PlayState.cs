@@ -479,14 +479,12 @@ namespace DwarfCorp.GameStates
 
             #region select employee
 
-            Master.SelectedMinions.RemoveAll(minion => minion.IsDead);
-            if (Master.SelectedMinions.Count == 1)
+            World.PlayerFaction.SelectedMinions.RemoveAll(minion => minion.IsDead);
+            if (World.PlayerFaction.SelectedMinions.Count == 1)
             {
                 // Lol this is evil just trying to reduce the update rate for speed
                 if (MathFunctions.RandEvent(0.1f))
-                {
-                    SelectedEmployeeInfo.Employee = Master.SelectedMinions[0];
-                }
+                    SelectedEmployeeInfo.Employee = World.PlayerFaction.SelectedMinions[0];
             }
             else
             {
@@ -2547,7 +2545,7 @@ namespace DwarfCorp.GameStates
             {
                 if (PausePanel == null || PausePanel.Hidden)
                 {
-                    Master.SelectedMinions.AddRange(World.PlayerFaction.Minions);
+                    World.PlayerFaction.SelectedMinions.AddRange(World.PlayerFaction.Minions);
                     World.Tutorial("dwarf selected");
                     return true;
                 }

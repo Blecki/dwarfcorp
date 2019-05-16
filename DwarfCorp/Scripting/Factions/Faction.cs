@@ -1141,5 +1141,10 @@ namespace DwarfCorp
             SoundManager.PlaySound(ContentPaths.Audio.change, 0.15f);
             World.Tutorial("pay");
         }
+
+        public bool AreAllEmployeesAsleep()
+        {
+            return (Minions.Count > 0) && Minions.All(minion => !minion.Active || ((!minion.Stats.Species.CanSleep || minion.Creature.Stats.IsAsleep) && !minion.IsDead));
+        }
     }
 }

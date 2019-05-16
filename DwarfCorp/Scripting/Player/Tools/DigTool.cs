@@ -77,7 +77,7 @@ namespace DwarfCorp
                 compoundTask.AddSubTasks(assignments);
                 Player.TaskManager.AddTask(compoundTask);
 
-                List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.SelectedMinions, Task.TaskCategory.Dig);
+                var minions = Faction.FilterMinionsWithCapability(Player.World.PlayerFaction.SelectedMinions, Task.TaskCategory.Dig);
                 OnConfirm(minions);
             }
             else

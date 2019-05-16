@@ -46,10 +46,6 @@ namespace DwarfCorp
 
         #endregion
 
-
-        [JsonIgnore]
-        public List<CreatureAI> SelectedMinions { get { return World.PlayerFaction.SelectedMinions; } set { World.PlayerFaction.SelectedMinions = value; } }
-
         [JsonIgnore]
         public List<GameComponent> SelectedObjects = new List<GameComponent>();
 
@@ -95,8 +91,6 @@ namespace DwarfCorp
             Camera = World.Renderer.Camera;
             VoxSelector = new VoxelSelector(World);
             BodySelector = new BodySelector(Camera, GameState.Game.GraphicsDevice, World.ComponentManager);
-            SelectedMinions = new List<CreatureAI>();
-
             CreateTools();
         }
 
@@ -155,12 +149,6 @@ namespace DwarfCorp
         public void OnSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
             CurrentTool.OnVoxelsSelected(voxels, button);
-        }
-
-        // Todo: Belongs in... uh WorldManager maybe?
-        public bool AreAllEmployeesAsleep()
-        {
-            return (World.PlayerFaction.Minions.Count > 0) && World.PlayerFaction.Minions.All(minion => !minion.Active || ((!minion.Stats.Species.CanSleep || minion.Creature.Stats.IsAsleep) && !minion.IsDead));
         }
 
         public void Render2D(DwarfGame game, DwarfTime time)
@@ -307,7 +295,7 @@ namespace DwarfCorp
                 return;
             }
             KeyboardState keyState = Keyboard.GetState();
-            if (SelectedMinions.Count != 1)
+            if (World.PlayerFaction.SelectedMinions.Count != 1)
             {
                 Camera.FollowAutoTarget = false;
                 Camera.EnableControl = true;
@@ -318,7 +306,7 @@ namespace DwarfCorp
                 return;
             }
 
-            var dwarf = SelectedMinions[0];
+            var dwarf = World.PlayerFaction.SelectedMinions[0];
             if (!dwarf.IsPosessed)
             {
                 Camera.FollowAutoTarget = false;
