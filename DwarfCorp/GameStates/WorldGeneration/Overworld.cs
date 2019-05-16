@@ -46,11 +46,15 @@ namespace DwarfCorp
         public List<Faction> NativeFactions { get; set; }
         public List<ColonyCell> ColonyCells;
         public static ColorGradient JetGradient = null;
+        public static MemoryTexture BiomeBlend = null;
 
         public Overworld(int Width, int Height)
         {
             Map = new OverworldCell[Width, Height];
             ColonyCells = ColonyCell.DeriveFromTexture("World\\colonies");
+            BiomeBlend = TextureTool.MemoryTextureFromTexture2D(AssetManager.GetContentTexture("World\\biome-blend"));
+            if (BiomeBlend == null || BiomeBlend.Width != VoxelConstants.ChunkSizeX || BiomeBlend.Height != VoxelConstants.ChunkSizeZ)
+                BiomeBlend = new MemoryTexture(VoxelConstants.ChunkSizeX, VoxelConstants.ChunkSizeZ);
         }
 
         public static float LinearInterpolate(Vector2 position, OverworldCell[,] map, OverworldField fieldType)
@@ -345,6 +349,13 @@ namespace DwarfCorp
             return worldXZ / 16.0f + origin;
         }
 
+        public static Vector2 WorldToOverworldRemainder(Vector2 World)
+        {
+            var x = 16.0f * Math.Floor(World.X / 16.0f);
+            var y = 16.0f * Math.Floor(World.Y / 16.0f);
+            return new Vector2((float)(World.X - x), (float)(World.Y - y));
+        }
+
         public static Vector2 WorldToOverworld(Vector3 worldXYZ, Vector2 origin)
         {
             return WorldToOverworld(new Vector2(worldXYZ.X, worldXYZ.Z), origin);
@@ -353,9 +364,13 @@ namespace DwarfCorp
         public static BiomeData GetBiomeAt(OverworldCell[,] Map, Vector3 worldPos, Vector2 origin)
         {
             DebugHelper.AssertNotNull(Map);
-            Vector2 v = WorldToOverworld(worldPos, origin);
-            var biome = Map[(int)MathFunctions.Clamp(v.X, 0, Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Map.GetLength(1) - 1)].Biome;
-            return BiomeLibrary.GetBiome(biome);
+            var v = WorldToOverworld(worldPos, origin);
+            var r = WorldToOverworldRemainder(new Vector2(worldPos.X, worldPos.Z));
+            var blendColor = BiomeBlend.Data[BiomeBlend.Index((int)MathFunctions.Clamp(r.X, 0, VoxelConstants.ChunkSizeX), (int)MathFunctions.Clamp(r.Y, 0, VoxelConstants.ChunkSizeZ))];
+            var offsetV = v + new Vector2((blendColor.R - 127.0f) / 128.0f, (blendColor.G - 127.0f) / 128.0f);
+            var biome1 = Map[(int)MathFunctions.Clamp(v.X, 0, Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Map.GetLength(1) - 1)].Biome;
+            var biome2 = Map[(int)MathFunctions.Clamp(offsetV.X, 0, Map.GetLength(0) - 1), (int)MathFunctions.Clamp(offsetV.Y, 0, Map.GetLength(1) - 1)].Biome;
+            return BiomeLibrary.GetBiome(Math.Max(biome1, biome2));
         }
 
         public static float GetValueAt(OverworldCell[,] Map, Vector3 worldPos, OverworldField fieldType, Vector2 origin)
