@@ -33,7 +33,7 @@ namespace DwarfCorp.Rail
         public PaintRailTool(GameMaster Player)
         {
             this.Player = Player;
-            this.Faction = Player.Faction;
+            this.Faction = Player.World.PlayerFaction;
         }
 
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
@@ -46,7 +46,7 @@ namespace DwarfCorp.Rail
                 if (button == InputManager.MouseButton.Left)
                 {
                     if (CanPlace)
-                        RailHelper.Place(Player, PreviewBodies, GodModeSwitch);
+                        RailHelper.Place(Player.World, PreviewBodies, GodModeSwitch);
                     else
                         foreach (var piece in PreviewBodies)
                             piece.GetRoot().Delete();

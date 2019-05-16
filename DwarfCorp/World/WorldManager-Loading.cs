@@ -35,7 +35,16 @@ namespace DwarfCorp
 
         public Exception LoadingException = null;
 
-        public void Setup()
+        public Thread LoadingThread { get; set; }
+        public Action<String> OnSetLoadingMessage = null;
+
+        public void SetLoadingMessage(String Message)
+        {
+            if (OnSetLoadingMessage != null)
+                OnSetLoadingMessage(Message);
+        }
+
+        public void StartLoad()
         {
             Renderer.Screenshots = new List<WorldRenderer.Screenshot>(); // Todo: ?? Why is this updated every single frame?
             Game.Graphics.PreferMultiSampling = GameSettings.Default.AntiAliasing > 1;
@@ -322,8 +331,8 @@ namespace DwarfCorp
                 Game.DoLazyAction(new Action(() => ParticleManager = new ParticleManager(ComponentManager)));
 
                 SetLoadingMessage("Creating GameMaster ...");
-                Master = new GameMaster(Factions.Factions["Player"], Game, ComponentManager, ChunkManager,
-                    Renderer.Camera, GraphicsDevice);
+            PlayerFaction = Factions.Factions["Player"];
+                Master = new GameMaster(PlayerFaction, Game, ComponentManager, ChunkManager, Renderer.Camera, GraphicsDevice);
 
                 if (gameFile == null)
                 {
@@ -351,11 +360,11 @@ namespace DwarfCorp
                     if (gameFile.PlayData.Tasks != null)
                     {
                         Master.TaskManager = gameFile.PlayData.Tasks;
-                        Master.TaskManager.Faction = Master.Faction;
+                        Master.TaskManager.Faction = PlayerFaction;
                     }
                 }
 
-            if (Master.Faction.Economy.Information == null)
+            if (PlayerFaction.Economy.Information == null)
                 throw new InvalidProgramException();
 
                 if (MathFunctions.RandEvent(0.01f))

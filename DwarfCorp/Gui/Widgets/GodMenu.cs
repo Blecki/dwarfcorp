@@ -9,12 +9,12 @@ namespace DwarfCorp.Gui.Widgets
 {
     public class GodMenu : HorizontalMenuTray.Tray
     {
-        public GameMaster Master;
+        public WorldManager World;
 
         private void ActivateGodTool(String Command)
         {
-            (Master.Tools["God"] as GodModeTool).Command = Command;
-            Master.ChangeTool("God");
+            (World.Master.Tools["God"] as GodModeTool).Command = Command;
+            World.Master.ChangeTool("God");
         }
 
         public override void Construct()
@@ -53,15 +53,15 @@ namespace DwarfCorp.Gui.Widgets
                         // Turn off binary compressed saves and save a nice straight json save for debugging purposes.
 
                         // Todo: Why isn't World managing this paused state itself?
-                        bool paused = Master.World.Paused;
+                        bool paused = World.Paused;
                         var previousSetting = DwarfGame.COMPRESSED_BINARY_SAVES;
                         DwarfGame.COMPRESSED_BINARY_SAVES = false;
-                        Master.World.Save(
+                        World.Save(
                                 (success, exception) =>
                                     {
-                                        Master.World.MakeAnnouncement(success ? "Debug save created.": "Debug save failed - " + exception.Message);
+                                        World.MakeAnnouncement(success ? "Debug save created.": "Debug save failed - " + exception.Message);
                                         DwarfGame.COMPRESSED_BINARY_SAVES = previousSetting;
-                                        Master.World.Paused = paused;
+                                        World.Paused = paused;
                                     });
                     }
                 },
@@ -188,9 +188,9 @@ namespace DwarfCorp.Gui.Widgets
                                             Text = p.Name,
                                             OnClick = (sender, args) =>
                                             {
-                                                var railTool = Master.Tools["BuildRail"] as Rail.BuildRailTool;
+                                                var railTool = World.Master.Tools["BuildRail"] as Rail.BuildRailTool;
                                                 railTool.Pattern = p;
-                                                Master.ChangeTool("BuildRail");
+                                                World.Master.ChangeTool("BuildRail");
                                                 railTool.GodModeSwitch = true;
                                             }
                                         })
@@ -202,9 +202,9 @@ namespace DwarfCorp.Gui.Widgets
                                 Text = "PAINT",
                                 OnClick = (sender, args) =>
                                 {
-                                    var railTool = Master.Tools["PaintRail"] as Rail.PaintRailTool;
+                                    var railTool = World.Master.Tools["PaintRail"] as Rail.PaintRailTool;
                                     railTool.SelectedResources = new List<ResourceAmount>(new ResourceAmount[] { new ResourceAmount("Rail", 1) });
-                                    Master.ChangeTool("PaintRail");
+                                    World.Master.ChangeTool("PaintRail");
                                     railTool.GodModeSwitch = true;
                                 }
                             }
@@ -216,7 +216,7 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "AUTO SAVE",
                     OnClick = (sender, args) =>
                     {
-                        Master.World.gameState.StateManager.GetState<GameStates.PlayState>().AutoSave();
+                        World.Master.World.gameState.StateManager.GetState<GameStates.PlayState>().AutoSave();
                     }
                 },
                 new HorizontalMenuTray.MenuItem
@@ -235,42 +235,42 @@ namespace DwarfCorp.Gui.Widgets
                                 new HorizontalMenuTray.MenuItem
                                 {
                                     Text = "SPIN +",
-                                    OnClick = (sender, args) => this.Master.World.Renderer.Camera.Trailer(Vector3.Zero, 2.0f, 0.0f),
+                                    OnClick = (sender, args) => World.Renderer.Camera.Trailer(Vector3.Zero, 2.0f, 0.0f),
                                 },
                                 new HorizontalMenuTray.MenuItem
                                 {
                                     Text = "SPIN -",
-                                    OnClick = (sender, args) => this.Master.World.Renderer.Camera.Trailer(Vector3.Zero, -2.0f, 0.0f),
+                                    OnClick = (sender, args) => World.Renderer.Camera.Trailer(Vector3.Zero, -2.0f, 0.0f),
                                 },
                                 new HorizontalMenuTray.MenuItem
                                 {
                                     Text = "ZOOM -",
-                                    OnClick = (sender, args) => this.Master.World.Renderer.Camera.Trailer(Vector3.Zero, 0.0f, 2.5f),
+                                    OnClick = (sender, args) => World.Renderer.Camera.Trailer(Vector3.Zero, 0.0f, 2.5f),
                                 },
                                 new HorizontalMenuTray.MenuItem
                                 {
                                     Text = "ZOOM +",
-                                    OnClick = (sender, args) => this.Master.World.Renderer.Camera.Trailer(Vector3.Zero, 0.0f, -2.5f),
+                                    OnClick = (sender, args) => World.Renderer.Camera.Trailer(Vector3.Zero, 0.0f, -2.5f),
                                 },
                                 new HorizontalMenuTray.MenuItem
                                 {
                                     Text = "FWD",
-                                    OnClick = (sender, args) => this.Master.World.Renderer.Camera.Trailer(Vector3.Forward * 5, 0.0f, 0.0f),
+                                    OnClick = (sender, args) => World.Renderer.Camera.Trailer(Vector3.Forward * 5, 0.0f, 0.0f),
                                 },
                                 new HorizontalMenuTray.MenuItem
                                 {
                                     Text = "BACK",
-                                    OnClick = (sender, args) => this.Master.World.Renderer.Camera.Trailer(Vector3.Backward * 5, 0.0f, 0.0f),
+                                    OnClick = (sender, args) => World.Renderer.Camera.Trailer(Vector3.Backward * 5, 0.0f, 0.0f),
                                 },
                                 new HorizontalMenuTray.MenuItem
                                 {
                                     Text = "LEFT",
-                                    OnClick = (sender, args) => this.Master.World.Renderer.Camera.Trailer(Vector3.Left * 5, 0.0f, 0.0f),
+                                    OnClick = (sender, args) => World.Renderer.Camera.Trailer(Vector3.Left * 5, 0.0f, 0.0f),
                                 },
                                 new HorizontalMenuTray.MenuItem
                                 {
                                     Text = "RIGHT",
-                                    OnClick = (sender, args) => this.Master.World.Renderer.Camera.Trailer(Vector3.Right * 5, 0.0f, 0.0f),
+                                    OnClick = (sender, args) => World.Renderer.Camera.Trailer(Vector3.Right * 5, 0.0f, 0.0f),
                                 },
                         }
 
@@ -296,12 +296,12 @@ namespace DwarfCorp.Gui.Widgets
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
 
-                            ItemSource = Master.World.Factions.Factions.Values.Where(f => f.Race.IsIntelligent && f != Master.Faction).Select(s =>
+                            ItemSource = World.Factions.Factions.Values.Where(f => f.Race.IsIntelligent && f != World.PlayerFaction).Select(s =>
                             {
                                 return new HorizontalMenuTray.MenuItem
                                 {
                                     Text = s.Name,
-                                    OnClick = (sender, args) => Master.World.Diplomacy.SendTradeEnvoy(s, Master.World)
+                                    OnClick = (sender, args) => World.Diplomacy.SendTradeEnvoy(s, World)
                                 };
 
                             }),
@@ -317,7 +317,7 @@ namespace DwarfCorp.Gui.Widgets
                                 return new HorizontalMenuTray.MenuItem
                                 {
                                     Text = e.Name,
-                                    OnClick = (sender, args) => Master.World.EventScheduler.ActivateEvent(Master.World, e)
+                                    OnClick = (sender, args) => World.EventScheduler.ActivateEvent(World, e)
                                 };
 
                             }),
@@ -329,12 +329,12 @@ namespace DwarfCorp.Gui.Widgets
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
 
-                            ItemSource = Master.World.Factions.Factions.Values.Where(f => f.Race.IsIntelligent && f != Master.Faction).Select(s =>
+                            ItemSource = World.Factions.Factions.Values.Where(f => f.Race.IsIntelligent && f != World.PlayerFaction).Select(s =>
                             {
                                 return new HorizontalMenuTray.MenuItem
                                 {
                                     Text = s.Name,
-                                    OnClick = (sender, args) => Master.World.Diplomacy.SendWarParty(s)
+                                    OnClick = (sender, args) => World.Diplomacy.SendWarParty(s)
                                 };
 
                             }),
@@ -345,7 +345,7 @@ namespace DwarfCorp.Gui.Widgets
                 new HorizontalMenuTray.MenuItem
                 {
                     Text = "DWARF BUX",
-                    OnClick = (sender, args) => Master.Faction.AddMoney(100m)
+                    OnClick = (sender, args) => World.PlayerFaction.AddMoney(100m)
                 },
 
                 new HorizontalMenuTray.MenuItem
@@ -358,14 +358,14 @@ namespace DwarfCorp.Gui.Widgets
                             new HorizontalMenuTray.MenuItem
                             {
                                 Text = "PAY",
-                                OnClick = (sender, args) => Master.World.PlayerFaction.PayEmployees()
+                                OnClick = (sender, args) => World.PlayerFaction.PayEmployees()
                             },
                             new HorizontalMenuTray.MenuItem
                             {
                                 Text = "STARVE",
                                 OnClick = (sender, args) =>
                                 {
-                                    foreach(var minion in Master.Faction.Minions)
+                                    foreach(var minion in World.PlayerFaction.Minions)
                                         minion.Stats.Hunger.CurrentValue = 0;
                                 }
                             },                
@@ -374,7 +374,7 @@ namespace DwarfCorp.Gui.Widgets
                                 Text = "XP",
                                 OnClick = (sender, args) =>
                                 {
-                                    foreach(var minion in Master.Faction.Minions)
+                                    foreach(var minion in World.PlayerFaction.Minions)
                                         minion.AddXP(100);
                                 } 
                             },
@@ -388,7 +388,7 @@ namespace DwarfCorp.Gui.Widgets
                                 Text = "HAPPY",
                                 OnClick = (sender, args) =>
                                 {
-                                    foreach (var minion in Master.Faction.Minions)
+                                    foreach (var minion in World.PlayerFaction.Minions)
                                     {
                                         var thoughts = minion.GetRoot().GetComponent<DwarfThoughts>();
                                         if (thoughts != null)
@@ -401,7 +401,7 @@ namespace DwarfCorp.Gui.Widgets
                                 Text = "PISSED",
                                 OnClick = (sender, args) =>
                                 {
-                                    foreach (var minion in Master.Faction.Minions)
+                                    foreach (var minion in World.PlayerFaction.Minions)
                                     {
                                         var thoughts = minion.GetRoot().GetComponent<DwarfThoughts>();
                                         if (thoughts != null)
@@ -414,7 +414,7 @@ namespace DwarfCorp.Gui.Widgets
                                 Text = "GAMBLE",
                                 OnClick = (sender, args) =>
                                 {
-                                    foreach(var employee in Master.Faction.Minions)
+                                    foreach(var employee in World.PlayerFaction.Minions)
                                     {
                                         employee.Stats.Boredom.SetValue(employee.Stats.Boredom.MinValue);
                                         employee.AddMoney(100);
@@ -427,7 +427,7 @@ namespace DwarfCorp.Gui.Widgets
                                 Text = "PASS OUT",
                                 OnClick = (sender, args) =>
                                 {
-                                    var employee = Datastructures.SelectRandom(Master.Faction.Minions);
+                                    var employee = Datastructures.SelectRandom(World.PlayerFaction.Minions);
                                     if (employee != null)
                                         employee.Creature.Heal(-employee.Stats.Health.CurrentValue * employee.Creature.MaxHealth + 1);
                                 }
@@ -445,7 +445,7 @@ namespace DwarfCorp.Gui.Widgets
                         var keys = EntityFactory.EnumerateEntityTypes().ToList();
                         int num = keys.Count();
                         float gridSize = (float)Math.Ceiling(Math.Sqrt((double)num));
-                        Vector3 gridCenter = Master.World.Renderer.CursorLightPos;
+                        Vector3 gridCenter = World.Renderer.CursorLightPos;
                         int i = 0;
                         for (float dx = -gridSize/2; dx <= gridSize/2; dx++)
                         {
@@ -456,8 +456,8 @@ namespace DwarfCorp.Gui.Widgets
                                     continue;
                                 }
 
-                                Vector3 pos = MathFunctions.Clamp(gridCenter + new Vector3(dx, Master.World.WorldSizeInVoxels.Y, dz), Master.World.ChunkManager.Bounds);
-                                VoxelHandle handle = VoxelHelpers.FindFirstVisibleVoxelOnRay(Master.World.ChunkManager, pos, pos + Vector3.Down * 100);
+                                Vector3 pos = MathFunctions.Clamp(gridCenter + new Vector3(dx, World.WorldSizeInVoxels.Y, dz), World.ChunkManager.Bounds);
+                                VoxelHandle handle = VoxelHelpers.FindFirstVisibleVoxelOnRay(World.ChunkManager, pos, pos + Vector3.Down * 100);
                                 if (handle.IsValid)
                                     EntityFactory.CreateEntity<GameComponent>(keys[i], handle.WorldPosition + Vector3.Up);
                                 i++;
@@ -474,7 +474,7 @@ namespace DwarfCorp.Gui.Widgets
                         var itemTypes = Library.EnumerateCraftables().Where(craft => craft.Type == CraftItem.CraftType.Object).ToList();
                         int num = itemTypes.Count();
                         float gridSize = (float)Math.Ceiling(Math.Sqrt((double)num));
-                        Vector3 gridCenter = Master.World.Renderer.CursorLightPos;
+                        Vector3 gridCenter = World.Renderer.CursorLightPos;
 
                         int i = 0;
                         for (float dx = -gridSize/2; dx <= gridSize/2; dx++)
@@ -486,8 +486,8 @@ namespace DwarfCorp.Gui.Widgets
                                     var item = itemTypes[i];
                                     if (item.Name != "Explosive")
                                     {
-                                        Vector3 pos = MathFunctions.Clamp(gridCenter + new Vector3(dx, Master.World.WorldSizeInVoxels.Y, dz), Master.World.ChunkManager.Bounds);
-                                        VoxelHandle handle = VoxelHelpers.FindFirstVisibleVoxelOnRay(Master.World.ChunkManager, pos, pos + Vector3.Down * 100);
+                                        Vector3 pos = MathFunctions.Clamp(gridCenter + new Vector3(dx, World.WorldSizeInVoxels.Y, dz), World.ChunkManager.Bounds);
+                                        VoxelHandle handle = VoxelHelpers.FindFirstVisibleVoxelOnRay(World.ChunkManager, pos, pos + Vector3.Down * 100);
 
                                         if (handle.IsValid)
                                         {
@@ -501,7 +501,7 @@ namespace DwarfCorp.Gui.Widgets
                                             if (entity != null)
                                             {
                                                 if (item.AddToOwnedPool)
-                                                    Master.Faction.OwnedObjects.Add(entity as GameComponent);
+                                                    World.PlayerFaction.OwnedObjects.Add(entity as GameComponent);
                                                 if (item.Moveable)
                                                     entity.Tags.Add("Moveable");
                                                 if (item.Deconstructable)
@@ -521,7 +521,7 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "+1 HOUR",
                     OnClick = (sender, args) =>
                     {
-                        Master.World.Time.CurrentDate += new TimeSpan(1, 0, 0);
+                        World.Time.CurrentDate += new TimeSpan(1, 0, 0);
                         
                     }
                 },
@@ -530,7 +530,7 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "FORCE REBUILD",
                     OnClick = (sender, args) =>
                     {
-                         foreach (var chunk in Master.World.ChunkManager.ChunkMap)
+                         foreach (var chunk in World.ChunkManager.ChunkMap)
                             for (int Y = 0; Y < VoxelConstants.ChunkSizeY; ++Y)
                                 chunk.InvalidateSlice(Y);
                     }
@@ -550,7 +550,7 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "LET IT SNOW",
                     OnClick = (sender, args) =>
                     {
-                        var storm = Weather.CreateStorm(Vector3.One, 100.0f, Master.World);
+                        var storm = Weather.CreateStorm(Vector3.One, 100.0f, World);
                         storm.TypeofStorm = StormType.SnowStorm;
                         storm.Start();
                     }

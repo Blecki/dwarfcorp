@@ -22,7 +22,7 @@ namespace DwarfCorp.ContextCommands
 
         public override bool CanBeAppliedTo(GameComponent Entity, WorldManager World)
         {
-            return World.Master.Faction.Designations.EnumerateEntityDesignations(Entity).Any();
+            return World.PlayerFaction.Designations.EnumerateEntityDesignations(Entity).Any();
         }
 
         public override void Apply(GameComponent Entity, WorldManager World)

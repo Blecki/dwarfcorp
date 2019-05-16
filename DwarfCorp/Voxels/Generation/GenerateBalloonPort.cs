@@ -101,7 +101,7 @@ namespace DwarfCorp.Generation
                                 WorldManager.DoLazy(new Action(() =>
                                 {
                                     var ladder = EntityFactory.CreateEntity<Ladder>("Ladder", ladderPos);
-                                    Settings.World.Master.Faction.OwnedObjects.Add(ladder);
+                                    Settings.World.PlayerFaction.OwnedObjects.Add(ladder);
                                     ladder.Tags.Add("Moveable");
                                     ladder.Tags.Add("Deconstructable");
                                 }));

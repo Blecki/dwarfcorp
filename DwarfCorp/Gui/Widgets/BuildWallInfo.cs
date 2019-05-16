@@ -13,7 +13,7 @@ namespace DwarfCorp.Gui.Widgets
     public class BuildWallInfo : Widget
     {
         public VoxelType Data;
-        public GameMaster Master;
+        public WorldManager World;
 
         public override void Construct()
         {
@@ -31,7 +31,7 @@ namespace DwarfCorp.Gui.Widgets
 
         public bool CanBuild()
         {
-            foreach (var resource in Master.Faction.ListResourcesInStockpilesPlusMinions().Where(r => Data.CanBuildWith(ResourceLibrary.GetResourceByName(r.Key))))
+            foreach (var resource in World.PlayerFaction.ListResourcesInStockpilesPlusMinions().Where(r => Data.CanBuildWith(ResourceLibrary.GetResourceByName(r.Key))))
                 if (resource.Value.First.Count > 0 || resource.Value.Second.Count > 0)
                     return true;
             return false;

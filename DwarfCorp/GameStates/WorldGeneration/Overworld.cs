@@ -52,6 +52,7 @@ namespace DwarfCorp
         {
             Map = new OverworldCell[Width, Height];
             ColonyCells = ColonyCell.DeriveFromTexture("World\\colonies");
+
             BiomeBlend = TextureTool.MemoryTextureFromTexture2D(AssetManager.GetContentTexture("World\\biome-blend"));
             if (BiomeBlend == null || BiomeBlend.Width != VoxelConstants.ChunkSizeX || BiomeBlend.Height != VoxelConstants.ChunkSizeZ)
                 BiomeBlend = new MemoryTexture(VoxelConstants.ChunkSizeX, VoxelConstants.ChunkSizeZ);

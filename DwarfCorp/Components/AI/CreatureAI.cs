@@ -209,8 +209,7 @@ namespace DwarfCorp
         public void ResetPositionConstraint()
         {
             PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue),
-            new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
-            
+            new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));            
         }
 
         public string LastFailedAct = null;

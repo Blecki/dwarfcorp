@@ -39,7 +39,7 @@ namespace DwarfCorp
             if (!animal.GetRoot().Tags.Contains("DomesticAnimal"))
                 return false;
 
-            var pens = Player.Faction.GetRooms().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.IsBuilt &&
+            var pens = Player.World.PlayerFaction.GetRooms().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.IsBuilt &&
                             (pen.Species == "" || pen.Species == creature.Stats.CurrentClass.Name));
 
             if (pens.Any())
@@ -76,7 +76,7 @@ namespace DwarfCorp
                         break;
                     case InputManager.MouseButton.Right:
                         {
-                            var existingOrder = Player.Faction.Designations.GetEntityDesignation(animal, DesignationType.Wrangle);
+                            var existingOrder = Player.World.PlayerFaction.Designations.GetEntityDesignation(animal, DesignationType.Wrangle);
                             if (existingOrder != null)
                                 Player.TaskManager.CancelTask(existingOrder.Task);
                         }

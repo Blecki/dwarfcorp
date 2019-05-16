@@ -13,7 +13,7 @@ namespace DwarfCorp.Gui.Widgets
     public class BuildRoomInfo : Widget
     {
         public RoomData Data;
-        public GameMaster Master;
+        public WorldManager World;
 
         public override void Construct()
         {
@@ -44,7 +44,7 @@ namespace DwarfCorp.Gui.Widgets
         {
             foreach (var requirment in Data.RequiredResources)
             {
-                var inventory = Master.Faction.ListResourcesWithTag(requirment.Value.Type);
+                var inventory = World.PlayerFaction.ListResourcesWithTag(requirment.Value.Type);
                 if (inventory.Sum(r => r.Count) < requirment.Value.Count) return false;
             }
 

@@ -154,11 +154,11 @@ namespace DwarfCorp
 
         public List<GameComponent> SelectRootBodiesOnScreen(Rectangle selectionRectangle, Camera camera)
         {
-            if (World.SelectionBuffer == null)
+            if (World.Renderer.SelectionBuffer == null)
                 return new List<GameComponent>();
 
             HashSet<GameComponent> toReturn = new HashSet<GameComponent>(); // Hashset ensures all bodies are unique.
-            foreach (uint id in World.SelectionBuffer.GetIDsSelected(selectionRectangle))
+            foreach (uint id in World.Renderer.SelectionBuffer.GetIDsSelected(selectionRectangle))
             {
                 GameComponent component;
                 if (!Components.TryGetValue(id, out component))

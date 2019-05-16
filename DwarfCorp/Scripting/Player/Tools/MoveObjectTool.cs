@@ -193,7 +193,7 @@ namespace DwarfCorp
 
                     SelectedBody.PropogateTransforms();
 
-                    var validPlacement = ObjectHelper.IsValidPlacement(voxelUnderMouse, craftItem, Player, SelectedBody, "move", "moved");
+                    var validPlacement = ObjectHelper.IsValidPlacement(voxelUnderMouse, craftItem, Player.World, SelectedBody, "move", "moved");
 
                     foreach (var tinter in SelectedBody.GetRoot().EnumerateAll().OfType<Tinter>())
                     {

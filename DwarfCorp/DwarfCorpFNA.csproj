@@ -842,6 +842,7 @@
     <Compile Include="World\DebugOverworlds.cs" />
     <Compile Include="World\WorldManager-Saving.cs" />
     <Compile Include="World\WorldManager-Ambients.cs" />
+    <Compile Include="World\WorldManager-Announcement.cs" />
     <Compile Include="World\WorldRenderer.cs" />
     <Compile Include="World\WorldManager-SpeciesLimits.cs" />
     <Compile Include="World\WorldRendererPersistentSettings.cs" />

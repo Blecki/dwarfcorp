@@ -99,21 +99,21 @@ namespace DwarfCorp
 
             var v = Player.VoxSelector.VoxelUnderMouse;
 
-            if (Player.Faction.RoomBuilder.IsBuildDesignation(v))
+            if (Player.World.PlayerFaction.RoomBuilder.IsBuildDesignation(v))
             {
-                BuildVoxelOrder vox = Player.Faction.RoomBuilder.GetBuildDesignation(v);
+                BuildVoxelOrder vox = Player.World.PlayerFaction.RoomBuilder.GetBuildDesignation(v);
                 if (vox != null && vox.Order != null)
                 {
                     vox.Order.Destroy();
                     if (vox.Order.DisplayWidget != null)
                         Player.World.Gui.DestroyWidget(vox.Order.DisplayWidget);
-                    Player.Faction.RoomBuilder.BuildDesignations.Remove(vox.Order);
-                    Player.Faction.RoomBuilder.DesignatedRooms.Remove(vox.Order.ToBuild);
+                    Player.World.PlayerFaction.RoomBuilder.BuildDesignations.Remove(vox.Order);
+                    Player.World.PlayerFaction.RoomBuilder.DesignatedRooms.Remove(vox.Order.ToBuild);
                 }
             }
-            else if (Player.Faction.RoomBuilder.IsInRoom(v))
+            else if (Player.World.PlayerFaction.RoomBuilder.IsInRoom(v))
             {
-                Room existingRoom = Player.Faction.RoomBuilder.GetMostLikelyRoom(v);
+                Room existingRoom = Player.World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(v);
 
                 if (existingRoom != null)
                     Player.World.Gui.ShowModalPopup(new Gui.Widgets.Confirm
@@ -129,9 +129,9 @@ namespace DwarfCorp
         {
             if (status == Gui.Widgets.Confirm.Result.OKAY)
             {
-                Player.Faction.RoomBuilder.DesignatedRooms.Remove(room);
+                Player.World.PlayerFaction.RoomBuilder.DesignatedRooms.Remove(room);
 
-                List<BuildVoxelOrder> existingDesignations = Player.Faction.RoomBuilder.GetDesignationsAssociatedWithRoom(room);
+                List<BuildVoxelOrder> existingDesignations = Player.World.PlayerFaction.RoomBuilder.GetDesignationsAssociatedWithRoom(room);
                 BuildRoomOrder buildRoomDes = null;
                 foreach (BuildVoxelOrder des in existingDesignations)
                 {
@@ -142,7 +142,7 @@ namespace DwarfCorp
                 {
                     Player.World.Gui.DestroyWidget(buildRoomDes.DisplayWidget);
                 }
-                Player.Faction.RoomBuilder.BuildDesignations.Remove(buildRoomDes);
+                Player.World.PlayerFaction.RoomBuilder.BuildDesignations.Remove(buildRoomDes);
 
                 room.Destroy();
             }
@@ -176,7 +176,7 @@ namespace DwarfCorp
                 var v = Player.VoxSelector.VoxelUnderMouse;
                 if (v.IsValid && !v.IsEmpty)
                 {
-                    var room = Player.Faction.RoomBuilder.GetRoomThatContainsVoxel(v);
+                    var room = Player.World.PlayerFaction.RoomBuilder.GetRoomThatContainsVoxel(v);
                     if (room != null)
                         Drawer3D.DrawBox(room.GetBoundingBox(), GameSettings.Default.Colors.GetColor("Positive", Color.Green), 0.2f, true);
                 }

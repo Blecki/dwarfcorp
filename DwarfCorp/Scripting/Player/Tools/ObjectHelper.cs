@@ -1,35 +1,3 @@
-// BuildTool.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,7 +17,7 @@ namespace DwarfCorp
         public static bool IsValidPlacement(
             VoxelHandle Location, 
             CraftItem CraftType, 
-            GameMaster Player, 
+            WorldManager World, 
             GameComponent PreviewBody,
             String Verb,
             String PastParticple)
@@ -60,9 +28,9 @@ namespace DwarfCorp
             }
 
             if (!String.IsNullOrEmpty(CraftType.CraftLocation) 
-                && Player.Faction.FindNearestItemWithTags(CraftType.CraftLocation, Location.WorldPosition, false, null) == null)
+                && World.PlayerFaction.FindNearestItemWithTags(CraftType.CraftLocation, Location.WorldPosition, false, null) == null)
             {
-                Player.World.ShowTooltip("Can't " + Verb + ", need " + CraftType.CraftLocation);
+                World.ShowTooltip("Can't " + Verb + ", need " + CraftType.CraftLocation);
                 return false;
             }
 
@@ -73,12 +41,12 @@ namespace DwarfCorp
                     case CraftItem.CraftPrereq.NearWall:
                         {
                             var neighborFound = VoxelHelpers.EnumerateManhattanNeighbors2D(Location.Coordinate)
-                                    .Select(c => new VoxelHandle(Player.World.ChunkManager, c))
+                                    .Select(c => new VoxelHandle(World.ChunkManager, c))
                                     .Any(v => v.IsValid && !v.IsEmpty);
 
                             if (!neighborFound)
                             {
-                                Player.World.ShowTooltip("Must be " + PastParticple + " next to wall!");
+                                World.ShowTooltip("Must be " + PastParticple + " next to wall!");
                                 return false;
                             }
 
@@ -90,7 +58,7 @@ namespace DwarfCorp
 
                             if (!below.IsValid || below.IsEmpty)
                             {
-                                Player.World.ShowTooltip("Must be " + PastParticple + " on solid ground!");
+                                World.ShowTooltip("Must be " + PastParticple + " on solid ground!");
                                 return false;
                             }
                             break;
@@ -110,7 +78,7 @@ namespace DwarfCorp
                 if (Debugger.Switches.DrawToolDebugInfo)
                     Drawer3D.DrawBox(sensorBox, Color.Yellow, 0.1f, false);
 
-                foreach (var intersectingObject in Player.World.EnumerateIntersectingObjects(sensorBox, CollisionType.Static))
+                foreach (var intersectingObject in World.EnumerateIntersectingObjects(sensorBox, CollisionType.Static))
                 {
                     if (Object.ReferenceEquals(intersectingObject, sensor)) continue;
                     var objectRoot = intersectingObject.GetRoot() as GameComponent;
@@ -118,7 +86,7 @@ namespace DwarfCorp
                     if (objectRoot == PreviewBody) continue; 
                     if (objectRoot != null && objectRoot.GetRotatedBoundingBox().Intersects(previewBox))
                     {
-                        Player.World.ShowTooltip("Can't " + Verb + " here: intersects " + objectRoot.Name);
+                        World.ShowTooltip("Can't " + Verb + " here: intersects " + objectRoot.Name);
                         return false;
                     }
                 }
@@ -127,24 +95,24 @@ namespace DwarfCorp
                     (PreviewBody.GetRotatedBoundingBox().Expand(-0.1f)).Any(
                     v =>
                     {
-                        var tvh = new VoxelHandle(Player.World.ChunkManager, v);
+                        var tvh = new VoxelHandle(World.ChunkManager, v);
                         return tvh.IsValid && !tvh.IsEmpty;
                     });
-                var current = new VoxelHandle(Player.World.ChunkManager, GlobalVoxelCoordinate.FromVector3(PreviewBody.Position));
+                var current = new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(PreviewBody.Position));
                 bool underwater = current.IsValid && current.LiquidType != LiquidType.None;
                 if (underwater)
                 {
-                    Player.World.ShowTooltip("Can't " + Verb + " here: underwater or in lava.");
+                    World.ShowTooltip("Can't " + Verb + " here: underwater or in lava.");
                     return false;
                 }
                 if (intersectsWall && !CraftType.Prerequisites.Contains(CraftItem.CraftPrereq.NearWall))
                 {
-                    Player.World.ShowTooltip("Can't " + Verb + " here: intersects wall.");
+                    World.ShowTooltip("Can't " + Verb + " here: intersects wall.");
                     return false;
                 }
 
             }
-            Player.World.ShowTooltip("");
+            World.ShowTooltip("");
             return true;
         }
     }

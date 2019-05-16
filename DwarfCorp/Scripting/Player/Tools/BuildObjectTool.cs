@@ -70,7 +70,7 @@ namespace DwarfCorp
             {
                 case (InputManager.MouseButton.Left):
                     {
-                        if (ObjectHelper.IsValidPlacement(Player.VoxSelector.VoxelUnderMouse, CraftType, Player, PreviewBody, "build", "built"))
+                        if (ObjectHelper.IsValidPlacement(Player.VoxSelector.VoxelUnderMouse, CraftType, Player.World, PreviewBody, "build", "built"))
                         {
                             PreviewBody.SetFlag(GameComponent.Flag.ShouldSerialize, true);
 
@@ -114,7 +114,7 @@ namespace DwarfCorp
                     }
                 case (InputManager.MouseButton.Right):
                     {
-                        var designation = Player.Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft).Select(d => d.Tag as CraftDesignation).FirstOrDefault(d => d.Location == Player.VoxSelector.VoxelUnderMouse);
+                        var designation = World.PlayerFaction.Designations.EnumerateEntityDesignations(DesignationType.Craft).Select(d => d.Tag as CraftDesignation).FirstOrDefault(d => d.Location == Player.VoxSelector.VoxelUnderMouse);
                         if (designation != null)
                         {
                             var realDesignation = World.PlayerFaction.Designations.GetEntityDesignation(designation.Entity, DesignationType.Craft);
@@ -128,9 +128,9 @@ namespace DwarfCorp
 
         private bool HandlePlaceExistingUpdate()
         {
-            var resources = World.Master.Faction.ListResources().Where(r => ResourceLibrary.GetResourceByName(r.Value.Type).CraftInfo.CraftItemType == CraftType.Name).ToList();
+            var resources = World.PlayerFaction.ListResources().Where(r => ResourceLibrary.GetResourceByName(r.Value.Type).CraftInfo.CraftItemType == CraftType.Name).ToList();
 
-            var toPlace = World.Master.Faction.Designations.EnumerateEntityDesignations().Where(designation => designation.Type == DesignationType.Craft &&
+            var toPlace = World.PlayerFaction.Designations.EnumerateEntityDesignations().Where(designation => designation.Type == DesignationType.Craft &&
                 ((CraftDesignation)designation.Tag).ItemType.Name == CraftType.Name).ToList();
 
             if (resources.Sum(r => r.Value.Count) <= toPlace.Count)
@@ -155,7 +155,7 @@ namespace DwarfCorp
             return true;
 
             /*
-            var resource = World.Master.Faction.ListResources().First(r => ResourceLibrary.GetResourceByName(r.Value.String).CraftItnfo.CraftItemType == CraftType.Name);
+            var resource = World.PlayerFaction.ListResources().First(r => ResourceLibrary.GetResourceByName(r.Value.String).CraftItnfo.CraftItemType == CraftType.Name);
             if (resource.Value != null)
             {
                 ExistingPlacement = resource.Key;
@@ -244,7 +244,7 @@ namespace DwarfCorp
             else
                 PreviewBody.OrientToWalls();
 
-            var valid = ObjectHelper.IsValidPlacement(Player.VoxSelector.VoxelUnderMouse, CraftType, Player, PreviewBody, "build", "built");
+            var valid = ObjectHelper.IsValidPlacement(Player.VoxSelector.VoxelUnderMouse, CraftType, Player.World, PreviewBody, "build", "built");
             PreviewBody.SetVertexColorRecursive(valid ? GameSettings.Default.Colors.GetColor("Positive", Color.Green) : GameSettings.Default.Colors.GetColor("Negative", Color.Red));
 
             if (valid && CraftType.AllowRotation)

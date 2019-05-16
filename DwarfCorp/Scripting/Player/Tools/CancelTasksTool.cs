@@ -41,7 +41,7 @@ namespace DwarfCorp
                 {
                     if (r.IsValid)
                     {
-                        var designations = Player.Faction.Designations.EnumerateDesignations(r).ToList();
+                        var designations = Player.World.PlayerFaction.Designations.EnumerateDesignations(r).ToList();
                         foreach (var des in designations)
                             if (des.Task != null)
                                 Player.TaskManager.CancelTask(des.Task);
@@ -87,7 +87,7 @@ namespace DwarfCorp
             if (Options.Entities.CheckState)
                 foreach (var body in bodies)
                 {
-                    foreach (var des in Player.Faction.Designations.EnumerateEntityDesignations(body).ToList())
+                    foreach (var des in Player.World.PlayerFaction.Designations.EnumerateEntityDesignations(body).ToList())
                         if (des.Task != null)
                             Player.TaskManager.CancelTask(des.Task);
                 }

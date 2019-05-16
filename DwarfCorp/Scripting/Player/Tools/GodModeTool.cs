@@ -66,8 +66,8 @@ namespace DwarfCorp
             if(Command.Contains("Build/"))
             {
                 string type = Command.Substring(6);
-                var room = RoomLibrary.CreateRoom(Player.Faction, type, Player.World);
-                Player.Faction.RoomBuilder.DesignatedRooms.Add(room);
+                var room = RoomLibrary.CreateRoom(Player.World.PlayerFaction, type, Player.World);
+                Player.World.PlayerFaction.RoomBuilder.DesignatedRooms.Add(room);
                 RoomLibrary.CompleteRoomImmediately(room, refs);
             }
             if (Command.Contains("Spawn/"))
@@ -91,7 +91,7 @@ namespace DwarfCorp
                             if (craftItem != null)
                             {
                                 if (craftItem.AddToOwnedPool)
-                                    Player.Faction.OwnedObjects.Add(body);
+                                    Player.World.PlayerFaction.OwnedObjects.Add(body);
 
                                 if (craftItem.Moveable)
                                     body.Tags.Add("Moveable");
@@ -160,7 +160,7 @@ namespace DwarfCorp
                             case "Delete Block":
                                 {
                                     var v = vox;
-                                    Player.World.Master.Faction.OnVoxelDestroyed(vox);
+                                    Player.World.PlayerFaction.OnVoxelDestroyed(vox);
                                     v.Type = Library.EmptyVoxelType;
                                     v.QuickSetLiquid(LiquidType.None, 0);
                                 }

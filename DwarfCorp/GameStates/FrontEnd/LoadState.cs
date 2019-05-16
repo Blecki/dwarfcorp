@@ -93,10 +93,12 @@ namespace DwarfCorp.GameStates
                 Settings = Settings,
             };
 
+            World.Renderer.PersistentSettings.MaxViewingLevel = World.WorldSizeInVoxels.Y;
+
             World.OnLoadedEvent += () => DoneLoading = true;
             World.OnSetLoadingMessage = (s) => LoadTicker.AddMessage(s);
 
-            World.Setup();
+            World.StartLoad();
         }
 
         public override void Update(DwarfTime gameTime)

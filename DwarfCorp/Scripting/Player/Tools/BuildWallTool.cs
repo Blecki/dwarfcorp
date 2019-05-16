@@ -31,7 +31,7 @@ namespace DwarfCorp
 
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            var Faction = Player.Faction;
+            var Faction = Player.World.PlayerFaction;
 
             if (CurrentVoxelType == 0)
             {
@@ -57,7 +57,7 @@ namespace DwarfCorp
                             if (Player.World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty && !r.IsEmpty) continue;
                             if (Player.World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectFilled && r.IsEmpty) continue;
 
-                            var existingDesignation = Player.Faction.Designations.GetVoxelDesignation(r, DesignationType.Put);
+                            var existingDesignation = Player.World.PlayerFaction.Designations.GetVoxelDesignation(r, DesignationType.Put);
                             if (existingDesignation != null)
                                 Player.TaskManager.CancelTask(existingDesignation.Task);
 

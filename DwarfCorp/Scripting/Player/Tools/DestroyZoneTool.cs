@@ -23,7 +23,7 @@ namespace DwarfCorp
             Player = Master;
         }
 
-        private Faction Faction { get { return Player.Faction; } }
+        private Faction Faction { get { return Player.World.PlayerFaction; } }
         private WorldManager World { get { return Player.World; } }
 
         public override void OnVoxelsSelected(List<VoxelHandle> Voxels, InputManager.MouseButton button)

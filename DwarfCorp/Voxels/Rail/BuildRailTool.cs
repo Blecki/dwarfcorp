@@ -49,16 +49,15 @@ namespace DwarfCorp.Rail
         public BuildRailTool(GameMaster Player)
         {
             this.Player = Player;
-            this.Faction = Player.Faction;
+            this.Faction = Player.World.PlayerFaction;
         }
 
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
             if (button == InputManager.MouseButton.Left)
-                //if (RailHelper.CanPlace(Player, PreviewBodies))
                 if (CanPlace)
                 {
-                    RailHelper.Place(Player, PreviewBodies, GodModeSwitch);
+                    RailHelper.Place(Player.World, PreviewBodies, GodModeSwitch);
                     PreviewBodies.Clear();
                     CreatePreviewBodies(Player.World.ComponentManager, Player.VoxSelector.VoxelUnderMouse);
                 }

@@ -50,7 +50,7 @@ namespace DwarfCorp
                 return false;
             }
 
-            if (Player.World.Diplomacy.GetPolitics(creature.Faction, Player.Faction).GetCurrentRelationship() ==
+            if (Player.World.Diplomacy.GetPolitics(creature.Faction, Player.World.PlayerFaction).GetCurrentRelationship() ==
                 Relationship.Loving)
             {
                 return false;
@@ -69,14 +69,14 @@ namespace DwarfCorp
                     continue;
                 }
 
-                if (Player.World.Diplomacy.GetPolitics(creature.Faction, Player.Faction).GetCurrentRelationship() ==
+                if (Player.World.Diplomacy.GetPolitics(creature.Faction, Player.World.PlayerFaction).GetCurrentRelationship() ==
                     Relationship.Loving)
                 {
-                    Player.Faction.World.ShowTooltip("We refuse to attack allies.");
+                    Player.World.PlayerFaction.World.ShowTooltip("We refuse to attack allies.");
                     shown = true;
                     continue;
                 }
-                Player.Faction.World.ShowTooltip("Click to attack this " + creature.Stats.CurrentClass.Name);
+                Player.World.PlayerFaction.World.ShowTooltip("Click to attack this " + creature.Stats.CurrentClass.Name);
                 shown = true;
             }
             if (!shown)
@@ -125,9 +125,9 @@ namespace DwarfCorp
                     continue;
                 }
 
-                if (Player.World.Diplomacy.GetPolitics(creature.Faction, Player.Faction).GetCurrentRelationship() == Relationship.Loving)
+                if (Player.World.Diplomacy.GetPolitics(creature.Faction, Player.World.PlayerFaction).GetCurrentRelationship() == Relationship.Loving)
                 {
-                    Player.Faction.World.ShowToolPopup("We refuse to attack allies.");
+                    Player.World.PlayerFaction.World.ShowToolPopup("We refuse to attack allies.");
                     continue;
                 }
 
@@ -137,16 +137,16 @@ namespace DwarfCorp
                 {
                     var task = new KillEntityTask(other, KillEntityTask.KillType.Attack);
                     Player.TaskManager.AddTask(task);
-                    Player.Faction.World.ShowToolPopup("Will attack this " + creature.Stats.CurrentClass.Name);
-                    OnConfirm(Player.Faction.SelectedMinions);
+                    Player.World.PlayerFaction.World.ShowToolPopup("Will attack this " + creature.Stats.CurrentClass.Name);
+                    OnConfirm(Player.World.PlayerFaction.SelectedMinions);
                 }
                 else if (button == InputManager.MouseButton.Right)
                 {
-                    var designation = Player.Faction.Designations.GetEntityDesignation(other, DesignationType.Attack);
+                    var designation = Player.World.PlayerFaction.Designations.GetEntityDesignation(other, DesignationType.Attack);
                     if (designation != null)
                     {
                         Player.TaskManager.CancelTask(designation.Task);
-                        Player.Faction.World.ShowToolPopup("Attack cancelled for " + creature.Stats.CurrentClass.Name);
+                        Player.World.PlayerFaction.World.ShowToolPopup("Attack cancelled for " + creature.Stats.CurrentClass.Name);
                     }
                 }
             }

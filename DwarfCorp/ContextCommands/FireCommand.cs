@@ -25,7 +25,7 @@ namespace DwarfCorp.ContextCommands
             var creature = Entity.GetComponent<CreatureAI>();
             if (creature == null)
                 return false;
-            return World.Master.Faction.Minions.Contains(creature);
+            return World.PlayerFaction.Minions.Contains(creature);
         }
         
         public override void Apply(GameComponent Entity, WorldManager World)

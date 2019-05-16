@@ -40,6 +40,12 @@ namespace DwarfCorp.GameStates
 
         private List<ContextCommands.ContextCommand> ContextCommands = new List<ContextCommands.ContextCommand>();
 
+        private bool sliceDownheld = false;
+        private bool sliceUpheld = false;
+        private Timer sliceDownTimer = new Timer(0.5f, true, Timer.TimerMode.Real);
+        private Timer sliceUpTimer = new Timer(0.5f, true, Timer.TimerMode.Real);
+        private int rememberedViewValue = 0;
+
         private Gui.Widget MoneyLabel;
         private Gui.Widget LevelLabel;
         private Gui.Widget StocksLabel;
@@ -138,6 +144,8 @@ namespace DwarfCorp.GameStates
             IsInitialized = false;
 
             Renderer = World.Renderer; // Todo: Kill
+
+            rememberedViewValue = world.WorldSizeInVoxels.Y;
         }
 
         private void World_OnLoseEvent()
@@ -331,14 +339,85 @@ namespace DwarfCorp.GameStates
 
                 else if (@event == Gui.InputEvents.KeyUp)
                 {
-                    args.Handled = HandleKeyPress((Keys)args.KeyValue) || Master.OnKeyReleased((Keys)args.KeyValue);
+                    if ((Keys)args.KeyValue == ControlSettings.Mappings.SliceUp)
+                    {
+                        sliceUpheld = false;
+                        args.Handled = true;
+                    }
+
+                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.SliceDown)
+                    {
+                        sliceDownheld = false;
+                        args.Handled = true;
+                    }
+                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.SliceSelected)
+                    {
+                        if (args.Control)
+                        {
+                            World.Renderer.SetMaxViewingLevel(rememberedViewValue);
+                            args.Handled = true;
+                        }
+                        else if (Master.VoxSelector.VoxelUnderMouse.IsValid)
+                        {
+                            World.Tutorial("unslice");
+                            World.Renderer.SetMaxViewingLevel(Master.VoxSelector.VoxelUnderMouse.Coordinate.Y + 1);
+                            Drawer3D.DrawBox(Master.VoxSelector.VoxelUnderMouse.GetBoundingBox(), Color.White, 0.15f, true);
+                            args.Handled = true;
+                        }
+                    }
+                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.Unslice)
+                    {
+                        rememberedViewValue = World.Renderer.PersistentSettings.MaxViewingLevel;
+                        World.Renderer.SetMaxViewingLevel(World.WorldSizeInVoxels.Y);
+                        args.Handled = true;
+                    }
                 }
 
                 else if (@event == Gui.InputEvents.KeyDown)
                 {
-                    args.Handled = Master.OnKeyPressed((Keys)args.KeyValue);
+                    if ((Keys)args.KeyValue == ControlSettings.Mappings.SliceUp)
+                    {
+                        if (!sliceUpheld)
+                        {
+                            sliceUpheld = true;
+                            World.Tutorial("unslice");
+                            sliceUpTimer.Reset(0.5f);
+                            World.Renderer.SetMaxViewingLevel(World.Renderer.PersistentSettings.MaxViewingLevel + 1);
+                            args.Handled = true;
+                        }
+                    }
+                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.SliceDown)
+                    {
+                        if (!sliceDownheld)
+                        {
+                            World.Tutorial("unslice");
+                            sliceDownheld = true;
+                            sliceDownTimer.Reset(0.5f);
+                            World.Renderer.SetMaxViewingLevel(World.Renderer.PersistentSettings.MaxViewingLevel - 1);
+                            args.Handled = true;
+                        }
+                    }
                 }
             });
+
+            if (sliceDownheld)
+            {
+                sliceDownTimer.Update(gameTime);
+                if (sliceDownTimer.HasTriggered)
+                {
+                    World.Renderer.SetMaxViewingLevel(World.Renderer.PersistentSettings.MaxViewingLevel - 1);
+                    sliceDownTimer.Reset(sliceDownTimer.TargetTimeSeconds * 0.6f);
+                }
+            }
+            else if (sliceUpheld)
+            {
+                sliceUpTimer.Update(gameTime);
+                if (sliceUpTimer.HasTriggered)
+                {
+                    World.Renderer.SetMaxViewingLevel(World.Renderer.PersistentSettings.MaxViewingLevel + 1);
+                    sliceUpTimer.Reset(sliceUpTimer.TargetTimeSeconds * 0.6f);
+                }
+            }
 
             World.Update(gameTime);
             Renderer.Update(gameTime);
@@ -354,11 +433,11 @@ namespace DwarfCorp.GameStates
 
             #region Update top left panel
             var pulse = 0.25f * (float)Math.Sin(gameTime.TotalRealTime.TotalSeconds * 4) + 0.25f;
-            MoneyLabel.Text = Master.Faction.Economy.Funds.ToString();
-            MoneyLabel.TextColor = Master.Faction.Economy.Funds > 1.0m ? Color.White.ToVector4() : new Vector4(1.0f, pulse, pulse, 1.0f);
+            MoneyLabel.Text = World.PlayerFaction.Economy.Funds.ToString();
+            MoneyLabel.TextColor = World.PlayerFaction.Economy.Funds > 1.0m ? Color.White.ToVector4() : new Vector4(1.0f, pulse, pulse, 1.0f);
             MoneyLabel.Invalidate();
-            int availableSpace = Master.Faction.ComputeRemainingStockpileSpace();
-            int totalSpace = Master.Faction.ComputeTotalStockpileSpace();
+            int availableSpace = World.PlayerFaction.ComputeRemainingStockpileSpace();
+            int totalSpace = World.PlayerFaction.ComputeTotalStockpileSpace();
             StocksLabel.Text = String.Format("    Stocks: {0}/{1}", totalSpace - availableSpace, totalSpace);
             StocksLabel.TextColor = availableSpace > 0 ? Color.White.ToVector4() : new Vector4(1.0f, pulse, pulse, 1.0f);
             StocksLabel.Invalidate();
@@ -413,9 +492,9 @@ namespace DwarfCorp.GameStates
             {
                 bool update = MathFunctions.RandEvent(0.1f);
                 if ((SelectedEmployeeInfo.Employee == null || SelectedEmployeeInfo.Employee.IsDead || !SelectedEmployeeInfo.Employee.Active) &&
-                    Master.Faction.Minions.Count > 0)
+                    World.PlayerFaction.Minions.Count > 0)
                 {
-                    SelectedEmployeeInfo.Employee = Master.Faction.Minions[0];
+                    SelectedEmployeeInfo.Employee = World.PlayerFaction.Minions[0];
                 }
                 else if (update)
                 {
@@ -541,7 +620,7 @@ namespace DwarfCorp.GameStates
                 numResources = 0;
             }
 
-            var resourceCount = Master.Faction.ListResourcesInStockpilesPlusMinions()
+            var resourceCount = World.PlayerFaction.ListResourcesInStockpilesPlusMinions()
                 .Where(r => data.CanBuildWith(ResourceLibrary.GetResourceByName(r.Key))).Sum(r => r.Value.First.Count + r.Value.Second.Count);
 
             int newNum = Math.Max(resourceCount -
@@ -740,8 +819,8 @@ namespace DwarfCorp.GameStates
                                 World.MakeAnnouncement(StringLibrary.GetString("was-fired", selectedEmployee.Stats.FullName));
                                 selectedEmployee.GetRoot().Delete();
 
-                                Master.Faction.Minions.Remove(selectedEmployee);
-                                Master.Faction.SelectedMinions.Remove(selectedEmployee);
+                                World.PlayerFaction.Minions.Remove(selectedEmployee);
+                                World.PlayerFaction.SelectedMinions.Remove(selectedEmployee);
                             }
                         }
                     }));
@@ -1250,11 +1329,11 @@ namespace DwarfCorp.GameStates
                         {
                             Data = data,
                             Rect = new Rectangle(0, 0, 256, 164),
-                            Master = Master
+                            World = World
                         },
                         OnClick = (sender, args) =>
                         {
-                            Master.Faction.RoomBuilder.CurrentRoomData = data;
+                            World.PlayerFaction.RoomBuilder.CurrentRoomData = data;
                             Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
                             ChangeTool("BuildZone");
                             World.ShowToolPopup("Click and drag to build " + data.Name);
@@ -1350,11 +1429,11 @@ namespace DwarfCorp.GameStates
                             {
                                 Data = data,
                                 Rect = new Rectangle(0, 0, 256, 128),
-                                Master = Master
+                                World = World
                             },
                             OnClick = (sender, args) =>
                             {
-                                Master.Faction.RoomBuilder.CurrentRoomData = null;
+                                World.PlayerFaction.RoomBuilder.CurrentRoomData = null;
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
                                 var tool = Master.Tools["BuildWall"] as BuildWallTool;
                                 tool.BuildFloor = false;
@@ -1400,11 +1479,11 @@ namespace DwarfCorp.GameStates
                             {
                                 Data = data,
                                 Rect = new Rectangle(0, 0, 256, 128),
-                                Master = Master
+                                World = World
                             },
                             OnClick = (sender, args) =>
                             {
-                                Master.Faction.RoomBuilder.CurrentRoomData = null;
+                                World.PlayerFaction.RoomBuilder.CurrentRoomData = null;
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
                                 var tool = Master.Tools["BuildWall"] as BuildWallTool;
                                 tool.BuildFloor = true;
@@ -1522,7 +1601,7 @@ namespace DwarfCorp.GameStates
                                     sender.Parent.Parent.Hidden = true;
                                     var tool = Master.Tools["BuildObject"] as BuildObjectTool;
                                     tool.SelectedResources = buildInfo.GetSelectedResources();
-                                    Master.Faction.RoomBuilder.CurrentRoomData = null;
+                                    World.PlayerFaction.RoomBuilder.CurrentRoomData = null;
                                     Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
                                     tool.CraftType = data;
                                     tool.Mode = BuildObjectTool.PlacementMode.BuildNew;
@@ -1545,7 +1624,7 @@ namespace DwarfCorp.GameStates
                                     sender.Parent.Parent.Hidden = true;
                                     var tool = Master.Tools["BuildObject"] as BuildObjectTool;
                                     tool.SelectedResources = null;
-                                    Master.Faction.RoomBuilder.CurrentRoomData = null;
+                                    World.PlayerFaction.RoomBuilder.CurrentRoomData = null;
                                     Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
                                     tool.CraftType = data;
                                     tool.Mode = BuildObjectTool.PlacementMode.PlaceExisting;
@@ -1878,7 +1957,7 @@ namespace DwarfCorp.GameStates
                 KeepChildVisible = true,
                 OnConstruct = (sender) =>
                 {
-                    AddToolbarIcon(sender, () => Master.Faction.Minions.Any(minion =>
+                    AddToolbarIcon(sender, () => World.PlayerFaction.Minions.Any(minion =>
                         minion.Stats.IsTaskAllowed(Task.TaskCategory.BuildZone)));
                     AddToolSelectIcon("BuildZone", sender);
                 },
@@ -1957,7 +2036,7 @@ namespace DwarfCorp.GameStates
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () =>
-                    Master.Faction.Minions.Any(minion =>
+                    World.PlayerFaction.Minions.Any(minion =>
                         minion.Stats.IsTaskAllowed(Task.TaskCategory.Cook)));
                 },
                 ReplacementMenu = menu_Edibles,
@@ -2037,8 +2116,8 @@ namespace DwarfCorp.GameStates
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () =>
-                    Master.Faction.Minions.Any(minion =>
-                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Research)) && Master.Faction.OwnedObjects.Any(obj => obj.Tags.Contains("Apothecary")));
+                    World.PlayerFaction.Minions.Any(minion =>
+                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Research)) && World.PlayerFaction.OwnedObjects.Any(obj => obj.Tags.Contains("Apothecary")));
                 },
                 ReplacementMenu = menu_potions,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
@@ -2058,7 +2137,7 @@ namespace DwarfCorp.GameStates
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () =>
-                    Master.Faction.Minions.Any(minion =>
+                    World.PlayerFaction.Minions.Any(minion =>
                         minion.Stats.IsTaskAllowed(Task.TaskCategory.Dig)));
                     AddToolSelectIcon("Dig", sender);
                 },
@@ -2080,7 +2159,7 @@ namespace DwarfCorp.GameStates
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () =>
-                    Master.Faction.Minions.Any(minion =>
+                    World.PlayerFaction.Minions.Any(minion =>
                         minion.Stats.IsTaskAllowed(Task.TaskCategory.Gather)));
                     AddToolSelectIcon("Gather", sender);
                 },
@@ -2102,7 +2181,7 @@ namespace DwarfCorp.GameStates
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () =>
-                    Master.Faction.Minions.Any(minion =>
+                    World.PlayerFaction.Minions.Any(minion =>
                         minion.Stats.IsTaskAllowed(Task.TaskCategory.Chop)));
                     AddToolSelectIcon("Chop", sender);
                 },
@@ -2124,7 +2203,7 @@ namespace DwarfCorp.GameStates
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () =>
-                    Master.Faction.Minions.Any(minion =>
+                    World.PlayerFaction.Minions.Any(minion =>
                         minion.Stats.IsTaskAllowed(Task.TaskCategory.Attack)));
                     AddToolSelectIcon("Attack", sender);
                 },
@@ -2169,7 +2248,7 @@ namespace DwarfCorp.GameStates
 
                     (widget as FlatToolTray.Tray).ItemSource =
                         (new Widget[] { icon_menu_Plant_Return }).Concat(
-                         Master.Faction.ListResourcesWithTag(Resource.ResourceTags.Plantable)
+                         World.PlayerFaction.ListResourcesWithTag(Resource.ResourceTags.Plantable)
                         .Select(resource => new FlatToolTray.Icon
                         {
                             Icon = ResourceLibrary.GetResourceByName(resource.Type)?.GuiLayers[0],
@@ -2248,7 +2327,7 @@ namespace DwarfCorp.GameStates
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () =>
-                    Master.Faction.Minions.Any(minion =>
+                    World.PlayerFaction.Minions.Any(minion =>
                         minion.Stats.IsTaskAllowed(Task.TaskCategory.Wrangle)));
                     AddToolSelectIcon("Wrangle", sender);
                 },
@@ -2345,7 +2424,7 @@ namespace DwarfCorp.GameStates
 
             GodMenu = GuiRoot.RootItem.AddChild(new Gui.Widgets.GodMenu
             {
-                Master = Master,
+                World = World,
                 AutoLayout = AutoLayout.FloatTopLeft
             }) as Gui.Widgets.GodMenu;
 
@@ -2468,7 +2547,7 @@ namespace DwarfCorp.GameStates
             {
                 if (PausePanel == null || PausePanel.Hidden)
                 {
-                    Master.SelectedMinions.AddRange(Master.Faction.Minions);
+                    Master.SelectedMinions.AddRange(World.PlayerFaction.Minions);
                     World.Tutorial("dwarf selected");
                     return true;
                 }

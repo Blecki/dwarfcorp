@@ -102,7 +102,7 @@ namespace DwarfCorp
                 return false;
 
             Creature dwarf = dwarves[0];
-            return dwarf.Faction == Player.Faction && !Player.SelectedMinions.Contains(dwarf.AI);
+            return dwarf.Faction == Player.World.PlayerFaction && !Player.SelectedMinions.Contains(dwarf.AI);
         }
 
         bool IsDwarf(GameComponent body)
@@ -115,7 +115,7 @@ namespace DwarfCorp
             if (dwarves.Count <= 0)
                 return false;
 
-            return dwarves[0].Faction == Player.Faction;
+            return dwarves[0].Faction == Player.World.PlayerFaction;
         }
 
         protected void SelectDwarves(List<GameComponent> bodies)

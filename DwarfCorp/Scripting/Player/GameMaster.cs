@@ -20,8 +20,6 @@ namespace DwarfCorp
         [JsonIgnore]
         public BodySelector BodySelector { get; set; }
 
-        public Faction Faction { get; set; } // Todo: Move to WorldManager
-
         #region  Player tool management
 
         [JsonIgnore]
@@ -50,7 +48,7 @@ namespace DwarfCorp
 
 
         [JsonIgnore]
-        public List<CreatureAI> SelectedMinions { get { return Faction.SelectedMinions; } set { Faction.SelectedMinions = value; } }
+        public List<CreatureAI> SelectedMinions { get { return World.PlayerFaction.SelectedMinions; } set { World.PlayerFaction.SelectedMinions = value; } }
 
         [JsonIgnore]
         public List<GameComponent> SelectedObjects = new List<GameComponent>();
@@ -60,11 +58,6 @@ namespace DwarfCorp
 
         public TaskManager TaskManager { get; set; }
 
-        private bool sliceDownheld = false;
-        private bool sliceUpheld = false;
-        private Timer sliceDownTimer = new Timer(0.5f, true, Timer.TimerMode.Real);
-        private Timer sliceUpTimer = new Timer(0.5f, true, Timer.TimerMode.Real);
-
         public Scripting.Gambling GamblingState = new Scripting.Gambling(); // Todo: Belongs in WorldManager?
 
         [OnDeserialized]
@@ -73,20 +66,20 @@ namespace DwarfCorp
             World = (WorldManager)(context.Context);
             Initialize(GameState.Game, World.ComponentManager, World.ChunkManager, World.Renderer.Camera, GameState.Game.GraphicsDevice);
             World.Master = this;
-            TaskManager.Faction = Faction;
+            TaskManager.Faction = World.PlayerFaction;
         }
 
         public GameMaster()
         {
         }
 
+        // Todo: Clean up construction
         public GameMaster(Faction faction, DwarfGame game, ComponentManager components, ChunkManager chunks, OrbitCamera camera, GraphicsDevice graphics)
         {
             TaskManager = new TaskManager();
             TaskManager.Faction = faction;
 
             World = components.World;
-            Faction = faction;
             Initialize(game, components, chunks, camera, graphics);
             VoxSelector.Selected += OnSelected;
             VoxSelector.Dragged += OnDrag;
@@ -94,7 +87,6 @@ namespace DwarfCorp
             BodySelector.MouseOver += OnMouseOver;
             World.Master = this;
             World.Time.NewDay += Time_NewDay;
-            rememberedViewValue = World.WorldSizeInVoxels.Y;
         }
 
         public void Initialize(DwarfGame game, ComponentManager components, ChunkManager chunks, OrbitCamera camera, GraphicsDevice graphics)
@@ -117,7 +109,6 @@ namespace DwarfCorp
             Tools["God"].Destroy();
             Tools["SelectUnits"].Destroy();
             Tools.Clear();
-            Faction = null;
             VoxSelector = null;
             BodySelector = null;
         }
@@ -140,7 +131,7 @@ namespace DwarfCorp
 
         void Time_NewDay(DateTime time)
         {
-            Faction.PayEmployees();
+            World.PlayerFaction.PayEmployees();
         }
 
         public void OnMouseOver(IEnumerable<GameComponent> bodies)
@@ -168,14 +159,14 @@ namespace DwarfCorp
         // Todo: Belongs in... uh WorldManager maybe?
         public bool AreAllEmployeesAsleep()
         {
-            return (Faction.Minions.Count > 0) && Faction.Minions.All(minion => !minion.Active || ((!minion.Stats.Species.CanSleep || minion.Creature.Stats.IsAsleep) && !minion.IsDead));
+            return (World.PlayerFaction.Minions.Count > 0) && World.PlayerFaction.Minions.All(minion => !minion.Active || ((!minion.Stats.Species.CanSleep || minion.Creature.Stats.IsAsleep) && !minion.IsDead));
         }
 
         public void Render2D(DwarfGame game, DwarfTime time)
         {
             CurrentTool.Render2D(game, time);
             
-            foreach (CreatureAI creature in Faction.SelectedMinions)
+            foreach (CreatureAI creature in World.PlayerFaction.SelectedMinions)
             {
                 foreach (Task task in creature.Tasks)
                     if (task.IsFeasible(creature.Creature) == Task.Feasibility.Feasible)
@@ -214,13 +205,13 @@ namespace DwarfCorp
             {
                 List<Task> orphanedTasks = new List<Task>();
                 
-                foreach (var ent in Faction.Designations.EnumerateEntityDesignations())
+                foreach (var ent in World.PlayerFaction.Designations.EnumerateEntityDesignations())
                 {
                     if (ent.Type == DesignationType.Attack)
                     {
                         var task = new KillEntityTask(ent.Body, KillEntityTask.KillType.Attack);
                         if (!TaskManager.HasTask(task) &&
-                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
+                            !World.PlayerFaction.Minions.Any(minion => minion.Tasks.Contains(task)))
                         {
                             orphanedTasks.Add(task);
                         }
@@ -231,7 +222,7 @@ namespace DwarfCorp
                     {
                         var task = new CraftItemTask(ent.Tag as CraftDesignation);
                         if (!TaskManager.HasTask(task) &&
-                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
+                            !World.PlayerFaction.Minions.Any(minion => minion.Tasks.Contains(task)))
                         {
                             orphanedTasks.Add(task);
                         }
@@ -250,9 +241,9 @@ namespace DwarfCorp
         {
             // Todo: All input handling should be in one spot. PlayState!
             GamblingState.Update(time);
-            TaskManager.Update(Faction.Minions);
+            TaskManager.Update(World.PlayerFaction.Minions);
             CurrentTool.Update(game, time);
-            Faction.RoomBuilder.Update();
+            World.PlayerFaction.RoomBuilder.Update();
             UpdateOrphanedTasks();
 
             if (World.Paused)
@@ -260,9 +251,9 @@ namespace DwarfCorp
 
             UpdateInput(game, time);
 
-            if (Faction.Minions.Any(m => m.IsDead && m.TriggersMourning))
+            if (World.PlayerFaction.Minions.Any(m => m.IsDead && m.TriggersMourning))
             {
-                foreach (CreatureAI minion in Faction.Minions)
+                foreach (CreatureAI minion in World.PlayerFaction.Minions)
                 {
                     minion.Creature.AddThought(Thought.ThoughtType.FriendDied);
 
@@ -275,40 +266,21 @@ namespace DwarfCorp
 
             }
 
-            Faction.Minions.RemoveAll(m => m.IsDead);
+            World.PlayerFaction.Minions.RemoveAll(m => m.IsDead);
 
             HandlePosessedDwarf();
-
-            if (sliceDownheld)
-            {
-                sliceDownTimer.Update(time);
-                if (sliceDownTimer.HasTriggered)
-                {
-                    World.Renderer.SetMaxViewingLevel(World.Renderer.PersistentSettings.MaxViewingLevel - 1);
-                    sliceDownTimer.Reset(sliceDownTimer.TargetTimeSeconds * 0.6f);
-                }
-            }
-            else if (sliceUpheld)
-            {
-                sliceUpTimer.Update(time);
-                if (sliceUpTimer.HasTriggered)
-                {
-                    World.Renderer.SetMaxViewingLevel(World.Renderer.PersistentSettings.MaxViewingLevel + 1);
-                    sliceUpTimer.Reset(sliceUpTimer.TargetTimeSeconds * 0.6f);
-                }
-            }
 
             checkFoodTimer.Update(time);
             if (checkFoodTimer.HasTriggered)
             {
-                var food = Faction.CountResourcesWithTag(Resource.ResourceTags.Edible);
+                var food = World.PlayerFaction.CountResourcesWithTag(Resource.ResourceTags.Edible);
                 if (food == 0)
                 {
-                    Faction.World.MakeAnnouncement("We're out of food!", null, () => { return Faction.CountResourcesWithTag(Resource.ResourceTags.Edible) == 0; });
+                    World.PlayerFaction.World.MakeAnnouncement("We're out of food!", null, () => { return World.PlayerFaction.CountResourcesWithTag(Resource.ResourceTags.Edible) == 0; });
                 }
             }
 
-            foreach(var minion in Faction.Minions)
+            foreach(var minion in World.PlayerFaction.Minions)
             {
                 if (minion == null) throw new InvalidProgramException("Null minion?");
                 if (minion.Stats == null) throw new InvalidProgramException("Minion has null status?");
@@ -338,7 +310,7 @@ namespace DwarfCorp
             {
                 CameraController.FollowAutoTarget = false;
                 CameraController.EnableControl = true;
-                foreach (var creature in Faction.Minions)
+                foreach (var creature in World.PlayerFaction.Minions)
                 {
                     creature.IsPosessed = false;
                 }
@@ -454,72 +426,6 @@ namespace DwarfCorp
                 BodySelector.Update();
             }
 
-        }
-
-        public bool OnKeyPressed(Keys key)
-        {
-            if (key == ControlSettings.Mappings.SliceUp)
-            {
-                if (!sliceUpheld)
-                {
-                    sliceUpheld = true;
-                    World.Tutorial("unslice");
-                    sliceUpTimer.Reset(0.5f);
-                    World.Renderer.SetMaxViewingLevel(World.Renderer.PersistentSettings.MaxViewingLevel + 1);
-                    return true;
-                }
-            }
-            else if (key == ControlSettings.Mappings.SliceDown)
-            {
-                if (!sliceDownheld)
-                {
-                    World.Tutorial("unslice");
-                    sliceDownheld = true;
-                    sliceDownTimer.Reset(0.5f);
-                    World.Renderer.SetMaxViewingLevel(World.Renderer.PersistentSettings.MaxViewingLevel - 1);
-                    return true;
-                }
-            }
-            return false;
-        }
-        private int rememberedViewValue = 0;
-
-        public bool OnKeyReleased(Keys key)
-        {
-            KeyboardState keys = Keyboard.GetState();
-            if (key == ControlSettings.Mappings.SliceUp)
-            {
-                sliceUpheld = false;
-                return true;
-            }
-
-            else if (key == ControlSettings.Mappings.SliceDown)
-            {
-                sliceDownheld = false;
-                return true;
-            }
-            else if (key == ControlSettings.Mappings.SliceSelected)
-            {
-                if (keys.IsKeyDown(Keys.LeftControl) || keys.IsKeyDown(Keys.RightControl))
-                {
-                    World.Renderer.SetMaxViewingLevel(rememberedViewValue);
-                    return true;
-                }
-                else if (VoxSelector.VoxelUnderMouse.IsValid)
-                {
-                    World.Tutorial("unslice");
-                    World.Renderer.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y + 1);
-                    Drawer3D.DrawBox(VoxSelector.VoxelUnderMouse.GetBoundingBox(), Color.White, 0.15f, true);
-                    return true;
-                }
-            }
-            else if (key == ControlSettings.Mappings.Unslice)
-            {
-                rememberedViewValue = World.Renderer.PersistentSettings.MaxViewingLevel;
-                World.Renderer.SetMaxViewingLevel(World.WorldSizeInVoxels.Y);
-                return true;
-            }
-            return false;
         }
 
         #endregion

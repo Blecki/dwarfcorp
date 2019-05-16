@@ -55,18 +55,10 @@ namespace DwarfCorp
 
         public Diplomacy Diplomacy;
 
-        public SelectionBuffer SelectionBuffer;
         public ContentManager Content;
         public DwarfGame Game;
         public GraphicsDevice GraphicsDevice { get { return GameState.Game.GraphicsDevice; } }
-        public Thread LoadingThread { get; set; }
-        public Action<String> OnSetLoadingMessage = null;
-
-        public void SetLoadingMessage(String Message)
-        {
-            if (OnSetLoadingMessage != null)
-                OnSetLoadingMessage(Message);
-        }
+        
 
         private bool paused_ = false;
         // True if the game's update loop is paused, false otherwise
@@ -137,40 +129,11 @@ namespace DwarfCorp
             Stats.AddStat(stat, Time.CurrentDate, value);
         }
 
-        public void MakeAnnouncement(String Message, Action<Gui.Root, QueuedAnnouncement> ClickAction = null, Func<bool> Keep = null, bool logEvent = true, String eventDetails = "")
-        {
-            MakeAnnouncement(Message, Color.Black, ClickAction, Keep, logEvent, eventDetails);
-        }
-
-        public void MakeAnnouncement(String Message, Color eventColor, Action<Gui.Root, QueuedAnnouncement> ClickAction = null, Func<bool> Keep = null, bool logEvent = true, String eventDetails = "")
-        {
-            if (OnAnnouncement != null)
-                OnAnnouncement(new QueuedAnnouncement
-                {
-                    Text = Message,
-                    ClickAction = ClickAction,
-                    ShouldKeep = Keep
-                });
-
-            if (logEvent)
-            {
-                LogEvent(Message, eventColor, eventDetails);
-            }
-        }
-
-        public void MakeAnnouncement(QueuedAnnouncement Announcement)
-        {
-            LogEvent(Announcement.Text);
-            if (OnAnnouncement != null)
-                OnAnnouncement(Announcement);
-        }
+        
 
         public MonsterSpawner MonsterSpawner { get; set; }
 
-        public Faction PlayerFaction
-        {
-            get { return Master.Faction; }
-        }
+        public Faction PlayerFaction;
 
         public List<Faction> Natives { get; set; } // Todo: To be rid of this; two concepts of faction - The owner faction in the overworld, and the instance in this game.
 
@@ -348,18 +311,15 @@ namespace DwarfCorp
                 if (Time.IsDay())
                 {
                     FastForwardToDay = false;
-                    foreach (CreatureAI minion in Master.Faction.Minions)
+                    foreach (CreatureAI minion in PlayerFaction.Minions)
                         minion.Stats.Energy.CurrentValue = minion.Stats.Energy.MaxValue;
-                    //Master.ToolBar.SpeedButton.SetSpeed(1);
                     Time.Speed = 100;
                 }
                 else
                 {
-                    //Master.ToolBar.SpeedButton.SetSpecialSpeed(3);
                     Time.Speed = 1000;
                 }
             }
-            //ParticleManager.Trigger("dice", CursorLightPos + Vector3.Up, Color.White, 1);
 
             IndicatorManager.Update(gameTime);
             HandleAmbientSound();

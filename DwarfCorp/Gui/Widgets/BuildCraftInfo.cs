@@ -152,7 +152,7 @@ namespace DwarfCorp.Gui.Widgets
                         var resourceSelector = child.AddChild(new Gui.Widgets.ComboBox
                         {
                             Font = "font8",
-                            Items = Master.Faction.ListResourcesWithTag(resourceAmount.Type).Where(r => r.Count >= resourceAmount.Count).Select(r => r.Type).OrderBy(p => p).ToList(),
+                            Items = World.PlayerFaction.ListResourcesWithTag(resourceAmount.Type).Where(r => r.Count >= resourceAmount.Count).Select(r => r.Type).OrderBy(p => p).ToList(),
                             AutoLayout = AutoLayout.DockLeft,
                             MinimumSize = new Point(200, 18),
                             Tooltip = String.Format("Type of {0} to use.", resourceAmount.Type)
@@ -212,7 +212,7 @@ namespace DwarfCorp.Gui.Widgets
                     {
                         if (Data.Type == CraftItem.CraftType.Object && PlaceAction != null)
                         {
-                            var resources = Master.Faction.ListResources();
+                            var resources = World.PlayerFaction.ListResources();
                             if (resources.Any(resource => ResourceLibrary.GetResourceByName(resource.Key).CraftInfo.CraftItemType == Data.Name))
                             {
                                 bottomBar.AddChild(new Button()
@@ -287,7 +287,7 @@ namespace DwarfCorp.Gui.Widgets
             if (!AllowWildcard)
             {
                 foreach (var resourceAmount in Data.RequiredResources)
-                    if (Master.Faction.ListResourcesWithTag(resourceAmount.Type).Count == 0)
+                    if (World.PlayerFaction.ListResourcesWithTag(resourceAmount.Type).Count == 0)
                     {
                         return false;
                     }

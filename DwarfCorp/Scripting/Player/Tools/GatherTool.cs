@@ -60,7 +60,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    var designation = Player.Faction.Designations.GetEntityDesignation(resource, DesignationType.Gather);
+                    var designation = Player.World.PlayerFaction.Designations.GetEntityDesignation(resource, DesignationType.Gather);
                     if (designation != null)
                         Player.TaskManager.CancelTask(designation.Task);
                 }

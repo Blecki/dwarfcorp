@@ -24,7 +24,7 @@ namespace DwarfCorp
     /// </summary>
     public abstract class PlayerTool
     {
-        public GameMaster Player { get; set; }
+        public GameMaster Player { get; set; } // Todo: Should reference world, not player.
 
         public abstract void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button);
         public abstract void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button);

@@ -30,7 +30,7 @@ namespace DwarfCorp
             // If no file exists, we have to create the balloon and balloon port.
             if (!string.IsNullOrEmpty(Settings.OverworldSettings.InstanceSettings.ExistingFile)) return; // Todo: Don't call in the first place??
              
-            var port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager, Renderer.Camera.Position.X, Renderer.Camera.Position.Z, 1, Settings);
+            var port = GenerateInitialBalloonPort(PlayerFaction.RoomBuilder, ChunkManager, Renderer.Camera.Position.X, Renderer.Camera.Position.Z, 1, Settings);
             PlayerFaction.Economy.Funds = Settings.OverworldSettings.InitalEmbarkment.Money;
 
             foreach (var res in Settings.OverworldSettings.InitalEmbarkment.Resources)
@@ -43,7 +43,7 @@ namespace DwarfCorp
                 ComponentManager.RootComponent.AddChild(Balloon.CreateBalloon(
                     portBox.Center() + new Vector3(0, 100, 0),
                     portBox.Center() + new Vector3(0, 10, 0), ComponentManager,
-                    Master.Faction));
+                    PlayerFaction));
                 CreateInitialDwarves(port.GetBoundingBox().Center() + new Vector3(0, VoxelConstants.ChunkSizeZ * 0.5f, 0));
             }));
 

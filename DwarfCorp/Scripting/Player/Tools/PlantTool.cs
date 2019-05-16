@@ -55,7 +55,7 @@ namespace DwarfCorp
                 }
             }
 
-            var designation = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType.Plant);
+            var designation = Player.World.PlayerFaction.Designations.GetVoxelDesignation(voxel, DesignationType.Plant);
 
             if (designation != null)
             {
@@ -79,7 +79,7 @@ namespace DwarfCorp
             }
 
             // We have to shrink the bounding box used because for some reason zones overflow their bounds a little during their collision check.
-            if (Player.Faction.GetIntersectingRooms(voxel.GetBoundingBox().Expand(-0.2f)).Count > 0)
+            if (Player.World.PlayerFaction.GetIntersectingRooms(voxel.GetBoundingBox().Expand(-0.2f)).Count > 0)
             {
                 Player.World.ShowTooltip("Can't plant inside zones.");
                 return false;
@@ -95,7 +95,7 @@ namespace DwarfCorp
             if (button == InputManager.MouseButton.Left)
             {
                 var goals = new List<PlantTask>();
-                int count = Player.Faction.Designations.EnumerateDesignations(DesignationType.Plant).Count();
+                int count = Player.World.PlayerFaction.Designations.EnumerateDesignations(DesignationType.Plant).Count();
 
                 foreach (var voxel in voxels)
                 {
@@ -129,13 +129,13 @@ namespace DwarfCorp
 
                 Player.TaskManager.AddTasks(goals);
                 
-                OnConfirm(Player.World.Master.Faction.Minions.Where(minion => minion.Stats.IsTaskAllowed(Task.TaskCategory.Plant)).ToList());
+                OnConfirm(Player.World.PlayerFaction.Minions.Where(minion => minion.Stats.IsTaskAllowed(Task.TaskCategory.Plant)).ToList());
             }
             else if (button == InputManager.MouseButton.Right)
             {
                 foreach (var voxel in voxels)
                 {
-                    var designation = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType.Plant);
+                    var designation = Player.World.PlayerFaction.Designations.GetVoxelDesignation(voxel, DesignationType.Plant);
 
                     if (designation != null)
                         Player.TaskManager.CancelTask(designation.Task);

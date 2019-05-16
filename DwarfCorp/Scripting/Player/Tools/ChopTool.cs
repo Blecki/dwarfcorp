@@ -102,7 +102,7 @@ namespace DwarfCorp
 
             if (button == InputManager.MouseButton.Left)
             {
-                List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.Faction.SelectedMinions, Task.TaskCategory.Chop);
+                List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.World.PlayerFaction.SelectedMinions, Task.TaskCategory.Chop);
                 List<Task> tasks = new List<Task>();
 
                 foreach (var plant in plantsPicked)
@@ -122,7 +122,7 @@ namespace DwarfCorp
                 {
                     if (!plant.IsVisible) continue;
                     if (Player.World.ChunkManager.IsAboveCullPlane(plant.BoundingBox)) continue;
-                    var designation = Player.Faction.Designations.GetEntityDesignation(plant, DesignationType.Chop);
+                    var designation = Player.World.PlayerFaction.Designations.GetEntityDesignation(plant, DesignationType.Chop);
                     if (designation != null)
                         Player.TaskManager.CancelTask(designation.Task);
                 }
