@@ -66,6 +66,7 @@ namespace DwarfCorp.Gui.Input
             InputActions[Action].Keys.Clear();
         }
 
+        // Todo: Is any of this used?
         public void BindHandler(String Action, Action Handler)
         {
             if (!InputActions.ContainsKey(Action)) throw new InvalidOperationException();

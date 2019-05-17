@@ -22,11 +22,10 @@ using DwarfCorp.Events;
 
 namespace DwarfCorp
 {
-    // Todo: Split into WorldManager and WorldRenderer.
     /// <summary>
     /// This is the main game state for actually playing the game.
     /// </summary>
-    public partial class WorldManager : IDisposable
+    public partial class WorldManager : IDisposable // Todo: Rename to just World?
     {
         #region fields
 
@@ -42,6 +41,9 @@ namespace DwarfCorp
         private Timer checkFoodTimer = new Timer(60.0f, false, Timer.TimerMode.Real);
         public TaskManager TaskManager;
         private Timer orphanedTaskRateLimiter = new Timer(10.0f, false, Timer.TimerMode.Real);
+        public MonsterSpawner MonsterSpawner;
+        public Faction PlayerFaction;
+        public List<Faction> Natives { get; set; } // Todo: To be rid of this; two concepts of faction - The owner faction in the overworld, and the instance in this game.
 
         #region Tutorial Hooks
 
@@ -77,18 +79,11 @@ namespace DwarfCorp
             }
         }
 
-        // Handles a thread which constantly runs A* plans for whoever needs them.
         public PlanService PlanService = null;
-
-        // Contains the storm forecast
         public Weather Weather = new Weather();
-
-        // The current calendar date/time of the game.
         public WorldTime Time = new WorldTime();
-        
         private SaveGame gameFile;
-
-        public Point3 WorldSizeInChunks { get; set; }
+        public Point3 WorldSizeInChunks;
 
         [JsonIgnore]
         public Point3 WorldSizeInVoxels
@@ -101,7 +96,6 @@ namespace DwarfCorp
 
 
         public EventLog EventLog = new EventLog();
-
         public StatsTracker Stats = new StatsTracker();
 
         public void LogEvent(EventLog.LogEntry entry)
@@ -133,12 +127,7 @@ namespace DwarfCorp
 
         
 
-        public MonsterSpawner MonsterSpawner { get; set; }
-
-        public Faction PlayerFaction;
-
-        public List<Faction> Natives { get; set; } // Todo: To be rid of this; two concepts of faction - The owner faction in the overworld, and the instance in this game.
-
+        
         public struct Screenshot
         {
             public string FileName { get; set; }
@@ -154,10 +143,6 @@ namespace DwarfCorp
         // event that is called when the world is done loading
         public delegate void OnLoaded();
         public event OnLoaded OnLoadedEvent;
-
-        // event that is called when the player loses in the world
-        public delegate void OnLose();
-        public event OnLose OnLoseEvent;
 
         // Lazy actions - needed occasionally to spawn entities from threads among other things.
         private static List<Action> LazyActions = new List<Action>();
@@ -232,22 +217,16 @@ namespace DwarfCorp
         /// <param name="gameTime">The current time</param>
         public void Update(DwarfTime gameTime)
         {
+            #region Perform Lazy Actions
             int MAX_LAZY_ACTIONS = 32;
-            int action = 0;
-            foreach (var func in LazyActions)
-            {
-                if (func != null)
-                    func.Invoke();
-                action++;
-                if (action > MAX_LAZY_ACTIONS)
-                {
-                    break;
-                }
-            }
-            if (action > 0)
-            {
-                LazyActions.RemoveRange(0, action);
-            }
+            var actionsPerformed = 0;
+            for (; actionsPerformed < LazyActions.Count && actionsPerformed < MAX_LAZY_ACTIONS; ++actionsPerformed)
+                LazyActions[actionsPerformed]?.Invoke();
+            if (actionsPerformed > 0)
+                LazyActions.RemoveRange(0, actionsPerformed);
+            #endregion
+
+            #region Fast Forward To Day
             if (FastForwardToDay)
             {
                 if (Time.IsDay())
@@ -258,10 +237,9 @@ namespace DwarfCorp
                     Time.Speed = 100;
                 }
                 else
-                {
                     Time.Speed = 1000;
-                }
             }
+            #endregion
 
             IndicatorManager.Update(gameTime);
             HandleAmbientSound();
@@ -370,9 +348,7 @@ namespace DwarfCorp
 #endif
 
             if (Time.CurrentDate.Hour != _prevHour)
-            {
                 TrackStats();
-            }
             _prevHour = Time.CurrentDate.Hour;
         }
 
@@ -391,17 +367,13 @@ namespace DwarfCorp
 
         public void Dispose()
         {
+            // Todo: Move this to the composite library.
             foreach(var composite in CompositeLibrary.Composites)
                 composite.Value.Dispose();
             CompositeLibrary.Composites.Clear();
 
             if (LoadingThread != null && LoadingThread.IsAlive)
                 LoadingThread.Abort();
-        }
-
-        public void InvokeLoss()
-        {
-            OnLoseEvent();
         }
 
         // This hack exists to find orphaned tasks not assigned to any dwarf, and to then

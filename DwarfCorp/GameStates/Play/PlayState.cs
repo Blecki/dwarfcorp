@@ -243,12 +243,6 @@ namespace DwarfCorp.GameStates
 
         #endregion
 
-        private void World_OnLoseEvent()
-        {
-            //Paused = true;
-            //StateManager.PushState("LoseState");
-        }
-
         /// <summary>
         /// Called when the PlayState is entered from the state manager.
         /// </summary>
@@ -289,14 +283,10 @@ namespace DwarfCorp.GameStates
                 Gui = new Gui.Root(DwarfGame.GuiSkin);
                 Gui.MousePointer = new Gui.MousePointer("mouse", 4, 0);
 
-                // Setup input event handlers. All of the actions should already be established - just 
-                // need handlers.
                 DwarfGame.GumInput.ClearAllHandlers();
 
                 World.UserInterface = this;
-                World.OnLoseEvent += World_OnLoseEvent;
                 CreateGUIComponents();
-                //InputManager.KeyReleasedCallback += TemporaryKeyPressHandler;
                 IsInitialized = true;
 
                 SoundManager.PlayMusic("main_theme_day");
