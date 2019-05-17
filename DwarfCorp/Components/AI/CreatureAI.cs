@@ -305,7 +305,7 @@ namespace DwarfCorp
             }
 
             if (_preEmptTimer.HasTriggered && newTask == null && Faction == World.PlayerFaction && !Stats.IsOnStrike)
-                newTask = World.Master.TaskManager.GetBestTask(this, (int)CurrentTask.Priority);
+                newTask = World.TaskManager.GetBestTask(this, (int)CurrentTask.Priority);
 
             if (newTask != null)
             {
@@ -389,7 +389,7 @@ namespace DwarfCorp
         {
             if (CurrentTask != null && Faction == World.PlayerFaction)
             {
-                World.Master.TaskManager.CancelTask(CurrentTask);
+                World.TaskManager.CancelTask(CurrentTask);
             }
             else
             {
@@ -637,7 +637,7 @@ namespace DwarfCorp
                         if (MathFunctions.Rand(0, 1) < 0.25f) // We hate it so much that we might just go on strike! This can probably be tweaked. As it stands,
                             // dorfs go on strike almost immediately every time.
                         {
-                            Manager.World.MakeWorldPopup(String.Format("{0} ({1}) refuses to work!",
+                            Manager.World.UserInterface.MakeWorldPopup(String.Format("{0} ({1}) refuses to work!",
                                    Stats.FullName, Stats.CurrentClass.Name), Creature.Physics, -10, 10);
                             Manager.World.Tutorial("happiness");
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.25f);
@@ -879,7 +879,7 @@ namespace DwarfCorp
 
             if (Faction == World.PlayerFaction && !Stats.IsOnStrike)
             {
-                var candidate = World.Master.TaskManager.GetBestTask(this);
+                var candidate = World.TaskManager.GetBestTask(this);
                 if (candidate != null)
                     return candidate;
 
@@ -1374,7 +1374,7 @@ namespace DwarfCorp
             if (CurrentTask != null)
             {
                 if (CurrentTask.ReassignOnDeath && Faction == World.PlayerFaction)
-                    World.Master.TaskManager.AddTask(CurrentTask);
+                    World.TaskManager.AddTask(CurrentTask);
                 ChangeTask(null);
             }
             if (PlanSubscriber != null)
@@ -1389,7 +1389,7 @@ namespace DwarfCorp
             if (CurrentTask != null)
             {
                 if (CurrentTask.ReassignOnDeath && Faction == World.PlayerFaction)
-                    World.Master.TaskManager.AddTask(CurrentTask);
+                    World.TaskManager.AddTask(CurrentTask);
                 ChangeTask(null);
             }
             if (PlanSubscriber != null)

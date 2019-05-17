@@ -24,15 +24,15 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
-            World.Master.VoxSelector.SelectionColor = Color.White;
-            World.Master.VoxSelector.DrawBox = true;
-            World.Master.VoxSelector.DrawVoxel = true;
+            World.UserInterface.VoxSelector.SelectionColor = Color.White;
+            World.UserInterface.VoxSelector.DrawBox = true;
+            World.UserInterface.VoxSelector.DrawVoxel = true;
             World.Tutorial("mine");
         }
 
         public override void OnEnd()
         {
-            World.Master.VoxSelector.Clear();
+            World.UserInterface.VoxSelector.Clear();
         }
 
         public override void OnVoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
@@ -71,11 +71,11 @@ namespace DwarfCorp
 
                 }
 
-                World.Master.TaskManager.AddTasks(assignments);
+                World.TaskManager.AddTasks(assignments);
 
                 var compoundTask = new CompoundTask("DIG A HOLE", Task.TaskCategory.Dig, Task.PriorityType.Medium);
                 compoundTask.AddSubTasks(assignments);
-                World.Master.TaskManager.AddTask(compoundTask);
+                World.TaskManager.AddTask(compoundTask);
 
                 var minions = Faction.FilterMinionsWithCapability(World.PlayerFaction.SelectedMinions, Task.TaskCategory.Dig);
                 OnConfirm(minions);
@@ -88,7 +88,7 @@ namespace DwarfCorp
                     {
                         var designation = World.PlayerFaction.Designations.GetVoxelDesignation(r, DesignationType.Dig);
                         if (designation != null && designation.Task != null)
-                            World.Master.TaskManager.CancelTask(designation.Task);
+                            World.TaskManager.CancelTask(designation.Task);
                     }
                 }
             }
@@ -103,17 +103,17 @@ namespace DwarfCorp
         {
             if (World.Master.IsCameraRotationModeActive())
             {
-                World.Master.VoxSelector.Enabled = false;
-                World.Master.BodySelector.Enabled = false;
+                World.UserInterface.VoxSelector.Enabled = false;
+                World.UserInterface.BodySelector.Enabled = false;
                 World.UserInterface.SetMouse(null);
                 return;
             }
 
-            World.Master.VoxSelector.Enabled = true;
+            World.UserInterface.VoxSelector.Enabled = true;
 
-            if (World.Master.VoxSelector.VoxelUnderMouse.IsValid && !World.UserInterface.IsMouseOverGui)
+            if (World.UserInterface.VoxSelector.VoxelUnderMouse.IsValid && !World.UserInterface.IsMouseOverGui)
             {
-                World.UserInterface.ShowTooltip(World.Master.VoxSelector.VoxelUnderMouse.IsExplored ? World.Master.VoxSelector.VoxelUnderMouse.Type.Name : "???");
+                World.UserInterface.ShowTooltip(World.UserInterface.VoxSelector.VoxelUnderMouse.IsExplored ? World.UserInterface.VoxSelector.VoxelUnderMouse.Type.Name : "???");
             }
 
             if (World.UserInterface.IsMouseOverGui)
@@ -121,8 +121,8 @@ namespace DwarfCorp
             else
                 World.UserInterface.SetMouse(new Gui.MousePointer("mouse", 1, 1));
 
-            World.Master.BodySelector.Enabled = false;
-            World.Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+            World.UserInterface.BodySelector.Enabled = false;
+            World.UserInterface.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
         }
 
         public override void Render2D(DwarfGame game, DwarfTime time)

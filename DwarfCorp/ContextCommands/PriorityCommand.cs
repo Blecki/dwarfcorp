@@ -99,7 +99,7 @@ namespace DwarfCorp.ContextCommands
                 return;
             }
 
-            world.MakeWorldPopup(new PrioritySelector()
+            world.UserInterface.MakeWorldPopup(new PrioritySelector()
             {
                 Task = task,
                 ScreenPos = screenPos

@@ -41,6 +41,8 @@ namespace DwarfCorp
         public Events.Scheduler EventScheduler;
         public int MaxViewingLevel = 0;
         private Timer checkFoodTimer = new Timer(60.0f, false, Timer.TimerMode.Real);
+        public TaskManager TaskManager;
+        private Timer orphanedTaskRateLimiter = new Timer(10.0f, false, Timer.TimerMode.Real);
 
         #region Tutorial Hooks
 
@@ -166,49 +168,6 @@ namespace DwarfCorp
             LazyActions.Add(action);
         }
         
-        public class WorldPopup
-        {
-            public Widget Widget;
-            public GameComponent BodyToTrack;
-            public Vector2 ScreenOffset;
-
-            public void Update(DwarfTime time, Camera camera, Viewport viewport)
-            {
-                if (Widget == null || BodyToTrack == null || BodyToTrack.IsDead)
-                {
-                    return;
-                }
-
-                var projectedPosition = viewport.Project(BodyToTrack.Position, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
-                if (projectedPosition.Z > 0.999f)
-                {
-                    Widget.Hidden = true;
-                    return;
-                }
-
-                Vector2 projectedCenter = new Vector2(projectedPosition.X / DwarfGame.GuiSkin.CalculateScale(), projectedPosition.Y / DwarfGame.GuiSkin.CalculateScale()) + ScreenOffset - new Vector2(0, Widget.Rect.Height);
-                if ((new Vector2(Widget.Rect.Center.X, Widget.Rect.Center.Y) - projectedCenter).Length() < 0.1f)
-                {
-                    return;
-                }
-
-                Widget.Rect = new Rectangle((int)projectedCenter.X - Widget.Rect.Width / 2, 
-                    (int)projectedCenter.Y - Widget.Rect.Height / 2, Widget.Rect.Width, Widget.Rect.Height);
-
-                if (!viewport.Bounds.Intersects(Widget.Rect))
-                {
-                    Widget.Hidden = true;
-                }
-                else
-                {
-                    Widget.Hidden = false;
-                }
-                Widget.Layout();
-                Widget.Invalidate();
-            }
-        }
-
-        private Dictionary<uint, WorldPopup> LastWorldPopup = new Dictionary<uint, WorldPopup>();
         private Splasher Splasher;
         #endregion
 
@@ -307,9 +266,14 @@ namespace DwarfCorp
 
             IndicatorManager.Update(gameTime);
             HandleAmbientSound();
+            UpdateOrphanedTasks();
 
-            Master.Update(Game, gameTime);
+            TaskManager.Update(PlayerFaction.Minions);
+            PlayerFaction.RoomBuilder.Update();
 
+            if (Paused)
+                Renderer.Camera.LastWheel = Mouse.GetState().ScrollWheelValue;
+           
             // Should we display the out of food message?
             checkFoodTimer.Update(gameTime);
             if (checkFoodTimer.HasTriggered)
@@ -323,30 +287,7 @@ namespace DwarfCorp
             EventScheduler.Update(this, Time.CurrentDate);
 
             Time.Update(gameTime);
-
-            if (LastWorldPopup != null)
-            {
-                List<uint> removals = new List<uint>();
-                foreach (var popup in LastWorldPopup)
-                {
-                    popup.Value.Update(gameTime, Renderer.Camera, GraphicsDevice.Viewport);
-                    if (popup.Value.Widget == null || !UserInterface.Gui.RootItem.Children.Contains(popup.Value.Widget) 
-                        || popup.Value.BodyToTrack == null || popup.Value.BodyToTrack.IsDead)
-                    {
-                        removals.Add(popup.Key);
-                    }
-                }
-
-                foreach (var removal in removals)
-                {
-                    if (LastWorldPopup[removal].Widget != null && UserInterface.Gui.RootItem.Children.Contains(LastWorldPopup[removal].Widget))
-                    {
-                        UserInterface.Gui.DestroyWidget(LastWorldPopup[removal].Widget);
-                    }
-                    LastWorldPopup.Remove(removal);
-                }
-            }
-
+                       
             if (Paused)
             {
                 ComponentManager.UpdatePaused(gameTime, ChunkManager, Renderer.Camera);
@@ -467,30 +408,45 @@ namespace DwarfCorp
             OnLoseEvent();
         }
 
-        // Todo: Belongs in PlayState.
-        public WorldPopup MakeWorldPopup(string text, GameComponent body, float screenOffset = -10, float time = 30.0f)
+        // This hack exists to find orphaned tasks not assigned to any dwarf, and to then
+        // put them on the task list.
+        // Todo: With the new task pool, how often is this used?
+        public void UpdateOrphanedTasks()
         {
-            return MakeWorldPopup(new TimedIndicatorWidget() { Text = text, DeathTimer = new Timer(time, true, Timer.TimerMode.Real) }, body, new Vector2(0, screenOffset));
-        }
-
-        public WorldPopup MakeWorldPopup(Widget widget, GameComponent body, Vector2 ScreenOffset)
-        {
-            if (LastWorldPopup.ContainsKey(body.GlobalID))
-                UserInterface.Gui.DestroyWidget(LastWorldPopup[body.GlobalID].Widget);
-
-            UserInterface.Gui.RootItem.AddChild(widget);
-
-            // Todo: Uh - what cleans these up if the body is destroyed?
-            LastWorldPopup[body.GlobalID] = new WorldPopup()
+            orphanedTaskRateLimiter.Update(DwarfTime.LastTime);
+            if (orphanedTaskRateLimiter.HasTriggered)
             {
-                Widget = widget,
-                BodyToTrack = body,
-                ScreenOffset = ScreenOffset 
-            };
+                List<Task> orphanedTasks = new List<Task>();
 
-            UserInterface.Gui.RootItem.SendToBack(widget);
+                foreach (var ent in PlayerFaction.Designations.EnumerateEntityDesignations())
+                {
+                    if (ent.Type == DesignationType.Attack)
+                    {
+                        var task = new KillEntityTask(ent.Body, KillEntityTask.KillType.Attack);
+                        if (!TaskManager.HasTask(task) &&
+                            !PlayerFaction.Minions.Any(minion => minion.Tasks.Contains(task)))
+                        {
+                            orphanedTasks.Add(task);
+                        }
+                    }
 
-            return LastWorldPopup[body.GlobalID];
+
+                    else if (ent.Type == DesignationType.Craft)
+                    {
+                        var task = new CraftItemTask(ent.Tag as CraftDesignation);
+                        if (!TaskManager.HasTask(task) &&
+                            !PlayerFaction.Minions.Any(minion => minion.Tasks.Contains(task)))
+                        {
+                            orphanedTasks.Add(task);
+                        }
+                    }
+
+                    // TODO ... other entity task types
+                }
+
+                if (orphanedTasks.Count > 0)
+                    TaskManager.AddTasks(orphanedTasks);
+            }
         }
     }
 }

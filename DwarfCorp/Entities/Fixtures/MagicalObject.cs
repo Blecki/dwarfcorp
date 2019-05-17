@@ -64,9 +64,7 @@ namespace DwarfCorp
         public void NotifyRecharge()
         {
             if (World.PlayerFaction.OwnedObjects.Contains(this.GetRoot()))
-            {
-                World.Master.TaskManager.AddTask(new RechargeObjectTask(this));
-            }
+                World.TaskManager.AddTask(new RechargeObjectTask(this));
         }
 
         public override void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)

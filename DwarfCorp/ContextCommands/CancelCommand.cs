@@ -29,7 +29,7 @@ namespace DwarfCorp.ContextCommands
         {
             foreach (var des in World.PlayerFaction.Designations.EnumerateEntityDesignations(Entity).ToList())
                 if (des.Task != null)
-                    World.Master.TaskManager.CancelTask(des.Task);
+                    World.TaskManager.CancelTask(des.Task);
         }
     }
 }

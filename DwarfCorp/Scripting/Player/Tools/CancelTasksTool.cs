@@ -24,14 +24,14 @@ namespace DwarfCorp
         public override void OnBegin()
         {
             World.Tutorial("cancel-tasks");
-            World.Master.VoxSelector.SelectionColor = Color.Red;
-            World.Master.VoxSelector.DrawBox = true;
-            World.Master.VoxSelector.DrawVoxel = true;
+            World.UserInterface.VoxSelector.SelectionColor = Color.Red;
+            World.UserInterface.VoxSelector.DrawBox = true;
+            World.UserInterface.VoxSelector.DrawVoxel = true;
         }
 
         public override void OnEnd()
         {
-            World.Master.VoxSelector.Clear();
+            World.UserInterface.VoxSelector.Clear();
         }
 
         public override void OnVoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
@@ -44,7 +44,7 @@ namespace DwarfCorp
                         var designations = World.PlayerFaction.Designations.EnumerateDesignations(r).ToList();
                         foreach (var des in designations)
                             if (des.Task != null)
-                                World.Master.TaskManager.CancelTask(des.Task);
+                                World.TaskManager.CancelTask(des.Task);
                     }
                 }
         }
@@ -57,15 +57,15 @@ namespace DwarfCorp
         {
             if (World.Master.IsCameraRotationModeActive())
             {
-                World.Master.VoxSelector.Enabled = false;
-                World.Master.BodySelector.Enabled = false;
+                World.UserInterface.VoxSelector.Enabled = false;
+                World.UserInterface.BodySelector.Enabled = false;
                 World.UserInterface.SetMouse(null);
                 return;
             }
 
-            World.Master.VoxSelector.Enabled = Options.Voxels.CheckState;
-            World.Master.BodySelector.Enabled = Options.Entities.CheckState;
-            World.Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+            World.UserInterface.VoxSelector.Enabled = Options.Voxels.CheckState;
+            World.UserInterface.BodySelector.Enabled = Options.Entities.CheckState;
+            World.UserInterface.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
 
             if (World.UserInterface.IsMouseOverGui)
                 World.UserInterface.SetMouse(World.UserInterface.MousePointer);
@@ -89,7 +89,7 @@ namespace DwarfCorp
                 {
                     foreach (var des in World.PlayerFaction.Designations.EnumerateEntityDesignations(body).ToList())
                         if (des.Task != null)
-                            World.Master.TaskManager.CancelTask(des.Task);
+                            World.TaskManager.CancelTask(des.Task);
                 }
         }
 

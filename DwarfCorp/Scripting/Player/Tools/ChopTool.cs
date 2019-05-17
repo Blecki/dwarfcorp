@@ -55,15 +55,15 @@ namespace DwarfCorp
         {
             if (World.Master.IsCameraRotationModeActive())
             {
-                World.Master.VoxSelector.Enabled = false;
-                World.Master.BodySelector.Enabled = false;
+                World.UserInterface.VoxSelector.Enabled = false;
+                World.UserInterface.BodySelector.Enabled = false;
                 World.UserInterface.SetMouse(null);
                 return;
             }
 
-            World.Master.VoxSelector.Enabled = false;
-            World.Master.BodySelector.Enabled = true;
-            World.Master.BodySelector.AllowRightClickSelection = true;
+            World.UserInterface.VoxSelector.Enabled = false;
+            World.UserInterface.BodySelector.Enabled = true;
+            World.UserInterface.BodySelector.AllowRightClickSelection = true;
 
             World.UserInterface.SetMouse(new Gui.MousePointer("mouse", 1, 0));
 
@@ -76,7 +76,7 @@ namespace DwarfCorp
         public override void Render3D(DwarfGame game, DwarfTime time)
         {
             NamedImageFrame frame = new NamedImageFrame("newgui/pointers", 32, 5, 0);
-            foreach (GameComponent tree in World.Master.BodySelector.CurrentBodies)
+            foreach (GameComponent tree in World.UserInterface.BodySelector.CurrentBodies)
             {
                 if (tree.Tags.Contains("Vegetation"))
                 {
@@ -112,7 +112,7 @@ namespace DwarfCorp
                     tasks.Add(new ChopEntityTask(plant));
                 }
 
-                World.Master.TaskManager.AddTasks(tasks);
+                World.TaskManager.AddTasks(tasks);
                 if (tasks.Count > 0 && minions.Count > 0)
                     OnConfirm(minions);
             }
@@ -124,7 +124,7 @@ namespace DwarfCorp
                     if (World.ChunkManager.IsAboveCullPlane(plant.BoundingBox)) continue;
                     var designation = World.PlayerFaction.Designations.GetEntityDesignation(plant, DesignationType.Chop);
                     if (designation != null)
-                        World.Master.TaskManager.CancelTask(designation.Task);
+                        World.TaskManager.CancelTask(designation.Task);
                 }
             }
         }

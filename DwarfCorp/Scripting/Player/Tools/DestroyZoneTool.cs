@@ -25,7 +25,7 @@ namespace DwarfCorp
 
         public override void OnVoxelsSelected(List<VoxelHandle> Voxels, InputManager.MouseButton button)
         {
-            var v = World.Master.VoxSelector.VoxelUnderMouse;
+            var v = World.UserInterface.VoxSelector.VoxelUnderMouse;
 
             if (World.PlayerFaction.RoomBuilder.IsBuildDesignation(v))
             {
@@ -81,7 +81,7 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-            World.Master.VoxSelector.Clear();
+            World.UserInterface.VoxSelector.Clear();
         }
 
         public override void OnMouseOver(IEnumerable<GameComponent> bodies)
@@ -93,17 +93,17 @@ namespace DwarfCorp
         {
             if (World.Master.IsCameraRotationModeActive())
             {
-                World.Master.VoxSelector.Enabled = false;
+                World.UserInterface.VoxSelector.Enabled = false;
                 World.UserInterface.SetMouse(null);
-                World.Master.BodySelector.Enabled = false;
+                World.UserInterface.BodySelector.Enabled = false;
                 return;
             }
 
-            World.Master.VoxSelector.Enabled = true;
-            World.Master.BodySelector.Enabled = false;
-            World.Master.VoxSelector.DrawVoxel = true;
-            World.Master.VoxSelector.DrawBox = false;
-            World.Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+            World.UserInterface.VoxSelector.Enabled = true;
+            World.UserInterface.BodySelector.Enabled = false;
+            World.UserInterface.VoxSelector.DrawVoxel = true;
+            World.UserInterface.VoxSelector.DrawBox = false;
+            World.UserInterface.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
             
 
             if (World.UserInterface.IsMouseOverGui)
@@ -114,7 +114,7 @@ namespace DwarfCorp
 
         public override void Render3D(DwarfGame game, DwarfTime time)
         {
-            var v = World.Master.VoxSelector.VoxelUnderMouse;
+            var v = World.UserInterface.VoxSelector.VoxelUnderMouse;
             if (v.IsValid && !v.IsEmpty)
             {
                 var room = World.PlayerFaction.RoomBuilder.GetRoomThatContainsVoxel(v);
@@ -136,7 +136,7 @@ namespace DwarfCorp
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            var v = World.Master.VoxSelector.VoxelUnderMouse;
+            var v = World.UserInterface.VoxSelector.VoxelUnderMouse;
 
             if (World.PlayerFaction.RoomBuilder.IsBuildDesignation(v))
             {

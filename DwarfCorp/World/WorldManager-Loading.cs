@@ -332,6 +332,8 @@ namespace DwarfCorp
 
                 SetLoadingMessage("Creating GameMaster ...");
             PlayerFaction = Factions.Factions["Player"];
+            TaskManager = new TaskManager();
+            TaskManager.Faction = PlayerFaction;
                 Master = new GameMaster(this);
 
                 if (gameFile == null)
@@ -359,8 +361,8 @@ namespace DwarfCorp
                     Game.LogSentryBreadcrumb("Loading", "Started new game with an existing file.");
                     if (gameFile.PlayData.Tasks != null)
                     {
-                        Master.TaskManager = gameFile.PlayData.Tasks;
-                        Master.TaskManager.Faction = PlayerFaction;
+                        TaskManager = gameFile.PlayData.Tasks;
+                        TaskManager.Faction = PlayerFaction;
                     }
                 }
 

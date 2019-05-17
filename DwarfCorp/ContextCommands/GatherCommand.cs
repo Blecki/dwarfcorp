@@ -27,7 +27,7 @@ namespace DwarfCorp.ContextCommands
 
         public override void Apply(GameComponent Entity, WorldManager World)
         {
-            World.Master.TaskManager.AddTask(new GatherItemTask(Entity));
+            World.TaskManager.AddTask(new GatherItemTask(Entity));
         }
     }
 }

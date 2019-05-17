@@ -46,17 +46,17 @@ namespace DwarfCorp
 
                         List<Task> assignments = new List<Task>();
                         var validRefs = voxels.Where(r => !World.PlayerFaction.Designations.IsVoxelDesignation(r, DesignationType.Put)
-                            && World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? r.IsEmpty : !r.IsEmpty).ToList();
+                            && World.UserInterface.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? r.IsEmpty : !r.IsEmpty).ToList();
 
                         foreach (var r in voxels)
                         {
                             // Todo: Mode should be a property of the tool, not grabbed out of the vox selector.
-                            if (World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty && !r.IsEmpty) continue;
-                            if (World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectFilled && r.IsEmpty) continue;
+                            if (World.UserInterface.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty && !r.IsEmpty) continue;
+                            if (World.UserInterface.VoxSelector.SelectionType == VoxelSelectionType.SelectFilled && r.IsEmpty) continue;
 
                             var existingDesignation = World.PlayerFaction.Designations.GetVoxelDesignation(r, DesignationType.Put);
                             if (existingDesignation != null)
-                                World.Master.TaskManager.CancelTask(existingDesignation.Task);
+                                World.TaskManager.CancelTask(existingDesignation.Task);
 
                             var above = VoxelHelpers.GetVoxelAbove(r);
 
@@ -68,8 +68,7 @@ namespace DwarfCorp
                             assignments.Add(new BuildVoxelTask(r, Library.GetVoxelType(CurrentVoxelType).Name));
                         }
 
-                        //TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(Player.World.Master.SelectedMinions, GameMaster.ToolMode.BuildZone));
-                        World.Master.TaskManager.AddTasks(assignments);
+                        World.TaskManager.AddTasks(assignments);
                         break;
                     }
                 case (InputManager.MouseButton.Right):
@@ -78,7 +77,7 @@ namespace DwarfCorp
                         {
                             var designation = World.PlayerFaction.Designations.GetVoxelDesignation(r, DesignationType.Put);
                             if (designation != null)
-                                World.Master.TaskManager.CancelTask(designation.Task);
+                                World.TaskManager.CancelTask(designation.Task);
                         }
                         break;
                     }
@@ -95,7 +94,7 @@ namespace DwarfCorp
             if (Selected != null)
                 Selected.Clear();
             CurrentVoxelType = 0;
-            World.Master.VoxSelector.Clear();
+            World.UserInterface.VoxSelector.Clear();
         }
 
         public override void OnMouseOver(IEnumerable<GameComponent> bodies)
@@ -107,13 +106,13 @@ namespace DwarfCorp
         {
             if (World.Master.IsCameraRotationModeActive())
             {
-                World.Master.VoxSelector.Enabled = false;
+                World.UserInterface.VoxSelector.Enabled = false;
                 World.UserInterface.SetMouse(null);
                 return;
             }
 
-            World.Master.VoxSelector.Enabled = true;
-            World.Master.BodySelector.Enabled = false;
+            World.UserInterface.VoxSelector.Enabled = true;
+            World.UserInterface.BodySelector.Enabled = false;
 
             if (World.UserInterface.IsMouseOverGui)
                 World.UserInterface.SetMouse(World.UserInterface.MousePointer);
@@ -122,16 +121,16 @@ namespace DwarfCorp
 
             MouseState mouse = Mouse.GetState();
             if (mouse.RightButton == ButtonState.Pressed)
-                World.Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+                World.UserInterface.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
             else
-                World.Master.VoxSelector.SelectionType = BuildFloor ? VoxelSelectionType.SelectFilled : VoxelSelectionType.SelectEmpty;
+                World.UserInterface.VoxSelector.SelectionType = BuildFloor ? VoxelSelectionType.SelectFilled : VoxelSelectionType.SelectEmpty;
 
         }
 
         private void DrawVoxels(float alpha, IEnumerable<VoxelHandle> selected)
         {
             Effect.VertexColorTint = new Color(0.5f, 1.0f, 0.5f, alpha);
-            Vector3 offset = World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? Vector3.Zero : Vector3.Up * 0.15f;
+            Vector3 offset = World.UserInterface.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? Vector3.Zero : Vector3.Up * 0.15f;
 
             foreach (var voxel in selected)
             {
@@ -190,10 +189,10 @@ namespace DwarfCorp
             }
             else if (mouse.RightButton != ButtonState.Pressed)
             {
-                var underMouse = World.Master.VoxSelector.VoxelUnderMouse;
+                var underMouse = World.UserInterface.VoxSelector.VoxelUnderMouse;
                 if (underMouse.IsValid)
                 {
-                    DrawVoxels(time, new List<VoxelHandle>() { World.Master.VoxSelector.VoxelUnderMouse });
+                    DrawVoxels(time, new List<VoxelHandle>() { World.UserInterface.VoxSelector.VoxelUnderMouse });
                 }
             }
         }

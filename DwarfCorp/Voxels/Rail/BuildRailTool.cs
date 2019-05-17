@@ -57,7 +57,7 @@ namespace DwarfCorp.Rail
                 {
                     RailHelper.Place(World, PreviewBodies, GodModeSwitch);
                     PreviewBodies.Clear();
-                    CreatePreviewBodies(World.ComponentManager, World.Master.VoxSelector.VoxelUnderMouse);
+                    CreatePreviewBodies(World.ComponentManager, World.UserInterface.VoxSelector.VoxelUnderMouse);
                 }
         }
 
@@ -75,8 +75,8 @@ namespace DwarfCorp.Rail
                 body.GetRoot().Delete();
             PreviewBodies.Clear();
             Pattern = null;
-            World.Master.VoxSelector.DrawVoxel = true;
-            World.Master.VoxSelector.DrawBox = true;
+            World.UserInterface.VoxSelector.DrawVoxel = true;
+            World.UserInterface.VoxSelector.DrawBox = true;
         }
 
         public override void OnMouseOver(IEnumerable<GameComponent> bodies)
@@ -100,17 +100,17 @@ namespace DwarfCorp.Rail
 
             if (World.Master.IsCameraRotationModeActive())
             {
-                World.Master.VoxSelector.Enabled = false;
+                World.UserInterface.VoxSelector.Enabled = false;
                 World.UserInterface.SetMouse(null);
-                World.Master.BodySelector.Enabled = false;
+                World.UserInterface.BodySelector.Enabled = false;
                 return;
             }
 
-            World.Master.VoxSelector.Enabled = true;
-            World.Master.BodySelector.Enabled = false;
-            World.Master.VoxSelector.DrawBox = false;
-            World.Master.VoxSelector.DrawVoxel = false;
-            World.Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+            World.UserInterface.VoxSelector.Enabled = true;
+            World.UserInterface.BodySelector.Enabled = false;
+            World.UserInterface.VoxSelector.DrawBox = false;
+            World.UserInterface.VoxSelector.DrawVoxel = false;
+            World.UserInterface.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
 
             if (World.UserInterface.IsMouseOverGui)
                 World.UserInterface.SetMouse(World.UserInterface.MousePointer);
@@ -136,7 +136,7 @@ namespace DwarfCorp.Rail
             var tint = Color.White;
 
             for (var i = 0; i < PreviewBodies.Count && i < Pattern.Pieces.Count; ++i)
-                PreviewBodies[i].UpdatePiece(Pattern.Pieces[i], World.Master.VoxSelector.VoxelUnderMouse);
+                PreviewBodies[i].UpdatePiece(Pattern.Pieces[i], World.UserInterface.VoxSelector.VoxelUnderMouse);
 
             if (RailHelper.CanPlace(World, PreviewBodies))
             {

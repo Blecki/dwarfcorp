@@ -101,7 +101,7 @@ namespace DwarfCorp
                 {
                     creature.World.MakeAnnouncement(
                         StringLibrary.GetString("cancelled-crafting-unreachable", creature.Stats.FullName, Item.ItemType.DisplayName));
-                    creature.World.Master.TaskManager.CancelTask(this);
+                    creature.World.TaskManager.CancelTask(this);
                 }
             }
             yield return Act.Status.Success;

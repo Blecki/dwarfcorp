@@ -162,6 +162,45 @@ namespace DwarfCorp
             RoomBuilder.Faction = this;
             RoomBuilder.CheckRemovals();
 
+            if (this == World.PlayerFaction) // Todo: This sucks.
+            {
+                #region Mourn dead minions
+                if (Minions.Any(m => m.IsDead && m.TriggersMourning))
+                {
+                    foreach (var minion in Minions)
+                    {
+                        minion.Creature.AddThought(Thought.ThoughtType.FriendDied);
+
+                        if (!minion.IsDead) continue;
+
+                        World.MakeAnnouncement(String.Format("{0} ({1}) died!", minion.Stats.FullName, minion.Stats.CurrentClass.Name));
+                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
+                        World.Tutorial("death");
+                    }
+                }
+
+                #endregion
+
+                #region Free stuck minions
+                foreach (var minion in Minions)
+                {
+                    if (minion == null) throw new InvalidProgramException("Null minion?");
+                    if (minion.Stats == null) throw new InvalidProgramException("Minion has null status?");
+
+                    if (minion.Stats.IsAsleep)
+                        continue;
+
+                    if (minion.CurrentTask == null)
+                        continue;
+
+                    if (minion.Stats.IsTaskAllowed(Task.TaskCategory.Dig))
+                        minion.Movement.SetCan(MoveType.Dig, GameSettings.Default.AllowAutoDigging);
+
+                    minion.ResetPositionConstraint();
+                }
+                #endregion
+            }
+
             Minions.RemoveAll(m => m.IsDead);
             SelectedMinions.RemoveAll(m => m.IsDead);
 
@@ -226,9 +265,9 @@ namespace DwarfCorp
                                 if (resourceType.Tags.Any(tag => tag == blacklist))
                                 {
                                     var transferTask = new TransferResourcesTask(stockpile.ID, resourcePair.Value.CloneResource());
-                                    if (World.Master.TaskManager.HasTask(transferTask))
+                                    if (World.TaskManager.HasTask(transferTask))
                                         continue;
-                                    World.Master.TaskManager.AddTask(transferTask);
+                                    World.TaskManager.AddTask(transferTask);
                                 }
                             }
                         }

@@ -72,8 +72,8 @@ namespace DwarfCorp.Rail
             PreviewBodies.Clear();
             PathVoxels.Clear();
             SelectedResources = null;
-            World.Master.VoxSelector.DrawVoxel = true;
-            World.Master.VoxSelector.DrawBox = true;
+            World.UserInterface.VoxSelector.DrawVoxel = true;
+            World.UserInterface.VoxSelector.DrawBox = true;
         }
 
         public override void OnMouseOver(IEnumerable<GameComponent> bodies)
@@ -85,17 +85,17 @@ namespace DwarfCorp.Rail
         {
             if (World.Master.IsCameraRotationModeActive())
             {
-                World.Master.VoxSelector.Enabled = false;
+                World.UserInterface.VoxSelector.Enabled = false;
                 World.UserInterface.SetMouse(null);
-                World.Master.BodySelector.Enabled = false;
+                World.UserInterface.BodySelector.Enabled = false;
                 return;
             }
 
-            World.Master.VoxSelector.Enabled = true;
-            World.Master.BodySelector.Enabled = false;
-            World.Master.VoxSelector.DrawBox = false;
-            World.Master.VoxSelector.DrawVoxel = true;
-            World.Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+            World.UserInterface.VoxSelector.Enabled = true;
+            World.UserInterface.BodySelector.Enabled = false;
+            World.UserInterface.VoxSelector.DrawBox = false;
+            World.UserInterface.VoxSelector.DrawVoxel = true;
+            World.UserInterface.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
 
             if (World.UserInterface.IsMouseOverGui)
                 World.UserInterface.SetMouse(World.UserInterface.MousePointer);
@@ -180,7 +180,7 @@ namespace DwarfCorp.Rail
             }
             else
             {
-                var voxelUnderMouse = World.Master.VoxSelector.VoxelUnderMouse;
+                var voxelUnderMouse = World.UserInterface.VoxSelector.VoxelUnderMouse;
                 if (voxelUnderMouse == DragStartVoxel)
                 {
                     // Create single straight preview piece
@@ -372,7 +372,7 @@ namespace DwarfCorp.Rail
             if (!Dragging)
             {
                 Dragging = true;
-                DragStartVoxel = World.Master.VoxSelector.FirstVoxel;
+                DragStartVoxel = World.UserInterface.VoxSelector.FirstVoxel;
                 StartingOppositeOrientation = CompassOrientation.North;
                 OverrideStartingOrientation = false;
                 EndingOppositeOrientation = CompassOrientation.North;

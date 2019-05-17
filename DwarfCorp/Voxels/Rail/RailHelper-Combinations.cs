@@ -217,7 +217,7 @@ namespace DwarfCorp.Rail
             }
 
             if (!GodModeSwitch && assignments.Count > 0)
-                World.Master.TaskManager.AddTasks(assignments);
+                World.TaskManager.AddTasks(assignments);
         }
     }
 }

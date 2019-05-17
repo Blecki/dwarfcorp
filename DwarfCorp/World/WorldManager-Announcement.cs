@@ -6,6 +6,7 @@ namespace DwarfCorp
 {
     public partial class WorldManager : IDisposable
     {
+        // Todo: Belongs in PlayState maybe?
         public Action<QueuedAnnouncement> OnAnnouncement;
 
         public void MakeAnnouncement(String Message, Action<Gui.Root, QueuedAnnouncement> ClickAction = null, Func<bool> Keep = null, bool logEvent = true, String eventDetails = "")

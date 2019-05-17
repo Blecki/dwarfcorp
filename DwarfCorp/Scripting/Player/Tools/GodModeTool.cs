@@ -23,7 +23,7 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
-            World.Master.VoxSelector.SelectionType = GetSelectionTypeBySelectionBoxValue(Command);
+            World.UserInterface.VoxSelector.SelectionType = GetSelectionTypeBySelectionBoxValue(Command);
         }
 
         public override void OnEnd()
@@ -58,7 +58,7 @@ namespace DwarfCorp
 
         private void SelectorBox_OnSelectionModified(string arg)
         {
-            World.Master.VoxSelector.SelectionType = GetSelectionTypeBySelectionBoxValue(arg);
+            World.UserInterface.VoxSelector.SelectionType = GetSelectionTypeBySelectionBoxValue(arg);
         }
 
         public override void OnVoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
@@ -236,18 +236,18 @@ namespace DwarfCorp
         {
             if (World.Master.IsCameraRotationModeActive())
             {
-                World.Master.VoxSelector.Enabled = false;
+                World.UserInterface.VoxSelector.Enabled = false;
                 World.UserInterface.SetMouse(null);
                 return;
             }
 
-            World.Master.VoxSelector.Enabled = true;
-            World.Master.BodySelector.Enabled = false;
+            World.UserInterface.VoxSelector.Enabled = true;
+            World.UserInterface.BodySelector.Enabled = false;
             World.UserInterface.SetMouse(World.UserInterface.MousePointer);
 
             if (Command == "Repulse")
             {
-                var location = World.Master.VoxSelector.VoxelUnderMouse;
+                var location = World.UserInterface.VoxSelector.VoxelUnderMouse;
                 var center = location.GetBoundingBox().Center();
                 foreach (var body in World.EnumerateIntersectingObjects(location.GetBoundingBox(), CollisionType.Dynamic))
                 {

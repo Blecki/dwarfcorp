@@ -1,35 +1,3 @@
-// PlanAct.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,30 +8,20 @@ using Microsoft.Xna.Framework;
 namespace DwarfCorp
 {
     /// <summary>
-    /// A creature finds a path from point A to point B and fills the blackboard with
-    /// this information.
+    /// A creature finds a path from point A to point B and fills the blackboard with this information.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class PlanAct : CreatureAct
     {
-        public Timer PlannerTimer { get; set; }
-        public int MaxExpansions { get; set; }
-
-        public string PathOut { get; set; }
-
-        public string TargetName { get; set; }
-
+        public Timer PlannerTimer;
+        public int MaxExpansions;
+        public string PathOut;
+        public string TargetName;
         public List<MoveAction> Path { get { return GetPath(); } set {  SetPath(value);} }
         public VoxelHandle Target { get { return GetTarget(); } set {  SetTarget(value);} }
-
         public int MaxTimeouts { get; set; }
-
         public int Timeouts { get; set; }
-
         private bool WaitingOnResponse { get; set; }
-
         public float Radius { get; set; }
-
         public List<float> Weights { get; set; } 
 
         public enum PlanType
@@ -75,8 +33,6 @@ namespace DwarfCorp
         }
 
         public AStarPlanner.PlanResultCode LastResult;
-
-
         public PlanType Type { get; set; }
 
         public PlanAct()
@@ -252,9 +208,7 @@ namespace DwarfCorp
                     if (!voxUnder.IsValid)
                     {
                         if (Debugger.Switches.DrawPaths)
-                        {
-                            Creature.World.MakeWorldPopup(String.Format("Invalid request"), Creature.Physics, -10, 1);
-                        }
+                            Creature.World.UserInterface.MakeWorldPopup(String.Format("Invalid request"), Creature.Physics, -10, 1);
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                         Agent.Blackboard.SetData<bool>("NoPath", true);
                         yield return Status.Fail;
@@ -314,13 +268,9 @@ namespace DwarfCorp
                             if (Debugger.Switches.DrawPaths)
                             {
                                 if (obeysGoal)
-                                {
-                                    Creature.World.MakeWorldPopup(String.Format("Using Old Path", response.Result), Creature.Physics, -10, 1);
-                                }
+                                    Creature.World.UserInterface.MakeWorldPopup(String.Format("Using Old Path", response.Result), Creature.Physics, -10, 1);
                                 else
-                                {
-                                    Creature.World.MakeWorldPopup(String.Format("Old Path Dropped", response.Result), Creature.Physics, -10, 1);
-                                }
+                                    Creature.World.UserInterface.MakeWorldPopup(String.Format("Old Path Dropped", response.Result), Creature.Physics, -10, 1);
                             }
 
                             if (obeysGoal)
@@ -330,17 +280,13 @@ namespace DwarfCorp
                                 statusResult = Status.Success;
                             }
                             else
-                            {
                                 continue;
-                            }
                         }
                         else if (response.Result == AStarPlanner.PlanResultCode.Invalid || response.Result == AStarPlanner.PlanResultCode.NoSolution
                             || response.Result == AStarPlanner.PlanResultCode.Cancelled || response.Result == AStarPlanner.PlanResultCode.Invalid)
                         {
                             if (Debugger.Switches.DrawPaths)
-                            {
-                                Creature.World.MakeWorldPopup(String.Format("Path: {0}", response.Result), Creature.Physics, -10, 1);
-                            }
+                                Creature.World.UserInterface.MakeWorldPopup(String.Format("Path: {0}", response.Result), Creature.Physics, -10, 1);
                             Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                             Agent.Blackboard.SetData<bool>("NoPath", true);
                             statusResult = Status.Fail;
@@ -354,9 +300,7 @@ namespace DwarfCorp
                         else
                         {
                             if (Debugger.Switches.DrawPaths)
-                            {
-                                Creature.World.MakeWorldPopup(String.Format("Max timeouts reached", response.Result), Creature.Physics, -10, 1);
-                            }
+                                Creature.World.UserInterface.MakeWorldPopup(String.Format("Max timeouts reached", response.Result), Creature.Physics, -10, 1);
                             Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                             Agent.Blackboard.SetData<bool>("NoPath", true);
                             statusResult = Status.Fail;

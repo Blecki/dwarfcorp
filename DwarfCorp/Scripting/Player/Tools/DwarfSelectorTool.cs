@@ -191,9 +191,9 @@ namespace DwarfCorp
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
-            World.Master.VoxSelector.Enabled = false;
-            World.Master.BodySelector.Enabled = true;
-            World.Master.BodySelector.AllowRightClickSelection = false;
+            World.UserInterface.VoxSelector.Enabled = false;
+            World.UserInterface.BodySelector.Enabled = true;
+            World.UserInterface.BodySelector.AllowRightClickSelection = false;
 
             World.UserInterface.SetMouse(World.UserInterface.MousePointer);
         }
@@ -220,7 +220,7 @@ namespace DwarfCorp
         {
             DwarfGame.SpriteBatch.Begin();
 
-            foreach (var body in World.Master.BodySelector.CurrentBodies.Where(DrawSelectionRect))
+            foreach (var body in World.UserInterface.BodySelector.CurrentBodies.Where(DrawSelectionRect))
             {
                 Drawer2D.DrawRect(DwarfGame.SpriteBatch, GetScreenRect(body.BoundingBox, World.Renderer.Camera), Color.White, 1.0f);
             }

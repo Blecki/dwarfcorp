@@ -29,7 +29,7 @@ namespace DwarfCorp.ContextCommands
         {
             var minions = Faction.FilterMinionsWithCapability(World.PlayerFaction.Minions, Task.TaskCategory.Attack);
             if (minions.Count > 0)
-                World.Master.TaskManager.AddTask(new KillEntityTask(Entity, KillEntityTask.KillType.Attack));
+                World.TaskManager.AddTask(new KillEntityTask(Entity, KillEntityTask.KillType.Attack));
         }
     }
 }

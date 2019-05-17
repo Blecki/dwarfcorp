@@ -24,9 +24,7 @@ namespace DwarfCorp
                 {
                     creature.World.MakeAnnouncement(String.Format("{0} cancelled harvest task because it is unreachable", creature.Stats.FullName));
                     if (creature.Faction == creature.World.PlayerFaction)
-                    {
-                        creature.World.Master.TaskManager.CancelTask(designation.Task);
-                    }
+                        creature.World.TaskManager.CancelTask(designation.Task);
                 }
                 return false;
             }

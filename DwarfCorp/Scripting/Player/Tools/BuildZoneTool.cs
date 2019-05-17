@@ -45,7 +45,7 @@ namespace DwarfCorp
         public override void OnEnd()
         {
             World.PlayerFaction.RoomBuilder.End();
-            World.Master.VoxSelector.Clear();
+            World.UserInterface.VoxSelector.Clear();
             World.PlayerFaction.RoomBuilder.OnExit();
         }
 
@@ -63,16 +63,16 @@ namespace DwarfCorp
             {
                 if (World.Master.IsCameraRotationModeActive())
                 {
-                    World.Master.VoxSelector.Enabled = false;
+                    World.UserInterface.VoxSelector.Enabled = false;
                     World.UserInterface.SetMouse(null);
-                    World.Master.BodySelector.Enabled = false;
+                    World.UserInterface.BodySelector.Enabled = false;
                     return;
                 }
 
-                World.Master.VoxSelector.Enabled = true;
-                World.Master.BodySelector.Enabled = false;
-                World.Master.VoxSelector.DrawBox = true;
-                World.Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+                World.UserInterface.VoxSelector.Enabled = true;
+                World.UserInterface.BodySelector.Enabled = false;
+                World.UserInterface.VoxSelector.DrawBox = true;
+                World.UserInterface.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
 
                 if (World.UserInterface.IsMouseOverGui)
                     World.UserInterface.SetMouse(World.UserInterface.MousePointer);

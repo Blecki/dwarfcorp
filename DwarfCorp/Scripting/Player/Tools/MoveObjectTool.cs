@@ -107,8 +107,8 @@ namespace DwarfCorp
             if (World.Master.IsCameraRotationModeActive())
                 return;
 
-            World.Master.VoxSelector.Enabled = false;
-            World.Master.BodySelector.Enabled = false;
+            World.UserInterface.VoxSelector.Enabled = false;
+            World.UserInterface.BodySelector.Enabled = false;
 
             if (World.UserInterface.IsMouseOverGui)
                 World.UserInterface.SetMouse(World.UserInterface.MousePointer);
@@ -162,7 +162,7 @@ namespace DwarfCorp
                     World.UserInterface.ShowTooltip(String.Format("Press {0}/{1} to rotate.", ControlSettings.Mappings.RotateObjectLeft, ControlSettings.Mappings.RotateObjectRight));
                 }
 
-                var voxelUnderMouse = World.Master.VoxSelector.VoxelUnderMouse;
+                var voxelUnderMouse = World.UserInterface.VoxSelector.VoxelUnderMouse;
                 if (voxelUnderMouse.IsValid && voxelUnderMouse.IsEmpty)
                 {
                     var spawnOffset = Vector3.Zero;

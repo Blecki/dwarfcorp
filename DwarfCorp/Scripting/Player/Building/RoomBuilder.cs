@@ -270,12 +270,12 @@ namespace DwarfCorp
             foreach (var obj in order.WorkObjects)
                 obj.Manager.RootComponent.AddChild(obj);
 
-            World.Master.TaskManager.AddTask(new BuildRoomTask(order));
+            World.TaskManager.AddTask(new BuildRoomTask(order));
         }
 
         public void OnVoxelsDragged(List<VoxelHandle> refs, InputManager.MouseButton button)
         {
-            World.Master.VoxSelector.SelectionColor = Color.White;
+            World.UserInterface.VoxSelector.SelectionColor = Color.White;
 
             if (Faction == null)
                 Faction = World.PlayerFaction;
@@ -318,7 +318,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    World.Master.VoxSelector.SelectionColor = GameSettings.Default.Colors.GetColor("Negative", Color.Red);
+                    World.UserInterface.VoxSelector.SelectionColor = GameSettings.Default.Colors.GetColor("Negative", Color.Red);
                 }
             }
         }

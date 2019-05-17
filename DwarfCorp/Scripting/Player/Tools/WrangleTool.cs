@@ -78,7 +78,7 @@ namespace DwarfCorp
                         {
                             var existingOrder = World.PlayerFaction.Designations.GetEntityDesignation(animal, DesignationType.Wrangle);
                             if (existingOrder != null)
-                                World.Master.TaskManager.CancelTask(existingOrder.Task);
+                                World.TaskManager.CancelTask(existingOrder.Task);
                         }
                         break;
                 }
@@ -86,7 +86,7 @@ namespace DwarfCorp
 
             if (tasks.Count > 0)
             {
-                World.Master.TaskManager.AddTasks(tasks);
+                World.TaskManager.AddTasks(tasks);
                 OnConfirm(World.PlayerFaction.SelectedMinions);
             }
         }
@@ -111,15 +111,15 @@ namespace DwarfCorp
         {
             if (World.Master.IsCameraRotationModeActive())
             {
-                World.Master.VoxSelector.Enabled = false;
+                World.UserInterface.VoxSelector.Enabled = false;
                 World.UserInterface.SetMouse(null);
-                World.Master.BodySelector.Enabled = false;
+                World.UserInterface.BodySelector.Enabled = false;
                 return;
             }
 
-            World.Master.BodySelector.AllowRightClickSelection = true;
-            World.Master.VoxSelector.Enabled = false;
-            World.Master.BodySelector.Enabled = true;
+            World.UserInterface.BodySelector.AllowRightClickSelection = true;
+            World.UserInterface.VoxSelector.Enabled = false;
+            World.UserInterface.BodySelector.Enabled = true;
 
             if (World.UserInterface.IsMouseOverGui)
                 World.UserInterface.SetMouse(World.UserInterface.MousePointer);
@@ -129,7 +129,7 @@ namespace DwarfCorp
 
         public override void Render3D(DwarfGame game, DwarfTime time)
         {
-            foreach (var animal in World.Master.BodySelector.CurrentBodies)
+            foreach (var animal in World.UserInterface.BodySelector.CurrentBodies)
                 if (animal.Tags.Contains("DomesticAnimal"))
                     Drawer3D.DrawBox(animal.BoundingBox, Color.LightGreen, 0.1f, false);
         }

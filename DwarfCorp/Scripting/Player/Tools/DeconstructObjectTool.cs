@@ -30,7 +30,7 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-            World.Master.VoxSelector.Clear();
+            World.UserInterface.VoxSelector.Clear();
         }
 
 
@@ -97,7 +97,7 @@ namespace DwarfCorp
             if (selectedBodies.Count != 0)
                 return;
 
-            var v = World.Master.VoxSelector.VoxelUnderMouse;
+            var v = World.UserInterface.VoxSelector.VoxelUnderMouse;
 
             if (World.PlayerFaction.RoomBuilder.IsBuildDesignation(v))
             {
@@ -161,19 +161,19 @@ namespace DwarfCorp
             else
                 World.UserInterface.SetMouse(new Gui.MousePointer("mouse", 1, 9));
 
-            World.Master.VoxSelector.Enabled = true;
-            World.Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
-            World.Master.VoxSelector.DrawBox = false;
-            World.Master.VoxSelector.DrawVoxel = false;
-            World.Master.BodySelector.Enabled = true;
-            World.Master.BodySelector.AllowRightClickSelection = true;
+            World.UserInterface.VoxSelector.Enabled = true;
+            World.UserInterface.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+            World.UserInterface.VoxSelector.DrawBox = false;
+            World.UserInterface.VoxSelector.DrawVoxel = false;
+            World.UserInterface.BodySelector.Enabled = true;
+            World.UserInterface.BodySelector.AllowRightClickSelection = true;
         }
 
         public override void Render3D(DwarfGame game, DwarfTime time)
         {
             if (selectedBodies.Count == 0)
             {
-                var v = World.Master.VoxSelector.VoxelUnderMouse;
+                var v = World.UserInterface.VoxSelector.VoxelUnderMouse;
                 if (v.IsValid && !v.IsEmpty)
                 {
                     var room = World.PlayerFaction.RoomBuilder.GetRoomThatContainsVoxel(v);

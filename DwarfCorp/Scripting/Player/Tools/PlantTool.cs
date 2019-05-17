@@ -25,7 +25,7 @@ namespace DwarfCorp
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            World.Master.VoxSelector.SelectionColor = Color.White;
+            World.UserInterface.VoxSelector.SelectionColor = Color.White;
             foreach (var voxel in voxels)
                 ValidatePlanting(voxel);
         }
@@ -127,7 +127,7 @@ namespace DwarfCorp
                     }
                 }
 
-                World.Master.TaskManager.AddTasks(goals);
+                World.TaskManager.AddTasks(goals);
                 
                 OnConfirm(World.PlayerFaction.Minions.Where(minion => minion.Stats.IsTaskAllowed(Task.TaskCategory.Plant)).ToList());
             }
@@ -138,7 +138,7 @@ namespace DwarfCorp
                     var designation = World.PlayerFaction.Designations.GetVoxelDesignation(voxel, DesignationType.Plant);
 
                     if (designation != null)
-                        World.Master.TaskManager.CancelTask(designation.Task);
+                        World.TaskManager.CancelTask(designation.Task);
                 }
             }
         }
@@ -155,31 +155,31 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
-            World.Master.VoxSelector.DrawBox = true;
-            World.Master.VoxSelector.DrawVoxel = true;
+            World.UserInterface.VoxSelector.DrawBox = true;
+            World.UserInterface.VoxSelector.DrawVoxel = true;
         }
 
         public override void OnEnd()
         {
-            World.Master.VoxSelector.Clear();
+            World.UserInterface.VoxSelector.Clear();
         }
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
             if (World.Master.IsCameraRotationModeActive())
             {
-                World.Master.VoxSelector.Enabled = false;
+                World.UserInterface.VoxSelector.Enabled = false;
                 World.UserInterface.SetMouse(null);
-                World.Master.BodySelector.Enabled = false;
+                World.UserInterface.BodySelector.Enabled = false;
                 return;
             }
 
-            World.Master.BodySelector.AllowRightClickSelection = true;
+            World.UserInterface.BodySelector.AllowRightClickSelection = true;
 
-            World.Master.VoxSelector.Enabled = true;
-            World.Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
-            World.Master.BodySelector.Enabled = false;
-            ValidatePlanting(World.Master.VoxSelector.VoxelUnderMouse);
+            World.UserInterface.VoxSelector.Enabled = true;
+            World.UserInterface.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+            World.UserInterface.BodySelector.Enabled = false;
+            ValidatePlanting(World.UserInterface.VoxSelector.VoxelUnderMouse);
 
             if (World.UserInterface.IsMouseOverGui)
                 World.UserInterface.SetMouse(World.UserInterface.MousePointer);

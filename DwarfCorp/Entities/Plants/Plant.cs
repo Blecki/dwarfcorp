@@ -102,7 +102,7 @@ namespace DwarfCorp
                             Plant = Farm.SeedString,
                             RequiredResources = Farm.RequiredResources
                         };
-                        World.Master.TaskManager.AddTask(task);
+                        World.TaskManager.AddTask(task);
                     }
                 }
             }

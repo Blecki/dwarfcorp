@@ -45,7 +45,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 if (sender.Hidden) return;
 
-                var tasksToDisplay = World.Master.TaskManager.EnumerateTasks()
+                var tasksToDisplay = World.TaskManager.EnumerateTasks()
                     .Where(t => !t.Hidden)
                     .Where(t => String.IsNullOrEmpty(FilterBox.Text) ? true : t.Name.Contains(FilterBox.Text));
 
@@ -77,7 +77,7 @@ namespace DwarfCorp.Gui.Widgets
                             TextVerticalAlign = VerticalAlign.Center,
                             OnClick = (_sender, args) =>
                             {
-                                World.Master.TaskManager.CancelTask(lambdaCopy);
+                                World.TaskManager.CancelTask(lambdaCopy);
                             }
                         });
 

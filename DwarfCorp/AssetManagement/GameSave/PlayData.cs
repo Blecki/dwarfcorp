@@ -40,7 +40,7 @@ namespace DwarfCorp
                 Factions = World.Factions,
                 Resources = ResourceLibrary.Enumerate().Where(r => r.Generated).ToList(),
                 Designations = World.Renderer.DesignationDrawer,
-                Tasks = World.Master.TaskManager,
+                Tasks = World.TaskManager,
                 ConversationMemory = World.ConversationMemory,
                 Stats = World.Stats
             };

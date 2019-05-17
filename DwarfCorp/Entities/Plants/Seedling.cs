@@ -79,7 +79,7 @@ namespace DwarfCorp
                 if (GameSettings.Default.AllowAutoFarming)
                 {
                     var task = new ChopEntityTask(adult) { Priority = Task.PriorityType.Low };
-                    World.Master.TaskManager.AddTask(task);
+                    World.TaskManager.AddTask(task);
                 }
             }
             Die();

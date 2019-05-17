@@ -87,15 +87,15 @@ namespace DwarfCorp
         {
             if (World.Master.IsCameraRotationModeActive())
             {
-                World.Master.VoxSelector.Enabled = false;
-                World.Master.BodySelector.Enabled = false;
+                World.UserInterface.VoxSelector.Enabled = false;
+                World.UserInterface.BodySelector.Enabled = false;
                 World.UserInterface.SetMouse(null);
                 return;
             }
 
-            World.Master.VoxSelector.Enabled = false;
-            World.Master.BodySelector.Enabled = true;
-            World.Master.BodySelector.AllowRightClickSelection = true;
+            World.UserInterface.VoxSelector.Enabled = false;
+            World.UserInterface.BodySelector.Enabled = true;
+            World.UserInterface.BodySelector.AllowRightClickSelection = true;
 
 
             if (World.UserInterface.IsMouseOverGui)
@@ -136,7 +136,7 @@ namespace DwarfCorp
                 if (button == InputManager.MouseButton.Left)
                 {
                     var task = new KillEntityTask(other, KillEntityTask.KillType.Attack);
-                    World.Master.TaskManager.AddTask(task);
+                    World.TaskManager.AddTask(task);
                     World.UserInterface.ShowToolPopup("Will attack this " + creature.Stats.CurrentClass.Name);
                     OnConfirm(World.PlayerFaction.SelectedMinions);
                 }
@@ -145,7 +145,7 @@ namespace DwarfCorp
                     var designation = World.PlayerFaction.Designations.GetEntityDesignation(other, DesignationType.Attack);
                     if (designation != null)
                     {
-                        World.Master.TaskManager.CancelTask(designation.Task);
+                        World.TaskManager.CancelTask(designation.Task);
                         World.UserInterface.ShowToolPopup("Attack cancelled for " + creature.Stats.CurrentClass.Name);
                     }
                 }

@@ -275,7 +275,7 @@ namespace DwarfCorp
                         listener.OnVoxelChanged(voxel);
                 }
 
-                World.Master.TaskManager.OnVoxelChanged(voxel);
+                World.TaskManager.OnVoxelChanged(voxel);
             }
         }
 

@@ -1,35 +1,3 @@
-// Diplomacy.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +9,6 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Diplomacy
     {
         public class PoliticalEvent
@@ -399,7 +366,7 @@ namespace DwarfCorp
                     if (envoy.Creatures.Count > 0)
                     {
                         envoy.Creatures.First().ZoomToMe();
-                        World.MakeWorldPopup(String.Format("Traders from {0} ({1}) have entered our territory.\nThey will try to get to our balloon port to trade with us.", natives.Name, natives.Race.Name),
+                        World.UserInterface.MakeWorldPopup(String.Format("Traders from {0} ({1}) have entered our territory.\nThey will try to get to our balloon port to trade with us.", natives.Name, natives.Race.Name),
                             envoy.Creatures.First().Physics, -10);
                     }
                 },
@@ -443,7 +410,7 @@ namespace DwarfCorp
                     if (party.Creatures.Count > 0)
                     {
                         party.Creatures.First().ZoomToMe();
-                        World.MakeWorldPopup(String.Format("Warriors from {0} ({1}) have entered our territory. They will prepare for a while and then attack us.", natives.Name, natives.Race.Name), party.Creatures.First().Physics, -10);
+                        World.UserInterface.MakeWorldPopup(String.Format("Warriors from {0} ({1}) have entered our territory. They will prepare for a while and then attack us.", natives.Name, natives.Race.Name), party.Creatures.First().Physics, -10);
                     }
                 },
                 ShouldKeep = () =>
@@ -680,24 +647,18 @@ namespace DwarfCorp
                 bool doneWaiting = party.UpdateTimer(World.Time.CurrentDate);
                 party.Creatures.RemoveAll(creature => creature.IsDead);
                 if (party.DeathTimer.Update(World.Time.CurrentDate))
-                {
                     party.Creatures.ForEach((creature) => creature.Die());
-                }
 
                 Diplomacy.Politics politics =  faction.World.Diplomacy.GetPolitics(faction, party.OtherFaction);
 
                 if (politics.GetCurrentRelationship() != Relationship.Hateful)
-                {
                     RecallWarParty(party);
-                }
 
                 if (party.Creatures.All(creature => creature.IsDead))
                     party.ShouldRemove = true;
 
                 if (!doneWaiting)
-                {
                     continue;
-                }
                 else
                 {
                     foreach(var creature in party.OwnerFaction.Minions)
@@ -706,9 +667,7 @@ namespace DwarfCorp
                         {
                             CreatureAI enemyMinion = party.OtherFaction.GetNearestMinion(creature.Position);
                             if (enemyMinion != null && !enemyMinion.Stats.IsFleeing)
-                            {
                                 creature.AssignTask(new KillEntityTask(enemyMinion.Physics, KillEntityTask.KillType.Auto));
-                            }
                         }
                     }
 

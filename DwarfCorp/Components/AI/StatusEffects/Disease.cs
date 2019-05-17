@@ -39,11 +39,11 @@ namespace DwarfCorp
 
         public override void OnApply(Creature creature)
         {
-            creature.Faction.World.Tutorial("disease");
+            creature.World.Tutorial("disease");
 
-            if (creature.Faction == creature.Faction.World.PlayerFaction)
+            if (creature.Faction == creature.World.PlayerFaction)
             {
-                creature.Faction.World.MakeWorldPopup(creature.Stats.FullName + " got " + Name + "!", creature.Physics, -10, 10);
+                creature.World.UserInterface.MakeWorldPopup(creature.Stats.FullName + " got " + Name + "!", creature.Physics, -10, 10);
                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.15f);
             }
 
@@ -57,7 +57,7 @@ namespace DwarfCorp
 
             if (creature.Faction == creature.Faction.World.PlayerFaction)
             {
-                creature.Faction.World.MakeWorldPopup(creature.Stats.FullName + " recovered from  " + Name + "!", creature.Physics, -10, 10);
+                creature.World.UserInterface.MakeWorldPopup(creature.Stats.FullName + " recovered from  " + Name + "!", creature.Physics, -10, 10);
                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
             }
             base.OnEnd(creature);

@@ -95,10 +95,7 @@ namespace DwarfCorp.Events
                             });
                         }
                         else
-                        {
-                            world.MakeWorldPopup(scheduledEvent.AnnouncementDetails,
-                                                 entity, -10);
-                        }
+                            world.UserInterface.MakeWorldPopup(scheduledEvent.AnnouncementDetails, entity, -10);
                     }
 
                     if (scheduledEvent.PauseOnAnnouncementDetails)

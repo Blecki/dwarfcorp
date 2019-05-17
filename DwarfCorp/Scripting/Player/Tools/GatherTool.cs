@@ -62,11 +62,11 @@ namespace DwarfCorp
                 {
                     var designation = World.PlayerFaction.Designations.GetEntityDesignation(resource, DesignationType.Gather);
                     if (designation != null)
-                        World.Master.TaskManager.CancelTask(designation.Task);
+                        World.TaskManager.CancelTask(designation.Task);
                 }
             }
 
-            World.Master.TaskManager.AddTasks(assignments);
+            World.TaskManager.AddTasks(assignments);
 
             OnConfirm(Faction.FilterMinionsWithCapability(World.PlayerFaction.SelectedMinions, Task.TaskCategory.Gather));
         }
@@ -91,9 +91,9 @@ namespace DwarfCorp
             if (World.Master.IsCameraRotationModeActive())
                 return;
 
-            World.Master.VoxSelector.Enabled = false;
-            World.Master.BodySelector.Enabled = true;
-            World.Master.BodySelector.AllowRightClickSelection = true;
+            World.UserInterface.VoxSelector.Enabled = false;
+            World.UserInterface.BodySelector.Enabled = true;
+            World.UserInterface.BodySelector.AllowRightClickSelection = true;
 
             if (World.UserInterface.IsMouseOverGui)
                 World.UserInterface.SetMouse(World.UserInterface.MousePointer);
@@ -105,7 +105,7 @@ namespace DwarfCorp
         {
             NamedImageFrame frame = new NamedImageFrame("newgui/pointers", 32, 6, 0);
 
-            foreach (var body in World.Master.BodySelector.CurrentBodies)
+            foreach (var body in World.UserInterface.BodySelector.CurrentBodies)
             {
                 if (body.Tags.Contains("Resource"))
                 {
