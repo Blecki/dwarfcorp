@@ -55,7 +55,7 @@ namespace DwarfCorp
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
-            if (World.Master.IsCameraRotationModeActive())
+            if (World.UserInterface.IsCameraRotationModeActive())
             {
                 World.UserInterface.VoxSelector.Enabled = false;
                 World.UserInterface.BodySelector.Enabled = false;

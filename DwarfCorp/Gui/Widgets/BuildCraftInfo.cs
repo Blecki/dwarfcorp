@@ -10,7 +10,6 @@ namespace DwarfCorp.Gui.Widgets
     public class BuildCraftInfo : Widget
     {
         public CraftItem Data;
-        public GameMaster Master;
         public WorldManager World;
         private List<Gui.Widgets.ComboBox> ResourceCombos = new List<Gui.Widgets.ComboBox>();
         private Gui.Widgets.ComboBox NumCombo = new ComboBox();

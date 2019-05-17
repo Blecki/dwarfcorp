@@ -10,7 +10,6 @@ namespace DwarfCorp.Gui.Widgets
     public class PlantInfo : Widget
     {
         public String Type;
-        public GameMaster Master;
 
         public override void Construct()
         {

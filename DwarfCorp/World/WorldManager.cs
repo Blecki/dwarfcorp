@@ -37,7 +37,6 @@ namespace DwarfCorp
         public Yarn.MemoryVariableStore ConversationMemory = new Yarn.MemoryVariableStore();
         public FactionLibrary Factions = null;
         public ParticleManager ParticleManager = null;
-        public GameMaster Master = null;
         public Events.Scheduler EventScheduler;
         public int MaxViewingLevel = 0;
         private Timer checkFoodTimer = new Timer(60.0f, false, Timer.TimerMode.Real);
@@ -384,9 +383,6 @@ namespace DwarfCorp
             ChunkManager.Destroy();
             ComponentManager.Destroy();
             ComponentManager = null;
-
-            Master.Destroy();
-            Master = null;
 
             ChunkManager = null;
             GC.Collect();

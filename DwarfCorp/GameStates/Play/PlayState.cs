@@ -28,12 +28,7 @@ namespace DwarfCorp.GameStates
 
         public VoxelSelector VoxSelector;
         public BodySelector BodySelector;
-
-        public GameMaster Master
-        {
-            get { return World.Master; }
-            set { World.Master = value; }
-        }
+        private List<GameComponent> SelectedObjects = new List<GameComponent>();
 
         public bool Paused // Todo: Kill
         {
@@ -119,7 +114,7 @@ namespace DwarfCorp.GameStates
             }
 
             if (Mode != "SelectUnits")
-                World.Master.SelectedObjects = new List<GameComponent>();
+                SelectedObjects = new List<GameComponent>();
 
             // Todo: Should probably clean up existing tool even if they are the same tool.
             Tools[Mode].OnBegin();
@@ -241,6 +236,11 @@ namespace DwarfCorp.GameStates
             return LastWorldPopup[body.GlobalID];
         }
 
+        public bool IsCameraRotationModeActive()
+        {
+            return KeyManager.RotationEnabled(World.Renderer.Camera);
+        }
+
         #endregion
 
         private void World_OnLoseEvent()
@@ -277,7 +277,7 @@ namespace DwarfCorp.GameStates
                 {
                     CurrentTool.OnBodiesSelected(bodies, button);
                     if (CurrentToolMode == "SelectUnits")
-                        Master.SelectedObjects = bodies;
+                        SelectedObjects = bodies;
                 };
                 BodySelector.MouseOver += (bodies) => CurrentTool.OnMouseOver(bodies);
 
@@ -320,6 +320,7 @@ namespace DwarfCorp.GameStates
 
                 World.LogEvent(String.Format("We have arrived at {0}", World.Settings.Overworld.Name));
             }
+
             base.OnEnter();
         }
 
@@ -676,7 +677,7 @@ namespace DwarfCorp.GameStates
                 CurrentTool.Render3D(Game, gameTime);
                 VoxSelector.Render();
 
-                foreach (var obj in Master.SelectedObjects)
+                foreach (var obj in SelectedObjects)
                     if (obj.IsVisible && !obj.IsDead)
                         Drawer3D.DrawBox(obj.GetBoundingBox(), Color.White, 0.01f, true);
 
@@ -880,7 +881,7 @@ namespace DwarfCorp.GameStates
             Gui.RootItem.AddChild(new Gui.Widgets.ResourcePanel
             {
                 AutoLayout = AutoLayout.FloatTop,
-                Master = Master,
+                World = World,
                 Transparent = true,
             });
 
@@ -1719,7 +1720,6 @@ namespace DwarfCorp.GameStates
                                 Data = data,
                                 AllowWildcard = true,
                                 Rect = new Rectangle(0, 0, 450, 200),
-                                Master = Master,
                                 World = World,
                                 Transparent = true,
                                 BuildAction = (sender, args) =>
@@ -1775,7 +1775,6 @@ namespace DwarfCorp.GameStates
                             {
                                 Data = data.ObjectAsCraftableResource(),
                                 Rect = new Rectangle(0, 0, 450, 200),
-                                Master = Master,
                                 World = World,
                                 Transparent = true,
                                 BuildAction = (sender, args) =>
@@ -1917,7 +1916,6 @@ namespace DwarfCorp.GameStates
                         {
                             Data = data,
                             Rect = new Rectangle(0, 0, 450, 200),
-                            Master = Master,
                             World = World,
                             BuildAction = (sender, args) =>
                             {
@@ -2127,7 +2125,6 @@ namespace DwarfCorp.GameStates
                         {
                             Data = data,
                             Rect = new Rectangle(0, 0, 450, 200),
-                            Master = Master,
                             World = World,
                             BuildAction = (sender, args) =>
                             {
@@ -2205,7 +2202,6 @@ namespace DwarfCorp.GameStates
                         {
                             Data = data,
                             Rect = new Rectangle(0, 0, 450, 200),
-                            Master = Master,
                             World = World,
                             OnShown = (sender) =>
                             {
@@ -2399,7 +2395,6 @@ namespace DwarfCorp.GameStates
                             {
                                 Type = resource.Type,
                                 Rect = new Rectangle(0, 0, 256, 128),
-                                Master = Master,
                                 TextColor = Color.Black.ToVector4()
                             },
                         }
@@ -2579,8 +2574,8 @@ namespace DwarfCorp.GameStates
             if (CurrentToolMode != "SelectUnits")
                 return null;
 
-            Master.SelectedObjects.RemoveAll(b => !ContextCommands.Any(c => c.CanBeAppliedTo(b, World)));
-            var bodiesClicked = Master.SelectedObjects;
+            SelectedObjects.RemoveAll(b => !ContextCommands.Any(c => c.CanBeAppliedTo(b, World)));
+            var bodiesClicked = SelectedObjects;
 
             if (bodiesClicked.Count > 0)
             {

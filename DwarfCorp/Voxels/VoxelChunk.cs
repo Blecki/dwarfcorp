@@ -105,11 +105,9 @@ namespace DwarfCorp
         {
             if (g == null || g.IsDisposed)
                 return;
-            VoxelListPrimitive primitive = new VoxelListPrimitive();
-            DesignationSet designations = null;
-            if (Manager.World.Master != null)
-                designations = Manager.World.PlayerFaction.Designations;
-            primitive.InitializeFromChunk(this, designations, Manager.World.Renderer.DesignationDrawer, Manager.World);
+
+            var primitive = new VoxelListPrimitive();
+            primitive.InitializeFromChunk(this, Manager.World.PlayerFaction?.Designations, Manager.World.Renderer.DesignationDrawer, Manager.World);
 
             PrimitiveMutex.WaitOne();
             if (Primitive != null)

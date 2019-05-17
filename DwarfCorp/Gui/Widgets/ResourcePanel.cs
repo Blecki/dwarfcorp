@@ -64,7 +64,7 @@ namespace DwarfCorp.Gui.Widgets
 
     public class ResourcePanel : GridPanel
     {
-        public GameMaster Master;
+        public WorldManager World;
         
         private bool AreListsEqual<T>(List<T> listA, List<T> listB)
         {
@@ -124,7 +124,7 @@ namespace DwarfCorp.Gui.Widgets
                 Children.Clear();
                 var aggregated =
                     AggregateResources(
-                        Master.World.PlayerFaction.ListResourcesInStockpilesPlusMinions().Where(p => p.Value.First.Count > 0 || p.Value.Second.Count > 0));
+                        World.PlayerFaction.ListResourcesInStockpilesPlusMinions().Where(p => p.Value.First.Count > 0 || p.Value.Second.Count > 0));
                 foreach (var resource in aggregated)
                 {
                     var resourceTemplate = ResourceLibrary.GetResourceByName(resource.Amount.First.Type);

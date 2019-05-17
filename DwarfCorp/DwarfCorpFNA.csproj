@@ -653,7 +653,6 @@
     <Compile Include=".\Scripting\Player\Building\BuildVoxelOrder.cs" />
     <Compile Include=".\Scripting\Player\Building\CraftDesignation.cs" />
     <Compile Include=".\Scripting\Player\Building\RoomBuilder.cs" />
-    <Compile Include=".\Scripting\Player\GameMaster.cs" />
     <Compile Include=".\Scripting\Player\InputManager.cs" />
     <Compile Include=".\Scripting\Player\IVoxelBrush.cs" />
     <Compile Include=".\Scripting\Player\KeyManager.cs" />

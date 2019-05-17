@@ -843,7 +843,6 @@
     <Compile Include="Economy\Resources\ResourceLibrary.cs" />
     <Compile Include="Scripting\Factions\Faction.cs" />
     <Compile Include="Scripting\Factions\FactionLibrary.cs" />
-    <Compile Include="Scripting\Player\GameMaster.cs" />
     <Compile Include="Scripting\Player\InputManager.cs" />
     <Compile Include="Scripting\Player\KeyManager.cs" />
     <Compile Include="Scripting\Player\Tools\AttackTool.cs" />

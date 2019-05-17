@@ -334,9 +334,9 @@ namespace DwarfCorp
             PlayerFaction = Factions.Factions["Player"];
             TaskManager = new TaskManager();
             TaskManager.Faction = PlayerFaction;
-                Master = new GameMaster(this);
+            Time.NewDay += (time) => PlayerFaction.PayEmployees();
 
-                if (gameFile == null)
+            if (gameFile == null)
                 {
                     Game.LogSentryBreadcrumb("Loading", "Started new game without an existing file.");
                     if (Settings.Overworld.Map == null)
