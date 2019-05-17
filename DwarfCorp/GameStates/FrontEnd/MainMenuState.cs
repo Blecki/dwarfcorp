@@ -9,7 +9,7 @@ namespace DwarfCorp.GameStates
     public class MainMenuState : MenuState
     {
         public MainMenuState(DwarfGame game, GameStateManager stateManager) :
-            base("MainMenuState", game, stateManager)
+            base(game, stateManager)
         {
        
         }

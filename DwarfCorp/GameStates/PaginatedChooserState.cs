@@ -130,7 +130,7 @@ namespace DwarfCorp.GameStates
 
 
         public PaginatedChooserState(DwarfGame Game, GameStateManager StateManager) :
-            base(Game, "GuiStateTemplate", StateManager)
+            base(Game, StateManager)
         { this.EnableScreensaver = true; }
 
         public override void OnEnter()

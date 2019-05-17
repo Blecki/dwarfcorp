@@ -1,35 +1,3 @@
-// GameStateManager.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,18 +5,13 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.GameStates
 {
-
-    /// <summary>
-    /// Manages a set of game states. A game state is a generic representation of how the game behaves. Game states live in a stack. The state on the top of the stack is the one currently running.
-    /// States can be both rendered and updated. There are brief transition periods between states where animations can occur.
-    /// </summary>
     public class GameStateManager
     {
-        public List<GameState> StateStack { get; private set; }
-        //public Dictionary<string, GameState> States { get; set; }
+        private List<GameState> StateStack;
+        public bool StateStackIsEmpty => StateStack.Count == 0;
         public DwarfGame Game { get; set; }
-        public GameState CurrentState { get; private set; }
-        public GameState NextState { get; private set; }
+        private GameState CurrentState;
+        private GameState NextState;
 
         public Terrain2D ScreenSaver { get; set; }
 
@@ -62,24 +25,14 @@ namespace DwarfCorp.GameStates
             StateStack = new List<GameState>();
         }
 
-        public T GetState<T>() where T : class
-        {
-            T state = default(T);
-            lock (_mutex)
-            {
-                state = StateStack.OfType<T>().FirstOrDefault();
-            }
-            return state;
-        }
-
         public void PopState(bool enterNext = true)
         {
             lock (_mutex)
             {
-                Game.LogSentryBreadcrumb("GameState", "Popping state.");
                 if (StateStack.Count > 0)
                 {
-                    Game.LogSentryBreadcrumb("GameState", String.Format("Leaving state {0}", StateStack[0].Name));
+                    Game.LogSentryBreadcrumb("GameState", String.Format("Leaving state {0}", StateStack[0].GetType().FullName));
+                    StateStack[0].OnPopped();
                     StateStack.RemoveAt(0);
                 }
 
@@ -87,7 +40,7 @@ namespace DwarfCorp.GameStates
                 {
                     var state = StateStack.ElementAt(0);
                     NextState = state;
-                    NextState.OnEnter();
+                    NextState.OnEnter(); // Split into OnEnter and OnExposed
                 }
             }
         }
@@ -96,9 +49,8 @@ namespace DwarfCorp.GameStates
         {
             lock (_mutex)
             {
-                StateStack.Clear();
-                CurrentState = null;
-                NextState = null;
+                while (StateStack.Count > 0)
+                    PopState(false);
             }
         }
 
@@ -137,10 +89,7 @@ namespace DwarfCorp.GameStates
                 if (NextState != null && NextState.IsInitialized)
                 {
                     if (CurrentState != null)
-                    {
-                        CurrentState.OnExit();
-                        CurrentState.OnPopped();
-                    }
+                        CurrentState.OnCovered();
 
                     CurrentState = NextState;
                     NextState = null;
@@ -170,13 +119,9 @@ namespace DwarfCorp.GameStates
                         || Object.ReferenceEquals(state, NextState)))
                     {
                         if (state.IsInitialized)
-                        {
                             state.Render(time);
-                        }
                         else if (!state.IsInitialized)
-                        {
                             state.RenderUnitialized(time);
-                        }
                     }
                 }
             }

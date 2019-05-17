@@ -466,7 +466,7 @@ namespace DwarfCorp.GameStates
         public WorldManager World;
         private Gui.Widget mainPanel;
         public FactionViewState(DwarfGame game, GameStateManager stateManager, WorldManager world) :
-            base(game, "FactionViewState", stateManager)
+            base(game, stateManager)
         {
             World = world;
         }
@@ -485,8 +485,7 @@ namespace DwarfCorp.GameStates
                 Font = "font16",
                 OnClick = (sender, args) =>
                 {
-                    if (StateManager.CurrentState == this)
-                        StateManager.PopState();
+                    StateManager.PopState();
                 },
                 AutoLayout = AutoLayout.FloatBottomLeft,
             });

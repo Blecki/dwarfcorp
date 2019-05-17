@@ -138,7 +138,7 @@ namespace DwarfCorp.GameStates
         /// <param name="stateManager">The game state manager this state will belong to</param>
         /// <param name="world">The world manager</param>
         public PlayState(DwarfGame game, GameStateManager stateManager, WorldManager World) :
-            base(game, "PlayState", stateManager)
+            base(game, stateManager)
         {
             this.World = World;
             IsShuttingDown = false;
@@ -283,8 +283,6 @@ namespace DwarfCorp.GameStates
                 Gui = new Gui.Root(DwarfGame.GuiSkin);
                 Gui.MousePointer = new Gui.MousePointer("mouse", 4, 0);
 
-                DwarfGame.GumInput.ClearAllHandlers();
-
                 World.UserInterface = this;
                 CreateGUIComponents();
                 IsInitialized = true;
@@ -317,10 +315,10 @@ namespace DwarfCorp.GameStates
         /// <summary>
         /// Called when the PlayState is exited and another state (such as the main menu) is loaded.
         /// </summary>
-        public override void OnExit()
+        public override void OnCovered()
         {
             World.PauseThreads();
-            base.OnExit();
+            base.OnCovered();
         }
 
         private float timeOnLastClick = 0.0f;
@@ -788,19 +786,16 @@ namespace DwarfCorp.GameStates
                     CreateGUIComponents();
                 }
 
-                if (Game.StateManager.CurrentState == this)
+                if (!MinimapFrame.Hidden && !Gui.RootItem.Hidden)
                 {
-                    if (!MinimapFrame.Hidden && !Gui.RootItem.Hidden)
-                    {
-                        Gui.Draw(new Point(0, 0), false);
-                        MinimapRenderer.Render(new Rectangle(MinimapFrame.Rect.X, MinimapFrame.Rect.Bottom - 192, 192, 192), Gui);
-                        Gui.DrawMesh(MinimapFrame.GetRenderMesh(), Gui.RenderData.Texture);
-                        Gui.RedrawPopups();
-                        Gui.DrawMouse();
-                    }
-                    else
-                        Gui.Draw();
+                    Gui.Draw(new Point(0, 0), false);
+                    MinimapRenderer.Render(new Rectangle(MinimapFrame.Rect.X, MinimapFrame.Rect.Bottom - 192, 192, 192), Gui);
+                    Gui.DrawMesh(MinimapFrame.GetRenderMesh(), Gui.RenderData.Texture);
+                    Gui.RedrawPopups();
+                    Gui.DrawMouse();
                 }
+                else
+                    Gui.Draw();
             }
 
             base.Render(gameTime);

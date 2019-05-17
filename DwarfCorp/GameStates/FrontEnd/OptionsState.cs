@@ -69,7 +69,7 @@ namespace DwarfCorp.GameStates
         private EditableTextField SaveLocation;
 
         public OptionsState(DwarfGame Game, GameStateManager StateManager) :
-            base(Game, "NewOptionsState", StateManager)
+            base(Game, StateManager)
         { }
 
         public override void OnEnter()
@@ -144,27 +144,24 @@ namespace DwarfCorp.GameStates
                     if (HasChanges)
                     {
                         var confirm = new Gui.Widgets.Confirm
-                            {
-                                Text = "@options-apply-check",
-                                OkayText = StringLibrary.GetString("yes"),
-                                CancelText = StringLibrary.GetString("no"),
-                                OnClose = (s2) =>
-                                    {
-                                        if ((s2 as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
-                                            ConfirmSettings();
-                                        if (OnClosed != null) OnClosed();
-                                        StateManager.PopState();
-                                    }
-                            };
+                        {
+                            Text = "@options-apply-check",
+                            OkayText = StringLibrary.GetString("yes"),
+                            CancelText = StringLibrary.GetString("no"),
+                            OnClose = (s2) =>
+                                {
+                                    if ((s2 as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
+                                        ConfirmSettings();
+                                    if (OnClosed != null) OnClosed();
+                                    StateManager.PopState();
+                                }
+                        };
                         GuiRoot.ShowModalPopup(confirm);
                     }
                     else
                     {
-                        if (StateManager.CurrentState == this)
-                        {
-                            if (OnClosed != null) OnClosed();
-                            StateManager.PopState();
-                        }
+                        OnClosed?.Invoke();
+                        StateManager.PopState();
                     }
                 },
                 AutoLayout = AutoLayout.FloatTopLeft
@@ -358,16 +355,6 @@ namespace DwarfCorp.GameStates
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
-
-            /*
-            FogOfWar = rightPanel.AddChild(new CheckBox
-            {
-                Text = "Fog Of War",
-                Tooltip = "When checked, unexplored tiles underground will be invisible.",
-                OnCheckStateChange = OnItemChanged,
-                AutoLayout = AutoLayout.DockTop
-            }) as CheckBox;
-            */
 
             AutoDigging = rightPanel.AddChild(new CheckBox
             {
@@ -728,34 +715,6 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockTop,
                 Tooltip = "When checked, detail grass motes will spawn. Turn off to increase game performance."
             }) as CheckBox;
-
-            //NumMotes = leftPanel.AddChild(LabelAndDockWidget("Max Number of Entities",
-            //     new HorizontalFloatSlider
-            //     {
-            //         ScrollArea = 2048 - 100,
-            //         OnSliderChanged = OnItemChanged,
-            //         Tooltip = "Controls how many of each type of entity will get drawn to the screen. Higher values mean more detail. Lower values mean better performance."
-
-            //     })).GetChild(1) as HorizontalFloatSlider;
-
-            /*
-            LightMap = leftPanel.AddChild(new CheckBox
-            {
-                Text = "Light Maps",
-                OnCheckStateChange = OnItemChanged,
-                AutoLayout = AutoLayout.DockTop,
-                Tooltip = "When checked, light maps will be used for pixelated terrain lighting. Turning this off increases performance."
-            }) as CheckBox;
-
-            DynamicShadows = leftPanel.AddChild(new CheckBox
-            {
-                Text = "Dynamic Shadows",
-                OnCheckStateChange = OnItemChanged,
-                AutoLayout = AutoLayout.DockTop,
-                Tooltip = "When checked, the sun will cast shadows on terrain and entities. Turning this off increases performance."
-            }) as CheckBox;
-             */
-
         }
 
         private void OnItemChanged(Gui.Widget Sender)

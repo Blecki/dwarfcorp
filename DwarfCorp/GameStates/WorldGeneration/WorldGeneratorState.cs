@@ -1,65 +1,61 @@
-using System.Collections.Generic;
-using System.Linq;
+using System;
 using DwarfCorp.Gui;
-using LibNoise;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace DwarfCorp.GameStates
 {
-    // Todo: Make this use wait cursor while generating.
-    public class NewWorldGeneratorState : GameState
+    public class WorldGeneratorState : GameState
     {
         private Gui.Root GuiRoot;
         private Gui.Widgets.ProgressBar GenerationProgress;
         private WorldGeneratorPreview Preview;
         private WorldGenerator Generator;
         private OverworldGenerationSettings Settings;
-        private bool AutoGenerate;
         private Gui.Widget RightPanel;
         private Widget MainPanel;
-        
-        public NewWorldGeneratorState(DwarfGame Game, GameStateManager StateManager, CompanyInformation Company, bool AutoGenerate) :
-            base(Game, "NewWorldGeneratorState", StateManager)
-        {
-            this.AutoGenerate = AutoGenerate;
 
-            this.Settings = new OverworldGenerationSettings()
-                {
-                    Company = Company,
-                    Width = 128,
-                    Height = 128,
-                    Name = TextGenerator.GenerateRandom(TextGenerator.GetAtoms(ContentPaths.Text.Templates.worlds)),
-                    NumCivilizations = 5,
-                    NumFaults = 3,
-                    NumRains = 1000,
-                    NumVolcanoes = 3,
-                    RainfallScale = 1.0f,
-                    SeaLevel = 0.17f,
-                    TemperatureScale = 1.0f
-                };           
+        public enum PanelStates
+        {
+            Generate,
+            Launch
+        }
+
+        private PanelStates PanelState = PanelStates.Generate;
+        
+        public WorldGeneratorState(DwarfGame Game, GameStateManager StateManager, OverworldGenerationSettings Settings, PanelStates StartingState) :
+            base(Game, StateManager)
+        {
+            this.PanelState = StartingState;
+            this.Settings = Settings;
         }       
 
         private void RestartGeneration()
         {
             if (Generator != null)
                 Generator.Abort();
+
             if (Settings.Natives != null)
                 Settings.Natives.Clear();
+
             Generator = new WorldGenerator(Settings, true);
             if (Preview != null) Preview.SetGenerator(Generator);
-            Generator.Generate();
+
             GuiRoot.RootItem.GetChild(0).Text = Settings.Name;
             GuiRoot.RootItem.GetChild(0).Invalidate();
             GuiRoot.MousePointer = new MousePointer("mouse", 15.0f, 16, 17, 18, 19, 20, 21, 22, 23);
-
             Preview.Hidden = true;
             GenerationProgress.Hidden = false;
+
+            Generator.Generate();
         }
 
         private void SwitchToLaunchPanel()
         {
+            if (PanelState != PanelStates.Generate)
+                throw new InvalidProgramException();
+
+            PanelState = PanelStates.Launch;
+
             var rect = RightPanel.Rect;
             MainPanel.RemoveChild(RightPanel);
 
@@ -67,6 +63,7 @@ namespace DwarfCorp.GameStates
             {
                 Rect = rect
             });
+
             RightPanel.Layout();
         }
 
@@ -74,6 +71,7 @@ namespace DwarfCorp.GameStates
         {
             DwarfGame.GumInputMapper.GetInputQueue();
 
+            #region Setup GUI
             GuiRoot = new Gui.Root(DwarfGame.GuiSkin);
             GuiRoot.MousePointer = new MousePointer("mouse", 15.0f, 16, 17, 18, 19, 20, 21, 22, 23);
 
@@ -88,18 +86,31 @@ namespace DwarfCorp.GameStates
                 InteriorMargin = new Gui.Margin(24, 0, 0, 0),
             });
 
-            RightPanel = MainPanel.AddChild(new GenerationPanel(Game, StateManager, Settings)
+            switch (PanelState)
             {
-                RestartGeneration = () => RestartGeneration(),
-                GetGenerator = () => Generator,
-                OnVerified = () =>
-                {
-                    SwitchToLaunchPanel();
-                },
-                AutoLayout = Gui.AutoLayout.DockRight,
-                MinimumSize = new Point(256, 0),
-                Padding = new Gui.Margin(2,2,2,2)
-            });
+                case PanelStates.Generate:
+                    RightPanel = MainPanel.AddChild(new GenerationPanel(Game, StateManager, Settings)
+                    {
+                        RestartGeneration = () => RestartGeneration(),
+                        GetGenerator = () => Generator,
+                        OnVerified = () =>
+                        {
+                            SwitchToLaunchPanel();
+                        },
+                        AutoLayout = Gui.AutoLayout.DockRight,
+                        MinimumSize = new Point(256, 0),
+                        Padding = new Gui.Margin(2, 2, 2, 2)
+                    });
+                    break;
+                case PanelStates.Launch:
+                    RightPanel = MainPanel.AddChild(new LaunchPanel(Game, StateManager, Generator, Settings)
+                    {
+                        AutoLayout = AutoLayout.DockRight,
+                        MinimumSize = new Point(256, 0),
+                        Padding = new Gui.Margin(2, 2, 2, 2)
+                    });
+                    break;
+            }
 
             GenerationProgress = MainPanel.AddChild(new Gui.Widgets.ProgressBar
             {
@@ -123,33 +134,30 @@ namespace DwarfCorp.GameStates
             }) as WorldGeneratorPreview;
 
             GuiRoot.RootItem.Layout();
+            #endregion
 
-            IsInitialized = true;
-
-            if (AutoGenerate)
-                RestartGeneration();
-            else // Setup a dummy generator for now.
+            switch (PanelState)
             {
-                Generator = new WorldGenerator(Settings, true);
-                Generator.LoadDummy(
-                    new Color[Settings.Overworld.Map.GetLength(0) * Settings.Overworld.Map.GetLength(1)], 
-                    Game.GraphicsDevice);
-                Preview.SetGenerator(Generator);
+                case PanelStates.Generate:
+                    RestartGeneration();
+                    break;
+
+                case PanelStates.Launch:
+                    // Setup a dummy generator.
+                    Generator = new WorldGenerator(Settings, true);
+                    Generator.LoadDummy(new Color[Settings.Overworld.Map.GetLength(0) * Settings.Overworld.Map.GetLength(1)], Game.GraphicsDevice);
+                    Preview.SetGenerator(Generator);
+                    break;
             }
 
+            IsInitialized = true;
             base.OnEnter();
         }
 
         public override void Update(DwarfTime gameTime)
         {
             foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
-            {
                 GuiRoot.HandleInput(@event.Message, @event.Args);
-                if (!@event.Args.Handled)
-                {
-                    // Pass event to game...
-                }
-            }
 
             GenerationProgress.Text = Generator.LoadingMessage;
             GenerationProgress.Percentage = Generator.Progress * 100.0f;
@@ -164,9 +172,8 @@ namespace DwarfCorp.GameStates
                 Preview.Update();
             }
 
-            base.Update(gameTime);
-
             Preview.PreparePreview(StateManager.Game.GraphicsDevice);
+            base.Update(gameTime);
         }
 
         public override void Render(DwarfTime gameTime)
@@ -179,31 +186,20 @@ namespace DwarfCorp.GameStates
                 GuiRoot.MousePointer = new MousePointer("mouse", 1, 0);
             }
 
-            // This is a serious hack.
             GuiRoot.RedrawPopups();
-          
             GuiRoot.DrawMouse();
+
             base.Render(gameTime);
         }
 
         public override void OnPopped()
         {
-            // Todo: This is NOT called properly.
             if (this.Generator.LandMesh != null)
-            {
                 this.Generator.LandMesh.Dispose();
-            }
             if (this.Generator.LandIndex != null)
-            {
                 this.Generator.LandIndex.Dispose();
-            }
-            //this.Generator.worldData = null;
 
-            if (this.GuiRoot != null)
-            {
-                this.GuiRoot.DestroyWidget(this.GuiRoot.RootItem);
-            }
-            base.OnExit();
+            base.OnPopped();
         }
     }
 }

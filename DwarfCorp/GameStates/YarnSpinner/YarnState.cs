@@ -37,7 +37,7 @@ namespace DwarfCorp
             String ConversationFile,
             String StartNode,
             Yarn.MemoryVariableStore Memory) :
-            base(Game, "YarnState", GameState.Game.StateManager)
+            base(Game, GameState.Game.StateManager)
         {
             World = world;
             YarnEngine = new YarnEngine(ConversationFile, StartNode, Memory, this);

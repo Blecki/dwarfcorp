@@ -15,7 +15,7 @@ namespace DwarfCorp.GameStates
         private Gui.Widgets.TabPanel TabPanel;
 
         public EconomyState(DwarfGame Game, GameStateManager StateManager, WorldManager World) :
-            base(Game, "EconomyState", StateManager)
+            base(Game, StateManager)
         {
             this.World = World;
         }
@@ -44,8 +44,7 @@ namespace DwarfCorp.GameStates
                 Border = "border-button",
                 OnClick = (sender, args) =>
                 {
-                    if (StateManager.CurrentState == this)
-                        StateManager.PopState();
+                    StateManager.PopState();
                 },
                 AutoLayout = AutoLayout.FloatBottomRight
             });

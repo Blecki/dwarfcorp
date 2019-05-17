@@ -371,18 +371,12 @@ namespace DwarfCorp
             StateManager.Game.LogSentryBreadcrumb("Loading", "LoadContent was called.", BreadcrumbLevel.Info);
             AssetManager.Initialize(Content, GraphicsDevice, GameSettings.Default);
 
-            //var palette = TextureTool.ExtractPaletteFromDirectoryRecursive("Entities/Dwarf");
-            //var paletteTexture = TextureTool.Texture2DFromMemoryTexture(GraphicsDevice, TextureTool.MemoryTextureFromPalette(palette));
-            //paletteTexture.SaveAsPng(System.IO.File.OpenWrite("palette.png"), paletteTexture.Width, paletteTexture.Height);
-
             // Prepare GemGui
             if (GumInputMapper == null)
             {
                 GumInputMapper = new Gui.Input.GumInputMapper(Window.Handle);
                 GumInput = new Gui.Input.Input(GumInputMapper);
             }
-                // Register all bindable actions with the input system.
-                //GumInput.AddAction("TEST", Gui.Input.KeyBindingType.Pressed);
 
                 GuiSkin = new RenderData(GraphicsDevice, Content);
 
@@ -405,25 +399,17 @@ namespace DwarfCorp
                 {
                     SoundManager.Content = Content;
                     SoundManager.LoadDefaultSounds();
-#if XNA_BUILD
-                    //SoundManager.SetActiveSongs(ContentPaths.Music.dwarfcorp, ContentPaths.Music.dwarfcorp_2,
-                    //    ContentPaths.Music.dwarfcorp_3, ContentPaths.Music.dwarfcorp_4, ContentPaths.Music.dwarfcorp_5);
-#endif
                 }
 
-                if (StateManager.StateStack.Count == 0)
+                if (StateManager.StateStackIsEmpty)
                 {
                     StateManager.Game.LogSentryBreadcrumb("GameState", "There was nothing in the state stack. Starting over.");
                     if (GameSettings.Default.DisplayIntro)
-                    {
                         StateManager.PushState(new IntroState(this, StateManager));
-                    }
                     else
-                    {
                         StateManager.PushState(new MainMenuState(this, StateManager));
-                    }
                 }
-                EmbarkmentLibrary.InitializeDefaultLibrary();
+
                 ControlSettings.Load();
                 Drawer2D.Initialize(Content, GraphicsDevice);
                 base.LoadContent();
@@ -622,7 +608,7 @@ namespace DwarfCorp
         }
     }
 
-    public class EventLogState : GameStates.GameState
+    public class EventLogState : GameStates.GameState // Todo: Split file...
     {
         public EventLog Log { get; set; }
         public DateTime Now { get; set; }
@@ -630,7 +616,7 @@ namespace DwarfCorp
         public EventLogViewer Viewer { get; set; }
 
         public EventLogState(DwarfGame game, GameStateManager manager, EventLog log, DateTime now) :
-            base(game, "EventLog", manager)
+            base(game, manager)
         {
             Log = log;
             Now = now;
@@ -659,18 +645,12 @@ namespace DwarfCorp
             }) as EventLogViewer;
             Viewer.CloseButton.OnClick = (sender, args) =>
             {
-                if (StateManager.CurrentState == this)
                     StateManager.PopState();
             };
             // Must be true or Render will not be called.
             IsInitialized = true;
             GuiRoot.RootItem.Layout();
             base.OnEnter();
-        }
-
-        public override void OnExit()
-        {
-            base.OnExit();
         }
 
         public override void OnPopped()
@@ -696,19 +676,11 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime gameTime)
         {
-            foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
+            DwarfGame.GumInput.FireActions(GuiRoot, (@event, args) =>
             {
-                GuiRoot.HandleInput(@event.Message, @event.Args);
-                if (!@event.Args.Handled)
-                {
-                    // Pass event to game...
-                    if (@event.Message == InputEvents.KeyUp && @event.Args.KeyValue == (int)Microsoft.Xna.Framework.Input.Keys.Escape)
-                    {
-                        if (StateManager.CurrentState == this)
-                            StateManager.PopState();
-                    }
-                }
-            }
+                if (@event == InputEvents.KeyUp && args.KeyValue == (int)Microsoft.Xna.Framework.Input.Keys.Escape)
+                    StateManager.PopState();
+            });
 
             GuiRoot.Update(gameTime.ToRealTime());
             SoundManager.Update(gameTime, null, null);

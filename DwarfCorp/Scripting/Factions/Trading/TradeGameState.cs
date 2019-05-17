@@ -25,7 +25,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
             TradeEnvoy Envoy, 
             Faction PlayerFaction,
             WorldManager World) :
-            base(Game, "GuiStateTemplate", StateManager)
+            base(Game, StateManager)
         {
             this.World = World;
             this.Envoy = Envoy;

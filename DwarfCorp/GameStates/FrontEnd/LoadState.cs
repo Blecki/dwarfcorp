@@ -28,7 +28,7 @@ namespace DwarfCorp.GameStates
         public OverworldGenerationSettings Settings { get; set; }
 
         public LoadState(DwarfGame game, GameStateManager stateManager, OverworldGenerationSettings settings) :
-            base(game, "LoadState", stateManager)
+            base(game, stateManager)
         {
             Settings = settings;
             EnableScreensaver = true;
@@ -107,22 +107,17 @@ namespace DwarfCorp.GameStates
             {
                 // Todo: Decouple gui/input from world.
                 // Copy important bits to PlayState - This is a hack; decouple world from gui and input instead.
-                if (StateManager.CurrentState == this)
-                {
-                    PlayState.Input = Input;
-                    StateManager.PopState(false);
-                    StateManager.PushState(new PlayState(Game, StateManager, World));
+                PlayState.Input = Input;
+                StateManager.PopState(false);
+                StateManager.PushState(new PlayState(Game, StateManager, World));
 
-                    World.OnSetLoadingMessage = null;
-                    World.Settings.Overworld.NativeFactions = World.Natives;
-                }
+                World.OnSetLoadingMessage = null;
+                World.Settings.Overworld.NativeFactions = World.Natives;
             }
             else
             {
                 if (Settings.GenerateFromScratch && Generator.CurrentState == WorldGenerator.GenerationState.Finished && World == null)
-                {
                     CreateWorld();
-                }
                 else if (Settings.GenerateFromScratch)
                 {
                     if (!LoadTicker.HasMesssage(Generator.LoadingMessage))
@@ -138,7 +133,7 @@ namespace DwarfCorp.GameStates
 
                 GuiRoot.Update(gameTime.ToRealTime());
                 Runner.Update(gameTime);
-              
+
                 if (World != null && World.LoadStatus == WorldManager.LoadingStatus.Failure && !DisplayException)
                 {
                     DisplayException = true;
@@ -158,22 +153,12 @@ namespace DwarfCorp.GameStates
                         OnClick = (s, a) =>
                         {
                             StateManager.Game.LogSentryBreadcrumb("Loading", "Loading failed. Player going back to start.");
-                            if (StateManager.CurrentState == this)
-                            {
-                                StateManager.PopState(false);
-                                StateManager.ClearState();
-                                StateManager.PushState(new MainMenuState(Game, StateManager));
-                            }
+                            StateManager.ClearState();
                         },
                         OnClose = (s) =>
                         {
                             StateManager.Game.LogSentryBreadcrumb("Loading", "Loading failed. Player going back to start.");
-                            if (StateManager.CurrentState == this)
-                            {
-                                StateManager.PopState(false);
-                                StateManager.ClearState();
-                                StateManager.PushState(new MainMenuState(Game, StateManager));
-                            }
+                            StateManager.ClearState();
                         },
                         Rect = GuiRoot.RenderData.VirtualScreen
                     });
