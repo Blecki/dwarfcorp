@@ -19,6 +19,7 @@ namespace DwarfCorp.GameStates
 
         public Action RestartGeneration;
         public Func<WorldGenerator> GetGenerator;
+        public Action OnVerified;
         
         public GenerationPanel(DwarfGame Game, GameStateManager StateManager, OverworldGenerationSettings Settings)
         {
@@ -112,7 +113,7 @@ namespace DwarfCorp.GameStates
 
             StartButton = AddChild(new Gui.Widget
             {
-                Text = "Start Game",
+                Text = "I like this world",
                 Border = "border-button",
                 ChangeColorOnHover = true,
                 TextColor = new Vector4(0, 0, 0, 1),
@@ -120,7 +121,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockBottom,
                 OnClick = (sender, args) =>
                 {
-                    StateManager.PushState(new OverworldTileChooseState(Game, StateManager, Generator, Settings));
+                    OnVerified?.Invoke();
                 }
             });
 

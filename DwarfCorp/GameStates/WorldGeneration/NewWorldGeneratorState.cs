@@ -17,6 +17,8 @@ namespace DwarfCorp.GameStates
         private WorldGenerator Generator;
         private OverworldGenerationSettings Settings;
         private bool AutoGenerate;
+        private Gui.Widget RightPanel;
+        private Widget MainPanel;
         
         public NewWorldGeneratorState(DwarfGame Game, GameStateManager StateManager, CompanyInformation Company, bool AutoGenerate) :
             base(Game, "NewWorldGeneratorState", StateManager)
@@ -56,6 +58,18 @@ namespace DwarfCorp.GameStates
             GenerationProgress.Hidden = false;
         }
 
+        private void SwitchToLaunchPanel()
+        {
+            var rect = RightPanel.Rect;
+            MainPanel.RemoveChild(RightPanel);
+
+            RightPanel = MainPanel.AddChild(new LaunchPanel(Game, StateManager, Generator, Settings)
+            {
+                Rect = rect
+            });
+            RightPanel.Layout();
+        }
+
         public override void OnEnter()
         {
             DwarfGame.GumInputMapper.GetInputQueue();
@@ -63,7 +77,7 @@ namespace DwarfCorp.GameStates
             GuiRoot = new Gui.Root(DwarfGame.GuiSkin);
             GuiRoot.MousePointer = new MousePointer("mouse", 15.0f, 16, 17, 18, 19, 20, 21, 22, 23);
 
-            var mainPanel = GuiRoot.RootItem.AddChild(new Gui.Widget
+            MainPanel = GuiRoot.RootItem.AddChild(new Gui.Widget
             {
                 Rect = GuiRoot.RenderData.VirtualScreen,
                 Border = "border-fancy",
@@ -74,16 +88,20 @@ namespace DwarfCorp.GameStates
                 InteriorMargin = new Gui.Margin(24, 0, 0, 0),
             });
 
-            var rightPanel = mainPanel.AddChild(new GenerationPanel(Game, StateManager, Settings)
+            RightPanel = MainPanel.AddChild(new GenerationPanel(Game, StateManager, Settings)
             {
                 RestartGeneration = () => RestartGeneration(),
                 GetGenerator = () => Generator,
+                OnVerified = () =>
+                {
+                    SwitchToLaunchPanel();
+                },
                 AutoLayout = Gui.AutoLayout.DockRight,
                 MinimumSize = new Point(256, 0),
                 Padding = new Gui.Margin(2,2,2,2)
             });
 
-            GenerationProgress = mainPanel.AddChild(new Gui.Widgets.ProgressBar
+            GenerationProgress = MainPanel.AddChild(new Gui.Widgets.ProgressBar
             {
                 AutoLayout = Gui.AutoLayout.DockBottom,
                 TextHorizontalAlign = Gui.HorizontalAlign.Center,
@@ -92,7 +110,7 @@ namespace DwarfCorp.GameStates
                 TextColor = new Vector4(1,1,1,1)                
             }) as Gui.Widgets.ProgressBar;
 
-            Preview = mainPanel.AddChild(new WorldGeneratorPreview(Game.GraphicsDevice)
+            Preview = MainPanel.AddChild(new WorldGeneratorPreview(Game.GraphicsDevice)
             {
                 Border = "border-thin",
                 AutoLayout = Gui.AutoLayout.DockFill,
