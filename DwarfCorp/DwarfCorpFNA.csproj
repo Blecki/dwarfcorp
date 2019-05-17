@@ -169,7 +169,6 @@
     <Compile Include=".\Components\AI\StatusEffects\StatBuff.cs" />
     <Compile Include=".\Components\AI\StatusEffects\StatusEffect.cs" />
     <Compile Include=".\Components\AI\StatusEffects\ThoughtBuff.cs" />
-    <Compile Include=".\Components\AI\WaitForPlanHelper.cs" />
     <Compile Include=".\Components\Body.cs" />
     <Compile Include=".\Components\GameComponent.cs" />
     <Compile Include=".\Components\GameComponentExtensions.cs" />

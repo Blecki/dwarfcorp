@@ -314,7 +314,6 @@
     <Compile Include="Entities\Fixtures\PlantGrowthTower.cs" />
     <Compile Include="Entities\Fixtures\SummoningCircle.cs" />
     <Compile Include="Components\AI\DwarfThoughts.cs" />
-    <Compile Include="Components\AI\WaitForPlanHelper.cs" />
     <Compile Include="Components\AI\LeaveWorldTask.cs" />
     <Compile Include="Components\AI\StatusEffects\Disease.cs" />
     <Compile Include="Components\AI\Gender.cs" />
