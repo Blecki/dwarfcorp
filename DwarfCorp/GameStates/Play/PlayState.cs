@@ -404,12 +404,106 @@ namespace DwarfCorp.GameStates
 
                 else if (@event == DwarfCorp.Gui.InputEvents.KeyUp)
                 {
-                    if ((Keys)args.KeyValue == ControlSettings.Mappings.SliceUp)
+                    if (FlatToolTray.Tray.Hotkeys.Contains((Keys)args.KeyValue))
+                    {
+                        if (PausePanel == null || PausePanel.Hidden)
+                        {
+                            (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray)
+                               .Hotkey((Keys)args.KeyValue);
+                        }
+                    }
+                    else if ((Keys)args.KeyValue == Keys.Escape)
+                    {
+                        if (PausePanel == null || PausePanel.Hidden)
+                        {
+                            BrushTray.Select(0);
+                            World.TutorialManager.HideTutorial();
+                        }
+                        else
+                        {
+                            World.TutorialManager.ShowTutorial();
+                        }
+
+                        CameraTray.Select(0);
+
+
+                        if (MainMenu.Hidden && PausePanel == null)
+                            (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(FlatToolTray.Tray.Hotkeys[0]);
+                        else if (CurrentToolMode != "SelectUnits" && PausePanel == null)
+                            ChangeTool("SelectUnits");
+                        else if (PausePanel != null)
+                        {
+                            PausePanel.Close();
+                        }
+                        else
+                            OpenPauseMenu();
+                    }
+                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.SelectAllDwarves)
+                    {
+                        if (PausePanel == null || PausePanel.Hidden)
+                        {
+                            World.PlayerFaction.SelectedMinions.AddRange(World.PlayerFaction.Minions);
+                            World.Tutorial("dwarf selected");
+                        }
+                    }
+                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.Pause)
+                    {
+                        if (PausePanel == null || PausePanel.Hidden)
+                        {
+                            Paused = !Paused;
+                            if (Paused) GameSpeedControls.Pause();
+                            else GameSpeedControls.Resume();
+                        }
+                    }
+                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.TimeForward)
+                    {
+                        if (PausePanel == null || PausePanel.Hidden)
+                        {
+                            GameSpeedControls.CurrentSpeed += 1;
+                        }
+                    }
+                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.TimeBackward)
+                    {
+                        if (PausePanel == null || PausePanel.Hidden)
+                        {
+                            GameSpeedControls.CurrentSpeed -= 1;
+                        }
+                    }
+                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.ToggleGUI)
+                    {
+                        Gui.RootItem.Hidden = !Gui.RootItem.Hidden;
+                        Gui.RootItem.Invalidate();
+                    }
+                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.Map)
+                    {
+                        if (PausePanel == null || PausePanel.Hidden)
+                        {
+                            Gui.SafeCall(MinimapIcon.OnClick, MinimapIcon, new InputEventArgs
+                            {
+                            });
+                        }
+                    }
+                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.Xray)
+                    {
+                        Xray.CheckState = !Xray.CheckState;
+                    }
+                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.GodMode)
+                    {
+                        if (PausePanel == null || PausePanel.Hidden)
+                        {
+                            if (!GodMenu.Hidden)
+                            {
+                                ChangeTool("SelectUnits");
+                            }
+                            GodMenu.Hidden = !GodMenu.Hidden;
+                            GodMenu.Invalidate();
+                        }
+                    }
+                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.SliceUp)
                     {
                         sliceUpheld = false;
                         args.Handled = true;
                     }
-
                     else if ((Keys)args.KeyValue == ControlSettings.Mappings.SliceDown)
                     {
                         sliceDownheld = false;
@@ -437,7 +531,6 @@ namespace DwarfCorp.GameStates
                         args.Handled = true;
                     }
                 }
-
                 else if (@event == DwarfCorp.Gui.InputEvents.KeyDown)
                 {
                     if ((Keys)args.KeyValue == ControlSettings.Mappings.SliceUp)
@@ -2597,134 +2690,6 @@ namespace DwarfCorp.GameStates
                 MultiContextMenu = null;
             }
             return null;
-        }
-
-        /// <summary>
-        /// Called when the user releases a key
-        /// </summary>
-        /// <param name="key">The keyboard key released</param>
-        private void TemporaryKeyPressHandler(Keys key)
-        {
-            /*
-            if ((DateTime.Now - EnterTime).TotalSeconds >= EnterInputDelaySeconds)
-            {
-                InputManager.KeyReleasedCallback -= TemporaryKeyPressHandler;
-                InputManager.KeyReleasedCallback += HandleKeyPress;
-                HandleKeyPress(key);
-            }
-            */
-        }
-
-        private bool HandleKeyPress(Keys key)
-        {
-            // Special case: number keys reserved for changing tool mode
-            if (FlatToolTray.Tray.Hotkeys.Contains(key))
-            {
-                if (PausePanel == null || PausePanel.Hidden)
-                {
-                    (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray)
-                       .Hotkey(key);
-                    return true;
-                }
-            }
-            else if (key == Keys.Escape)
-            {
-                if (PausePanel == null || PausePanel.Hidden)
-                {
-                    BrushTray.Select(0);
-                    World.TutorialManager.HideTutorial();
-                }
-                else
-                {
-                    World.TutorialManager.ShowTutorial();
-                }
-
-                CameraTray.Select(0);
-
-
-                if (MainMenu.Hidden && PausePanel == null)
-                    (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(FlatToolTray.Tray.Hotkeys[0]);
-                else if (CurrentToolMode != "SelectUnits" && PausePanel == null)
-                    ChangeTool("SelectUnits");
-                else if (PausePanel != null)
-                {
-                    PausePanel.Close();
-                }
-                else
-                    OpenPauseMenu();
-                return true;
-            }
-            else if (key == ControlSettings.Mappings.SelectAllDwarves)
-            {
-                if (PausePanel == null || PausePanel.Hidden)
-                {
-                    World.PlayerFaction.SelectedMinions.AddRange(World.PlayerFaction.Minions);
-                    World.Tutorial("dwarf selected");
-                    return true;
-                }
-            }
-            else if (key == ControlSettings.Mappings.Pause)
-            {
-                if (PausePanel == null || PausePanel.Hidden)
-                {
-                    Paused = !Paused;
-                    if (Paused) GameSpeedControls.Pause();
-                    else GameSpeedControls.Resume();
-                    return true;
-                }
-            }
-            else if (key == ControlSettings.Mappings.TimeForward)
-            {
-                if (PausePanel == null || PausePanel.Hidden)
-                {
-                    GameSpeedControls.CurrentSpeed += 1;
-                    return true;
-                }
-            }
-            else if (key == ControlSettings.Mappings.TimeBackward)
-            {
-                if (PausePanel == null || PausePanel.Hidden)
-                {
-                    GameSpeedControls.CurrentSpeed -= 1;
-                    return true;
-                }
-            }
-            else if (key == ControlSettings.Mappings.ToggleGUI)
-            {
-                Gui.RootItem.Hidden = !Gui.RootItem.Hidden;
-                Gui.RootItem.Invalidate();
-                return true;
-            }
-            else if (key == ControlSettings.Mappings.Map)
-            {
-                if (PausePanel == null || PausePanel.Hidden)
-                {
-                    Gui.SafeCall(MinimapIcon.OnClick, MinimapIcon, new InputEventArgs
-                    {
-                    });
-                    return true;
-                }
-            }
-            else if (key == ControlSettings.Mappings.Xray)
-            {
-                Xray.CheckState = !Xray.CheckState;
-            }
-#if !DEMO
-            else if (key == ControlSettings.Mappings.GodMode)
-            {
-                if (PausePanel == null || PausePanel.Hidden)
-                {
-                    if (!GodMenu.Hidden)
-                    {
-                        ChangeTool("SelectUnits");
-                    }
-                    GodMenu.Hidden = !GodMenu.Hidden;
-                    GodMenu.Invalidate();
-                    return true;
-                }
-            }
-#endif
-            return false;
         }
 
         private void MakeMenuItem(Gui.Widget Menu, string Name, string Tooltip, Action<Gui.Widget, Gui.InputEventArgs> OnClick)

@@ -10,58 +10,31 @@ using System.IO;
 
 namespace DwarfCorp.GameStates
 {
-    public class OverworldTileChooseState : GameState
+    // Todo: Make this use wait cursor while generating.
+    public class LaunchPanel : Widget
     {
-        private Gui.Root GuiRoot;
-        private WorldGeneratorPreview Preview;
         private Gui.Widget StartButton;
-        private WorldGenerator Generator = null;
+        public WorldGenerator Generator = null;
         private OverworldGenerationSettings Settings;
         private Widget CellInfo;
         private String SaveName;
+        private GameStateManager StateManager;
+        private DwarfGame Game;
 
-        public OverworldTileChooseState(DwarfGame Game, GameStateManager StateManager, WorldGenerator Generator, OverworldGenerationSettings Settings) :
-            base(Game, "NewWorldGeneratorState", StateManager)
+        public LaunchPanel(DwarfGame Game, GameStateManager StateManager, WorldGenerator Generator, OverworldGenerationSettings Settings) 
         {
             this.Generator = Generator;
             this.Settings = Settings;
+            this.StateManager = StateManager;
+            this.Game = Game;
 
             if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
                 throw new InvalidProgramException();
         }
 
-        public OverworldTileChooseState(DwarfGame Game, GameStateManager StateManager, OverworldGenerationSettings Settings) :
-            base(Game, "NewWorldGeneratorState", StateManager)
+        public override void Construct()
         {
-            this.Settings = Settings;
-        }
-
-        public override void OnEnter()
-        {
-            DwarfGame.GumInputMapper.GetInputQueue();
-
-            GuiRoot = new Gui.Root(DwarfGame.GuiSkin);
-            GuiRoot.MousePointer = new MousePointer("mouse", 15.0f, 16, 17, 18, 19, 20, 21, 22, 23);
-
-            var mainPanel = GuiRoot.RootItem.AddChild(new Gui.Widget
-            {
-                Rect = GuiRoot.RenderData.VirtualScreen,
-                Border = "border-fancy",
-                Text = Settings.Name,
-                Font = "font16",
-                TextColor = new Vector4(0, 0, 0, 1),
-                Padding = new Gui.Margin(4, 4, 4, 4),
-                InteriorMargin = new Gui.Margin(24, 0, 0, 0),
-            });
-
-            var rightPanel = mainPanel.AddChild(new Gui.Widget
-            {
-                AutoLayout = Gui.AutoLayout.DockRight,
-                MinimumSize = new Point(256, 0),
-                Padding = new Gui.Margin(2,2,2,2)
-            });
-
-            rightPanel.AddChild(new Gui.Widget
+            AddChild(new Gui.Widget
             {
                 Text = "Back",
                 Border = "border-button",
@@ -71,12 +44,11 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockTop,
                 OnClick = (sender, args) =>
                 {
-                    if (StateManager.CurrentState == this)
-                        StateManager.PopState();
+                    StateManager.PopState();
                 }
             });
 
-            StartButton = rightPanel.AddChild(new Gui.Widget
+            StartButton = AddChild(new Gui.Widget
             {
                 Text = "Start Game",
                 Border = "border-button",
@@ -127,36 +99,15 @@ namespace DwarfCorp.GameStates
                 }
             });
 
-            CellInfo = rightPanel.AddChild(new Widget
+            CellInfo = AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockFill,
                 TextColor = new Vector4(0, 0, 0, 1)
             });
 
-            Preview = mainPanel.AddChild(new WorldGeneratorPreview(Game.GraphicsDevice)
-            {
-                Border = "border-thin",
-                AutoLayout = Gui.AutoLayout.DockFill,
-                Overworld = Settings.Overworld,
-                OnCellSelectionMade = UpdateCellInfo
-            }) as WorldGeneratorPreview;
-
-            if (Generator == null)
-            {
-                Generator = new WorldGenerator(Settings, false);
-                Generator.LoadDummy(
-                    new Color[Settings.Overworld.Map.GetLength(0) * Settings.Overworld.Map.GetLength(1)],
-                    Game.GraphicsDevice);
-            }
-
-            Preview.SetGenerator(Generator);
             UpdateCellInfo();
 
-            GuiRoot.RootItem.Layout();
-                        
-            IsInitialized = true;
-
-            base.OnEnter();
+            base.Construct();
         }
 
         private void UpdateCellInfo()
@@ -185,39 +136,6 @@ namespace DwarfCorp.GameStates
                     CellInfo.Text = "";
                 }
             }
-        }
-
-        public override void Update(DwarfTime gameTime)
-        {
-            foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
-            {
-                GuiRoot.HandleInput(@event.Message, @event.Args);
-                if (!@event.Args.Handled)
-                {
-                    // Pass event to game...
-                }
-            }
-
-
-            GuiRoot.Update(gameTime.ToRealTime());
-            Preview.Update();
-            base.Update(gameTime);
-
-            Preview.PreparePreview(StateManager.Game.GraphicsDevice);
-        }
-
-        public override void Render(DwarfTime gameTime)
-        {
-            GuiRoot.Draw();
-
-                Preview.DrawPreview();
-                GuiRoot.MousePointer = new MousePointer("mouse", 1, 0);
-
-            // This is a serious hack.
-            GuiRoot.RedrawPopups();
-          
-            GuiRoot.DrawMouse();
-            base.Render(gameTime);
         }
     }
 }

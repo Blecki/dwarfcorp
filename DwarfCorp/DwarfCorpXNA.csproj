@@ -263,7 +263,9 @@
     <Compile Include="Events\Library.cs" />
     <Compile Include="GameStates\Play\WorldPopup.cs" />
     <Compile Include="GameStates\WorldGeneration\ColonyCell.cs" />
+    <Compile Include="GameStates\WorldGeneration\GenerationPanel.cs" />
     <Compile Include="GameStates\WorldGeneration\InstanceSettings.cs" />
+    <Compile Include="GameStates\WorldGeneration\LaunchPanel..cs" />
     <Compile Include="GameStates\WorldGeneration\NewWorldGeneratorState.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldGenerationSettings.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldTileChooserState.cs" />

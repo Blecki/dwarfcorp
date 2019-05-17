@@ -14,7 +14,6 @@ namespace DwarfCorp.GameStates
         private Gui.Root GuiRoot;
         private Gui.Widgets.ProgressBar GenerationProgress;
         private WorldGeneratorPreview Preview;
-        private Gui.Widget StartButton;
         private WorldGenerator Generator;
         private OverworldGenerationSettings Settings;
         private bool AutoGenerate;
@@ -52,6 +51,9 @@ namespace DwarfCorp.GameStates
             GuiRoot.RootItem.GetChild(0).Text = Settings.Name;
             GuiRoot.RootItem.GetChild(0).Invalidate();
             GuiRoot.MousePointer = new MousePointer("mouse", 15.0f, 16, 17, 18, 19, 20, 21, 22, 23);
+
+            Preview.Hidden = true;
+            GenerationProgress.Hidden = false;
         }
 
         public override void OnEnter()
@@ -72,190 +74,14 @@ namespace DwarfCorp.GameStates
                 InteriorMargin = new Gui.Margin(24, 0, 0, 0),
             });
 
-            var rightPanel = mainPanel.AddChild(new Gui.Widget
+            var rightPanel = mainPanel.AddChild(new GenerationPanel(Game, StateManager, Settings)
             {
+                RestartGeneration = () => RestartGeneration(),
+                GetGenerator = () => Generator,
                 AutoLayout = Gui.AutoLayout.DockRight,
                 MinimumSize = new Point(256, 0),
                 Padding = new Gui.Margin(2,2,2,2)
             });
-
-            rightPanel.AddChild(new Gui.Widget
-            {
-                Text = "Regenerate",
-                Border = "border-button",
-                ChangeColorOnHover = true,
-                TextColor = new Vector4(0, 0, 0, 1),
-                Font = "font16",
-                AutoLayout = Gui.AutoLayout.DockTop,
-                OnClick = (sender, args) => {
-                    GameStates.GameState.Game.LogSentryBreadcrumb("WorldGenerator", "User is regeneating the world.");
-                    //Settings = new OverworldGenerationSettings();
-                    RestartGeneration();
-                }
-            });
-
-            rightPanel.AddChild(new Gui.Widget
-            {
-                Text = "Save World",
-                Border = "border-button",
-                ChangeColorOnHover = true,
-                TextColor = new Vector4(0, 0, 0, 1),
-                Font = "font16",
-                AutoLayout = Gui.AutoLayout.DockTop,
-                OnClick = (sender, args) =>
-                {
-                    GameStates.GameState.Game.LogSentryBreadcrumb("WorldGenerator", "User is saving the world.");
-                    if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
-                        GuiRoot.ShowTooltip(GuiRoot.MousePosition, "Generator is not finished.");
-                    else
-                    {
-                        global::System.IO.DirectoryInfo worldDirectory = global::System.IO.Directory.CreateDirectory(DwarfGame.GetWorldDirectory() + global::System.IO.Path.DirectorySeparatorChar + Settings.Name);
-                        var file = new NewOverworldFile(Game.GraphicsDevice, Settings);
-                        file.WriteFile(worldDirectory.FullName);
-                        GuiRoot.ShowModalPopup(GuiRoot.ConstructWidget(new Gui.Widgets.Popup
-                        {
-                            Text = "File saved."
-                        }));
-                    }
-                }
-            });
-
-            rightPanel.AddChild(new Gui.Widget
-            {
-                Text = "Advanced",
-                Border = "border-button",
-                ChangeColorOnHover = true,
-                TextColor = new Vector4(0, 0, 0, 1),
-                Font = "font16",
-                AutoLayout = Gui.AutoLayout.DockTop,
-                OnClick = (sender, args) =>
-                {
-                    GameStates.GameState.Game.LogSentryBreadcrumb("WorldGenerator", "User is modifying advanced settings.");
-                    var advancedSettingsEditor = GuiRoot.ConstructWidget(new Gui.Widgets.WorldGenerationSettingsDialog
-                    {
-                        Settings = Settings,
-                        OnClose = (s) =>
-                        {
-                            if ((s as Gui.Widgets.WorldGenerationSettingsDialog).Result == Gui.Widgets.WorldGenerationSettingsDialog.DialogResult.Okay)
-                                RestartGeneration();
-                        }
-                    });
-
-                    GuiRoot.ShowModalPopup(advancedSettingsEditor);
-                }
-            });
-
-            rightPanel.AddChild(new Gui.Widget
-            {
-                Text = "Back",
-                Border = "border-button",
-                ChangeColorOnHover = true,
-                TextColor = new Vector4(0, 0, 0, 1),
-                Font = "font16",
-                AutoLayout = Gui.AutoLayout.DockTop,
-                OnClick = (sender, args) =>
-                {
-                    Generator.Abort();
-                    if (StateManager.CurrentState == this)
-                        StateManager.PopState();
-                }
-            });
-
-            StartButton = rightPanel.AddChild(new Gui.Widget
-            {
-                Text = "Start Game",
-                Border = "border-button",
-                ChangeColorOnHover = true,
-                TextColor = new Vector4(0, 0, 0, 1),
-                Font = "font16",
-                AutoLayout = Gui.AutoLayout.DockBottom,
-                OnClick = (sender, args) =>
-                {
-                    StateManager.PushState(new OverworldTileChooseState(Game, StateManager, Generator, Settings));
-                }
-            });
-
-            rightPanel.AddChild(new Gui.Widget
-            {
-                Text = "Territory size",
-                AutoLayout = Gui.AutoLayout.DockTop,
-                Font = "font8",
-                TextColor = new Vector4(0, 0, 0, 1),
-            });
-
-            rightPanel.AddChild(new Gui.Widget
-            {
-                Text = "Difficulty",
-                AutoLayout = Gui.AutoLayout.DockTop,
-                Font = "font8",
-                TextColor = new Vector4(0,0,0,1)
-            });
-
-            var difficultySelectorCombo = rightPanel.AddChild(new Gui.Widgets.ComboBox
-            {
-                AutoLayout = Gui.AutoLayout.DockTop,
-                Items = EmbarkmentLibrary.Enumerate().Select(e => e.Name).ToList(),
-                TextColor = new Vector4(0, 0, 0, 1),
-                Font = "font8",
-                OnSelectedIndexChanged = (sender) =>
-                {
-                    Settings.InitalEmbarkment = EmbarkmentLibrary.GetEmbarkment((sender as Gui.Widgets.ComboBox).SelectedItem);
-                }
-            }) as Gui.Widgets.ComboBox;
-
-            rightPanel.AddChild(new Gui.Widget
-            {
-                Text = "Caves",
-                AutoLayout = Gui.AutoLayout.DockTop,
-                Font = "font8",
-                TextColor = new Vector4(0, 0, 0, 1),
-            });
-
-            var layerSetting = rightPanel.AddChild(new Gui.Widgets.ComboBox
-            {
-                AutoLayout = AutoLayout.DockTop,
-                Items = new List<string>(new string[] { "Barely any", "Few", "Normal", "Lots", "Way too many" }),
-                Font = "font8",
-                TextColor = new Vector4(0, 0, 0, 1),
-                OnSelectedIndexChanged = (sender) =>
-                {
-                    switch ((sender as Gui.Widgets.ComboBox).SelectedItem)
-                    {
-                        case "Barely any": Settings.NumCaveLayers = 2; break;
-                        case "Few": Settings.NumCaveLayers = 3; break;
-                        case "Normal": Settings.NumCaveLayers = 4; break;
-                        case "Lots": Settings.NumCaveLayers = 6; break;
-                        case "Way too many": Settings.NumCaveLayers = 9; break;
-                    }
-                }
-            }) as Gui.Widgets.ComboBox;
-
-            rightPanel.AddChild(new Gui.Widget
-            {
-                Text = "Z Levels",
-                AutoLayout = Gui.AutoLayout.DockTop,
-                Font = "font8",
-                TextColor = new Vector4(0, 0, 0, 1),
-            });
-
-            var zLevelSetting = rightPanel.AddChild(new Gui.Widgets.ComboBox
-            {
-                AutoLayout = AutoLayout.DockTop,
-                Items = new List<string>(new string[] { "16", "64", "128" }),
-                Font = "font8",
-                TextColor = new Vector4(0, 0, 0, 1),
-                OnSelectedIndexChanged = (sender) =>
-                {
-                    switch ((sender as Gui.Widgets.ComboBox).SelectedItem)
-                    {
-                        case "16": Settings.zLevels = 1; break;
-                        case "64": Settings.zLevels = 4; break;
-                        case "128": Settings.zLevels = 8; break;
-                    }
-                }
-            }) as Gui.Widgets.ComboBox;
-
-            zLevelSetting.SelectedIndex = 1;
 
             GenerationProgress = mainPanel.AddChild(new Gui.Widgets.ProgressBar
             {
@@ -263,20 +89,22 @@ namespace DwarfCorp.GameStates
                 TextHorizontalAlign = Gui.HorizontalAlign.Center,
                 TextVerticalAlign = Gui.VerticalAlign.Center,
                 Font = "font10",
-                TextColor = new Vector4(1,1,1,1)
+                TextColor = new Vector4(1,1,1,1)                
             }) as Gui.Widgets.ProgressBar;
 
             Preview = mainPanel.AddChild(new WorldGeneratorPreview(Game.GraphicsDevice)
             {
                 Border = "border-thin",
                 AutoLayout = Gui.AutoLayout.DockFill,
-                Overworld = Settings.Overworld
+                Overworld = Settings.Overworld,
+                Hidden = true,
+                OnLayout = (sender) =>
+                {
+                    sender.Rect = new Rectangle(sender.Rect.X, sender.Rect.Y, sender.Rect.Width, GenerationProgress.Rect.Bottom - sender.Rect.Y);
+                }
             }) as WorldGeneratorPreview;
 
             GuiRoot.RootItem.Layout();
-
-            difficultySelectorCombo.SelectedIndex = difficultySelectorCombo.Items.IndexOf("Normal");
-            layerSetting.SelectedIndex = layerSetting.Items.IndexOf("Normal");
 
             IsInitialized = true;
 
@@ -312,7 +140,12 @@ namespace DwarfCorp.GameStates
 
             GuiRoot.Update(gameTime.ToRealTime());
             if (Generator.CurrentState == WorldGenerator.GenerationState.Finished)
+            {
+                Preview.Hidden = false;
+                GenerationProgress.Hidden = true;
                 Preview.Update();
+            }
+
             base.Update(gameTime);
 
             Preview.PreparePreview(StateManager.Game.GraphicsDevice);
