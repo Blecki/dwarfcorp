@@ -5,33 +5,23 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.GameStates
 {
-    public class GameStateManager
+    public static class GameStateManager
     {
-        private List<GameState> StateStack;
-        public bool StateStackIsEmpty => StateStack.Count == 0;
-        public DwarfGame Game { get; set; }
-        private GameState CurrentState;
-        private GameState NextState;
+        private static List<GameState> StateStack = new List<GameState>();
+        public static bool StateStackIsEmpty => StateStack.Count == 0;
+        private static GameState CurrentState;
+        private static GameState NextState;
+        public static bool DrawScreensaver => CurrentState != null && CurrentState.EnableScreensaver;
 
-        public Terrain2D ScreenSaver { get; set; }
+        private static object _mutex = new object();
 
-        private object _mutex = new object();
-
-        public GameStateManager(DwarfGame game)
-        {
-            Game = game;
-            CurrentState = null;
-            NextState = null;
-            StateStack = new List<GameState>();
-        }
-
-        public void PopState(bool enterNext = true)
+        public static void PopState(bool enterNext = true)
         {
             lock (_mutex)
             {
                 if (StateStack.Count > 0)
                 {
-                    Game.LogSentryBreadcrumb("GameState", String.Format("Leaving state {0}", StateStack[0].GetType().FullName));
+                    DwarfGame.LogSentryBreadcrumb("GameState", String.Format("Leaving state {0}", StateStack[0].GetType().FullName));
                     StateStack[0].OnPopped();
                     StateStack.RemoveAt(0);
                 }
@@ -45,7 +35,7 @@ namespace DwarfCorp.GameStates
             }
         }
 
-        public void ClearState()
+        public static void ClearState()
         {
             lock (_mutex)
             {
@@ -54,7 +44,7 @@ namespace DwarfCorp.GameStates
             }
         }
 
-        public void PushState(GameState state)
+        public static void PushState(GameState state)
         {
             lock (_mutex)
             {
@@ -64,26 +54,8 @@ namespace DwarfCorp.GameStates
             }
         }
 
-        public void Update(DwarfTime time)
+        public static void Update(DwarfTime time)
         {
-#if DEBUG
-            Microsoft.Xna.Framework.Input.KeyboardState k = Microsoft.Xna.Framework.Input.Keyboard.GetState();
-            if (k.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Home))
-            {
-                try
-                {
-                    GameState.Game.GraphicsDevice.Reset();
-                }
-                catch (Exception exception)
-                {
-
-                }
-            }
-#endif
-
-            if (ScreenSaver == null)
-                ScreenSaver = new Terrain2D(Game);
-
             lock (_mutex)
             {
                 if (NextState != null && NextState.IsInitialized)
@@ -100,23 +72,14 @@ namespace DwarfCorp.GameStates
             }
         }
 
-        public void Render(DwarfTime time)
+        public static void Render(DwarfTime time)
         {
             lock (_mutex)
             {
-                Game.GraphicsDevice.Clear(Color.Black);
-
-                if (CurrentState != null && CurrentState.EnableScreensaver)
-                    ScreenSaver.Render(Game.GraphicsDevice, time);
-
                 for (int i = StateStack.Count - 1; i >= 0; i--)
                 {
-                    GameState state = StateStack[i];
-
-                    if (state != null &&
-                        (state.RenderUnderneath || i == 0
-                        || Object.ReferenceEquals(state, CurrentState)
-                        || Object.ReferenceEquals(state, NextState)))
+                    var state = StateStack[i];
+                    if (state != null && (state.RenderUnderneath || i == 0 || Object.ReferenceEquals(state, CurrentState) || Object.ReferenceEquals(state, NextState)))
                     {
                         if (state.IsInitialized)
                             state.Render(time);
@@ -127,5 +90,4 @@ namespace DwarfCorp.GameStates
             }
         }
     }
-
 }

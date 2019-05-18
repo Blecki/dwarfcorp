@@ -1,6 +1,6 @@
 Modified MIT License (MIT)
 
-Copyright (c) 2015 Completely Fair Games Ltd.
+Copyright (c) 2019 Holey Donut Games LLC.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -14,12 +14,13 @@ all copies or substantial portions of the Software.
 
 The following content pieces are considered PROPRIETARY and may not be used
 in any derivative works, commercial or non commercial, without explicit 
-written permission from Completely Fair Games:
+written permission from Holey Donut Games:
 
 * Images (sprites, textures, etc.)
 * 3D Models
 * Sound Effects
 * Music
+* Content (JSON definition files, scripts, etc.)
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,

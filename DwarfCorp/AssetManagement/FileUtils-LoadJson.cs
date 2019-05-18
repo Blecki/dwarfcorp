@@ -1,37 +1,3 @@
-// FileUtils.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
-using ICSharpCode.SharpZipLib.Zip;
 using Newtonsoft.Json;
 using System;
 using System.IO;
@@ -43,25 +9,6 @@ namespace DwarfCorp
 {
     public static partial class FileUtils
     {
-        public static T LoadCompressedJsonFromAbsolutePath<T>(String Path, Object Context)
-        {
-            using (FileStream fs = new FileStream(Path, FileMode.Open))
-            using (var stream = new ZipInputStream(fs))
-            {
-                while (stream.GetNextEntry() != null)
-                {
-                    using (StreamReader reader = new StreamReader(stream))
-                    {
-                        using (JsonReader json = new JsonTextReader(reader))
-                        {
-                            return GetStandardSerializer(Context).Deserialize<T>(json);
-                        }
-                    }
-                }
-                return default(T);
-            }
-        }
-
         public static T LoadJsonFromAbsolutePath<T>(string filePath, object context = null)
         {           
             using (var stream = new FileStream(filePath, FileMode.Open))
@@ -128,7 +75,7 @@ namespace DwarfCorp
                 }
                 catch (Exception e)
                 {
-                    GameStates.GameState.Game.LogSentryBreadcrumb("AssetManager", String.Format("Could not load json: {0} msg: {1}", resolvedAssetPath, e.Message), SharpRaven.Data.BreadcrumbLevel.Error);
+                    DwarfGame.LogSentryBreadcrumb("AssetManager", String.Format("Could not load json: {0} msg: {1}", resolvedAssetPath, e.Message), SharpRaven.Data.BreadcrumbLevel.Error);
                     Console.WriteLine("Error loading asset {0}: {1}", resolvedAssetPath, e.Message);
                 }
             }

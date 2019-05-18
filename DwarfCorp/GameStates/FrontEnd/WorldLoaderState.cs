@@ -11,8 +11,8 @@ namespace DwarfCorp.GameStates
 {
     public class WorldLoaderState : PaginatedChooserState
     {
-        public WorldLoaderState(DwarfGame Game, GameStateManager StateManager) :
-            base(Game, StateManager)
+        public WorldLoaderState(DwarfGame Game) :
+            base(Game)
         {
             this.ProceedButtonText = "Load";
             this.NoItemsText = "No worlds found.";
@@ -52,9 +52,9 @@ namespace DwarfCorp.GameStates
             this.OnProceedClicked = (path) =>
             {
                 var file = NewOverworldFile.Load(path);
-                StateManager.PopState();
-                var genState = new WorldGeneratorState(Game, Game.StateManager, file.CreateSettings(), WorldGeneratorState.PanelStates.Launch);
-                StateManager.PushState(genState);
+                GameStateManager.PopState();
+                var genState = new WorldGeneratorState(Game, file.CreateSettings(), WorldGeneratorState.PanelStates.Launch);
+                GameStateManager.PushState(genState);
             };
         }        
     }

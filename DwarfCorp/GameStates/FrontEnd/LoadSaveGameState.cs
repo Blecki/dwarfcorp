@@ -11,8 +11,8 @@ namespace DwarfCorp.GameStates
 {
     public class LoadSaveGameState : PaginatedChooserState
     {
-        public LoadSaveGameState(DwarfGame Game, GameStateManager StateManager) :
-            base(Game, StateManager)
+        public LoadSaveGameState(DwarfGame Game) :
+            base(Game)
         {
             this.ProceedButtonText = "Load";
             this.NoItemsText = "No saves found.";
@@ -36,8 +36,8 @@ namespace DwarfCorp.GameStates
 
             this.OnProceedClicked = (path) =>
             {
-                StateManager.ClearState();
-                StateManager.PushState(new LoadState(Game, Game.StateManager,
+                GameStateManager.ClearState();
+                GameStateManager.PushState(new LoadState(Game,
                     new OverworldGenerationSettings
                     {
                         InstanceSettings = new InstanceSettings

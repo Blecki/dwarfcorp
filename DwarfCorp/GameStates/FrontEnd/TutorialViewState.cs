@@ -43,8 +43,8 @@ namespace DwarfCorp.GameStates
         private Gui.Root GuiRoot;
         private Gui.Widget mainPanel;
         WorldManager World;
-        public TutorialViewState(DwarfGame game, GameStateManager stateManager, WorldManager world) :
-            base(game, stateManager)
+        public TutorialViewState(DwarfGame game, WorldManager world) :
+            base(game)
         {
             World = world;
         }
@@ -63,7 +63,7 @@ namespace DwarfCorp.GameStates
                 Font = "font16",
                 OnClick = (sender, args) =>
                 {
-                    StateManager.PopState();
+                    GameStateManager.PopState();
                 },
                 AutoLayout = AutoLayout.FloatBottomLeft,
             });

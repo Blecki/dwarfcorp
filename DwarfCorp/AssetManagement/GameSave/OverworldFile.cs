@@ -44,7 +44,7 @@ namespace DwarfCorp
         
         public Texture2D CreateScreenshot(GraphicsDevice device, int width, int height, float seaLevel)
         {
-            GameStates.GameState.Game.LogSentryBreadcrumb("Saving", String.Format("User saving an overworld with size {0} x {1}", width, height), SharpRaven.Data.BreadcrumbLevel.Info);
+            DwarfGame.LogSentryBreadcrumb("Saving", String.Format("User saving an overworld with size {0} x {1}", width, height), SharpRaven.Data.BreadcrumbLevel.Info);
             Texture2D toReturn = null;
             toReturn = new Texture2D(device, width, height);
             global::System.Threading.Mutex imageMutex = new global::System.Threading.Mutex();
@@ -162,15 +162,9 @@ namespace DwarfCorp
             var worldFilePath = filePath + global::System.IO.Path.DirectorySeparatorChar + "world.png";
             var metaFilePath = filePath + global::System.IO.Path.DirectorySeparatorChar + "meta.txt";
 
-            //if (File.Exists(worldFilePath) && File.Exists(metaFilePath))
-            //{
-            //    Console.Out.WriteLine("Overworld {0} already exists. Just assuming it is correct.", worldFilePath);
-            //    return false;
-            //}
-
             // Write meta info
             MetaData.Version = Program.Version;
-            FileUtils.SaveJSon(MetaData, metaFilePath, false);
+            FileUtils.SaveJSon(MetaData, metaFilePath);
 
             using (var texture = CreateSaveTexture(Device))
             using (var stream = new System.IO.FileStream(worldFilePath, System.IO.FileMode.Create))

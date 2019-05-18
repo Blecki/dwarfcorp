@@ -129,8 +129,8 @@ namespace DwarfCorp.GameStates
         public String InvalidItemText;
 
 
-        public PaginatedChooserState(DwarfGame Game, GameStateManager StateManager) :
-            base(Game, StateManager)
+        public PaginatedChooserState(DwarfGame Game) :
+            base(Game)
         { this.EnableScreensaver = true; }
 
         public override void OnEnter()
@@ -177,7 +177,7 @@ namespace DwarfCorp.GameStates
                 Tooltip = "Back to the main screen",
                 OnClick = (sender, args) =>
                 {
-                    StateManager.PopState();
+                    GameStateManager.PopState();
                 }
             });
 

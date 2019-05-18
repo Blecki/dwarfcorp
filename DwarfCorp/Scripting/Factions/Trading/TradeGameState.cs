@@ -21,11 +21,10 @@ namespace DwarfCorp.Scripting.Factions.Trading
 
         public TradeGameState(
             DwarfGame Game, 
-            GameStateManager StateManager,
             TradeEnvoy Envoy, 
             Faction PlayerFaction,
             WorldManager World) :
-            base(Game, StateManager)
+            base(Game)
         {
             this.World = World;
             this.Envoy = Envoy;
@@ -65,7 +64,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
             if(TradePanel.Result == Gui.Widgets.TradeDialogResult.Pending)
                 return;
 
-            StateManager.PopState();
+            GameStateManager.PopState();
         }
 
         public override void Render(DwarfTime gameTime)

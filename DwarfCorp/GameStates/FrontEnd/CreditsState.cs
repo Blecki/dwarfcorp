@@ -30,8 +30,9 @@ namespace DwarfCorp
         public List<CreditEntry> Entries { get; set; }
         public int Padding { get; set; }
         public bool IsDone { get; set; }
-        public CreditsState(DwarfGame game, GameStateManager stateManager) 
-            : base(game, stateManager)
+
+        public CreditsState(DwarfGame game) 
+            : base(game)
         {
             ScrollSpeed = 30;
             EntryHeight = 30;
@@ -60,7 +61,7 @@ namespace DwarfCorp
                 if (@event.Message == Gui.InputEvents.KeyPress || @event.Message == Gui.InputEvents.MouseClick)
                 {
                     IsDone = true;
-                    StateManager.PopState();
+                    GameStateManager.PopState();
                 }
             }
 

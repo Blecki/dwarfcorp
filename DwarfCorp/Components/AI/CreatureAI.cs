@@ -772,7 +772,7 @@ namespace DwarfCorp
                                 Stats.FullName, Stats.CurrentClass.Name),
                             ClickAction = (gui, sender) =>
                             {
-                                Manager.World.Game.StateManager.PushState(new EconomyState(Manager.World.Game, Manager.World.Game.StateManager, Manager.World));
+                                GameStateManager.PushState(new EconomyState(Manager.World.Game, Manager.World));
                             }
                         });
 
@@ -1451,7 +1451,7 @@ namespace DwarfCorp
             var state = new YarnState(World, ContentPaths.employee_conversation, "Start", cMem);
             state.AddEmployeePortrait(Employee);
             state.SetVoicePitch(Employee.Stats.VoicePitch);
-            Employee.World.Game.StateManager.PushState(state);
+            GameStateManager.PushState(state);
         }
     }
 }

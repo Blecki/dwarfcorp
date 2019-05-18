@@ -8,8 +8,8 @@ namespace DwarfCorp.GameStates
 {
     public class MainMenuState : MenuState
     {
-        public MainMenuState(DwarfGame game, GameStateManager stateManager) :
-            base(game, stateManager)
+        public MainMenuState(DwarfGame game) :
+            base(game)
         {
        
         }
@@ -21,34 +21,34 @@ namespace DwarfCorp.GameStates
             CreateMenuItem(frame, 
                 StringLibrary.GetString("new-game"), 
                 StringLibrary.GetString("new-game-tooltip"),
-                (sender, args) => StateManager.PushState(new CompanyMakerState(Game, Game.StateManager)));
+                (sender, args) => GameStateManager.PushState(new CompanyMakerState(Game)));
 
             CreateMenuItem(frame, 
                 StringLibrary.GetString("load-game"),
                 StringLibrary.GetString("load-game-tooltip"),
-                (sender, args) => StateManager.PushState(new WorldLoaderState(Game, StateManager)));
+                (sender, args) => GameStateManager.PushState(new WorldLoaderState(Game)));
 
             CreateMenuItem(frame, 
                 StringLibrary.GetString("options"),
                 StringLibrary.GetString("options-tooltip"),
-                (sender, args) => StateManager.PushState(new OptionsState(Game, StateManager)));
+                (sender, args) => GameStateManager.PushState(new OptionsState(Game)));
 
             CreateMenuItem(frame,
                 StringLibrary.GetString("manage-mods"),
                 StringLibrary.GetString("manage-mods-tooltip"), 
-                (sender, args) => StateManager.PushState(new ModManagement.ManageModsState(Game, StateManager)));
+                (sender, args) => GameStateManager.PushState(new ModManagement.ManageModsState(Game)));
 
             CreateMenuItem(frame, 
                 StringLibrary.GetString("credits"),
                 StringLibrary.GetString("credits-tooltip"),
-                (sender, args) => StateManager.PushState(new CreditsState(GameState.Game, StateManager)));
+                (sender, args) => GameStateManager.PushState(new CreditsState(GameState.Game)));
 
 #if DEBUG
             CreateMenuItem(frame, "QUICKPLAY", "",
                 (sender, args) =>
                 {
-                    GameStates.GameState.Game.LogSentryBreadcrumb("Menu", "User generating a random world.");
-                    StateManager.PushState(new LoadState(Game, Game.StateManager, new OverworldGenerationSettings()
+                    DwarfGame.LogSentryBreadcrumb("Menu", "User generating a random world.");
+                    GameStateManager.PushState(new LoadState(Game, new OverworldGenerationSettings()
                     {
                         Company = new CompanyInformation(),
                         GenerateFromScratch = true,
@@ -62,12 +62,12 @@ namespace DwarfCorp.GameStates
             CreateMenuItem(frame, "Dwarf Designer", "Open the dwarf designer.",
                 (sender, args) =>
                 {
-                    StateManager.PushState(new Debug.DwarfDesignerState(GameState.Game, StateManager));
+                    GameStateManager.PushState(new Debug.DwarfDesignerState(GameState.Game));
                 });
 
             CreateMenuItem(frame, "Yarn test", "", (sender, args) =>
             {
-                StateManager.PushState(new YarnState(null, "test.conv", "Start", new Yarn.MemoryVariableStore()));
+                GameStateManager.PushState(new YarnState(null, "test.conv", "Start", new Yarn.MemoryVariableStore()));
             });
 #endif
 

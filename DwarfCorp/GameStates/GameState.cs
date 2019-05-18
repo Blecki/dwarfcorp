@@ -12,18 +12,16 @@ namespace DwarfCorp.GameStates
     /// </summary>
     public class GameState
     {
-        public static DwarfGame Game { get; set; }
-        public GameStateManager StateManager { get; set; }
+        public static DwarfGame Game { get; set; } // Todo: Kill?
         public bool IsInitialized { get; set; }
         public bool RenderUnderneath { get; set; }
         public bool IsActiveState { get; set; }
         public bool EnableScreensaver { get; set; }
 
-        public GameState(DwarfGame game, GameStateManager stateManager)
+        public GameState(DwarfGame game)
         {
             EnableScreensaver = true;
             Game = game;
-            StateManager = stateManager;
             IsInitialized = false;
             RenderUnderneath = false;
             IsActiveState = false;
@@ -32,7 +30,7 @@ namespace DwarfCorp.GameStates
         public virtual void OnEnter()
         {
             IsActiveState = true;
-            Game.LogSentryBreadcrumb("GameState", this.GetType().FullName);
+            DwarfGame.LogSentryBreadcrumb("GameState", this.GetType().FullName);
         }
 
         public virtual void OnCovered()

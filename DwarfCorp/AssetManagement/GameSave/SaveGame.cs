@@ -26,14 +26,11 @@ namespace DwarfCorp
             foreach (ChunkFile chunk in ChunkData)
             {
                 var filename = directory + System.IO.Path.DirectorySeparatorChar + "Chunks" + System.IO.Path.DirectorySeparatorChar + chunk.ID.X + "_" + chunk.ID.Y + "_" + chunk.ID.Z + ".";
-                if (DwarfGame.COMPRESSED_BINARY_SAVES)
-                    FileUtils.SaveBinary(chunk, filename + ChunkFile.CompressedExtension);
-                else
-                    FileUtils.SaveJSon(chunk, filename + ChunkFile.Extension, false);
+                FileUtils.SaveJSon(chunk, filename + ChunkFile.Extension);
             }
 
-            FileUtils.SaveJSon(this.Metadata, directory + System.IO.Path.DirectorySeparatorChar + "Metadata." + MetaData.Extension, false);
-            FileUtils.SaveJSon(this.PlayData, directory + System.IO.Path.DirectorySeparatorChar + "World." + PlayData.Extension, DwarfGame.COMPRESSED_BINARY_SAVES);
+            FileUtils.SaveJSon(this.Metadata, directory + System.IO.Path.DirectorySeparatorChar + "Metadata." + MetaData.Extension);
+            FileUtils.SaveJSon(this.PlayData, directory + System.IO.Path.DirectorySeparatorChar + "World." + PlayData.Extension);
         }
 
         public static void DeleteOldestSave(string subdir, int maxToKeep, string blacklist)
@@ -67,24 +64,17 @@ namespace DwarfCorp
             ChunkData = new List<ChunkFile>();
 
             var chunkDirs = System.IO.Directory.GetDirectories(Path, "Chunks");
-            
+
             if (chunkDirs.Length > 0)
             {
-                foreach (string chunk in Directory.GetFiles(chunkDirs[0], "*." + (DwarfGame.COMPRESSED_BINARY_SAVES ? ChunkFile.CompressedExtension : ChunkFile.Extension)))
-                {
-                    if (DwarfGame.COMPRESSED_BINARY_SAVES)
-                        ChunkData.Add(FileUtils.LoadBinary<ChunkFile>(chunk));
-                    else
-                        ChunkData.Add(FileUtils.LoadJsonFromAbsolutePath<ChunkFile>(chunk));
-                }
+                foreach (string chunk in Directory.GetFiles(chunkDirs[0], "*." + ChunkFile.Extension))
+                    ChunkData.Add(FileUtils.LoadJsonFromAbsolutePath<ChunkFile>(chunk));
             }
             else
             {
                 Console.Error.WriteLine("Can't load chunks {0}, no chunks found", Path);
                 return false;
-            }
-
-            
+            }            
 
             return true;
         }
@@ -92,37 +82,28 @@ namespace DwarfCorp
         // Todo: Goal here is to not have to load all chunks at once.
         public List<ChunkFile> LoadChunks()
         {
-            if (Metadata == null) throw new InvalidProgramException("MetaData must be loaded before chunk data.");
+            if (Metadata == null)
+                throw new InvalidProgramException("MetaData must be loaded before chunk data.");
+
             var chunkDirectory = System.IO.Path.Combine(Path, "Chunks");
-            if (!Directory.Exists(chunkDirectory)) throw new InvalidOperationException("No chunk directory found.");
+            if (!Directory.Exists(chunkDirectory))
+                throw new InvalidOperationException("No chunk directory found.");
 
             var r = new List<ChunkFile>();
 
-            foreach (string chunkFileName in Directory.GetFiles(chunkDirectory, "*." + (DwarfGame.COMPRESSED_BINARY_SAVES ? ChunkFile.CompressedExtension : ChunkFile.Extension)))
-            {
-                ChunkFile chunk = null;
-                if (DwarfGame.COMPRESSED_BINARY_SAVES)
-                    chunk = FileUtils.LoadBinary<ChunkFile>(chunkFileName);
-                else
-                    chunk = FileUtils.LoadJsonFromAbsolutePath<ChunkFile>(chunkFileName);
-
-                r.Add(chunk);
-            }
+            foreach (string chunkFileName in Directory.GetFiles(chunkDirectory, "*." + ChunkFile.Extension))
+                r.Add(FileUtils.LoadJsonFromAbsolutePath<ChunkFile>(chunkFileName));
 
             return r;
         }
             
         public bool LoadPlayData(string filePath, WorldManager world)
         {
+            // Todo: Use actual set path
             string[] worldFiles = global::System.IO.Directory.GetFiles(filePath, "*." + PlayData.Extension);
 
             if (worldFiles.Length > 0)
-            {
-                if (DwarfGame.COMPRESSED_BINARY_SAVES)
-                    PlayData = FileUtils.LoadCompressedJsonFromAbsolutePath<PlayData>(worldFiles[0], world);
-                else
-                    PlayData = FileUtils.LoadJsonFromAbsolutePath<PlayData>(worldFiles[0], world);
-            }
+                PlayData = FileUtils.LoadJsonFromAbsolutePath<PlayData>(worldFiles[0], world);
             else
             {
                 Console.Error.WriteLine("Can't load world from {0}, no data file found.", filePath);

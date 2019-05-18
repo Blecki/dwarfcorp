@@ -18,7 +18,6 @@ namespace DwarfCorp
     public class ChunkFile
     {
         public static string Extension = "chunk";
-        public static string CompressedExtension = "zchunk";
 
         public GlobalChunkCoordinate ID;
         public GlobalVoxelCoordinate Origin;

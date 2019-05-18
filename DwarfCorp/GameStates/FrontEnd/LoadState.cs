@@ -27,8 +27,8 @@ namespace DwarfCorp.GameStates
         private Timer TipTimer = new Timer(1, false, Timer.TimerMode.Real);
         public OverworldGenerationSettings Settings { get; set; }
 
-        public LoadState(DwarfGame game, GameStateManager stateManager, OverworldGenerationSettings settings) :
-            base(game, stateManager)
+        public LoadState(DwarfGame game, OverworldGenerationSettings settings) :
+            base(game)
         {
             Settings = settings;
             EnableScreensaver = true;
@@ -108,8 +108,8 @@ namespace DwarfCorp.GameStates
                 // Todo: Decouple gui/input from world.
                 // Copy important bits to PlayState - This is a hack; decouple world from gui and input instead.
                 PlayState.Input = Input;
-                StateManager.PopState(false);
-                StateManager.PushState(new PlayState(Game, StateManager, World));
+                GameStateManager.PopState(false);
+                GameStateManager.PushState(new PlayState(Game, World));
 
                 World.OnSetLoadingMessage = null;
                 World.Settings.Overworld.NativeFactions = World.Natives;
@@ -145,20 +145,20 @@ namespace DwarfCorp.GameStates
                     DwarfTime.LastTime.IsPaused = false;
                     DwarfTime.LastTime.Speed = 1.0f;
                     World = null;
-                    Game.LogSentryBreadcrumb("Loading", "Loading failed.", SharpRaven.Data.BreadcrumbLevel.Error);
+                    DwarfGame.LogSentryBreadcrumb("Loading", "Loading failed.", SharpRaven.Data.BreadcrumbLevel.Error);
                     GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm()
                     {
                         CancelText = "",
                         Text = "Oh no! Loading failed :( This crash has been automatically reported to the developers: " + exceptionText,
                         OnClick = (s, a) =>
                         {
-                            StateManager.Game.LogSentryBreadcrumb("Loading", "Loading failed. Player going back to start.");
-                            StateManager.ClearState();
+                            DwarfGame.LogSentryBreadcrumb("Loading", "Loading failed. Player going back to start.");
+                            GameStateManager.ClearState();
                         },
                         OnClose = (s) =>
                         {
-                            StateManager.Game.LogSentryBreadcrumb("Loading", "Loading failed. Player going back to start.");
-                            StateManager.ClearState();
+                            DwarfGame.LogSentryBreadcrumb("Loading", "Loading failed. Player going back to start.");
+                            GameStateManager.ClearState();
                         },
                         Rect = GuiRoot.RenderData.VirtualScreen
                     });

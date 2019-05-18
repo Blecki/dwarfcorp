@@ -18,14 +18,12 @@ namespace DwarfCorp.GameStates
         private OverworldGenerationSettings Settings;
         private Widget CellInfo;
         private String SaveName;
-        private GameStateManager StateManager;
         private DwarfGame Game;
 
-        public LaunchPanel(DwarfGame Game, GameStateManager StateManager, WorldGenerator Generator, OverworldGenerationSettings Settings) 
+        public LaunchPanel(DwarfGame Game, WorldGenerator Generator, OverworldGenerationSettings Settings) 
         {
             this.Generator = Generator;
             this.Settings = Settings;
-            this.StateManager = StateManager;
             this.Game = Game;
 
             if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
@@ -44,7 +42,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockTop,
                 OnClick = (sender, args) =>
                 {
-                    StateManager.PopState();
+                    GameStateManager.PopState();
                 }
             });
 
@@ -62,8 +60,8 @@ namespace DwarfCorp.GameStates
                     var saveGame = SaveGame.LoadMetaFromDirectory(saveName);
                     if (saveGame != null)
                     {
-                        StateManager.ClearState();
-                        StateManager.PushState(new LoadState(Game, Game.StateManager,
+                        GameStateManager.ClearState();
+                        GameStateManager.PushState(new LoadState(Game,
                             new OverworldGenerationSettings
                             {
                                 InstanceSettings = new InstanceSettings
@@ -75,26 +73,26 @@ namespace DwarfCorp.GameStates
                     }
                     else
                     {
-                        GameStates.GameState.Game.LogSentryBreadcrumb("WorldGenerator", string.Format("User is starting a game with a {0} x {1} world.", Settings.Width, Settings.Height));
+                        DwarfGame.LogSentryBreadcrumb("WorldGenerator", string.Format("User is starting a game with a {0} x {1} world.", Settings.Width, Settings.Height));
                         Settings.Overworld.Name = Settings.Name;
-                            Settings.InstanceSettings.ExistingFile = null;
-                            Settings.InstanceSettings.SpawnRect = Generator.GetSpawnRectangle();
-                            if (Settings.Natives == null || Settings.Natives.Count == 0)
-                                Settings.Natives = Generator.NativeCivilizations;
+                        Settings.InstanceSettings.ExistingFile = null;
+                        Settings.InstanceSettings.SpawnRect = Generator.GetSpawnRectangle();
+                        if (Settings.Natives == null || Settings.Natives.Count == 0)
+                            Settings.Natives = Generator.NativeCivilizations;
 
-                            foreach (var faction in Settings.Natives)
-                            {
-                                Vector2 center = new Vector2(faction.Center.X, faction.Center.Y);
-                                Vector2 spawn = new Vector2(Generator.GetSpawnRectangle().Center.X, Generator.GetSpawnRectangle().Center.Y);
-                                faction.DistanceToCapital = (center - spawn).Length();
-                                faction.ClaimsColony = false;
-                            }
+                        foreach (var faction in Settings.Natives)
+                        {
+                            Vector2 center = new Vector2(faction.Center.X, faction.Center.Y);
+                            Vector2 spawn = new Vector2(Generator.GetSpawnRectangle().Center.X, Generator.GetSpawnRectangle().Center.Y);
+                            faction.DistanceToCapital = (center - spawn).Length();
+                            faction.ClaimsColony = false;
+                        }
 
-                            foreach (var faction in Generator.GetFactionsInSpawn())
-                                faction.ClaimsColony = true;
+                        foreach (var faction in Generator.GetFactionsInSpawn())
+                            faction.ClaimsColony = true;
 
-                            StateManager.ClearState();
-                            StateManager.PushState(new LoadState(Game, StateManager, Settings));
+                        GameStateManager.ClearState();
+                        GameStateManager.PushState(new LoadState(Game, Settings));
                     }
                 }
             });

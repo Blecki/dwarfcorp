@@ -131,14 +131,8 @@ namespace DwarfCorp.GameStates
 
         public Gui.Root Gui;
 
-        /// <summary>
-        /// Creates a new play state
-        /// </summary>
-        /// <param name="game">The program currently running</param>
-        /// <param name="stateManager">The game state manager this state will belong to</param>
-        /// <param name="world">The world manager</param>
-        public PlayState(DwarfGame game, GameStateManager stateManager, WorldManager World) :
-            base(game, stateManager)
+        public PlayState(DwarfGame game, WorldManager World) :
+            base(game)
         {
             this.World = World;
             IsShuttingDown = false;
@@ -1203,7 +1197,7 @@ namespace DwarfCorp.GameStates
             {
                 Tag = "economy",
                 Icon = new Gui.TileReference("tool-icons", 10),
-                OnClick = (sender, args) => StateManager.PushState(new EconomyState(Game, StateManager, World)),
+                OnClick = (sender, args) => GameStateManager.PushState(new EconomyState(Game, World)),
                 DrawIndicator = true,
                 Tooltip = StringLibrary.GetString("economy-tooltip"),
                 Text = StringLibrary.GetString("economy-label"),
@@ -1223,7 +1217,7 @@ namespace DwarfCorp.GameStates
                                  Icon = new Gui.TileReference("tool-icons", 21),
                                 OnClick = (sender, args) =>
                                 {
-                                    StateManager.PushState(new EventLogState(Game, StateManager, World.EventLog, World.Time.CurrentDate));
+                                    GameStateManager.PushState(new EventLogState(Game, World.EventLog, World.Time.CurrentDate));
                                 },
                                 Text = StringLibrary.GetString("events-label"),
                                 TextVerticalAlign = VerticalAlign.Below,
@@ -1234,7 +1228,7 @@ namespace DwarfCorp.GameStates
                                  Icon = new Gui.TileReference("tool-icons", 36),
                                 OnClick = (sender, args) =>
                                 {
-                                    StateManager.PushState(new FactionViewState(GameState.Game, GameState.Game.StateManager, World));
+                                    GameStateManager.PushState(new FactionViewState(GameState.Game, World));
                                 },
                                 Text =  StringLibrary.GetString("diplomacy-label"),
                                 TextVerticalAlign = VerticalAlign.Below,
@@ -2750,7 +2744,7 @@ namespace DwarfCorp.GameStates
 
             MakeMenuItem(PausePanel, "Options", "", (sender, args) =>
             {
-                var state = new OptionsState(Game, StateManager)
+                var state = new OptionsState(Game)
                 {
                     OnClosed = () =>
                     {
@@ -2763,14 +2757,12 @@ namespace DwarfCorp.GameStates
                     World = World
                 };
 
-                StateManager.PushState(state);
+                GameStateManager.PushState(state);
             });
 
             MakeMenuItem(PausePanel, "Help", "", (sender, args) =>
             {
-                var state = new TutorialViewState(Game, StateManager, World);
-
-                StateManager.PushState(state);
+                GameStateManager.PushState(new TutorialViewState(Game, World));
             });
 
             MakeMenuItem(PausePanel, "Save", "",
@@ -2816,16 +2808,16 @@ namespace DwarfCorp.GameStates
 
         public void QuitGame()
         {
-            QuitGame(new MainMenuState(Game, StateManager));
+            QuitGame(new MainMenuState(Game));
         }
 
         public void QuitGame(GameState state)
         {
             World.Quit();
-            StateManager.ClearState();
+            GameStateManager.ClearState();
             Destroy();
 
-            StateManager.PushState(state);
+            GameStateManager.PushState(state);
         }
 
         public void AutoSave(Action<bool> callback = null)

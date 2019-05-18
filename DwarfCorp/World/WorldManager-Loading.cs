@@ -114,7 +114,7 @@ namespace DwarfCorp
                     Time = gameFile.Metadata.Time;
                     WorldSizeInChunks = gameFile.Metadata.NumChunks;
 
-                    if (gameFile.Metadata.OverworldFile != null && gameFile.Metadata.OverworldFile != "flat")
+                    if (gameFile.Metadata.OverworldFile != null)
                     {
                         SetLoadingMessage("Loading Overworld " + gameFile.Metadata.OverworldFile);
                         var worldDirectory = Directory.CreateDirectory(DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + gameFile.Metadata.OverworldFile);
@@ -122,11 +122,6 @@ namespace DwarfCorp
                     var instanceSettings = Settings.InstanceSettings;
                     Settings = overWorldFile.CreateSettings();
                     Settings.InstanceSettings = instanceSettings;
-                    }
-                    else
-                    {
-                        SetLoadingMessage("Generating flat world..");
-                        DebugOverworlds.CreateUniformLand();
                     }
                 }
 
@@ -338,7 +333,7 @@ namespace DwarfCorp
 
             if (gameFile == null)
                 {
-                    Game.LogSentryBreadcrumb("Loading", "Started new game without an existing file.");
+                    DwarfGame.LogSentryBreadcrumb("Loading", "Started new game without an existing file.");
                     if (Settings.Overworld.Map == null)
                         throw new InvalidProgramException("Tried to start game with an empty overworld. This should not happen.");
 
@@ -358,7 +353,7 @@ namespace DwarfCorp
 
                 if (gameFile != null)
                 {
-                    Game.LogSentryBreadcrumb("Loading", "Started new game with an existing file.");
+                    DwarfGame.LogSentryBreadcrumb("Loading", "Started new game with an existing file.");
                     if (gameFile.PlayData.Tasks != null)
                     {
                         TaskManager = gameFile.PlayData.Tasks;

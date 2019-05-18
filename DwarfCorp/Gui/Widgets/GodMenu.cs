@@ -47,27 +47,6 @@ namespace DwarfCorp.Gui.Widgets
             
                 new HorizontalMenuTray.MenuItem
                 {
-                    Text = "DEBUG SAVE",
-                    OnClick = (sender, args) =>
-                    {
-                        // Turn off binary compressed saves and save a nice straight json save for debugging purposes.
-
-                        // Todo: Why isn't World managing this paused state itself?
-                        bool paused = World.Paused;
-                        var previousSetting = DwarfGame.COMPRESSED_BINARY_SAVES;
-                        DwarfGame.COMPRESSED_BINARY_SAVES = false;
-                        World.Save(
-                                (success, exception) =>
-                                    {
-                                        World.MakeAnnouncement(success ? "Debug save created.": "Debug save failed - " + exception.Message);
-                                        DwarfGame.COMPRESSED_BINARY_SAVES = previousSetting;
-                                        World.Paused = paused;
-                                    });
-                    }
-                },
-
-                new HorizontalMenuTray.MenuItem
-                {
                     Text = "BUILD",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {

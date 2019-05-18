@@ -1,36 +1,3 @@
-// FileUtils.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,19 +7,13 @@ using System.Runtime.Serialization.Formatters;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using DwarfCorp.GameStates;
-using ICSharpCode.SharpZipLib;
-using ICSharpCode.SharpZipLib.Zip;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO.Compression;
-using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// A static class with helper functions for saving/loading data to binary, JSON, and ZIP
-    /// </summary>
     public static partial class FileUtils
     {
         private static List<JsonConverter> StandardConverters = new List<JsonConverter>
@@ -115,9 +76,9 @@ namespace DwarfCorp
         /// <param name="obj">The object.</param>
         /// <param name="filePath">The file path.</param>
         /// <returns>True if the object could be saved.</returns>
-        public static bool SaveBasicJson<T>(T obj, string filePath)
+        public static bool SaveBasicJson<T>(T obj, string filePath) // Todo: Kill
         {
-            return Save(GetStandardSerializer(null), obj, filePath, false);
+            return Save(GetStandardSerializer(null), obj, filePath);
         }
 
         public static string SerializeBasicJSON<T>(T obj)
@@ -131,11 +92,10 @@ namespace DwarfCorp
         /// <typeparam name="T">The type of the object.</typeparam>
         /// <param name="obj">The object to save.</param>
         /// <param name="filePath">The file path.</param>
-        /// <param name="compress">if set to <c>true</c> write with GZIP compression.</param>
         /// <returns>True if the object could be saved.</returns>
-        public static bool SaveJSon<T>(T obj, string filePath, bool compress)
+        public static bool SaveJSon<T>(T obj, string filePath)
         {
-            return Save(GetStandardSerializer(null), obj, filePath, compress);
+            return Save(GetStandardSerializer(null), obj, filePath);
 
         }
 
@@ -146,30 +106,14 @@ namespace DwarfCorp
         /// <param name="serializer">The serializer.</param>
         /// <param name="obj">The object.</param>
         /// <param name="filePath">The file path.</param>
-        /// <param name="compress">if set to <c>true</c> uses gzip compression.</param>
         /// <returns>true if the object could be saved.</returns>
-        private static bool Save<T>(JsonSerializer serializer, T obj, string filePath, bool compress)
+        private static bool Save<T>(JsonSerializer serializer, T obj, string filePath)
         {
-            if (!compress)
+            using (StreamWriter filestream = new StreamWriter(File.Open(filePath, global::System.IO.FileMode.OpenOrCreate)))
+            using (JsonWriter writer = new JsonTextWriter(filestream))
             {
-                using (StreamWriter filestream = new StreamWriter(File.Open(filePath, global::System.IO.FileMode.OpenOrCreate)))
-                using (JsonWriter writer = new JsonTextWriter(filestream))
-                {
-                    serializer.Serialize(writer, obj);
-                    return true;
-                }
-            }
-            else
-            {
-                using (var zip = new ZipOutputStream(new FileStream(filePath, FileMode.OpenOrCreate)))
-                using (JsonWriter writer = new JsonTextWriter(new StreamWriter(zip)))
-                {
-                    zip.SetLevel(9); // 0 - store only to 9 - means best compression
-                    var entry = new ZipEntry(Path.GetFileName(filePath));
-                    zip.PutNextEntry(entry);
-                    serializer.Serialize(writer, obj);
-                    return true;
-                }
+                serializer.Serialize(writer, obj);
+                return true;
             }
         }
 

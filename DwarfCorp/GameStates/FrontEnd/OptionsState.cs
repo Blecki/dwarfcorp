@@ -68,8 +68,8 @@ namespace DwarfCorp.GameStates
         private CheckBox DisableTutorialForAllGames;
         private EditableTextField SaveLocation;
 
-        public OptionsState(DwarfGame Game, GameStateManager StateManager) :
-            base(Game, StateManager)
+        public OptionsState(DwarfGame Game) :
+            base(Game)
         { }
 
         public override void OnEnter()
@@ -153,7 +153,7 @@ namespace DwarfCorp.GameStates
                                     if ((s2 as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
                                         ConfirmSettings();
                                     if (OnClosed != null) OnClosed();
-                                    StateManager.PopState();
+                                    GameStateManager.PopState();
                                 }
                         };
                         GuiRoot.ShowModalPopup(confirm);
@@ -161,7 +161,7 @@ namespace DwarfCorp.GameStates
                     else
                     {
                         OnClosed?.Invoke();
-                        StateManager.PopState();
+                        GameStateManager.PopState();
                     }
                 },
                 AutoLayout = AutoLayout.FloatTopLeft
@@ -957,8 +957,8 @@ namespace DwarfCorp.GameStates
         public void ApplySettings(GameSettings.Settings settings)
         {
             // Graphics settings
-            var preResolutionX = StateManager.Game.Graphics.PreferredBackBufferWidth;
-            var preResolutionY = StateManager.Game.Graphics.PreferredBackBufferHeight;
+            var preResolutionX = GameState.Game.Graphics.PreferredBackBufferWidth;
+            var preResolutionY = GameState.Game.Graphics.PreferredBackBufferHeight;
             var preFullscreen = GameSettings.Default.Fullscreen;
             var preGuiScale = GameSettings.Default.GuiScale;
             var preVsync = GameSettings.Default.VSync;
@@ -1000,13 +1000,13 @@ namespace DwarfCorp.GameStates
                 preFullscreen != GameSettings.Default.Fullscreen ||
                 preVsync != GameSettings.Default.VSync)
             {
-                StateManager.Game.Graphics.PreferredBackBufferWidth = GameSettings.Default.ResolutionX;
-                StateManager.Game.Graphics.PreferredBackBufferHeight = GameSettings.Default.ResolutionY;
-                StateManager.Game.Graphics.IsFullScreen = GameSettings.Default.Fullscreen;
-                StateManager.Game.Graphics.SynchronizeWithVerticalRetrace = GameSettings.Default.VSync;
+                Game.Graphics.PreferredBackBufferWidth = GameSettings.Default.ResolutionX;
+                Game.Graphics.PreferredBackBufferHeight = GameSettings.Default.ResolutionY;
+                Game.Graphics.IsFullScreen = GameSettings.Default.Fullscreen;
+                Game.Graphics.SynchronizeWithVerticalRetrace = GameSettings.Default.VSync;
                 try
                 {
-                    StateManager.Game.Graphics.ApplyChanges();
+                    Game.Graphics.ApplyChanges();
                 }
                 catch (NoSuitableGraphicsDeviceException)
                 {

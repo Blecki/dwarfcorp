@@ -37,7 +37,7 @@ namespace DwarfCorp
             String ConversationFile,
             String StartNode,
             Yarn.MemoryVariableStore Memory) :
-            base(Game, GameState.Game.StateManager)
+            base(Game)
         {
             World = world;
             YarnEngine = new YarnEngine(ConversationFile, StartNode, Memory, this);
@@ -190,7 +190,7 @@ namespace DwarfCorp
 
         public void EndConversation()
         {
-            StateManager.PopState();
+            GameStateManager.PopState();
         }
 
         public override void OnEnter()

@@ -9,8 +9,8 @@ namespace DwarfCorp.GameStates
         private Texture2D Logo;
         private Timer IntroTimer = new Timer(1, true);
 
-        public IntroState(DwarfGame game, GameStateManager stateManager) :
-            base(game, stateManager)
+        public IntroState(DwarfGame game) :
+            base(game)
         {
         }
 
@@ -28,15 +28,10 @@ namespace DwarfCorp.GameStates
             Game.IsMouseVisible = false;
             IntroTimer.Update(gameTime);
 
-            if (IntroTimer.HasTriggered)
+            if (IntroTimer.HasTriggered || Keyboard.GetState().GetPressedKeys().Length > 0)
             {
-                StateManager.PopState();
-                StateManager.PushState(new MainMenuState(Game, StateManager));
-            }
-            else if (Keyboard.GetState().GetPressedKeys().Length > 0)
-            {
-                StateManager.PopState();
-                StateManager.PushState(new MainMenuState(Game, StateManager));
+                GameStateManager.PopState();
+                GameStateManager.PushState(new MainMenuState(Game));
             }
 
             base.Update(gameTime);

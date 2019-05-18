@@ -27,7 +27,7 @@ namespace DwarfCorp
     /// and texture. Additionally, the TextureManager provides an interface to directly load
     /// resources from the disk (rather than going through XNAs content system)
     /// </summary>
-    public partial class AssetManager
+    public static partial class AssetManager
     {
         private static Dictionary<String, Texture2D> TextureCache = new Dictionary<string, Texture2D>();
         private static ContentManager Content { get { return GameState.Game.Content; } }
@@ -253,7 +253,7 @@ namespace DwarfCorp
             string asset = FileUtils.NormalizePath(_asset);
             if (asset == null)
             {
-                GameStates.GameState.Game.LogSentryBreadcrumb("AssetManager", string.Format("Asset {0} was null.", _asset), SharpRaven.Data.BreadcrumbLevel.Warning);
+                DwarfGame.LogSentryBreadcrumb("AssetManager", string.Format("Asset {0} was null.", _asset), SharpRaven.Data.BreadcrumbLevel.Warning);
                 var r = Content.Load<Texture2D>(ContentPaths.Error);
                 return r;
             }
@@ -265,7 +265,7 @@ namespace DwarfCorp
                     return existing;
                 else
                 {
-                    GameStates.GameState.Game.LogSentryBreadcrumb("AssetManager", string.Format("Asset {0} was invalid.", asset), SharpRaven.Data.BreadcrumbLevel.Warning);
+                    DwarfGame.LogSentryBreadcrumb("AssetManager", string.Format("Asset {0} was invalid.", asset), SharpRaven.Data.BreadcrumbLevel.Warning);
                     TextureCache.Remove(asset);
                 }
             }
@@ -291,14 +291,14 @@ namespace DwarfCorp
                 Console.Error.WriteLine(exception.ToString());
                 try
                 {
-                    GameStates.GameState.Game.LogSentryBreadcrumb("AssetManager", string.Format("Failed to load asset {0} : {1}", asset, exception.ToString()), SharpRaven.Data.BreadcrumbLevel.Warning);
+                    DwarfGame.LogSentryBreadcrumb("AssetManager", string.Format("Failed to load asset {0} : {1}", asset, exception.ToString()), SharpRaven.Data.BreadcrumbLevel.Warning);
                     var r = Content.Load<Texture2D>(ContentPaths.Error);
                     TextureCache[asset] = r;
                     return r;
                 }
                 catch (Exception innerException)
                 {
-                    GameStates.GameState.Game.LogSentryBreadcrumb("AssetManager", string.Format("Everything is broken! {0}", innerException.ToString()), SharpRaven.Data.BreadcrumbLevel.Error);
+                    DwarfGame.LogSentryBreadcrumb("AssetManager", string.Format("Everything is broken! {0}", innerException.ToString()), SharpRaven.Data.BreadcrumbLevel.Error);
                     return null;
                 }
             }

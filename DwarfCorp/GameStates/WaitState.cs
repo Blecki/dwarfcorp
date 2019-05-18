@@ -35,8 +35,8 @@ namespace DwarfCorp.GameStates
         public bool success = false;
         private Gui.Root GuiRoot;
 
-        public WaitState(DwarfGame game, string name, GameStateManager stateManager, WaitThreadRoutine routine)
-            : base(game, stateManager)
+        public WaitState(DwarfGame game, string name, WaitThreadRoutine routine)
+            : base(game)
         {
             WaitThread = new Thread(() =>
             {
@@ -101,7 +101,7 @@ namespace DwarfCorp.GameStates
             DwarfGame.GumInput.FireActions(GuiRoot, null);
             if (!WaitThread.IsAlive && !Done)
             {
-                StateManager.PopState();
+                GameStateManager.PopState();
                 Done = true;
             }
 

@@ -22,8 +22,8 @@ namespace DwarfCorp.GameStates
 
         private PanelStates PanelState = PanelStates.Generate;
         
-        public WorldGeneratorState(DwarfGame Game, GameStateManager StateManager, OverworldGenerationSettings Settings, PanelStates StartingState) :
-            base(Game, StateManager)
+        public WorldGeneratorState(DwarfGame Game, OverworldGenerationSettings Settings, PanelStates StartingState) :
+            base(Game)
         {
             this.PanelState = StartingState;
             this.Settings = Settings;
@@ -59,7 +59,7 @@ namespace DwarfCorp.GameStates
             var rect = RightPanel.Rect;
             MainPanel.RemoveChild(RightPanel);
 
-            RightPanel = MainPanel.AddChild(new LaunchPanel(Game, StateManager, Generator, Settings)
+            RightPanel = MainPanel.AddChild(new LaunchPanel(Game, Generator, Settings)
             {
                 Rect = rect
             });
@@ -89,7 +89,7 @@ namespace DwarfCorp.GameStates
             switch (PanelState)
             {
                 case PanelStates.Generate:
-                    RightPanel = MainPanel.AddChild(new GenerationPanel(Game, StateManager, Settings)
+                    RightPanel = MainPanel.AddChild(new GenerationPanel(Game, Settings)
                     {
                         RestartGeneration = () => RestartGeneration(),
                         GetGenerator = () => Generator,
@@ -103,7 +103,7 @@ namespace DwarfCorp.GameStates
                     });
                     break;
                 case PanelStates.Launch:
-                    RightPanel = MainPanel.AddChild(new LaunchPanel(Game, StateManager, Generator, Settings)
+                    RightPanel = MainPanel.AddChild(new LaunchPanel(Game, Generator, Settings)
                     {
                         AutoLayout = AutoLayout.DockRight,
                         MinimumSize = new Point(256, 0),
@@ -172,7 +172,7 @@ namespace DwarfCorp.GameStates
                 Preview.Update();
             }
 
-            Preview.PreparePreview(StateManager.Game.GraphicsDevice);
+            Preview.PreparePreview(Game.GraphicsDevice);
             base.Update(gameTime);
         }
 

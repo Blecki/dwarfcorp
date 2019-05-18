@@ -17,78 +17,11 @@ using System.Collections.Generic;
 
 namespace DwarfCorp
 {
-
     public class DwarfGame : Game
     {
-#if XNA_BUILD
-        public static bool COMPRESSED_BINARY_SAVES = true;
-#else
-        public static bool COMPRESSED_BINARY_SAVES = false;
-#endif
-
-        private class LogWriter : StreamWriter
-        {
-            private Gui.Widgets.DwarfConsole ConsoleLogOutput = null;
-            private global::System.Text.StringBuilder PreConsoleLogQueue = new global::System.Text.StringBuilder();
-            private TextWriter _mainOut;
-            public void SetConsole(Gui.Widgets.DwarfConsole Console)
-            {
-                this.ConsoleLogOutput = Console;
-                Console.AddMessage(PreConsoleLogQueue.ToString());
-            }
-
-            public LogWriter(TextWriter mainOut, FileStream Output) : base(Output)
-            {
-                _mainOut = mainOut;
-                AutoFlush = true;
-            }
-
-            public override void Write(char value)
-            {
-                _mainOut.Write(value);
-                if (ConsoleLogOutput != null)
-                    ConsoleLogOutput.Append(value);
-                else
-                    PreConsoleLogQueue.Append(value);
-
-                base.Write(value);
-            }
-
-            //public override void Write(string value)
-            //{
-            //    if (Console != null) Console.AddMessage(value);
-            //    base.Write(value);
-            //}
-
-            //public override void Write(char[] buffer)
-            //{
-            //    if (Console != null) foreach (var c in buffer) Console.Append(c);
-            //    base.Write(buffer);
-            //}
-
-            public override void Write(char[] buffer, int index, int count)
-            {
-                _mainOut.Write(buffer, index, count);
-                if (ConsoleLogOutput != null)
-                    for (var x = index; x < index + count; ++x)
-                        ConsoleLogOutput.Append(buffer[x]);
-                else
-                    PreConsoleLogQueue.Append(buffer, index, count);
-
-                base.Write(buffer, index, count);
-            }
-
-            public override void WriteLine(string value)
-            {
-                foreach (var c in value) Write(c);
-                Write('\n');
-            }
-        }
-
-        public GameStateManager StateManager { get; set; }
         public GraphicsDeviceManager Graphics;
-        public AssetManager TextureManager { get; set; }
         public static SpriteBatch SpriteBatch { get; set; }
+        public Terrain2D ScreenSaver { get; set; }
 
         public static Gui.Input.GumInputMapper GumInputMapper;
         public static Gui.Input.Input GumInput;
@@ -113,37 +46,20 @@ namespace DwarfCorp
             public Func<bool> Result;
         }
 
-
         private List<LazyAction> _lazyActions = new List<LazyAction>();
         private object _actionMutex = new object();
-
-        [ConsoleCommandHandler("PALETTE")]
-        private static String DumpPalette(String Path)
-        {
-            var palette = TextureTool.ExtractPaletteFromDirectoryRecursive(Path);
-            var paletteTexture = TextureTool.Texture2DFromMemoryTexture(DwarfGame.GuiSkin.Device, TextureTool.MemoryTextureFromPalette(palette));
-            paletteTexture.SaveAsPng(global::System.IO.File.OpenWrite("palette.png"), paletteTexture.Width, paletteTexture.Height);
-            return "Dumped.";
-        }
-
+                
 #if SHARP_RAVEN && !DEBUG
-        private RavenClient ravenClient;
+        private static RavenClient ravenClient;
 #endif
 
         public DwarfGame()
         {
-            //BoundingBox foo = new BoundingBox(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
-            //string serialized = FileUtils.SerializeBasicJSON(foo);
-            //BoundingBox deserialized = Newtonsoft.Json.JsonConvert.DeserializeObject<BoundingBox>(serialized, new BoxConverter());
-            //string code = ContentPathGenerator.GenerateCode();
-            //Console.Out.Write(code);
             GameState.Game = this;
-            //Content.RootDirectory = "Content";
-            StateManager = new GameStateManager(this);
             Graphics = new GraphicsDeviceManager(this);
             Window.Title = "DwarfCorp";
             Window.AllowUserResizing = false;
-            MainThreadID = global::System.Threading.Thread.CurrentThread.ManagedThreadId;
+            MainThreadID = Thread.CurrentThread.ManagedThreadId;
             GameSettings.Load();
 
             try
@@ -151,9 +67,7 @@ namespace DwarfCorp
 #if SHARP_RAVEN && !DEBUG
                 if (GameSettings.Default.AllowReporting)
                 {
-                    ravenClient =
-                        new RavenClient(
-                            "https://af78a676a448474dacee4c72a9197dd2:0dd0a01a9d4e4fa4abc6e89ac7538346@sentry.io/192119");
+                    ravenClient = new RavenClient("https://af78a676a448474dacee4c72a9197dd2:0dd0a01a9d4e4fa4abc6e89ac7538346@sentry.io/192119");
                     ravenClient.Tags["Version"] = Program.Version;
                     ravenClient.Tags["Commit"] = Program.Commit;
 
@@ -198,11 +112,7 @@ namespace DwarfCorp
             }
 
             if (AssetManagement.Steam.Steam.InitializeSteam() == AssetManagement.Steam.Steam.SteamInitializationResult.QuitImmediately)
-            {
                 Exit();
-            }
-
-            //DoBloatTest();
         }
 
 #if !XNA_BUILD && !GEMMONO
@@ -312,7 +222,7 @@ namespace DwarfCorp
             }
         }
 
-        public void TriggerRavenEvent(string message, string details)
+        public static void TriggerRavenEvent(string message, string details)
         {
 #if SHARP_RAVEN && !DEBUG
             if (ravenClient == null)
@@ -323,7 +233,7 @@ namespace DwarfCorp
 #endif
         }
 
-        public void LogSentryBreadcrumb(string category, string message, BreadcrumbLevel level = BreadcrumbLevel.Info)
+        public static void LogSentryBreadcrumb(string category, string message, BreadcrumbLevel level = BreadcrumbLevel.Info)
         {
             Console.Out.WriteLine(String.Format("{0} : {1}", category, message));
 #if SHARP_RAVEN && !DEBUG
@@ -368,7 +278,7 @@ namespace DwarfCorp
             try
             {
 #endif
-            StateManager.Game.LogSentryBreadcrumb("Loading", "LoadContent was called.", BreadcrumbLevel.Info);
+            LogSentryBreadcrumb("Loading", "LoadContent was called.", BreadcrumbLevel.Info);
             AssetManager.Initialize(Content, GraphicsDevice, GameSettings.Default);
 
             // Prepare GemGui
@@ -401,18 +311,21 @@ namespace DwarfCorp
                     SoundManager.LoadDefaultSounds();
                 }
 
-                if (StateManager.StateStackIsEmpty)
+                if (GameStateManager.StateStackIsEmpty)
                 {
-                    StateManager.Game.LogSentryBreadcrumb("GameState", "There was nothing in the state stack. Starting over.");
+                    LogSentryBreadcrumb("GameState", "There was nothing in the state stack. Starting over.");
                     if (GameSettings.Default.DisplayIntro)
-                        StateManager.PushState(new IntroState(this, StateManager));
+                        GameStateManager.PushState(new IntroState(this));
                     else
-                        StateManager.PushState(new MainMenuState(this, StateManager));
+                        GameStateManager.PushState(new MainMenuState(this));
                 }
 
                 ControlSettings.Load();
                 Drawer2D.Initialize(Content, GraphicsDevice);
-                base.LoadContent();
+            ScreenSaver = new Terrain2D(this);
+
+            base.LoadContent();
+
 #if SHARP_RAVEN && !DEBUG
             }
             catch (Exception exception)
@@ -472,7 +385,7 @@ namespace DwarfCorp
             PerformanceMonitor.PushFrame("Update");
             AssetManagement.Steam.Steam.Update();
             DwarfTime.LastTime.Update(time);
-            StateManager.Update(DwarfTime.LastTime);
+                GameStateManager.Update(DwarfTime.LastTime);
 
             lock (_actionMutex)
             {
@@ -509,8 +422,15 @@ namespace DwarfCorp
             {
 #endif
             PerformanceMonitor.PushFrame("Render");
-                StateManager.Render(DwarfTime.LastTime);
-                GraphicsDevice.SetRenderTarget(null);
+
+            GraphicsDevice.Clear(Color.Black);
+
+            if (GameStateManager.DrawScreensaver)
+                ScreenSaver.Render(GraphicsDevice, DwarfTime.LastTime);
+
+                GameStateManager.Render(DwarfTime.LastTime);
+
+            GraphicsDevice.SetRenderTarget(null);
                 base.Draw(time);
             PerformanceMonitor.PopFrame();
             PerformanceMonitor.Render();
@@ -579,7 +499,7 @@ namespace DwarfCorp
         // If called in the non main thread, will return false;
         public static bool IsMainThread
         {
-            get { return global::System.Threading.Thread.CurrentThread.ManagedThreadId == MainThreadID; }
+            get { return Thread.CurrentThread.ManagedThreadId == MainThreadID; }
         }
 
         public static bool ExitGame = false;
@@ -605,174 +525,6 @@ namespace DwarfCorp
             }
 
             return display;
-        }
-    }
-
-    public class EventLogState : GameStates.GameState // Todo: Split file...
-    {
-        public EventLog Log { get; set; }
-        public DateTime Now { get; set; }
-        public Gui.Root GuiRoot { get; set; }
-        public EventLogViewer Viewer { get; set; }
-
-        public EventLogState(DwarfGame game, GameStateManager manager, EventLog log, DateTime now) :
-            base(game, manager)
-        {
-            Log = log;
-            Now = now;
-        }
-        public override bool Equals(object obj)
-        {
-            return base.Equals(obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
-        public override void OnEnter()
-        {
-            GuiRoot = new Gui.Root(DwarfGame.GuiSkin);
-            GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
-            Viewer = GuiRoot.RootItem.AddChild(new EventLogViewer()
-            {
-                Log = Log,
-                Now = Now,
-                Rect = GuiRoot.RenderData.VirtualScreen,
-                AutoLayout = AutoLayout.DockFill,
-                InteriorMargin = new Margin(32, 32, 16, 16)
-            }) as EventLogViewer;
-            Viewer.CloseButton.OnClick = (sender, args) =>
-            {
-                    StateManager.PopState();
-            };
-            // Must be true or Render will not be called.
-            IsInitialized = true;
-            GuiRoot.RootItem.Layout();
-            base.OnEnter();
-        }
-
-        public override void OnPopped()
-        {
-            base.OnPopped();
-        }
-
-        public override void Render(DwarfTime gameTime)
-        {
-            GuiRoot.Draw();
-            base.Render(gameTime);
-        }
-
-        public override void RenderUnitialized(DwarfTime gameTime)
-        {
-            base.RenderUnitialized(gameTime);
-        }
-
-        public override string ToString()
-        {
-            return base.ToString();
-        }
-
-        public override void Update(DwarfTime gameTime)
-        {
-            DwarfGame.GumInput.FireActions(GuiRoot, (@event, args) =>
-            {
-                if (@event == InputEvents.KeyUp && args.KeyValue == (int)Microsoft.Xna.Framework.Input.Keys.Escape)
-                    StateManager.PopState();
-            });
-
-            GuiRoot.Update(gameTime.ToRealTime());
-            SoundManager.Update(gameTime, null, null);
-            base.Update(gameTime);
-        }
-    }
-
-
-    public class EventLogViewer : Gui.Widget
-    {
-        public EventLog Log { get; set; }
-        public DateTime Now { get; set; }
-        public Widget CloseButton { get; set; }
-        public override void Construct()
-        {
-            Border = "border-fancy";
-            AddChild(new Gui.Widget()
-            {
-                Text = "Events",
-                Font = "font16",
-                AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(256, 32)
-            });
-            Gui.Widgets.WidgetListView listView = AddChild(new Gui.Widgets.WidgetListView()
-            {
-                AutoLayout = AutoLayout.DockTop,
-                SelectedItemForegroundColor = Color.Black.ToVector4(),
-                SelectedItemBackgroundColor = new Vector4(0, 0, 0, 0),
-                ItemBackgroundColor2 = new Vector4(0, 0, 0, 0.1f),
-                ItemBackgroundColor1 = new Vector4(0, 0, 0, 0),
-                ItemHeight = 32,
-                MinimumSize = new Point(0, 3 * Root.RenderData.VirtualScreen.Height / 4)
-            }) as Gui.Widgets.WidgetListView;
-            foreach (var logged in Log.GetEntries().Reverse())
-            {
-                listView.AddItem(Root.ConstructWidget(new Widget()
-                {
-                    Background = new TileReference("basic", 0),
-                    Text = TextGenerator.AgeToString(Now - logged.Date) + " " + logged.Text,
-                    Tooltip = logged.Details,
-                    TextColor = logged.TextColor.ToVector4(),
-                    Font = "font10",
-                    MinimumSize = new Point(640, 32),
-                    Padding = new Margin(0, 0, 4, 4),
-                    TextVerticalAlign = VerticalAlign.Center
-                }));
-            }
-            CloseButton = AddChild(new Gui.Widgets.Button()
-            {
-                Text = "Close",
-                Font = "font10",
-                Border = "border-button",
-                MinimumSize = new Point(128, 32),
-                AutoLayout = AutoLayout.FloatBottomRight
-            });
-            Layout();
-            base.Construct();
-        }
-    }
-
-    public class EventLog
-    {
-        public struct LogEntry
-        {
-            public string Text;
-            public string Details;
-            public DateTime Date;
-            public Color TextColor;
-        }
-
-        private List<LogEntry> Entries = new List<LogEntry>();
-        private TimeSpan MaxDuration = new TimeSpan(10, 0, 0, 0, 0);
-
-        public IEnumerable<LogEntry> GetEntries()
-        {
-            return Entries;
-        }
-
-        public void AddEntry(LogEntry entry)
-        {
-            // Deduplication of entries.
-            if (Entries.Any(e => e.Text == entry.Text && (entry.Date - e.Date) < new TimeSpan(0, 1, 0, 0, 0)))
-                return;
-
-            Console.Out.WriteLine(entry.Text);
-            Entries.Add(entry);
-            Entries.RemoveAll(e => (entry.Date - e.Date) > MaxDuration);
-        }
-
-        public EventLog()
-        {
-
         }
     }
 }

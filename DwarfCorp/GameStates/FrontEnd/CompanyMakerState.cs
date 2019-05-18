@@ -17,8 +17,8 @@ namespace DwarfCorp.GameStates
 
         private CompanyInformation CompanyInformation;
 
-        public CompanyMakerState(DwarfGame game, GameStateManager stateManager) :
-            base(game, stateManager)
+        public CompanyMakerState(DwarfGame game) :
+            base(game)
         {
             CompanyInformation = new CompanyInformation();
         }
@@ -62,7 +62,7 @@ namespace DwarfCorp.GameStates
                         Company = CompanyInformation,
                     };
 
-                    StateManager.PushState(new WorldGeneratorState(Game, Game.StateManager, settings, WorldGeneratorState.PanelStates.Generate));
+                    GameStateManager.PushState(new WorldGeneratorState(Game, settings, WorldGeneratorState.PanelStates.Generate));
                 },
                 AutoLayout = AutoLayout.FloatBottomRight
             });
@@ -76,7 +76,7 @@ namespace DwarfCorp.GameStates
                 Font = "font16",
                 OnClick = (sender, args) =>
                 {
-                    StateManager.PopState();
+                    GameStateManager.PopState();
                 },
                 AutoLayout = AutoLayout.FloatBottomLeft,
             });

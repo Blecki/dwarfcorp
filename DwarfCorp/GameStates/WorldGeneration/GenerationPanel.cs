@@ -15,17 +15,15 @@ namespace DwarfCorp.GameStates
         private WorldGenerator Generator => GetGenerator();
         private OverworldGenerationSettings Settings;
         private DwarfGame Game;
-        private GameStateManager StateManager;
 
         public Action RestartGeneration;
         public Func<WorldGenerator> GetGenerator;
         public Action OnVerified;
         
-        public GenerationPanel(DwarfGame Game, GameStateManager StateManager, OverworldGenerationSettings Settings)
+        public GenerationPanel(DwarfGame Game, OverworldGenerationSettings Settings)
         {
             this.Settings = Settings;
             this.Game = Game;
-            this.StateManager = StateManager;
         }
 
         public override void Construct()
@@ -39,7 +37,7 @@ namespace DwarfCorp.GameStates
                 Font = "font16",
                 AutoLayout = Gui.AutoLayout.DockTop,
                 OnClick = (sender, args) => {
-                    GameStates.GameState.Game.LogSentryBreadcrumb("WorldGenerator", "User is regeneating the world.");
+                    DwarfGame.LogSentryBreadcrumb("WorldGenerator", "User is regeneating the world.");
                     //Settings = new OverworldGenerationSettings();
                     RestartGeneration();
                 }
@@ -55,7 +53,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockTop,
                 OnClick = (sender, args) =>
                 {
-                    GameStates.GameState.Game.LogSentryBreadcrumb("WorldGenerator", "User is saving the world.");
+                    DwarfGame.LogSentryBreadcrumb("WorldGenerator", "User is saving the world.");
                     if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
                         Root.ShowTooltip(Root.MousePosition, "Generator is not finished.");
                     else
@@ -81,7 +79,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockTop,
                 OnClick = (sender, args) =>
                 {
-                    GameStates.GameState.Game.LogSentryBreadcrumb("WorldGenerator", "User is modifying advanced settings.");
+                    DwarfGame.LogSentryBreadcrumb("WorldGenerator", "User is modifying advanced settings.");
                     var advancedSettingsEditor = Root.ConstructWidget(new Gui.Widgets.WorldGenerationSettingsDialog
                     {
                         Settings = Settings,
@@ -107,7 +105,7 @@ namespace DwarfCorp.GameStates
                 OnClick = (sender, args) =>
                 {
                     Generator.Abort();
-                    StateManager.PopState();
+                    GameStateManager.PopState();
                 }
             });
 

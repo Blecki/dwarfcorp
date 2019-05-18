@@ -28,8 +28,8 @@ namespace DwarfCorp.GameStates.ModManagement
             OnSystemChanges?.Invoke();
         }
 
-        public ManageModsState(DwarfGame game, GameStateManager stateManager) :
-    base(game, stateManager)
+        public ManageModsState(DwarfGame game) :
+    base(game)
         {
         }
 
@@ -75,12 +75,12 @@ namespace DwarfCorp.GameStates.ModManagement
                         {
                             Text = "Dwarf Corp must be restarted for changes to take effect.",
                             OkayText = "Okay",
-                            OnClose = (s2) => StateManager.PopState()
+                            OnClose = (s2) => GameStateManager.PopState()
                         };
                         GuiRoot.ShowModalPopup(confirm);
                     }
                     else
-                        StateManager.PopState();
+                        GameStateManager.PopState();
                 },
                 AutoLayout = AutoLayout.DockRight
             });

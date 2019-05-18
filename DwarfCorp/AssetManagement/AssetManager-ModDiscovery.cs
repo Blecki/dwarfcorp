@@ -12,7 +12,7 @@ using System.Security.Permissions;
 
 namespace DwarfCorp
 {
-    public partial class AssetManager
+    public static partial class AssetManager
     {
         public static List<ModMetaData> DiscoverMods()
         {

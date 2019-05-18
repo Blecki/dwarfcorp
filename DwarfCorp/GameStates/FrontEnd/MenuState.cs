@@ -12,8 +12,8 @@ namespace DwarfCorp.GameStates
         private Widget LogoWidget;
         private Texture2D LogoTexture;
 
-        public MenuState(DwarfGame game, GameStateManager stateManager) :
-            base(game, stateManager)
+        public MenuState(DwarfGame game) :
+            base(game)
         {
        
         }
