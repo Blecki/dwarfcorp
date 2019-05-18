@@ -11,7 +11,6 @@ namespace DwarfCorp.Gui.Widgets
     {
         public Faction Faction;
         private Gui.Widgets.WidgetListView EmployeeList;
-        private static Dictionary<String, int> IconIndex;
 
         private void RebuildEmployeeList()
         {
@@ -23,28 +22,20 @@ namespace DwarfCorp.Gui.Widgets
                 MinimumSize = new Point(128, 64),
                 OnClick = (sender, args) =>
                 {
-                    if (Faction.Minions.Count < GameSettings.Default.MaxDwarfs)
-                    {
-                        // Show hire dialog.
-                        var dialog = Root.ConstructWidget(
-                            new HireEmployeeDialog(Faction.Economy.Information)
-                            {
-                                Faction = Faction,
-                                OnClose = (_s) =>
-                                {
-                                    RebuildEmployeeList();
-                                }
-                            });
-                        Root.ShowModalPopup(dialog);
-                        Faction.World.Tutorial("hire");
-                    }
-                    else
-                    {
-                        Root.ShowModalPopup(Root.ConstructWidget(new Gui.Widgets.Popup
+                    // Show hire dialog.
+                    var dialog = Root.ConstructWidget(
+                        new HireEmployeeDialog(Faction.Economy.Information)
                         {
-                            Text = String.Format("Can't hire any more dwarfs. We can only have {0}.", GameSettings.Default.MaxDwarfs)
-                        }));
-                    }
+                            Faction = Faction,
+                            OnClose = (_s) =>
+                            {
+                                EmployeeList.Hidden = false;
+                                RebuildEmployeeList();
+                            }
+                        });
+                    Root.ShowModalPopup(dialog);
+                    Faction.World.Tutorial("hire");
+                    EmployeeList.Hidden = true;
                 }
             });
 
@@ -79,23 +70,6 @@ namespace DwarfCorp.Gui.Widgets
             }
 
             EmployeeList.SelectedIndex = 1;
-        }
-
-        public static int GetIconIndex(String Class)
-        {
-            if (IconIndex == null)
-            {
-                IconIndex = new Dictionary<string, int>();
-                IconIndex.Add("Craftdwarf", 0);
-                IconIndex.Add("Musket", 1);
-                IconIndex.Add("Miner", 2);
-                IconIndex.Add("AxeDwarf", 3);
-                IconIndex.Add("Wizard", 4);
-            }
-
-            if (IconIndex.ContainsKey(Class))
-                return IconIndex[Class];
-            return -1;
         }
 
         public override void Construct()

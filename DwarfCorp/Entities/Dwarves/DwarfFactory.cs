@@ -42,6 +42,12 @@ namespace DwarfCorp
             return GenerateDwarf(Position, Manager, "Musketeer", 0, Mating.RandomGender(), MathFunctions.Random.Next());
         }
 
+        [EntityFactory("Dwarf Manager")]
+        private static GameComponent __factory5(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return GenerateDwarf(Position, Manager, "Manager", 0, Mating.RandomGender(), MathFunctions.Random.Next());
+        }
+
         public static GameComponent GenerateDwarf(
             Vector3 Position,
             ComponentManager Manager,

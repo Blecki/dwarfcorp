@@ -1,6 +1,7 @@
 {
   "Name": "Manager",
   "PlayerClass": true,
+  "Managerial": true,
   "Actions": "Attack,Guard",
   "AttackMode": "Attacking",
   "Weapons": [

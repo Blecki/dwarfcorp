@@ -216,9 +216,7 @@ namespace DwarfCorp
             public bool AllowAutoDigging = true;
             public bool AllowAutoFarming = true;
             public float FNAONLY_KeyRepeatRate = 0.1f;
-            public int MaxDwarfs = 40;
             public int DwarfArrivalDelayHours = 4;
-            public float SigningBonus = 100;
             public int MaxLiveChunks = 10; // How many chunks can have geometry saved
             [AutoResetBool(false)] public bool FastGen = false;
             [AutoResetFloat(0.15f)] public float GenerationRuinsRate = 0.15f;

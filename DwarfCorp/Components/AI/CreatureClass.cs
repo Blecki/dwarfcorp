@@ -26,6 +26,7 @@ namespace DwarfCorp
         public Task.TaskCategory Actions = Task.TaskCategory.None;
         public CharacterMode AttackMode;
         public bool PlayerClass = false;
+        public bool Managerial = false;
 
         // Todo: Should just include name of attack animation. Kinda what the AttackMode is.
 

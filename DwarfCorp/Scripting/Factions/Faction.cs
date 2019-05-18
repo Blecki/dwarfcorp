@@ -982,9 +982,8 @@ namespace DwarfCorp
                 ArrivalTime = startDate+ new TimeSpan(0, delay, 0, 0, 0)
             });
 
-            AddMoney(-(decimal)GameSettings.Default.SigningBonus);
+            AddMoney(-(decimal)(currentApplicant.Level.Pay * 4));
             return NewArrivals.Last().ArrivalTime;
-
         }
 
         public void HireImmediately(Applicant currentApplicant)
@@ -1138,6 +1137,16 @@ namespace DwarfCorp
                 return;
 
                 Economy.Funds += money;
+        }
+
+        public int CalculateSupervisionCap()
+        {
+            return Minions.Sum(c => c.Stats.CurrentClass.Managerial ? (int)c.Stats.Intelligence : 0) + 4;
+        }
+
+        public int CalculateSupervisedEmployees()
+        {
+            return Minions.Where(c => !c.Stats.CurrentClass.Managerial).Count() + NewArrivals.Where(c => !c.Applicant.Class.Managerial).Count();
         }
 
         public void PayEmployees()

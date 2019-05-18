@@ -141,6 +141,8 @@ namespace DwarfCorp
             BaseIntelligence = CurrentLevel.BaseStats.Intelligence;
             BaseStrength = CurrentLevel.BaseStats.Strength;
             BaseWisdom = CurrentLevel.BaseStats.Wisdom;
+
+            Title = CurrentLevel.Name;
         }
         
         public void LevelUp(Creature Creature)

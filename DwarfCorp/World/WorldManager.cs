@@ -177,7 +177,8 @@ namespace DwarfCorp
 
         public void PauseThreads()
         {
-            ChunkManager.PauseThreads = true;
+            if (ChunkManager != null)
+                ChunkManager.PauseThreads = true;
         }
 
         public void UnpauseThreads()

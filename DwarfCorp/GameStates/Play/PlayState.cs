@@ -46,6 +46,7 @@ namespace DwarfCorp.GameStates
 
         private Gui.Widget MoneyLabel;
         private Gui.Widget LevelLabel;
+        private Widget SupervisionLabel;
         private Gui.Widget StocksLabel;
         private Gui.Widgets.FlatToolTray.RootTray BottomToolBar;
         private Gui.Widgets.FlatToolTray.Tray MainMenu;
@@ -634,6 +635,8 @@ namespace DwarfCorp.GameStates
             StocksLabel.Invalidate();
             LevelLabel.Text = String.Format("{0}/{1}", Renderer.PersistentSettings.MaxViewingLevel, World.WorldSizeInVoxels.Y);
             LevelLabel.Invalidate();
+            SupervisionLabel.Text = String.Format("{0}/{1}", World.PlayerFaction.Minions.Count, World.PlayerFaction.CalculateSupervisionCap());
+            SupervisionLabel.Invalidate();
             #endregion
 
             #region Update toolbar tray
@@ -947,6 +950,24 @@ namespace DwarfCorp.GameStates
                 TextVerticalAlign = DwarfCorp.Gui.VerticalAlign.Center,
                 TextColor = new Vector4(1, 1, 1, 1),
                 Tooltip = StringLibrary.GetString("slicer-current-tooltip")
+            });
+
+            BottomBar.AddChild(new Gui.Widget
+            {
+                Background = new Gui.TileReference("dwarves", 0),
+                MinimumSize = new Point(24, 32),
+                MaximumSize = new Point(24, 32),
+                AutoLayout = DwarfCorp.Gui.AutoLayout.DockLeftCentered,
+                Tooltip = "Dwarves vs Available Supervision"
+            });
+
+            SupervisionLabel = BottomBar.AddChild(new Widget
+            {
+                AutoLayout = AutoLayout.DockLeftCentered,
+                Font = "font10",
+                TextVerticalAlign = VerticalAlign.Center,
+                TextColor = new Vector4(1, 1, 1, 1),
+                Tooltip = "You need supervisors to manage more dwarves."
             });
             #endregion
 
