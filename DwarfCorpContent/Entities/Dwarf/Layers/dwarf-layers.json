@@ -37,6 +37,13 @@
   {
     "Type": "body",
     "Precedence": 0,
+    "Asset": "Entities/Dwarf/Layers/manager_bod",
+    "RestrictionType": "Class",
+    "RestrictionValue": "Manager"
+  },
+  {
+    "Type": "body",
+    "Precedence": 0,
     "Asset": "Entities/Dwarf/Layers/blank",
     "DefaultLayer": true
   },
@@ -106,7 +113,7 @@
     "Precedence": 3,
     "Asset": "Entities/Dwarf/Layers/braided-beard",
     "RestrictionType": "Gender",
-	"RestrictionValue": "Female Nonbinary"
+    "RestrictionValue": "Female Nonbinary"
   },
   {
     "Type": "beard",
@@ -148,14 +155,14 @@
   {
     "Type": "hair",
     "Precedence": 4,
-    "Asset": "Entities/Dwarf/Layers/buzz-hair",
+    "Asset": "Entities/Dwarf/Layers/buzz-hair"
   },
   {
     "Type": "hair",
     "Precedence": 4,
     "Asset": "Entities/Dwarf/Layers/bun-hair",
     "RestrictionType": "Gender",
-	"RestrictionValue": "Female Nonbinary"
+    "RestrictionValue": "Female Nonbinary"
   },
   {
     "Type": "hair",
@@ -252,7 +259,15 @@
   {
     "Type": "hat",
     "Precedence": 5,
-    "Asset": "Entities/Dwarf/Layers/blank"
+    "Asset": "Entities/Dwarf/Layers/manager_hat",
+    "RestrictionType": "Class",
+    "RestrictionValue": "Manager"
+  },
+  {
+    "Type": "hat",
+    "Precedence": 5,
+    "Asset": "Entities/Dwarf/Layers/blank",
+    "DefaultLayer": true
   },
 
   {

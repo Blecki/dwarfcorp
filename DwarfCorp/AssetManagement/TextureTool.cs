@@ -77,9 +77,8 @@ namespace DwarfCorp
         public static IndexedTexture DecomposeTexture(MemoryTexture Source, Palette Palette)
         {
             if (Source == null)
-            {
                 return null;
-            }
+
             var r = new IndexedTexture(Source.Width, Source.Height);
             for (var i = 0; i < Source.Data.Length; ++i)
             {
@@ -130,13 +129,6 @@ namespace DwarfCorp
             return r;
         }
 
-        public static Texture2D PaletteSwap(GraphicsDevice Device, Texture2D Source, Texture2D SourcePalette, Texture2D DestinationPalette)
-        {
-            var decomposedTexture = DecomposeTexture(MemoryTextureFromTexture2D(Source), RawPaletteFromTexture2D(SourcePalette));
-            var composedTexture = ComposeTexture(decomposedTexture, RawPaletteFromTexture2D(DestinationPalette));
-            return Texture2DFromMemoryTexture(Device, composedTexture);
-        }
-
         public static void ClearMemoryTexture(MemoryTexture Texture)
         {
             if (Texture == null)
@@ -148,35 +140,10 @@ namespace DwarfCorp
                 Texture.Data[i] = Color.Transparent;
         }
 
-        public static void Blit(MemoryTexture Source, MemoryTexture Onto)
-        {
-            if (Source == null || Onto == null)
-            {
-                return;
-            }
-            var width = Math.Min(Source.Width, Onto.Width);
-            var height = Math.Min(Source.Height, Onto.Height);
-            for (var y = 0; y < height; ++y)
-            {
-                var sourceIndex = Source.Index(0, y);
-                var destIndex = Onto.Index(0, y);
-                for (var x = 0; x < width; ++x)
-                {
-                    var sourcePixel = Source.Data[sourceIndex];
-                    if (sourcePixel.A != 0)
-                        Onto.Data[destIndex] = sourcePixel;
-                    sourceIndex += 1;
-                    destIndex += 1;
-                }
-            }
-        }
-
         public static void Blit(IndexedTexture Source, Palette SourcePalette, MemoryTexture Destination)
         {
             if (Source == null || SourcePalette == null || Destination == null)
-            {
                 return;
-            }
 
             var width = Math.Min(Source.Width, Destination.Width);
             var height = Math.Min(Source.Height, Destination.Height);

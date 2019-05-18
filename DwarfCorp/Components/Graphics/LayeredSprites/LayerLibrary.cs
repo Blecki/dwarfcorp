@@ -82,9 +82,7 @@ namespace DwarfCorp.LayeredSprites
                 var rawTexture = AssetManager.GetContentTexture(layer.Asset);
                 var memTexture = TextureTool.MemoryTextureFromTexture2D(rawTexture);
                 if (memTexture == null)
-                {
                     continue;
-                }
                 layer.CachedTexture = TextureTool.DecomposeTexture(memTexture, BaseDwarfPalette.CachedPalette);
             }
 
