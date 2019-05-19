@@ -22,7 +22,7 @@ namespace DwarfCorp
         public ComponentManager.ComponentSaveData Components;
         public Tutorial.TutorialSaveData TutorialSaveData;
         public Diplomacy Diplomacy;
-        public FactionLibrary Factions;
+        public FactionSet Factions;
         public List<Resource> Resources;
         public DesignationDrawer Designations;
         public TaskManager Tasks;

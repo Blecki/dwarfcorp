@@ -45,6 +45,7 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     Background = new TileReference("basic", 0)
                 });
+
                 var employeeSprite = employee.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>();
                
                 if (employeeSprite != null)
@@ -57,13 +58,12 @@ namespace DwarfCorp.Gui.Widgets
                         AnimationPlayer = employeeSprite.AnimPlayer
                     });
 
-                var title = employee.Stats.Title ?? employee.Stats.CurrentLevel.Name;
                 bar.AddChild(new Widget
                 {
                     AutoLayout = AutoLayout.DockFill,
                     TextVerticalAlign = VerticalAlign.Center,
                     MinimumSize = new Point(128, 64),
-                    Text = (employee.Stats.IsOverQualified ? employee.Stats.FullName + "*" : employee.Stats.FullName) + " (" + title + ")"
+                    Text = (employee.Stats.IsOverQualified ? employee.Stats.FullName + "*" : employee.Stats.FullName) + " (" + employee.Stats.Title ?? employee.Stats.CurrentLevel.Name + ")"
                 });
 
                 EmployeeList.AddItem(bar);
@@ -79,32 +79,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 OnFireClicked = (sender) =>
                 {
-                    Root.ShowModalPopup(Root.ConstructWidget(new Gui.Widgets.Confirm
-                    {
-                        OkayText = "Fire this dwarf!",
-                        CancelText = "Keep this dwarf.",
-                        Padding = new Margin(32, 10, 10, 10),
-                        OnClose = (confirm) =>
-                        {
-                            if ((confirm as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
-                            {
-                                SoundManager.PlaySound(ContentPaths.Audio.change, 0.5f);
-                                var employeeInfo = (sender as EmployeeInfo);
-                                if (employeeInfo == null)
-                                {
-                                    Console.Error.WriteLine("Error firing dwarf. This should not have happened!");
-                                    return;
-                                }
-                                var selectedEmployee = employeeInfo.Employee;
-                                selectedEmployee.GetRoot().Delete();
-
-                                Faction.Minions.Remove(selectedEmployee);
-                                Faction.SelectedMinions.Remove(selectedEmployee);
-
-                                RebuildEmployeeList();
-                            }
-                        }
-                    }));
+                    RebuildEmployeeList();
                 }
             }) as EmployeeInfo;
 

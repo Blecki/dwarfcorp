@@ -304,6 +304,7 @@
     <Compile Include="Gui\Widgets\Minimap\MinimapRenderer.cs" />
     <Compile Include="LogWriter.cs" />
     <Compile Include="Scripting\Combat\Attack.cs" />
+    <Compile Include="Scripting\Factions\FactionSet.cs" />
     <Compile Include="Scripting\LeafActs\FollowPathAct.cs" />
     <Compile Include="Scripting\Potions\GatherPotionsTask.cs" />
     <Compile Include="Scripting\Potions\Potion.cs" />
@@ -845,7 +846,6 @@
     <Compile Include="Economy\Resources\ResourceContainer.cs" />
     <Compile Include="Economy\Resources\ResourceLibrary.cs" />
     <Compile Include="Scripting\Factions\Faction.cs" />
-    <Compile Include="Scripting\Factions\FactionLibrary.cs" />
     <Compile Include="Scripting\Player\InputManager.cs" />
     <Compile Include="Scripting\Player\KeyManager.cs" />
     <Compile Include="Scripting\Player\Tools\AttackTool.cs" />

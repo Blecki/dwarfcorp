@@ -437,7 +437,7 @@ namespace DwarfCorp.GameStates
 
 
                 LoadingMessage = "Factions";
-                FactionLibrary library = new FactionLibrary();
+                FactionSet library = new FactionSet();
                 library.Initialize(null, new CompanyInformation());
 
                 if (Settings.Natives == null || Settings.Natives.Count == 0)

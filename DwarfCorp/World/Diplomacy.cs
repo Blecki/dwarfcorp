@@ -95,7 +95,7 @@ namespace DwarfCorp
         }
 
         [JsonIgnore]
-        public FactionLibrary Factions { get { return World.Factions; }}
+        public FactionSet Factions { get { return World.Factions; }}
 
 
         [JsonArrayAttribute]

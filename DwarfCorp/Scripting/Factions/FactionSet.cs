@@ -8,13 +8,13 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class FactionLibrary
+    public class FactionSet
     {
         public Dictionary<string, Faction> Factions { get; set; }
         
         public Faction GenerateFaction(OverworldGenerationSettings Settings, int idx , int n)
         {
-            var race = RaceLibrary.GetRandomIntelligentRace();
+            var race = Library.GetRandomIntelligentRace();
 
             var fact = new Faction(null)
             {
@@ -40,13 +40,13 @@ namespace DwarfCorp
                 Factions["Player"] = new Faction(state)
                 {
                     Name = "Player",
-                    Race = RaceLibrary.FindRace("Dwarf")
+                    Race = Library.GetRace("Dwarf")
                 };
 
                 Factions["The Motherland"] = new Faction(state)
                 {
                     Name = "The Motherland",
-                    Race = RaceLibrary.FindRace("Dwarf"),
+                    Race = Library.GetRace("Dwarf"),
                     IsRaceFaction = false,
                     TradeMoney = 10000,
                     TerritorySize = 9999,
@@ -59,49 +59,49 @@ namespace DwarfCorp
             Factions["Goblins"] = new Faction(state)
             {
                 Name = "Goblins",
-                Race = RaceLibrary.FindRace("Goblins"),
+                Race = Library.GetRace("Goblins"),
                 IsRaceFaction = true
             };
 
             Factions["Elf"] = new Faction(state)
             {
                 Name = "Elf",
-                Race = RaceLibrary.FindRace("Elf"),
+                Race = Library.GetRace("Elf"),
                 IsRaceFaction = true
             };
 
             Factions["Undead"] = new Faction(state)
             {
                 Name = "Undead",
-                Race = RaceLibrary.FindRace("Undead"),
+                Race = Library.GetRace("Undead"),
                 IsRaceFaction = true
             };
 
             Factions["Demon"] = new Faction(state)
             {
                 Name = "Demon",
-                Race = RaceLibrary.FindRace("Demon"),
+                Race = Library.GetRace("Demon"),
                 IsRaceFaction = true
             };
 
             Factions["Herbivore"] = new Faction(state)
             {
                 Name = "Herbivore",
-                Race = RaceLibrary.FindRace("Herbivore"),
+                Race = Library.GetRace("Herbivore"),
                 IsRaceFaction = true
             };
 
             Factions["Carnivore"] = new Faction(state)
             {
                 Name = "Carnivore",
-                Race = RaceLibrary.FindRace("Carnivore"),
+                Race = Library.GetRace("Carnivore"),
                 IsRaceFaction = true
             };
 
             Factions["Evil"] = new Faction(state)
             {
                 Name = "Evil",
-                Race = RaceLibrary.FindRace("Evil"),
+                Race = Library.GetRace("Evil"),
                 IsRaceFaction = true
             };
 
@@ -109,7 +109,7 @@ namespace DwarfCorp
             Factions["Molemen"] = new Faction(state)
             {
                 Name = "Molemen",
-                Race = RaceLibrary.FindRace("Molemen"),
+                Race = Library.GetRace("Molemen"),
                 IsRaceFaction = true
             };
             
@@ -117,7 +117,7 @@ namespace DwarfCorp
         }
 
 
-        public FactionLibrary()
+        public FactionSet()
         {
 
 
@@ -140,7 +140,7 @@ namespace DwarfCorp
                 Factions["Player"] = new Faction(world)
                 {
                     Name = "Player",
-                    Race = RaceLibrary.FindRace("Dwarf"),
+                    Race = Library.GetRace("Dwarf"),
                     DistanceToCapital = 0,
                     ClaimsColony = true
                 };
@@ -148,7 +148,7 @@ namespace DwarfCorp
                 Factions["The Motherland"] = new Faction(world)
                 {
                     Name = "The Motherland",
-                    Race = RaceLibrary.FindRace("Dwarf"),
+                    Race = Library.GetRace("Dwarf"),
                     IsRaceFaction = false,
                     TradeMoney = 10000,
                     IsMotherland = true,
@@ -160,21 +160,21 @@ namespace DwarfCorp
                 Factions["Herbivore"] = new Faction(world)
                 {
                     Name = "Herbivore",
-                    Race = RaceLibrary.FindRace("Herbivore"),
+                    Race = Library.GetRace("Herbivore"),
                     IsRaceFaction = true
                 };
 
                 Factions["Carnivore"] = new Faction(world)
                 {
                     Name = "Carnivore",
-                    Race = RaceLibrary.FindRace("Carnivore"),
+                    Race = Library.GetRace("Carnivore"),
                     IsRaceFaction = true
                 };
 
                 Factions["Evil"] = new Faction(world)
                 {
                     Name = "Evil",
-                    Race = RaceLibrary.FindRace("Evil"),
+                    Race = Library.GetRace("Evil"),
                     IsRaceFaction = true
                 };
             }

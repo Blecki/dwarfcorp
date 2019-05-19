@@ -34,7 +34,7 @@ namespace DwarfCorp
         public ChunkManager ChunkManager = null;
         public ComponentManager ComponentManager = null;
         public Yarn.MemoryVariableStore ConversationMemory = new Yarn.MemoryVariableStore();
-        public FactionLibrary Factions = null;
+        public FactionSet Factions = null;
         public ParticleManager ParticleManager = null;
         public Events.Scheduler EventScheduler;
         public int MaxViewingLevel = 0;

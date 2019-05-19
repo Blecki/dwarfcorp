@@ -263,7 +263,7 @@ namespace DwarfCorp
 
                 if (Natives == null) // Todo: Always true??
                 {
-                    FactionLibrary library = new FactionLibrary();
+                    FactionSet library = new FactionSet();
                     library.Initialize(this, Settings.Company);
                     Natives = new List<Faction>();
                     for (int i = 0; i < 10; i++)
@@ -283,7 +283,7 @@ namespace DwarfCorp
                         faction.RoomBuilder = new RoomBuilder(faction, this);
                 }
 
-                Factions = new FactionLibrary();
+                Factions = new FactionSet();
                 if (Natives != null && Natives.Count > 0)
                 {
                     Factions.AddFactions(this, Natives);

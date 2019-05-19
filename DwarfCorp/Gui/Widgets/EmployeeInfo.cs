@@ -367,10 +367,37 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockRight,
                 OnClick = (sender, args) =>
                 {
+                    if (Employee == null)
+                        return;
+
+                    Root.ShowModalPopup(Root.ConstructWidget(new Confirm
+                    {
+                        OkayText = StringLibrary.GetString("fire-dwarf"),
+                        CancelText = StringLibrary.GetString("keep-dwarf"),
+                        Text = String.Format("Really fire {0}? They will collect ${1} in severance pay.", Employee.Stats.FullName, Employee.Stats.CurrentLevel.Pay * 4),
+                        Padding = new Margin(32, 10, 10, 10),
+                        MinimumSize = new Point(512, 128),
+                        OnClose = (confirm) =>
+                        {
+                            if ((confirm as Gui.Widgets.Confirm).DialogResult == DwarfCorp.Gui.Widgets.Confirm.Result.OKAY)
+                            {
+                                SoundManager.PlaySound(ContentPaths.Audio.change, 0.25f);
+                                if (Employee.IsDead)
+                                    return;
+                                Employee.GetRoot().GetComponent<Inventory>().Die();
+                                Employee.World.MakeAnnouncement(StringLibrary.GetString("was-fired", Employee.Stats.FullName));
+                                Employee.GetRoot().Delete();
+
+                                Employee.Faction.FireEmployee(Employee);
+                            }
+                        }
+                    }));
+
                     Root.SafeCall(OnFireClicked, this);
                 }
             });
 
+            // Todo: If posession is disabled - can it just be removed?
             /*
             if (EnablePosession)
             {

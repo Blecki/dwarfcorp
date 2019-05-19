@@ -1013,41 +1013,6 @@ namespace DwarfCorp.GameStates
                 Tag = "selected-employee-info",
                 AutoLayout = AutoLayout.FloatBottomLeft,
                 MinimumSize = new Point(450, 500 - (50 * (GameSettings.Default.GuiScale - 1))),
-                OnFireClicked = (sender) =>
-                {
-                    Gui.ShowModalPopup(Gui.ConstructWidget(new Gui.Widgets.Confirm
-                    {
-                        OkayText = StringLibrary.GetString("fire-dwarf"),
-                        CancelText = StringLibrary.GetString("keep-dwarf"),
-                        Padding = new Margin(32, 10, 10, 10),
-                        MinimumSize = new Point(512, 128),
-                        OnClose = (confirm) =>
-                        {
-                            if ((confirm as Gui.Widgets.Confirm).DialogResult == DwarfCorp.Gui.Widgets.Confirm.Result.OKAY)
-                            {
-                                SoundManager.PlaySound(ContentPaths.Audio.change, 0.25f);
-                                var employeeInfo = (sender as EmployeeInfo);
-                                if (employeeInfo == null)
-                                {
-                                    Console.Error.WriteLine("Error firing dwarf. This should not have happened!");
-                                    World.MakeAnnouncement(StringLibrary.GetString("firing-error"));
-                                    return;
-                                }
-                                var selectedEmployee = (sender as EmployeeInfo).Employee;
-                                if (selectedEmployee.IsDead)
-                                {
-                                    return;
-                                }
-                                selectedEmployee.GetRoot().GetComponent<Inventory>().Die();
-                                World.MakeAnnouncement(StringLibrary.GetString("was-fired", selectedEmployee.Stats.FullName));
-                                selectedEmployee.GetRoot().Delete();
-
-                                World.PlayerFaction.Minions.Remove(selectedEmployee);
-                                World.PlayerFaction.SelectedMinions.Remove(selectedEmployee);
-                            }
-                        }
-                    }));
-                }
             }) as EmployeeInfo;
 
             var markerFilter = Gui.RootItem.AddChild(new DesignationFilter

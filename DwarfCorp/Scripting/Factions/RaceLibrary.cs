@@ -4,16 +4,16 @@ using System.Linq;
 
 namespace DwarfCorp
 {
-    public class RaceLibrary
+    public static partial class Library
     {
         private static Dictionary<string, Race> Races = null;
-        private static bool Initialized = false;
+        private static bool RacesInitialized = false;
 
-        private static void Initialize()
+        private static void InitializeRaces()
         {
-            if (Initialized)
+            if (RacesInitialized)
                 return;
-            Initialized = true;
+            RacesInitialized = true;
 
             Races = new Dictionary<string, Race>();
             foreach (var race in FileUtils.LoadJsonListFromDirectory<Race>(ContentPaths.World.races, null, r => r.Name))
@@ -22,9 +22,9 @@ namespace DwarfCorp
             Console.WriteLine("Loaded Race Library.");
         }
 
-        public static Race FindRace(String Name)
+        public static Race GetRace(String Name)
         {
-            Initialize();
+            InitializeRaces();
             Race result = null;
             if (Races.TryGetValue(Name, out result))
                 return result;
@@ -33,7 +33,7 @@ namespace DwarfCorp
 
         public static Race GetRandomIntelligentRace()
         {
-            Initialize();
+            InitializeRaces();
             return Datastructures.SelectRandom(Races.Values.Where(r => r.IsIntelligent && r.IsNative));
         }
     }

@@ -14,7 +14,6 @@ namespace DwarfCorp
     /// A faction is an independent collection of creatures, tied to an economy, rooms, and designations.
     /// Examples might be the player's dwarves, or the faction of goblins.
     /// </summary>
-    [JsonObject(IsReference = true)]
     public class Faction
     {
         public DwarfBux TradeMoney { get; set; }
@@ -57,7 +56,7 @@ namespace DwarfCorp
         {
             get
             {
-                return RaceLibrary.FindRace(_race);
+                return Library.GetRace(_race);
             }
             set
             {
@@ -134,7 +133,7 @@ namespace DwarfCorp
             PrimaryColor = descriptor.PrimaryColory;
             SecondaryColor = descriptor.SecondaryColor;
             Name = descriptor.Name;
-            Race = RaceLibrary.FindRace(descriptor.Race);
+            Race = Library.GetRace(descriptor.Race);
             Center = new Point(descriptor.CenterX, descriptor.CenterY);
         }
 
@@ -1000,7 +999,7 @@ namespace DwarfCorp
                     World.ComponentManager, currentApplicant.ClassName, currentApplicant.LevelIndex, currentApplicant.Gender, currentApplicant.RandomSeed);
             World.ComponentManager.RootComponent.AddChild(dwarfPhysics);
             var newMinion = dwarfPhysics.EnumerateAll().OfType<Dwarf>().FirstOrDefault();
-            global::System.Diagnostics.Debug.Assert(newMinion != null);
+            Debug.Assert(newMinion != null);
 
             newMinion.Stats.AllowedTasks = currentApplicant.Class.Actions;
             newMinion.Stats.LevelIndex = currentApplicant.LevelIndex - 1;
@@ -1012,12 +1011,18 @@ namespace DwarfCorp
             World.MakeAnnouncement(
                 new Gui.Widgets.QueuedAnnouncement
                 {
-                    Text = String.Format("{0} was hired as a {1}.",
-                        currentApplicant.Name, currentApplicant.Level.Name),
+                    Text = String.Format("{0} was hired as a {1}.", currentApplicant.Name, currentApplicant.Level.Name),
                     ClickAction = (gui, sender) => newMinion.AI.ZoomToMe()
                 });
 
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
+        }
+
+        public void FireEmployee(CreatureAI Employee)
+        {
+            Minions.Remove(Employee);
+            SelectedMinions.Remove(Employee);
+            AddMoney(-(decimal)(Employee.Stats.CurrentLevel.Pay * 4));
         }
 
         public GameComponent DispatchBalloon()

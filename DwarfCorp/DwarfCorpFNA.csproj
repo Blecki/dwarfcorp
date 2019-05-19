@@ -611,7 +611,7 @@
     <Compile Include=".\Scripting\Factions\EmbarkmentLibrary.cs" />
     <Compile Include=".\Scripting\Factions\Expedition.cs" />
     <Compile Include=".\Scripting\Factions\Faction.cs" />
-    <Compile Include=".\Scripting\Factions\FactionLibrary.cs" />
+    <Compile Include="Scripting\Factions\FactionSet.cs" />
     <Compile Include=".\Scripting\Factions\Race.cs" />
     <Compile Include=".\Scripting\Factions\RaceLibrary.cs" />
     <Compile Include=".\Scripting\Factions\TradeEnvoy.cs" />
