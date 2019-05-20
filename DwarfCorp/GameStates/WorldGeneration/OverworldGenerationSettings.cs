@@ -36,6 +36,7 @@ namespace DwarfCorp.GameStates
         public OverworldGenerationSettings()
         {
             Seed = Name.GetHashCode();
+            Company = new CompanyInformation();
             Overworld = new Overworld(Width, Height);
             InstanceSettings = new InstanceSettings();
         }

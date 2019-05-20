@@ -100,7 +100,7 @@ namespace DwarfCorp
                 if (creature.Faction == creature.World.PlayerFaction)
                 {
                     creature.World.MakeAnnouncement(
-                        StringLibrary.GetString("cancelled-crafting-unreachable", creature.Stats.FullName, Item.ItemType.DisplayName));
+                        Library.GetString("cancelled-crafting-unreachable", creature.Stats.FullName, Item.ItemType.DisplayName));
                     creature.World.TaskManager.CancelTask(this);
                 }
             }

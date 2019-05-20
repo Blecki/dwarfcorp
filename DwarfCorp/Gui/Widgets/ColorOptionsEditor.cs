@@ -116,7 +116,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 Font = "font10",
                 AutoLayout = AutoLayout.DockRight,
-                Text = StringLibrary.GetString("okay"),
+                Text = Library.GetString("okay"),
                 OnClick = (sender, args) =>
                 {
                     Close();
@@ -125,7 +125,7 @@ namespace DwarfCorp.Gui.Widgets
 
             buttonRow.AddChild(new Widget()
             {
-                Text = StringLibrary.GetString("color-profile"),
+                Text = Library.GetString("color-profile"),
                 Font = "font10",
                 AutoLayout = AutoLayout.DockLeft,
                 MinimumSize = new Point(64, 32)

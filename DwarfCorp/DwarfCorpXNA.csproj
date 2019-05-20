@@ -555,7 +555,6 @@
     <Compile Include="Entities\Traps\BearTrap.cs" />
     <Compile Include="Entities\Traps\TurretTrap.cs" />
     <Compile Include="GameSettings.cs" />
-    <Compile Include="GameStates\FrontEnd\CompanyMakerState.cs" />
     <Compile Include="GameStates\FrontEnd\CreditsState.cs" />
     <Compile Include="GameStates\GameState.cs" />
     <Compile Include="GameStates\GameStateManager.cs" />

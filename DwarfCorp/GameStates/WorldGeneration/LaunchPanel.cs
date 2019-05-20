@@ -26,7 +26,7 @@ namespace DwarfCorp.GameStates
             this.Settings = Settings;
             this.Game = Game;
 
-            if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
+            if (Generator != null && Generator.CurrentState != WorldGenerator.GenerationState.Finished)
                 throw new InvalidProgramException();
         }
 

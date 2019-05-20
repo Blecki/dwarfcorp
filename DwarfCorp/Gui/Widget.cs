@@ -228,10 +228,10 @@ namespace DwarfCorp.Gui
             if (!Constructed)
             {
                 if (Text != null)
-                    Text = StringLibrary.TransformDataString(Text, Text);
+                    Text = Library.TransformDataString(Text, Text);
 
                 if (Tooltip != null)
-                    Tooltip = StringLibrary.TransformDataString(Tooltip, Tooltip);
+                    Tooltip = Library.TransformDataString(Tooltip, Tooltip);
                 
                 Constructed = true;
                 this.Construct();

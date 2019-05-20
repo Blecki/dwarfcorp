@@ -145,8 +145,8 @@ namespace DwarfCorp.GameStates
                         var confirm = new Gui.Widgets.Confirm
                         {
                             Text = "@options-apply-check",
-                            OkayText = StringLibrary.GetString("yes"),
-                            CancelText = StringLibrary.GetString("no"),
+                            OkayText = Library.GetString("yes"),
+                            CancelText = Library.GetString("no"),
                             OnClose = (s2) =>
                                 {
                                     if ((s2 as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)

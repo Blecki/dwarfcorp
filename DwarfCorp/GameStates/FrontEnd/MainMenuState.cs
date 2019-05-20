@@ -16,31 +16,31 @@ namespace DwarfCorp.GameStates
 
         public void MakeMenu()
         {
-            var frame = CreateMenu(StringLibrary.GetString("main-menu-title"));
+            var frame = CreateMenu(Library.GetString("main-menu-title"));
+
+            CreateMenuItem(frame,
+                Library.GetString("new-game"),
+                Library.GetString("new-game-tooltip"),
+                (sender, args) => GameStateManager.PushState(new WorldGeneratorState(Game, new OverworldGenerationSettings(), WorldGeneratorState.PanelStates.Generate)));
 
             CreateMenuItem(frame, 
-                StringLibrary.GetString("new-game"), 
-                StringLibrary.GetString("new-game-tooltip"),
-                (sender, args) => GameStateManager.PushState(new CompanyMakerState(Game)));
-
-            CreateMenuItem(frame, 
-                StringLibrary.GetString("load-game"),
-                StringLibrary.GetString("load-game-tooltip"),
+                Library.GetString("load-game"),
+                Library.GetString("load-game-tooltip"),
                 (sender, args) => GameStateManager.PushState(new WorldLoaderState(Game)));
 
             CreateMenuItem(frame, 
-                StringLibrary.GetString("options"),
-                StringLibrary.GetString("options-tooltip"),
+                Library.GetString("options"),
+                Library.GetString("options-tooltip"),
                 (sender, args) => GameStateManager.PushState(new OptionsState(Game)));
 
             CreateMenuItem(frame,
-                StringLibrary.GetString("manage-mods"),
-                StringLibrary.GetString("manage-mods-tooltip"), 
+                Library.GetString("manage-mods"),
+                Library.GetString("manage-mods-tooltip"), 
                 (sender, args) => GameStateManager.PushState(new ModManagement.ManageModsState(Game)));
 
             CreateMenuItem(frame, 
-                StringLibrary.GetString("credits"),
-                StringLibrary.GetString("credits-tooltip"),
+                Library.GetString("credits"),
+                Library.GetString("credits-tooltip"),
                 (sender, args) => GameStateManager.PushState(new CreditsState(GameState.Game)));
 
 #if DEBUG
@@ -72,8 +72,8 @@ namespace DwarfCorp.GameStates
 #endif
 
             CreateMenuItem(frame, 
-                StringLibrary.GetString("quit"),
-                StringLibrary.GetString("quit-tooltip"),
+                Library.GetString("quit"),
+                Library.GetString("quit-tooltip"),
                 (sender, args) => Game.Exit());
 
             FinishMenu();

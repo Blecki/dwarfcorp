@@ -897,7 +897,7 @@ namespace DwarfCorp.GameStates
                 Font = "font10",
                 TextVerticalAlign = DwarfCorp.Gui.VerticalAlign.Center,
                 TextColor = new Vector4(1, 1, 1, 1),
-                Tooltip = StringLibrary.GetString("money-amount")
+                Tooltip = Library.GetString("money-amount")
             });
 
             StocksLabel = BottomBar.AddChild(new Gui.Widget
@@ -905,7 +905,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = DwarfCorp.Gui.AutoLayout.DockLeftCentered,
                 Font = "font10",
                 TextVerticalAlign = DwarfCorp.Gui.VerticalAlign.Center,
-                Tooltip = StringLibrary.GetString("stockpile-tooltip")
+                Tooltip = Library.GetString("stockpile-tooltip")
             });
 
             BottomBar.AddChild(new Gui.Widget
@@ -914,7 +914,7 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(32, 32),
                 MaximumSize = new Point(32, 32),
                 AutoLayout = DwarfCorp.Gui.AutoLayout.DockLeftCentered,
-                Tooltip = StringLibrary.GetString("slicer-tooltip")
+                Tooltip = Library.GetString("slicer-tooltip")
             });
 
             BottomBar.AddChild(new Gui.Widgets.ImageButton
@@ -927,7 +927,7 @@ namespace DwarfCorp.GameStates
                 {
                     Renderer.SetMaxViewingLevel(Renderer.PersistentSettings.MaxViewingLevel - 1);
                 },
-                Tooltip = StringLibrary.GetString("slicer-down-tooltip")
+                Tooltip = Library.GetString("slicer-down-tooltip")
             });
 
             BottomBar.AddChild(new Gui.Widgets.ImageButton
@@ -940,7 +940,7 @@ namespace DwarfCorp.GameStates
                 {
                     Renderer.SetMaxViewingLevel(Renderer.PersistentSettings.MaxViewingLevel + 1);
                 },
-                Tooltip = StringLibrary.GetString("slicer-up-tooltip")
+                Tooltip = Library.GetString("slicer-up-tooltip")
             });
 
             LevelLabel = BottomBar.AddChild(new Gui.Widget
@@ -949,7 +949,7 @@ namespace DwarfCorp.GameStates
                 Font = "font10",
                 TextVerticalAlign = DwarfCorp.Gui.VerticalAlign.Center,
                 TextColor = new Vector4(1, 1, 1, 1),
-                Tooltip = StringLibrary.GetString("slicer-current-tooltip")
+                Tooltip = Library.GetString("slicer-current-tooltip")
             });
 
             BottomBar.AddChild(new Gui.Widget
@@ -987,7 +987,7 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(128, 20),
                 Font = "font10",
                 TextColor = new Vector4(1, 1, 1, 1),
-                Tooltip = StringLibrary.GetString("time-tooltip")
+                Tooltip = Library.GetString("time-tooltip")
             });
             #endregion
 
@@ -1185,8 +1185,8 @@ namespace DwarfCorp.GameStates
                 Icon = new Gui.TileReference("tool-icons", 10),
                 OnClick = (sender, args) => GameStateManager.PushState(new EconomyState(Game, World)),
                 DrawIndicator = true,
-                Tooltip = StringLibrary.GetString("economy-tooltip"),
-                Text = StringLibrary.GetString("economy-label"),
+                Tooltip = Library.GetString("economy-tooltip"),
+                Text = Library.GetString("economy-label"),
                 TextVerticalAlign = VerticalAlign.Below
             };
 
@@ -1205,9 +1205,9 @@ namespace DwarfCorp.GameStates
                                 {
                                     GameStateManager.PushState(new EventLogState(Game, World.EventLog, World.Time.CurrentDate));
                                 },
-                                Text = StringLibrary.GetString("events-label"),
+                                Text = Library.GetString("events-label"),
                                 TextVerticalAlign = VerticalAlign.Below,
-                                Tooltip = StringLibrary.GetString("events-tooltip")
+                                Tooltip = Library.GetString("events-tooltip")
                             },
                             new Gui.Widgets.FramedIcon()
                             {
@@ -1216,9 +1216,9 @@ namespace DwarfCorp.GameStates
                                 {
                                     GameStateManager.PushState(new FactionViewState(GameState.Game, World));
                                 },
-                                Text =  StringLibrary.GetString("diplomacy-label"),
+                                Text =  Library.GetString("diplomacy-label"),
                                 TextVerticalAlign = VerticalAlign.Below,
-                                Tooltip = StringLibrary.GetString("diplomacy-tooltip")
+                                Tooltip = Library.GetString("diplomacy-tooltip")
                             },
                             EconomyIcon,
 
@@ -1226,8 +1226,8 @@ namespace DwarfCorp.GameStates
                             {
                                 Icon = new Gui.TileReference("tool-icons", 12),
                                 OnClick = (sender, args) => { OpenPauseMenu(); },
-                                Tooltip = StringLibrary.GetString("settings-tooltip"),
-                                Text = StringLibrary.GetString("settings-label"),
+                                Tooltip = Library.GetString("settings-tooltip"),
+                                Text = Library.GetString("settings-label"),
                                 TextVerticalAlign = VerticalAlign.Below
                             }
                         },
@@ -1746,7 +1746,7 @@ namespace DwarfCorp.GameStates
             Func<CraftItem, FlatToolTray.Icon> createCraftIcon = (data) => new FlatToolTray.Icon
             {
                 Icon = data.Icon,
-                Tooltip = StringLibrary.GetString("craft", data.DisplayName),
+                Tooltip = Library.GetString("craft", data.DisplayName),
                 KeepChildVisible = true, // So the player can interact with the popup.
                 ExpandChildWhenDisabled = true,
                 Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
@@ -1772,7 +1772,7 @@ namespace DwarfCorp.GameStates
                     },
                     TabSource = new KeyValuePair<String, Widget>[] {
                         new KeyValuePair<string, Widget>(
-                            StringLibrary.GetString("place"),
+                            Library.GetString("place"),
                             new BuildCraftInfo
                             {
                                 Data = data,
@@ -1801,7 +1801,7 @@ namespace DwarfCorp.GameStates
                                     }
 
                                     ChangeTool("BuildObject");
-                                    ShowToolPopup(StringLibrary.GetString("click-and-drag", data.Verb, data.DisplayName));
+                                    ShowToolPopup(Library.GetString("click-and-drag", data.Verb, data.DisplayName));
                                 },
                                 PlaceAction = (sender, args) =>
                                 {
@@ -1824,11 +1824,11 @@ namespace DwarfCorp.GameStates
                                     }
 
                                     ChangeTool("BuildObject");
-                                    ShowToolPopup(StringLibrary.GetString("place", data.DisplayName));
+                                    ShowToolPopup(Library.GetString("place", data.DisplayName));
                                 }
                             }),
                         new KeyValuePair<string, Widget>(
-                            StringLibrary.GetString("stockpile"),
+                            Library.GetString("stockpile"),
                             new BuildCraftInfo
                             {
                                 Data = data.ObjectAsCraftableResource(),
@@ -2250,7 +2250,7 @@ namespace DwarfCorp.GameStates
                     {
                         Icon = data.Icon,
                         KeepChildVisible = true, // So the player can interact with the popup.
-                        Tooltip = StringLibrary.GetString("verb-noun", data.Verb, data.DisplayName),
+                        Tooltip = Library.GetString("verb-noun", data.Verb, data.DisplayName),
                         Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
                         Text = objectNameToLabel(data.DisplayName),
                         TextVerticalAlign = VerticalAlign.Below,

@@ -56,7 +56,7 @@ namespace DwarfCorp
         {
             Category = TaskCategory.BuildObject;
             MaxAssignable = 3;
-            Name = StringLibrary.GetString("craft-at", CraftDesignation.Entity.GlobalID, CraftDesignation.ItemType.DisplayName, CraftDesignation.Location);
+            Name = Library.GetString("craft-at", CraftDesignation.Entity.GlobalID, CraftDesignation.ItemType.DisplayName, CraftDesignation.Location);
             Priority = PriorityType.Medium;
             AutoRetry = true;
             this.CraftDesignation = CraftDesignation;

@@ -58,7 +58,7 @@ namespace DwarfCorp
 
         public bool wasDeserialized = false;
 
-        public virtual String GetDescriptionString() { return StringLibrary.GetString("generic-room-description"); }
+        public virtual String GetDescriptionString() { return Library.GetString("generic-room-description"); }
 
         public Room() : base()
         {

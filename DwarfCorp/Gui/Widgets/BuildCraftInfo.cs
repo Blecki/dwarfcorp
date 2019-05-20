@@ -216,22 +216,22 @@ namespace DwarfCorp.Gui.Widgets
                             {
                                 bottomBar.AddChild(new Button()
                                 {
-                                    Text = StringLibrary.GetString("place-existing"),
+                                    Text = Library.GetString("place-existing"),
                                     OnClick = (widget, args) =>
                                     {
                                         PlaceAction(this, args);
                                     },
                                     AutoLayout = AutoLayout.DockLeftCentered,
                                     MinimumSize = new Point(64, 28),
-                                    Tooltip = StringLibrary.GetString("place-existing-tooltip", Data.DisplayName)
+                                    Tooltip = Library.GetString("place-existing-tooltip", Data.DisplayName)
                                 });
                             }
                         }
 
                         var buildButton = bottomBar.AddChild(new Button()
                         {
-                            Text = StringLibrary.GetString("place-new", Data.Verb),
-                            Tooltip = StringLibrary.GetString("place-new-tooltip", Data.Verb, Data.DisplayName),
+                            Text = Library.GetString("place-new", Data.Verb),
+                            Tooltip = Library.GetString("place-new-tooltip", Data.Verb, Data.DisplayName),
                             OnClick = (widget, args) => 
                             {
                                 BuildAction(this, args);

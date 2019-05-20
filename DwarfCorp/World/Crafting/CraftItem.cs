@@ -66,13 +66,13 @@ namespace DwarfCorp
 
         public void InitializeStrings()
         {
-            DisplayName = StringLibrary.TransformDataString(DisplayName, Name);
-            PluralDisplayName = StringLibrary.TransformDataString(PluralDisplayName, DisplayName + "s"); // Default to appending an s if the plural name is not specified.
-            ShortDisplayName = StringLibrary.TransformDataString(ShortDisplayName, DisplayName);
-            Verb = StringLibrary.TransformDataString(Verb, StringLibrary.GetString("build"));
-            PastTeseVerb = StringLibrary.TransformDataString(PastTeseVerb, StringLibrary.GetString("built"));
-            CurrentVerb = StringLibrary.TransformDataString(CurrentVerb, StringLibrary.GetString("building"));
-            Description = StringLibrary.TransformDataString(Description, Description);
+            DisplayName = Library.TransformDataString(DisplayName, Name);
+            PluralDisplayName = Library.TransformDataString(PluralDisplayName, DisplayName + "s"); // Default to appending an s if the plural name is not specified.
+            ShortDisplayName = Library.TransformDataString(ShortDisplayName, DisplayName);
+            Verb = Library.TransformDataString(Verb, Library.GetString("build"));
+            PastTeseVerb = Library.TransformDataString(PastTeseVerb, Library.GetString("built"));
+            CurrentVerb = Library.TransformDataString(CurrentVerb, Library.GetString("building"));
+            Description = Library.TransformDataString(Description, Description);
         }
 
         private IEnumerable<ResourceAmount> MergeResources(IEnumerable<ResourceAmount> resources)

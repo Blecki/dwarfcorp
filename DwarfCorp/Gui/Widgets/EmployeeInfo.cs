@@ -372,9 +372,9 @@ namespace DwarfCorp.Gui.Widgets
 
                     Root.ShowModalPopup(Root.ConstructWidget(new Confirm
                     {
-                        OkayText = StringLibrary.GetString("fire-dwarf"),
-                        CancelText = StringLibrary.GetString("keep-dwarf"),
-                        Text = String.Format("Really fire {0}? They will collect ${1} in severance pay.", Employee.Stats.FullName, Employee.Stats.CurrentLevel.Pay * 4),
+                        OkayText = Library.GetString("fire-dwarf"),
+                        CancelText = Library.GetString("keep-dwarf"),
+                        Text = String.Format("Really fire {0}? They will collect {1} in severance pay.", Employee.Stats.FullName, Employee.Stats.CurrentLevel.Pay * 4),
                         Padding = new Margin(32, 10, 10, 10),
                         MinimumSize = new Point(512, 128),
                         OnClose = (confirm) =>
@@ -385,7 +385,7 @@ namespace DwarfCorp.Gui.Widgets
                                 if (Employee.IsDead)
                                     return;
                                 Employee.GetRoot().GetComponent<Inventory>().Die();
-                                Employee.World.MakeAnnouncement(StringLibrary.GetString("was-fired", Employee.Stats.FullName));
+                                Employee.World.MakeAnnouncement(Library.GetString("was-fired", Employee.Stats.FullName));
                                 Employee.GetRoot().Delete();
 
                                 Employee.Faction.FireEmployee(Employee);
