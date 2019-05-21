@@ -132,15 +132,22 @@ namespace DwarfCorp.GameStates
         public void AutoSelectSpawnRegion()
         {
             LoadingMessage = "Selecting spawn.";
+
+            Settings.InstanceSettings.Cell = new ColonyCell
+            {
+                Bounds = new Rectangle(MathFunctions.RandInt(0, Settings.Width - 8), MathFunctions.RandInt(0, Settings.Height - 8), 8, 8)
+            };
+
             bool inWater = true;
             do
             {
-                Rectangle rect = GetSpawnRectangle();
-                var center = rect.Center;
-                inWater = Overworld.Map[center.X, center.Y].Height < Settings.SeaLevel;
-                Settings.InstanceSettings.SpawnRect = rect;
+                var rect = GetSpawnRectangle();
+                inWater = Overworld.Map[rect.Center.X, rect.Center.Y].Height < Settings.SeaLevel;
                 if (inWater)
-                    Settings.InstanceSettings.Origin = new Vector2(MathFunctions.Rand(0, Settings.Width - rect.Width), MathFunctions.Rand(0, Settings.Height - rect.Height));
+                    Settings.InstanceSettings.Cell = new ColonyCell
+                    {
+                        Bounds = new Rectangle(MathFunctions.RandInt(0, Settings.Width - rect.Width), MathFunctions.RandInt(0, Settings.Height - rect.Height), rect.Width, rect.Height)
+                    };
             } while (inWater);
         }
 
@@ -238,7 +245,11 @@ namespace DwarfCorp.GameStates
             LandIndex = null;
             if (CurrentState == GenerationState.NotStarted)
             {
-                Settings.InstanceSettings.Origin = new Vector2(Settings.Width / 2.0f, Settings.Height / 2.0f);
+                Settings.InstanceSettings.Cell = new ColonyCell
+                {
+                    Bounds = new Rectangle(0, 0, 8, 8)
+                };
+
                 genThread = new Thread(unused =>
                 {
                     Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -917,7 +928,7 @@ namespace DwarfCorp.GameStates
         // Spawn rectangle in world map pixel units
         public Rectangle GetSpawnRectangle() // Todo: Kill
         {
-            return new Rectangle((int)Settings.InstanceSettings.Origin.X , (int)Settings.InstanceSettings.Origin.Y, Settings.InstanceSettings.ColonySize.X, Settings.InstanceSettings.ColonySize.Z);
+            return Settings.InstanceSettings.Cell.Bounds;
         }
     }
 }

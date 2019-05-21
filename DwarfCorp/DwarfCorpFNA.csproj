@@ -116,7 +116,7 @@
     <Compile Include="GameStates\Play\PrepareExpeditionDialog.cs" />
     <Compile Include="GameStates\Play\SelectEmployeesDialog.cs" />
     <Compile Include="GameStates\Play\SelectResourcesDialog.cs" />
-    <Compile Include="Graphics\Cameras\SimpleOrbitCamera.cs" />
+    <Compile Include="GameStates\WorldGeneration\SimpleOrbitCamera.cs" />
     <Compile Include="LogWriter.cs" />
     <Compile Include="EventLog.cs" />
     <Compile Include="EventLogState.cs" />
@@ -352,7 +352,6 @@
     <Compile Include=".\GameStates\Debug\DwarfDesignerState.cs" />
     <Compile Include=".\GameStates\FrontEnd\CreditsState.cs" />
     <Compile Include=".\GameStates\FrontEnd\IntroState.cs" />
-    <Compile Include=".\GameStates\FrontEnd\LoadSaveGameState.cs" />
     <Compile Include=".\GameStates\FrontEnd\LoadState.cs" />
     <Compile Include=".\GameStates\FrontEnd\MainMenuState.cs" />
     <Compile Include=".\GameStates\FrontEnd\MenuState.cs" />

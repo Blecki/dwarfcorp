@@ -52,7 +52,7 @@ namespace DwarfCorp.GameStates
         private void SwitchToLaunchPanel()
         {
             if (PanelState != PanelStates.Generate)
-                throw new InvalidProgramException();
+                return;
 
             PanelState = PanelStates.Launch;
 
@@ -170,7 +170,7 @@ namespace DwarfCorp.GameStates
             {
                 Preview.Hidden = false;
                 GenerationProgress.Hidden = true;
-                Preview.Update();
+                Preview.Update(gameTime);
             }
 
             Preview.PreparePreview(Game.GraphicsDevice);

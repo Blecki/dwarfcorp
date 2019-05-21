@@ -52,10 +52,8 @@ namespace DwarfCorp.GameStates
                     {
                         Company = new CompanyInformation(),
                         GenerateFromScratch = true,
-                        InstanceSettings = new InstanceSettings
-                        {
-                            ColonySize = new Point3(8, 4, 8)
-                        }
+                        InstanceSettings = new InstanceSettings(),
+                        InitalEmbarkment = Library.DefaultEmbarkment
                     }));
                 });
 

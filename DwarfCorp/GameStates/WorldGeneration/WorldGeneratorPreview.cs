@@ -119,10 +119,9 @@ namespace DwarfCorp.GameStates
                         var colonyCell = Overworld.ColonyCells.FirstOrDefault(c => c.Bounds.Contains(new Point(clickPoint.X, clickPoint.Y)));
                         if (colonyCell != null)
                         {
-                            Generator.Settings.InstanceSettings.Origin = new Vector2(colonyCell.Bounds.X, colonyCell.Bounds.Y);
-                            Generator.Settings.InstanceSettings.ColonySize = new Point3(colonyCell.Bounds.Width, Generator.Settings.InstanceSettings.ColonySize.Y, colonyCell.Bounds.Height);
+                            Generator.Settings.InstanceSettings.Cell = colonyCell;
                             previewText = Generator.GetSpawnStats();
-                            Camera.newTarget = new Vector3((float)colonyCell.Bounds.Center.X / (float)Overworld.Map.GetLength(0), 0, (float)colonyCell.Bounds.Center.Y / (float)Overworld.Map.GetLength(1));
+                            Camera.SetGoalFocus(new Vector3((float)colonyCell.Bounds.Center.X / (float)Overworld.Map.GetLength(0), 0, (float)colonyCell.Bounds.Center.Y / (float)Overworld.Map.GetLength(1)));
                         }
 
                         UpdatePreview = true;
@@ -163,14 +162,12 @@ namespace DwarfCorp.GameStates
         {
             this.Generator = Generator;
             this.Overworld = Generator.Settings.Overworld;
-            //PreviewTexture = new Texture2D(Device, Generator.Settings.Width, Generator.Settings.Height);
             Generator.UpdatePreview += () => UpdatePreview = true;
         }
 
-        public void Update()
+        public void Update(DwarfTime Time)
         {
-            //Because Gum doesn't send deltas on mouse move.
-            Camera.Update(Root.MousePosition);
+            Camera.Update(Root.MousePosition, Time);
         }
 
         private float GetIconScale(Point pos)
@@ -303,7 +300,7 @@ namespace DwarfCorp.GameStates
                 DrawRectangle(new Rectangle(cell.Bounds.X * 4, cell.Bounds.Y * 4, cell.Bounds.Width * 4, cell.Bounds.Height * 4), colorData, Overworld.Map.GetLength(0) * 4, Color.Yellow);
 
             var spawnRect = new Rectangle((int)Generator.Settings.InstanceSettings.Origin.X * 4, (int)Generator.Settings.InstanceSettings.Origin.Y * 4,
-                Generator.Settings.InstanceSettings.ColonySize.X * 4, Generator.Settings.InstanceSettings.ColonySize.Z * 4);
+                Generator.Settings.InstanceSettings.Cell.Bounds.Width * 4, Generator.Settings.InstanceSettings.Cell.Bounds.Height * 4);
             DrawRectangle(spawnRect, colorData, Overworld.Map.GetLength(0) * 4, Color.Red);
 
             PreviewTexture.SetData(colorData);
@@ -371,7 +368,7 @@ namespace DwarfCorp.GameStates
             {
                 UpdatePreview = false;
                 InitializePreviewRenderTypes();
-                Overworld.NativeFactions = Generator.NativeCivilizations;
+                Overworld.NativeFactions = Generator.NativeCivilizations; // Why is this copying the factions?
                 CreatePreviewGUI();
             }
         }
@@ -425,7 +422,6 @@ namespace DwarfCorp.GameStates
 
             PreviewEffect.View = Camera.ViewMatrix;
             PreviewEffect.Projection = Camera.ProjectionMatrix;
-            Camera.cameraTarget = Camera.newTarget * 0.1f + Camera.cameraTarget * 0.9f;
             PreviewEffect.TextureEnabled = true;
             PreviewEffect.Texture = PreviewTexture;
             PreviewEffect.LightingEnabled = true;

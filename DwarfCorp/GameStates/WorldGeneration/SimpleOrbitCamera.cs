@@ -14,11 +14,16 @@ namespace DwarfCorp.GameStates
         private float phi = 1.2f;
         private float theta = -0.25f;
         private float zoom = 0.9f;
-        public Vector3 cameraTarget = new Vector3(0.5f, 0.0f, 0.5f);
-        public Vector3 newTarget = new Vector3(0.5f, 0, 0.5f);
+        private Vector3 Focus = new Vector3(0.5f, 0.0f, 0.5f);
+        private Vector3 GoalFocus = new Vector3(0.5f, 0, 0.5f);
         private Point PreviousMousePosition;
         public Rectangle Rect;
         public Overworld Overworld;
+
+        public void SetGoalFocus(Vector3 GoalFocus)
+        {
+            this.GoalFocus = GoalFocus;
+        }
 
         public Matrix CameraRotation
         {
@@ -32,7 +37,7 @@ namespace DwarfCorp.GameStates
         {
             get
             {
-                return Matrix.CreateLookAt(CameraPos, cameraTarget, Vector3.Up);
+                return Matrix.CreateLookAt(CameraPos, Focus, Vector3.Up);
             }
         }
 
@@ -40,7 +45,7 @@ namespace DwarfCorp.GameStates
         {
             get
             {
-                return zoom * Vector3.Transform(Vector3.Forward, CameraRotation) + cameraTarget;
+                return zoom * Vector3.Transform(Vector3.Forward, CameraRotation) + Focus;
 
             }
         }
@@ -123,10 +128,12 @@ namespace DwarfCorp.GameStates
             return port.Project(worldSpace, ProjectionMatrix, ViewMatrix, Matrix.Identity);
         }
 
-        public void Update(Point MousePosition)
+        public void Update(Point MousePosition, DwarfTime Time)
         {
             //Because Gum doesn't send deltas on mouse move.
             PreviousMousePosition = MousePosition;
+            var delta = 0.5f * (float)Time.ElapsedGameTime.TotalSeconds;
+            Focus = GoalFocus * delta + Focus * (1.0f - delta);
         }
     }
 }

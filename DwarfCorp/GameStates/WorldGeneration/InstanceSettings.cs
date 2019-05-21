@@ -6,9 +6,8 @@ namespace DwarfCorp.GameStates
 {
     public class InstanceSettings
     {
-        public Point3 ColonySize = new Point3(0, 1, 0);
-        public Vector2 Origin;
+        [JsonIgnore] public Vector2 Origin => new Vector2(Cell.Bounds.X, Cell.Bounds.Y);
         public string ExistingFile = null;
-        public Rectangle SpawnRect; // Todo: Kill?
+        public ColonyCell Cell;
     }
 }

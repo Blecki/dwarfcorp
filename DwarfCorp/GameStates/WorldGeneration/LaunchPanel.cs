@@ -76,7 +76,7 @@ namespace DwarfCorp.GameStates
                         DwarfGame.LogSentryBreadcrumb("WorldGenerator", string.Format("User is starting a game with a {0} x {1} world.", Settings.Width, Settings.Height));
                         Settings.Overworld.Name = Settings.Name;
                         Settings.InstanceSettings.ExistingFile = null;
-                        Settings.InstanceSettings.SpawnRect = Generator.GetSpawnRectangle();
+
                         if (Settings.Natives == null || Settings.Natives.Count == 0)
                             Settings.Natives = Generator.NativeCivilizations;
 

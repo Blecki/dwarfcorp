@@ -345,7 +345,7 @@ namespace DwarfCorp
                     };
 
                     SetLoadingMessage("Generating Chunks...");
-                    Generation.Generator.Generate(Settings.InstanceSettings.SpawnRect, ChunkManager, this, generatorSettings, SetLoadingMessage);
+                    Generation.Generator.Generate(Settings.InstanceSettings.Cell.Bounds, ChunkManager, this, generatorSettings, SetLoadingMessage);
                     CreateInitialEmbarkment(generatorSettings);
                     ChunkManager.NeedsMinimapUpdate = true;
                     ChunkManager.RecalculateBounds();
