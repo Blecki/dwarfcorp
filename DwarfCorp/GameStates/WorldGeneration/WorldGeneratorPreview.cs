@@ -21,19 +21,10 @@ namespace DwarfCorp.GameStates
         public Texture2D PreviewTexture { get; private set; }
         private BasicEffect PreviewEffect;
         private RenderTarget2D PreviewRenderTarget;
-        private List<Vector2> SpawnRectanglePoints = new List<Vector2>(new Vector2[]
-        {
-            Vector2.Zero, Vector2.Zero, Vector2.Zero, Vector2.Zero
-        });
         private Gui.Mesh KeyMesh;
 
         // Todo: This should be a camera class, or something.
-        private float phi = 1.2f;
-        private float theta = -0.25f;
-        private float zoom = 0.9f;
-        private Vector3 cameraTarget = new Vector3(0.5f, 0.0f, 0.5f);
-        private Vector3 newTarget = new Vector3(0.5f, 0, 0.5f);
-        private Point PreviousMousePosition;
+        private SimpleOrbitCamera Camera = new SimpleOrbitCamera();
         private Vector2 lastSpawnWorld = Vector2.Zero;
         private List<Point3> Trees { get; set; }
         private float TreeProbability = 0.001f;
@@ -51,40 +42,6 @@ namespace DwarfCorp.GameStates
 
                 return Matrix.CreateScale(vScale * previewRect.Width, uScale * previewRect.Height, 1.0f) *
                     Matrix.CreateTranslation(vScale * previewRect.X, uScale * previewRect.Y, 0.0f);
-            }
-        }
-
-        private Matrix CameraRotation
-        {
-            get
-            {
-                return Matrix.CreateRotationX(phi) * Matrix.CreateRotationY(theta);
-            }
-        }
-
-        private Matrix ViewMatrix
-        {
-            get
-            {
-                return Matrix.CreateLookAt(CameraPos, cameraTarget, Vector3.Up);
-            }
-        }
-
-        private Vector3 CameraPos
-        {
-            get
-            {
-                return zoom*Vector3.Transform(Vector3.Forward, CameraRotation) + cameraTarget;
-                
-            }
-        }
-
-        private Matrix ProjectionMatrix
-        {
-            get
-            {
-                return Matrix.CreatePerspectiveFieldOfView(1.5f, (float)PreviewPanel.Rect.Width /
-                    (float)PreviewPanel.Rect.Height, 0.01f, 3.0f);
             }
         }
 
@@ -141,13 +98,14 @@ namespace DwarfCorp.GameStates
             }) as Gui.Widgets.ComboBox;
 
             PreviewSelector.SelectedIndex = 1;
-            
+
             PreviewPanel = AddChild(new Gui.Widget
             {
                 AutoLayout = Gui.AutoLayout.DockFill,
                 OnLayout = (sender) =>
                 {
                     sender.Rect = sender.Rect.Interior(0, PreviewSelector.Rect.Height + 2, 0, 0);
+                    Camera.Rect = sender.Rect;
                 },
                 OnClick = (sender, args) =>
                 {
@@ -156,7 +114,7 @@ namespace DwarfCorp.GameStates
 
                     if (args.MouseButton == 0)
                     {
-                        var clickPoint = ScreenToWorld(new Vector2(args.X, args.Y));
+                        var clickPoint = Camera.ScreenToWorld(new Vector2(args.X, args.Y));
 
                         var colonyCell = Overworld.ColonyCells.FirstOrDefault(c => c.Bounds.Contains(new Point(clickPoint.X, clickPoint.Y)));
                         if (colonyCell != null)
@@ -164,47 +122,31 @@ namespace DwarfCorp.GameStates
                             Generator.Settings.InstanceSettings.Origin = new Vector2(colonyCell.Bounds.X, colonyCell.Bounds.Y);
                             Generator.Settings.InstanceSettings.ColonySize = new Point3(colonyCell.Bounds.Width, Generator.Settings.InstanceSettings.ColonySize.Y, colonyCell.Bounds.Height);
                             previewText = Generator.GetSpawnStats();
+                            Camera.newTarget = new Vector3((float)colonyCell.Bounds.Center.X / (float)Overworld.Map.GetLength(0), 0, (float)colonyCell.Bounds.Center.Y / (float)Overworld.Map.GetLength(1));
                         }
+
                         UpdatePreview = true;
+
 
                         OnCellSelectionMade?.Invoke();
                     }
                 },
-                OnMouseMove = (sender, args) =>
+                OnMouseMove = (sender, args) => 
                 {
                     if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
-                    {
                         return;
-                    }
-                    if (Microsoft.Xna.Framework.Input.Mouse.GetState().RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
-                    {
-                        var delta = new Vector2(args.X, args.Y) - new Vector2(PreviousMousePosition.X,
-                             PreviousMousePosition.Y);
-
-                        var keyboard = Microsoft.Xna.Framework.Input.Keyboard.GetState();
-                        if (keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift) ||
-                            keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightShift))
-                        {
-                            zoom = global::System.Math.Min((float)global::System.Math.Max(zoom + delta.Y * 0.001f, 0.1f), 1.5f);
-                        }
-                        else
-                        {
-                            phi += delta.Y * 0.01f;
-                            theta -= delta.X * 0.01f;
-                            phi = global::System.Math.Max(phi, 0.5f);
-                            phi = global::System.Math.Min(phi, 1.5f);
-                        }
-                    }
+                    Camera.OnMouseMove(args);
                 },
                 OnScroll = (sender, args) =>
                 {
                     if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
-                    {
                         return;
-                    }
-                    zoom = global::System.Math.Min((float)global::System.Math.Max(args.ScrollValue > 0 ? zoom - 0.1f : zoom + 0.1f, 0.1f), 1.5f);
+
+                    Camera.OnScroll(args);
                 }
             });
+
+            Camera.Overworld = Overworld;
         }
             
         public WorldGeneratorPreview(GraphicsDevice Device)
@@ -225,71 +167,15 @@ namespace DwarfCorp.GameStates
             Generator.UpdatePreview += () => UpdatePreview = true;
         }
 
-        public Point ScreenToWorld(Vector2 screenCoord)
-        {
-            // Todo: This can be simplified.
-            Viewport port = new Viewport(PreviewPanel.GetDrawableInterior());
-            port.MinDepth = 0.0f;
-            port.MaxDepth = 1.0f;
-            Vector3 rayStart = port.Unproject(new Vector3(screenCoord.X, screenCoord.Y, 0.0f), ProjectionMatrix, ViewMatrix, Matrix.Identity);
-            Vector3 rayEnd = port.Unproject(new Vector3(screenCoord.X, screenCoord.Y, 1.0f), ProjectionMatrix,
-                ViewMatrix, Matrix.Identity);
-            Vector3 bearing = (rayEnd - rayStart);
-            bearing.Normalize();
-            Ray ray = new Ray(rayStart, bearing);
-            Plane worldPlane = new Plane(Vector3.Zero, Vector3.Forward, Vector3.Right);
-            float? dist = ray.Intersects(worldPlane);
-
-            if (dist.HasValue)
-            {
-                Vector3 pos = rayStart + bearing * dist.Value;
-                return new Point((int)(pos.X * Overworld.Map.GetLength(0)), (int)(pos.Z * Overworld.Map.GetLength(1)));
-            }
-            else
-            {
-                return new Point(0, 0);
-            }
-        }
-
-        public Vector3 GetWorldSpace(Vector2 worldCoord)
-        {
-            var height = 0.0f;
-            if ((int)worldCoord.X > 0 && (int)worldCoord.Y > 0 &&
-                (int)worldCoord.X < Overworld.Map.GetLength(0) && (int)worldCoord.Y < Overworld.Map.GetLength(1))
-                height = Overworld.Map[(int)worldCoord.X, (int)worldCoord.Y].Height * 0.05f;
-            return new Vector3(worldCoord.X / Overworld.Map.GetLength(0), height, worldCoord.Y / Overworld.Map.GetLength(1));
-        }
-
-        public Vector3 WorldToScreen(Vector2 worldCoord)
-        {
-            Viewport port = new Viewport(PreviewPanel.GetDrawableInterior());
-            Vector3 worldSpace = GetWorldSpace(worldCoord);
-            return port.Project(worldSpace, ProjectionMatrix, ViewMatrix, Matrix.Identity);
-        }
-
-        public void GetSpawnRectangleInScreenSpace(List<Vector2> Points, Rectangle Rect)
-        {
-            Points[0] = new Vector2(Rect.X, Rect.Y);
-            Points[1] = new Vector2(Rect.X + Rect.Width, Rect.Y);
-            Points[2] = new Vector2(Rect.X + Rect.Width, Rect.Height + Rect.Y);
-            Points[3] = new Vector2(Rect.X, Rect.Height + Rect.Y);
-
-            for (var i = 0; i < 4; ++i)
-            {
-                var vec3 = WorldToScreen(Points[i]);  
-                Points[i] = new Vector2(vec3.X * GameSettings.Default.GuiScale, vec3.Y * GameSettings.Default.GuiScale);
-            }
-        }
-
         public void Update()
         {
             //Because Gum doesn't send deltas on mouse move.
-            PreviousMousePosition = Root.MousePosition;
+            Camera.Update(Root.MousePosition);
         }
 
         private float GetIconScale(Point pos)
         {
-            float dist = (CameraPos - GetWorldSpace(new Vector2(pos.X, pos.Y))).Length();
+            float dist = (Camera.CameraPos - Camera.GetWorldSpace(new Vector2(pos.X, pos.Y))).Length();
             return MathFunctions.Clamp((1.0f - dist) * 4.0f, 1.0f, 4);
         }
 
@@ -299,34 +185,14 @@ namespace DwarfCorp.GameStates
             if (Generator.CurrentState != WorldGenerator.GenerationState.Finished) return;
 
             Root.DrawQuad(PreviewPanel.Rect, PreviewRenderTarget);
-
-
-            try
-            {
-                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin, null, null, null, Matrix.Identity);
-
-                foreach (var cell in Overworld.ColonyCells)
-                {
-                    GetSpawnRectangleInScreenSpace(SpawnRectanglePoints, cell.Bounds);
-                    Drawer2D.DrawPolygon(DwarfGame.SpriteBatch, Color.Yellow, 1, SpawnRectanglePoints);
-                }
-
-                //GetSpawnRectangleInScreenSpace(SpawnRectanglePoints, Generator.GetSpawnRectangle());
-                //Drawer2D.DrawPolygon(DwarfGame.SpriteBatch, Color.Red, 2, SpawnRectanglePoints);
-            }
-            finally
-            {
-                DwarfGame.SpriteBatch.End();
-            }
-
-
+                       
             var font = Root.GetTileSheet("font10");
             var icon = Root.GetTileSheet("map-icons");
             var bkg = Root.GetTileSheet("basic");
             var rect = PreviewPanel.GetDrawableInterior();
             foreach (var tree in Trees)
             {
-                var treeLocation = WorldToScreen(new Vector2(tree.X, tree.Y));
+                var treeLocation = Camera.WorldToScreen(new Vector2(tree.X, tree.Y));
                 if (treeLocation.Z > 0.9999f)
                     continue;
                 float scale = GetIconScale(new Point(tree.X, tree.Y));
@@ -342,7 +208,7 @@ namespace DwarfCorp.GameStates
 
             foreach (var civ in Generator.NativeCivilizations)
             {
-                var civLocation = WorldToScreen(new Vector2(civ.Center.X, civ.Center.Y));
+                var civLocation = Camera.WorldToScreen(new Vector2(civ.Center.X, civ.Center.Y));
                 if (civLocation.Z > 0.9999f)
                     continue;
                 Rectangle nameBounds;
@@ -372,8 +238,8 @@ namespace DwarfCorp.GameStates
             Rectangle spawnWorld = Generator.GetSpawnRectangle();
             Vector2 newSpawn = new Vector2(spawnWorld.Center.X, spawnWorld.Center.Y);
             Vector2 spawnCenter = newSpawn * 0.1f + lastSpawnWorld * 0.9f;
-            Vector3 newCenter = WorldToScreen(newSpawn);
-            Vector3 worldCenter = WorldToScreen(spawnCenter);
+            Vector3 newCenter = Camera.WorldToScreen(newSpawn);
+            Vector3 worldCenter = Camera.WorldToScreen(spawnCenter);
             if (worldCenter.Z < 0.9999f)
             {
                 float scale = GetIconScale(new Point((int)spawnCenter.X, (int)spawnCenter.Y));
@@ -403,17 +269,45 @@ namespace DwarfCorp.GameStates
         {
             return PreviewTexture == null || PreviewTexture.IsDisposed
                     || PreviewTexture.GraphicsDevice.IsDisposed
-                    || PreviewTexture.Width != Overworld.Map.GetLength(0) ||
-                    PreviewTexture.Height != Overworld.Map.GetLength(1);
+                    || PreviewTexture.Width != Overworld.Map.GetLength(0) * 4 ||
+                    PreviewTexture.Height != Overworld.Map.GetLength(1) * 4;
+        }
+
+        private void DrawRectangle(Rectangle Rect, Color[] Into, int Width, Color Color)
+        {
+            for (var x = 0; x < Rect.Width; ++x)
+            {
+                Into[(Rect.Y * Width) + Rect.X + x] = Color;
+                Into[((Rect.Y + Rect.Height - 1) * Width) + Rect.X + x] = Color;
+            }
+
+            for (var y = 1; y < Rect.Height - 1; ++y)
+            {
+                Into[((Rect.Y + y) * Width) + Rect.X] = Color;
+                Into[((Rect.Y + y) * Width) + Rect.X + Rect.Width - 1] = Color;
+            }
         }
 
         private void CreatePreviewGUI()
         {
             var bkg = Root.GetTileSheet("basic");
             var style = PreviewRenderTypes[PreviewSelector.SelectedItem];
+            var colorData = new Color[Overworld.Map.GetLength(0) * Overworld.Map.GetLength(1) * 4 * 4];
+            
             Overworld.TextureFromHeightMap(style.DisplayType, Overworld.Map, Overworld.NativeFactions,
-                style.Scalar, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null,
-                Generator.worldData, PreviewTexture, Generator.Settings.SeaLevel);
+                4, colorData, Generator.Settings.SeaLevel);
+            Overworld.Smooth(4, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), colorData);
+            Overworld.ShadeHeight(Overworld.Map, 4, colorData);
+
+            foreach (var cell in Overworld.ColonyCells)
+                DrawRectangle(new Rectangle(cell.Bounds.X * 4, cell.Bounds.Y * 4, cell.Bounds.Width * 4, cell.Bounds.Height * 4), colorData, Overworld.Map.GetLength(0) * 4, Color.Yellow);
+
+            var spawnRect = new Rectangle((int)Generator.Settings.InstanceSettings.Origin.X * 4, (int)Generator.Settings.InstanceSettings.Origin.Y * 4,
+                Generator.Settings.InstanceSettings.ColonySize.X * 4, Generator.Settings.InstanceSettings.ColonySize.Z * 4);
+            DrawRectangle(spawnRect, colorData, Overworld.Map.GetLength(0) * 4, Color.Red);
+
+            PreviewTexture.SetData(colorData);
+
 
             var colorKeyEntries = style.GetColorKeys(Generator);
             var font = Root.GetTileSheet("font8");
@@ -465,15 +359,14 @@ namespace DwarfCorp.GameStates
                 return;
             }
 
-            PreviewTexture = new Texture2D(graphicsDevice, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1));
+            PreviewTexture = new Texture2D(graphicsDevice, Overworld.Map.GetLength(0) * 4, Overworld.Map.GetLength(1) * 4);
         }
 
         private void RegneratePreviewTexture()
         {
             if (PreviewTextureNeedsRegeneration())
-            {
                 SetNewPreviewTexture();
-            }
+
             if (PreviewTexture != null && UpdatePreview)
             {
                 UpdatePreview = false;
@@ -514,7 +407,7 @@ namespace DwarfCorp.GameStates
             Device.DepthStencilState = DepthStencilState.Default;
             if (PreviewRenderTarget == null || PreviewRenderTarget.IsDisposed || PreviewRenderTarget.GraphicsDevice.IsDisposed || PreviewRenderTarget.IsContentLost)
             {
-                PreviewRenderTarget = new RenderTarget2D(Device, PreviewPanel.Rect.Width, PreviewPanel.Rect.Height);
+                PreviewRenderTarget = new RenderTarget2D(Device, PreviewPanel.Rect.Width, PreviewPanel.Rect.Height, false, SurfaceFormat.Color, DepthFormat.Depth16);
                 PreviewRenderTarget.ContentLost += PreviewRenderTarget_ContentLost;
             }
             Device.SetRenderTarget(PreviewRenderTarget);
@@ -530,9 +423,9 @@ namespace DwarfCorp.GameStates
 
             PreviewEffect.World = Matrix.Identity;
 
-            PreviewEffect.View = ViewMatrix;
-            PreviewEffect.Projection = ProjectionMatrix;
-            cameraTarget = newTarget * 0.1f + cameraTarget * 0.9f;
+            PreviewEffect.View = Camera.ViewMatrix;
+            PreviewEffect.Projection = Camera.ProjectionMatrix;
+            Camera.cameraTarget = Camera.newTarget * 0.1f + Camera.cameraTarget * 0.9f;
             PreviewEffect.TextureEnabled = true;
             PreviewEffect.Texture = PreviewTexture;
             PreviewEffect.LightingEnabled = true;
@@ -544,12 +437,10 @@ namespace DwarfCorp.GameStates
             Device.DepthStencilState = DepthStencilState.Default;
 
             if (previewSampler == null)
-            {
                 previewSampler = new SamplerState
                 {
                     Filter = TextureFilter.MinLinearMagPointMipPoint
                 };
-            }
 
             Device.SamplerStates[0] = previewSampler;
             foreach (EffectPass pass in PreviewEffect.CurrentTechnique.Passes)
@@ -586,9 +477,7 @@ namespace DwarfCorp.GameStates
                 }
 
                 if (UpdatePreview || Trees == null)
-                {
                     UpdateTrees();
-                }
                 DrawPreviewInternal();
             }
             catch (InvalidOperationException exception)
@@ -599,7 +488,7 @@ namespace DwarfCorp.GameStates
 
         private void PreviewRenderTarget_ContentLost(object sender, EventArgs e)
         {
-            PreviewRenderTarget = new RenderTarget2D(Device, PreviewPanel.Rect.Width, PreviewPanel.Rect.Height);
+            PreviewRenderTarget = new RenderTarget2D(Device, PreviewPanel.Rect.Width, PreviewPanel.Rect.Height, false, SurfaceFormat.Color, DepthFormat.Depth16);
             PreviewRenderTarget.ContentLost += PreviewRenderTarget_ContentLost;
         }
     }

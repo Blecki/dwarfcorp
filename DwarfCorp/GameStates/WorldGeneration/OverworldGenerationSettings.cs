@@ -17,7 +17,7 @@ namespace DwarfCorp.GameStates
         public int NumFaults = 3;
         public float SeaLevel = 0.17f;
         public float TemperatureScale = 1.0f;
-        public Embarkment InitalEmbarkment = Library.DefaultEmbarkment;
+        public Embarkment InitalEmbarkment = null;
         public bool GenerateFromScratch = false;
         public int Seed = 0;
         public int NumCaveLayers = 8;

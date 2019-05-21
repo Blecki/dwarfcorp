@@ -45,7 +45,6 @@ namespace DwarfCorp
         public string Name { get; set; }
         public List<Faction> NativeFactions { get; set; }
         public List<ColonyCell> ColonyCells;
-        public static ColorGradient JetGradient = null;
         public static MemoryTexture BiomeBlend = null;
 
         public Overworld(int Width, int Height)
@@ -176,173 +175,169 @@ namespace DwarfCorp
         public static void TextureFromHeightMap(string displayMode,
             OverworldCell[,] map,
             List<Faction> NativeFactions,
-            OverworldField type,
-            int width, int height,
-            Mutex imageMutex,
+            int scale,
             Color[] worldData,
-            Texture2D worldMap, float sealevel)
+            float sealevel)
         {
-            if(JetGradient == null)
-            {
-                List<ColorStop> stops = new List<ColorStop>();
-                ColorStop first = new ColorStop
-                {
-                    m_color = new Color(0, 255, 255),
-                    m_position = 0.0f
-                };
-
-                ColorStop second = new ColorStop
-                {
-                    m_color = new Color(0, 0, 255),
-                    m_position = 0.2f
-                };
-
-
-                ColorStop third = new ColorStop
-                {
-                    m_color = new Color(255, 255, 0),
-                    m_position = 0.4f
-                };
-
-                ColorStop fourth = new ColorStop
-                {
-                    m_color = new Color(255, 0, 0),
-                    m_position = 0.8f
-                };
-
-                ColorStop fifth = new ColorStop
-                {
-                    m_color = new Color(255, 255, 255),
-                    m_position = 1.0f
-                };
-
-                stops.Add(first);
-                stops.Add(second);
-                stops.Add(third);
-                stops.Add(fourth);
-                stops.Add(fifth);
-
-
-                JetGradient = new ColorGradient(stops);
-            }
-
-
-            int stepX = map.GetLength(0) / width;
-            int stepY = map.GetLength(1) / height;
             string index = "";
-            for(int tx = 0; tx < width; tx++)
+
+            for (int x = 0; x < map.GetLength(0); ++x)
             {
-                for(int ty = 0; ty < height; ty++)
+                for (int y = 0; y < map.GetLength(1); ++y)
                 {
-                    int x = tx * stepX;
-                    int y = ty * stepY;
-   
-                    float h1 = map[x, y].GetValue(type);
-                    var biome = map[x, y].Biome;
-                    if(h1 < 0.1f)
+                    var h1 = map[x, y].GetValue(OverworldField.Height);
+                    var cellColor = Color.DarkBlue;
+
+                    if (displayMode == "Height")
                     {
-                        index = "Sea";
-                    }
-                    else if(h1 >= 0.1f && h1 <= sealevel)
-                    {
-                        index = "Water";
-                    }
-                    else if(displayMode == "Biomes")
-                    {
-                        index = "Biome";
-                    }
-                    else if(displayMode == "Height")
-                    {
-                        if(h1 >= 0.2f && h1 < 0.21f)
-                        {
+                        if (h1 < 0.1f)
+                            index = "Sea";
+                        else if (h1 >= 0.1f && h1 <= sealevel)
+                            index = "Water";
+                        else if (h1 >= 0.2f && h1 < 0.21f)
                             index = "Shore";
-                        }
-                        else if(h1 >= 0.21f && h1 < 0.4f)
-                        {
+                        else if (h1 >= 0.21f && h1 < 0.4f)
                             index = "Lowlands";
-                        }
-                        else if(h1 >= 0.4f && h1 < 0.6f)
-                        {
+                        else if (h1 >= 0.4f && h1 < 0.6f)
                             index = "Highlands";
-                        }
-                        else if(h1 >= 0.6f && h1 < 0.9f)
-                        {
+                        else if (h1 >= 0.6f && h1 < 0.9f)
                             index = "Mountains";
-                        }
+                        else
+                            index = "Peaks";
+
+                        cellColor = HeightColors[index];
+                    }
+                    else if (displayMode == "Biomes")
+                    {
+                        if (h1 < 0.1f)
+                            cellColor = HeightColors["Sea"];
+                        else if (h1 >= 0.1f && h1 <= sealevel)
+                            cellColor = HeightColors["Water"];
                         else
                         {
-                            index = "Peaks";
+                            var _biome = BiomeLibrary.GetBiome(map[x, y].Biome);
+                            if (_biome != null)
+                                cellColor = _biome.MapColor;
                         }
-                    }
-
-                    if(displayMode == "Gray")
-                    {
-                        Color toDraw = JetGradient.GetColor(h1);
-                        worldData[y * width + x] = toDraw;
                     }
                     else if (displayMode == "Factions")
                     {
-                        float h2 = map[x, y].Height;
-                        byte factionColor = map[x, y].Faction;
-                        
+                        var faction = map[x, y].Faction;
 
-                        Color ci = Color.DarkBlue;
-
-                        if (factionColor > 0 && factionColor <= NativeFactions.Count)
+                        if (faction > 0 && faction <= NativeFactions.Count)
                         {
-                            bool inside = x > 0 && x < width - 1 && y > 0 && y < height - 1;
-                            ci = NativeFactions[factionColor - 1].PrimaryColor;
-                           if(inside && 
-                               (map[x + 1, y].Faction != factionColor || 
-                               map[x - 1, y].Faction != factionColor || 
-                               map[x, y - 1].Faction != factionColor || 
-                               map[x, y + 1].Faction != factionColor ||
-                               map[x + 1, y + 1].Faction != factionColor ||
-                               map[x - 1, y - 1].Faction != factionColor || 
-                               map[x + 1, y - 1].Faction != factionColor ||
-                               map[x - 1, y + 1].Faction != factionColor))
-                           {
-                                    ci = NativeFactions[factionColor - 1].SecondaryColor;
-                           }
+                            bool inside = x > 0 && x < map.GetLength(0) - 1 && y > 0 && y < map.GetLength(1) - 1;
+                            cellColor = NativeFactions[faction - 1].PrimaryColor;
+                            if (inside &&
+                                (map[x + 1, y].Faction != faction ||
+                                map[x - 1, y].Faction != faction ||
+                                map[x, y - 1].Faction != faction ||
+                                map[x, y + 1].Faction != faction ||
+                                map[x + 1, y + 1].Faction != faction ||
+                                map[x - 1, y - 1].Faction != faction ||
+                                map[x + 1, y - 1].Faction != faction ||
+                                map[x - 1, y + 1].Faction != faction))
+                                cellColor = NativeFactions[faction - 1].SecondaryColor;
                         }
-                        else if (h2 > sealevel)
-                        {
-                            ci = Color.Gray;
-                        }
-
-                        Color toDraw = new Color((float)(ci.R) * (h2 + 0.5f) / 255.0f, (float)(ci.G * (h2 + 0.5f)) / 255.0f, (float)(ci.B * (h2 + 0.5f)) / 255.0f);
-                        worldData[ty * width + tx] = toDraw;
+                        else if (h1 > sealevel)
+                            cellColor = Color.Gray;
                     }
-                    else
-                    {
-                        var ci = Color.Black;
-                        if (displayMode == "Biomes" && index != "Water" && index != "Sea")
-                        {
-                            var _biome = BiomeLibrary.GetBiome(biome);
-                            if (_biome != null)
-                                ci = _biome.MapColor;
-                        }
-                        else
-                            ci = HeightColors[index];
 
-                        var toDraw = new Color((float) (ci.R) * (h1 + 0.5f) / 255.0f, (float) (ci.G * (h1 + 0.5f)) / 255.0f, (float) (ci.B * (h1 + 0.5f)) / 255.0f);
-                        worldData[ty * width + tx] = toDraw;
+                    for (var tx = 0; tx < scale; ++tx)
+                        for (var ty = 0; ty < scale; ++ty)
+                        {
+                            var rx = (x * scale) + tx;
+                            var ry = (y * scale) + ty;
+                            var pixelIndex = ry * map.GetLength(0) * scale + rx;
+                            worldData[pixelIndex] = cellColor;
+                        }
+                }
+            }
+        }
+        
+        public static void ShadeHeight(
+            OverworldCell[,] map,
+            int scale,
+            Color[] worldData)
+        {
+            for (int x = 0; x < map.GetLength(0); ++x)
+            {
+                for (int y = 0; y < map.GetLength(1); ++y)
+                {
+                    var h1 = map[x, y].GetValue(OverworldField.Height);
+
+                    for (var tx = 0; tx < scale; ++tx)
+                        for (var ty = 0; ty < scale; ++ty)
+                        {
+                            var rx = (x * scale) + tx;
+                            var ry = (y * scale) + ty;
+                            var pixelIndex = ry * map.GetLength(0) * scale + rx;
+                            var cellColor = worldData[pixelIndex];
+                            cellColor = new Color((float)(cellColor.R) * (h1 + 0.5f) / 255.0f, (float)(cellColor.G * (h1 + 0.5f)) / 255.0f, (float)(cellColor.B * (h1 + 0.5f)) / 255.0f, 1.0f);
+                            worldData[pixelIndex] = cellColor;
+                        }
+                }
+            }
+        }
+
+        private static Color GetPixelAt(Color[] data, int x, int y, int width, int height)
+        {
+            return data[MathFunctions.Clamp(y, 0, height - 1) * width + MathFunctions.Clamp(x, 0, width - 1)];
+        }
+
+        private static void SetPixelAt(Color[] data, int x, int y, int width, Color color)
+        {
+            data[y * width + x] = color;
+        }
+
+        public static void Smooth(
+            int scale,
+            int width,
+            int height,
+            Color[] worldData)
+        {
+            for (int x = 0; x < width; ++x)
+            {
+                for (int y = 0; y < height; ++y)
+                {
+                    if (x > 0 && y > 0)
+                    {
+                        var a = GetPixelAt(worldData, (x * scale) - 1, y * scale, width * scale, height * scale);
+                        var b = GetPixelAt(worldData, x * scale, (y * scale) - 1, width * scale, height * scale);
+
+                        if (a == b)
+                            SetPixelAt(worldData, x * scale, y * scale, width * scale, a);
+                    }
+
+                    if (x > 0 && y < height)
+                    {
+                        var a = GetPixelAt(worldData, (x * scale) - 1, y * scale + scale - 1, width * scale, height * scale);
+                        var b = GetPixelAt(worldData, x * scale, (y * scale) + scale, width * scale, height * scale);
+
+                        if (a == b)
+                            SetPixelAt(worldData, x * scale, y * scale + scale - 1, width * scale, a);
+                    }
+
+                    if (x < width && y < height)
+                    {
+                        var a = GetPixelAt(worldData, (x * scale) + scale, y * scale + scale - 1, width * scale, height * scale);
+                        var b = GetPixelAt(worldData, x * scale + scale - 1, (y * scale) + scale, width * scale, height * scale);
+
+                        if (a == b)
+                            SetPixelAt(worldData, x * scale + scale - 1, y * scale + scale - 1, width * scale, a);
+                    }
+
+                    if (x < width && y > 0)
+                    {
+                        var a = GetPixelAt(worldData, (x * scale) + scale, y * scale, width * scale, height * scale);
+                        var b = GetPixelAt(worldData, x * scale + scale - 1, (y * scale) - 1, width * scale, height * scale);
+
+                        if (a == b)
+                            SetPixelAt(worldData, x * scale + scale - 1, y * scale, width * scale, a);
                     }
                 }
             }
 
-            if(imageMutex != null)
-                imageMutex.WaitOne();
-
-            GameState.Game.GraphicsDevice.Textures[0] = null;
-
-            if (worldMap.IsDisposed || worldMap.GraphicsDevice.IsDisposed)
-                worldMap = new Texture2D(GameState.Game.GraphicsDevice, width, height);
-
-            worldMap.SetData(worldData);
-
-            if(imageMutex != null)
-                imageMutex.ReleaseMutex();
         }
 
         public static Vector2 WorldToOverworld(Vector2 worldXZ, Vector2 origin)

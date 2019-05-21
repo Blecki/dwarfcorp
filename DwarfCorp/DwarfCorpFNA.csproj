@@ -116,6 +116,7 @@
     <Compile Include="GameStates\Play\PrepareExpeditionDialog.cs" />
     <Compile Include="GameStates\Play\SelectEmployeesDialog.cs" />
     <Compile Include="GameStates\Play\SelectResourcesDialog.cs" />
+    <Compile Include="Graphics\Cameras\SimpleOrbitCamera.cs" />
     <Compile Include="LogWriter.cs" />
     <Compile Include="EventLog.cs" />
     <Compile Include="EventLogState.cs" />

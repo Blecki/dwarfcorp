@@ -272,6 +272,7 @@
     <Compile Include="GameStates\WorldGeneration\LaunchPanel.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGeneratorState.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldGenerationSettings.cs" />
+    <Compile Include="Graphics\Cameras\SimpleOrbitCamera.cs" />
     <Compile Include="Gui\Widgets\EmployeePortrait.cs" />
     <Compile Include="GameStates\FrontEnd\MenuState.cs" />
     <Compile Include="GameStates\ModManagement\Steam\UGCStatus.cs" />

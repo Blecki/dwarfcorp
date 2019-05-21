@@ -45,12 +45,11 @@ namespace DwarfCorp
         public Texture2D CreateScreenshot(GraphicsDevice device, int width, int height, float seaLevel)
         {
             DwarfGame.LogSentryBreadcrumb("Saving", String.Format("User saving an overworld with size {0} x {1}", width, height), SharpRaven.Data.BreadcrumbLevel.Info);
-            Texture2D toReturn = null;
-            toReturn = new Texture2D(device, width, height);
-            global::System.Threading.Mutex imageMutex = new global::System.Threading.Mutex();
-            Color[] worldData = new Color[width * height];
-            Overworld.TextureFromHeightMap("Height", OverworldMap, null, OverworldField.Height, width, height, imageMutex, worldData, toReturn, seaLevel);
-
+            Texture2D toReturn = new Texture2D(device, width, height);
+            var colorData = new Color[width * height];
+            Overworld.TextureFromHeightMap("Height", OverworldMap, null, 1, colorData, seaLevel);
+            Overworld.ShadeHeight(OverworldMap, 1, colorData);
+            toReturn.SetData(colorData);
             return toReturn;
         }
 

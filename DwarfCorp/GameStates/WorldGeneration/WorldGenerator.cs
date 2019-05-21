@@ -26,7 +26,6 @@ namespace DwarfCorp.GameStates
         public OverworldGenerationSettings Settings { get; set; }
         public VertexBuffer LandMesh { get; set; }
         public IndexBuffer LandIndex { get; set; }
-        public Color[] worldData;
         public string LoadingMessage = "";
         private Thread genThread;
         public float Progress = 0.0f;
@@ -89,29 +88,29 @@ namespace DwarfCorp.GameStates
             {
                 return;
             }
-           int resolution = 4;
+           int resolution = 1;
            int width = Overworld.Map.GetLength(0);
            int height = Overworld.Map.GetLength(1);
-           int numVerts = (width * height) / resolution;
+           int numVerts = ((width + 1) * (height + 1)) / resolution;
            LandMesh = new VertexBuffer(Device, VertexPositionNormalTexture.VertexDeclaration, numVerts, BufferUsage.None);
            VertexPositionNormalTexture[] verts = new VertexPositionNormalTexture[numVerts];
 
             int i = 0;
-            for (int x = 0; x < width; x += resolution)
+            for (int x = 0; x <= width; x += resolution)
             {
-                for (int y = 0; y < height; y += resolution)
+                for (int y = 0; y <= height; y += resolution)
                 {
-                    float landHeight = Overworld.Map[x, y].Height;
+                    float landHeight = Overworld.Map[(x < width) ? x : x - 1, (y < height) ? y : y - 1].Height;
                     verts[i].Position = new Vector3((float)x / width, landHeight * 0.05f, (float)y / height);
                     verts[i].TextureCoordinate = new Vector2(((float)x) / width, ((float)y) / height);
-                    Vector3 normal = new Vector3(Overworld.Map[MathFunctions.Clamp(x + 1, 0, width - 1), y].Height - height,  1.0f, Overworld.Map[x, MathFunctions.Clamp(y + 1, 0, height - 1)].Height - height);
+                    Vector3 normal = new Vector3(Overworld.Map[MathFunctions.Clamp(x + 1, 0, width - 1), MathFunctions.Clamp(y, 0, height - 1)].Height - height,  1.0f, Overworld.Map[MathFunctions.Clamp(x, 0, width - 1), MathFunctions.Clamp(y + 1, 0, height - 1)].Height - height);
                     normal.Normalize();
                     verts[i].Normal = normal;
                     i++;
                 }
             }
             LandMesh.SetData(verts);
-            int[] indices = SetUpTerrainIndices(width / resolution, height / resolution);
+            int[] indices = SetUpTerrainIndices((width + 1) / resolution, (height + 1) / resolution);
             LandIndex = new IndexBuffer(Device, typeof(int), indices.Length, BufferUsage.None);
             LandIndex.SetData(indices);
         }
@@ -330,11 +329,9 @@ namespace DwarfCorp.GameStates
 
                 MathFunctions.Random = new ThreadSafeRandom(Settings.Seed);
                 CurrentState = GenerationState.Generating;
-
-
+                
                 LoadingMessage = "Init..";
                 Overworld.heightNoise.Seed = Settings.Seed;
-                worldData = new Color[Settings.Width * Settings.Height];
                 Overworld.Map = new OverworldCell[Settings.Width, Settings.Height];
 
                 Progress = 0.01f;
@@ -529,7 +526,6 @@ namespace DwarfCorp.GameStates
         {
             CurrentState = GenerationState.Finished;
             Progress = 1.0f;
-            worldData = color;
             CreateMesh(Device);
         }
 
