@@ -16,7 +16,7 @@ namespace DwarfCorp
         {
             var race = Library.GetRandomIntelligentRace();
 
-            var fact = new Faction(null)
+            var fact = new Faction()
             {
                 Race = race,
                 Name = TextGenerator.ToTitleCase(TextGenerator.GenerateRandom(Datastructures.SelectRandom(race.FactionNameTemplates).ToArray())),
@@ -29,6 +29,24 @@ namespace DwarfCorp
                 ClaimsColony = MathFunctions.RandEvent(0.1f)
             };
             fact.Economy = new Company(fact, fact.TradeMoney, new CompanyInformation() {LogoBackgroundColor = fact.SecondaryColor.ToVector4(), LogoSymbolColor = fact.PrimaryColor.ToVector4(), Name = fact.Name});
+            return fact;
+        }
+
+        public OverworldFaction GenerateOverworldFaction(OverworldGenerationSettings Settings, int idx, int n)
+        {
+            var race = Library.GetRandomIntelligentRace();
+
+            var fact = new OverworldFaction()
+            {
+                Race = race.Name,
+                Name = TextGenerator.ToTitleCase(TextGenerator.GenerateRandom(Datastructures.SelectRandom(race.FactionNameTemplates).ToArray())),
+                PrimaryColor = new HSLColor(idx * (255.0f / n), 255.0, MathFunctions.Rand(100.0f, 200.0f)),
+                SecondaryColor = new HSLColor(MathFunctions.Rand(0, 255.0f), 255.0, MathFunctions.Rand(100.0f, 200.0f)),
+                CenterX = MathFunctions.RandInt(0, Settings.Overworld.Map.GetLength(0)),
+                CenterY = MathFunctions.RandInt(0, Settings.Overworld.Map.GetLength(1)),
+                GoodWill = MathFunctions.Rand(-1, 1),
+            };
+
             return fact;
         }
 
@@ -182,6 +200,11 @@ namespace DwarfCorp
             {
                 Factions[faction.Name] = faction;
             }
+        }
+
+        public void AddFaction(Faction Faction)
+        {
+            Factions[Faction.Name] = Faction;
         }
     }
 }

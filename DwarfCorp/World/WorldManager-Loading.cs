@@ -219,13 +219,6 @@ namespace DwarfCorp
                 Renderer.Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
                 Time = gameFile.Metadata.Time;
 
-                // Restore native factions from deserialized data.
-                Natives = new List<Faction>();
-
-                foreach (var faction in Factions.Factions.Values)
-                    if (faction.Race.IsNative && faction.Race.IsIntelligent && !faction.IsRaceFaction)
-                        Natives.Add(faction);
-
                 PlayerFaction = Factions.Factions["Player"];
                 //RoomBuilder = gameFile.PlayData.RoomBuilder;
 
@@ -264,35 +257,18 @@ namespace DwarfCorp
                 ComponentManager = new ComponentManager(this);
                 ComponentManager.SetRootComponent(new GameComponent(ComponentManager, "root", Matrix.Identity, Vector3.Zero, Vector3.Zero));
 
-                if (Natives == null) // Todo: Always true??
-                {
-                    FactionSet library = new FactionSet();
-                    library.Initialize(this, Settings.Company);
-                    Natives = new List<Faction>();
-                    for (int i = 0; i < 10; i++)
-                    {
-                        Natives.Add(library.GenerateFaction(Settings, i, 10));
-                    }
-
-                }
-
                 #region Prepare Factions
 
-                foreach (Faction faction in Natives)
-                { 
-                    faction.World = this;
-
-                    if (faction.RoomBuilder == null)
-                        faction.RoomBuilder = new RoomBuilder(faction, this);
-                }
-
                 Factions = new FactionSet();
-                if (Natives != null && Natives.Count > 0)
-                {
-                    Factions.AddFactions(this, Natives);
-                }
-
                 Factions.Initialize(this, Settings.Company);
+                foreach (var faction in Settings.Natives)
+                {
+                    var f = new Faction(faction);
+                    f.World = this;
+                    f.RoomBuilder = new RoomBuilder(f, this);
+                    Factions.AddFaction(f);
+                }               
+
                 Point playerOrigin = new Point((int)(Settings.InstanceSettings.Origin.X), (int)(Settings.InstanceSettings.Origin.Y));
 
                 Factions.Factions["Player"].Center = playerOrigin;

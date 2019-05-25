@@ -89,7 +89,6 @@ namespace DwarfCorp.GameStates
             {
                 // Todo: Just keep a reference to the settings OMG.
                 WorldSizeInChunks = new Point3(Settings.InstanceSettings.Cell.Bounds.Width, Settings.zLevels, Settings.InstanceSettings.Cell.Bounds.Height),
-                Natives = Settings.Natives,
                 Settings = Settings,
             };
 
@@ -112,7 +111,6 @@ namespace DwarfCorp.GameStates
                 GameStateManager.PushState(new PlayState(Game, World));
 
                 World.OnSetLoadingMessage = null;
-                World.Settings.Overworld.NativeFactions = World.Natives;
             }
             else
             {

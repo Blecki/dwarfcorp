@@ -77,20 +77,6 @@ namespace DwarfCorp.GameStates
                         Settings.Overworld.Name = Settings.Name;
                         Settings.InstanceSettings.ExistingFile = null;
 
-                        if (Settings.Natives == null || Settings.Natives.Count == 0)
-                            Settings.Natives = Generator.NativeCivilizations;
-
-                        foreach (var faction in Settings.Natives)
-                        {
-                            Vector2 center = new Vector2(faction.Center.X, faction.Center.Y);
-                            Vector2 spawn = new Vector2(Generator.GetSpawnRectangle().Center.X, Generator.GetSpawnRectangle().Center.Y);
-                            faction.DistanceToCapital = (center - spawn).Length();
-                            faction.ClaimsColony = false;
-                        }
-
-                        foreach (var faction in Generator.GetFactionsInSpawn())
-                            faction.ClaimsColony = true;
-
                         GameStateManager.ClearState();
                         GameStateManager.PushState(new LoadState(Game, Settings));
                     }

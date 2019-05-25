@@ -53,8 +53,6 @@ namespace DwarfCorp
                     Directory.CreateDirectory(DwarfGame.GetWorldDirectory() +
                                               Path.DirectorySeparatorChar + Settings.Overworld.Name);
 
-                // This is a hack. Why does the overworld have this as a static field??
-                Settings.Overworld.NativeFactions = this.Natives;
             NewOverworldFile file = new NewOverworldFile(Game.GraphicsDevice, Settings);
                 file.WriteFile(worldDirectory.FullName);
 

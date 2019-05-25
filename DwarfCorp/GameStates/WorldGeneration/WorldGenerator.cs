@@ -30,10 +30,7 @@ namespace DwarfCorp.GameStates
         private Thread genThread;
         public float Progress = 0.0f;
         public Overworld Overworld;
-
         public Action UpdatePreview;
-
-        public List<Faction> NativeCivilizations = new List<Faction>();
 
         public WorldGenerator(OverworldGenerationSettings Settings, bool ClearOverworld)
         {
@@ -53,7 +50,6 @@ namespace DwarfCorp.GameStates
             Overworld.Volcanoes = new List<Vector2>();
             LandMesh = null;
             LandIndex = null;
-            NativeCivilizations = Settings.Natives;
         }
 
         public static int[] SetUpTerrainIndices(int width, int height)
@@ -189,7 +185,7 @@ namespace DwarfCorp.GameStates
                     color = Color.Green;
                     dsc = "Friendly";
                 }
-                yield return new KeyValuePair<string, Color>("    " + faction.Name + " (" + faction.Race.Name + ") --" + dsc, color);
+                yield return new KeyValuePair<string, Color>("    " + faction.Name + " (" + faction.Race + ") --" + dsc, color);
             }
             yield return new KeyValuePair<string, Color>("Biomes: ", Color.White);
             foreach (var biome in biomes)
@@ -206,10 +202,10 @@ namespace DwarfCorp.GameStates
             }
         }
 
-        public List<Faction> GetFactionsInSpawn()
+        public List<OverworldFaction> GetFactionsInSpawn()
         {
             Rectangle spawnRect = GetSpawnRectangle();
-            List<Faction> toReturn = new List<Faction>();
+            var toReturn = new List<OverworldFaction>();
 
             try
             {
@@ -219,9 +215,9 @@ namespace DwarfCorp.GameStates
                     {
                         byte factionIdx = Overworld.Map[x, y].Faction;
 
-                        if (factionIdx > 0 && factionIdx <= NativeCivilizations.Count)
+                        if (factionIdx > 0 && factionIdx <= Settings.Natives.Count)
                         {
-                            Faction faction = NativeCivilizations[factionIdx - 1];
+                            var faction = Settings.Natives[factionIdx - 1];
 
                             if (!toReturn.Contains(faction))
                                 toReturn.Add(faction);
@@ -266,13 +262,13 @@ namespace DwarfCorp.GameStates
         
         public Dictionary<string, Color> GenerateFactionColors()
         {
-            Dictionary<string, Color> toReturn = new Dictionary<string, Color>();
+            var toReturn = new Dictionary<string, Color>();
             toReturn["Unclaimed"] = Color.Gray;
-            foreach (Faction faction in NativeCivilizations)
+            foreach (var faction in Settings.Natives)
             {
                 int goodwill = (int)(100 * faction.GoodWill);
                 string goodwillStr = goodwill > 0 ? "+" + goodwill.ToString() : goodwill.ToString();
-                toReturn[faction.Name + " (" + faction.Race.Name + ") " + goodwillStr] = faction.PrimaryColor;
+                toReturn[faction.Name + " (" + faction.Race + ") " + goodwillStr] = faction.PrimaryColor;
             }
             return toReturn;
         }
@@ -448,30 +444,12 @@ namespace DwarfCorp.GameStates
                 FactionSet library = new FactionSet();
                 library.Initialize(null, new CompanyInformation());
 
-                if (Settings.Natives == null || Settings.Natives.Count == 0)
-                {
-                    NativeCivilizations = new List<Faction>();
+                    Settings.Natives = new List<OverworldFaction>();
                     for (int i = 0; i < Settings.NumCivilizations; i++)
-                    {
-                        NativeCivilizations.Add(library.GenerateFaction(Settings, i, Settings.NumCivilizations));
-                    }
-                    Settings.Natives = NativeCivilizations;
-                }
-                else
-                {
-                    NativeCivilizations = Settings.Natives;
+                        Settings.Natives.Add(library.GenerateOverworldFaction(Settings, i, Settings.NumCivilizations));
 
-                    if (Settings.NumCivilizations > Settings.Natives.Count)
-                    {
-                        int count = Settings.Natives.Count;
-                        for (int i = count; i < Settings.NumCivilizations; i++)
-                        {
-                            NativeCivilizations.Add(library.GenerateFaction(Settings, i, Settings.NumCivilizations));
-                        }
-                    }
-                }
-                SeedCivs(Overworld.Map, Settings.NumCivilizations, NativeCivilizations);
-                GrowCivs(Overworld.Map, 200, NativeCivilizations);
+                SeedCivs(Overworld.Map, Settings.NumCivilizations, Settings.Natives);
+                GrowCivs(Overworld.Map, 200, Settings.Natives);
 
 
                 for (int x = 0; x < Settings.Width; x++)
@@ -832,7 +810,7 @@ namespace DwarfCorp.GameStates
             return null;
         }
 
-        public void SeedCivs(OverworldCell[,] map, int numCivs, List<Faction> civs )
+        public void SeedCivs(OverworldCell[,] map, int numCivs, List<OverworldFaction> civs )
         {
             for (int i = 0; i < numCivs; i++)
             {
@@ -846,7 +824,7 @@ namespace DwarfCorp.GameStates
             }
         }
 
-        public void GrowCivs(OverworldCell[,] map, int iters, List<Faction> civs)
+        public void GrowCivs(OverworldCell[,] map, int iters, List<OverworldFaction> civs)
         {
             int width = map.GetLength(0);
             int height = map.GetLength(1);
@@ -891,38 +869,15 @@ namespace DwarfCorp.GameStates
                                 var biome = map[x + deltas[minNeighbor].X, y + deltas[minNeighbor].Y].Biome;
                                 var biomeName = BiomeLibrary.GetBiome(biome).Name;
                                 var myFaction = civs[faction - 1];
-                                if (myFaction.Race.Biomes.ContainsKey(biomeName))
+                                var race = Library.GetRace(myFaction.Race);
+                                if (race.Biomes.ContainsKey(biomeName))
                                     map[x + deltas[minNeighbor].X, y + deltas[minNeighbor].Y].Biome =
-                                        BiomeLibrary.GetBiome(myFaction.Race.Biomes[biomeName]).Biome;
+                                        BiomeLibrary.GetBiome(race.Biomes[biomeName]).Biome;
                             }
                         }
                     }
                 }
-            }
-
-            foreach(var civ in NativeCivilizations)
-            {
-                civ.Center = new Point(0, 0);
-            }
-
-            for (int x = 1; x < width - 1; x++)
-            {
-                for (int y = 1; y < height - 1; y++)
-                {
-                    byte f = map[x, y].Faction;
-                    if (f> 0)
-                    {
-                        civs[f - 1].Center = new Point(x + civs[f - 1].Center.X, y + civs[f - 1].Center.Y);
-                        civs[f - 1].TerritorySize++;
-                    }
-                }
-            }
-
-            foreach (Faction f in civs)
-            {
-                if(f.TerritorySize > 0)
-                    f.Center = new Point(f.Center.X / f.TerritorySize, f.Center.Y / f.TerritorySize);
-            }
+            }            
         }
 
         // Spawn rectangle in world map pixel units

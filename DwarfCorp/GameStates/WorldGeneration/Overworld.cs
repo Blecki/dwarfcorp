@@ -43,7 +43,6 @@ namespace DwarfCorp
         public List<Vector2> Volcanoes { get; set; }
         public OverworldCell[,] Map { get; set; }
         public string Name { get; set; }
-        public List<Faction> NativeFactions { get; set; }
         public List<ColonyCell> ColonyCells;
         public static MemoryTexture BiomeBlend = null;
 
@@ -174,7 +173,7 @@ namespace DwarfCorp
 
         public static void TextureFromHeightMap(string displayMode,
             OverworldCell[,] map,
-            List<Faction> NativeFactions,
+            List<OverworldFaction> NativeFactions,
             int scale,
             Color[] worldData,
             float sealevel)

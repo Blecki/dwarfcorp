@@ -19,7 +19,7 @@ namespace DwarfCorp
         public List<TradeEnvoy> TradeEnvoys { get; set; }
         public List<WarParty> WarParties { get; set; }
         public List<GameComponent> OwnedObjects { get; set; }
-        public List<Stockpile> Stockpiles { get; set; }
+        public List<Stockpile> Stockpiles = new List<Stockpile>();
         public List<CreatureAI> Minions { get; set; }
         public RoomBuilder RoomBuilder { get; set; }
         public Color PrimaryColor { get; set; }
@@ -104,7 +104,6 @@ namespace DwarfCorp
             Threats = new List<Creature>();
             Minions = new List<CreatureAI>();
             SelectedMinions = new List<CreatureAI>();
-            Stockpiles = new List<Stockpile>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
             OwnedObjects = new List<GameComponent>();
@@ -114,19 +113,18 @@ namespace DwarfCorp
             GoodWill = 0.0f;
         }
 
-        public Faction(OverworldMetaData.FactionDescriptor descriptor)
+        public Faction(OverworldFaction descriptor)
         {
             Threats = new List<Creature>();
             Minions = new List<CreatureAI>();
             SelectedMinions = new List<CreatureAI>();
-            Stockpiles = new List<Stockpile>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
             OwnedObjects = new List<GameComponent>();
             IsRaceFaction = false;
             TradeMoney = 0.0m;
             GoodWill = descriptor.GoodWill;
-            PrimaryColor = descriptor.PrimaryColory;
+            PrimaryColor = descriptor.PrimaryColor;
             SecondaryColor = descriptor.SecondaryColor;
             Name = descriptor.Name;
             Race = Library.GetRace(descriptor.Race);

@@ -77,7 +77,6 @@ namespace DwarfCorp.GameStates
                 new PreviewRenderType("Factions", OverworldField.Factions,
                 (g) =>
                 {
-                    Overworld.NativeFactions = g.NativeCivilizations;
                     return g.GenerateFactionColors();
                 }));
         }
@@ -203,9 +202,9 @@ namespace DwarfCorp.GameStates
                 Root.DrawMesh(mesh, Root.RenderData.Texture);
             }
 
-            foreach (var civ in Generator.NativeCivilizations)
+            foreach (var civ in Generator.Settings.Natives)
             {
-                var civLocation = Camera.WorldToScreen(new Vector2(civ.Center.X, civ.Center.Y));
+                var civLocation = Camera.WorldToScreen(new Vector2(civ.CenterX, civ.CenterY));
                 if (civLocation.Z > 0.9999f)
                     continue;
                 Rectangle nameBounds;
@@ -223,12 +222,12 @@ namespace DwarfCorp.GameStates
                     Root.DrawMesh(bkgmesh, Root.RenderData.Texture);
                     Root.DrawMesh(mesh, Root.RenderData.Texture);
                 }
-                float scale = GetIconScale(civ.Center);
+                float scale = GetIconScale(new Point(civ.CenterX, civ.CenterY));
                 var iconRect = new Rectangle((int)(nameBounds.Center.X - 8 * scale),
                     (int)(nameBounds.Center.Y + 8 * scale), (int)(16 * scale), (int)(16 * scale));
                 if (!rect.Contains(iconRect)) continue;
                 var iconMesh = Gui.Mesh.FittedSprite(iconRect,
-                    icon, civ.Race.Icon);
+                    icon, Library.GetRace(civ.Race).Icon);
                 Root.DrawMesh(iconMesh, Root.RenderData.Texture);
             }
 
@@ -291,7 +290,7 @@ namespace DwarfCorp.GameStates
             var style = PreviewRenderTypes[PreviewSelector.SelectedItem];
             var colorData = new Color[Overworld.Map.GetLength(0) * Overworld.Map.GetLength(1) * 4 * 4];
             
-            Overworld.TextureFromHeightMap(style.DisplayType, Overworld.Map, Overworld.NativeFactions,
+            Overworld.TextureFromHeightMap(style.DisplayType, Overworld.Map, Generator.Settings.Natives,
                 4, colorData, Generator.Settings.SeaLevel);
             Overworld.Smooth(4, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), colorData);
             Overworld.ShadeHeight(Overworld.Map, 4, colorData);
@@ -368,7 +367,6 @@ namespace DwarfCorp.GameStates
             {
                 UpdatePreview = false;
                 InitializePreviewRenderTypes();
-                Overworld.NativeFactions = Generator.NativeCivilizations; // Why is this copying the factions?
                 CreatePreviewGUI();
             }
         }

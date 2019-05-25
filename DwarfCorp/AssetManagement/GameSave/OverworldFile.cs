@@ -181,16 +181,12 @@ namespace DwarfCorp
             var Overworld = new Overworld(OverworldMap.GetLength(0), OverworldMap.GetLength(1));
             Overworld.Map = OverworldMap;
             Overworld.Name = MetaData.Settings.Name;
-            Overworld.NativeFactions = new List<Faction>();
-            foreach (var faction in MetaData.FactionList)
-                Overworld.NativeFactions.Add(new Faction(faction));
             return Overworld;
         }
 
         public OverworldGenerationSettings CreateSettings()
         {
             MetaData.Settings.Overworld = CreateOverworld();
-            MetaData.Settings.Natives = MetaData.Settings.Overworld.NativeFactions;
             return MetaData.Settings;
         }
 

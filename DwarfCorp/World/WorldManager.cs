@@ -43,8 +43,6 @@ namespace DwarfCorp
         private Timer orphanedTaskRateLimiter = new Timer(10.0f, false, Timer.TimerMode.Real);
         public MonsterSpawner MonsterSpawner;
         public Faction PlayerFaction;
-        //public RoomBuilder RoomBuilder;
-        public List<Faction> Natives { get; set; } // Todo: To be rid of this; two concepts of faction - The owner faction in the overworld, and the instance in this game.
 
         #region Tutorial Hooks
 

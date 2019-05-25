@@ -25,7 +25,8 @@ namespace DwarfCorp.GameStates
         public InstanceSettings InstanceSettings;
 
         [JsonIgnore] public Overworld Overworld = null;
-        [JsonIgnore] public List<Faction> Natives;
+
+        public List<OverworldFaction> Natives;
 
         public static string GetRandomWorldName()
         {
