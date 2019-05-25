@@ -108,7 +108,7 @@ namespace DwarfCorp
             cMem.SetValue("$envoy_demands_tribute", new Yarn.Value(this.TributeDemanded != 0));
             cMem.SetValue("$envoy_tribute_demanded", new Yarn.Value((float)this.TributeDemanded.Value));
             cMem.SetValue("$envoy_name", new Yarn.Value(name));
-            cMem.SetValue("$envoy_faction", new Yarn.Value(OwnerFaction.Name));
+            cMem.SetValue("$envoy_faction", new Yarn.Value(OwnerFaction.ParentFaction.Name));
             cMem.SetValue("$player_faction", new Yarn.Value(this.OtherFaction));
             cMem.SetValue("$offensive_trades", new Yarn.Value(0));
             cMem.SetValue("$trades", new Yarn.Value(0));

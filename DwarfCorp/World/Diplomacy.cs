@@ -129,7 +129,7 @@ namespace DwarfCorp
 
         public Politics GetPolitics(Faction factionA, Faction factionB)
         {
-            return FactionPolitics[new Pair<string>(factionA.Name, factionB.Name)];
+            return FactionPolitics[new Pair<string>(factionA.ParentFaction.Name, factionB.ParentFaction.Name)];
         }
 
         public void InitializeFactionPolitics(Faction New, DateTime Now)
@@ -138,12 +138,12 @@ namespace DwarfCorp
 
             foreach (var faction in Factions.Factions)
             {
-                Pair<string> pair = new Pair<string>(faction.Value.Name, New.Name);
+                Pair<string> pair = new Pair<string>(faction.Value.ParentFaction.Name, New.ParentFaction.Name);
 
                 if (FactionPolitics.ContainsKey(pair))
                     continue;
 
-                if (faction.Key == New.Name)
+                if (faction.Key == New.ParentFaction.Name)
                 {
                     var politics = new Politics(Now, new TimeSpan(0, 0, 0))
                     {
@@ -203,7 +203,7 @@ namespace DwarfCorp
 
                     if (faction.Value.Race.IsIntelligent && New.Race.IsIntelligent)
                     {
-                        float trustingness = faction.Value.GoodWill;
+                        float trustingness = faction.Value.ParentFaction.GoodWill;
 
                         if (trustingness < -0.8f)
                         {
@@ -281,7 +281,7 @@ namespace DwarfCorp
         {
             if (!world.PlayerFaction.GetRooms().Any(room => room is BalloonPort && room.IsBuilt))
             {
-                world.MakeAnnouncement(String.Format("Trade envoy from {0} left: No balloon port!", natives.Name));
+                world.MakeAnnouncement(String.Format("Trade envoy from {0} left: No balloon port!", natives.ParentFaction.Name));
                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.15f);
                 return null;
             }
@@ -312,7 +312,7 @@ namespace DwarfCorp
                 {
                     natives.Economy = new Company(natives, 1000.0m, new CompanyInformation()
                     {
-                        Name = natives.Name
+                        Name = natives.ParentFaction.Name
                     });
                 }
 
@@ -341,7 +341,7 @@ namespace DwarfCorp
                     {
                         natives.Economy = new Company(natives, 1000.0m, new CompanyInformation()
                         {
-                            Name = natives.Name
+                            Name = natives.ParentFaction.Name
                         });
                     }
 
@@ -360,13 +360,13 @@ namespace DwarfCorp
             natives.TradeEnvoys.Add(envoy);
             world.MakeAnnouncement(new DwarfCorp.Gui.Widgets.QueuedAnnouncement
             {
-                Text = String.Format("Trade envoy from {0} has arrived!", natives.Name),
+                Text = String.Format("Trade envoy from {0} has arrived!", natives.ParentFaction.Name),
                 ClickAction = (gui, sender) =>
                 {
                     if (envoy.Creatures.Count > 0)
                     {
                         envoy.Creatures.First().ZoomToMe();
-                        World.UserInterface.MakeWorldPopup(String.Format("Traders from {0} ({1}) have entered our territory.\nThey will try to get to our balloon port to trade with us.", natives.Name, natives.Race.Name),
+                        World.UserInterface.MakeWorldPopup(String.Format("Traders from {0} ({1}) have entered our territory.\nThey will try to get to our balloon port to trade with us.", natives.ParentFaction.Name, natives.Race.Name),
                             envoy.Creatures.First().Physics, -10);
                     }
                 },
@@ -403,14 +403,14 @@ namespace DwarfCorp
             natives.WarParties.Add(party);
             natives.World.MakeAnnouncement(new Gui.Widgets.QueuedAnnouncement()
             {
-                Text = String.Format("A war party from {0} has arrived!", natives.Name),
+                Text = String.Format("A war party from {0} has arrived!", natives.ParentFaction.Name),
                 SecondsVisible = 60,
                 ClickAction = (gui, sender) =>
                 {
                     if (party.Creatures.Count > 0)
                     {
                         party.Creatures.First().ZoomToMe();
-                        World.UserInterface.MakeWorldPopup(String.Format("Warriors from {0} ({1}) have entered our territory. They will prepare for a while and then attack us.", natives.Name, natives.Race.Name), party.Creatures.First().Physics, -10);
+                        World.UserInterface.MakeWorldPopup(String.Format("Warriors from {0} ({1}) have entered our territory. They will prepare for a while and then attack us.", natives.ParentFaction.Name, natives.Race.Name), party.Creatures.First().Physics, -10);
                     }
                 },
                 ShouldKeep = () =>
@@ -449,7 +449,7 @@ namespace DwarfCorp
             foreach (var mypolitics in FactionPolitics)
             {
                 Pair<string> pair = mypolitics.Key;
-                if (!pair.IsSelfPair() && pair.Contains(world.PlayerFaction.Name))
+                if (!pair.IsSelfPair() && pair.Contains(world.PlayerFaction.ParentFaction.Name))
                 {
                     mypolitics.Value.UpdateEvents(currentDate);
                 }
@@ -495,7 +495,7 @@ namespace DwarfCorp
             IEnumerable<Act.Status> RecallEnvoyOnFail(TradeEnvoy envoy)
             {
                 Diplomacy.RecallEnvoy(envoy);
-                TradePort.Faction.World.MakeAnnouncement("Envoy from " + envoy.OwnerFaction.Name + " left. Trade port inaccessible.");
+                TradePort.Faction.World.MakeAnnouncement("Envoy from " + envoy.OwnerFaction.ParentFaction.Name + " left. Trade port inaccessible.");
                 yield return Act.Status.Success;
             }
 
@@ -514,7 +514,7 @@ namespace DwarfCorp
                 {
                     if (envoy.UpdateWaitTimer(World.Time.CurrentDate))
                     {
-                        World.MakeAnnouncement(String.Format("The envoy from {0} is leaving.", envoy.OwnerFaction.Name));
+                        World.MakeAnnouncement(String.Format("The envoy from {0} is leaving.", envoy.OwnerFaction.ParentFaction.Name));
                         RecallEnvoy(envoy);
                     }
                 }
@@ -528,7 +528,7 @@ namespace DwarfCorp
                 Diplomacy.Politics politics = faction.World.Diplomacy.GetPolitics(faction, envoy.OtherFaction);
                 if (politics.GetCurrentRelationship() == Relationship.Hateful)
                 {
-                    World.MakeAnnouncement(String.Format("The envoy from {0} left: we are at war with them.", envoy.OwnerFaction.Name));
+                    World.MakeAnnouncement(String.Format("The envoy from {0} left: we are at war with them.", envoy.OwnerFaction.ParentFaction.Name));
                     RecallEnvoy(envoy);
                 }
                 else
@@ -673,7 +673,7 @@ namespace DwarfCorp
 
                     if (party.ExpiditionState == Expedition.State.Arriving)
                     {
-                        World.MakeAnnouncement(String.Format("The war party from {0} is attacking!", party.OwnerFaction.Name));
+                        World.MakeAnnouncement(String.Format("The war party from {0} is attacking!", party.OwnerFaction.ParentFaction.Name));
                         SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.15f);
                         party.ExpiditionState = Expedition.State.Fighting;
                     }

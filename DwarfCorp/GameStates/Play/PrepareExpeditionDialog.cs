@@ -22,14 +22,14 @@ namespace DwarfCorp.GameStates
         public override void Construct()
         {
             Border = "border-one";
-            Text = String.Format("Send an Expedition to the {0} at {1}", DestinationFaction.Race.Plural, DestinationFaction.Name);
+            Text = String.Format("Send an Expedition to the {0} at {1}", DestinationFaction.Race.Plural, DestinationFaction.ParentFaction.Name);
             Font = "font16";
             InteriorMargin = new Margin(32, 5, 5, 5);
             var rect = GetDrawableInterior();
             AddChild(new Widget()
             {
                 Font = "font10",
-                Text = String.Format("{0} is {1} miles away.\nThe expedition will take about {2}.", DestinationFaction.Name, (int)DestinationFaction.DistanceToCapital, 
+                Text = String.Format("{0} is {1} miles away.\nThe expedition will take about {2}.", DestinationFaction.ParentFaction.Name, (int)DestinationFaction.DistanceToCapital, 
                 TextGenerator.TimeToString(Scripting.Adventure.Adventure.GetETA(Faction.Minions, DestinationFaction.DistanceToCapital))),
                 MinimumSize = new Point(0, 64),
                 AutoLayout = AutoLayout.DockTop
@@ -39,18 +39,18 @@ namespace DwarfCorp.GameStates
             {
                 new TradeAdventure()
                 {
-                    DestinationFaction = DestinationFaction.Name,
-                    OwnerFaction = Faction.Name
+                    DestinationFaction = DestinationFaction.ParentFaction.Name,
+                    OwnerFaction = Faction.ParentFaction.Name
                 },
                 new RaidAdventure()
                 {
-                    DestinationFaction = DestinationFaction.Name,
-                    OwnerFaction = Faction.Name
+                    DestinationFaction = DestinationFaction.ParentFaction.Name,
+                    OwnerFaction = Faction.ParentFaction.Name
                 },
                 new PeaceAdventure()
                 {
-                    DestinationFaction = DestinationFaction.Name,
-                    OwnerFaction = Faction.Name
+                    DestinationFaction = DestinationFaction.ParentFaction.Name,
+                    OwnerFaction = Faction.ParentFaction.Name
                 }
             };
             var politics = World.Diplomacy.GetPolitics(Faction, DestinationFaction);

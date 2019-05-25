@@ -68,7 +68,7 @@ namespace DwarfCorp
                             Creature.Physics.Position,
                             OwnerTask, DwarfTime.LastTime,
                             Creature.Stats.BaseDigSpeed,
-                            Creature.Faction.Name))
+                            Creature.Faction.ParentFaction.Name))
                 {
                     if (status == Act.Status.Running)
                     {

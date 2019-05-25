@@ -247,12 +247,10 @@ namespace DwarfCorp
                 ChunkManager = new ChunkManager(Content, this, WorldSizeInChunks);
                 Splasher = new Splasher(ChunkManager);
 
-
                 Renderer.ChunkRenderer = new ChunkRenderer(ChunkManager);
 
                 Renderer.Camera.Position = new Vector3(0, 10, 0) + new Vector3(WorldSizeInChunks.X * VoxelConstants.ChunkSizeX, 0, WorldSizeInChunks.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
                 Renderer.Camera.Target = new Vector3(0, 10, 1) + new Vector3(WorldSizeInChunks.X * VoxelConstants.ChunkSizeX, 0, WorldSizeInChunks.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
-
 
                 ComponentManager = new ComponentManager(this);
                 ComponentManager.SetRootComponent(new GameComponent(ComponentManager, "root", Matrix.Identity, Vector3.Zero, Vector3.Zero));
@@ -263,7 +261,7 @@ namespace DwarfCorp
                 Factions.Initialize(this, Settings.Company);
                 foreach (var faction in Settings.Natives)
                 {
-                    var f = new Faction(faction);
+                    var f = new Faction(this, faction);
                     f.World = this;
                     f.RoomBuilder = new RoomBuilder(f, this);
                     Factions.AddFaction(f);
@@ -274,14 +272,12 @@ namespace DwarfCorp
                 Factions.Factions["Player"].Center = playerOrigin;
                 Factions.Factions["The Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
                 PlayerFaction = Factions.Factions["Player"];
-                //RoomBuilder = new RoomBuilder(PlayerFaction, this);
 
                 #endregion
 
                 Diplomacy = new Diplomacy(this);
                 Diplomacy.Initialize(Time.CurrentDate);
 
-                // Initialize goal manager here.
                 EventScheduler = new Events.Scheduler();
 
                 TutorialManager = new Tutorial.TutorialManager();
@@ -289,12 +285,8 @@ namespace DwarfCorp
                 Tutorial("new game start");
 
                 foreach (var item in Library.EnumerateCraftables())
-                {
                     if (!String.IsNullOrEmpty(item.Tutorial))
-                    {
                         TutorialManager.AddTutorial(item.Name, item.Tutorial, item.Icon);
-                    }
-                }
             }
 
                 Renderer.Camera.World = this;

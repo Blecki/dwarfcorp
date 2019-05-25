@@ -165,7 +165,7 @@ namespace DwarfCorp.Events
                     return true;
 
                 case FactionSpecification.Specific:
-                    return faction.Name == EntityFaction;
+                    return faction.ParentFaction.Name == EntityFaction;
             }
             return false;
         }
@@ -188,7 +188,7 @@ namespace DwarfCorp.Events
                 dist += 1.0f / (1.0f + faction.DistanceToCapital);
                 if (randPick < dist)
                 {
-                    return faction.Name;
+                    return faction.ParentFaction.Name;
                 }
             }
 

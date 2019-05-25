@@ -97,7 +97,7 @@ namespace DwarfCorp.GameStates
                 });
                 titlebar.AddChild(new Widget()
                 {
-                    Text = System.String.Format("{0} ({1}){2}", faction.Value.Name, faction.Value.Race.Name, diplomacy.IsAtWar ? " -- At war!" : ""),
+                    Text = String.Format("{0} ({1}){2}", faction.Value.ParentFaction.Name, faction.Value.Race.Name, diplomacy.IsAtWar ? " -- At war!" : ""),
                     TextHorizontalAlign = HorizontalAlign.Right,
                     TextVerticalAlign = VerticalAlign.Bottom,
                     Font = "font10",
@@ -148,7 +148,7 @@ namespace DwarfCorp.GameStates
                                                     adventure.Money = selectResources.SelectedMoney;
                                                     adventure.Resources = selectResources.SelectedResources;
                                                     adventure.DestinationFaction = faction.Key;
-                                                    adventure.OwnerFaction = World.PlayerFaction.Name;
+                                                    adventure.OwnerFaction = World.PlayerFaction.ParentFaction.Name;
                                                     adventure.Position = World.Settings.InstanceSettings.Origin;
                                                     adventure.Start = World.Settings.InstanceSettings.Origin;
                                                     World.Diplomacy.Adventures.Add(adventure);

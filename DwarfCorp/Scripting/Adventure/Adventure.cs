@@ -623,7 +623,7 @@ namespace DwarfCorp.Scripting.Adventure
                     Duration = new TimeSpan(4, 0, 0, 0),
                     Time = world.Time.CurrentDate
                 });
-                LastEvent = String.Format("The {0} of {1} were offended by our peace offering. They captured the envoy.", des.Race.Plural, des.Name);
+                LastEvent = String.Format("The {0} of {1} were offended by our peace offering. They captured the envoy.", des.Race.Plural, des.ParentFaction.Name);
                 Party.Clear();
                 Resources.Clear();
                 Money = 0;
@@ -645,7 +645,7 @@ namespace DwarfCorp.Scripting.Adventure
                 });
                 politics.HasMet = true;
                 politics.IsAtWar = false;
-                LastEvent = String.Format("The adventuring party made peace with the {0} of {1}!", des.Race.Plural, des.Name);
+                LastEvent = String.Format("The adventuring party made peace with the {0} of {1}!", des.Race.Plural, des.ParentFaction.Name);
                 Money = 0;
                 Resources.Clear();
                 AdventureState = State.ComingBack;

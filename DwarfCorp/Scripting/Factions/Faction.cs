@@ -12,6 +12,8 @@ namespace DwarfCorp
 {
     public class Faction // Todo: Need to trim and refactor, see if can be split into normal faction / player faction.
     {
+        public OverworldFaction ParentFaction; // Todo: To fix load, has to save name and reclaim from Overworld when deserialized.
+
         public DwarfBux TradeMoney { get; set; }
         public Point Center { get; set; }
         public int TerritorySize { get; set; }
@@ -22,10 +24,8 @@ namespace DwarfCorp
         public List<Stockpile> Stockpiles = new List<Stockpile>();
         public List<CreatureAI> Minions { get; set; }
         public RoomBuilder RoomBuilder { get; set; }
-        public Color PrimaryColor { get; set; }
-        public Color SecondaryColor { get; set; }
-        public Timer HandleThreatsTimer { get; set; }
-        public Timer HandleStockpilesTimer { get; set; }
+        public Timer HandleThreatsTimer = new Timer(1.0f, false, Timer.TimerMode.Real);
+        public Timer HandleStockpilesTimer = new Timer(5.5f, false, Timer.TimerMode.Real);
         public DesignationSet Designations = new DesignationSet();
         public Dictionary<ulong, VoxelHandle> GuardedVoxels = new Dictionary<ulong, VoxelHandle>();
         public Dictionary<Resource.ResourceTags, int> CachedResourceTagCounts = new Dictionary<Resource.ResourceTags, int>();
@@ -60,13 +60,10 @@ namespace DwarfCorp
             }
         }
 
-        public List<Creature> Threats { get; set; }
+        public List<Creature> Threats = new List<Creature>();
 
-        public string Name { get; set; }
         public List<CreatureAI> SelectedMinions { get; set; }
         public bool IsRaceFaction { get; set; }
-
-        public float GoodWill { get; set; }
 
         [JsonIgnore]
         public WorldManager World { get; set; }
@@ -74,48 +71,20 @@ namespace DwarfCorp
         [OnDeserialized]
         public void OnDeserialized(StreamingContext ctx)
         {
-            World = ((WorldManager)ctx.Context);
-            HandleThreatsTimer = new Timer(1.0f, false, Timer.TimerMode.Real);
-            HandleStockpilesTimer = new Timer(5.5f, false, Timer.TimerMode.Real);
-            if (Threats == null)
-            {
-                Threats = new List<Creature>();
-            }
-
-            if (Minions == null)
-            {
-                Minions = new List<CreatureAI>();
-            }
+            World = ctx.Context as WorldManager;
             Threats.RemoveAll(threat => threat == null || threat.IsDead);
             Minions.RemoveAll(minion => minion == null || minion.IsDead);
         }
 
         public Faction()
         {
-            HandleThreatsTimer = new Timer(1.0f, false, Timer.TimerMode.Real);
-            HandleStockpilesTimer = new Timer(5.5f, false, Timer.TimerMode.Real);
         }
 
-        public Faction(WorldManager world)
+        public Faction(WorldManager World, OverworldFaction descriptor)
         {
-            HandleThreatsTimer = new Timer(1.0f, false, Timer.TimerMode.Real);
-            HandleStockpilesTimer = new Timer(5.5f, false, Timer.TimerMode.Real);
-            World = world;
-            Threats = new List<Creature>();
-            Minions = new List<CreatureAI>();
-            SelectedMinions = new List<CreatureAI>();
-            TradeEnvoys = new List<TradeEnvoy>();
-            WarParties = new List<WarParty>();
-            OwnedObjects = new List<GameComponent>();
-            RoomBuilder = new RoomBuilder(this, world);
-            IsRaceFaction = false;
-            TradeMoney = 0.0m;
-            GoodWill = 0.0f;
-        }
+            this.World = World;
+            ParentFaction = descriptor;
 
-        public Faction(OverworldFaction descriptor)
-        {
-            Threats = new List<Creature>();
             Minions = new List<CreatureAI>();
             SelectedMinions = new List<CreatureAI>();
             TradeEnvoys = new List<TradeEnvoy>();
@@ -123,10 +92,6 @@ namespace DwarfCorp
             OwnedObjects = new List<GameComponent>();
             IsRaceFaction = false;
             TradeMoney = 0.0m;
-            GoodWill = descriptor.GoodWill;
-            PrimaryColor = descriptor.PrimaryColor;
-            SecondaryColor = descriptor.SecondaryColor;
-            Name = descriptor.Name;
             Race = Library.GetRace(descriptor.Race);
             Center = new Point(descriptor.CenterX, descriptor.CenterY);
         }

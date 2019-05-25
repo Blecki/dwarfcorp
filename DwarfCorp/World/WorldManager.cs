@@ -81,7 +81,7 @@ namespace DwarfCorp
         public PlanService PlanService = null;
         public Weather Weather = new Weather();
         public WorldTime Time = new WorldTime();
-        private SaveGame gameFile;
+        private SaveGame gameFile; // Todo: Kill
         public Point3 WorldSizeInChunks;
 
         [JsonIgnore]
