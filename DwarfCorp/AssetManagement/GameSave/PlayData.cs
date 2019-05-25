@@ -23,6 +23,7 @@ namespace DwarfCorp
         public Tutorial.TutorialSaveData TutorialSaveData;
         public Diplomacy Diplomacy;
         public FactionSet Factions;
+        //public RoomBuilder RoomBuilder;
         public List<Resource> Resources;
         public DesignationDrawer Designations;
         public TaskManager Tasks;
@@ -38,6 +39,7 @@ namespace DwarfCorp
                 TutorialSaveData = World.TutorialManager.GetSaveData(),
                 Diplomacy = World.Diplomacy,
                 Factions = World.Factions,
+                //RoomBuilder = World.RoomBuilder,
                 Resources = ResourceLibrary.Enumerate().Where(r => r.Generated).ToList(),
                 Designations = World.Renderer.DesignationDrawer,
                 Tasks = World.TaskManager,

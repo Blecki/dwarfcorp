@@ -49,24 +49,9 @@ namespace DwarfCorp
             CollisionType = CollisionType.None;
         }
 
-        public bool Pickup(ResourceAmount resourceAmount, RestockType restock)
-        {
-            for (int i = 0; i < resourceAmount.Count; i++)
-            {
-                Resources.Add(new InventoryItem()
-                {
-                    Resource = resourceAmount.Type,
-                    MarkedForRestock = restock == RestockType.RestockResource,
-                    MarkedForUse = restock != RestockType.RestockResource
-                });
-            }
-            return true;
-        }
-
         public bool Remove(IEnumerable<Quantitiy<Resource.ResourceTags>> amount, RestockType type)
         {
             foreach (var quantity in amount)
-            {
                 for (int i = 0; i < quantity.Count; i++)
                 {
                     int kRemove = -1;
@@ -77,51 +62,51 @@ namespace DwarfCorp
                         else if (type == RestockType.RestockResource && !Resources[k].MarkedForRestock)
                             continue;
 
-                        if (!ResourceLibrary.GetResourceByName(Resources[k].Resource)
-                            .Tags.Contains(quantity.Type)) continue;
+                        if (!ResourceLibrary.GetResourceByName(Resources[k].Resource).Tags.Contains(quantity.Type)) continue;
                         kRemove = k;
                         break;
                     }
+
                     if (kRemove < 0)
-                    {
                         return false;
-                    }
+
                     Resources.RemoveAt(kRemove);
                 }
-            }
+
             return true;
         }
 
         public bool Remove(IEnumerable<ResourceAmount> resourceAmount, RestockType type)
         {
             foreach (var quantity in resourceAmount)
-            {
-                for (int i = 0; i < quantity.Count; i++)
-                {
-                    int kRemove = -1;
-                    for (int k = 0; k < Resources.Count; k++)
-                    {
-                        if (type == RestockType.None && Resources[k].MarkedForRestock)
-                            continue;
-                        else if (type == RestockType.RestockResource && !Resources[k].MarkedForRestock)
-                            continue;
-                        if (Resources[k].Resource != quantity.Type) continue;
-                        kRemove = k;
-                        break;
-                    }
-                    if (kRemove < 0)
-                    {
-                        return false;
-                    }
-                    Resources.RemoveAt(kRemove);
-                }
-            }
+                if (!Remove(quantity, type))
+                    return false;
             return true;
         }
 
         public bool Remove(ResourceAmount resourceAmount, RestockType type)
         {
-            return Remove(new List<ResourceAmount>() {resourceAmount}, type);
+            for (int i = 0; i < resourceAmount.Count; i++)
+            {
+                var kRemove = -1;
+                for (int k = 0; k < Resources.Count; k++)
+                {
+                    if (type == RestockType.None && Resources[k].MarkedForRestock)
+                        continue;
+                    else if (type == RestockType.RestockResource && !Resources[k].MarkedForRestock)
+                        continue;
+                    if (Resources[k].Resource != resourceAmount.Type) continue;
+                    kRemove = k;
+                    break;
+                }
+
+                if (kRemove < 0)
+                    return false;
+
+                Resources.RemoveAt(kRemove);
+            }
+
+            return true;
         }
 
 
@@ -189,9 +174,7 @@ namespace DwarfCorp
             List<GameComponent> toReturn = new List<GameComponent>();
 
             if(!Remove(resources.CloneResource(), type))
-            {
                 return toReturn;
-            }
 
             for(int i = 0; i < resources.Count; i++)
             {
@@ -275,27 +258,22 @@ namespace DwarfCorp
             return Resources.Count(resource => resource.Resource == itemToStock.Type) >= itemToStock.Count;
         }
 
-        public bool HasResource(Quantitiy<Resource.ResourceTags> itemToStock, bool allowHeterogenous = false)
+        public bool HasResource(Quantitiy<Resource.ResourceTags> itemToStock)
         {
-            if (allowHeterogenous)
-                return Resources.Count(resource => ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(itemToStock.Type)) >= itemToStock.Count;
-            else
+            Dictionary<String, int> resourceCounts = new Dictionary<String, int>();
+            foreach (var resource in Resources)
             {
-                Dictionary<String, int> resourceCounts = new Dictionary<String, int>();
-                foreach (var resource in Resources)
+                if (ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(itemToStock.Type))
                 {
-                    if (ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(itemToStock.Type))
+                    if (!resourceCounts.ContainsKey(resource.Resource))
                     {
-                        if (!resourceCounts.ContainsKey(resource.Resource))
-                        {
-                            resourceCounts[resource.Resource] = 0;
-                        }
-                        resourceCounts[resource.Resource]++;
+                        resourceCounts[resource.Resource] = 0;
                     }
+                    resourceCounts[resource.Resource]++;
                 }
-
-                return resourceCounts.Count > 0 && resourceCounts.Max(r => r.Value >= itemToStock.Count);
             }
+
+            return resourceCounts.Count > 0 && resourceCounts.Max(r => r.Value >= itemToStock.Count);
         }
 
         public List<ResourceAmount> GetResources(Quantitiy<Resource.ResourceTags> quantitiy, RestockType type = RestockType.RestockResource)
@@ -308,7 +286,15 @@ namespace DwarfCorp
 
         public void AddResource(ResourceAmount tradeGood, RestockType type = RestockType.RestockResource)
         {
-            Pickup(tradeGood, type);
+            for (int i = 0; i < tradeGood.Count; i++)
+            {
+                Resources.Add(new InventoryItem()
+                {
+                    Resource = tradeGood.Type,
+                    MarkedForRestock = type == RestockType.RestockResource,
+                    MarkedForUse = type != RestockType.RestockResource
+                });
+            }
         }
     }
 }

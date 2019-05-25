@@ -226,6 +226,9 @@ namespace DwarfCorp
                     if (faction.Race.IsNative && faction.Race.IsIntelligent && !faction.IsRaceFaction)
                         Natives.Add(faction);
 
+                PlayerFaction = Factions.Factions["Player"];
+                //RoomBuilder = gameFile.PlayData.RoomBuilder;
+
                 Diplomacy = gameFile.PlayData.Diplomacy;
 
                 EventScheduler = new Events.Scheduler();
@@ -276,7 +279,7 @@ namespace DwarfCorp
                 #region Prepare Factions
 
                 foreach (Faction faction in Natives)
-                {
+                { 
                     faction.World = this;
 
                     if (faction.RoomBuilder == null)
@@ -294,6 +297,8 @@ namespace DwarfCorp
 
                 Factions.Factions["Player"].Center = playerOrigin;
                 Factions.Factions["The Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
+                PlayerFaction = Factions.Factions["Player"];
+                //RoomBuilder = new RoomBuilder(PlayerFaction, this);
 
                 #endregion
 
@@ -326,14 +331,14 @@ namespace DwarfCorp
                 Game.DoLazyAction(new Action(() => ParticleManager = new ParticleManager(ComponentManager)));
 
                 SetLoadingMessage("Creating GameMaster ...");
-            PlayerFaction = Factions.Factions["Player"];
+
             TaskManager = new TaskManager();
             TaskManager.Faction = PlayerFaction;
             Time.NewDay += (time) => PlayerFaction.PayEmployees();
 
             if (gameFile == null)
                 {
-                    DwarfGame.LogSentryBreadcrumb("Loading", "Started new game without an existing file.");
+                DwarfGame.LogSentryBreadcrumb("Loading", "Started new game without an existing file.");
                     if (Settings.Overworld.Map == null)
                         throw new InvalidProgramException("Tried to start game with an empty overworld. This should not happen.");
 

@@ -10,11 +10,7 @@ using System.Diagnostics;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// A faction is an independent collection of creatures, tied to an economy, rooms, and designations.
-    /// Examples might be the player's dwarves, or the faction of goblins.
-    /// </summary>
-    public class Faction
+    public class Faction // Todo: Need to trim and refactor, see if can be split into normal faction / player faction.
     {
         public DwarfBux TradeMoney { get; set; }
         public Point Center { get; set; }
@@ -480,16 +476,6 @@ namespace DwarfCorp
             return nearest;
         }
 
-        public Stockpile GetIntersectingStockpile(BoundingBox v)
-        {
-            return Stockpiles.FirstOrDefault(pile => pile.Intersects(v));
-        }
-
-        public List<Stockpile> GetIntersectingStockpiles(BoundingBox v)
-        {
-            return Stockpiles.Where(pile => pile.Intersects(v)).ToList();
-        }
-
         public List<Room> GetIntersectingRooms(BoundingBox v)
         {
             return RoomBuilder.DesignatedRooms.Where(room => room.Intersects(v)).ToList();
@@ -615,7 +601,6 @@ namespace DwarfCorp
             foreach (var amount in required)
             {
                 int numGot = 0;
-                String selectedString = null;
                 foreach (Stockpile stockpile in Stockpiles.OrderBy(s => (s.GetBoundingBox().Center() - biasPos).LengthSquared()))
                 {
                     if (numGot >= amount.Count)
@@ -632,20 +617,17 @@ namespace DwarfCorp
         }
 
 
-        public IEnumerable<KeyValuePair<Stockpile, ResourceAmount>> GetStockpilesContainingResources(List<Quantitiy<Resource.ResourceTags>> tags, bool allowHeterogenous = false)
+        public IEnumerable<KeyValuePair<Stockpile, ResourceAmount>> GetStockpilesContainingResources(List<Quantitiy<Resource.ResourceTags>> tags)
         {
             foreach (var tag in tags)
             {
                 int numGot = 0;
-                String selectedString = null;
                 foreach (Stockpile stockpile in Stockpiles)
                 {
                     if (numGot >= tag.Count)
                         break;
                     foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => ResourceLibrary.GetResourceByName(sResource.Type).Tags.Contains(tag.Type)))
                     {
-                        if (!allowHeterogenous && selectedString != null && selectedString != resource.Type)
-                            continue;
                         int amountToRemove = global::System.Math.Min(resource.Count, tag.Count - numGot);
                         if (amountToRemove <= 0) continue;
                         numGot += amountToRemove;
@@ -655,7 +637,7 @@ namespace DwarfCorp
             }
         }
 
-        public List<ResourceAmount> GetResourcesWithTags(List<Quantitiy<Resource.ResourceTags>> tags, bool allowHeterogenous = false)
+        public List<ResourceAmount> GetResourcesWithTags(List<Quantitiy<Resource.ResourceTags>> tags)
         {
             Dictionary<Resource.ResourceTags, int> tagsRequired = new Dictionary<Resource.ResourceTags, int>();
             Dictionary<Resource.ResourceTags, int> tagsGot = new Dictionary<Resource.ResourceTags, int>();
@@ -697,11 +679,6 @@ namespace DwarfCorp
                         }
                     }
                 }
-            }
-
-            if (allowHeterogenous)
-            {
-                return amounts.Values.ToList();
             }
 
             List<ResourceAmount> toReturn = new List<ResourceAmount>();
@@ -774,23 +751,6 @@ namespace DwarfCorp
                 }
 
                 if (CachedResourceTagCounts[resource] == 0)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public bool HasResourcesCached(IEnumerable<Quantitiy<Resource.ResourceTags>> resources)
-        {
-            foreach(var resource in resources)
-            {
-                if (!CachedResourceTagCounts.ContainsKey(resource.Type))
-                {
-                    return false;
-                }
-
-                if (CachedResourceTagCounts[resource.Type] < resource.Count)
                 {
                     return false;
                 }

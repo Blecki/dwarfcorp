@@ -12,7 +12,7 @@ namespace DwarfCorp
     {
         public List<Quantitiy<Resource.ResourceTags>> Resources { get; set; }
         public List<KeyValuePair<Stockpile, ResourceAmount> > ResourcesToStash { get; set; }
-        public bool AllowHeterogenous { get; set; }
+        public bool AllowHeterogenous { get; set; } // Todo: Unused
         public Faction Faction = null;
 
         public GetResourcesAct()
@@ -75,7 +75,7 @@ namespace DwarfCorp
             {
                 foreach (Quantitiy<Resource.ResourceTags> resource in Resources)
                 {
-                    if (!Creature.Inventory.HasResource(resource, AllowHeterogenous))
+                    if (!Creature.Inventory.HasResource(resource))
                     {
                         hasAllResources = false;
                     }
@@ -108,7 +108,7 @@ namespace DwarfCorp
             { 
 
                 if(ResourcesToStash == null && Resources != null)
-                    ResourcesToStash = Faction.GetStockpilesContainingResources(Resources, AllowHeterogenous).ToList();
+                    ResourcesToStash = Faction.GetStockpilesContainingResources(Resources).ToList();
 
                 if(ResourcesToStash != null &&  ResourcesToStash.Count == 0)
                 {
