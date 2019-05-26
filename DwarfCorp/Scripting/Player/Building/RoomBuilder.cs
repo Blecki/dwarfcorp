@@ -20,7 +20,7 @@ namespace DwarfCorp
     /// </summary>
     public class RoomBuilder
     {
-        public List<Room> DesignatedRooms { get; set; }
+        public List<Zone> DesignatedRooms { get; set; }
         public List<BuildRoomOrder> BuildDesignations { get; set; }
         public RoomData CurrentRoomData { get; set; }
         public Faction Faction { get; set; }
@@ -34,7 +34,7 @@ namespace DwarfCorp
             World = ((WorldManager)ctx.Context);
         }
 
-        public List<Room> FilterRoomsByType(string type)
+        public List<Zone> FilterRoomsByType(string type)
         {
             return DesignatedRooms.Where(r => r.Type.Name == type).ToList();
         }
@@ -52,7 +52,7 @@ namespace DwarfCorp
         public RoomBuilder(Faction faction, WorldManager world)
         {
             World = world;
-            DesignatedRooms = new List<Room>();
+            DesignatedRooms = new List<Zone>();
             BuildDesignations = new List<BuildRoomOrder>();
             CurrentRoomData = RoomLibrary.GetData("BedRoom");
             Faction = faction;
@@ -77,7 +77,7 @@ namespace DwarfCorp
             return DesignatedRooms.Any(r => r.ContainsVoxel(v)) || Faction.IsInStockpile(v);
         }
 
-        public Room GetRoomThatContainsVoxel(VoxelHandle V)
+        public Zone GetRoomThatContainsVoxel(VoxelHandle V)
         {
             return DesignatedRooms.FirstOrDefault(r => r.ContainsVoxel(V));
         }
@@ -87,12 +87,12 @@ namespace DwarfCorp
             return BuildDesignations.SelectMany(room => room.VoxelOrders).Any(buildDesignation => buildDesignation.Voxel == v);
         }
 
-        public bool IsBuildDesignation(Room r)
+        public bool IsBuildDesignation(Zone r)
         {
             return BuildDesignations.Any(room => room.ToBuild == r);
         }
 
-        public BuildVoxelOrder GetBuildDesignation(Room v)
+        public BuildVoxelOrder GetBuildDesignation(Zone v)
         {
             return (from room in BuildDesignations
                 where room.ToBuild == v
@@ -115,9 +115,9 @@ namespace DwarfCorp
                 select room).FirstOrDefault();
         }
 
-        public Room GetMostLikelyRoom(VoxelHandle v)
+        public Zone GetMostLikelyRoom(VoxelHandle v)
         {
-            foreach(Room r in DesignatedRooms.Where(r => r.ContainsVoxel(v)))
+            foreach(var r in DesignatedRooms.Where(r => r.ContainsVoxel(v)))
                 return r;
 
             BoundingBox larger = new BoundingBox(v.GetBoundingBox().Min - new Vector3(0.5f, 0.5f, 0.5f), v.GetBoundingBox().Max + new Vector3(0.5f, 0.5f, 0.5f));
@@ -128,7 +128,7 @@ namespace DwarfCorp
                 select buildDesignation.ToBuild).FirstOrDefault();
         }
 
-        public List<BuildVoxelOrder> GetDesignationsAssociatedWithRoom(Room room)
+        public List<BuildVoxelOrder> GetDesignationsAssociatedWithRoom(Zone room)
         {
             return (from roomDesignation in BuildDesignations
                 from des in roomDesignation.VoxelOrders
@@ -157,17 +157,17 @@ namespace DwarfCorp
 
         public void OnVoxelDestroyed(VoxelHandle voxDestroyed)
         {
-            List<Room> toDestroy = new List<Room>();
+            var toDestroy = new List<Zone>();
 
             lock (DesignatedRooms)
             {
-                List<Room> toCheck = new List<Room>();
+                var toCheck = new List<Zone>();
                 toCheck.AddRange(DesignatedRooms.Where(r => r.IsBuilt));
-                foreach (Room r in toCheck)
+                foreach (var r in toCheck)
                     if (r.RemoveVoxel(voxDestroyed))
                         toDestroy.Add(r);
 
-                foreach (Room r in toDestroy)
+                foreach (var r in toDestroy)
                 {
                     DesignatedRooms.Remove(r);
                     r.Destroy();
@@ -251,7 +251,7 @@ namespace DwarfCorp
 
         private void BuildNewVoxels(IEnumerable<VoxelHandle> designations)
         {
-            Room toBuild = RoomLibrary.CreateRoom(Faction, CurrentRoomData.Name, World);
+            var toBuild = RoomLibrary.CreateRoom(Faction, CurrentRoomData.Name, World);
             var order = new BuildRoomOrder(toBuild, Faction, Faction.World);
             BuildDesignations.Add(order);
             DesignatedRooms.Add(toBuild);
@@ -279,7 +279,7 @@ namespace DwarfCorp
             foreach (BuildRoomOrder order in BuildDesignations)
                 order.SetTint(Color.White);
             
-            foreach (Room room in Faction.GetRooms())
+            foreach (var room in Faction.EnumerateZones())
                 room.SetTint(Color.White);
             
             if (CurrentRoomData == null)
@@ -326,7 +326,7 @@ namespace DwarfCorp
                 order.SetTint(Color.White);
             }
 
-            foreach (Room room in Faction.GetRooms())
+            foreach (var room in Faction.EnumerateZones())
             {
                 room.SetTint(Color.White);
             }

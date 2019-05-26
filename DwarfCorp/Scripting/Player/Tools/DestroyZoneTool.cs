@@ -41,7 +41,7 @@ namespace DwarfCorp
             }
             else if (World.PlayerFaction.RoomBuilder.IsInRoom(v))
             {
-                Room existingRoom = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(v);
+                var existingRoom = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(v);
 
                 if (existingRoom != null)
                     World.UserInterface.Gui.ShowModalPopup(new Gui.Widgets.Confirm
@@ -52,7 +52,7 @@ namespace DwarfCorp
             }
         }
 
-        public static void DestroyRoom(Gui.Widgets.Confirm.Result status, Room room, Faction Faction, WorldManager World)
+        public static void DestroyRoom(Gui.Widgets.Confirm.Result status, Zone room, Faction Faction, WorldManager World)
         {
             if (status == Gui.Widgets.Confirm.Result.OKAY)
             {
@@ -151,7 +151,7 @@ namespace DwarfCorp
             }
             else if (World.PlayerFaction.RoomBuilder.IsInRoom(v))
             {
-                Room existingRoom = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(v);
+                var existingRoom = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(v);
                 if (existingRoom != null)
                     existingRoom.SetTint(GameSettings.Default.Colors.GetColor("Negative", Color.Red));
             }

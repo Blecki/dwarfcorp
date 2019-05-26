@@ -254,9 +254,12 @@ namespace DwarfCorp
             TaskManager.AssignTasksGreedy(tasks, Minions);
         }
 
-        public List<Room> GetRooms()
+        public IEnumerable<Zone> EnumerateZones()
         {
-            return RoomBuilder.DesignatedRooms;
+            if (RoomBuilder != null)
+                foreach (var room in RoomBuilder.DesignatedRooms)
+                    yield return room;
+            yield break;
         }
 
         public void OnVoxelDestroyed(VoxelHandle V)
@@ -326,13 +329,12 @@ namespace DwarfCorp
             return false;
         }
 
-        public Room GetNearestRoomOfType(string typeName, Vector3 position)
+        public Zone GetNearestRoomOfType(string typeName, Vector3 position)
         {
-            List<Room> rooms = GetRooms();
-            Room desiredRoom = null;
+            Zone desiredRoom = null;
             float nearestDistance = float.MaxValue;
 
-            foreach (Room room in rooms)
+            foreach (var room in EnumerateZones())
             {
                 if (room.Type.Name != typeName || !room.IsBuilt) continue;
                 float dist =
@@ -344,7 +346,6 @@ namespace DwarfCorp
                     desiredRoom = room;
                 }
             }
-
 
             return desiredRoom;
         }
@@ -373,7 +374,7 @@ namespace DwarfCorp
             return nearest;
         }
 
-        public List<Room> GetIntersectingRooms(BoundingBox v)
+        public List<Zone> GetIntersectingRooms(BoundingBox v)
         {
             return RoomBuilder.DesignatedRooms.Where(room => room.Intersects(v)).ToList();
         }
@@ -487,7 +488,7 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public IEnumerable<KeyValuePair<Room, ResourceAmount>> GetStockpilesContainingResources(Vector3 biasPos, IEnumerable<ResourceAmount> required)
+        public IEnumerable<KeyValuePair<Zone, ResourceAmount>> GetStockpilesContainingResources(Vector3 biasPos, IEnumerable<ResourceAmount> required)
         {
             foreach (var amount in required)
             {
@@ -501,14 +502,14 @@ namespace DwarfCorp
                         int amountToRemove = global::System.Math.Min(resource.Count, amount.Count - numGot);
                         if (amountToRemove <= 0) continue;
                         numGot += amountToRemove;
-                        yield return new KeyValuePair<Room, ResourceAmount>(stockpile, new ResourceAmount(resource.Type, amountToRemove));
+                        yield return new KeyValuePair<Zone, ResourceAmount>(stockpile, new ResourceAmount(resource.Type, amountToRemove));
                     }
                 }
             }
         }
 
 
-        public IEnumerable<KeyValuePair<Room, ResourceAmount>> GetStockpilesContainingResources(List<Quantitiy<Resource.ResourceTags>> tags)
+        public IEnumerable<KeyValuePair<Zone, ResourceAmount>> GetStockpilesContainingResources(List<Quantitiy<Resource.ResourceTags>> tags)
         {
             foreach (var tag in tags)
             {
@@ -522,7 +523,7 @@ namespace DwarfCorp
                         int amountToRemove = global::System.Math.Min(resource.Count, tag.Count - numGot);
                         if (amountToRemove <= 0) continue;
                         numGot += amountToRemove;
-                        yield return new KeyValuePair<Room, ResourceAmount>(stockpile, new ResourceAmount(resource.Type, amountToRemove));
+                        yield return new KeyValuePair<Zone, ResourceAmount>(stockpile, new ResourceAmount(resource.Type, amountToRemove));
                     }
                 }
             }
@@ -684,7 +685,7 @@ namespace DwarfCorp
             return HasResources(new List<ResourceAmount>() { new ResourceAmount(resource) });
         }
 
-        public bool RemoveResources(ResourceAmount resources, Vector3 position, Room stock, bool createItems = true)
+        public bool RemoveResources(ResourceAmount resources, Vector3 position, Zone stock, bool createItems = true)
         {
             if (!stock.Resources.HasResource(resources))
                 return false;
@@ -839,7 +840,7 @@ namespace DwarfCorp
 
         public void HireImmediately(Applicant currentApplicant)
         {
-            List<Room> rooms = GetRooms().Where(room => room.Type.Name == "Balloon Port").ToList();
+            var rooms = EnumerateZones().Where(room => room.Type.Name == "Balloon Port").ToList();
             Vector3 spawnLoc = World.Renderer.Camera.Position;
             if (rooms.Count > 0)
             {
@@ -879,12 +880,10 @@ namespace DwarfCorp
 
         public GameComponent DispatchBalloon()
         {
-            List<Room> rooms = GetRooms().Where(room => room.Type.Name == "Balloon Port").ToList();
+            var rooms = EnumerateZones().Where(room => room.Type.Name == "Balloon Port").ToList();
 
             if (rooms.Count == 0)
-            {
                 return null;
-            }
 
             Vector3 pos = rooms.First().GetBoundingBox().Center();
             return Balloon.CreateBalloon(pos + new Vector3(0, 1000, 0), pos + Vector3.UnitY * 15, World.ComponentManager, this);
@@ -960,13 +959,12 @@ namespace DwarfCorp
             return maxAmount != null ? new List<ResourceAmount>() { maxAmount } : new List<ResourceAmount>();
         }
 
-        public Room GetNearestRoom(Vector3 position)
+        public Zone GetNearestRoom(Vector3 position)
         {
-            List<Room> rooms = GetRooms();
-            Room desiredRoom = null;
+            Zone desiredRoom = null;
             float nearestDistance = float.MaxValue;
 
-            foreach (Room room in rooms)
+            foreach (var room in EnumerateZones())
             {
                 if (room.Voxels.Count == 0) continue;
                 float dist =

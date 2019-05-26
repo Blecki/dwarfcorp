@@ -12,10 +12,9 @@ namespace DwarfCorp
     /// This designation specifies a list of voxels which are to be turned
     /// into a BuildRoom.
     /// </summary>
-    [JsonObject(IsReference = true)]
     public class BuildRoomOrder
     {
-        public Room ToBuild { get; set; }
+        public Zone ToBuild { get; set; }
         public Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> PutResources { get; set; }
         public List<BuildVoxelOrder> VoxelOrders { get; set; }
         public Faction Faction { get; set; }
@@ -41,7 +40,7 @@ namespace DwarfCorp
         }
 
 
-        public BuildRoomOrder(Room toBuild, Faction faction, WorldManager world)
+        public BuildRoomOrder(Zone toBuild, Faction faction, WorldManager world)
         {
             BuildProgress = 0;
             World = world;

@@ -11,7 +11,7 @@ namespace DwarfCorp
     public class Graveyard : Stockpile
     {
         [RoomFactory("Graveyard")]
-        private static Room _factory(RoomData Data, Faction Faction, WorldManager World)
+        private static Zone _factory(RoomData Data, Faction Faction, WorldManager World)
         {
             return new Graveyard(Data, Faction, World);
         }

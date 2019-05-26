@@ -1,35 +1,3 @@
-// RoomLibrary.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,14 +23,15 @@ namespace DwarfCorp
     /// <summary>
     /// A static class describing all the kinds of rooms. Can create rooms using templates.
     /// </summary>
-    public class RoomLibrary
+    public class RoomLibrary // Todo: Mono Library
     {
         private static List<RoomData> RoomTypes = null;
-        private static Dictionary<string, Func<RoomData, Faction, WorldManager, Room>> RoomFuncs { get; set; }
+        private static Dictionary<string, Func<RoomData, Faction, WorldManager, Zone>> RoomFuncs { get; set; }
+        private static bool RoomTypesInitialized = false;
 
         public static IEnumerable<string> GetRoomTypes()
         {
-            InitializeStatics();
+            InitializeRoomTypes();
             return RoomTypes.Select(r => r.Name);
         }
 
@@ -70,14 +39,16 @@ namespace DwarfCorp
         {
         }
 
-        private static void InitializeStatics()
+        private static void InitializeRoomTypes()
         {
-            if (RoomTypes != null) return;
+            if (RoomTypesInitialized)
+                return;
+            RoomTypesInitialized = true;
 
             RoomTypes = FileUtils.LoadJsonListFromDirectory<RoomData>(ContentPaths.room_types, null, d => d.Name);
-            RoomFuncs = new Dictionary<string, Func<RoomData, Faction, WorldManager, Room>>();
+            RoomFuncs = new Dictionary<string, Func<RoomData, Faction, WorldManager, Zone>>();
 
-            foreach (var method in AssetManager.EnumerateModHooks(typeof(RoomFactoryAttribute), typeof(Room), new Type[]
+            foreach (var method in AssetManager.EnumerateModHooks(typeof(RoomFactoryAttribute), typeof(Zone), new Type[]
             {
                 typeof(RoomData),
                 typeof(Faction),
@@ -86,25 +57,26 @@ namespace DwarfCorp
             {
                 var attribute = method.GetCustomAttributes(false).FirstOrDefault(a => a is RoomFactoryAttribute) as RoomFactoryAttribute;
                 if (attribute == null) continue;
-                RoomFuncs[attribute.Name] = (data, faction, world) => method.Invoke(null, new Object[] { data, faction, world }) as Room;
+                RoomFuncs[attribute.Name] = (data, faction, world) => method.Invoke(null, new Object[] { data, faction, world }) as Zone;
             }
         }
 
         public static RoomData GetData(string Name)
         {
-            InitializeStatics();
+            InitializeRoomTypes();
             return RoomTypes.Where(r => r.Name == Name).FirstOrDefault();
         }
       
-        public static Room CreateRoom(Faction faction, string name, WorldManager world)
+        public static Zone CreateRoom(Faction faction, string name, WorldManager world)
         {
-            InitializeStatics();
+            InitializeRoomTypes();
             if (RoomFuncs.ContainsKey(name))
                 return RoomFuncs[name](GetData(name), faction, world);
             return null;
         }
 
-        public static void CompleteRoomImmediately(Room Room, List<VoxelHandle> Voxels)
+        // Todo: Does not belong here.
+        public static void CompleteRoomImmediately(Zone Room, List<VoxelHandle> Voxels)
         {
             foreach (var voxel in Voxels)
                 Room.AddVoxel(voxel);

@@ -67,7 +67,7 @@ namespace DwarfCorp
             if (Voxels.Count == 0)
                 return false;
 
-            if (Faction.GetRooms().Where(room => room.Type.Name == this.Name).Count() + 1 > MaxNumRooms)
+            if (Faction.EnumerateZones().Where(room => room.Type.Name == this.Name).Count() + 1 > MaxNumRooms)
             {
                 World.UserInterface.ShowTooltip(String.Format("We can only build {0} {1}. Destroy the existing to build a new one.", MaxNumRooms, Name));
                 return false;

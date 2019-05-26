@@ -98,7 +98,7 @@ namespace DwarfCorp
                 return creature.AI.ActOnWander();
             }
             
-            var rooms = creature.Faction.GetRooms();
+            var rooms = creature.Faction.EnumerateZones();
             var items = creature.Faction.OwnedObjects.OfType<Flag>().ToList();
 
             bool goToItem = MathFunctions.RandEvent(0.2f);

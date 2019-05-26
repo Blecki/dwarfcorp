@@ -140,7 +140,7 @@ namespace DwarfCorp
                 where
                     Manager.World.Diplomacy.GetPolitics(Creature.Faction, faction.Value)
                         .GetCurrentRelationship() == Relationship.Hateful
-                from zone in faction.Value.GetRooms()
+                from zone in faction.Value.EnumerateZones()
                 from body in zone.ZoneBodies
                 where body.Tags.Contains("Grave")
                 select body).ToList();

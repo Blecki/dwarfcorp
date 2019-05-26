@@ -59,7 +59,7 @@ namespace DwarfCorp
         /// <param name="x">The position of the center of the balloon port</param>
         /// <param name="z">The position of the center of the balloon port</param>
         /// <param name="size">The size of the (square) balloon port in voxels on a side</param>
-        public Room GenerateInitialBalloonPort(RoomBuilder roomDes, ChunkManager chunkManager, float x, float z,
+        public Zone GenerateInitialBalloonPort(RoomBuilder roomDes, ChunkManager chunkManager, float x, float z,
             int size, Generation.GeneratorSettings Settings)
         {
             var roomVoxels = Generation.Generator.GenerateBalloonPort(chunkManager, x, z, size, Settings);

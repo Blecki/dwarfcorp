@@ -683,7 +683,6 @@
     <Compile Include=".\Scripting\Player\VoxelSelector.cs" />
     <Compile Include=".\Scripting\Potions\GatherPotionsTask.cs" />
     <Compile Include=".\Scripting\Potions\Potion.cs" />
-    <Compile Include=".\Scripting\Rooms\Room.cs" />
     <Compile Include=".\Scripting\Rooms\RoomData.cs" />
     <Compile Include=".\Scripting\Rooms\RoomLibrary.cs" />
     <Compile Include=".\Scripting\Rooms\RoomTypes\AnimalPen.cs" />

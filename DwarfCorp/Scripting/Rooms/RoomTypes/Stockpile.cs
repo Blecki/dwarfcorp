@@ -15,10 +15,10 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Stockpile : Room
+    public class Stockpile : Zone
     {
         [RoomFactory("Stockpile")]
-        private static Room _factory(RoomData Data, Faction Faction, WorldManager World)
+        private static Zone _factory(RoomData Data, Faction Faction, WorldManager World)
         {
             return new Stockpile(Data, Faction, World);
         }

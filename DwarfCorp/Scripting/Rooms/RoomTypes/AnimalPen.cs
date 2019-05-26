@@ -8,10 +8,10 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class AnimalPen : Room
+    public class AnimalPen : Zone
     {
         [RoomFactory("Animal Pen")]
-        private static Room _factory(RoomData Data, Faction Faction, WorldManager World)
+        private static Zone _factory(RoomData Data, Faction Faction, WorldManager World)
         {
             return new AnimalPen(Data, Faction, World);
         }

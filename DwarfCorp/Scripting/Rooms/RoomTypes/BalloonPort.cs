@@ -11,7 +11,7 @@ namespace DwarfCorp
     public class BalloonPort : Stockpile
     {
         [RoomFactory("Balloon Port")]
-        private static Room _factory(RoomData Data, Faction Faction, WorldManager World)
+        private static Zone _factory(RoomData Data, Faction Faction, WorldManager World)
         {
             return new BalloonPort(Data, Faction, World);
         }

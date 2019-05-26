@@ -113,7 +113,7 @@ namespace DwarfCorp
             }
             else if (World.PlayerFaction.RoomBuilder.IsInRoom(v))
             {
-                Room existingRoom = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(v);
+                var existingRoom = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(v);
 
                 if (existingRoom != null)
                     World.UserInterface.Gui.ShowModalPopup(new Gui.Widgets.Confirm
@@ -125,7 +125,7 @@ namespace DwarfCorp
         }
 
 
-        void destroyDialog_OnClosed(Gui.Widgets.Confirm.Result status, Room room)
+        void destroyDialog_OnClosed(Gui.Widgets.Confirm.Result status, Zone room)
         {
             if (status == Gui.Widgets.Confirm.Result.OKAY)
             {

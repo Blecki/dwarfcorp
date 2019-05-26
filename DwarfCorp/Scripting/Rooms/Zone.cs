@@ -16,13 +16,20 @@ namespace DwarfCorp
     public class Zone
     {
         public string ID = "";
+        private static int Counter = 0;
+
         public List<VoxelHandle> Voxels = new List<VoxelHandle>();
         // This is a list of voxel type ids that existed before this zone
         // was created. When the zone is destroyed, the voxel types will be restored.
         public List<byte> OriginalVoxelTypes = new List<byte>(); 
         public List<GameComponent> ZoneBodies = new List<GameComponent>();
         public RoomData Type;
-        
+        [JsonIgnore] public Gui.Widget GuiTag;
+        public List<VoxelHandle> Designations = new List<VoxelHandle>();
+        public bool IsBuilt;
+        public virtual String GetDescriptionString() { return Library.GetString("generic-room-description"); }
+
+
         [JsonProperty]
         protected int ResPerVoxel = 32;
 
@@ -53,9 +60,9 @@ namespace DwarfCorp
             }
         }
 
-        public Zone(string id, WorldManager world, Faction faction, RoomData Type)
+        public Zone(RoomData Type, WorldManager world, Faction faction)
         {
-            ID = id;
+            ID = Counter + ". " + Type.Name;
             World = world;
             Resources = new ResourceContainer
             {
@@ -64,6 +71,7 @@ namespace DwarfCorp
             Faction = faction;
             this.Type = Type;
 
+            ++Counter;
         }
 
         public Zone()
@@ -292,6 +300,15 @@ namespace DwarfCorp
             box = box.Expand(expansion);
             return box.Contains(worldCoordinate) != ContainmentType.Disjoint;
         }
-    }
 
+        public virtual void OnBuilt()
+        {
+
+        }
+
+        public virtual void Update(DwarfTime Time)
+        {
+            ZoneBodies.RemoveAll(body => body.IsDead);
+        }
+    }
 }
