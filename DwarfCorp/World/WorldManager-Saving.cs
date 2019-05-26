@@ -45,31 +45,29 @@ namespace DwarfCorp
             try
             {
 #endif
-                Thread.CurrentThread.Name = "Save";
-                // Ensure we're using the invariant culture.
-                Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-                Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-                DirectoryInfo worldDirectory =
-                    Directory.CreateDirectory(DwarfGame.GetWorldDirectory() +
-                                              Path.DirectorySeparatorChar + Settings.Overworld.Name);
+            Thread.CurrentThread.Name = "Save";
+            // Ensure we're using the invariant culture.
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+            var worldDirectory = Directory.CreateDirectory(DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Settings.Overworld.Name);
 
-            NewOverworldFile file = new NewOverworldFile(Game.GraphicsDevice, Settings);
-                file.WriteFile(worldDirectory.FullName);
+            var file = new NewOverworldFile(Game.GraphicsDevice, Settings);
+            file.WriteFile(worldDirectory.FullName);
 
-                gameFile = SaveGame.CreateFromWorld(this);
+            var gameFile = SaveGame.CreateFromWorld(this);
             var path = worldDirectory.FullName + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)Settings.InstanceSettings.Origin.X, (int)Settings.InstanceSettings.Origin.Y);
-                SaveGame.DeleteOldestSave(path, GameSettings.Default.MaxSaves, "Autosave");
-                gameFile.WriteFile(path);
-                ComponentManager.CleanupSaveData();
+            SaveGame.DeleteOldestSave(path, GameSettings.Default.MaxSaves, "Autosave");
+            gameFile.WriteFile(path);
+            ComponentManager.CleanupSaveData();
 
-                lock (Renderer.ScreenshotLock)
+            lock (Renderer.ScreenshotLock)
+            {
+                Renderer.Screenshots.Add(new WorldRenderer.Screenshot()
                 {
-                    Renderer.Screenshots.Add(new WorldRenderer.Screenshot()
-                    {
-                        FileName = path + Path.DirectorySeparatorChar + "screenshot.png",
-                        Resolution = new Point(128, 128)
-                    });
-                }
+                    FileName = path + Path.DirectorySeparatorChar + "screenshot.png",
+                    Resolution = new Point(128, 128)
+                });
+            }
 
 #if !DEBUG
             }
@@ -80,7 +78,7 @@ namespace DwarfCorp
                 throw new WaitStateException(exception.Message);
             }
 #endif
-                return true;
+            return true;
         }
     }
 }

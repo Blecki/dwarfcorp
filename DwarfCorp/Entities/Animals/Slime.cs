@@ -51,7 +51,7 @@ namespace DwarfCorp
             (
                 manager,
                 new CreatureStats("Slime", "Slime", 0),
-                manager.World.Factions.Factions["Demon"],
+                manager.World.Factions.Factions["Carnivore"],
                 name
             )
         {

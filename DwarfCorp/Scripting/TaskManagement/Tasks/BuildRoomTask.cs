@@ -88,7 +88,7 @@ namespace DwarfCorp
         {
             Category = TaskCategory.BuildZone;
             MaxAssignable = 3;
-            Name = "Build Room " + zone.ToBuild.RoomData.Name + zone.ToBuild.ID;
+            Name = "Build Room " + zone.ToBuild.Type.Name + zone.ToBuild.ID;
             Zone = zone;
             Priority = PriorityType.Medium;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;

@@ -7,12 +7,8 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// The creature finds food in a stockpile or BuildRoom, and eats it.
-    /// </summary>
     public class FindAndEatFoodAct : CompoundCreatureAct
     {
-
         public FindAndEatFoodAct()
         {
             Name = "Find and Eat Edible";

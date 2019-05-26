@@ -46,7 +46,7 @@ namespace DwarfCorp
                 if (existingRoom != null)
                     World.UserInterface.Gui.ShowModalPopup(new Gui.Widgets.Confirm
                     {
-                        Text = "Do you want to destroy this " + existingRoom.RoomData.Name + "?",
+                        Text = "Do you want to destroy this " + existingRoom.Type.Name + "?",
                         OnClose = (sender) => DestroyRoom((sender as Gui.Widgets.Confirm).DialogResult, existingRoom, World.PlayerFaction, World)
                     });
             }

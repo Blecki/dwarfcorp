@@ -207,6 +207,13 @@ namespace DwarfCorp
             
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is GameComponent other)
+                return GlobalID == other.GlobalID;
+            return false;
+        }
+
         public override int GetHashCode()
         {
             return (int) GlobalID;

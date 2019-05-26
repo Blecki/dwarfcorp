@@ -4,10 +4,17 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp.GameStates
 {
+    public enum LoadType
+    {
+        CreateNew,
+        LoadFromFile
+    }
+
     public class InstanceSettings
     {
         [JsonIgnore] public Vector2 Origin => new Vector2(Cell.Bounds.X, Cell.Bounds.Y);
         public string ExistingFile = null;
+        public LoadType LoadType = LoadType.CreateNew;
         public ColonyCell Cell;
     }
 }

@@ -107,22 +107,19 @@ namespace DwarfCorp
             }
         }
 
-        public override void Update()
+        public override void Update(DwarfTime Time)
         {
             if (Animals.Count > 0)
             {
                 Animals.RemoveAll(body => body.IsDead);
                 if (Animals.Count == 0)
-                {
                     Species = "";
-                }
 
                 foreach (var body in Animals)
-                {
                     ClampBody(body);
-                }
             }
-            base.Update();
+
+            base.Update(Time);
         }
 
         public override void Destroy()
@@ -131,9 +128,7 @@ namespace DwarfCorp
             {
                 var creature = animal.GetRoot().GetComponent<CreatureAI>();
                 if (creature != null)
-                {
                     creature.ResetPositionConstraint();
-                }
             }
             base.Destroy();
         }

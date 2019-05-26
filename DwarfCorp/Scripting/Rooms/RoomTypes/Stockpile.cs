@@ -32,8 +32,6 @@ namespace DwarfCorp
             base(Data, World, Faction)
         {
             Boxes = new List<GameComponent>();
-            Faction.Stockpiles.Add(this);
-            ReplacementType = Library.GetVoxelType("Stockpile");
             this.Faction = Faction;
             BlacklistResources = new List<Resource.ResourceTags>()
             {
@@ -46,6 +44,7 @@ namespace DwarfCorp
         public List<GameComponent> Boxes { get; set; }
         public string BoxType = "Crate";
         public Vector3 BoxOffset = Vector3.Zero;
+        private Timer HandleStockpilesTimer = new Timer(5.5f, false, Timer.TimerMode.Real);
 
         public override string GetDescriptionString()
         {
@@ -180,13 +179,26 @@ namespace DwarfCorp
             var box = GetBoundingBox();
             box.Min += Vector3.Up;
             box.Max += Vector3.Up;
+
             foreach(var resource in EntityFactory.CreateResourcePiles(Resources.Resources.Values, box))
             {
 
             }
 
-            if (Faction != null)
-                Faction.Stockpiles.Remove(this);
+            foreach (var resource in Resources.Enumerate())
+            {
+                var resourceType = ResourceLibrary.GetResourceByName(resource.Type);
+
+                foreach (var tag in resourceType.Tags)
+                {
+                    if (Faction.CachedResourceTagCounts.ContainsKey(tag))
+                    {
+                        Faction.CachedResourceTagCounts[tag] -= resource.Count;
+                        System.Diagnostics.Trace.Assert(Faction.CachedResourceTagCounts[tag] >= 0);
+                    }
+                }
+            }
+            Faction.RecomputeCachedVoxelstate();
 
             base.Destroy();
         }
@@ -195,6 +207,31 @@ namespace DwarfCorp
         {
             HandleBoxes();
             base.RecalculateMaxResources();
-        }        
+        }
+
+        public override void Update(DwarfTime Time)
+        {
+            HandleStockpilesTimer.Update(Time);
+
+            if (HandleStockpilesTimer.HasTriggered)
+                foreach (var blacklist in BlacklistResources)
+                    foreach (var resourcePair in Resources.Resources)
+                    {
+                        if (resourcePair.Value.Count == 0)
+                            continue;
+
+                        var resourceType = ResourceLibrary.GetResourceByName(resourcePair.Key);
+
+                        if (resourceType.Tags.Any(tag => tag == blacklist))
+                        {
+                            var transferTask = new TransferResourcesTask(ID, resourcePair.Value.CloneResource());
+                            if (World.TaskManager.HasTask(transferTask))
+                                continue;
+                            World.TaskManager.AddTask(transferTask);
+                        }
+                    }
+
+            base.Update(Time);
+        }
     }
 }

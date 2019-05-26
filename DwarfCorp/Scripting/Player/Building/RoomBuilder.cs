@@ -36,7 +36,7 @@ namespace DwarfCorp
 
         public List<Room> FilterRoomsByType(string type)
         {
-            return DesignatedRooms.Where(r => r.RoomData.Name == type).ToList();
+            return DesignatedRooms.Where(r => r.Type.Name == type).ToList();
         }
 
         public void End()
@@ -164,12 +164,8 @@ namespace DwarfCorp
                 List<Room> toCheck = new List<Room>();
                 toCheck.AddRange(DesignatedRooms.Where(r => r.IsBuilt));
                 foreach (Room r in toCheck)
-                {
                     if (r.RemoveVoxel(voxDestroyed))
-                    {
                         toDestroy.Add(r);
-                    }
-                }
 
                 foreach (Room r in toDestroy)
                 {
@@ -215,7 +211,7 @@ namespace DwarfCorp
                             {
                                 Border = "border-dark",
                                 TextColor = Color.White.ToVector4(),
-                                Text = String.Format("Need {0} to build this {1}", resourceList, buildOrder.ToBuild.RoomData.Name),
+                                Text = String.Format("Need {0} to build this {1}", resourceList, buildOrder.ToBuild.Type.Name),
                                 Rect = new Rectangle(0, 0, 200, 40),
                                 Font = "font8",
                                 TextVerticalAlign = Gui.VerticalAlign.Center,

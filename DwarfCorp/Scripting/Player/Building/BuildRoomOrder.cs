@@ -1,35 +1,3 @@
-// BuildRoomOrder.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -110,7 +78,7 @@ namespace DwarfCorp
         public bool MeetsBuildRequirements()
         {
             bool toReturn = true;
-            foreach (Resource.ResourceTags s in ToBuild.RoomData.RequiredResources.Keys)
+            foreach (Resource.ResourceTags s in ToBuild.Type.RequiredResources.Keys)
             {
                 if (!PutResources.ContainsKey(s))
                 {
@@ -118,7 +86,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    toReturn = toReturn && (PutResources[s].Count >= Math.Max((int)(ToBuild.RoomData.RequiredResources[s].Count * VoxelOrders.Count * 0.25f), 1));
+                    toReturn = toReturn && (PutResources[s].Count >= Math.Max((int)(ToBuild.Type.RequiredResources[s].Count * VoxelOrders.Count * 0.25f), 1));
                 }
             }
 
@@ -135,7 +103,7 @@ namespace DwarfCorp
 
             if (!silent)
             {
-                World.MakeAnnouncement(String.Format("{0} was built", ToBuild.RoomData.Name), null);
+                World.MakeAnnouncement(String.Format("{0} was built", ToBuild.Type.Name), null);
                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
             }
 
@@ -189,9 +157,9 @@ namespace DwarfCorp
 
         public int GetNumRequiredResources(Resource.ResourceTags name)
         {
-            if(ToBuild.RoomData.RequiredResources.ContainsKey(name))
+            if(ToBuild.Type.RequiredResources.ContainsKey(name))
             {
-                return Math.Max((int) (ToBuild.RoomData.RequiredResources[name].Count * VoxelOrders.Count * 0.25f), 1);
+                return Math.Max((int) (ToBuild.Type.RequiredResources[name].Count * VoxelOrders.Count * 0.25f), 1);
             }
             else
             {
@@ -201,9 +169,9 @@ namespace DwarfCorp
 
         public string GetTextDisplay()
         {
-            string toReturn = ToBuild.RoomData.Name;
+            string toReturn = ToBuild.Type.Name;
 
-            foreach (Quantitiy<Resource.ResourceTags> amount in ToBuild.RoomData.RequiredResources.Values)
+            foreach (Quantitiy<Resource.ResourceTags> amount in ToBuild.Type.RequiredResources.Values)
             {
                 toReturn += "\n";
                 int numResource = 0;
@@ -220,9 +188,9 @@ namespace DwarfCorp
         public List<Quantitiy<Resource.ResourceTags>> ListRequiredResources()
         {
             List<Quantitiy<Resource.ResourceTags>> toReturn = new List<Quantitiy<Resource.ResourceTags>>();
-            foreach (Resource.ResourceTags s in ToBuild.RoomData.RequiredResources.Keys)
+            foreach (Resource.ResourceTags s in ToBuild.Type.RequiredResources.Keys)
             {
-                int needed = Math.Max((int) (ToBuild.RoomData.RequiredResources[s].Count * VoxelOrders.Count * 0.25f), 1);
+                int needed = Math.Max((int) (ToBuild.Type.RequiredResources[s].Count * VoxelOrders.Count * 0.25f), 1);
                 int currentResources = 0;
 
                 if(PutResources.ContainsKey(s))

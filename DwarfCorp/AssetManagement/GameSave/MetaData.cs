@@ -14,7 +14,6 @@ namespace DwarfCorp
         public GameStates.InstanceSettings InstanceSettings;
         public float TimeOfDay { get; set; }
         public WorldTime Time { get; set; }
-        public Point3 NumChunks { get; set; } // Todo: Redundant?
         public String Version;
         public String Commit;
         public WorldRendererPersistentSettings RendererSettings;
@@ -30,7 +29,6 @@ namespace DwarfCorp
                 InstanceSettings = World.Settings.InstanceSettings,
                 TimeOfDay = World.Renderer.Sky.TimeOfDay,
                 Time = World.Time,
-                NumChunks = World.ChunkManager.WorldSize,
                 Version = Program.Version,
                 Commit = Program.Commit,
                 RendererSettings = World.Renderer.PersistentSettings

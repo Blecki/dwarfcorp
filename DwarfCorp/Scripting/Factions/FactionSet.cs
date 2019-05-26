@@ -32,108 +32,83 @@ namespace DwarfCorp
 
         public void Initialize(WorldManager world, CompanyInformation CompanyInformation)
         {
-                Factions = new Dictionary<string, Faction>();
+            Factions = new Dictionary<string, Faction>();
 
-                Factions["Player"] = new Faction(world, new OverworldFaction
-                {
-                    Name = "Player",
-                    Race = "Dwarf"
-                })
-                {
-                    DistanceToCapital = 0,
-                    ClaimsColony = true
-                };
+            Factions["Player"] = new Faction(world, new OverworldFaction
+            {
+                Name = "Player",
+                Race = "Dwarf"
+            })
+            {
+                DistanceToCapital = 0,
+                ClaimsColony = true,
+            };
 
-                Factions["The Motherland"] = new Faction(world, new OverworldFaction
-                {
-                    Name = "Player",
-                    Race = "Dwarf"
-                })
-                {
-                    IsRaceFaction = false,
-                    TradeMoney = 10000,
-                    IsMotherland = true,
-                    TerritorySize = 9999,
-                    DistanceToCapital = 600,
-                    ClaimsColony = true
-                };
+            Factions["The Motherland"] = new Faction(world, new OverworldFaction
+            {
+                Name = "The Motherland",
+                Race = "Dwarf"
+            })
+            {
+                InteractiveFaction = true,
+                TradeMoney = 10000,
+                IsMotherland = true,
+                TerritorySize = 9999,
+                DistanceToCapital = 600,
+                ClaimsColony = true
+            };
 
-                Factions["Herbivore"] = new Faction(world, new OverworldFaction
-                {
-                    Name = "Herbivore",
-                    Race = "Herbivore"
-                })
-                {
-                    IsRaceFaction = true
-                };
+            Factions["Herbivore"] = new Faction(world, new OverworldFaction
+            {
+                Name = "Herbivore",
+                Race = "Herbivore"
+            });
 
-                Factions["Carnivore"] = new Faction(world, new OverworldFaction
-                {
-                    Name = "Carnivore",
-                    Race = "Carnivore"
-                })
-                {
-                    IsRaceFaction = true
-                };
+            Factions["Carnivore"] = new Faction(world, new OverworldFaction
+            {
+                Name = "Carnivore",
+                Race = "Carnivore"
+            });
 
-                Factions["Evil"] = new Faction(world, new OverworldFaction
-                {
-                    Name = "Evil",
-                    Race = "Evil"
-                })
-                {
-                    IsRaceFaction = true
-                };
+            Factions["Evil"] = new Faction(world, new OverworldFaction
+            {
+                Name = "Evil",
+                Race = "Evil"
+            });
 
 
             Factions["Goblins"] = new Faction(world, new OverworldFaction
             {
                 Name = "Goblins",
                 Race = "Goblins"
-            })
-            {
-                IsRaceFaction = true
-            };
+            });
 
             Factions["Elf"] = new Faction(world, new OverworldFaction
             {
                 Name = "Elf",
                 Race = "Elf"
-            })
-            {
-                IsRaceFaction = true
-            };
+            });
 
             Factions["Undead"] = new Faction(world, new OverworldFaction
             {
                 Name = "Undead",
                 Race = "Undead"
-            })
-            {
-                IsRaceFaction = true
-            };
+            });
 
             Factions["Demon"] = new Faction(world, new OverworldFaction
             {
                 Name = "Demon",
                 Race = "Demon"
-            })
-            {
-                IsRaceFaction = true
-            };
+            });
 
             Factions["Molemen"] = new Faction(world, new OverworldFaction
             {
                 Name = "Molemen",
                 Race = "Molemen"
-            })
-            {
-                IsRaceFaction = true
-            };
-            
+            });
+
             Factions["Player"].Economy = new Company(Factions["Player"], 300.0m, CompanyInformation);
         }
-
 
         public FactionSet()
         {
@@ -144,9 +119,7 @@ namespace DwarfCorp
         public void Update(DwarfTime time)
         {
             foreach(var faction in Factions)
-            {
                 faction.Value.Update(time);
-            }
         }
 
         public void AddFaction(Faction Faction)

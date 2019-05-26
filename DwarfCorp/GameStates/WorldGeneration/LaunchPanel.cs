@@ -66,7 +66,9 @@ namespace DwarfCorp.GameStates
                             {
                                 InstanceSettings = new InstanceSettings
                                 {
-                                    ExistingFile = saveName
+                                    ExistingFile = saveName,
+                                    LoadType = LoadType.LoadFromFile,
+                                    Cell = Settings.InstanceSettings.Cell
                                 },
                                 Name = saveName
                             }));
@@ -76,6 +78,7 @@ namespace DwarfCorp.GameStates
                         DwarfGame.LogSentryBreadcrumb("WorldGenerator", string.Format("User is starting a game with a {0} x {1} world.", Settings.Width, Settings.Height));
                         Settings.Overworld.Name = Settings.Name;
                         Settings.InstanceSettings.ExistingFile = null;
+                        Settings.InstanceSettings.LoadType = LoadType.CreateNew;
 
                         GameStateManager.ClearState();
                         GameStateManager.PushState(new LoadState(Game, Settings));

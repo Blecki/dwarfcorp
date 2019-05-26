@@ -11,7 +11,7 @@ namespace DwarfCorp
     public class GetResourcesAct : CompoundCreatureAct
     {
         public List<Quantitiy<Resource.ResourceTags>> Resources { get; set; }
-        public List<KeyValuePair<Stockpile, ResourceAmount> > ResourcesToStash { get; set; }
+        public List<KeyValuePair<Room, ResourceAmount> > ResourcesToStash { get; set; }
         public bool AllowHeterogenous { get; set; } // Todo: Unused
         public Faction Faction = null;
 
@@ -20,7 +20,7 @@ namespace DwarfCorp
 
         }
 
-        public GetResourcesAct(CreatureAI agent, List<KeyValuePair<Stockpile, ResourceAmount>> resources) :
+        public GetResourcesAct(CreatureAI agent, List<KeyValuePair<Room, ResourceAmount>> resources) :
             base(agent)
         {
             Name = "Get Resources";
@@ -61,7 +61,7 @@ namespace DwarfCorp
             yield return Status.Success;
         }
 
-        bool HasResources(CreatureAI agent, KeyValuePair<Stockpile, ResourceAmount> resource)
+        bool HasResources(CreatureAI agent, KeyValuePair<Room, ResourceAmount> resource)
         {
             return resource.Key.Resources.HasResources(resource.Value);
         }
@@ -153,7 +153,7 @@ namespace DwarfCorp
         }
     }
 
-
+    // Todo: SPLIT FILE
     public class TransferResourcesTask : Task
     {
         public string StockpileFrom;
@@ -178,9 +178,7 @@ namespace DwarfCorp
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             if (!GetStockpile(agent.Faction))
-            {
                 return 9999;
-            }
 
             return (stockpile.GetBoundingBox().Center() - agent.AI.Position).LengthSquared();
         }
@@ -188,20 +186,16 @@ namespace DwarfCorp
         public bool GetStockpile(Faction faction)
         {
             if (stockpile != null)
-            {
-                return faction.Stockpiles.Contains(stockpile);
-            }
+                return faction.RoomBuilder.DesignatedRooms.Contains(stockpile);
 
-            stockpile = faction.Stockpiles.FirstOrDefault(s => s.ID == StockpileFrom);
+            stockpile = faction.RoomBuilder.DesignatedRooms.FirstOrDefault(s => s.ID == StockpileFrom) as Stockpile;
             return stockpile != null;
         }
 
         public override bool IsComplete(Faction faction)
         {
             if (!GetStockpile(faction))
-            {
                 return true;
-            }
 
             return !stockpile.Resources.HasResources(Resources);
         }

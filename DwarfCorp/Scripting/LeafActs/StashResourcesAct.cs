@@ -8,12 +8,11 @@ namespace DwarfCorp
     /// <summary>
     /// A creature grabs a given item and puts it in their inventory
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class StashResourcesAct : CreatureAct
     {
         public ResourceAmount Resources { get; set; }
         public Faction Faction = null;
-        public Stockpile Zone = null;
+        public Room Zone = null;
         public Inventory.RestockType RestockType = Inventory.RestockType.None;
 
         public StashResourcesAct()
@@ -21,7 +20,7 @@ namespace DwarfCorp
 
         }
 
-        public StashResourcesAct(CreatureAI agent, Stockpile zone, ResourceAmount resources) :
+        public StashResourcesAct(CreatureAI agent, Room zone, ResourceAmount resources) :
             base(agent)
         {
             Zone = zone;
@@ -38,7 +37,7 @@ namespace DwarfCorp
             }
             if (Zone != null)
             {
-                var resourcesToStock = Creature.Inventory.Resources.Where(a => a.MarkedForRestock && Zone.IsAllowed(a.Resource)).ToList();
+                var resourcesToStock = Creature.Inventory.Resources.Where(a => a.MarkedForRestock && Zone is Stockpile && (Zone as Stockpile).IsAllowed(a.Resource)).ToList();
                 foreach (var resource in resourcesToStock)
                 {
                     List<GameComponent> createdItems = Creature.Inventory.RemoveAndCreate(new ResourceAmount(resource.Resource), Inventory.RestockType.RestockResource);

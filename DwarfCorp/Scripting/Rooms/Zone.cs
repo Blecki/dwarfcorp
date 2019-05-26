@@ -1,35 +1,3 @@
-// Zone.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,6 +21,7 @@ namespace DwarfCorp
         // was created. When the zone is destroyed, the voxel types will be restored.
         public List<byte> OriginalVoxelTypes = new List<byte>(); 
         public List<GameComponent> ZoneBodies = new List<GameComponent>();
+        public RoomData Type;
         
         [JsonProperty]
         protected int ResPerVoxel = 32;
@@ -64,15 +33,6 @@ namespace DwarfCorp
             set { ResPerVoxel = value; RecalculateMaxResources(); }
         }
         
-        [JsonIgnore]
-        public bool ReplaceVoxelTypes
-        {
-            get { return ReplacementType != null; }
-        }
-
-        [JsonIgnore]
-        public VoxelType ReplacementType { get; set; }
-
         [JsonIgnore]
         public WorldManager World { get; set; }
 
@@ -93,16 +53,16 @@ namespace DwarfCorp
             }
         }
 
-        public Zone(string id, WorldManager world, Faction faction)
+        public Zone(string id, WorldManager world, Faction faction, RoomData Type)
         {
             ID = id;
-            ReplacementType = null;
             World = world;
             Resources = new ResourceContainer
             {
                 MaxResources = 1
             };
             Faction = faction;
+            this.Type = Type;
 
         }
 
@@ -226,14 +186,11 @@ namespace DwarfCorp
                 Voxels.Remove(toRemove);
                 toRemove.IsPlayerBuilt = false;
                 removed = true;
-                if (ReplaceVoxelTypes)
-                {
                     if (OriginalVoxelTypes.Count > i)
                     {
                         toRemove.TypeID = OriginalVoxelTypes[i];
                         OriginalVoxelTypes.RemoveAt(i);
                     }
-                }
                 break;
             }
             RecalculateMaxResources();
@@ -265,11 +222,8 @@ namespace DwarfCorp
                 return;
             Voxel.IsPlayerBuilt = true;
             Voxels.Add(Voxel);
-            if (ReplaceVoxelTypes)
-            {
                 OriginalVoxelTypes.Add(Voxel.TypeID);
-                Voxel.Type = ReplacementType;
-            }
+                Voxel.Type = Library.GetVoxelType(Type.FloorType);
 
             RecalculateMaxResources();
           
@@ -329,11 +283,6 @@ namespace DwarfCorp
             }
 
             return new BoundingBox(new Vector3(minX, minY, minZ), new Vector3(maxX + 1, maxY + 1, maxZ + 1));
-        }
-
-        public bool IsInZone(Vector3 worldCoordinate)
-        {
-            return GetBoundingBox().Contains(worldCoordinate) != ContainmentType.Disjoint;
         }
 
         public bool IsRestingOnZone(Vector3 worldCoordinate, float expansion=1.0f)

@@ -81,7 +81,6 @@ namespace DwarfCorp
         public PlanService PlanService = null;
         public Weather Weather = new Weather();
         public WorldTime Time = new WorldTime();
-        private SaveGame gameFile; // Todo: Kill
         public Point3 WorldSizeInChunks;
 
         [JsonIgnore]
@@ -325,12 +324,6 @@ namespace DwarfCorp
             ChunkManager.Update(gameTime, Renderer.Camera, GraphicsDevice);
             SoundManager.Update(gameTime, Renderer.Camera, Time);
             Weather.Update(this.Time.CurrentDate, this);
-
-            if (gameFile != null)
-            {
-                // Cleanup game file.
-                gameFile = null;
-            }
 
 #if DEBUG
             KeyboardState k = Keyboard.GetState();
