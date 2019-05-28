@@ -40,25 +40,6 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public bool HasAvailableResources(int numVoxels, Faction faction)
-        {
-            foreach (var resources in RequiredResources)
-            {
-                Quantitiy<Resource.ResourceTags> required = new Quantitiy<Resource.ResourceTags>(resources.Value)
-                {
-                    Count = (int) (numVoxels*resources.Value.Count*0.25f)
-                };
-
-                if (!faction.HasResources(new List<Quantitiy<Resource.ResourceTags>>() { required }))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-
         public bool Verify(
             List<VoxelHandle> Voxels, 
             Faction Faction, 
@@ -131,7 +112,7 @@ namespace DwarfCorp
                     return false;
                 }
 
-                if (Faction.RoomBuilder.IsInRoom(voxel) || Faction.RoomBuilder.IsBuildDesignation(voxel))
+                if (World.RoomBuilder.IsInRoom(voxel) || World.RoomBuilder.IsBuildDesignation(voxel))
                 {
                     World.UserInterface.ShowTooltip("Room's can't overlap!");
                     return false;

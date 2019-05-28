@@ -308,6 +308,8 @@
     <Compile Include="Scripting\CompoundActs\TransferResourcesAct.cs" />
     <Compile Include="Scripting\CompoundActs\TransferResourcesTask.cs" />
     <Compile Include="Scripting\Factions\FactionSet.cs" />
+    <Compile Include="Scripting\Factions\Trading\EnvoyTradeEntity.cs" />
+    <Compile Include="Scripting\Factions\Trading\PlayerTradeEntity.cs" />
     <Compile Include="Scripting\LeafActs\FollowPathAct.cs" />
     <Compile Include="Scripting\Potions\GatherPotionsTask.cs" />
     <Compile Include="Scripting\Potions\Potion.cs" />
@@ -930,8 +932,10 @@
     <Compile Include="World\WorldManager-OctTree.cs" />
     <Compile Include="World\WorldManager-NewGameSetup.cs" />
     <Compile Include="World\WorldManager-Loading.cs" />
+    <Compile Include="World\WorldManager-Resources.cs" />
     <Compile Include="World\WorldManager-Saving.cs" />
     <Compile Include="World\WorldManager-SpeciesLimits.cs" />
+    <Compile Include="World\WorldManager-Zones.cs" />
     <Compile Include="World\WorldManager.cs" />
     <Compile Include="World\WorldRendererPersistentSettings.cs" />
     <Compile Include="World\WorldRenderer.cs" />

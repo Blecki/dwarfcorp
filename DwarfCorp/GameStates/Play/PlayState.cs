@@ -628,8 +628,8 @@ namespace DwarfCorp.GameStates
             MoneyLabel.Text = World.PlayerFaction.Economy.Funds.ToString();
             MoneyLabel.TextColor = World.PlayerFaction.Economy.Funds > 1.0m ? Color.White.ToVector4() : new Vector4(1.0f, pulse, pulse, 1.0f);
             MoneyLabel.Invalidate();
-            int availableSpace = World.PlayerFaction.ComputeRemainingStockpileSpace();
-            int totalSpace = World.PlayerFaction.ComputeTotalStockpileSpace();
+            int availableSpace = World.ComputeRemainingStockpileSpace();
+            int totalSpace = World.ComputeTotalStockpileSpace();
             StocksLabel.Text = String.Format("    Stocks: {0}/{1}", totalSpace - availableSpace, totalSpace);
             StocksLabel.TextColor = availableSpace > 0 ? Color.White.ToVector4() : new Vector4(1.0f, pulse, pulse, 1.0f);
             StocksLabel.Invalidate();
@@ -1521,7 +1521,7 @@ namespace DwarfCorp.GameStates
                         },
                         OnClick = (sender, args) =>
                         {
-                            World.PlayerFaction.RoomBuilder.CurrentRoomData = data;
+                            World.RoomBuilder.CurrentRoomData = data;
                             VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
                             ChangeTool("BuildZone");
                             ShowToolPopup("Click and drag to build " + data.Name);
@@ -1621,7 +1621,7 @@ namespace DwarfCorp.GameStates
                             },
                             OnClick = (sender, args) =>
                             {
-                                World.PlayerFaction.RoomBuilder.CurrentRoomData = null;
+                                World.RoomBuilder.CurrentRoomData = null;
                                 VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
                                 var tool = Tools["BuildWall"] as BuildWallTool;
                                 tool.BuildFloor = false;
@@ -1671,7 +1671,7 @@ namespace DwarfCorp.GameStates
                             },
                             OnClick = (sender, args) =>
                             {
-                                World.PlayerFaction.RoomBuilder.CurrentRoomData = null;
+                                World.RoomBuilder.CurrentRoomData = null;
                                 VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
                                 var tool = Tools["BuildWall"] as BuildWallTool;
                                 tool.BuildFloor = true;
@@ -1788,7 +1788,7 @@ namespace DwarfCorp.GameStates
                                     sender.Parent.Parent.Hidden = true;
                                     var tool = Tools["BuildObject"] as BuildObjectTool;
                                     tool.SelectedResources = buildInfo.GetSelectedResources();
-                                    World.PlayerFaction.RoomBuilder.CurrentRoomData = null;
+                                    World.RoomBuilder.CurrentRoomData = null;
                                     VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
                                     tool.CraftType = data;
                                     tool.Mode = BuildObjectTool.PlacementMode.BuildNew;
@@ -1811,7 +1811,7 @@ namespace DwarfCorp.GameStates
                                     sender.Parent.Parent.Hidden = true;
                                     var tool = Tools["BuildObject"] as BuildObjectTool;
                                     tool.SelectedResources = null;
-                                    World.PlayerFaction.RoomBuilder.CurrentRoomData = null;
+                                    World.RoomBuilder.CurrentRoomData = null;
                                     VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
                                     tool.CraftType = data;
                                     tool.Mode = BuildObjectTool.PlacementMode.PlaceExisting;
@@ -2429,7 +2429,7 @@ namespace DwarfCorp.GameStates
 
                     (widget as FlatToolTray.Tray).ItemSource =
                         (new Widget[] { icon_menu_Plant_Return }).Concat(
-                         World.PlayerFaction.ListResourcesWithTag(Resource.ResourceTags.Plantable)
+                         World.ListResourcesWithTag(Resource.ResourceTags.Plantable)
                         .Select(resource => new FlatToolTray.Icon
                         {
                             Icon = ResourceLibrary.GetResourceByName(resource.Type)?.GuiLayers[0],

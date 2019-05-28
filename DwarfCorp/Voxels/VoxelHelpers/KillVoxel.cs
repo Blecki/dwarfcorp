@@ -18,7 +18,7 @@ namespace DwarfCorp
     {
         public static List<GameComponent> KillVoxel(WorldManager World, VoxelHandle Voxel)
         {
-            World.PlayerFaction?.OnVoxelDestroyed(Voxel);
+            World.OnVoxelDestroyed(Voxel);
 
             if (!Voxel.IsValid || Voxel.IsEmpty)
                 return null;

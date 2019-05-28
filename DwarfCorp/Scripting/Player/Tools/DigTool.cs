@@ -61,7 +61,7 @@ namespace DwarfCorp
                     }
 
                     // Todo: Should this be removed from the existing compound task and put in the new one?
-                    if (!World.PlayerFaction.Designations.IsVoxelDesignation(v, DesignationType.Dig) && !(World.PlayerFaction.RoomBuilder.IsInRoom(v) || World.PlayerFaction.RoomBuilder.IsBuildDesignation(v)))
+                    if (!World.PlayerFaction.Designations.IsVoxelDesignation(v, DesignationType.Dig) && !(World.RoomBuilder.IsInRoom(v) || World.RoomBuilder.IsBuildDesignation(v)))
                     {
                         var task = new KillVoxelTask(v);
                         task.Hidden = true;

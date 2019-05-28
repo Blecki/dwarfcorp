@@ -430,7 +430,7 @@ namespace DwarfCorp
                 }
                 case 1:
                 {
-                    if (Faction.ListResourcesWithTag(Resource.ResourceTags.Alcohol).Count > 0)
+                    if (World.ListResourcesWithTag(Resource.ResourceTags.Alcohol).Count > 0)
                         return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(this) { FoodTag = Resource.ResourceTags.Alcohol, FallbackTag = Resource.ResourceTags.Alcohol}, 3, false) { Name = "Binge drink." }) { Name = "Binge drink.", Priority = Task.PriorityType.High, BoredomIncrease = GameSettings.Default.Boredom_Eat };
 
                     if (!Stats.Hunger.IsSatisfied())
@@ -568,7 +568,7 @@ namespace DwarfCorp
             }
 
             // Try to find food if we are hungry.
-            if (Stats.Hunger.IsDissatisfied() && Faction.CountResourcesWithTag(Resource.ResourceTags.Edible) > 0)
+            if (Stats.Hunger.IsDissatisfied() && World.CountResourcesWithTag(Resource.ResourceTags.Edible) > 0)
             {
                 Task toReturn = new SatisfyHungerTask();
                 if (Stats.Hunger.IsCritical())
@@ -918,14 +918,14 @@ namespace DwarfCorp
                 // Craft random items for fun.
                 if (Stats.IsTaskAllowed(Task.TaskCategory.CraftItem) && MathFunctions.RandEvent(0.0005f))
                 {
-                    var item = Library.GetRandomApplicableCraftItem(Faction);
+                    var item = Library.GetRandomApplicableCraftItem(Faction, World);
 
                     if (item != null)
                     {
                         var resources = new List<ResourceAmount>();
                         foreach (var resource in item.RequiredResources)
                         {
-                            var amount = Faction.GetResourcesWithTags(new List<Quantitiy<Resource.ResourceTags>>() { resource });
+                            var amount = World.GetResourcesWithTags(new List<Quantitiy<Resource.ResourceTags>>() { resource });
                             if (amount == null || amount.Count == 0)
                                 break;
                             resources.Add(Datastructures.SelectRandom(amount));
@@ -1041,7 +1041,7 @@ namespace DwarfCorp
             }
 
 
-            if (MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction && Faction.ListResourcesWithTag(Resource.ResourceTags.Potion).Count > 0)
+            if (MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction && World.ListResourcesWithTag(Resource.ResourceTags.Potion).Count > 0)
             {
                 return new GatherPotionsTask();
             }

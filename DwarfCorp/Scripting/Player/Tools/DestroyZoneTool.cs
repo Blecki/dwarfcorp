@@ -27,25 +27,25 @@ namespace DwarfCorp
         {
             var v = World.UserInterface.VoxSelector.VoxelUnderMouse;
 
-            if (World.PlayerFaction.RoomBuilder.IsBuildDesignation(v))
-                World.PlayerFaction.RoomBuilder.DestroyBuildDesignation(v);
-            else if (World.PlayerFaction.RoomBuilder.IsInRoom(v))
+            if (World.RoomBuilder.IsBuildDesignation(v))
+                World.RoomBuilder.DestroyBuildDesignation(v);
+            else if (World.RoomBuilder.IsInRoom(v))
             {
-                var existingRoom = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(v);
+                var existingRoom = World.RoomBuilder.GetMostLikelyRoom(v);
 
                 if (existingRoom != null)
                     World.UserInterface.Gui.ShowModalPopup(new Gui.Widgets.Confirm
                     {
                         Text = "Do you want to destroy this " + existingRoom.Type.Name + "?",
-                        OnClose = (sender) => DestroyRoom((sender as Gui.Widgets.Confirm).DialogResult, existingRoom, World.PlayerFaction, World)
+                        OnClose = (sender) => DestroyRoom((sender as Gui.Widgets.Confirm).DialogResult, existingRoom, World)
                     });
             }
         }
 
-        public static void DestroyRoom(Gui.Widgets.Confirm.Result status, Zone room, Faction Faction, WorldManager World)
+        public static void DestroyRoom(Gui.Widgets.Confirm.Result status, Zone room, WorldManager World)
         {
             if (status == Gui.Widgets.Confirm.Result.OKAY)
-                Faction.RoomBuilder.DestroyZone(room);
+                World.RoomBuilder.DestroyZone(room);
         }
 
         public override void OnBegin()
@@ -90,7 +90,7 @@ namespace DwarfCorp
             var v = World.UserInterface.VoxSelector.VoxelUnderMouse;
             if (v.IsValid && !v.IsEmpty)
             {
-                var room = World.PlayerFaction.RoomBuilder.GetRoomThatContainsVoxel(v);
+                var room = World.RoomBuilder.GetRoomThatContainsVoxel(v);
                 if (room != null)
                     Drawer3D.DrawBox(room.GetBoundingBox(), GameSettings.Default.Colors.GetColor("Positive", Color.Green), 0.2f, true);
             }
@@ -109,9 +109,9 @@ namespace DwarfCorp
         {
             var v = World.UserInterface.VoxSelector.VoxelUnderMouse;
 
-            if (World.PlayerFaction.RoomBuilder.IsBuildDesignation(v))
+            if (World.RoomBuilder.IsBuildDesignation(v))
             {
-                var order = World.PlayerFaction.RoomBuilder.GetBuildDesignation(v);
+                var order = World.RoomBuilder.GetBuildDesignation(v);
                 if (order == null || order.Order == null)
                     return;
 
@@ -120,9 +120,9 @@ namespace DwarfCorp
                 else
                     order.ToBuild.SetTint(GameSettings.Default.Colors.GetColor("Negative", Color.Red));
             }
-            else if (World.PlayerFaction.RoomBuilder.IsInRoom(v))
+            else if (World.RoomBuilder.IsInRoom(v))
             {
-                var existingRoom = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(v);
+                var existingRoom = World.RoomBuilder.GetMostLikelyRoom(v);
                 if (existingRoom != null)
                     existingRoom.SetTint(GameSettings.Default.Colors.GetColor("Negative", Color.Red));
             }

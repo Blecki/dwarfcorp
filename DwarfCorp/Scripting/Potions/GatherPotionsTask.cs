@@ -27,7 +27,7 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            return agent.Faction.ListResourcesWithTag(Resource.ResourceTags.Potion).Count > 0 ? Feasibility.Feasible : Feasibility.Infeasible;
+            return agent.World.ListResourcesWithTag(Resource.ResourceTags.Potion).Count > 0 ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override Act CreateScript(Creature agent)

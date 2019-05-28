@@ -43,7 +43,7 @@ namespace DwarfCorp
         private Timer orphanedTaskRateLimiter = new Timer(10.0f, false, Timer.TimerMode.Real);
         public MonsterSpawner MonsterSpawner;
         public Faction PlayerFaction;
-        public RoomBuilder RoomBuilder => PlayerFaction.RoomBuilder; // Todo: Hackity hack.
+        public RoomBuilder RoomBuilder;
 
         #region Tutorial Hooks
 
@@ -254,9 +254,9 @@ namespace DwarfCorp
             checkFoodTimer.Update(gameTime);
             if (checkFoodTimer.HasTriggered)
             {
-                var food = PlayerFaction.CountResourcesWithTag(Resource.ResourceTags.Edible);
+                var food = CountResourcesWithTag(Resource.ResourceTags.Edible);
                 if (food == 0)
-                    MakeAnnouncement("We're out of food!", null, () => { return PlayerFaction.CountResourcesWithTag(Resource.ResourceTags.Edible) == 0; });
+                    MakeAnnouncement("We're out of food!", null, () => { return CountResourcesWithTag(Resource.ResourceTags.Edible) == 0; });
             }
 
             GamblingState.Update(gameTime);
@@ -285,6 +285,10 @@ namespace DwarfCorp
                 }
 
                 Diplomacy.Update(gameTime, Time.CurrentDate, this);
+
+                RoomBuilder.Faction = PlayerFaction;
+                RoomBuilder.Update(gameTime);
+
                 Factions.Update(gameTime);
                 ComponentManager.Update(gameTime, ChunkManager, Renderer.Camera);
                 MonsterSpawner.Update(gameTime);
@@ -408,6 +412,14 @@ namespace DwarfCorp
                 if (orphanedTasks.Count > 0)
                     TaskManager.AddTasks(orphanedTasks);
             }
+        }
+
+        public void OnVoxelDestroyed(VoxelHandle V)
+        {
+            if (!V.IsValid)
+                return;
+
+            RoomBuilder.OnVoxelDestroyed(V);
         }
     }
 }

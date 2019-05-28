@@ -223,16 +223,14 @@ namespace DwarfCorp
             ConversationMemory = gameFile.PlayData.ConversationMemory;
 
             Factions = gameFile.PlayData.Factions;
+            RoomBuilder = gameFile.PlayData.RoomBuilder;
             ComponentManager.World = this;
 
             Renderer.Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
             Time = gameFile.Metadata.Time;
 
             PlayerFaction = Factions.Factions["Player"];
-            foreach (var faction in Factions.Factions)
-                faction.Value.RoomBuilder = new RoomBuilder(faction.Value, this);
-
-
+            
             //RoomBuilder = gameFile.PlayData.RoomBuilder;
 
             Diplomacy = gameFile.PlayData.Diplomacy;
@@ -378,9 +376,7 @@ namespace DwarfCorp
             Factions.Factions["Player"].Center = playerOrigin;
             Factions.Factions["The Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
             PlayerFaction = Factions.Factions["Player"];
-
-            foreach (var faction in Factions.Factions)
-                faction.Value.RoomBuilder = new RoomBuilder(faction.Value, this);
+            RoomBuilder = new RoomBuilder(PlayerFaction, this);
 
             #endregion
 

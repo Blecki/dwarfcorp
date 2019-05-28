@@ -11,7 +11,6 @@ namespace DwarfCorp
     public class StashResourcesAct : CreatureAct
     {
         public ResourceAmount Resources { get; set; }
-        public Faction Faction = null;
         public Zone Zone = null;
         public Inventory.RestockType RestockType = Inventory.RestockType.None;
 
@@ -31,10 +30,6 @@ namespace DwarfCorp
         public override IEnumerable<Status> Run()
         {
             Creature.IsCloaked = false;
-            if (Faction == null)
-            {
-                Faction = Agent.Faction;
-            }
             if (Zone != null)
             {
                 var resourcesToStock = Creature.Inventory.Resources.Where(a => a.MarkedForRestock && Zone is Stockpile && (Zone as Stockpile).IsAllowed(a.Resource)).ToList();
@@ -69,7 +64,7 @@ namespace DwarfCorp
             }
 
             Timer waitTimer = new Timer(1.0f, true);
-            bool removed = Faction.RemoveResources(Resources, Agent.Position, Zone);
+            bool removed = Creature.World.RemoveResources(Resources, Agent.Position, Zone);
 
             if(!removed)
                 yield return Status.Fail;

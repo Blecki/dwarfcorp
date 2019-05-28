@@ -44,7 +44,7 @@ namespace DwarfCorp.Gui.Widgets
         {
             foreach (var requirment in Data.RequiredResources)
             {
-                var inventory = World.PlayerFaction.ListResourcesWithTag(requirment.Value.Type);
+                var inventory = World.ListResourcesWithTag(requirment.Value.Type);
                 if (inventory.Sum(r => r.Count) < requirment.Value.Count) return false;
             }
 

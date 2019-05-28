@@ -199,9 +199,9 @@ namespace DwarfCorp
                 string info = currentHoverVoxel.Type.Name;
 
                 // If it belongs to a room, display that information.
-                if (World.PlayerFaction.RoomBuilder.IsInRoom(currentHoverVoxel))
+                if (World.RoomBuilder.IsInRoom(currentHoverVoxel))
                 {
-                    var room = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(currentHoverVoxel);
+                    var room = World.RoomBuilder.GetMostLikelyRoom(currentHoverVoxel);
 
                     if (room != null)
                         info += " (" + room.ID + ")";

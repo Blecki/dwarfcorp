@@ -100,7 +100,7 @@ namespace DwarfCorp.Gui.Widgets
                                 World.UserInterface.Gui.ShowModalPopup(new Gui.Widgets.Confirm
                                 {
                                     Text = "Do you want to destroy this " + lambdaCopy.Type.Name + "?",
-                                    OnClose = (_sender2) => DestroyZoneTool.DestroyRoom((_sender2 as Gui.Widgets.Confirm).DialogResult, lambdaCopy, World.PlayerFaction, World)
+                                    OnClose = (_sender2) => DestroyZoneTool.DestroyRoom((_sender2 as Gui.Widgets.Confirm).DialogResult, lambdaCopy, World)
                                 });
                             }
                         });

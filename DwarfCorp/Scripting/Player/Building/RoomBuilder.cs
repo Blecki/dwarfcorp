@@ -219,7 +219,7 @@ namespace DwarfCorp
                     var requiredResources = buildOrder.ListRequiredResources();
                     if (buildOrder.DisplayWidget == null)
                     {
-                        if (!Faction.HasResources(requiredResources))
+                        if (!World.HasResources(requiredResources))
                         {
                             StringBuilder resourceList = new StringBuilder();
                             foreach (var resource in requiredResources)
@@ -249,7 +249,7 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        if (Faction.HasResources(requiredResources))
+                        if (World.HasResources(requiredResources))
                         {
                             buildOrder.DisplayWidget.Root.DestroyWidget(buildOrder.DisplayWidget);
                             buildOrder.DisplayWidget = null;
@@ -288,7 +288,7 @@ namespace DwarfCorp
             foreach (var obj in order.WorkObjects)
                 obj.Manager.RootComponent.AddChild(obj);
 
-            World.TaskManager.AddTask(new BuildRoomTask(order));
+            World.TaskManager.AddTask(new BuildRoomTask(order, this));
         }
 
         public void OnVoxelsDragged(List<VoxelHandle> refs, InputManager.MouseButton button)

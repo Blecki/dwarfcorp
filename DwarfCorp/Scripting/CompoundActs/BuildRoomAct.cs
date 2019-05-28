@@ -9,10 +9,10 @@ namespace DwarfCorp
     /// A creature finds an item with a particular tag, and then puts it into a build zone
     /// for a BuildRoom. (This is used to construct rooms)
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class BuildRoomAct : CompoundCreatureAct
     {
         public BuildRoomOrder BuildRoom { get; set; }
+        public RoomBuilder Builder;
         public List<Quantitiy<Resource.ResourceTags>> Resources { get; set; } 
 
         public IEnumerable<Status> SetTargetVoxelFromRoom(BuildRoomOrder buildRoom, string target)
@@ -48,7 +48,7 @@ namespace DwarfCorp
 
         public bool IsRoomBuildOrder(BuildRoomOrder buildRooom)
         {
-            return Creature.Faction.RoomBuilder.BuildDesignations.Contains(buildRooom);
+            return Builder.BuildDesignations.Contains(buildRooom);
         }
 
         public BuildRoomAct()
@@ -139,9 +139,10 @@ namespace DwarfCorp
         }
 
 
-        public BuildRoomAct(CreatureAI agent, BuildRoomOrder buildRoom) :
+        public BuildRoomAct(CreatureAI agent, BuildRoomOrder buildRoom, RoomBuilder Builder) :
             base(agent)
         {
+            this.Builder = Builder;
             Name = "Build BuildRoom " + buildRoom.ToString();
             Resources = buildRoom.ListRequiredResources();
             BuildRoom = buildRoom;

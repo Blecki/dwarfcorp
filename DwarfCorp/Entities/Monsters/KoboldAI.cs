@@ -38,7 +38,7 @@ namespace DwarfCorp
                         var resource = Datastructures.SelectRandom(resources);
                         if (resource.Value.Count > 0)
                         {
-                            AssignTask(new ActWrapperTask(new GetResourcesAct(this, new List<ResourceAmount>() { new ResourceAmount(resource.Value.Type, 1) }) { Faction = World.PlayerFaction }) { Name = "Steal stuff", Priority = Task.PriorityType.High });
+                            AssignTask(new ActWrapperTask(new GetResourcesAct(this, new List<ResourceAmount>() { new ResourceAmount(resource.Value.Type, 1) })) { Name = "Steal stuff", Priority = Task.PriorityType.High });
                         }
                     }
                 //}

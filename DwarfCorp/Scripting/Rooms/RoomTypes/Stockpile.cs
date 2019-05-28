@@ -224,7 +224,7 @@ namespace DwarfCorp
 
                         if (resourceType.Tags.Any(tag => tag == blacklist))
                         {
-                            var transferTask = new TransferResourcesTask(ID, resourcePair.Value.CloneResource());
+                            var transferTask = new TransferResourcesTask(ID, resourcePair.Value.CloneResource(), World.RoomBuilder);
                             if (World.TaskManager.HasTask(transferTask))
                                 continue;
                             World.TaskManager.AddTask(transferTask);

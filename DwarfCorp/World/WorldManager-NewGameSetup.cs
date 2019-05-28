@@ -30,7 +30,7 @@ namespace DwarfCorp
             // If no file exists, we have to create the balloon and balloon port.
             if (!string.IsNullOrEmpty(Settings.OverworldSettings.InstanceSettings.ExistingFile)) return; // Todo: Don't call in the first place??
              
-            var port = GenerateInitialBalloonPort(PlayerFaction.RoomBuilder, ChunkManager, Renderer.Camera.Position.X, Renderer.Camera.Position.Z, 1, Settings);
+            var port = GenerateInitialBalloonPort(Renderer.Camera.Position.X, Renderer.Camera.Position.Z, 1, Settings);
             PlayerFaction.Economy.Funds = Settings.OverworldSettings.InitalEmbarkment.Money;
 
             foreach (var res in Settings.OverworldSettings.InitalEmbarkment.Resources)
@@ -54,19 +54,16 @@ namespace DwarfCorp
         /// <summary>
         /// Creates a flat, wooden balloon port for the balloon to land on, and Dwarves to sit on.
         /// </summary>
-        /// <param name="roomDes">The player's BuildRoom designator (so that we can create a balloon port)</param>
-        /// <param name="chunkManager">The terrain handler</param>
         /// <param name="x">The position of the center of the balloon port</param>
         /// <param name="z">The position of the center of the balloon port</param>
         /// <param name="size">The size of the (square) balloon port in voxels on a side</param>
-        public Zone GenerateInitialBalloonPort(RoomBuilder roomDes, ChunkManager chunkManager, float x, float z,
-            int size, Generation.GeneratorSettings Settings)
+        public static Zone GenerateInitialBalloonPort(float x, float z, int size, Generation.GeneratorSettings Settings)
         {
-            var roomVoxels = Generation.Generator.GenerateBalloonPort(chunkManager, x, z, size, Settings);
+            var roomVoxels = Generation.Generator.GenerateBalloonPort(Settings.World.ChunkManager, x, z, size, Settings);
 
             // Actually create the BuildRoom.
-            var toBuild = RoomLibrary.CreateRoom(PlayerFaction, "Balloon Port", this);
-            roomDes.AddZone(toBuild);
+            var toBuild = RoomLibrary.CreateRoom(Settings.World.PlayerFaction, "Balloon Port", Settings.World); // Todo: Trim redundant parameters
+            Settings.World.RoomBuilder.AddZone(toBuild);
             RoomLibrary.CompleteRoomImmediately(toBuild, roomVoxels.StockpileVoxels);
 
             return toBuild;

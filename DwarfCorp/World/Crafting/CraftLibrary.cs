@@ -50,7 +50,7 @@ namespace DwarfCorp
             Console.WriteLine("Loaded Craft Library.");
         }
 
-        public static CraftItem GetRandomApplicableCraftItem(Faction faction)
+        public static CraftItem GetRandomApplicableCraftItem(Faction faction, WorldManager World)
         {
             InitializeCraftLibrary();
 
@@ -59,7 +59,7 @@ namespace DwarfCorp
             for (int i = 0; i < maxIters; i++)
             {
                 var item = Datastructures.SelectRandom(CraftItems.Where(k => k.Value.Type == CraftItem.CraftType.Resource));
-                if (!faction.HasResources(item.Value.RequiredResources))
+                if (!World.HasResources(item.Value.RequiredResources))
                     continue;
                 if (!faction.OwnedObjects.Any(o => o.Tags.Contains(item.Value.CraftLocation)))
                     continue;

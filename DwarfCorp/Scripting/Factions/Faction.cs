@@ -22,7 +22,6 @@ namespace DwarfCorp
         public List<WarParty> WarParties { get; set; }
         public List<GameComponent> OwnedObjects { get; set; }
         public List<CreatureAI> Minions { get; set; }
-        public RoomBuilder RoomBuilder { get; set; }
         public Timer HandleThreatsTimer = new Timer(1.0f, false, Timer.TimerMode.Real);
         public DesignationSet Designations = new DesignationSet();
         public Dictionary<ulong, VoxelHandle> GuardedVoxels = new Dictionary<ulong, VoxelHandle>();
@@ -93,7 +92,6 @@ namespace DwarfCorp
             Center = new Point(descriptor.CenterX, descriptor.CenterY);
         }
 
-
         private ulong GetVoxelQuickCompare(VoxelHandle V)
         {
             var coord = V.Coordinate.GetGlobalChunkCoordinate();
@@ -114,9 +112,6 @@ namespace DwarfCorp
 
         public void Update(DwarfTime time)
         {
-            RoomBuilder.Faction = this;
-            RoomBuilder.Update(time);
-
             if (this == World.PlayerFaction) // Todo: This sucks.
             {
                 #region Mourn dead minions
@@ -252,30 +247,12 @@ namespace DwarfCorp
             TaskManager.AssignTasksGreedy(tasks, Minions);
         }
 
-        public IEnumerable<Zone> EnumerateZones()
+        public IEnumerable<Zone> EnumerateZones() // Todo: Belongs to world manager??
         {
-            if (RoomBuilder != null)
-                foreach (var room in RoomBuilder.Zones)
+            if (World.RoomBuilder != null) 
+                foreach (var room in World.RoomBuilder.Zones) 
                     yield return room;
             yield break;
-        }
-
-        public void OnVoxelDestroyed(VoxelHandle V)
-        {
-            if (!V.IsValid)
-                return;
-
-            RoomBuilder.OnVoxelDestroyed(V);
-        }
-
-        public int ComputeRemainingStockpileSpace()
-        {
-            return EnumerateZones().Where(pile => !(pile is Graveyard)).Sum(pile => pile.Resources.MaxResources - pile.Resources.CurrentResourceCount);
-        }
-
-        public int ComputeTotalStockpileSpace()
-        {
-            return EnumerateZones().Where(pile => !(pile is Graveyard)).Sum(pile => pile.Resources.MaxResources);
         }
 
         public bool AddResources(ResourceAmount resources)
@@ -327,49 +304,6 @@ namespace DwarfCorp
             return false;
         }
 
-        public Zone GetNearestRoomOfType(string typeName, Vector3 position)
-        {
-            Zone desiredRoom = null;
-            float nearestDistance = float.MaxValue;
-
-            foreach (var room in EnumerateZones())
-            {
-                if (room.Type.Name != typeName || !room.IsBuilt) continue;
-                float dist =
-                    (room.GetNearestVoxel(position).WorldPosition - position).LengthSquared();
-
-                if (dist < nearestDistance)
-                {
-                    nearestDistance = dist;
-                    desiredRoom = room;
-                }
-            }
-
-            return desiredRoom;
-        }
-
-
-        public Stockpile GetNearestStockpile(Vector3 position, Func<Stockpile, bool> predicate)
-        {
-            Stockpile nearest = null;
-
-            var closestDist = float.MaxValue;
-            foreach (Stockpile stockpile in EnumerateZones().Where(s => s is Stockpile && predicate(s as Stockpile)))
-            {
-                if (!stockpile.IsBuilt)
-                    continue;
-
-                var dist = (stockpile.GetBoundingBox().Center() - position).LengthSquared();
-
-                if (dist < closestDist)
-                {
-                    closestDist = dist;
-                    nearest = stockpile;
-                }
-            }
-
-            return nearest;
-        }
 
         public List<Zone> GetIntersectingRooms(BoundingBox v)
         {
@@ -471,118 +405,12 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public IEnumerable<KeyValuePair<Zone, ResourceAmount>> GetStockpilesContainingResources(Vector3 biasPos, IEnumerable<ResourceAmount> required)
-        {
-            foreach (var amount in required)
-            {
-                var numGot = 0;
-                foreach (var stockpile in EnumerateZones().OrderBy(s => (s.GetBoundingBox().Center() - biasPos).LengthSquared()))
-                {
-                    if (numGot >= amount.Count)
-                        break;
-
-                    foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => sResource.Type == amount.Type))
-                    {
-                        var amountToRemove = System.Math.Min(resource.Count, amount.Count - numGot);
-                        if (amountToRemove <= 0)
-                            continue;
-
-                        numGot += amountToRemove;
-                        yield return new KeyValuePair<Zone, ResourceAmount>(stockpile, new ResourceAmount(resource.Type, amountToRemove));
-                    }
-                }
-            }
-        }
-
-
-        public IEnumerable<KeyValuePair<Zone, ResourceAmount>> GetStockpilesContainingResources(List<Quantitiy<Resource.ResourceTags>> tags)
-        {
-            foreach (var tag in tags)
-            {
-                int numGot = 0;
-                foreach (var stockpile in EnumerateZones())
-                {
-                    if (numGot >= tag.Count)
-                        break;
-                    foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => ResourceLibrary.GetResourceByName(sResource.Type).Tags.Contains(tag.Type)))
-                    {
-                        int amountToRemove = global::System.Math.Min(resource.Count, tag.Count - numGot);
-                        if (amountToRemove <= 0) continue;
-                        numGot += amountToRemove;
-                        yield return new KeyValuePair<Zone, ResourceAmount>(stockpile, new ResourceAmount(resource.Type, amountToRemove));
-                    }
-                }
-            }
-        }
-
-        public List<ResourceAmount> GetResourcesWithTags(List<Quantitiy<Resource.ResourceTags>> tags) // Todo: This is only ever called with a list of 1.
-        {
-            var tagsRequired = new Dictionary<Resource.ResourceTags, int>();
-            var tagsGot = new Dictionary<Resource.ResourceTags, int>();
-            var amounts = new Dictionary<String, ResourceAmount>();
-
-            foreach (Quantitiy<Resource.ResourceTags> quantity in tags)
-            {
-                tagsRequired[quantity.Type] = quantity.Count;
-                tagsGot[quantity.Type] = 0;
-            }
-
-            var r = new Random();
-
-            foreach (var stockpile in EnumerateZones())
-                foreach (var resource in stockpile.Resources.Enumerate().OrderBy(x => r.Next()))
-                    foreach (var requirement in tagsRequired)
-                    {
-                        var got = tagsGot[requirement.Key];
-
-                        if (requirement.Value <= got) continue;
-
-                        if (!ResourceLibrary.GetResourceByName(resource.Type).Tags.Contains(requirement.Key)) continue;
-
-                        int amountToRemove = global::System.Math.Min(resource.Count, requirement.Value - got);
-
-                        if (amountToRemove <= 0) continue;
-
-                        tagsGot[requirement.Key] += amountToRemove;
-
-                        if (amounts.ContainsKey(resource.Type))
-                        {
-                            amounts[resource.Type].Count += amountToRemove;
-                        }
-                        else
-                        {
-                            amounts[resource.Type] = new ResourceAmount(resource.Type, amountToRemove);
-                        }
-                    }
-
-            var toReturn = new List<ResourceAmount>();
-
-            foreach (var requirement in tagsRequired)
-            {
-                ResourceAmount maxAmount = null;
-                foreach (var pair in amounts)
-                {
-                    if (!ResourceLibrary.GetResourceByName(pair.Key).Tags.Contains(requirement.Key)) continue;
-                    if (maxAmount == null || pair.Value.Count > maxAmount.Count)
-                    {
-                        maxAmount = pair.Value;
-                    }
-                }
-                if (maxAmount != null)
-                {
-                    toReturn.Add(maxAmount);
-                }
-            }
-            return toReturn;
-        }
-
-
         public void RecomputeCachedVoxelstate()
         {
             foreach (var type in Library.EnumerateVoxelTypes())
             {
                 bool nospecialRequried = type.BuildRequirements.Count == 0;
-                CachedCanBuildVoxel[type.Name] = type.IsBuildable && ((nospecialRequried && HasResources(type.ResourceToRelease)) || (!nospecialRequried && HasResourcesCached(type.BuildRequirements)));
+                CachedCanBuildVoxel[type.Name] = type.IsBuildable && ((nospecialRequried && World.HasResources(type.ResourceToRelease)) || (!nospecialRequried && HasResourcesCached(type.BuildRequirements)));
             }
         }
 
@@ -626,121 +454,6 @@ namespace DwarfCorp
             }
 
             return true;
-        }
-
-        public bool HasResources(IEnumerable<Quantitiy<Resource.ResourceTags>> resources)
-        {
-            foreach (Quantitiy<Resource.ResourceTags> resource in resources)
-            {
-                int count = EnumerateZones().Sum(stock => stock.Resources.GetResourceCount(resource.Type));
-
-                if (count < resource.Count)
-                    return false;
-            }
-
-            return true;
-        }
-
-        public bool HasResources(IEnumerable<ResourceAmount> resources)
-        {
-            foreach (ResourceAmount resource in resources)
-            {
-                int count = EnumerateZones().Sum(stock => stock.Resources.GetResourceCount(resource.Type));
-
-                if (count < resources.Where(r => r.Type == resource.Type).Sum(r => r.Count))
-                    return false;
-            }
-
-            return true;
-        }
-
-        public bool HasResources(String resource)
-        {
-            return HasResources(new List<ResourceAmount>() { new ResourceAmount(resource) });
-        }
-
-        public bool RemoveResources(ResourceAmount resources, Vector3 position, Zone stock)
-        {
-            if (!stock.Resources.HasResource(resources))
-                return false;
-            if (!(stock is Stockpile))
-                return false;
-
-            // Todo: Stockpile deals with it's own boxes.
-            var resourceType = ResourceLibrary.GetResourceByName(resources.Type);
-            var num = stock.Resources.RemoveMaxResources(resources, resources.Count);
-
-            (stock as Stockpile).HandleBoxes();
-
-            foreach (var tag in resourceType.Tags)
-                if (CachedResourceTagCounts.ContainsKey(tag))
-                {
-                    CachedResourceTagCounts[tag] -= num;
-                    Trace.Assert(CachedResourceTagCounts[tag] >= 0);
-                }
-
-            for (int i = 0; i < num; i++)
-            {
-                GameComponent newEntity = EntityFactory.CreateEntity<GameComponent>(resources.Type + " Resource",
-                        (stock as Stockpile).Boxes[(stock as Stockpile).Boxes.Count - 1].LocalTransform.Translation + MathFunctions.RandVector3Cube() * 0.5f);
-
-                TossMotion toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f), 2.5f + MathFunctions.Rand(-0.5f, 0.5f), newEntity.LocalTransform, position);
-                newEntity.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
-                newEntity.AnimationQueue.Add(toss);
-                toss.OnComplete += () => toss_OnComplete(newEntity);
-            }
-
-            RecomputeCachedVoxelstate();
-            return true;
-
-        }
-
-        public bool RemoveResources(List<ResourceAmount> resources)
-        {
-            var amounts = new Dictionary<String, ResourceAmount>();
-
-            foreach (ResourceAmount resource in resources)
-            {
-                if (!amounts.ContainsKey(resource.Type))
-                    amounts.Add(resource.Type, new ResourceAmount(resource));
-                else
-                    amounts[resource.Type].Count += resource.Count;
-            }
-
-            if (!HasResources(amounts.Values))
-                return false;
-
-            foreach (var resource in resources)
-            {
-                int count = 0;
-                var resourceType = ResourceLibrary.GetResourceByName(resource.Type);
-                foreach (var stock in EnumerateZones().Where(s => resources.All(r => s is Stockpile && (s as Stockpile).IsAllowed(r.Type))))
-                {
-                    int num = stock.Resources.RemoveMaxResources(resource, resource.Count - count);
-                    (stock as Stockpile).HandleBoxes();
-                    foreach(var tag in resourceType.Tags)
-                    {
-                        if (CachedResourceTagCounts.ContainsKey(tag))
-                        {
-                            CachedResourceTagCounts[tag] -= num;
-                            Trace.Assert(CachedResourceTagCounts[tag] >= 0);
-                        }
-                    }
-
-                    count += num;
-
-                    if (count >= resource.Count)
-                        break;
-                }
-            }
-
-            RecomputeCachedVoxelstate();
-            return true;
-        }
-
-        void toss_OnComplete(GameComponent entity)
-        {
-            entity.Die();
         }
 
         public DateTime Hire(Applicant currentApplicant, int delay)
@@ -845,40 +558,6 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public int CountResourcesWithTag(Resource.ResourceTags tag)
-        {
-            List<ResourceAmount> resources = ListResourcesWithTag(tag);
-            int amounts = 0;
-
-            foreach (ResourceAmount amount in resources)
-            {
-                amounts += amount.Count;
-            }
-
-            return amounts;
-        }
-
-        public List<ResourceAmount> ListResourcesWithTag(Resource.ResourceTags tag, bool allowHeterogenous = true)
-        {
-            Dictionary<string, ResourceAmount> resources = ListResources();
-            if (allowHeterogenous)
-            {
-                return (from pair in resources
-                        where ResourceLibrary.GetResourceByName(pair.Value.Type).Tags.Contains(tag)
-                        select pair.Value).ToList();
-            }
-            ResourceAmount maxAmount = null;
-            foreach (var pair in resources)
-            {
-                var resource = ResourceLibrary.GetResourceByName(pair.Value.Type);
-                if (!resource.Tags.Contains(tag)) continue;
-                if (maxAmount == null || pair.Value.Count > maxAmount.Count)
-                {
-                    maxAmount = pair.Value;
-                }
-            }
-            return maxAmount != null ? new List<ResourceAmount>() { maxAmount } : new List<ResourceAmount>();
-        }
 
         public Zone GetNearestRoom(Vector3 position)
         {

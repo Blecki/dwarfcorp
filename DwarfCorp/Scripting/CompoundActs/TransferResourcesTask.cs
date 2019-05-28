@@ -10,13 +10,14 @@ namespace DwarfCorp
         public string StockpileFrom;
         private Stockpile stockpile;
         public ResourceAmount Resources;
+        public RoomBuilder Builder;
 
         public TransferResourcesTask()
         {
 
         }
 
-        public TransferResourcesTask(string stockpile, ResourceAmount resources)
+        public TransferResourcesTask(string stockpile, ResourceAmount resources, RoomBuilder Builder)
         {
             Priority = PriorityType.Medium;
             StockpileFrom = stockpile;
@@ -36,7 +37,7 @@ namespace DwarfCorp
 
         public bool GetStockpile(Faction faction)
         {
-            stockpile = faction.RoomBuilder.FindZone(StockpileFrom) as Stockpile;
+            stockpile = Builder.FindZone(StockpileFrom) as Stockpile;
             return stockpile != null;
         }
 

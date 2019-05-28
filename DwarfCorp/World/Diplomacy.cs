@@ -567,13 +567,13 @@ namespace DwarfCorp
                     foreach (CreatureAI creature in envoy.Creatures)
                     {
                        
-                        var tradePort = envoy.OtherFaction.GetNearestRoomOfType("Balloon Port", creature.Position);
+                        var tradePort = World.GetNearestRoomOfType("Balloon Port", creature.Position);
 
                         if (tradePort == null)
                         {
                             World.MakeAnnouncement("We need a balloon trade port to trade.", null, () =>
                             {
-                                return envoy.OtherFaction.GetNearestRoomOfType("Balloon Port", creature.Position) == null;
+                                return World.GetNearestRoomOfType("Balloon Port", creature.Position) == null;
                             });
                             World.Tutorial("trade");
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);

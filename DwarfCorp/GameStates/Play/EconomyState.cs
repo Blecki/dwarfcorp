@@ -69,7 +69,8 @@ namespace DwarfCorp.GameStates
             {
                 Border = "border-thin",
                 Padding = new Margin(4, 4, 0, 0),
-                Faction = World.PlayerFaction
+                Faction = World.PlayerFaction,
+                World = World
             });
 
             TabPanel.SelectedTab = 0;

@@ -13,7 +13,6 @@ namespace DwarfCorp
         public List<Quantitiy<Resource.ResourceTags>> Resources { get; set; }
         public List<KeyValuePair<Zone, ResourceAmount> > ResourcesToStash { get; set; }
         public bool AllowHeterogenous { get; set; } // Todo: Unused
-        public Faction Faction = null;
 
         public GetResourcesAct()
         {
@@ -24,7 +23,7 @@ namespace DwarfCorp
             base(agent)
         {
             Name = "Get Resources";
-            ResourcesToStash = agent.Faction.GetStockpilesContainingResources(agent.Position, resources).ToList();
+            ResourcesToStash = agent.World.GetStockpilesContainingResources(agent.Position, resources).ToList();
             AllowHeterogenous = false;
 
         }
@@ -89,16 +88,10 @@ namespace DwarfCorp
                 return;
             }
 
-            if (Faction == null)
-            {
-                Faction = Agent.Faction;
-            }
-
-
             if(!hasAllResources)
             { 
                 if(ResourcesToStash == null && Resources != null)
-                    ResourcesToStash = Faction.GetStockpilesContainingResources(Resources).ToList();
+                    ResourcesToStash = Creature.World.GetStockpilesContainingResources(Resources).ToList();
 
                 if(ResourcesToStash != null &&  ResourcesToStash.Count == 0)
                 {
@@ -111,7 +104,7 @@ namespace DwarfCorp
                     foreach (var resource in ResourcesToStash.OrderBy(r => (r.Key.GetBoundingBox().Center() - Agent.Position).LengthSquared()))
                     {
                         children.Add(new Domain(() => HasResources(Agent, resource), new GoToZoneAct(Agent, resource.Key)));
-                        children.Add(new Sequence(new Condition(() => HasResources(Agent, resource)), new StashResourcesAct(Agent, resource.Key, resource.Value) { Faction = Faction }));
+                        children.Add(new Sequence(new Condition(() => HasResources(Agent, resource)), new StashResourcesAct(Agent, resource.Key, resource.Value)));
                     }
                     children.Add(new SetBlackboardData<List<ResourceAmount>>(Agent, "ResourcesStashed", ResourcesToStash.Select(r => r.Value).ToList()));
                     Tree = new Sequence(children.ToArray()) | (new Wrap(Agent.Creature.RestockAll) & false);

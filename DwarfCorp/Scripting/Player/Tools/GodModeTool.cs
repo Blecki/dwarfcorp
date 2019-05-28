@@ -67,7 +67,7 @@ namespace DwarfCorp
             {
                 string type = Command.Substring(6);
                 var room = RoomLibrary.CreateRoom(World.PlayerFaction, type, World);
-                World.PlayerFaction.RoomBuilder.AddZone(room);
+                World.RoomBuilder.AddZone(room);
                 RoomLibrary.CompleteRoomImmediately(room, refs);
             }
             if (Command.Contains("Spawn/"))
@@ -160,7 +160,7 @@ namespace DwarfCorp
                             case "Delete Block":
                                 {
                                     var v = vox;
-                                    World.PlayerFaction.OnVoxelDestroyed(vox);
+                                    World.OnVoxelDestroyed(vox);
                                     v.Type = Library.EmptyVoxelType;
                                     v.QuickSetLiquid(LiquidType.None, 0);
                                 }

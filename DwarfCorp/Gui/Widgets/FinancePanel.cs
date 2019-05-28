@@ -54,6 +54,7 @@ namespace DwarfCorp.Gui.Widgets
     {
         public Faction Faction;
         private Widget InfoWidget;
+        public WorldManager World;
         int numrows = 0;
         private Widget Title;
 
@@ -119,8 +120,8 @@ namespace DwarfCorp.Gui.Widgets
                 var payPerDay = (DwarfBux)Faction.Minions.Select(m => m.Stats.CurrentLevel.Pay.Value).Sum();
                 AddRow("Employees:", String.Format("{0} at {1} per day.", Faction.Minions.Count, payPerDay));
                 AddRow("Runway:", String.Format("{0} day(s).\n", (int)(Faction.Economy.Funds / Math.Max(payPerDay, (decimal)0.01))));
-                var freeStockPile = Faction.ComputeRemainingStockpileSpace();
-                var totalStockPile = Math.Max(Faction.ComputeTotalStockpileSpace(), 1);
+                var freeStockPile = World.ComputeRemainingStockpileSpace();
+                var totalStockPile = Math.Max(World.ComputeTotalStockpileSpace(), 1);
                 AddRow("Stockpile space:", String.Format("{0} used of {1} ({2:00.00}%)\n", totalStockPile - freeStockPile, totalStockPile, (float)(totalStockPile - freeStockPile) / (float)totalStockPile * 100.0f));
                 AddRow("Average dwarf happiness:", String.Format("{0}%", (int)(float)Faction.Minions.Sum(m => m.Stats.Happiness.Percentage) / Math.Max(Faction.Minions.Count, 1)));
                 InfoWidget.Layout();
