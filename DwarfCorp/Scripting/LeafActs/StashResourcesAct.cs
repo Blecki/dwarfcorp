@@ -69,12 +69,10 @@ namespace DwarfCorp
             }
 
             Timer waitTimer = new Timer(1.0f, true);
-            bool removed = Faction.RemoveResources(Resources, Agent.Position, Zone, true);
+            bool removed = Faction.RemoveResources(Resources, Agent.Position, Zone);
 
             if(!removed)
-            {
                 yield return Status.Fail;
-            }
             else
             {
                 Agent.Creature.Inventory.AddResource(Resources.CloneResource(), Inventory.RestockType.None);

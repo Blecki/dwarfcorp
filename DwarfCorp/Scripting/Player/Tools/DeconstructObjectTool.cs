@@ -18,6 +18,8 @@ namespace DwarfCorp
             return new DeconstructObjectTool(World);
         }
 
+        private List<GameComponent> selectedBodies = new List<GameComponent>();
+
         public DeconstructObjectTool(WorldManager World)
         {
             this.World = World;
@@ -33,7 +35,6 @@ namespace DwarfCorp
             World.UserInterface.VoxSelector.Clear();
         }
 
-
         public bool CanDestroy(GameComponent body)
         {
             return body.Tags.Any(tag => tag == "Deconstructable") && !body.IsReserved;
@@ -45,7 +46,6 @@ namespace DwarfCorp
                 return;
 
             foreach (var body in bodies)
-            {
                 if (body.Tags.Any(tag => tag == "Deconstructable"))
                 {
                     if (body.IsReserved)
@@ -54,21 +54,15 @@ namespace DwarfCorp
                         continue;
                     }
                     body.Die();
-                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, body.Position,
-                    0.5f);
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, body.Position, 0.5f);
                 }
-            }          
         }
-
-
-        private List<GameComponent> selectedBodies = new List<GameComponent>();
 
         public override void OnMouseOver(IEnumerable<GameComponent> bodies)
         {
             DefaultOnMouseOver(bodies);
 
             foreach (var body in bodies)
-            {
                 if (body.Tags.Contains("Deconstructable"))
                 {
                     if (body.IsReserved)
@@ -79,15 +73,10 @@ namespace DwarfCorp
                     World.UserInterface.ShowTooltip("Left click to destroy this " + body.Name);
                     body.SetVertexColorRecursive(Color.Red);
                 }
-            }
 
-            foreach(var body in selectedBodies)
-            {
+            foreach (var body in selectedBodies)
                 if (!bodies.Contains(body))
-                {
                     body.SetVertexColorRecursive(Color.White);
-                }
-            }
 
             selectedBodies = bodies.ToList();
         }
@@ -100,17 +89,7 @@ namespace DwarfCorp
             var v = World.UserInterface.VoxSelector.VoxelUnderMouse;
 
             if (World.PlayerFaction.RoomBuilder.IsBuildDesignation(v))
-            {
-                BuildVoxelOrder vox = World.PlayerFaction.RoomBuilder.GetBuildDesignation(v);
-                if (vox != null && vox.Order != null)
-                {
-                    vox.Order.Destroy();
-                    if (vox.Order.DisplayWidget != null)
-                        World.UserInterface.Gui.DestroyWidget(vox.Order.DisplayWidget);
-                    World.PlayerFaction.RoomBuilder.BuildDesignations.Remove(vox.Order);
-                    World.PlayerFaction.RoomBuilder.DesignatedRooms.Remove(vox.Order.ToBuild);
-                }
-            }
+                World.PlayerFaction.RoomBuilder.DestroyBuildDesignation(v);
             else if (World.PlayerFaction.RoomBuilder.IsInRoom(v))
             {
                 var existingRoom = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(v);
@@ -124,30 +103,11 @@ namespace DwarfCorp
             }
         }
 
-
         void destroyDialog_OnClosed(Gui.Widgets.Confirm.Result status, Zone room)
         {
             if (status == Gui.Widgets.Confirm.Result.OKAY)
-            {
-                World.PlayerFaction.RoomBuilder.DesignatedRooms.Remove(room);
-
-                List<BuildVoxelOrder> existingDesignations = World.PlayerFaction.RoomBuilder.GetDesignationsAssociatedWithRoom(room);
-                BuildRoomOrder buildRoomDes = null;
-                foreach (BuildVoxelOrder des in existingDesignations)
-                {
-                    des.Order.VoxelOrders.Remove(des);
-                    buildRoomDes = des.Order;
-                }
-                if (buildRoomDes != null && buildRoomDes.DisplayWidget != null)
-                {
-                    World.UserInterface.Gui.DestroyWidget(buildRoomDes.DisplayWidget);
-                }
-                World.PlayerFaction.RoomBuilder.BuildDesignations.Remove(buildRoomDes);
-
-                room.Destroy();
-            }
+                World.PlayerFaction.RoomBuilder.DestroyZone(room);
         }
-
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
@@ -186,8 +146,5 @@ namespace DwarfCorp
         public override void Render2D(DwarfGame game, DwarfTime time)
         {
         }
-
-
     }
-
 }

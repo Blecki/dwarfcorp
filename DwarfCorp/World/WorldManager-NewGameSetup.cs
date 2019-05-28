@@ -66,7 +66,7 @@ namespace DwarfCorp
 
             // Actually create the BuildRoom.
             var toBuild = RoomLibrary.CreateRoom(PlayerFaction, "Balloon Port", this);
-            roomDes.DesignatedRooms.Add(toBuild);
+            roomDes.AddZone(toBuild);
             RoomLibrary.CompleteRoomImmediately(toBuild, roomVoxels.StockpileVoxels);
 
             return toBuild;

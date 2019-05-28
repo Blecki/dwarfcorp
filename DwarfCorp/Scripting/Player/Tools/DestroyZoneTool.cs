@@ -28,17 +28,7 @@ namespace DwarfCorp
             var v = World.UserInterface.VoxSelector.VoxelUnderMouse;
 
             if (World.PlayerFaction.RoomBuilder.IsBuildDesignation(v))
-            {
-                BuildVoxelOrder vox = World.PlayerFaction.RoomBuilder.GetBuildDesignation(v);
-                if (vox != null && vox.Order != null)
-                {
-                    vox.Order.Destroy();
-                    if (vox.Order.DisplayWidget != null)
-                        World.UserInterface.Gui.DestroyWidget(vox.Order.DisplayWidget);
-                    World.PlayerFaction.RoomBuilder.BuildDesignations.Remove(vox.Order);
-                    World.PlayerFaction.RoomBuilder.DesignatedRooms.Remove(vox.Order.ToBuild);
-                }
-            }
+                World.PlayerFaction.RoomBuilder.DestroyBuildDesignation(v);
             else if (World.PlayerFaction.RoomBuilder.IsInRoom(v))
             {
                 var existingRoom = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(v);
@@ -55,24 +45,7 @@ namespace DwarfCorp
         public static void DestroyRoom(Gui.Widgets.Confirm.Result status, Zone room, Faction Faction, WorldManager World)
         {
             if (status == Gui.Widgets.Confirm.Result.OKAY)
-            {
-                Faction.RoomBuilder.DesignatedRooms.Remove(room);
-
-                List<BuildVoxelOrder> existingDesignations = Faction.RoomBuilder.GetDesignationsAssociatedWithRoom(room);
-                BuildRoomOrder buildRoomDes = null;
-                foreach (BuildVoxelOrder des in existingDesignations)
-                {
-                    des.Order.VoxelOrders.Remove(des);
-                    buildRoomDes = des.Order;
-                }
-                if (buildRoomDes != null && buildRoomDes.DisplayWidget != null)
-                {
-                    World.UserInterface.Gui.DestroyWidget(buildRoomDes.DisplayWidget);
-                }
-                Faction.RoomBuilder.BuildDesignations.Remove(buildRoomDes);
-
-                room.Destroy();
-            }
+                Faction.RoomBuilder.DestroyZone(room);
         }
 
         public override void OnBegin()
@@ -126,9 +99,7 @@ namespace DwarfCorp
         public override void Render2D(DwarfGame game, DwarfTime time)
         {
         }
-
-
-
+               
         public override void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)
         {
             
@@ -155,8 +126,6 @@ namespace DwarfCorp
                 if (existingRoom != null)
                     existingRoom.SetTint(GameSettings.Default.Colors.GetColor("Negative", Color.Red));
             }
-        }
-
-        
+        }        
     }
 }

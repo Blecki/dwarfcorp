@@ -50,7 +50,7 @@ namespace DwarfCorp
                 return;
             }
 
-            var zones = World.PlayerFaction.RoomBuilder.DesignatedRooms.OfType<BalloonPort>();
+            var zones = World.PlayerFaction.EnumerateZones().OfType<BalloonPort>();
 
             CreatureAI closestCreature = null;
             float closestDist = float.MaxValue;

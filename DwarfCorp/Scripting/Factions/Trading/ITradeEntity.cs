@@ -126,7 +126,7 @@ namespace DwarfCorp.Trade
 
         public void RemoveResources(List<ResourceAmount> Resources)
         {
-            Faction.RemoveResources(Resources, Vector3.Zero, false);
+            Faction.RemoveResources(Resources);
         }
     }
 }

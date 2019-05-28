@@ -128,6 +128,8 @@
     <Compile Include="GameStates\WorldGeneration\GenerationPanel.cs" />
     <Compile Include="GameStates\WorldGeneration\LaunchPanel.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGeneratorState.cs" />
+    <Compile Include="Scripting\CompoundActs\TransferResourcesAct.cs" />
+    <Compile Include="Scripting\CompoundActs\TransferResourcesTask.cs" />
     <Compile Include="World\Crafting\CraftDetails.cs" />
     <Compile Include=".\Components\AI\Creature.cs" />
     <Compile Include=".\Components\AI\CreatureAI.cs" />
@@ -652,7 +654,6 @@
     <Compile Include=".\Scripting\Player\BodySelector.cs" />
     <Compile Include=".\Scripting\Player\BoxBrush.cs" />
     <Compile Include=".\Scripting\Player\Building\BuildRoomOrder.cs" />
-    <Compile Include=".\Scripting\Player\Building\BuildStockpileOrder.cs" />
     <Compile Include=".\Scripting\Player\Building\BuildVoxelOrder.cs" />
     <Compile Include=".\Scripting\Player\Building\CraftDesignation.cs" />
     <Compile Include=".\Scripting\Player\Building\RoomBuilder.cs" />

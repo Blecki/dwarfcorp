@@ -25,7 +25,6 @@ namespace DwarfCorp
         public List<GameComponent> ZoneBodies = new List<GameComponent>();
         public RoomData Type;
         [JsonIgnore] public Gui.Widget GuiTag;
-        public List<VoxelHandle> Designations = new List<VoxelHandle>();
         public bool IsBuilt;
         public virtual String GetDescriptionString() { return Library.GetString("generic-room-description"); }
 

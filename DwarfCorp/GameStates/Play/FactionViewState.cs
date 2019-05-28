@@ -152,7 +152,7 @@ namespace DwarfCorp.GameStates
                                                     adventure.Position = World.Settings.InstanceSettings.Origin;
                                                     adventure.Start = World.Settings.InstanceSettings.Origin;
                                                     World.Diplomacy.Adventures.Add(adventure);
-                                                    World.PlayerFaction.RemoveResources(selectResources.SelectedResources, Vector3.Zero, false);
+                                                    World.PlayerFaction.RemoveResources(selectResources.SelectedResources);
                                                     World.PlayerFaction.AddMoney(-selectResources.SelectedMoney);
                                                     Reset();
                                                 }

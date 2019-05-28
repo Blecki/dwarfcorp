@@ -305,6 +305,8 @@
     <Compile Include="Gui\Widgets\Minimap\MinimapRenderer.cs" />
     <Compile Include="LogWriter.cs" />
     <Compile Include="Scripting\Combat\Attack.cs" />
+    <Compile Include="Scripting\CompoundActs\TransferResourcesAct.cs" />
+    <Compile Include="Scripting\CompoundActs\TransferResourcesTask.cs" />
     <Compile Include="Scripting\Factions\FactionSet.cs" />
     <Compile Include="Scripting\LeafActs\FollowPathAct.cs" />
     <Compile Include="Scripting\Potions\GatherPotionsTask.cs" />
@@ -836,7 +838,6 @@
     <Compile Include="Scripting\MonsterSpawner.cs" />
     <Compile Include="Scripting\Player\BodySelector.cs" />
     <Compile Include="Scripting\Player\Building\BuildRoomOrder.cs" />
-    <Compile Include="Scripting\Player\Building\BuildStockpileOrder.cs" />
     <Compile Include="Scripting\Player\Building\BuildVoxelOrder.cs" />
     <Compile Include="Scripting\Player\Building\RoomBuilder.cs" />
     <Compile Include="Economy\Money.cs" />

@@ -211,19 +211,12 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public int GetResourceCount(Resource.ResourceTags resourceType, bool allowHeterogenous = false)
+        public int GetResourceCount(Resource.ResourceTags resourceType)
         {
-            if (allowHeterogenous)
-                return Resources.Values.Where(resource => ResourceLibrary.GetResourceByName(resource.Type).Tags.Contains(resourceType)).Sum(resource => resource.Count);
-            else
-            {
-                int count = 0;
-                foreach(var resource in Resources.Values.Where(resource => ResourceLibrary.GetResourceByName(resource.Type).Tags.Contains(resourceType)))
-                {
-                    count = Math.Max(count, resource.Count);
-                }
-                return count;
-            }
+            int count = 0;
+            foreach (var resource in Resources.Values.Where(resource => ResourceLibrary.GetResourceByName(resource.Type).Tags.Contains(resourceType)))
+                count = Math.Max(count, resource.Count);
+            return count;
         }
 
         public bool HasResource(Resource.ResourceTags resourceType)

@@ -115,7 +115,7 @@ namespace DwarfCorp
         public void Update(DwarfTime time)
         {
             RoomBuilder.Faction = this;
-            RoomBuilder.CheckRemovals();
+            RoomBuilder.Update(time);
 
             if (this == World.PlayerFaction) // Todo: This sucks.
             {
@@ -133,7 +133,6 @@ namespace DwarfCorp
                         World.Tutorial("death");
                     }
                 }
-
                 #endregion
 
                 #region Free stuck minions
@@ -186,8 +185,7 @@ namespace DwarfCorp
 
             Designations.CleanupDesignations();
 
-            foreach (var zone in RoomBuilder.DesignatedRooms)
-                zone.Update(time);
+           
 
             if (HandleThreatsTimer == null)
                 HandleThreatsTimer = new Timer(1.0f, false, Timer.TimerMode.Real);
@@ -257,7 +255,7 @@ namespace DwarfCorp
         public IEnumerable<Zone> EnumerateZones()
         {
             if (RoomBuilder != null)
-                foreach (var room in RoomBuilder.DesignatedRooms)
+                foreach (var room in RoomBuilder.Zones)
                     yield return room;
             yield break;
         }
@@ -272,19 +270,19 @@ namespace DwarfCorp
 
         public int ComputeRemainingStockpileSpace()
         {
-            return RoomBuilder.DesignatedRooms.Where(pile => !((pile is Graveyard))).Sum(pile => pile.Resources.MaxResources - pile.Resources.CurrentResourceCount);
+            return EnumerateZones().Where(pile => !(pile is Graveyard)).Sum(pile => pile.Resources.MaxResources - pile.Resources.CurrentResourceCount);
         }
 
         public int ComputeTotalStockpileSpace()
         {
-            return RoomBuilder.DesignatedRooms.Where(pile => !((pile is Graveyard))).Sum(pile => pile.Resources.MaxResources);
+            return EnumerateZones().Where(pile => !(pile is Graveyard)).Sum(pile => pile.Resources.MaxResources);
         }
 
         public bool AddResources(ResourceAmount resources)
         {
-            ResourceAmount amount = new ResourceAmount(resources.Type, resources.Count);
+            var amount = new ResourceAmount(resources.Type, resources.Count);
             var resource = ResourceLibrary.GetResourceByName(amount.Type);
-            foreach (Stockpile stockpile in RoomBuilder.DesignatedRooms.Where(s => s is Stockpile && (s as Stockpile).IsAllowed(resources.Type)))
+            foreach (Stockpile stockpile in EnumerateZones().Where(s => s is Stockpile && (s as Stockpile).IsAllowed(resources.Type)))
             {
                 int space = stockpile.Resources.MaxResources - stockpile.Resources.CurrentResourceCount;
 
@@ -355,14 +353,13 @@ namespace DwarfCorp
         {
             Stockpile nearest = null;
 
-            float closestDist = float.MaxValue;
-            foreach (Stockpile stockpile in RoomBuilder.DesignatedRooms.Where(s => s is Stockpile && predicate(s as Stockpile)))
+            var closestDist = float.MaxValue;
+            foreach (Stockpile stockpile in EnumerateZones().Where(s => s is Stockpile && predicate(s as Stockpile)))
             {
                 if (!stockpile.IsBuilt)
-                {
                     continue;
-                }
-                float dist = (stockpile.GetBoundingBox().Center() - position).LengthSquared();
+
+                var dist = (stockpile.GetBoundingBox().Center() - position).LengthSquared();
 
                 if (dist < closestDist)
                 {
@@ -376,22 +373,17 @@ namespace DwarfCorp
 
         public List<Zone> GetIntersectingRooms(BoundingBox v)
         {
-            return RoomBuilder.DesignatedRooms.Where(room => room.Intersects(v)).ToList();
-        }
-
-        public bool IsInStockpile(VoxelHandle v)
-        {
-            return RoomBuilder.DesignatedRooms.Any(s => s.ContainsVoxel(v));
+            return EnumerateZones().Where(room => room.Intersects(v)).ToList();
         }
 
         public bool HasFreeStockpile()
         {
-            return RoomBuilder.DesignatedRooms.Any(s => s.IsBuilt && !s.IsFull());
+            return EnumerateZones().Any(s => s.IsBuilt && !s.IsFull());
         }
 
         public bool HasFreeStockpile(ResourceAmount toPut)
         {
-            return RoomBuilder.DesignatedRooms.Any(s => s.IsBuilt && !s.IsFull() && s is Stockpile && (s as Stockpile).IsAllowed(toPut.Type));
+            return EnumerateZones().Any(s => s.IsBuilt && !s.IsFull() && s is Stockpile && (s as Stockpile).IsAllowed(toPut.Type));
         }
 
         public GameComponent FindNearestItemWithTags(string tag, Vector3 location, bool filterReserved, GameComponent queryObject)
@@ -421,34 +413,27 @@ namespace DwarfCorp
         public int CompareZones(Zone a, Zone b, Vector3 pos)
         {
             if (a == b)
-            {
                 return 0;
-            }
             else
             {
-
                 float costA = (pos - a.GetBoundingBox().Center()).LengthSquared();
                 float costB = (pos - b.GetBoundingBox().Center()).LengthSquared();
 
                 if (costA < costB)
-                {
                     return -1;
-                }
                 else
-                {
                     return 1;
-                }
             }
         }
 
         public Dictionary<string, Pair<ResourceAmount>> ListResourcesInStockpilesPlusMinions()
         {
-            Dictionary<string, ResourceAmount> stocks = ListResources();
-            Dictionary<string, Pair<ResourceAmount>> toReturn = new Dictionary<string, Pair<ResourceAmount>>();
+            var stocks = ListResources();
+            var toReturn = new Dictionary<string, Pair<ResourceAmount>>();
+
             foreach (var pair in stocks)
-            {
                 toReturn[pair.Key] = new Pair<ResourceAmount>(pair.Value, new ResourceAmount(pair.Value.Type, 0));
-            }
+
             foreach (var creature in Minions)
             {
                 var inventory = creature.Creature.Inventory;
@@ -456,25 +441,22 @@ namespace DwarfCorp
                 {
                     var resource = i.Resource;
                     if (toReturn.ContainsKey(resource))
-                    {
                         toReturn[resource].Second.Count += 1;
-                    }
                     else
-                    {
                         toReturn[resource] = new Pair<ResourceAmount>(new ResourceAmount(resource, 0), new ResourceAmount(resource));
-                    }
                 }
             }
+
             return toReturn;
         }
 
         public Dictionary<string, ResourceAmount> ListResources()
         {
-            Dictionary<string, ResourceAmount> toReturn = new Dictionary<string, ResourceAmount>();
+            var toReturn = new Dictionary<string, ResourceAmount>();
 
-            foreach (var stockpile in RoomBuilder.DesignatedRooms)
+            foreach (var stockpile in EnumerateZones())
             {
-                foreach (ResourceAmount resource in stockpile.Resources.Enumerate())
+                foreach (var resource in stockpile.Resources.Enumerate())
                 {
                     if (resource.Count == 0)
                         continue;
@@ -485,6 +467,7 @@ namespace DwarfCorp
                         toReturn[resource.Type] = new ResourceAmount(resource);
                 }
             }
+
             return toReturn;
         }
 
@@ -492,15 +475,18 @@ namespace DwarfCorp
         {
             foreach (var amount in required)
             {
-                int numGot = 0;
-                foreach (var stockpile in RoomBuilder.DesignatedRooms.OrderBy(s => (s.GetBoundingBox().Center() - biasPos).LengthSquared()))
+                var numGot = 0;
+                foreach (var stockpile in EnumerateZones().OrderBy(s => (s.GetBoundingBox().Center() - biasPos).LengthSquared()))
                 {
                     if (numGot >= amount.Count)
                         break;
+
                     foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => sResource.Type == amount.Type))
                     {
-                        int amountToRemove = global::System.Math.Min(resource.Count, amount.Count - numGot);
-                        if (amountToRemove <= 0) continue;
+                        var amountToRemove = System.Math.Min(resource.Count, amount.Count - numGot);
+                        if (amountToRemove <= 0)
+                            continue;
+
                         numGot += amountToRemove;
                         yield return new KeyValuePair<Zone, ResourceAmount>(stockpile, new ResourceAmount(resource.Type, amountToRemove));
                     }
@@ -514,7 +500,7 @@ namespace DwarfCorp
             foreach (var tag in tags)
             {
                 int numGot = 0;
-                foreach (var stockpile in RoomBuilder.DesignatedRooms)
+                foreach (var stockpile in EnumerateZones())
                 {
                     if (numGot >= tag.Count)
                         break;
@@ -529,11 +515,11 @@ namespace DwarfCorp
             }
         }
 
-        public List<ResourceAmount> GetResourcesWithTags(List<Quantitiy<Resource.ResourceTags>> tags)
+        public List<ResourceAmount> GetResourcesWithTags(List<Quantitiy<Resource.ResourceTags>> tags) // Todo: This is only ever called with a list of 1.
         {
-            Dictionary<Resource.ResourceTags, int> tagsRequired = new Dictionary<Resource.ResourceTags, int>();
-            Dictionary<Resource.ResourceTags, int> tagsGot = new Dictionary<Resource.ResourceTags, int>();
-            Dictionary<String, ResourceAmount> amounts = new Dictionary<String, ResourceAmount>();
+            var tagsRequired = new Dictionary<Resource.ResourceTags, int>();
+            var tagsGot = new Dictionary<Resource.ResourceTags, int>();
+            var amounts = new Dictionary<String, ResourceAmount>();
 
             foreach (Quantitiy<Resource.ResourceTags> quantity in tags)
             {
@@ -541,15 +527,13 @@ namespace DwarfCorp
                 tagsGot[quantity.Type] = 0;
             }
 
-            Random r = new Random();
+            var r = new Random();
 
-            foreach (var stockpile in RoomBuilder.DesignatedRooms)
-            {
-                foreach (ResourceAmount resource in stockpile.Resources.Enumerate().OrderBy(x => r.Next()))
-                {
+            foreach (var stockpile in EnumerateZones())
+                foreach (var resource in stockpile.Resources.Enumerate().OrderBy(x => r.Next()))
                     foreach (var requirement in tagsRequired)
                     {
-                        int got = tagsGot[requirement.Key];
+                        var got = tagsGot[requirement.Key];
 
                         if (requirement.Value <= got) continue;
 
@@ -570,10 +554,8 @@ namespace DwarfCorp
                             amounts[resource.Type] = new ResourceAmount(resource.Type, amountToRemove);
                         }
                     }
-                }
-            }
 
-            List<ResourceAmount> toReturn = new List<ResourceAmount>();
+            var toReturn = new List<ResourceAmount>();
 
             foreach (var requirement in tagsRequired)
             {
@@ -600,8 +582,7 @@ namespace DwarfCorp
             foreach (var type in Library.EnumerateVoxelTypes())
             {
                 bool nospecialRequried = type.BuildRequirements.Count == 0;
-                CachedCanBuildVoxel[type.Name] = type.IsBuildable && ((nospecialRequried && HasResources(type.ResourceToRelease)) ||
-                    (!nospecialRequried && HasResourcesCached(type.BuildRequirements)));
+                CachedCanBuildVoxel[type.Name] = type.IsBuildable && ((nospecialRequried && HasResources(type.ResourceToRelease)) || (!nospecialRequried && HasResourcesCached(type.BuildRequirements)));
             }
         }
 
@@ -638,28 +619,23 @@ namespace DwarfCorp
             foreach (var resource in resources)
             {
                 if (!CachedResourceTagCounts.ContainsKey(resource))
-                {
                     return false;
-                }
 
                 if (CachedResourceTagCounts[resource] == 0)
-                {
                     return false;
-                }
             }
+
             return true;
         }
 
-        public bool HasResources(IEnumerable<Quantitiy<Resource.ResourceTags>> resources, bool allowHeterogenous = false)
+        public bool HasResources(IEnumerable<Quantitiy<Resource.ResourceTags>> resources)
         {
             foreach (Quantitiy<Resource.ResourceTags> resource in resources)
             {
-                int count = RoomBuilder.DesignatedRooms.Sum(stock => stock.Resources.GetResourceCount(resource.Type, allowHeterogenous));
+                int count = EnumerateZones().Sum(stock => stock.Resources.GetResourceCount(resource.Type));
 
                 if (count < resource.Count)
-                {
                     return false;
-                }
             }
 
             return true;
@@ -669,12 +645,10 @@ namespace DwarfCorp
         {
             foreach (ResourceAmount resource in resources)
             {
-                int count = RoomBuilder.DesignatedRooms.Sum(stock => stock.Resources.GetResourceCount(resource.Type));
+                int count = EnumerateZones().Sum(stock => stock.Resources.GetResourceCount(resource.Type));
 
                 if (count < resources.Where(r => r.Type == resource.Type).Sum(r => r.Count))
-                {
                     return false;
-                }
             }
 
             return true;
@@ -685,7 +659,7 @@ namespace DwarfCorp
             return HasResources(new List<ResourceAmount>() { new ResourceAmount(resource) });
         }
 
-        public bool RemoveResources(ResourceAmount resources, Vector3 position, Zone stock, bool createItems = true)
+        public bool RemoveResources(ResourceAmount resources, Vector3 position, Zone stock)
         {
             if (!stock.Resources.HasResource(resources))
                 return false;
@@ -693,82 +667,57 @@ namespace DwarfCorp
                 return false;
 
             // Todo: Stockpile deals with it's own boxes.
-            List<Vector3> positions = new List<Vector3>();
             var resourceType = ResourceLibrary.GetResourceByName(resources.Type);
-            int num = stock.Resources.RemoveMaxResources(resources, resources.Count);
+            var num = stock.Resources.RemoveMaxResources(resources, resources.Count);
+
             (stock as Stockpile).HandleBoxes();
+
             foreach (var tag in resourceType.Tags)
-            {
                 if (CachedResourceTagCounts.ContainsKey(tag))
                 {
                     CachedResourceTagCounts[tag] -= num;
                     Trace.Assert(CachedResourceTagCounts[tag] >= 0);
                 }
-            }
-            if ((stock as Stockpile).Boxes.Count > 0)
+
+            for (int i = 0; i < num; i++)
             {
-                for (int i = 0; i < num; i++)
-                {
-                    positions.Add((stock as Stockpile).Boxes[(stock as Stockpile).Boxes.Count - 1].LocalTransform.Translation);
-                }
+                GameComponent newEntity = EntityFactory.CreateEntity<GameComponent>(resources.Type + " Resource",
+                        (stock as Stockpile).Boxes[(stock as Stockpile).Boxes.Count - 1].LocalTransform.Translation + MathFunctions.RandVector3Cube() * 0.5f);
+
+                TossMotion toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f), 2.5f + MathFunctions.Rand(-0.5f, 0.5f), newEntity.LocalTransform, position);
+                newEntity.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
+                newEntity.AnimationQueue.Add(toss);
+                toss.OnComplete += () => toss_OnComplete(newEntity);
             }
 
-            if (createItems)
-            {
-                foreach (Vector3 vec in positions)
-                {
-                    GameComponent newEntity =
-                        EntityFactory.CreateEntity<GameComponent>(resources.Type + " Resource",
-                            vec + MathFunctions.RandVector3Cube() * 0.5f);
-
-                    TossMotion toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f),
-                        2.5f + MathFunctions.Rand(-0.5f, 0.5f), newEntity.LocalTransform, position);
-                    newEntity.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
-                    newEntity.AnimationQueue.Add(toss);
-                    toss.OnComplete += () => toss_OnComplete(newEntity);
-
-                }
-            }
             RecomputeCachedVoxelstate();
             return true;
 
         }
 
-        public bool RemoveResources(List<ResourceAmount> resources, Vector3 position, bool createItems = true)
+        public bool RemoveResources(List<ResourceAmount> resources)
         {
-            Dictionary<String, ResourceAmount> amounts = new Dictionary<String, ResourceAmount>();
+            var amounts = new Dictionary<String, ResourceAmount>();
 
             foreach (ResourceAmount resource in resources)
             {
                 if (!amounts.ContainsKey(resource.Type))
-                {
                     amounts.Add(resource.Type, new ResourceAmount(resource));
-                }
                 else
-                {
                     amounts[resource.Type].Count += resource.Count;
-                }
             }
 
             if (!HasResources(amounts.Values))
-            {
                 return false;
-            }
 
-
-            var stockpilesCopy = RoomBuilder.DesignatedRooms.Where(s => resources.All(r => s is Stockpile && (s as Stockpile).IsAllowed(r.Type))).ToList();
-            stockpilesCopy.Sort((a, b) => CompareZones(a, b, position));
-
-
-            foreach (ResourceAmount resource in resources)
+            foreach (var resource in resources)
             {
                 int count = 0;
-                List<Vector3> positions = new List<Vector3>();
                 var resourceType = ResourceLibrary.GetResourceByName(resource.Type);
-                foreach (Stockpile stock in stockpilesCopy)
+                foreach (var stock in EnumerateZones().Where(s => resources.All(r => s is Stockpile && (s as Stockpile).IsAllowed(r.Type))))
                 {
                     int num = stock.Resources.RemoveMaxResources(resource, resource.Count - count);
-                    stock.HandleBoxes();
+                    (stock as Stockpile).HandleBoxes();
                     foreach(var tag in resourceType.Tags)
                     {
                         if (CachedResourceTagCounts.ContainsKey(tag))
@@ -777,41 +726,14 @@ namespace DwarfCorp
                             Trace.Assert(CachedResourceTagCounts[tag] >= 0);
                         }
                     }
-                    if (stock.Boxes.Count > 0)
-                    {
-                        for (int i = 0; i < num; i++)
-                        {
-                            positions.Add(stock.Boxes[stock.Boxes.Count - 1].LocalTransform.Translation);
-                        }
-                    }
 
                     count += num;
 
                     if (count >= resource.Count)
-                    {
                         break;
-                    }
-
                 }
-
-                if (createItems)
-                {
-                    foreach (Vector3 vec in positions)
-                    {
-                        GameComponent newEntity =
-                            EntityFactory.CreateEntity<GameComponent>(resource.Type + " Resource",
-                                vec + MathFunctions.RandVector3Cube() * 0.5f);
-
-                        TossMotion toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f),
-                            2.5f + MathFunctions.Rand(-0.5f, 0.5f), newEntity.LocalTransform, position);
-                        newEntity.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
-                        newEntity.AnimationQueue.Add(toss);
-                        toss.OnComplete += () => toss_OnComplete(newEntity);
-
-                    }
-                }
-
             }
+
             RecomputeCachedVoxelstate();
             return true;
         }
@@ -819,7 +741,6 @@ namespace DwarfCorp
         void toss_OnComplete(GameComponent entity)
         {
             entity.Die();
-
         }
 
         public DateTime Hire(Applicant currentApplicant, int delay)

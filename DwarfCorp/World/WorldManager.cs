@@ -43,6 +43,7 @@ namespace DwarfCorp
         private Timer orphanedTaskRateLimiter = new Timer(10.0f, false, Timer.TimerMode.Real);
         public MonsterSpawner MonsterSpawner;
         public Faction PlayerFaction;
+        public RoomBuilder RoomBuilder => PlayerFaction.RoomBuilder; // Todo: Hackity hack.
 
         #region Tutorial Hooks
 
@@ -245,7 +246,6 @@ namespace DwarfCorp
             UpdateOrphanedTasks();
 
             TaskManager.Update(PlayerFaction.Minions);
-            PlayerFaction.RoomBuilder.Update();
 
             if (Paused)
                 Renderer.Camera.LastWheel = Mouse.GetState().ScrollWheelValue;
