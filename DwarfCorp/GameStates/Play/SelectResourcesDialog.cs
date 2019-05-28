@@ -112,7 +112,7 @@ namespace DwarfCorp.GameStates
             Text = "Select Resources to Trade";
             Font = "font16";
             InteriorMargin = new Margin(32, 5, 5, 5);
-            var existingResources = Faction.ListResources();
+            var existingResources = World.ListResources();
             StayingResources = new List<ResourceAmount>();
             foreach(var resource in existingResources)
             {

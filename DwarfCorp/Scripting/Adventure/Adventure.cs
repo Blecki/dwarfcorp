@@ -153,7 +153,7 @@ namespace DwarfCorp.Scripting.Adventure
             foreach(var resource in Resources)
             {
                 // TODO: handle case of not enough stockpile space.
-                owner.AddResources(resource);
+                world.AddResources(resource);
             }
             // TODO: handle case of not enough treasury space.
             owner.AddMoney(Money);
@@ -329,7 +329,7 @@ namespace DwarfCorp.Scripting.Adventure
             {
                 case State.None:
                     {
-                        var balloonPorts = world.PlayerFaction.EnumerateZones().OfType<BalloonPort>().ToList();
+                        var balloonPorts = world.EnumerateZones().OfType<BalloonPort>().ToList();
                         if (balloonPorts.Count == 0)
                         {
                             LastEvent = "The adventuring party was cancelled, no balloon port.";
@@ -356,7 +356,7 @@ namespace DwarfCorp.Scripting.Adventure
                             Vehicle.GetComponent<BalloonAI>().State = BalloonAI.BalloonState.Waiting;
                             Vehicle.GetComponent<BalloonAI>().WaitTimer.Reset();
                         }
-                        var balloonPorts = world.PlayerFaction.EnumerateZones().OfType<BalloonPort>().ToList();
+                        var balloonPorts = world.EnumerateZones().OfType<BalloonPort>().ToList();
                         if (balloonPorts.Count == 0)
                         {
                             LastEvent = "The adventuring party was cancelled, no balloon port.";
@@ -453,7 +453,7 @@ namespace DwarfCorp.Scripting.Adventure
                         }
                         if (RemainingTravelTime.TotalHours < 1)
                         {
-                            var balloonPorts = world.PlayerFaction.EnumerateZones().OfType<BalloonPort>().ToList();
+                            var balloonPorts = world.EnumerateZones().OfType<BalloonPort>().ToList();
                             Vector3 location = world.Renderer.Camera.Position;
                             if (balloonPorts.Count != 0)
                             {

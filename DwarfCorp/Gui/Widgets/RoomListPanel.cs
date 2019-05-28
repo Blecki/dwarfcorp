@@ -47,7 +47,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 if (sender.Hidden) return;
 
-                var roomsToDisplay = World.PlayerFaction.EnumerateZones().Where(r => !String.IsNullOrEmpty(FilterBox.Text) ? r.ID.Contains(FilterBox.Text) : true);
+                var roomsToDisplay = World.EnumerateZones().Where(r => !String.IsNullOrEmpty(FilterBox.Text) ? r.ID.Contains(FilterBox.Text) : true);
 
                 int i = 0;
                 ListView.ClearItems();

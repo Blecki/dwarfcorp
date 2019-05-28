@@ -113,10 +113,10 @@ namespace DwarfCorp
 
             Act fallback = null;
 
-            if (creature.Faction.EnumerateZones().Count() == 0)
+            if (creature.World.EnumerateZones().Count() == 0)
                 fallback = new LongWanderAct(creature.AI) { PathLength = 20, Radius = 30, Is2D = true, Name = "Randomly wander." };
             else
-                fallback = new GoToZoneAct(creature.AI, Datastructures.SelectRandom(creature.Faction.EnumerateZones()));
+                fallback = new GoToZoneAct(creature.AI, Datastructures.SelectRandom(creature.World.EnumerateZones()));
 
             return new Select(new Sequence(new Wrap(() => FindLandEnum(creature)) { Name = "Search for land." },
                                            new GoToNamedVoxelAct("Land", PlanAct.PlanType.Into, creature.AI)),

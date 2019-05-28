@@ -39,7 +39,7 @@ namespace DwarfCorp
             if (!animal.GetRoot().Tags.Contains("DomesticAnimal"))
                 return false;
 
-            var pens = World.PlayerFaction.EnumerateZones().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.IsBuilt &&
+            var pens = World.EnumerateZones().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.IsBuilt &&
                             (pen.Species == "" || pen.Species == creature.Stats.CurrentClass.Name));
 
             if (pens.Any())

@@ -911,7 +911,7 @@ namespace DwarfCorp
                     ; // RestockAll generates tasks for the dwarf.           
 
             if (!IsPosessed &&
-                (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()) &&
+                (GatherManager.StockOrders.Count == 0 || !World.HasFreeStockpile()) &&
                 (GatherManager.StockMoneyOrders.Count == 0)
                 && Tasks.Count == 0)
             {
@@ -1015,18 +1015,16 @@ namespace DwarfCorp
             // If we have no more build orders, look for gather orders
             if (GatherManager.StockOrders.Count > 0)
             {
-                GatherManager.StockOrder order = GatherManager.StockOrders[0];
-                if (Faction.HasFreeStockpile(order.Resource))
+                var order = GatherManager.StockOrders[0];
+                if (World.HasFreeStockpile(order.Resource))
                 {
                     GatherManager.StockOrders.RemoveAt(0);
-                    StockResourceTask task = new StockResourceTask(order.Resource.CloneResource())
+                    var task = new StockResourceTask(order.Resource.CloneResource())
                     {
                         Priority = Task.PriorityType.Medium
                     };
                     if (task.IsFeasible(this.Creature) != Task.Feasibility.Infeasible)
-                    {
                         return task;
-                    }
                 }
             }
             

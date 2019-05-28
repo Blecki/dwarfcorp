@@ -106,7 +106,37 @@ namespace DwarfCorp
             }
         }
 
-       
+        public Zone FindNearestZone(Vector3 position)
+        {
+            Zone desiredRoom = null;
+            float nearestDistance = float.MaxValue;
+
+            foreach (var room in EnumerateZones())
+            {
+                if (room.Voxels.Count == 0) continue;
+                float dist =
+                    (room.GetNearestVoxel(position).WorldPosition - position).LengthSquared();
+
+                if (dist < nearestDistance)
+                {
+                    nearestDistance = dist;
+                    desiredRoom = room;
+                }
+            }
+
+
+            return desiredRoom;
+        }
+
+        public bool HasFreeStockpile()
+        {
+            return EnumerateZones().Any(s => s.IsBuilt && !s.IsFull());
+        }
+
+        public bool HasFreeStockpile(ResourceAmount toPut)
+        {
+            return EnumerateZones().Any(s => s.IsBuilt && !s.IsFull() && s is Stockpile && (s as Stockpile).IsAllowed(toPut.Type));
+        }
 
     }
 }

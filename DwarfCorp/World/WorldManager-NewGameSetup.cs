@@ -34,7 +34,7 @@ namespace DwarfCorp
             PlayerFaction.Economy.Funds = Settings.OverworldSettings.InitalEmbarkment.Money;
 
             foreach (var res in Settings.OverworldSettings.InitalEmbarkment.Resources)
-                PlayerFaction.AddResources(new ResourceAmount(res.Key, res.Value));
+                AddResources(new ResourceAmount(res.Key, res.Value));
 
             var portBox = port.GetBoundingBox();
 

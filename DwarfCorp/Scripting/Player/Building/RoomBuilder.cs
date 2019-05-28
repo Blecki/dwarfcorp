@@ -301,7 +301,7 @@ namespace DwarfCorp
             foreach (BuildRoomOrder order in BuildDesignations)
                 order.SetTint(Color.White);
             
-            foreach (var room in Faction.EnumerateZones())
+            foreach (var room in World.EnumerateZones())
                 room.SetTint(Color.White);
             
             if (CurrentRoomData == null)
@@ -344,7 +344,7 @@ namespace DwarfCorp
             foreach (BuildRoomOrder order in BuildDesignations)
                 order.SetTint(Color.White);
 
-            foreach (var room in Faction.EnumerateZones())
+            foreach (var room in World.EnumerateZones()) // Todo: Doesn't this loopback? L-O-L.
                 room.SetTint(Color.White);
 
             if(CurrentRoomData == null)

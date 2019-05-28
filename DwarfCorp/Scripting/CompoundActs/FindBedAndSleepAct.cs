@@ -36,7 +36,7 @@ namespace DwarfCorp
         public override void Initialize()
         {
             GameComponent closestItem = Agent.Faction.FindNearestItemWithTags("Bed", Agent.Position, true, Agent);
-            Zone closestZone = Agent.Faction.GetNearestRoom(Agent.Position);
+            Zone closestZone = Agent.World.FindNearestZone(Agent.Position);
            
             if (!Agent.Stats.Energy.IsSatisfied() && closestItem != null)
             {

@@ -82,7 +82,7 @@ namespace DwarfCorp
             if (agent.AI.Stats.IsAsleep)
                 return Feasibility.Infeasible;
 
-            return agent.Faction.HasFreeStockpile(EntityToGather) && 
+            return agent.World.HasFreeStockpile(EntityToGather) && 
                 !agent.AI.Movement.IsSessile && agent.Inventory.HasResource(EntityToGather) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 

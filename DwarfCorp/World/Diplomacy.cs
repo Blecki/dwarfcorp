@@ -279,7 +279,7 @@ namespace DwarfCorp
 
         public TradeEnvoy SendTradeEnvoy(Faction natives, WorldManager world)
         {
-            if (!world.PlayerFaction.EnumerateZones().Any(room => room is BalloonPort && room.IsBuilt))
+            if (!world.EnumerateZones().Any(room => room is BalloonPort && room.IsBuilt))
             {
                 world.MakeAnnouncement(String.Format("Trade envoy from {0} left: No balloon port!", natives.ParentFaction.Name));
                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.15f);

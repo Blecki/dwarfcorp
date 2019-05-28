@@ -133,8 +133,8 @@ namespace DwarfCorp.Gui.Widgets.Minimap
 
                 if (!HomeSet)
                 {
-                    if (World.PlayerFaction.EnumerateZones().Count() > 0)
-                        HomePosition = World.PlayerFaction.EnumerateZones().First().GetBoundingBox().Center();
+                    if (World.EnumerateZones().Any())
+                        HomePosition = World.EnumerateZones().First().GetBoundingBox().Center();
                     HomeSet = true;
                 }
 

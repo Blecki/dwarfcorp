@@ -76,12 +76,12 @@ namespace DwarfCorp
 
         public AnimalPen GetClosestPen(Creature agent)
         {
-            if (LastPen != null && (LastPen.Species == "" || LastPen.Species == Animal.Stats.CurrentClass.Name) && agent.Faction.EnumerateZones().Contains(LastPen) && LastPen.IsBuilt)
+            if (LastPen != null && (LastPen.Species == "" || LastPen.Species == Animal.Stats.CurrentClass.Name) && agent.World.EnumerateZones().Contains(LastPen) && LastPen.IsBuilt)
             {
                 return LastPen;
             }
 
-            var pens = agent.Faction.EnumerateZones().Where(room => room is AnimalPen && room.IsBuilt).Cast<AnimalPen>().Where(pen => pen.Species == "" || pen.Species == Animal.Stats.CurrentClass.Name);
+            var pens = agent.World.EnumerateZones().Where(room => room is AnimalPen && room.IsBuilt).Cast<AnimalPen>().Where(pen => pen.Species == "" || pen.Species == Animal.Stats.CurrentClass.Name);
             AnimalPen closestPen = null;
             float closestDist = float.MaxValue;
 

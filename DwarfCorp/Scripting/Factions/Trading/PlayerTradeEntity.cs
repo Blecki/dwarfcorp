@@ -19,7 +19,7 @@ namespace DwarfCorp.Trade
         public Faction TraderFaction { get { return Faction; } }
         public int AvailableSpace { get { return Faction.World.ComputeRemainingStockpileSpace(); } }
         public DwarfBux Money { get { return Faction.Economy.Funds; } }
-        public List<ResourceAmount> Resources { get { return Faction.ListResources().Where(r => 
+        public List<ResourceAmount> Resources { get { return Faction.World.ListResources().Where(r => 
             ResourceLibrary.GetResourceByName(r.Value.Type).MoneyValue > 0).Select(r => r.Value).ToList(); } }
 
         public void AddMoney(DwarfBux Money)
@@ -30,7 +30,7 @@ namespace DwarfCorp.Trade
         public void AddResources(List<ResourceAmount> Resources)
         {
             foreach (var resource in Resources)
-                Faction.AddResources(resource);
+                Faction.World.AddResources(resource);
         }
 
         public DwarfBux ComputeValue(String Resource)

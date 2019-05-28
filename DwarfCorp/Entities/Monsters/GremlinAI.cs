@@ -68,7 +68,7 @@ namespace DwarfCorp
                 }
                 else if (plantBomb)
                 {
-                    var room = World.PlayerFaction.GetNearestRoom(Position);
+                    var room = World.FindNearestZone(Position);
                     if (room != null)
                     {
                         AssignTask(new ActWrapperTask(new Sequence(new GoToZoneAct(this, room), new Do(() => { EntityFactory.CreateEntity<GameComponent>(PlantBomb, Position); return true; }))) { Priority = Task.PriorityType.High });

@@ -1603,7 +1603,7 @@ namespace DwarfCorp.GameStates
                     (widget as FlatToolTray.Tray).ItemSource =
                         (new Widget[] { icon_menu_WallTypes_Return }).Concat(
                         Library.EnumerateVoxelTypes()
-                        .Where(voxel => voxel.IsBuildable && World.PlayerFaction.ListResources().Any(r => voxel.CanBuildWith(ResourceLibrary.GetResourceByName(r.Value.Type))))
+                        .Where(voxel => voxel.IsBuildable && World.ListResources().Any(r => voxel.CanBuildWith(ResourceLibrary.GetResourceByName(r.Value.Type))))
                         .Select(data => new FlatToolTray.Icon
                         {
                             Tooltip = "Build " + data.Name,
@@ -1653,7 +1653,7 @@ namespace DwarfCorp.GameStates
                     (widget as FlatToolTray.Tray).ItemSource =
                         (new Widget[] { icon_menu_WallTypes_Return }).Concat(
                         Library.EnumerateVoxelTypes()
-                        .Where(voxel => voxel.IsBuildable && World.PlayerFaction.ListResources().Any(r => voxel.CanBuildWith(ResourceLibrary.GetResourceByName(r.Value.Type))))
+                        .Where(voxel => voxel.IsBuildable && World.ListResources().Any(r => voxel.CanBuildWith(ResourceLibrary.GetResourceByName(r.Value.Type))))
                         .Select(data => new FlatToolTray.Icon
                         {
                             Tooltip = "Build " + data.Name,

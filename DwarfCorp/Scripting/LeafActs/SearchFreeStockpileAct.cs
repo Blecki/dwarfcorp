@@ -85,7 +85,7 @@ namespace DwarfCorp
             List<Zone> sortedPiles;
 
                 sortedPiles =
-                    new List<Zone>(Creature.Faction.EnumerateZones().Where(pile => pile is Stockpile && (pile as Stockpile).IsAllowed(Item.Type)));
+                    new List<Zone>(Creature.World.EnumerateZones().Where(pile => pile is Stockpile && (pile as Stockpile).IsAllowed(Item.Type)));
                 sortedPiles.Sort(CompareStockpiles);
 
             foreach (Zone s in sortedPiles)

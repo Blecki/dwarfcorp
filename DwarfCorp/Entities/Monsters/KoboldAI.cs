@@ -32,7 +32,7 @@ namespace DwarfCorp
                 //    AssignTask(new ActWrapperTask(new GetMoneyAct(this, 100m, World.PlayerFaction)) { Name = "Steal money", Priority = Task.PriorityType.High });
                 //else
                 //{
-                    var resources = World.PlayerFaction.ListResources();
+                    var resources = World.ListResources();
                     if (resources.Count > 0)
                     {
                         var resource = Datastructures.SelectRandom(resources);

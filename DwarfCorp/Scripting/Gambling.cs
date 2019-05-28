@@ -117,7 +117,7 @@ namespace DwarfCorp.Scripting
             {
                 if (Participants.Count == 0)
                 {
-                    var zone = creature.Faction.GetNearestRoom(creature.AI.Position);
+                    var zone = creature.World.FindNearestZone(creature.AI.Position);
                     var obj = creature.Faction.OwnedObjects.Where(b => b.Tags.Contains("Table")).OrderBy(b => (b.Position - creature.AI.Position).LengthSquared()).FirstOrDefault();
                     if (obj == null && zone == null)
                     {

@@ -213,7 +213,7 @@ namespace DwarfCorp
 
         public List<ResourceAmount> ListResourcesWithTag(Resource.ResourceTags tag, bool allowHeterogenous = true)
         {
-            var resources = PlayerFaction.ListResources();
+            var resources = ListResources();
 
             if (allowHeterogenous)
             {
@@ -234,5 +234,77 @@ namespace DwarfCorp
             }
             return maxAmount != null ? new List<ResourceAmount>() { maxAmount } : new List<ResourceAmount>();
         }
+
+        public Dictionary<string, ResourceAmount> ListResources()
+        {
+            var toReturn = new Dictionary<string, ResourceAmount>();
+
+            foreach (var stockpile in EnumerateZones())
+            {
+                foreach (var resource in stockpile.Resources.Enumerate())
+                {
+                    if (resource.Count == 0)
+                        continue;
+
+                    if (toReturn.ContainsKey(resource.Type))
+                        toReturn[resource.Type].Count += resource.Count;
+                    else
+                        toReturn[resource.Type] = new ResourceAmount(resource);
+                }
+            }
+
+            return toReturn;
+        }
+
+        public bool AddResources(ResourceAmount resources)
+        {
+            var amount = new ResourceAmount(resources.Type, resources.Count);
+            var resource = ResourceLibrary.GetResourceByName(amount.Type);
+
+            foreach (Stockpile stockpile in EnumerateZones().Where(s => s is Stockpile && (s as Stockpile).IsAllowed(resources.Type)))
+            {
+                int space = stockpile.Resources.MaxResources - stockpile.Resources.CurrentResourceCount;
+
+                if (space >= amount.Count)
+                {
+                    stockpile.Resources.AddResource(amount);
+                    stockpile.HandleBoxes();
+                    foreach (var tag in resource.Tags)
+                    {
+                        if (!PlayerFaction.CachedResourceTagCounts.ContainsKey(tag))
+                        {
+                            PlayerFaction.CachedResourceTagCounts[tag] = 0;
+                        }
+                        PlayerFaction.CachedResourceTagCounts[tag] += amount.Count;
+                    }
+                    PlayerFaction.RecomputeCachedVoxelstate();
+                    return true;
+                }
+                else
+                {
+                    var amountToMove = space;
+                    stockpile.Resources.AddResource(new ResourceAmount(resources.Type, amountToMove));
+                    amount.Count -= amountToMove;
+
+                    stockpile.HandleBoxes();
+                    foreach (var tag in resource.Tags)
+                    {
+                        if (!PlayerFaction.CachedResourceTagCounts.ContainsKey(tag))
+                        {
+                            PlayerFaction.CachedResourceTagCounts[tag] = 0;
+                        }
+                        PlayerFaction.CachedResourceTagCounts[tag] += amountToMove;
+                    }
+                    PlayerFaction.RecomputeCachedVoxelstate();
+                    if (amount.Count == 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
     }
 }

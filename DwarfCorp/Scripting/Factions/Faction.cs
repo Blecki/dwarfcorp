@@ -247,79 +247,6 @@ namespace DwarfCorp
             TaskManager.AssignTasksGreedy(tasks, Minions);
         }
 
-        public IEnumerable<Zone> EnumerateZones() // Todo: Belongs to world manager??
-        {
-            if (World.RoomBuilder != null) 
-                foreach (var room in World.RoomBuilder.Zones) 
-                    yield return room;
-            yield break;
-        }
-
-        public bool AddResources(ResourceAmount resources)
-        {
-            var amount = new ResourceAmount(resources.Type, resources.Count);
-            var resource = ResourceLibrary.GetResourceByName(amount.Type);
-            foreach (Stockpile stockpile in EnumerateZones().Where(s => s is Stockpile && (s as Stockpile).IsAllowed(resources.Type)))
-            {
-                int space = stockpile.Resources.MaxResources - stockpile.Resources.CurrentResourceCount;
-
-                if (space >= amount.Count)
-                {
-                    stockpile.Resources.AddResource(amount);
-                    stockpile.HandleBoxes();
-                    foreach (var tag in resource.Tags)
-                    {
-                        if (!CachedResourceTagCounts.ContainsKey(tag))
-                        {
-                            CachedResourceTagCounts[tag] = 0;
-                        }
-                        CachedResourceTagCounts[tag] += amount.Count;
-                    }
-                    RecomputeCachedVoxelstate();
-                    return true;
-                }
-                else
-                {
-                    var amountToMove = space;
-                    stockpile.Resources.AddResource(new ResourceAmount(resources.Type, amountToMove));
-                    amount.Count -= amountToMove;
-
-                    stockpile.HandleBoxes();
-                    foreach (var tag in resource.Tags)
-                    {
-                        if (!CachedResourceTagCounts.ContainsKey(tag))
-                        {
-                            CachedResourceTagCounts[tag] = 0;
-                        }
-                        CachedResourceTagCounts[tag] += amountToMove;
-                    }
-                    RecomputeCachedVoxelstate();
-                    if (amount.Count == 0)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-
-        public List<Zone> GetIntersectingRooms(BoundingBox v)
-        {
-            return EnumerateZones().Where(room => room.Intersects(v)).ToList();
-        }
-
-        public bool HasFreeStockpile()
-        {
-            return EnumerateZones().Any(s => s.IsBuilt && !s.IsFull());
-        }
-
-        public bool HasFreeStockpile(ResourceAmount toPut)
-        {
-            return EnumerateZones().Any(s => s.IsBuilt && !s.IsFull() && s is Stockpile && (s as Stockpile).IsAllowed(toPut.Type));
-        }
-
         public GameComponent FindNearestItemWithTags(string tag, Vector3 location, bool filterReserved, GameComponent queryObject)
         {
             GameComponent closestItem = null;
@@ -362,7 +289,7 @@ namespace DwarfCorp
 
         public Dictionary<string, Pair<ResourceAmount>> ListResourcesInStockpilesPlusMinions()
         {
-            var stocks = ListResources();
+            var stocks = World.ListResources();
             var toReturn = new Dictionary<string, Pair<ResourceAmount>>();
 
             foreach (var pair in stocks)
@@ -383,28 +310,7 @@ namespace DwarfCorp
 
             return toReturn;
         }
-
-        public Dictionary<string, ResourceAmount> ListResources()
-        {
-            var toReturn = new Dictionary<string, ResourceAmount>();
-
-            foreach (var stockpile in EnumerateZones())
-            {
-                foreach (var resource in stockpile.Resources.Enumerate())
-                {
-                    if (resource.Count == 0)
-                        continue;
-
-                    if (toReturn.ContainsKey(resource.Type))
-                        toReturn[resource.Type].Count += resource.Count;
-                    else
-                        toReturn[resource.Type] = new ResourceAmount(resource);
-                }
-            }
-
-            return toReturn;
-        }
-
+        
         public void RecomputeCachedVoxelstate()
         {
             foreach (var type in Library.EnumerateVoxelTypes())
@@ -417,7 +323,7 @@ namespace DwarfCorp
         public void RecomputeCachedResourceState()
         {
             CachedResourceTagCounts.Clear();
-            foreach (var resource in ListResources())
+            foreach (var resource in World.ListResources())
             {
                 var type = ResourceLibrary.GetResourceByName(resource.Key);
                
@@ -474,7 +380,7 @@ namespace DwarfCorp
 
         public void HireImmediately(Applicant currentApplicant)
         {
-            var rooms = EnumerateZones().Where(room => room.Type.Name == "Balloon Port").ToList();
+            var rooms = World.EnumerateZones().Where(room => room.Type.Name == "Balloon Port").ToList();
             Vector3 spawnLoc = World.Renderer.Camera.Position;
             if (rooms.Count > 0)
             {
@@ -514,7 +420,7 @@ namespace DwarfCorp
 
         public GameComponent DispatchBalloon()
         {
-            var rooms = EnumerateZones().Where(room => room.Type.Name == "Balloon Port").ToList();
+            var rooms = World.EnumerateZones().Where(room => room.Type.Name == "Balloon Port").ToList();
 
             if (rooms.Count == 0)
                 return null;
@@ -523,75 +429,9 @@ namespace DwarfCorp
             return Balloon.CreateBalloon(pos + new Vector3(0, 1000, 0), pos + Vector3.UnitY * 15, World.ComponentManager, this);
         }
 
-        public List<GameComponent> GenerateRandomSpawn(int numCreatures, Vector3 position)
-        {
-            if (Race.CreatureTypes.Count == 0)
-            {
-                return new List<GameComponent>();
-            }
-
-            List<GameComponent> toReturn = new List<GameComponent>();
-            for (int i = 0; i < numCreatures; i++)
-            {
-                string creature = Race.CreatureTypes[MathFunctions.Random.Next(Race.CreatureTypes.Count)];
-                Vector3 offset = MathFunctions.RandVector3Cube() * 2;
-
-                var voxelUnder = VoxelHelpers.FindFirstVoxelBelowIncludingWater(new VoxelHandle(
-                    World.ChunkManager, GlobalVoxelCoordinate.FromVector3(position + offset)));
-                if (voxelUnder.IsValid)
-                {
-                    var body = EntityFactory.CreateEntity<GameComponent>(creature, voxelUnder.WorldPosition + new Vector3(0.5f, 1, 0.5f));
-                    var ai = body.EnumerateAll().OfType<CreatureAI>().FirstOrDefault();
-
-                    if (ai != null)
-                    {
-                        ai.Faction.Minions.Remove(ai);
-
-                        Minions.Add(ai);
-                        ai.Creature.Faction = this;
-                    }
-
-                    toReturn.Add(body);
-                }
-            }
-
-            return toReturn;
-        }
-
-
-        public Zone GetNearestRoom(Vector3 position)
-        {
-            Zone desiredRoom = null;
-            float nearestDistance = float.MaxValue;
-
-            foreach (var room in EnumerateZones())
-            {
-                if (room.Voxels.Count == 0) continue;
-                float dist =
-                    (room.GetNearestVoxel(position).WorldPosition - position).LengthSquared();
-
-                if (dist < nearestDistance)
-                {
-                    nearestDistance = dist;
-                    desiredRoom = room;
-                }
-            }
-
-
-            return desiredRoom;
-        }
-
         public void AddMinion(CreatureAI minion)
         {
             Minions.Add(minion);
-        }
-
-        public void AddMoney(DwarfBux money)
-        {
-            if (money == 0.0m)
-                return;
-
-                Economy.Funds += money;
         }
 
         public int CalculateSupervisionCap()
@@ -649,5 +489,49 @@ namespace DwarfCorp
         {
             return (Minions.Count > 0) && Minions.All(minion => !minion.Active || ((!minion.Stats.Species.CanSleep || minion.Creature.Stats.IsAsleep) && !minion.IsDead));
         }
+
+
+        public List<GameComponent> GenerateRandomSpawn(int numCreatures, Vector3 position)
+        {
+            if (Race.CreatureTypes.Count == 0)
+            {
+                return new List<GameComponent>();
+            }
+
+            List<GameComponent> toReturn = new List<GameComponent>();
+            for (int i = 0; i < numCreatures; i++)
+            {
+                string creature = Race.CreatureTypes[MathFunctions.Random.Next(Race.CreatureTypes.Count)];
+                Vector3 offset = MathFunctions.RandVector3Cube() * 2;
+
+                var voxelUnder = VoxelHelpers.FindFirstVoxelBelowIncludingWater(new VoxelHandle(
+                    World.ChunkManager, GlobalVoxelCoordinate.FromVector3(position + offset)));
+                if (voxelUnder.IsValid)
+                {
+                    var body = EntityFactory.CreateEntity<GameComponent>(creature, voxelUnder.WorldPosition + new Vector3(0.5f, 1, 0.5f));
+                    var ai = body.EnumerateAll().OfType<CreatureAI>().FirstOrDefault();
+
+                    if (ai != null)
+                    {
+                        ai.Faction.Minions.Remove(ai);
+
+                        Minions.Add(ai);
+                        ai.Creature.Faction = this;
+                    }
+
+                    toReturn.Add(body);
+                }
+            }
+
+            return toReturn;
+        }
+        public void AddMoney(DwarfBux money)
+        {
+            if (money == 0.0m)
+                return;
+
+            Economy.Funds += money;
+        }
+
     }
 }

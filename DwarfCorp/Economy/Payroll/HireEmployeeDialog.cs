@@ -146,7 +146,7 @@ namespace DwarfCorp.Gui.Widgets
                             {
                                 Text = "We can't afford the signing bonus!",
                             }));
-                        else if (!Faction.EnumerateZones().Any(r => r.Type.Name == "Balloon Port"))
+                        else if (!Faction.World.EnumerateZones().Any(r => r.Type.Name == "Balloon Port"))
                             Root.ShowModalPopup(Root.ConstructWidget(new Gui.Widgets.Popup
                             {
                                 Text = "We need a balloon port to hire someone.",

@@ -202,7 +202,7 @@ namespace DwarfCorp.Events
             {
                 case EntitySpawnLocation.BalloonPort:
                     {
-                        var balloonport = world.PlayerFaction.EnumerateZones().OfType<BalloonPort>();
+                        var balloonport = world.EnumerateZones().OfType<BalloonPort>();
                         if (balloonport.Any())
                         {
                             location = Datastructures.SelectRandom(balloonport).GetBoundingBox().Center() + Microsoft.Xna.Framework.Vector3.Up * 1.5f;
@@ -211,7 +211,7 @@ namespace DwarfCorp.Events
                     }
                 case EntitySpawnLocation.RandomZone:
                     {
-                        var zones = world.PlayerFaction.EnumerateZones();
+                        var zones = world.EnumerateZones();
                         if (zones.Any())
                         {
                             location = Datastructures.SelectRandom(zones).GetBoundingBox().Center() + Microsoft.Xna.Framework.Vector3.Up * 1.5f;

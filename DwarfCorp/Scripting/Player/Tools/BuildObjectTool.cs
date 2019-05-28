@@ -125,7 +125,7 @@ namespace DwarfCorp
 
         private bool HandlePlaceExistingUpdate()
         {
-            var resources = World.PlayerFaction.ListResources().Where(r => ResourceLibrary.GetResourceByName(r.Value.Type).CraftInfo.CraftItemType == CraftType.Name).ToList();
+            var resources = World.ListResources().Where(r => ResourceLibrary.GetResourceByName(r.Value.Type).CraftInfo.CraftItemType == CraftType.Name).ToList();
 
             var toPlace = World.PlayerFaction.Designations.EnumerateEntityDesignations().Where(designation => designation.Type == DesignationType.Craft &&
                 ((CraftDesignation)designation.Tag).ItemType.Name == CraftType.Name).ToList();
