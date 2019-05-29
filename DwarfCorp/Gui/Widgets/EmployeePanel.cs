@@ -9,7 +9,7 @@ namespace DwarfCorp.Gui.Widgets
 {
     public class EmployeePanel : Columns
     {
-        public Faction Faction;
+        public WorldManager World;
         private Gui.Widgets.WidgetListView EmployeeList;
 
         private void RebuildEmployeeList()
@@ -24,9 +24,9 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     // Show hire dialog.
                     var dialog = Root.ConstructWidget(
-                        new HireEmployeeDialog(Faction.Economy.Information)
+                        new HireEmployeeDialog(World.PlayerFaction.Economy.Information)
                         {
-                            Faction = Faction,
+                            World = World,
                             OnClose = (_s) =>
                             {
                                 EmployeeList.Hidden = false;
@@ -34,12 +34,12 @@ namespace DwarfCorp.Gui.Widgets
                             }
                         });
                     Root.ShowModalPopup(dialog);
-                    Faction.World.Tutorial("hire");
+                    World.Tutorial("hire");
                     EmployeeList.Hidden = true;
                 }
             });
 
-            foreach (var employee in Faction.Minions)
+            foreach (var employee in World.PlayerFaction.Minions)
             {
                 var bar = Root.ConstructWidget(new Widget
                 {
@@ -97,10 +97,10 @@ namespace DwarfCorp.Gui.Widgets
                 OnSelectedIndexChanged = (sender) =>
                 {
                     if ((sender as Gui.Widgets.WidgetListView).SelectedIndex > 0 &&
-                        (sender as Gui.Widgets.WidgetListView).SelectedIndex <= Faction.Minions.Count)
+                        (sender as Gui.Widgets.WidgetListView).SelectedIndex <= World.PlayerFaction.Minions.Count)
                     {
                         right.Hidden = false;
-                        right.Employee = Faction.Minions[(sender as Gui.Widgets.WidgetListView).SelectedIndex - 1];
+                        right.Employee = World.PlayerFaction.Minions[(sender as Gui.Widgets.WidgetListView).SelectedIndex - 1];
                     }
                     else
                         right.Hidden = true;

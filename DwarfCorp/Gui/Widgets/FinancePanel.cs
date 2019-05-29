@@ -7,49 +7,6 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Gui.Widgets
 {
-    public class StatsTracker
-    {
-        public class Stat
-        {
-            private const int MaxStats = 1024;
-
-            public struct Entry
-            {
-                public DateTime Date;
-                public float Value;
-            }
-            public List<Entry> Values = new List<Entry>();
-            public void Add(DateTime now, float value)
-            {
-                if (Values.Count > 0 && (now - Values.Last().Date) < new TimeSpan(0, 1, 0, 0, 0))
-                {
-                    return;
-                }
-                Values.Add(new Entry()
-                {
-                    Date = now,
-                    Value = value
-                });
-
-                if (Values.Count > MaxStats)
-                {
-                    Values.RemoveAt(0);
-                }
-            }
-        }
-
-        public Dictionary<string, Stat> GameStats = new Dictionary<string, Stat>();
-
-        public void AddStat(string name, DateTime time, float value)
-        {
-            if (!GameStats.ContainsKey(name))
-            {
-                GameStats.Add(name, new Stat());
-            }
-            GameStats[name].Add(time, value);
-        }
-
-    }
     public class FinancePanel : Gui.Widget
     {
         public Faction Faction;
@@ -110,7 +67,7 @@ namespace DwarfCorp.Gui.Widgets
                 numrows = 0;
                 InfoWidget.Clear();
                 AddRow("Liquid assets:", Faction.Economy.Funds.ToString());
-                var resources = Faction.ListResourcesInStockpilesPlusMinions();
+                var resources = World.ListResourcesInStockpilesPlusMinions();
                 AddRow("Material assets:", String.Format("{0} goods valued at ${1}", resources.Values.Select(r => r.First.Count + r.Second.Count).Sum(),
                     resources.Values.Select(r =>
                     {

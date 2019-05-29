@@ -117,6 +117,7 @@
     <Compile Include="GameStates\Play\SelectEmployeesDialog.cs" />
     <Compile Include="GameStates\Play\SelectResourcesDialog.cs" />
     <Compile Include="GameStates\WorldGeneration\SimpleOrbitCamera.cs" />
+    <Compile Include="Gui\Widgets\StatsTracker.cs" />
     <Compile Include="LogWriter.cs" />
     <Compile Include="EventLog.cs" />
     <Compile Include="EventLogState.cs" />
@@ -844,6 +845,8 @@
     <Compile Include=".\World\WorldManager.cs" />
     <Compile Include=".\World\WorldTime.cs" />
     <Compile Include="Voxels\Generation\GenerateOres.cs" />
+    <Compile Include="World\PersistentWorldData.cs" />
+    <Compile Include="World\WorldManager-Employees.cs" />
     <Compile Include="World\WorldManager-Zones.cs" />
     <Compile Include="World\WorldManager-Resources.cs" />
     <Compile Include="World\WorldManager-Saving.cs" />

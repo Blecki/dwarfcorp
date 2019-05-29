@@ -87,7 +87,7 @@ namespace DwarfCorp
             if (tasks.Count > 0)
             {
                 World.TaskManager.AddTasks(tasks);
-                OnConfirm(World.PlayerFaction.SelectedMinions);
+                OnConfirm(World.PersistentData.SelectedMinions);
             }
         }
 

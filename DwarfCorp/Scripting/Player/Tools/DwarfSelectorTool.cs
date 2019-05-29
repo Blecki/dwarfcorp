@@ -62,7 +62,7 @@ namespace DwarfCorp
             if (!vox.IsValid)
                 return;
 
-            foreach(CreatureAI minion in World.PlayerFaction.SelectedMinions)
+            foreach(CreatureAI minion in World.PersistentData.SelectedMinions)
             {
                 if (minion.Creature.Stats.IsAsleep) continue;
                 if(minion.CurrentTask != null)
@@ -75,9 +75,9 @@ namespace DwarfCorp
                 minion.CurrentTask.AutoRetry = false;
                 minion.CurrentTask.Priority = Task.PriorityType.Urgent;
             }
-            OnConfirm(World.PlayerFaction.SelectedMinions);
+            OnConfirm(World.PersistentData.SelectedMinions);
 
-            if (World.PlayerFaction.SelectedMinions.Count > 0)
+            if (World.PersistentData.SelectedMinions.Count > 0)
                 IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.DownArrow, vox.WorldPosition + Vector3.One * 0.5f, 0.5f, 2.0f, new Vector2(0, -50), Color.LightGreen);
         }
 
@@ -102,7 +102,7 @@ namespace DwarfCorp
                 return false;
 
             Creature dwarf = dwarves[0];
-            return dwarf.Faction == World.PlayerFaction && !World.PlayerFaction.SelectedMinions.Contains(dwarf.AI);
+            return dwarf.Faction == World.PlayerFaction && !World.PersistentData.SelectedMinions.Contains(dwarf.AI);
         }
 
         bool IsDwarf(GameComponent body)
@@ -123,7 +123,7 @@ namespace DwarfCorp
             KeyboardState keyState = Keyboard.GetState();
 
             if(!keyState.IsKeyDown(Keys.LeftShift))
-                World.PlayerFaction.SelectedMinions.Clear();
+                World.PersistentData.SelectedMinions.Clear();
 
             var newDwarves = new List<CreatureAI>();
 
@@ -131,7 +131,7 @@ namespace DwarfCorp
             {
                 if (IsNotSelectedDwarf(body))
                 {
-                    World.PlayerFaction.SelectedMinions.Add(body.GetRoot().GetComponent<CreatureAI>());
+                    World.PersistentData.SelectedMinions.Add(body.GetRoot().GetComponent<CreatureAI>());
                     newDwarves.Add(body.GetRoot().GetComponent<CreatureAI>());
 
                     World.Tutorial("dwarf selected");

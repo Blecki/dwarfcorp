@@ -62,7 +62,7 @@ namespace DwarfCorp.GameStates
                 Font = "font10",
                 Border = "border-thin",
                 Padding = new Margin(4, 4, 0, 0),
-                Faction = World.PlayerFaction,
+                World = World,
             });
 
             var financePanel = TabPanel.AddTab("Finance", new Gui.Widgets.FinancePanel

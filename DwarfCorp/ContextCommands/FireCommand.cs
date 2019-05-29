@@ -32,7 +32,7 @@ namespace DwarfCorp.ContextCommands
         {
             var creature = Entity.GetComponent<CreatureAI>();
             World.PlayerFaction.Minions.Remove(creature);
-            World.PlayerFaction.SelectedMinions.Remove(creature);
+            World.PersistentData.SelectedMinions.Remove(creature);
             Entity.GetRoot().Delete();
             SoundManager.PlaySound(ContentPaths.Audio.change, 0.5f);
         }

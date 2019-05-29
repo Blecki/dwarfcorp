@@ -77,7 +77,7 @@ namespace DwarfCorp
                 compoundTask.AddSubTasks(assignments);
                 World.TaskManager.AddTask(compoundTask);
 
-                var minions = Faction.FilterMinionsWithCapability(World.PlayerFaction.SelectedMinions, Task.TaskCategory.Dig);
+                var minions = Faction.FilterMinionsWithCapability(World.PersistentData.SelectedMinions, Task.TaskCategory.Dig);
                 OnConfirm(minions);
             }
             else

@@ -388,7 +388,7 @@ namespace DwarfCorp.Gui.Widgets
                                 Employee.World.MakeAnnouncement(Library.GetString("was-fired", Employee.Stats.FullName));
                                 Employee.GetRoot().Delete();
 
-                                Employee.Faction.FireEmployee(Employee);
+                                Employee.World.FireEmployee(Employee);
                             }
                         }
                     }));
@@ -504,7 +504,7 @@ namespace DwarfCorp.Gui.Widgets
                     else
                         idx--;
                     Employee = Employee.Faction.Minions[Math.Abs(idx) % Employee.Faction.Minions.Count];
-                    Employee.World.PlayerFaction.SelectedMinions = new List<CreatureAI>() { Employee };
+                    Employee.World.PersistentData.SelectedMinions = new List<CreatureAI>() { Employee };
                 }
             });
             topbuttons.AddChild(new Widget()
@@ -528,7 +528,7 @@ namespace DwarfCorp.Gui.Widgets
                     else
                         idx++;
                     Employee = Employee.Faction.Minions[idx % Employee.Faction.Minions.Count];
-                    Employee.World.PlayerFaction.SelectedMinions = new List<CreatureAI>() { Employee };
+                    Employee.World.PersistentData.SelectedMinions = new List<CreatureAI>() { Employee };
                 }
             });
 

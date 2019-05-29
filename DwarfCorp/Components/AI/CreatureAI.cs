@@ -494,27 +494,13 @@ namespace DwarfCorp
         }
 
         /// <summary> Update this creature </summary>
-        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera) // Todo: Need to detangle player-specific behavior from general creatures. Should also be performance boost.
         {
             base.Update(gameTime, chunks, camera);
 
             if (!Active)
                 return;
             Creature.NoiseMaker.BasePitch = Stats.VoicePitch;
-            if (Debugger.Switches.DrawPaths)
-            {
-                /*
-                StringBuilder taskString = new StringBuilder();
-                foreach (var task in Tasks)
-                {
-                    taskString.Append(task.Name);
-                    taskString.Append(String.Format(" Feasible: {0}, Cost {1}, Priority {2}", task.IsFeasible(Creature),
-                        task.ComputeCost(Creature), task.Priority));
-                    taskString.Append("\n");
-                }
-                Drawer2D.DrawText(taskString.ToString(), Position, Color.White, Color.Black);
-                */
-            }
 
             AutoGatherTimer.Update(gameTime);
             IdleTimer.Update(gameTime);
@@ -627,7 +613,7 @@ namespace DwarfCorp
                             //GetRoot().Delete();
 
                             Faction.Minions.Remove(this);
-                            Faction.SelectedMinions.Remove(this);
+                            World.PersistentData.SelectedMinions.Remove(this);
 
                             return;
                         }
@@ -910,7 +896,8 @@ namespace DwarfCorp
                 foreach (var status in Creature.RestockAll())
                     ; // RestockAll generates tasks for the dwarf.           
 
-            if (!IsPosessed &&
+            if (Object.ReferenceEquals(Creature.Faction, World.PlayerFaction) // Todo: Why am I checking stockpile space for mourning and training?
+                && !IsPosessed &&
                 (GatherManager.StockOrders.Count == 0 || !World.HasFreeStockpile()) &&
                 (GatherManager.StockMoneyOrders.Count == 0)
                 && Tasks.Count == 0)
@@ -1013,7 +1000,7 @@ namespace DwarfCorp
             }
 
             // If we have no more build orders, look for gather orders
-            if (GatherManager.StockOrders.Count > 0)
+            if (Object.ReferenceEquals(Creature.Faction, World.PlayerFaction) && GatherManager.StockOrders.Count > 0)
             {
                 var order = GatherManager.StockOrders[0];
                 if (World.HasFreeStockpile(order.Resource))

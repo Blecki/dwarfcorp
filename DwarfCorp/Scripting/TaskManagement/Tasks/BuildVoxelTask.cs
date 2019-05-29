@@ -48,9 +48,8 @@ namespace DwarfCorp
                 return Feasibility.Infeasible;
             }
 
-
             var voxtype = Library.GetVoxelType(VoxType);
-            return agent.Faction.CanBuildVoxel(voxtype) ? Feasibility.Feasible : Feasibility.Infeasible;
+            return agent.World.CanBuildVoxel(voxtype) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override bool ShouldDelete(Creature agent)

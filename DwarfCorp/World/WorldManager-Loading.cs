@@ -197,6 +197,9 @@ namespace DwarfCorp
 
             SetLoadingMessage("Loading Entities...");
             gameFile.LoadPlayData(Settings.InstanceSettings.ExistingFile, this);
+
+            PersistentData = gameFile.PlayData.PersistentData;
+
             Renderer.Camera = gameFile.PlayData.Camera;
             Renderer.DesignationDrawer = gameFile.PlayData.Designations;
 
@@ -251,7 +254,7 @@ namespace DwarfCorp
 
             TaskManager = new TaskManager();
             TaskManager.Faction = PlayerFaction;
-            Time.NewDay += (time) => PlayerFaction.PayEmployees();
+            Time.NewDay += (time) => PayEmployees();
 
             DwarfGame.LogSentryBreadcrumb("Loading", "Started new game with an existing file.");
             if (gameFile.PlayData.Tasks != null)
@@ -348,6 +351,7 @@ namespace DwarfCorp
                 MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 0.1f,
                 GameSettings.Default.VertexCullDistance);
 
+            PersistentData = new PersistentWorldData();
             ChunkManager = new ChunkManager(Content, this, WorldSizeInChunks);
             Splasher = new Splasher(ChunkManager);
 
@@ -406,7 +410,7 @@ namespace DwarfCorp
 
             TaskManager = new TaskManager();
             TaskManager.Faction = PlayerFaction;
-            Time.NewDay += (time) => PlayerFaction.PayEmployees();
+            Time.NewDay += (time) => PayEmployees();
 
 
             var generatorSettings = new Generation.GeneratorSettings(MathFunctions.Random.Next(), 0.02f, Settings)

@@ -30,6 +30,7 @@ namespace DwarfCorp
         public Yarn.MemoryVariableStore ConversationMemory;
         public DwarfCorp.Gui.Widgets.StatsTracker Stats;
         public RoomBuilder RoomBuilder;
+        public PersistentWorldData PersistentData;
 
         public static PlayData CreateFromWorld(WorldManager World)
         {
@@ -40,13 +41,13 @@ namespace DwarfCorp
                 TutorialSaveData = World.TutorialManager.GetSaveData(),
                 Diplomacy = World.Diplomacy,
                 Factions = World.Factions,
-                //RoomBuilder = World.RoomBuilder,
                 Resources = ResourceLibrary.Enumerate().Where(r => r.Generated).ToList(),
                 Designations = World.Renderer.DesignationDrawer,
                 Tasks = World.TaskManager,
                 ConversationMemory = World.ConversationMemory,
                 Stats = World.Stats,
-                RoomBuilder = World.RoomBuilder
+                RoomBuilder = World.RoomBuilder,
+                PersistentData = World.PersistentData
             };
         }
     }

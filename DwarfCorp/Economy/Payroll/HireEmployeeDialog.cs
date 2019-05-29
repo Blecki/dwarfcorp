@@ -16,7 +16,7 @@ namespace DwarfCorp.Gui.Widgets
             public Applicant Applicant;
         }
 
-        public Faction Faction;
+        public WorldManager World;
         public CompanyInformation Company;
         private Button HireButton;
         private Dictionary<String, GeneratedApplicant> Applicants = new Dictionary<string, GeneratedApplicant>();
@@ -141,24 +141,24 @@ namespace DwarfCorp.Gui.Widgets
                     var applicant = applicantInfo.Applicant;
                     if (applicant != null)
                     {
-                        if (applicant.Level.Pay * 4 > Faction.Economy.Funds)
+                        if (applicant.Level.Pay * 4 > World.PlayerFaction.Economy.Funds)
                             Root.ShowModalPopup(Root.ConstructWidget(new Gui.Widgets.Popup
                             {
                                 Text = "We can't afford the signing bonus!",
                             }));
-                        else if (!Faction.World.EnumerateZones().Any(r => r.Type.Name == "Balloon Port"))
+                        else if (!World.EnumerateZones().Any(r => r.Type.Name == "Balloon Port"))
                             Root.ShowModalPopup(Root.ConstructWidget(new Gui.Widgets.Popup
                             {
                                 Text = "We need a balloon port to hire someone.",
                             }));
-                        else if (!applicant.Class.Managerial && Faction.CalculateSupervisedEmployees() >= Faction.CalculateSupervisionCap())
+                        else if (!applicant.Class.Managerial && World.CalculateSupervisedEmployees() >= World.CalculateSupervisionCap())
                             Root.ShowModalPopup(Root.ConstructWidget(new Gui.Widgets.Popup
                             {
                                 Text = String.Format("Can't hire any more dwarfs. You need more supervisors!")
                             }));
                         else
                         {
-                            var date = Faction.Hire(applicant, 1);
+                            var date = World.Hire(applicant, 1);
                             SoundManager.PlaySound(ContentPaths.Audio.cash, 0.5f);
                             applicantInfo.Hidden = true;
                             HireButton.Hidden = true;
@@ -167,7 +167,7 @@ namespace DwarfCorp.Gui.Widgets
                                 Text = String.Format("We hired {0}, paying a signing bonus of {1}. They will arrive in about {2} hour(s).",
                                 applicant.Name,
                                 applicant.Level.Pay * 4,
-                                (date - Faction.World.Time.CurrentDate).Hours),
+                                (date - World.Time.CurrentDate).Hours),
                             });
 
                             var newApplicant = GenerateApplicant(Company, applicant.Class.Name);

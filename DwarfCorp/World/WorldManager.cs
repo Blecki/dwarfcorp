@@ -29,8 +29,10 @@ namespace DwarfCorp
     {
         #region fields
 
-        public WorldRenderer Renderer;
         public OverworldGenerationSettings Settings = null;
+        public PersistentWorldData PersistentData = null;
+
+        public WorldRenderer Renderer;
         public ChunkManager ChunkManager = null;
         public ComponentManager ComponentManager = null;
         public Yarn.MemoryVariableStore ConversationMemory = new Yarn.MemoryVariableStore();
@@ -195,7 +197,7 @@ namespace DwarfCorp
         {
             LogStat("Money", (float)(decimal)PlayerFaction.Economy.Funds);
 
-            var resources = PlayerFaction.ListResourcesInStockpilesPlusMinions();
+            var resources = ListResourcesInStockpilesPlusMinions();
             LogStat("Resources", resources.Values.Select(r => r.First.Count + r.Second.Count).Sum());
             LogStat("Resource Value", (float)resources.Values.Select(r =>
             {
@@ -289,10 +291,80 @@ namespace DwarfCorp
                 RoomBuilder.Faction = PlayerFaction;
                 RoomBuilder.Update(gameTime);
 
+                #region Mourn dead minions
+                if (PlayerFaction.Minions.Any(m => m.IsDead && m.TriggersMourning))
+                {
+                    foreach (var minion in PlayerFaction.Minions)
+                    {
+                        minion.Creature.AddThought(Thought.ThoughtType.FriendDied);
+
+                        if (!minion.IsDead) continue;
+
+                        MakeAnnouncement(String.Format("{0} ({1}) died!", minion.Stats.FullName, minion.Stats.CurrentClass.Name));
+                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
+                        Tutorial("death");
+                    }
+                }
+                #endregion
+
+                #region Free stuck minions
+                foreach (var minion in PlayerFaction.Minions)
+                {
+                    if (minion == null) throw new InvalidProgramException("Null minion?");
+                    if (minion.Stats == null) throw new InvalidProgramException("Minion has null status?");
+
+                    if (minion.Stats.IsAsleep)
+                        continue;
+
+                    if (minion.CurrentTask == null)
+                        continue;
+
+                    if (minion.Stats.IsTaskAllowed(Task.TaskCategory.Dig))
+                        minion.Movement.SetCan(MoveType.Dig, GameSettings.Default.AllowAutoDigging);
+
+                    minion.ResetPositionConstraint();
+                }
+                #endregion
+
+                foreach (var body in PlayerFaction.OwnedObjects)
+                    if (body.ReservedFor != null && body.ReservedFor.IsDead)
+                        body.ReservedFor = null;
+
+                #region Manage selection circles
+                PersistentData.SelectedMinions.RemoveAll(m => m.IsDead);
+
+                foreach (var m in PlayerFaction.Minions)
+                {
+                    var selectionCircle = m.GetRoot().GetComponent<SelectionCircle>();
+                    if (selectionCircle != null)
+                        selectionCircle.SetFlagRecursive(GameComponent.Flag.Visible, false);
+                    m.Creature.Sprite.DrawSilhouette = false;
+                };
+
+                foreach (var creature in PersistentData.SelectedMinions)
+                {
+                    var selectionCircle = creature.GetRoot().GetComponent<SelectionCircle>();
+                    if (selectionCircle == null)
+                        selectionCircle = creature.GetRoot().AddChild(new SelectionCircle(creature.Manager)) as SelectionCircle;
+                    selectionCircle.SetFlag(GameComponent.Flag.ShouldSerialize, false);
+                    selectionCircle.SetFlagRecursive(GameComponent.Flag.Visible, true);
+                    creature.Creature.Sprite.DrawSilhouette = true;
+                }
+                #endregion
+
                 Factions.Update(gameTime);
+
+                foreach (var applicant in PersistentData.NewArrivals)
+                    if (Time.CurrentDate >= applicant.ArrivalTime)
+                        HireImmediately(applicant.Applicant);
+
+                PersistentData.NewArrivals.RemoveAll(a => Time.CurrentDate >= a.ArrivalTime);
+
+
+
                 ComponentManager.Update(gameTime, ChunkManager, Renderer.Camera);
                 MonsterSpawner.Update(gameTime);
-                bool allAsleep = PlayerFaction.AreAllEmployeesAsleep();
+                bool allAsleep = AreAllEmployeesAsleep();
 
 #if !UPTIME_TEST
                 if (SleepPrompt == null && allAsleep && !FastForwardToDay && Time.IsNight())
@@ -307,7 +379,7 @@ namespace DwarfCorp
                         },
                         ShouldKeep = () =>
                         {
-                            return FastForwardToDay == false && Time.IsNight() && PlayerFaction.AreAllEmployeesAsleep();
+                            return FastForwardToDay == false && Time.IsNight() && AreAllEmployeesAsleep();
                         }
                     };
                     MakeAnnouncement(SleepPrompt);

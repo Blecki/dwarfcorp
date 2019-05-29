@@ -23,11 +23,14 @@ using System.Diagnostics;
 
 namespace DwarfCorp
 {
+    public partial class PersistentWorldData
+    {
+        public Dictionary<Resource.ResourceTags, int> CachedResourceTagCounts = new Dictionary<Resource.ResourceTags, int>();
+        public Dictionary<string, bool> CachedCanBuildVoxel = new Dictionary<string, bool>();
+    }
+
     public partial class WorldManager
     {
-
-
-
         public bool RemoveResources(ResourceAmount resources, Vector3 position, Zone stock)
         {
             if (!stock.Resources.HasResource(resources))
@@ -42,10 +45,10 @@ namespace DwarfCorp
             (stock as Stockpile).HandleBoxes();
 
             foreach (var tag in resourceType.Tags)
-                if (PlayerFaction.CachedResourceTagCounts.ContainsKey(tag)) // Move cache into worldmanager...
+                if (PersistentData.CachedResourceTagCounts.ContainsKey(tag)) // Move cache into worldmanager...
                 {
-                    PlayerFaction.CachedResourceTagCounts[tag] -= num;
-                    Trace.Assert(PlayerFaction.CachedResourceTagCounts[tag] >= 0);
+                    PersistentData.CachedResourceTagCounts[tag] -= num;
+                    Trace.Assert(PersistentData.CachedResourceTagCounts[tag] >= 0);
                 }
 
             for (int i = 0; i < num; i++)
@@ -59,7 +62,7 @@ namespace DwarfCorp
                 toss.OnComplete += () => newEntity.Die();
             }
 
-            PlayerFaction.RecomputeCachedVoxelstate();
+            RecomputeCachedVoxelstate();
             return true;
         }
 
@@ -88,10 +91,10 @@ namespace DwarfCorp
                     (stock as Stockpile).HandleBoxes();
                     foreach (var tag in resourceType.Tags)
                     {
-                        if (PlayerFaction.CachedResourceTagCounts.ContainsKey(tag))
+                        if (PersistentData.CachedResourceTagCounts.ContainsKey(tag))
                         {
-                            PlayerFaction.CachedResourceTagCounts[tag] -= num;
-                            Trace.Assert(PlayerFaction.CachedResourceTagCounts[tag] >= 0);
+                            PersistentData.CachedResourceTagCounts[tag] -= num;
+                            Trace.Assert(PersistentData.CachedResourceTagCounts[tag] >= 0);
                         }
                     }
 
@@ -102,7 +105,7 @@ namespace DwarfCorp
                 }
             }
 
-            PlayerFaction.RecomputeCachedVoxelstate();
+            RecomputeCachedVoxelstate();
             return true;
         }
 
@@ -271,13 +274,12 @@ namespace DwarfCorp
                     stockpile.HandleBoxes();
                     foreach (var tag in resource.Tags)
                     {
-                        if (!PlayerFaction.CachedResourceTagCounts.ContainsKey(tag))
-                        {
-                            PlayerFaction.CachedResourceTagCounts[tag] = 0;
-                        }
-                        PlayerFaction.CachedResourceTagCounts[tag] += amount.Count;
+                        if (!PersistentData.CachedResourceTagCounts.ContainsKey(tag))
+                            PersistentData.CachedResourceTagCounts[tag] = 0;
+                        PersistentData.CachedResourceTagCounts[tag] += amount.Count;
                     }
-                    PlayerFaction.RecomputeCachedVoxelstate();
+
+                    RecomputeCachedVoxelstate();
                     return true;
                 }
                 else
@@ -289,22 +291,91 @@ namespace DwarfCorp
                     stockpile.HandleBoxes();
                     foreach (var tag in resource.Tags)
                     {
-                        if (!PlayerFaction.CachedResourceTagCounts.ContainsKey(tag))
-                        {
-                            PlayerFaction.CachedResourceTagCounts[tag] = 0;
-                        }
-                        PlayerFaction.CachedResourceTagCounts[tag] += amountToMove;
+                        if (!PersistentData.CachedResourceTagCounts.ContainsKey(tag))
+                            PersistentData.CachedResourceTagCounts[tag] = 0;
+                        PersistentData.CachedResourceTagCounts[tag] += amountToMove;
                     }
-                    PlayerFaction.RecomputeCachedVoxelstate();
+
+                    RecomputeCachedVoxelstate();
+
                     if (amount.Count == 0)
-                    {
                         return true;
-                    }
                 }
             }
 
             return false;
         }
 
+        public Dictionary<string, Pair<ResourceAmount>> ListResourcesInStockpilesPlusMinions()
+        {
+            var stocks = ListResources();
+            var toReturn = new Dictionary<string, Pair<ResourceAmount>>();
+
+            foreach (var pair in stocks)
+                toReturn[pair.Key] = new Pair<ResourceAmount>(pair.Value, new ResourceAmount(pair.Value.Type, 0));
+
+            foreach (var creature in PlayerFaction.Minions)
+            {
+                var inventory = creature.Creature.Inventory;
+                foreach (var i in inventory.Resources)
+                {
+                    var resource = i.Resource;
+                    if (toReturn.ContainsKey(resource))
+                        toReturn[resource].Second.Count += 1;
+                    else
+                        toReturn[resource] = new Pair<ResourceAmount>(new ResourceAmount(resource, 0), new ResourceAmount(resource));
+                }
+            }
+
+            return toReturn;
+        }
+
+        public void RecomputeCachedVoxelstate()
+        {
+            foreach (var type in Library.EnumerateVoxelTypes())
+            {
+                bool nospecialRequried = type.BuildRequirements.Count == 0;
+                PersistentData.CachedCanBuildVoxel[type.Name] = type.IsBuildable && ((nospecialRequried && HasResources(type.ResourceToRelease)) || (!nospecialRequried && HasResourcesCached(type.BuildRequirements)));
+            }
+        }
+
+        public bool HasResourcesCached(IEnumerable<Resource.ResourceTags> resources)
+        {
+            foreach (var resource in resources)
+            {
+                if (!PersistentData.CachedResourceTagCounts.ContainsKey(resource))
+                    return false;
+
+                if (PersistentData.CachedResourceTagCounts[resource] == 0)
+                    return false;
+            }
+
+            return true;
+        }
+
+        public void RecomputeCachedResourceState()
+        {
+            PersistentData.CachedResourceTagCounts.Clear();
+            foreach (var resource in ListResources())
+            {
+                var type = ResourceLibrary.GetResourceByName(resource.Key);
+
+                foreach (var tag in type.Tags)
+                {
+                    Trace.Assert(type.Tags.Count(t => t == tag) == 1);
+                    if (!PersistentData.CachedResourceTagCounts.ContainsKey(tag))
+                        PersistentData.CachedResourceTagCounts[tag] = resource.Value.Count;
+                    else
+                        PersistentData.CachedResourceTagCounts[tag] += resource.Value.Count;
+                }
+            }
+
+            RecomputeCachedVoxelstate();
+        }
+
+        public bool CanBuildVoxel(VoxelType type)
+        {
+            return PersistentData.CachedCanBuildVoxel[type.Name];
+        }
     }
 }

@@ -337,7 +337,7 @@ namespace DwarfCorp.Gui.Widgets
                             new HorizontalMenuTray.MenuItem
                             {
                                 Text = "PAY",
-                                OnClick = (sender, args) => World.PlayerFaction.PayEmployees()
+                                OnClick = (sender, args) => World.PayEmployees()
                             },
                             new HorizontalMenuTray.MenuItem
                             {

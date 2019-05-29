@@ -324,7 +324,15 @@ namespace DwarfCorp
             }
             else
             {
-                GameComponent balloon = world.PlayerFaction.DispatchBalloon();
+                GameComponent balloon = null;
+
+                    var rooms = World.EnumerateZones().Where(room => room.Type.Name == "Balloon Port").ToList();
+
+                if (rooms.Count != 0)
+                {
+                    Vector3 pos = rooms.First().GetBoundingBox().Center();
+                    balloon = Balloon.CreateBalloon(pos + new Vector3(0, 1000, 0), pos + Vector3.UnitY * 15, World.ComponentManager, natives);
+                }
 
                 if (balloon != null)
                 {

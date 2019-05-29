@@ -170,7 +170,7 @@ namespace DwarfCorp
             else
                 component.Die();
 
-            Faction.RecomputeCachedResourceState();
+            World.RecomputeCachedResourceState();
             return worked;
         }
 
@@ -191,14 +191,15 @@ namespace DwarfCorp
 
                 foreach (var tag in resourceType.Tags)
                 {
-                    if (Faction.CachedResourceTagCounts.ContainsKey(tag))
+                    if (World.PersistentData.CachedResourceTagCounts.ContainsKey(tag)) // Todo: Move to World Manager.
                     {
-                        Faction.CachedResourceTagCounts[tag] -= resource.Count;
-                        System.Diagnostics.Trace.Assert(Faction.CachedResourceTagCounts[tag] >= 0);
+                        World.PersistentData.CachedResourceTagCounts[tag] -= resource.Count;
+                        System.Diagnostics.Trace.Assert(World.PersistentData.CachedResourceTagCounts[tag] >= 0);
                     }
                 }
             }
-            Faction.RecomputeCachedVoxelstate();
+
+            World.RecomputeCachedVoxelstate();
 
             base.Destroy();
         }

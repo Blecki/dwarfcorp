@@ -187,7 +187,7 @@ namespace DwarfCorp.Scripting.Adventure
         {
             var owner = creature.World.Factions.Factions[OwnerFaction];
             owner.Minions.Remove(creature);
-            creature.World.PlayerFaction.SelectedMinions.Remove(creature);
+            creature.World.PersistentData.SelectedMinions.Remove(creature);
             creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Active, false);
             creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
         }

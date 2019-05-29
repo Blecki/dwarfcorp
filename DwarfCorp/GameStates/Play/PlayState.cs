@@ -435,7 +435,7 @@ namespace DwarfCorp.GameStates
                     {
                         if (PausePanel == null || PausePanel.Hidden)
                         {
-                            World.PlayerFaction.SelectedMinions.AddRange(World.PlayerFaction.Minions);
+                            World.PersistentData.SelectedMinions.AddRange(World.PlayerFaction.Minions);
                             World.Tutorial("dwarf selected");
                         }
                     }
@@ -635,7 +635,7 @@ namespace DwarfCorp.GameStates
             StocksLabel.Invalidate();
             LevelLabel.Text = String.Format("{0}/{1}", Renderer.PersistentSettings.MaxViewingLevel, World.WorldSizeInVoxels.Y);
             LevelLabel.Invalidate();
-            SupervisionLabel.Text = String.Format("{0}/{1}", World.PlayerFaction.Minions.Count, World.PlayerFaction.CalculateSupervisionCap());
+            SupervisionLabel.Text = String.Format("{0}/{1}", World.PlayerFaction.Minions.Count, World.CalculateSupervisionCap());
             SupervisionLabel.Invalidate();
             #endregion
 
@@ -671,12 +671,12 @@ namespace DwarfCorp.GameStates
 
             #region select employee
 
-            World.PlayerFaction.SelectedMinions.RemoveAll(minion => minion.IsDead);
-            if (World.PlayerFaction.SelectedMinions.Count == 1)
+            World.PersistentData.SelectedMinions.RemoveAll(minion => minion.IsDead);
+            if (World.PersistentData.SelectedMinions.Count == 1)
             {
                 // Lol this is evil just trying to reduce the update rate for speed
                 if (MathFunctions.RandEvent(0.1f))
-                    SelectedEmployeeInfo.Employee = World.PlayerFaction.SelectedMinions[0];
+                    SelectedEmployeeInfo.Employee = World.PersistentData.SelectedMinions[0];
             }
             else
             {
@@ -761,7 +761,7 @@ namespace DwarfCorp.GameStates
 
                 CurrentTool.Render2D(Game, gameTime);
 
-                foreach (CreatureAI creature in World.PlayerFaction.SelectedMinions)
+                foreach (CreatureAI creature in World.PersistentData.SelectedMinions)
                 {
                     foreach (Task task in creature.Tasks)
                         if (task.IsFeasible(creature.Creature) == Task.Feasibility.Feasible)
@@ -825,7 +825,7 @@ namespace DwarfCorp.GameStates
                 numResources = 0;
             }
 
-            var resourceCount = World.PlayerFaction.ListResourcesInStockpilesPlusMinions()
+            var resourceCount = World.ListResourcesInStockpilesPlusMinions()
                 .Where(r => data.CanBuildWith(ResourceLibrary.GetResourceByName(r.Key))).Sum(r => r.Value.First.Count + r.Value.Second.Count);
 
             int newNum = Math.Max(resourceCount -
@@ -2826,7 +2826,7 @@ namespace DwarfCorp.GameStates
                 return;
 
             KeyboardState keyState = Keyboard.GetState();
-            if (World.PlayerFaction.SelectedMinions.Count != 1)
+            if (World.PersistentData.SelectedMinions.Count != 1)
             {
                 World.Renderer.Camera.FollowAutoTarget = false;
                 World.Renderer.Camera.EnableControl = true;
@@ -2837,7 +2837,7 @@ namespace DwarfCorp.GameStates
                 return;
             }
 
-            var dwarf = World.PlayerFaction.SelectedMinions[0];
+            var dwarf = World.PersistentData.SelectedMinions[0];
             if (!dwarf.IsPosessed)
             {
                 World.Renderer.Camera.FollowAutoTarget = false;

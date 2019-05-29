@@ -102,7 +102,7 @@ namespace DwarfCorp
 
             if (button == InputManager.MouseButton.Left)
             {
-                List<CreatureAI> minions = Faction.FilterMinionsWithCapability(World.PlayerFaction.SelectedMinions, Task.TaskCategory.Chop);
+                List<CreatureAI> minions = Faction.FilterMinionsWithCapability(World.PersistentData.SelectedMinions, Task.TaskCategory.Chop);
                 List<Task> tasks = new List<Task>();
 
                 foreach (var plant in plantsPicked)
