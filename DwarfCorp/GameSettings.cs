@@ -231,6 +231,7 @@ namespace DwarfCorp
 
             [AutoResetFloat(0.1f)] public float TrainChance = 0.1f;
             [AutoResetFloat(0.75f)] public float CreatureMovementAdjust = 0.75f;
+            [AutoResetFloat(0.01f)] public float DrownChance = 0.01f;
 
             public int MaxVoxelDesignations = 1024;
             public int NumPathingThreads = 2;

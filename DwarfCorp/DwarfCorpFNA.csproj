@@ -112,6 +112,7 @@
     <Compile Include=".\AssetManagement\StringLibrary.cs" />
     <Compile Include=".\AssetManagement\TextureTool.cs" />
     <Compile Include=".\Components\AI\CharacterMode.cs" />
+    <Compile Include="Components\AI\DwarfAI.cs" />
     <Compile Include="Components\Physics\Fire.cs" />
     <Compile Include="GameStates\Play\PrepareExpeditionDialog.cs" />
     <Compile Include="GameStates\Play\SelectEmployeesDialog.cs" />

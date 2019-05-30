@@ -51,42 +51,34 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            return !(agent.AI.IsPosessed || agent.Stats.IsAsleep) ? Feasibility.Feasible : Feasibility.Infeasible;
+            return !agent.Stats.IsAsleep ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override Act CreateScript(Creature creature)
         {
-            if (creature.AI.IsPosessed || creature.Stats.IsAsleep)
-            {
+            if (creature.Stats.IsAsleep)
                 return null;
-            }
 
             if (!creature.Faction.Race.IsIntelligent || !creature.IsOnGround)
-            {
                 return creature.AI.ActOnWander();
-            }
             
             var rooms = creature.World.EnumerateZones();
             var items = creature.Faction.OwnedObjects.OfType<Flag>().ToList();
 
             bool goToItem = MathFunctions.RandEvent(0.2f);
             if (goToItem && items.Count > 0)
-            {
                 return new GoToEntityAct(Datastructures.SelectRandom(items), creature.AI) & new Wrap(() => ConverseFriends(creature.AI));
-            }
 
             bool getDrink = MathFunctions.RandEvent(0.005f);
             if (getDrink && creature.World.HasResources(new List<Quantitiy<Resource.ResourceTags>>(){new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Alcohol)}))
-            {
                 return new FindAndEatFoodAct(creature.AI) { FoodTag = Resource.ResourceTags.Alcohol, FallbackTag = Resource.ResourceTags.Alcohol};
-            }
 
             return creature.AI.ActOnWander();
         }
 
         public override bool ShouldDelete(Creature agent)
         {
-            return agent.IsDead || agent.Stats.IsAsleep || !agent.Active || agent.AI.IsPosessed;
+            return agent.IsDead || agent.Stats.IsAsleep || !agent.Active;
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

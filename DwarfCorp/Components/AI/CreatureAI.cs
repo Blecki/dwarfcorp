@@ -40,7 +40,6 @@ namespace DwarfCorp
             Tasks = new List<Task>();
             IdleTimer = new Timer(2.0f, true);
             SpeakTimer = new Timer(5.0f, true);
-            XPEvents = new List<int>();
         }
 
         private bool jumpHeld = false;
@@ -95,14 +94,6 @@ namespace DwarfCorp
         
         public double UnhappinessTime = 0.0f;
         private String LastMesage = "";
-        /// <summary>
-        /// Gets or sets a value indicating whether this instance is posessed. If a creature is posessed,
-        /// it is being controlled by the player, so it shouldn't attempt to move unless it has to.
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if this instance is posessed; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsPosessed { get; set; }
 
         /// <summary> Wrapper around Creature.Physics </summary>
         [JsonIgnore]
@@ -164,13 +155,13 @@ namespace DwarfCorp
         public List<Task> Tasks { get; set; }
         
 
-        private struct FailedTask
+        protected struct FailedTask
         {
             public Task TaskFailure;
             public DateTime FailedTime;
         }
 
-        private List<FailedTask> FailedTasks = new List<FailedTask>();
+        protected List<FailedTask> FailedTasks = new List<FailedTask>();
 
         public bool WasTaskFailed(Task task)
         {
@@ -187,8 +178,6 @@ namespace DwarfCorp
         /// If true, whent he creature dies its friends will mourn its death, generating unhappy Thoughts
         /// </summary>
         public bool TriggersMourning { get; set; }
-        /// <summary> List of changes to the creatures XP over time.</summary>
-        public List<int> XPEvents { get; set; }
 
         public string Biography = "";
 
@@ -215,10 +204,7 @@ namespace DwarfCorp
         public string LastFailedAct = null;
 
         /// <summary> Add exprience points to the creature. It will level up from time to time </summary>
-        public void AddXP(int amount)
-        {
-            XPEvents.Add(amount);
-        }
+        public virtual void AddXP(int amount) { }
 
         /// <summary> Called whenever a list of enemies has been sensed by the creature </summary>
         private void Sensor_OnEnemySensed(List<CreatureAI> enemies)
@@ -230,9 +216,7 @@ namespace DwarfCorp
             {
                 enemies.RemoveAll(threat => threat == null || threat.Creature == null);
                 foreach (CreatureAI threat in enemies.Where(threat => threat != null && threat.Creature != null && !Faction.Threats.Contains(threat.Creature)))
-                {
                     Faction.Threats.Add(threat.Creature);
-                }
             }
         }
 
@@ -240,27 +224,22 @@ namespace DwarfCorp
         public Task GetEasiestTask(List<Task> tasks)
         {
             if (tasks == null)
-            {
                 return null;
-            }
 
             float bestCost = float.MaxValue;
             Task bestTask = null;
             var bestPriority = Task.PriorityType.Eventually;
 
-
             foreach (Task task in tasks)
             {
                 float cost = task.ComputeCost(Creature);
 
-                if (task.IsFeasible(Creature) == Task.Feasibility.Feasible && task.Priority >= bestPriority && cost < bestCost &&
-                    !WasTaskFailed(task))
+                if (task.IsFeasible(Creature) == Task.Feasibility.Feasible && task.Priority >= bestPriority && cost < bestCost && !WasTaskFailed(task))
                 {
                     bestCost = cost;
                     bestTask = task;
                     bestPriority = task.Priority;
                 }
-
             }
 
             return bestTask;
@@ -366,14 +345,10 @@ namespace DwarfCorp
             }
 
             if (closestMate != null && closestDist < 30)
-            {
                 Tasks.Add(new MateTask(closestMate));
-            }
         }
 
-        private Timer restockTimer = new Timer(10.0f, false);
-
-        private void ChangeAct(Act NewAct)
+        protected void ChangeAct(Act NewAct)
         {
             if (CurrentAct != null)
                 CurrentAct.OnCanceled();
@@ -397,104 +372,10 @@ namespace DwarfCorp
             }
         }
 
-        private Task SatisfyBoredom()
-        {
-            if (World.GamblingState.State == Scripting.Gambling.Status.Gaming ||
-                World.GamblingState.State == Scripting.Gambling.Status.WaitingForPlayers && World.GamblingState.Participants.Count > 0)
-            {
-                var task = new Scripting.GambleTask() { Priority = Task.PriorityType.High };
-                if (task.IsFeasible(Creature) == Task.Feasibility.Feasible)
-                {
-                    return task;
-                }
-            }
-
-            int rand = MathFunctions.RandInt(0, 5);
-            switch (rand)
-            {
-
-                case 0:
-                {
-                    return new ActWrapperTask(new LongWanderAct(this)
-                        {
-                            PathLength = 50,
-                            Radius = 30,
-                            Name = "Go on a walk",
-                            Is2D = true
-                        })
-                    {
-                        Name = "Go on a walk.",
-                        Priority = Task.PriorityType.High,
-                        BoredomIncrease = GameSettings.Default.Boredom_Walk
-                    };
-                }
-                case 1:
-                {
-                    if (World.ListResourcesWithTag(Resource.ResourceTags.Alcohol).Count > 0)
-                        return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(this) { FoodTag = Resource.ResourceTags.Alcohol, FallbackTag = Resource.ResourceTags.Alcohol}, 3, false) { Name = "Binge drink." }) { Name = "Binge drink.", Priority = Task.PriorityType.High, BoredomIncrease = GameSettings.Default.Boredom_Eat };
-
-                    if (!Stats.Hunger.IsSatisfied())
-                        return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(this), 3, false) { Name = "Binge eat." }) { Name = "Binge eat.", Priority = Task.PriorityType.High, BoredomIncrease = GameSettings.Default.Boredom_Eat };
-
-                    return ActOnIdle();
-                }
-                case 2:
-                {
-                    return new ActWrapperTask(new GoToChairAndSitAct(this) { SitTime = 60, Name = "Relax." }) { Name = "Relax.", Priority = Task.PriorityType.High, BoredomIncrease = GameSettings.Default.Boredom_Sleep };
-                }
-                case 3:
-                {
-                        var task = new Scripting.GambleTask() { Priority = Task.PriorityType.High };
-                        if (task.IsFeasible(Creature) == Task.Feasibility.Feasible)
-                            return task;
-
-                        break;
-                }
-                case 4:
-                {
-                        return ActOnIdle();
-                }
-            }
-            
-            return ActOnIdle();
-
-        }
         private Timer AutoGatherTimer = new Timer(MathFunctions.Rand() * 5 + 3, false);
-        public void AutoGather()
-        {
-            var intersections = World.EnumerateIntersectingObjects(Physics.BoundingBox.Expand(3.0f));
-
-            foreach (var body in intersections.OfType<ResourceEntity>())
-            {
-                if (!body.Active || body.AnimationQueue.Count > 0)
-                    continue;
-
-                if (Faction.Designations.IsDesignation(body, DesignationType.Gather))
-                {
-                    Creature.GatherImmediately(body, Inventory.RestockType.RestockResource);
-                    continue;
-                }
-                if (Faction  == World.PlayerFaction)
-                {
-                    Creature.GatherImmediately(body, Inventory.RestockType.RestockResource);
-                    continue;
-                }
-
-                var resource = ResourceLibrary.GetResourceByName(body.Resource.Type);
-                if (resource.Tags.Contains(Resource.ResourceTags.Edible))
-                {
-                    if ((Faction.Race.EatsMeat && resource.Tags.Contains(Resource.ResourceTags.AnimalProduct)) ||
-                        (Faction.Race.EatsPlants && !resource.Tags.Contains(Resource.ResourceTags.AnimalProduct)))
-                    {
-                        Creature.GatherImmediately(body);
-                        AssignTask(new ActWrapperTask(new EatFoodAct(this)));
-                    }
-                }
-            }
-        }
 
         /// <summary> Update this creature </summary>
-        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera) // Todo: Need to detangle player-specific behavior from general creatures. Should also be performance boost.
+        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera) 
         {
             base.Update(gameTime, chunks, camera);
 
@@ -521,37 +402,26 @@ namespace DwarfCorp
                     Faction.AddMinion(this);
                 }
 
-                AutoGather();
-                OrderEnemyAttack();
+                foreach (var body in World.EnumerateIntersectingObjects(Physics.BoundingBox.Expand(3.0f)).OfType<ResourceEntity>().Where(r => r.Active && r.AnimationQueue.Count == 0))
+                {
+                    var resource = ResourceLibrary.GetResourceByName(body.Resource.Type);
+                    if (resource.Tags.Contains(Resource.ResourceTags.Edible))
+                    {
+                        if ((Faction.Race.EatsMeat && resource.Tags.Contains(Resource.ResourceTags.AnimalProduct)) ||
+                            (Faction.Race.EatsPlants && !resource.Tags.Contains(Resource.ResourceTags.AnimalProduct)))
+                        {
+                            Creature.GatherImmediately(body);
+                            AssignTask(new ActWrapperTask(new EatFoodAct(this)));
+                        }
+                    }
+                }
+
+                    OrderEnemyAttack();
             }
+
             DeleteBadTasks();
             PreEmptTasks();
             HandleReproduction();
-
-            if (CurrentTask != null && Stats.CanGetBored)
-            {
-                float randomness = MathFunctions.Rand() * CurrentTask.BoredomIncrease * 0.25f;
-                Stats.Boredom.SetValue(Stats.Boredom.CurrentValue - (float)((CurrentTask.BoredomIncrease + randomness) * gameTime.ElapsedGameTime.TotalSeconds));
-
-                if (Stats.Boredom.IsCritical())
-                    Creature.AddThought(Thought.ThoughtType.FeltBored);
-            }
-
-            // Heal thyself
-            if (Stats.Health.IsDissatisfied() && Stats.Species.CanSleep)
-            {
-                Task toReturn = new GetHealedTask();
-                if (!Tasks.Contains(toReturn) && CurrentTask != toReturn)
-                    AssignTask(toReturn);
-            }
-
-            // Try to go to sleep if we are low on energy and it is night time.
-            if (!Stats.Energy.IsSatisfied() && Manager.World.Time.IsNight())
-            {
-                Task toReturn = new SatisfyTirednessTask();
-                if (!Tasks.Contains(toReturn) && CurrentTask != toReturn)
-                    AssignTask(toReturn);
-            }
 
             // Try to find food if we are hungry.
             if (Stats.Hunger.IsDissatisfied() && World.CountResourcesWithTag(Resource.ResourceTags.Edible) > 0)
@@ -563,97 +433,8 @@ namespace DwarfCorp
                     AssignTask(toReturn);
             }
 
-            if (Stats.CanGetBored && Stats.Boredom.IsDissatisfied())
-            {
-                if (!Tasks.Any(task => task.BoredomIncrease < 0))
-                {
-                    Task toReturn = SatisfyBoredom();
-                    if (toReturn != null && !Tasks.Contains(toReturn) && CurrentTask != toReturn)
-                        AssignTask(toReturn);
-                }
-            }
-
-            restockTimer.Update(DwarfTime.LastTime);
-            if (Object.ReferenceEquals(Creature.Faction, Manager.World.PlayerFaction) && restockTimer.HasTriggered && Creature.Inventory.Resources.Count > 10)
-                Creature.RestockAllImmediately();
-
-
             if (CurrentTask == null) // We need something to do.
             {
-                if (Object.ReferenceEquals(Creature.Faction, Manager.World.PlayerFaction))
-                {
-                    if (Stats.Happiness.IsSatisfied()) // We're happy, so make sure we aren't on strike.
-                    {
-                        Stats.IsOnStrike = false;
-                        UnhappinessTime = 0.0f;
-                    }
-
-                    if (Stats.IsOnStrike) // We're on strike, so track how long this job has sucked.
-                    {
-                        UnhappinessTime += gameTime.ElapsedGameTime.TotalMinutes;
-                        if (UnhappinessTime > GameSettings.Default.HoursUnhappyBeforeQuitting) // If we've been unhappy long enough, quit.
-                        {
-                            var thoughts = GetRoot().GetComponent<DwarfThoughts>();
-                            Manager.World.MakeAnnouncement( // Can't use a popup because the dwarf will soon not exist. Also - this is a serious event!
-                                Message: String.Format("{0} has quit!{1}", 
-                                    Stats.FullName, 
-                                    (thoughts == null ? "" : (" The last straw: " + thoughts.Thoughts.Last(t => t.HappinessModifier < 0.0f).Description))),
-                                ClickAction: null,
-                                logEvent: true,
-                                eventDetails: (thoughts == null ? "So sick of this place!" : String.Join("\n", thoughts.Thoughts.Where(t => t.HappinessModifier < 0.0f).Select(t => t.Description)))
-                                );
-
-                            LeaveWorld();
-
-                            GetRoot().GetComponent<Inventory>().Die();
-                            GetRoot().GetComponent<SelectionCircle>().Die();
-                            if (thoughts != null)
-                                thoughts.Thoughts.Clear();
-                            //GetRoot().GetComponent<Inventory>().Die();
-                            //GetRoot().Delete();
-
-                            Faction.Minions.Remove(this);
-                            World.PersistentData.SelectedMinions.Remove(this);
-
-                            return;
-                        }
-                    }
-                    else if (Stats.Happiness.IsDissatisfied()) // We aren't on strike, but we hate this place.
-                    {
-                        if (MathFunctions.Rand(0, 1) < 0.25f) // We hate it so much that we might just go on strike! This can probably be tweaked. As it stands,
-                            // dorfs go on strike almost immediately every time.
-                        {
-                            Manager.World.UserInterface.MakeWorldPopup(String.Format("{0} ({1}) refuses to work!",
-                                   Stats.FullName, Stats.CurrentClass.Name), Creature.Physics, -10, 10);
-                            Manager.World.Tutorial("happiness");
-                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.25f);
-                            Stats.IsOnStrike = true;
-                        }
-                    }
-
-                    if (!Stats.IsOnStrike) // We aren't on strike, so find a new task.
-                    {
-                        var goal = GetEasiestTask(Tasks);
-
-                        if (goal != null)
-                        {
-                            IdleTimer.Reset(IdleTimer.TargetTimeSeconds);
-                            ChangeTask(goal);
-                        }
-                        else
-                        {
-                            var newTask = ActOnIdle();
-                            if (newTask != null)
-                                ChangeTask(newTask);
-                        }
-                    }
-                    else
-                    {
-                        ChangeTask(ActOnIdle());
-                    }
-                }
-                else
-                {
                     var goal = GetEasiestTask(Tasks);
 
                     if (goal != null)
@@ -667,7 +448,6 @@ namespace DwarfCorp
                         if (newTask != null)
                             ChangeTask(newTask);
                     }
-                }
             }
             else
             {
@@ -696,13 +476,11 @@ namespace DwarfCorp
                                 FailedTasks.Add(new FailedTask() { TaskFailure = CurrentTask, FailedTime = World.Time.CurrentDate });
 
                             if (CurrentTask.ShouldRetry(Creature))
-                            {
                                 if (!Tasks.Contains(CurrentTask))
                                 {
                                     ReassignCurrentTask();
                                     retried = true;
                                 }
-                            }
                         }
                     }
 
@@ -713,19 +491,15 @@ namespace DwarfCorp
                 }
             }
 
-            UpdateXP();
-
             // With a small probability, the creature will drown if its under water.
-            if (MathFunctions.RandEvent(0.01f))
+            if (MathFunctions.RandEvent(GameSettings.Default.DrownChance))
             {
                 var above = VoxelHelpers.GetVoxelAbove(Physics.CurrentVoxel);
                 var below = VoxelHelpers.GetVoxelBelow(Physics.CurrentVoxel);
                 bool shouldDrown = (above.IsValid && (!above.IsEmpty || above.LiquidLevel > 0));
                 if ((Physics.IsInLiquid || (!Movement.CanSwim && (below.IsValid && (below.LiquidLevel > 5)))) 
                     && (!Movement.CanSwim || shouldDrown))
-                {
                     Creature.Damage(Movement.CanSwim ? 1.0f : 30.0f, Health.DamageType.Normal);
-                }
             }
 
             if (PositionConstraint.Contains(Physics.LocalPosition) == ContainmentType.Disjoint)
@@ -735,99 +509,10 @@ namespace DwarfCorp
             }
         }
 
-        private int lastXPAnnouncement = -1;
-        /// <summary> updates the creature's experience points. </summary>
-        public void UpdateXP()
-        {
-            foreach (int xp in XPEvents)
-            {
-                Stats.XP += xp;
-                string sign = xp > 0 ? "+" : "";
-
-                IndicatorManager.DrawIndicator(sign + xp + " XP",
-                    Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, xp > 0 ? GameSettings.Default.Colors.GetColor("Positive", Color.Green) : GameSettings.Default.Colors.GetColor("Negative", Color.Red));
-
-                if (Stats.IsOverQualified && lastXPAnnouncement != Stats.LevelIndex && Faction == Manager.World.PlayerFaction)
-                {
-                    lastXPAnnouncement = Stats.LevelIndex;
-
-                    Manager.World.MakeAnnouncement(
-                        new Gui.Widgets.QueuedAnnouncement
-                        {
-                            Text = String.Format("{0} ({1}) wants a promotion!",
-                                Stats.FullName, Stats.CurrentClass.Name),
-                            ClickAction = (gui, sender) =>
-                            {
-                                GameStateManager.PushState(new EconomyState(Manager.World.Game, Manager.World));
-                            }
-                        });
-
-                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
-                    Manager.World.Tutorial("level up");
-                }
-            }
-
-            XPEvents.Clear();
-        }
-
         /// <summary> The Act that the creature performs when its told to "wander" (when it has nothing to do) </summary>
         public virtual Act ActOnWander()
         {
             return new WanderAct(this, 5, 1.5f + MathFunctions.Rand(-0.25f, 0.25f), 1.0f);
-        }
-
-        /// <summary>
-        /// Causes the creature to look for nearby blocks to jump on
-        /// so as not to fall.
-        /// </summary>
-        /// <returns>Success if the jump has succeeded, Fail if it failed, and Running otherwise.</returns>
-        public IEnumerable<Act.Status> AvoidFalling()
-        {
-            var above = VoxelHelpers.GetVoxelAbove(Physics.CurrentVoxel);
-            foreach (var vox in VoxelHelpers.EnumerateAllNeighbors(Physics.CurrentVoxel.Coordinate)
-                .Select(c => new VoxelHandle(World.ChunkManager, c)))
-            {
-                if (!vox.IsValid) continue;
-                if (vox.IsEmpty) continue;
-
-                // Avoid teleporting through the block above. Never jump up through the
-                // block above you.
-                if (above.IsValid && !above.IsEmpty && vox.Coordinate.Y >= above.Coordinate.Y)
-                    continue;
-
-                var voxAbove = new VoxelHandle(World.ChunkManager, new GlobalVoxelCoordinate(vox.Coordinate.X, vox.Coordinate.Y + 1, vox.Coordinate.Z));
-                if (voxAbove.IsValid && !voxAbove.IsEmpty) continue;
-
-                Vector3 target = voxAbove.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f);
-                Physics.Face(target);
-                foreach (Act.Status status in Hop(target))
-                {
-                    yield return Act.Status.Running;
-                }
-                yield return Act.Status.Success;
-                yield break;
-            }
-            yield return Act.Status.Success;
-            yield break;
-        }
-
-        /// <summary>
-        /// Hops the specified location (coroutine)
-        /// </summary>
-        /// <param name="location">The location.</param>
-        /// <returns>Running until the hop completes, and then returns success.</returns>
-        public IEnumerable<Act.Status> Hop(Vector3 location)
-        {
-            float hopTime = 0.5f;
-
-            var motion = new TossMotion(hopTime, location.Y - Position.Y, Physics.GlobalTransform, location);
-            Physics.AnimationQueue.Add(motion);
-
-            while (!motion.IsDone())
-            {
-                yield return Act.Status.Running;
-            }
-            yield return Act.Status.Success;
         }
 
         /// <summary> 
@@ -837,200 +522,12 @@ namespace DwarfCorp
         /// </summary>
         public virtual Task ActOnIdle()
         {
-            /*
-            if (!IsPosessed && !Creature.IsOnGround && !Movement.CanFly && !Creature.Physics.IsInLiquid)
-            {
-                return new ActWrapperTask(new Wrap(AvoidFalling));
-            }
-             */
-
-            if (!IsPosessed && Creature.Physics.IsInLiquid)
+            if (Creature.Physics.IsInLiquid)
                 return new FindLandTask();
             var flames = GetRoot().GetComponent<Flammable>();
             if (flames != null && flames.IsOnFire)
                 return new LongWanderAct(this) { Name = "Freak out!", PathLength = 2, Radius = 5 }.AsTask();
 
-            if (Stats.CanGetBored)
-            {
-                if (World.GamblingState.State == Scripting.Gambling.Status.Gaming ||
-                    World.GamblingState.State == Scripting.Gambling.Status.WaitingForPlayers && World.GamblingState.Participants.Count > 0)
-                {
-                    var task = new Scripting.GambleTask() { Priority = Task.PriorityType.High };
-                    if (task.IsFeasible(Creature) == Task.Feasibility.Feasible)
-                    {
-                        return task;
-                    }
-                }
-            }
-
-            if (Faction == World.PlayerFaction && !Stats.IsOnStrike)
-            {
-                var candidate = World.TaskManager.GetBestTask(this);
-                if (candidate != null)
-                    return candidate;
-
-                if (Stats.CurrentLevel.HealingPower > 0 && Faction.Minions.Any(minion => !minion.Creature.Stats.Health.IsSatisfied()))
-                {
-                    var minion = Faction.Minions.FirstOrDefault(m => m != this && !m.Stats.Health.IsSatisfied());
-                    if (minion != null)
-                    {
-                        return new MagicHealAllyTask(minion);
-                    }
-                }
-            }
-
-            if (Faction == World.PlayerFaction && NumDaysNotPaid > 0)
-            {
-                if (Faction.Economy.Funds >= Stats.CurrentLevel.Pay)
-                {
-                    var task = new ActWrapperTask(new GetMoneyAct(this, Math.Min(Stats.CurrentLevel.Pay * NumDaysNotPaid, Faction.Economy.Funds)) { IncrementDays = false })
-                    { AutoRetry = true, Name = "Get paid.", Priority = Task.PriorityType.High };
-                    if (!HasTaskWithName(task))
-                    {
-                        return task;
-                    }
-                }
-            }
-
-            if (!IsPosessed && Faction == World.PlayerFaction && Creature.Inventory.Resources.Count > 0)
-                foreach (var status in Creature.RestockAll())
-                    ; // RestockAll generates tasks for the dwarf.           
-
-            if (Object.ReferenceEquals(Creature.Faction, World.PlayerFaction) // Todo: Why am I checking stockpile space for mourning and training?
-                && !IsPosessed &&
-                (GatherManager.StockOrders.Count == 0 || !World.HasFreeStockpile()) &&
-                (GatherManager.StockMoneyOrders.Count == 0)
-                && Tasks.Count == 0)
-            {
-                // Craft random items for fun.
-                if (Stats.IsTaskAllowed(Task.TaskCategory.CraftItem) && MathFunctions.RandEvent(0.0005f))
-                {
-                    var item = Library.GetRandomApplicableCraftItem(Faction, World);
-
-                    if (item != null)
-                    {
-                        var resources = new List<ResourceAmount>();
-                        foreach (var resource in item.RequiredResources)
-                        {
-                            var amount = World.GetResourcesWithTags(new List<Quantitiy<Resource.ResourceTags>>() { resource });
-                            if (amount == null || amount.Count == 0)
-                                break;
-                            resources.Add(Datastructures.SelectRandom(amount));
-                        }
-                        
-                        if (resources.Count > 0)
-                            return new CraftResourceTask(item, 1, 1, resources) {IsAutonomous = true, Priority = Task.PriorityType.Low};
-                    }
-                }
-
-                var aggregatedResources = new Dictionary<string, ResourceAmount>();
-                foreach (var resource in Creature.Inventory.Resources.Where(resource => resource.MarkedForRestock))
-                {
-                    if (!aggregatedResources.ContainsKey(resource.Resource))
-                    {
-                        aggregatedResources[resource.Resource] = new ResourceAmount(resource.Resource, 0);
-                    }
-
-                    aggregatedResources[resource.Resource].Count += 1;
-                }
-
-                foreach (var resource in aggregatedResources)
-                {
-                    Task task = new StockResourceTask(resource.Value.CloneResource());
-                    if (task.IsFeasible(Creature) != Task.Feasibility.Infeasible)
-                    {
-                        return task;
-                    }
-                }
-
-
-                // Find a room to train in, if applicable.
-                if (Stats.IsTaskAllowed(Task.TaskCategory.Attack) && MathFunctions.RandEvent(GameSettings.Default.TrainChance))
-                {
-                    if (!Stats.IsTaskAllowed(Task.TaskCategory.Research))
-                    {
-                        var closestTraining = Faction.FindNearestItemWithTags("Train", Position, true, this);
-
-                        if (closestTraining != null)
-                        {
-                            return new ActWrapperTask(new GoTrainAct(this)) { Name = "train", ReassignOnDeath = false, Priority = Task.PriorityType.Medium };
-                        }
-                    }
-                    else
-                    {
-                        var closestTraining = Faction.FindNearestItemWithTags("Research", Position, true, this);
-
-                        if (closestTraining != null)
-                        {
-                            return new ActWrapperTask(new GoTrainAct(this) { Magical = true }) { Name = "do magic research", ReassignOnDeath = false, Priority = Task.PriorityType.Medium };
-                        }
-                    }
-                }
-
-                if (IdleTimer.HasTriggered && MathFunctions.RandEvent(0.005f))
-                {
-                    return new ActWrapperTask(new MournGraves(this))
-                    {
-                        Priority = Task.PriorityType.Medium,
-                        AutoRetry = false
-                    };
-                }
-
-                // Otherwise, try to find a chair to sit in
-                if (IdleTimer.HasTriggered && MathFunctions.RandEvent(0.25f) && Faction == World.PlayerFaction)
-                {
-                    return new ActWrapperTask(new GoToChairAndSitAct(this))
-                    {
-                        Priority = Task.PriorityType.Eventually,
-                        AutoRetry = false
-                    };
-                }
-
-                /*
-                if (IdleTimer.HasTriggered)
-                {
-                    IdleTimer.Reset(IdleTimer.TargetTimeSeconds);
-                    return new ActWrapperTask(ActOnWander())
-                    {
-                        Priority = Task.PriorityType.Eventually
-                    };
-                }
-                return null;
-                 */
-            }
-
-            // If we have no more build orders, look for gather orders
-            if (Object.ReferenceEquals(Creature.Faction, World.PlayerFaction) && GatherManager.StockOrders.Count > 0)
-            {
-                var order = GatherManager.StockOrders[0];
-                if (World.HasFreeStockpile(order.Resource))
-                {
-                    GatherManager.StockOrders.RemoveAt(0);
-                    var task = new StockResourceTask(order.Resource.CloneResource())
-                    {
-                        Priority = Task.PriorityType.Medium
-                    };
-                    if (task.IsFeasible(this.Creature) != Task.Feasibility.Infeasible)
-                        return task;
-                }
-            }
-            
-            if (GatherManager.StockMoneyOrders.Count > 0)
-            {
-                var order = GatherManager.StockMoneyOrders[0];
-                    GatherManager.StockMoneyOrders.RemoveAt(0);
-                    return new ActWrapperTask(new StockMoneyAct(this, order.Money))
-                    {
-                        Priority = Task.PriorityType.Medium
-                    };
-            }
-
-
-            if (MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction && World.ListResourcesWithTag(Resource.ResourceTags.Potion).Count > 0)
-            {
-                return new GatherPotionsTask();
-            }
-            
             return new LookInterestingTask();
         }
 
@@ -1059,10 +556,7 @@ namespace DwarfCorp
         {
             if (SpeakTimer.HasTriggered)
             {
-                var thoughts = Creature.Physics.GetComponent<DwarfThoughts>();
-                if (thoughts != null)
-                    thoughts.AddThought(Thought.ThoughtType.Talked);
-
+                Creature.Physics.GetComponent<DwarfThoughts>()?.AddThought(Thought.ThoughtType.Talked);
                 Creature.DrawIndicator(IndicatorManager.StandardIndicators.Dots);
                 Creature.Physics.Face(other.Position);
                 SpeakTimer.Reset(SpeakTimer.TargetTimeSeconds);
@@ -1076,7 +570,7 @@ namespace DwarfCorp
         }
 
         /// <summary> For any enemy that this creature's enemy sensor knows about, order the creature to attack these enemies </summary>
-        public void OrderEnemyAttack()
+        public virtual void OrderEnemyAttack()
         {
             foreach (CreatureAI enemy in Sensor.Enemies.Where(e => e != null && !e.IsDead && e.Creature != null))
             {
@@ -1087,22 +581,13 @@ namespace DwarfCorp
                 if (!HasTaskWithName(task))
                 {
                     Creature.AI.AssignTask(task);
-
-                    if (Faction == Manager.World.PlayerFaction)
-                    {
-                        Manager.World.MakeAnnouncement(
-                            new Gui.Widgets.QueuedAnnouncement
-                            {
-                                Text = String.Format("{0} is fighting {1}.", Stats.FullName,
-                                    TextGenerator.IndefiniteArticle(enemy.Stats.CurrentClass.Name)),
-                                ClickAction = (gui, sender) => ZoomToMe()
-                            });
-
-                        Manager.World.Tutorial("combat");
-                    }
+                    MakeBattleAnnouncement(enemy);
                 }
             }
         }
+
+        protected virtual void MakeBattleAnnouncement(CreatureAI Enemy)
+        { }
 
         /// <summary> Pay the creature this amount of money. The money goes into the creature's wallet. </summary>
         public void AddMoney(DwarfBux pay)
@@ -1201,63 +686,6 @@ namespace DwarfCorp
         public void SetMessage(string message)
         {
             LastMesage = message;
-        }
-
-        public void TryMoveVelocity(Vector3 desiredDirection, bool jumpCommand)
-        {
-
-            Creature.OverrideCharacterMode = false;
-            Creature.CurrentCharacterMode = Creature.AI.Movement.CanFly ? CharacterMode.Flying : CharacterMode.Walking;
-
-            float currSpeed = Creature.Physics.Velocity.Length();
-
-            if (currSpeed < 1)
-            {
-                Creature.CurrentCharacterMode = DwarfCorp.CharacterMode.Idle;
-            }
-
-            float force = Creature.Stats.MaxAcceleration * 10;
-            if (!Creature.IsOnGround)
-            {
-                force = Creature.Stats.MaxAcceleration;
-                Creature.CurrentCharacterMode = Creature.Physics.Velocity.Y > 0
-                    ? DwarfCorp.CharacterMode.Jumping
-                    : DwarfCorp.CharacterMode.Falling;
-            }
-
-
-            if (Creature.Physics.IsInLiquid)
-            {
-                Creature.CurrentCharacterMode = CharacterMode.Swimming;
-                Creature.Physics.ApplyForce(Vector3.Up * 10, DwarfTime.Dt);
-                force = Creature.Stats.MaxAcceleration*5;
-                Creature.NoiseMaker.MakeNoise("Swim", Position, true);
-            }
-
-            Vector3 projectedForce = new Vector3(desiredDirection.X, 0, desiredDirection.Z);
-
-            if (jumpCommand && !jumpHeld && (Creature.IsOnGround || Creature.Physics.IsInLiquid) && Creature.IsHeadClear)
-            {
-                Creature.NoiseMaker.MakeNoise("Jump", Position, true);
-                Creature.Physics.LocalTransform *= Matrix.CreateTranslation(Vector3.Up*0.1f);
-                Creature.Physics.Velocity += Vector3.Up*5;
-                Creature.Physics.UpdateTransform();
-                Creature.Physics.UpdateBoundingBox();
-                Creature.IsOnGround = false;
-                Creature.Physics.IsInLiquid = false;
-            }
-            
-
-            jumpHeld = jumpCommand;
-
-            if (projectedForce.LengthSquared() > 0.001f)
-            {
-                projectedForce.Normalize();
-                Creature.Physics.ApplyForce(projectedForce * force, DwarfTime.Dt);
-                Creature.Physics.Velocity = 
-                    MathFunctions.ClampXZ(Creature.Physics.Velocity, Creature.Physics.IsInLiquid ? Stats.MaxSpeed * 0.5f: Stats.MaxSpeed);
-            }
-          
         }
 
         // If true, this creature can fight the other creature. Otherwise, we want to flee it.

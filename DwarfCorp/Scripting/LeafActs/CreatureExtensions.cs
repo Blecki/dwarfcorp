@@ -131,27 +131,22 @@ namespace DwarfCorp
                 };
 
                 if (!agent.AI.Tasks.Contains(task))
-                {
                     agent.AI.AssignTask(task);
-                }
             }
         }
 
         public static IEnumerable<Act.Status> RestockAll(this Creature agent)
         {
-            Dictionary<string, ResourceAmount> aggregatedResources = new Dictionary<string, ResourceAmount>();
+            var aggregatedResources = new Dictionary<string, ResourceAmount>();
+
             foreach (var resource in agent.Inventory.Resources)
             {
                 if (resource.MarkedForUse)
-                {
                     continue;
-                }
                 resource.MarkedForRestock = true;
 
                 if (!aggregatedResources.ContainsKey(resource.Resource))
-                {
                     aggregatedResources[resource.Resource] = new ResourceAmount(resource.Resource, 0);
-                }
                 aggregatedResources[resource.Resource].Count++;
             }
 
@@ -163,10 +158,9 @@ namespace DwarfCorp
                 };
 
                 if (task.IsFeasible(agent) == Task.Feasibility.Feasible && !agent.AI.Tasks.Contains(task))
-                {
                     agent.AI.AssignTask(task);
-                }
             }
+
             yield return Act.Status.Success;
         }
     }
