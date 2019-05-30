@@ -59,7 +59,7 @@ namespace DwarfCorp
                 if (Creature.Physics.BoundingBox.Intersects(Location.GetBoundingBox()))
                 {
                     var neighbors = VoxelHelpers.EnumerateAllNeighbors(Location.Coordinate)
-                        .Select(c => new VoxelHandle(Agent.Chunks, c));
+                        .Select(c => new VoxelHandle(Agent.World.ChunkManager, c));
 
                     var closest = VoxelHandle.InvalidHandle;
                     float closestDist = float.MaxValue;

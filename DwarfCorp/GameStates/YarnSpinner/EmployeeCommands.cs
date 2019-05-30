@@ -44,13 +44,16 @@ namespace DwarfCorp.GameStates.YarnSpinner
             if (creature == null)
                 return;
             creature.Stats.IsOnStrike = false;
+
             var thoughts = creature.GetRoot().GetComponent<DwarfThoughts>();
             if (thoughts != null)
             {
-                creature.NumDaysNotPaid = 0;
                 thoughts.Thoughts.RemoveAll(t => t.Description.Contains("paid"));
                 thoughts.AddThought(Thought.ThoughtType.GotPaid);
             }
+
+            if (creature is DwarfAI dorf)
+                dorf.OnPaid();
         }
     }
 }

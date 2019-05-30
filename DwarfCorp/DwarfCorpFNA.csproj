@@ -696,7 +696,6 @@
     <Compile Include=".\Scripting\Rooms\RoomTypes\Stockpile.cs" />
     <Compile Include=".\Scripting\Rooms\Zone.cs" />
     <Compile Include=".\Scripting\TaskManagement\CompoundTask.cs" />
-    <Compile Include=".\Scripting\TaskManagement\GatherManager.cs" />
     <Compile Include=".\Scripting\TaskManagement\Task.cs" />
     <Compile Include=".\Scripting\TaskManagement\TaskManager.cs" />
     <Compile Include=".\Scripting\TaskManagement\Tasks\BuildRoomTask.cs" />

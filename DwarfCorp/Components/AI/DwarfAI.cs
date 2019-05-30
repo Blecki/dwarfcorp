@@ -13,7 +13,11 @@ namespace DwarfCorp
     {
         [JsonProperty] private int lastXPAnnouncement = -1;
         private Timer restockTimer = new Timer(10.0f, false);
-
+        private Timer SpeakTimer = new Timer(5.0f, true);
+        [JsonProperty] private int NumDaysNotPaid = 0;
+        private Timer IdleTimer = new Timer(2.0f, true);
+        [JsonProperty] private double UnhappinessTime = 0.0f;
+        private Timer AutoGatherTimer = new Timer(MathFunctions.Rand() * 5 + 3, false);
 
         public DwarfAI()
         {
@@ -39,10 +43,8 @@ namespace DwarfCorp
                 }
             }
 
-            int rand = MathFunctions.RandInt(0, 5);
-            switch (rand)
+            switch (MathFunctions.RandInt(0, 5))
             {
-
                 case 0:
                 {
                     return new ActWrapperTask(new LongWanderAct(this)
@@ -74,15 +76,15 @@ namespace DwarfCorp
                 }
                 case 3:
                 {
-                        var task = new Scripting.GambleTask() { Priority = Task.PriorityType.High };
-                        if (task.IsFeasible(Creature) == Task.Feasibility.Feasible)
-                            return task;
+                    var task = new Scripting.GambleTask() { Priority = Task.PriorityType.High };
+                    if (task.IsFeasible(Creature) == Task.Feasibility.Feasible)
+                       return task;
 
-                        break;
+                    break;
                 }
                 case 4:
                 {
-                        return ActOnIdle();
+                    return ActOnIdle();
                 }
             }
             
@@ -90,12 +92,9 @@ namespace DwarfCorp
 
         }
 
-        private Timer AutoGatherTimer = new Timer(MathFunctions.Rand() * 5 + 3, false);
-
-        /// <summary> Update this creature </summary>
-        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera) // Todo: Need to detangle player-specific behavior from general creatures. Should also be performance boost.
+        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera) 
         {
-            base.Update(gameTime, chunks, camera);
+            //base.Update(gameTime, chunks, camera);
 
             if (!Active)
                 return;
@@ -389,31 +388,8 @@ namespace DwarfCorp
                 foreach (var status in Creature.RestockAll())
                     ; // RestockAll generates tasks for the dwarf.           
 
-            // If we have no more build orders, look for gather orders
-            if (GatherManager.StockOrders.Count > 0)
-            {
-                var order = GatherManager.StockOrders[0];
-                if (World.HasFreeStockpile(order.Resource))
-                {
-                    GatherManager.StockOrders.RemoveAt(0);
-                    var task = new StockResourceTask(order.Resource.CloneResource())
-                    {
-                        Priority = Task.PriorityType.Medium
-                    };
-                    if (task.IsFeasible(this.Creature) != Task.Feasibility.Infeasible)
-                        return task;
-                }
-            }
+            // Todo: Need dwarf to deposit money that's not theirs?
 
-            if (GatherManager.StockMoneyOrders.Count > 0)
-            {
-                var order = GatherManager.StockMoneyOrders[0];
-                GatherManager.StockMoneyOrders.RemoveAt(0);
-                return new ActWrapperTask(new StockMoneyAct(this, order.Money))
-                {
-                    Priority = Task.PriorityType.Medium
-                };
-            }
 
             if (Tasks.Count == 0)
             {
@@ -479,6 +455,41 @@ namespace DwarfCorp
                 return new GatherPotionsTask();
             
             return new LookInterestingTask();
+        }
+
+        public override void Converse(CreatureAI other)
+        {
+            if (SpeakTimer.HasTriggered)
+            {
+                Creature.Physics.GetComponent<DwarfThoughts>()?.AddThought(Thought.ThoughtType.Talked);
+                Creature.DrawIndicator(IndicatorManager.StandardIndicators.Dots);
+                Creature.Physics.Face(other.Position);
+                SpeakTimer.Reset(SpeakTimer.TargetTimeSeconds);
+            }
+        }
+
+        public void OnNotPaid()
+        {
+            NumDaysNotPaid++;
+
+            if (NumDaysNotPaid < 2)
+                Creature.AddThought(Thought.ThoughtType.NotPaid);
+            else
+            {
+                Creature.AddThought(new Thought()
+                {
+                    Description = String.Format("I have not been paid in {0} days!", NumDaysNotPaid),
+                    HappinessModifier = -25 * NumDaysNotPaid,
+                    TimeLimit = new TimeSpan(1, 0, 0, 0, 0),
+                    TimeStamp = World.Time.CurrentDate,
+                    Type = Thought.ThoughtType.Other
+                }, false);
+            }
+        }
+
+        public void OnPaid()
+        {
+            NumDaysNotPaid = 0;
         }
     }
 }

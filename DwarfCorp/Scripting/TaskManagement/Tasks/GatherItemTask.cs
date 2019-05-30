@@ -51,10 +51,7 @@ namespace DwarfCorp
 
         public override bool ShouldRetry(Creature agent)
         {
-            return EntityToGather != null &&
-                  EntityToGather.Active &&
-                  !EntityToGather.IsDead &&
-                  !agent.AI.GatherManager.ItemsToGather.Contains(EntityToGather);
+            return EntityToGather != null && EntityToGather.Active && !EntityToGather.IsDead;
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

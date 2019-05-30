@@ -657,7 +657,7 @@ namespace DwarfCorp
                 if (party.DeathTimer.Update(World.Time.CurrentDate))
                     party.Creatures.ForEach((creature) => creature.Die());
 
-                Diplomacy.Politics politics =  faction.World.Diplomacy.GetPolitics(faction, party.OtherFaction);
+                Diplomacy.Politics politics = faction.World.Diplomacy.GetPolitics(faction, party.OtherFaction);
 
                 if (politics.GetCurrentRelationship() != Relationship.Hateful)
                     RecallWarParty(party);
@@ -669,7 +669,7 @@ namespace DwarfCorp
                     continue;
                 else
                 {
-                    foreach(var creature in party.OwnerFaction.Minions)
+                    foreach (var creature in party.OwnerFaction.Minions)
                     {
                         if (creature.Tasks.Count == 0)
                         {
@@ -684,17 +684,6 @@ namespace DwarfCorp
                         World.MakeAnnouncement(String.Format("The war party from {0} is attacking!", party.OwnerFaction.ParentFaction.Name));
                         SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.15f);
                         party.ExpiditionState = Expedition.State.Fighting;
-                    }
-                }
-
-                foreach (var creature in party.Creatures)
-                {
-                    if (MathFunctions.RandEvent(0.001f))
-                    {
-                        creature.AssignTask(new ActWrapperTask(new GetMoneyAct(creature, (decimal)MathFunctions.Rand(0, 64.0f), party.OtherFaction))
-                        {
-                            Priority = Task.PriorityType.Medium
-                        });
                     }
                 }
             }

@@ -362,7 +362,7 @@ namespace DwarfCorp
                     }
 
                     var targetCreature = Target.GetRoot().GetComponent<CreatureAI>();
-                    if (targetCreature != null && !Creature.AI.FightOrFlight(targetCreature))
+                    if (targetCreature != null && Creature.AI.FightOrFlight(targetCreature) == CreatureAI.FightOrFlightResponse.Flee)
                     {
                         yield return Act.Status.Fail;
                         yield break;

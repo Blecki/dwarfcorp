@@ -142,7 +142,7 @@ namespace DwarfCorp
 
                 // Get the height of the terrain beneath the bird.
                 var surfaceHeight = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                    Agent.Chunks, GlobalVoxelCoordinate.FromVector3(oldPosition)))
+                    Agent.World.ChunkManager, GlobalVoxelCoordinate.FromVector3(oldPosition)))
                     .Coordinate.Y + 1;
 
                 // Immediately start flying.

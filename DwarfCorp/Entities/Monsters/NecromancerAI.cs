@@ -14,13 +14,14 @@ namespace DwarfCorp
         public Timer SummonTimer { get; set; }
         public Timer AttackTimer { get; set; }
         public float AttackRange { get; set; }
+        private Timer GatherSkeletonsTimer = new Timer(1, false);
+
 
         public NecromancerAI()
         {
             Skeletons = new List<Skeleton>();
             MaxSkeletons = 3;
             SummonTimer = new Timer(5, false);
-            WanderTimer = new Timer(1, false);
             AttackTimer = new Timer(3, false);
             SummonTimer.HasTriggered = true;
             AttackRange = 10;
@@ -32,7 +33,6 @@ namespace DwarfCorp
             Skeletons = new List<Skeleton>();
             MaxSkeletons = 3;
             SummonTimer = new Timer(5, false);
-            WanderTimer = new Timer(1, false);
             AttackTimer = new Timer(3, false);
             SummonTimer.HasTriggered = true;
             AttackRange = 10;
@@ -97,20 +97,18 @@ namespace DwarfCorp
 
         public void GatherSkeletons()
         {
-            foreach (Skeleton skeleton in Skeletons)
+            foreach (var skeleton in Skeletons)
             {
-                Vector3 offset = Position - skeleton.AI.Position;
-                float dist = (offset).Length();
-                if (dist > 4 && skeleton.AI.Tasks.Count <= 1)
+                var offset = Position - skeleton.AI.Position;
+                if (offset.Length() > 4 && skeleton.AI.Tasks.Count <= 1)
                 {
                     Task goToTask = new ActWrapperTask(new GoToEntityAct(Physics, skeleton.AI))
                     {
                         Priority = Task.PriorityType.High
                     };
+
                     if (!skeleton.AI.Tasks.Contains(goToTask))
-                    {
                         skeleton.AI.AssignTask(goToTask);
-                    }
                 }
             }
         }
@@ -161,8 +159,11 @@ namespace DwarfCorp
         {
             while (true)
             {
-                WanderAct wander = new WanderAct(this, WanderTimer.TargetTimeSeconds, 1.0f, 1.0f);
                 Skeletons.RemoveAll(skeleton => skeleton.IsDead);
+                Creature.CurrentCharacterMode = CharacterMode.Idle;
+                Creature.OverrideCharacterMode = false;
+
+                SummonTimer.Update(DwarfTime.LastTime);
                 if (SummonTimer.HasTriggered && Skeletons.Count < MaxSkeletons)
                 {
                     Creature.CurrentCharacterMode = Creature.Stats.CurrentClass.AttackMode;
@@ -171,33 +172,28 @@ namespace DwarfCorp
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_ic_necromancer_summon, Position, true);
                     SummonTimer.Reset(SummonTimer.TargetTimeSeconds);
                     for (int i = Skeletons.Count; i < MaxSkeletons; i+=2)
-                    {
                         SummonSkeleton();
-                    }
                     yield return Act.Status.Success;
                 }
                 else if (SummonTimer.HasTriggered)
-                {
                     yield return Act.Status.Success;
-                }
-                SummonTimer.Update(DwarfTime.LastTime);
-                Creature.CurrentCharacterMode = CharacterMode.Idle;
-                Creature.OverrideCharacterMode = false;
-                if (WanderTimer.HasTriggered)
+
+                GatherSkeletonsTimer.Update(DwarfTime.LastTime);
+                if (GatherSkeletonsTimer.HasTriggered)
                 {
-                    foreach (Act.Status status in wander.Run())
+                    var wander = new WanderAct(this, GatherSkeletonsTimer.TargetTimeSeconds, 1.0f, 1.0f);
+
+                    foreach (var status in wander.Run())
                     {
                         GatherSkeletons();
                         yield return Act.Status.Running;
                     }
                 }
-                WanderTimer.Update(DwarfTime.LastTime);
 
-                if (AttackTimer.HasTriggered)
-                {
-                    OrderSkeletonsToAttack();
-                }
                 AttackTimer.Update(DwarfTime.LastTime);
+                if (AttackTimer.HasTriggered)
+                    OrderSkeletonsToAttack();
+
                 yield return Act.Status.Running;
             }
         }

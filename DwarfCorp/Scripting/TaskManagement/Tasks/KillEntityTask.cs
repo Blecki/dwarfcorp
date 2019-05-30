@@ -51,7 +51,7 @@ namespace DwarfCorp
             if (otherCreature != null && (!otherCreature.IsDead && otherCreature.AI != null))
             {
                 // Flee if the other creature is too scary.
-                if (otherCreature != null && !creature.AI.FightOrFlight(otherCreature.AI))
+                if (otherCreature != null && creature.AI.FightOrFlight(otherCreature.AI) == CreatureAI.FightOrFlightResponse.Flee)
                 {
                     Name = "Flee Entity: " + EntityToKill.Name + " " + EntityToKill.GlobalID;
                     ReassignOnDeath = false;

@@ -8,7 +8,6 @@ namespace DwarfCorp
     public class GetMoneyAct : CompoundCreatureAct
     {
         public DwarfBux Money { get; set; }
-        public Faction Faction { get; set; }
         public bool IncrementDays = true;
 
         public GetMoneyAct()
@@ -16,15 +15,11 @@ namespace DwarfCorp
 
         }
 
-        public GetMoneyAct(CreatureAI agent, DwarfBux money, Faction faction = null) :
+        public GetMoneyAct(CreatureAI agent, DwarfBux money) :
             base(agent)
         {
             Name = "Get paid " + money.ToString();
             Money = money;
-            if (faction == null)
-                Faction = Creature.Faction;
-            else
-                Faction = faction;
         }
 
         public IEnumerable<Act.Status> SetMoneyNeeded(DwarfBux money)
@@ -43,39 +38,22 @@ namespace DwarfCorp
             }
 
             var needed = Agent.Blackboard.GetData<DwarfBux>("MoneyNeeded");
+
             if (needed <= 0)
             {
-                Agent.NumDaysNotPaid = 0;
+                if (Agent is DwarfAI dorf) dorf.OnPaid();
                 yield return Act.Status.Fail;
                 yield break;
             }
 
-            if (Faction.Economy.Funds < needed)
+            if (Agent.Faction.Economy.Funds < needed)
             {
                 Agent.World.MakeAnnouncement(String.Format("Could not pay {0}, not enough money!", Agent.Stats.FullName));
                 Agent.SetMessage("Failed to get money, not enough in treasury.");
-                if (IncrementDays)
-                {
-                    Agent.NumDaysNotPaid++;
+                if (IncrementDays && Agent is DwarfAI dorf)
+                    dorf.OnNotPaid();
 
-                    if (Agent.NumDaysNotPaid < 2)
-                    {
-                        Agent.Creature.AddThought(Thought.ThoughtType.NotPaid);
-                    }
-                    else
-                    {
-                        Agent.Creature.AddThought(new Thought()
-                        {
-                            Description = String.Format("I have not been paid in {0} days!", Agent.NumDaysNotPaid),
-                            HappinessModifier = -25 * Agent.NumDaysNotPaid,
-                            TimeLimit = new TimeSpan(1, 0, 0, 0, 0),
-                            TimeStamp = Agent.World.Time.CurrentDate,
-                            Type = Thought.ThoughtType.Other
-                        }, false);
-                    }
-                }
-
-                    yield return Act.Status.Fail;
+                yield return Act.Status.Fail;
                 yield break;
             }
             

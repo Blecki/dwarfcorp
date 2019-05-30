@@ -478,17 +478,10 @@ namespace DwarfCorp
 
         public void GatherImmediately(GameComponent item, Inventory.RestockType restockType = Inventory.RestockType.None)
         {
-            if (item is CoinPile)
+            if (item is CoinPile coins)
             {
-                var money = (item as CoinPile).Money;
-                AI.AddMoney(money);
+                Faction.AddMoney(coins.Money);
                 item.Die();
-
-                AI.GatherManager.StockMoneyOrders.Add(new GatherManager.StockMoneyOrder()
-                {
-                    Destination = null,
-                    Money = money
-                });
             }
             else
                 Inventory.Pickup(item, restockType);

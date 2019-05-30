@@ -292,7 +292,7 @@ namespace DwarfCorp
                 RoomBuilder.Update(gameTime);
 
                 #region Mourn dead minions
-                if (PlayerFaction.Minions.Any(m => m.IsDead && m.TriggersMourning))
+                if (PlayerFaction.Minions.Any(m => m.IsDead))
                 {
                     foreach (var minion in PlayerFaction.Minions)
                     {
