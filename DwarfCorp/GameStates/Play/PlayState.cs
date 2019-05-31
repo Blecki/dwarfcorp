@@ -695,7 +695,6 @@ namespace DwarfCorp.GameStates
             #region Console
             if (DwarfGame.IsConsoleVisible)
             {
-                PerformanceMonitor.SetMetric("ENTITIES", World.ComponentManager.RootComponent.Children.Count);
                 PerformanceMonitor.SetMetric("MEMORY", BytesToString(System.GC.GetTotalMemory(false)));
 
                 var statsDisplay = DwarfGame.GetConsoleTile("STATS");

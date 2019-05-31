@@ -481,6 +481,7 @@ namespace DwarfCorp
             
             UpdateViewMatrix();
         }
+
         private float _zoomTime = 0;
         public void OverheadUpdate(DwarfTime time, ChunkManager chunks)
         {
@@ -605,7 +606,7 @@ namespace DwarfCorp
 
             Vector3 velocityToSet = Vector3.Zero;
 
-            if (EnableControl)
+            //if (EnableControl)
             {
                 if (keys.IsKeyDown(ControlSettings.Mappings.Forward) || keys.IsKeyDown(Keys.Up))
                 {
@@ -637,7 +638,8 @@ namespace DwarfCorp
                     velocityToSet += mov * CameraMoveSpeed * dt;
                 }
             }
-            else if (FollowAutoTarget)
+            //else 
+            if (FollowAutoTarget)
             {
                 Vector3 prevTarget = Target;
                 float damper = MathFunctions.Clamp((Target - AutoTarget).Length() - 5, 0, 1);

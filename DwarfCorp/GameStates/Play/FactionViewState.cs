@@ -52,7 +52,7 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(0, 3 * GuiRoot.RenderData.VirtualScreen.Height / 4)
             }) as WidgetListView;
 
-            var factions = World.Factions.Factions.Where(f => f.Value.InteractiveFaction && f.Value.Race.IsIntelligent && f.Value != World.PlayerFaction).OrderBy(k =>
+            var factions = World.Factions.Factions.Where(f => f.Value.ParentFaction.InteractiveFaction && f.Value.Race.IsIntelligent && f.Value != World.PlayerFaction).OrderBy(k =>
             {
                 if (k.Value.Race.Name == "Dwarf")
                     return 0;

@@ -480,8 +480,8 @@ namespace DwarfCorp
         {
             foreach (CreatureAI enemy in Sensor.Enemies.Where(e => e != null && !e.IsDead && e.Creature != null))
             {
-                if (enemy.Stats.IsFleeing)
-                    continue;
+                //if (enemy.Stats.IsFleeing)
+                //    continue;
 
                 Task task = new KillEntityTask(enemy.Physics, KillEntityTask.KillType.Auto);
                 if (!HasTaskWithName(task))

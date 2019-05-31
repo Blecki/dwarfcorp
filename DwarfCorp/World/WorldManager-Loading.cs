@@ -366,20 +366,16 @@ namespace DwarfCorp
             #region Prepare Factions
 
             Factions = new FactionSet();
-            Factions.Initialize(this, Settings.Company);
+            //Factions.Initialize(this, Settings.Company);
             foreach (var faction in Settings.Natives)
-            {
-                var f = new Faction(this, faction);
-                f.World = this;
-                Factions.AddFaction(f);
-                f.InteractiveFaction = true;
-            }
+                Factions.AddFaction(new Faction(this, faction));
 
             Point playerOrigin = new Point((int)(Settings.InstanceSettings.Origin.X), (int)(Settings.InstanceSettings.Origin.Y));
 
             Factions.Factions["Player"].Center = playerOrigin;
             Factions.Factions["The Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
             PlayerFaction = Factions.Factions["Player"];
+            PlayerFaction.Economy = new Company(PlayerFaction, 300.0m, Settings.Company);
             RoomBuilder = new RoomBuilder(PlayerFaction, this);
 
             #endregion

@@ -444,12 +444,15 @@ namespace DwarfCorp.GameStates
                 FactionSet library = new FactionSet();
                 library.Initialize(null, new CompanyInformation());
 
-                    Settings.Natives = new List<OverworldFaction>();
-                    for (int i = 0; i < Settings.NumCivilizations; i++)
-                        Settings.Natives.Add(library.GenerateOverworldFaction(Settings, i, Settings.NumCivilizations));
+                Settings.Natives = new List<OverworldFaction>();
+                foreach (var fact in library.Factions)
+                    Settings.Natives.Add(fact.Value.ParentFaction); // Todo: Don't create a whole faction just to grab the overworldfactions from them.
+                for (int i = 0; i < Settings.NumCivilizations; i++)
+                    Settings.Natives.Add(library.GenerateOverworldFaction(Settings, i, Settings.NumCivilizations));
 
                 SeedCivs(Overworld.Map, Settings.NumCivilizations, Settings.Natives);
                 GrowCivs(Overworld.Map, 200, Settings.Natives);
+
 
 
                 for (int x = 0; x < Settings.Width; x++)

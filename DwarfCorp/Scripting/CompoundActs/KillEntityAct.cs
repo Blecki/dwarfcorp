@@ -44,11 +44,11 @@ namespace DwarfCorp
                 if ((creature.Position - Entity.Position).LengthSquared() > RadiusDomain)
                     return false;
 
-            if (Defensive)
-            {
-                var ai = Entity.GetRoot().GetComponent<CreatureAI>();
-                return !ai.Stats.IsFleeing;
-            }
+            //if (Defensive)
+            //{
+            //    var ai = Entity.GetRoot().GetComponent<CreatureAI>();
+            //    return !ai.Stats.IsFleeing;
+            //}
 
 
             return true;

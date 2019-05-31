@@ -246,13 +246,15 @@ namespace DwarfCorp
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera) // Todo: Camera redundant
         {
             PerformanceMonitor.PushFrame("Component Update");
+            PerformanceMonitor.SetMetric("COMPONENTS", NumComponents());
+
 
             var playerPoint = World.Renderer.Camera.Position;
             // Todo: Make this a sphere?
             var distanceVec = new Vector3(GameSettings.Default.EntityUpdateDistance, GameSettings.Default.EntityUpdateDistance, GameSettings.Default.EntityUpdateDistance);
             var updateBox = new BoundingBox(playerPoint - distanceVec, playerPoint + distanceVec);
             var componentsToUpdate = World.EnumerateIntersectingObjectsLoose(updateBox);
-            PerformanceMonitor.SetMetric("ENTITIES UPDATED", componentsToUpdate.Count);
+            PerformanceMonitor.SetMetric("COMPONENTS UPDATED", componentsToUpdate.Count);
 
             foreach (var body in componentsToUpdate)
             {

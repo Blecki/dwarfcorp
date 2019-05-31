@@ -10,7 +10,7 @@ namespace DwarfCorp
 {
     public class FactionSet
     {
-        public Dictionary<string, Faction> Factions { get; set; }
+        public Dictionary<string, Faction> Factions = new Dictionary<string, Faction>();
         
         public OverworldFaction GenerateOverworldFaction(OverworldGenerationSettings Settings, int idx, int n)
         {
@@ -25,6 +25,7 @@ namespace DwarfCorp
                 CenterX = MathFunctions.RandInt(0, Settings.Overworld.Map.GetLength(0)),
                 CenterY = MathFunctions.RandInt(0, Settings.Overworld.Map.GetLength(1)),
                 GoodWill = MathFunctions.Rand(-1, 1),
+                InteractiveFaction = true
             };
 
             return fact;
@@ -32,8 +33,6 @@ namespace DwarfCorp
 
         public void Initialize(WorldManager world, CompanyInformation CompanyInformation)
         {
-            Factions = new Dictionary<string, Faction>();
-
             Factions["Player"] = new Faction(world, new OverworldFaction
             {
                 Name = "Player",
@@ -47,12 +46,12 @@ namespace DwarfCorp
             Factions["The Motherland"] = new Faction(world, new OverworldFaction
             {
                 Name = "The Motherland",
-                Race = "Dwarf"
+                Race = "Dwarf",
+                InteractiveFaction = true,
+                IsMotherland = true
             })
             {
-                InteractiveFaction = true,
                 TradeMoney = 10000,
-                IsMotherland = true,
                 TerritorySize = 9999,
                 DistanceToCapital = 600,
                 ClaimsColony = true
@@ -106,8 +105,6 @@ namespace DwarfCorp
                 Name = "Molemen",
                 Race = "Molemen"
             });
-
-            Factions["Player"].Economy = new Company(Factions["Player"], 300.0m, CompanyInformation);
         }
 
         public FactionSet()

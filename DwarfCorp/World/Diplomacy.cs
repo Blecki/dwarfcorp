@@ -242,7 +242,7 @@ namespace DwarfCorp
                                 });
                             }
                         }
-                        else if (faction.Value.ClaimsColony && !faction.Value.IsMotherland)
+                        else if (faction.Value.ClaimsColony && !faction.Value.ParentFaction.IsMotherland)
                         {
                             if (!politics.HasEvent("you stole our land"))
                             {
@@ -674,7 +674,7 @@ namespace DwarfCorp
                         if (creature.Tasks.Count == 0)
                         {
                             CreatureAI enemyMinion = party.OtherFaction.GetNearestMinion(creature.Position);
-                            if (enemyMinion != null && !enemyMinion.Stats.IsFleeing)
+                            if (enemyMinion != null)// && !enemyMinion.Stats.IsFleeing)
                                 creature.AssignTask(new KillEntityTask(enemyMinion.Physics, KillEntityTask.KillType.Auto));
                         }
                     }

@@ -123,7 +123,7 @@ namespace DwarfCorp.Events
             switch (filter.Specification)
             {
                 case FactionSpecification.Motherland:
-                    return faction.IsMotherland;
+                    return faction.ParentFaction.IsMotherland;
 
                 case FactionSpecification.Player:
                     return faction == world.PlayerFaction;
@@ -172,7 +172,7 @@ namespace DwarfCorp.Events
 
         public string GetFaction(WorldManager world, string EntityFaction, FactionFilter EntityFactionFilter)
         {
-            var factions = world.Factions.Factions.Where(f => f.Value.Race.IsIntelligent && f.Value.InteractiveFaction &&
+            var factions = world.Factions.Factions.Where(f => f.Value.Race.IsIntelligent && f.Value.ParentFaction.InteractiveFaction &&
                 CanSpawnFaction(world, f.Value, EntityFaction, EntityFactionFilter)).Select(f => f.Value).ToList();
             factions.Sort((f1, f2) => f1.DistanceToCapital.CompareTo(f2.DistanceToCapital));
 

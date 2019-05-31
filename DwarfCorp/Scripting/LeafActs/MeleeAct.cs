@@ -280,29 +280,13 @@ namespace DwarfCorp
                 if(DefensiveStructure == null && !Creature.AI.Movement.IsSessile && !intersectsbounds && diff.Length() > CurrentAttack.Weapon.Range)
                 {
                     Creature.CurrentCharacterMode = defaultCharachterMode;
-                    /*
-                    Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, targetPos, Creature.Physics.GlobalTransform.Translation) * 0.9f;
-                    output.Y = 0.0f;
-                    if (Creature.AI.Movement.CanFly)
-                    {
-                        Creature.Physics.ApplyForce(-Creature.Physics.Gravity, DwarfTime.Dt);
-                    }
-                    if (Creature.AI.Movement.IsSessile)
-                    {
-                        output *= 0.0f;
-                    }
-                    Creature.Physics.ApplyForce(output, DwarfTime.Dt);
-                    Creature.Physics.Orientation = Physics.OrientMode.RotateY;
-                     */
-                    GreedyPathAct greedyPath = new GreedyPathAct(Creature.AI, Target, CurrentAttack.Weapon.Range * 0.75f) {PathLength = 5};
+                    var greedyPath = new GreedyPathAct(Creature.AI, Target, CurrentAttack.Weapon.Range * 0.75f) {PathLength = 5};
                     greedyPath.Initialize();
 
                     foreach (Act.Status stat in greedyPath.Run())
                     {
                         if (stat == Act.Status.Running)
-                        {
                             yield return Status.Running;
-                        }
                         else break;
                     }
                 }

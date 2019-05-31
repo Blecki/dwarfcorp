@@ -209,6 +209,7 @@ namespace DwarfCorp
 
         public override bool Equals(object obj)
         {
+            return Object.ReferenceEquals(this, obj);
             if (obj is GameComponent other)
                 return GlobalID == other.GlobalID;
             return false;

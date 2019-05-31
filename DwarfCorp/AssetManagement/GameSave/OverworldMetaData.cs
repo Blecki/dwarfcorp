@@ -18,6 +18,8 @@ namespace DwarfCorp
         public int CenterX { get; set; }
         public int CenterY { get; set; }
         public float GoodWill { get; set; }
+        public bool InteractiveFaction = false;
+        public bool IsMotherland = false;
     }
 
     [Serializable]

@@ -27,10 +27,8 @@ namespace DwarfCorp
         public DesignationSet Designations = new DesignationSet(); // Todo: Still want to get this out of faction.
         public Dictionary<ulong, VoxelHandle> GuardedVoxels = new Dictionary<ulong, VoxelHandle>();
         public bool ClaimsColony = false;
-        public bool IsMotherland = false;
         public float DistanceToCapital = 0.0f;
         public List<Creature> Threats = new List<Creature>();
-        public bool InteractiveFaction = false;
 
         [JsonIgnore] public Race Race => Library.GetRace(ParentFaction.Race);
         [JsonIgnore] public WorldManager World;
@@ -53,6 +51,7 @@ namespace DwarfCorp
         {
             this.World = World;
             ParentFaction = descriptor;
+            ParentFactionName = descriptor.Name;
 
             TradeMoney = 0.0m;
             Center = new Point(descriptor.CenterX, descriptor.CenterY);
