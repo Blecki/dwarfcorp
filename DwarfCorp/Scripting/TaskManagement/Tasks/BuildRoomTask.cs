@@ -42,7 +42,6 @@ namespace DwarfCorp
     internal class BuildRoomTask : Task
     {
         public BuildRoomOrder Zone;
-        public RoomBuilder Builder;
 
         public BuildRoomTask()
         {
@@ -64,7 +63,7 @@ namespace DwarfCorp
 
         private bool IsRoomBuildOrder(Faction faction, BuildRoomOrder buildRooom)
         {
-            return Builder.BuildDesignations.Contains(buildRooom);
+            return faction.World.RoomBuilder.BuildDesignations.Contains(buildRooom);
         }
 
 
@@ -80,7 +79,7 @@ namespace DwarfCorp
             if (Zone == null)
                 return null;
 
-            return new BuildRoomAct(creature.AI, Zone, Builder);
+            return new BuildRoomAct(creature.AI, Zone, creature.World.RoomBuilder);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
