@@ -10,7 +10,7 @@
   "ReleasesResource": false,
   "ResourceToRelease": "Stone",
   "BuildRequirements": [ "Stone" ],
-  "StartingHealth": 20.0,
+  "StartingHealth": 60.0,
   "ProbabilityOfRelease": 0.0,
   "CanRamp": false,
   "RampSize": 0.0,

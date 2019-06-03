@@ -9,7 +9,7 @@
   "TransitionTiles": null,
   "ReleasesResource": false,
   "ResourceToRelease": "Dirt",
-  "StartingHealth": 20.0,
+  "StartingHealth": 30.0,
   "ProbabilityOfRelease": 0.0,
   "CanRamp": false,
   "RampSize": 0.0,

@@ -9,7 +9,7 @@
   "TransitionTiles": null,
   "ReleasesResource": true,
   "ResourceToRelease": "Citrine",
-  "StartingHealth": 90.0,
+  "StartingHealth": 150.0,
   "ProbabilityOfRelease": 1.0,
   "CanRamp": false,
   "RampSize": 0.0,

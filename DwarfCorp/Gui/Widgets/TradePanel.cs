@@ -391,7 +391,7 @@ namespace DwarfCorp.Gui.Widgets
                         var envoyOut = Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney;
                         var tradeTarget = 1.0m;
 
-                        if (Player.AvailableSpace - PlayerColumns.SelectedResources.Count < EnvoyColumns.SelectedResources.Count)
+                        if (EnvoyColumns.SelectedResources.Count != 0 && Player.AvailableSpace + PlayerColumns.SelectedResources.Count < EnvoyColumns.SelectedResources.Count)
                         {
                             Root.ShowModalMessage("We do not have enough stockpile space for that.");
                         }

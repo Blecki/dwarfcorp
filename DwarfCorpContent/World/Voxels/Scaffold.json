@@ -10,7 +10,7 @@
   "ReleasesResource": false,
   "ResourceToRelease": "Wood",
   "BuildRequirements": [ "Wood" ],
-  "StartingHealth": 20.0,
+  "StartingHealth": 30.0,
   "ProbabilityOfRelease": 1.0,
   "CanRamp": false,
   "IsFlammable": true,

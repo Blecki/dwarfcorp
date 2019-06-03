@@ -262,7 +262,7 @@ namespace DwarfCorp
                 body.ProcessTransformChange();
             }
 
-            if (Debugger.Switches.ShowUpdateBox)
+            if (Debugger.Switches.DrawUpdateBox)
                 foreach (var chunk in World.EnumerateChunksInBounds(updateBox))
                     Drawer3D.DrawBox(chunk.GetBoundingBox(), Color.Red, 0.4f, false);
 

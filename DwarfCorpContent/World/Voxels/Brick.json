@@ -9,7 +9,7 @@
   "TransitionTiles": null,
   "ReleasesResource": true,
   "ResourceToRelease": "Brick",
-  "StartingHealth": 30.0,
+  "StartingHealth": 100.0,
   "ProbabilityOfRelease": 1.0,
   "CanRamp": false,
   "RampSize": 0.0,

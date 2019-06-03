@@ -9,7 +9,7 @@
   "TransitionTiles": null,
   "ReleasesResource": true,
   "ResourceToRelease": "Stone",
-  "StartingHealth": 50.0,
+  "StartingHealth": 100.0,
   "ProbabilityOfRelease": 1.0,
   "CanRamp": false,
   "RampSize": 0.0,

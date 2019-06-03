@@ -29,8 +29,11 @@ namespace DwarfCorp.Generation
 
                     for (int y = 0; y < VoxelConstants.ChunkSizeY; y++)
                     {
-                        if (Chunk.Origin.Y + y > height) break;
+                        if (Chunk.Origin.Y + y >= height) break;
                         if (Chunk.Origin.Y + y == 0) continue;
+
+                        var v = Chunk.Manager.CreateVoxelHandle(new GlobalVoxelCoordinate(Chunk.Origin.X + x, Chunk.Origin.Y + y, Chunk.Origin.Z + z));
+                        if (v.Sunlight) continue;
 
                         foreach (var voxelType in Library.EnumerateVoxelTypes())
                         {
@@ -48,7 +51,7 @@ namespace DwarfCorp.Generation
                                 var oreNoise = Settings.CaveNoise.GetValue(noiseVector.X, noiseVector.Y, noiseVector.Z);
 
                                 if (Math.Abs(oreNoise) < voxelType.Rarity * fade)
-                                    Chunk.Manager.CreateVoxelHandle(new GlobalVoxelCoordinate(Chunk.Origin.X + x, Chunk.Origin.Y + y, Chunk.Origin.Z + z)).RawSetType(voxelType);
+                                    v.RawSetType(voxelType);
                             }
                         }
                     }

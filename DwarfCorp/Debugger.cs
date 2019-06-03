@@ -15,7 +15,6 @@ namespace DwarfCorp
         public static class Switches
         {
             public static bool DrawBoundingBoxes = false;
-            public static bool DrawOcttree = false;
             public static bool DrawPaths = false;
             public static bool DrawRailNetwork = false;
             public static bool DrawPipeNetwork = false;
@@ -26,7 +25,7 @@ namespace DwarfCorp
             public static bool DrawSelectionBuffer = false;
             public static bool HideSliceTop = false;
             public static bool DebugElevators = false;
-            public static bool ShowUpdateBox = false;
+            public static bool DrawUpdateBox = false;
         }
 
         public class Switch

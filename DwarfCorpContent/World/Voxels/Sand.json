@@ -9,7 +9,7 @@
   "TransitionTiles": null,
   "ReleasesResource": true,
   "ResourceToRelease": "Sand",
-  "StartingHealth": 15.0,
+  "StartingHealth": 30.0,
   "ProbabilityOfRelease": 1.0,
   "CanRamp": true,
   "RampSize": 0.5,
