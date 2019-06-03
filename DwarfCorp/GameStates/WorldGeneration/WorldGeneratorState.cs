@@ -8,7 +8,7 @@ namespace DwarfCorp.GameStates
     {
         private Gui.Root GuiRoot;
         private Gui.Widgets.ProgressBar GenerationProgress;
-        private WorldGeneratorPreview Preview;
+        public WorldGeneratorPreview Preview;
         private WorldGenerator Generator;
         private OverworldGenerationSettings Settings;
         private Gui.Widget RightPanel;
@@ -59,7 +59,7 @@ namespace DwarfCorp.GameStates
             var rect = RightPanel.Rect;
             MainPanel.RemoveChild(RightPanel);
 
-            RightPanel = MainPanel.AddChild(new LaunchPanel(Game, Generator, Settings)
+            RightPanel = MainPanel.AddChild(new LaunchPanel(Game, Generator, Settings, this)
             {
                 Rect = rect
             });
@@ -103,12 +103,13 @@ namespace DwarfCorp.GameStates
                     });
                     break;
                 case PanelStates.Launch:
-                    RightPanel = MainPanel.AddChild(new LaunchPanel(Game, Generator, Settings)
+                    RightPanel = MainPanel.AddChild(new LaunchPanel(Game, Generator, Settings, this)
                     {
                         AutoLayout = AutoLayout.DockRight,
                         MinimumSize = new Point(256, 0),
                         Padding = new Gui.Margin(2, 2, 2, 2)
                     });
+
                     break;
             }
 
@@ -130,6 +131,10 @@ namespace DwarfCorp.GameStates
                 OnLayout = (sender) =>
                 {
                     sender.Rect = new Rectangle(sender.Rect.X, sender.Rect.Y, sender.Rect.Width, GenerationProgress.Rect.Bottom - sender.Rect.Y);
+                },
+                OnCellSelectionMade = () =>
+                {
+                    if (RightPanel is LaunchPanel launch) launch.UpdateCellInfo();
                 }
             }) as WorldGeneratorPreview;
 
@@ -185,6 +190,8 @@ namespace DwarfCorp.GameStates
             {
                 Preview.DrawPreview();
                 GuiRoot.MousePointer = new MousePointer("mouse", 1, 0);
+                if (RightPanel is LaunchPanel launch)
+                    launch.DrawPreview();
             }
 
             GuiRoot.RedrawPopups();

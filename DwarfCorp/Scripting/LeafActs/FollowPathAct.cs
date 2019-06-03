@@ -223,14 +223,15 @@ namespace DwarfCorp
                     CleanupMinecart();
                     Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
 
-                    foreach (var bit in Jump(Agent.Position, GetPathPoint(Step.DestinationVoxel), Agent.Position - GetPathPoint(Step.SourceVoxel), actionSpeed / 2.0f))
+                    var dest = GetPathPoint(Step.DestinationVoxel);
+                    foreach (var bit in Jump(Agent.Position, dest, dest - Agent.Position, actionSpeed / 2.0f))
                     {
                         Creature.OverrideCharacterMode = false;
                         SetCharacterMode(Creature.Physics.Velocity.Y > 0 ? CharacterMode.Jumping : CharacterMode.Falling);
                         yield return Status.Running;
                     }
 
-                    //SetAgentTranslation(GetPathPoint(Step.DestinationVoxel));
+                    SetAgentTranslation(dest);
 
                     break;
 
@@ -400,6 +401,7 @@ namespace DwarfCorp
             {
                 foreach (var status in PerformStep(step))
                 {
+                    //Agent.Physics.PropogateTransforms();
                     DeltaTime += (float)DwarfTime.LastTime.ElapsedGameTime.TotalSeconds;
 
                     if (status == Status.Fail)
@@ -426,7 +428,12 @@ namespace DwarfCorp
         {
             if (Debugger.Switches.DrawPaths)
                 for (var i = 0; i < Path.Count; ++i)
-                    Drawer3D.DrawLine(GetPathPoint(Path[i].SourceVoxel), GetPathPoint(Path[i].DestinationVoxel), Color.Red, 0.1f);
+                {
+                    if (Path[i].MoveType == MoveType.Jump)
+                        Drawer3D.DrawLine(GetPathPoint(Path[i].SourceVoxel), GetPathPoint(Path[i].DestinationVoxel), Color.Red, 0.1f);
+                    else
+                        Drawer3D.DrawLine(GetPathPoint(Path[i].SourceVoxel), GetPathPoint(Path[i].DestinationVoxel), Color.Blue, 0.1f);
+                }
         }
 
         public override void OnCanceled()
@@ -447,8 +454,8 @@ namespace DwarfCorp
             while (DeltaTime < jumpTime)
             {
                 var jumpProgress = DeltaTime / jumpTime;
-                Vector3 dx = (End - Start) * DeltaTime + Start;
-                dx.Y += Easing.Ballistic(DeltaTime, jumpTime, 1.0f);
+                var dx = ((End - Start) * jumpProgress) + Start;
+                dx.Y += Easing.Ballistic(DeltaTime, jumpTime, 1.5f);
                 SetAgentTranslation(dx);
                 Agent.Physics.Velocity = JumpDelta;
                 yield return Status.Running;
@@ -479,7 +486,7 @@ namespace DwarfCorp
             var transform = Agent.Physics.LocalTransform;
             transform.Translation = T;
             Agent.Physics.LocalTransform = transform;
-            //Agent.Physics.PropogateTransforms();
+            Agent.Physics.PropogateTransforms();
         }
     }
 }

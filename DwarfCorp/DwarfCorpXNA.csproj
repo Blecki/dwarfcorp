@@ -876,7 +876,6 @@
     <Compile Include="Scripting\TaskManagement\Tasks\KillEntityTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\KillVoxelTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\LookInterestingTask.cs" />
-    <Compile Include="Scripting\TaskManagement\Tasks\PutItemInZoneTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\SatisfyHungerTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\SatisfyTirednessTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\StockResourceTask.cs" />

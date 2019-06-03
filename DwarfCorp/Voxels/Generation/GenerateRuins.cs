@@ -23,6 +23,8 @@ namespace DwarfCorp.Generation
 
             int structureWidth = MathFunctions.RandInt(4, 16);
             int structureDepth = MathFunctions.RandInt(4, 16);
+            int xOffset = MathFunctions.RandInt(0, VoxelConstants.ChunkSizeX - structureWidth);
+            int zOffset = MathFunctions.RandInt(0, VoxelConstants.ChunkSizeZ - structureDepth);
             int wallHeight = MathFunctions.RandInt(2, 6);
             int heightOffset = MathFunctions.RandInt(-4, 2);
 
@@ -38,7 +40,7 @@ namespace DwarfCorp.Generation
             {
                 for (int dz = 0; dz < structureDepth; dz++)
                 {
-                    var worldPos = new Vector3(Chunk.Origin.X + dx, avgHeight + heightOffset, Chunk.Origin.Z + dz);
+                    var worldPos = new Vector3(Chunk.Origin.X + dx + xOffset, avgHeight + heightOffset, Chunk.Origin.Z + dz + zOffset);
 
                     var baseVoxel = Settings.World.ChunkManager.CreateVoxelHandle(GlobalVoxelCoordinate.FromVector3(worldPos));
                     var underVoxel = VoxelHelpers.FindFirstVoxelBelow(Settings.World.ChunkManager.CreateVoxelHandle(GlobalVoxelCoordinate.FromVector3(worldPos)));

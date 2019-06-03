@@ -19,12 +19,15 @@ namespace DwarfCorp.GameStates
         private Widget CellInfo;
         private String SaveName;
         private DwarfGame Game;
+        private WorldGeneratorState Preview;
+        private Widget ZoomedPreview;
 
-        public LaunchPanel(DwarfGame Game, WorldGenerator Generator, OverworldGenerationSettings Settings) 
+        public LaunchPanel(DwarfGame Game, WorldGenerator Generator, OverworldGenerationSettings Settings, WorldGeneratorState Preview) 
         {
             this.Generator = Generator;
             this.Settings = Settings;
             this.Game = Game;
+            this.Preview = Preview;
 
             if (Generator != null && Generator.CurrentState != WorldGenerator.GenerationState.Finished)
                 throw new InvalidProgramException();
@@ -88,8 +91,22 @@ namespace DwarfCorp.GameStates
 
             CellInfo = AddChild(new Widget
             {
-                AutoLayout = AutoLayout.DockFill,
-                TextColor = new Vector4(0, 0, 0, 1)
+                AutoLayout = AutoLayout.DockTop,
+                TextColor = new Vector4(0, 0, 0, 1),
+                Font = "font10"
+            });
+
+            ZoomedPreview = AddChild(new Gui.Widget
+            {
+                AutoLayout = Gui.AutoLayout.DockBottom,
+                OnLayout = (sender) =>
+                {
+                    var space = System.Math.Min(CellInfo.Rect.Width, StartButton.Rect.Top - CellInfo.Rect.Bottom - 4);
+                    sender.Rect.Height = space;
+                    sender.Rect.Width = space;
+                    sender.Rect.Y = StartButton.Rect.Top - space - 2;
+                    sender.Rect.X = CellInfo.Rect.X +  ((CellInfo.Rect.Width - space) / 2);
+                }
             });
 
             UpdateCellInfo();
@@ -97,7 +114,7 @@ namespace DwarfCorp.GameStates
             base.Construct();
         }
 
-        private void UpdateCellInfo()
+        public void UpdateCellInfo()
         {
             if (Settings.InstanceSettings.Origin.X < 0 || Settings.InstanceSettings.Origin.X >= Settings.Width ||
                 Settings.InstanceSettings.Origin.Y < 0 || Settings.InstanceSettings.Origin.Y >= Settings.Height)
@@ -113,16 +130,29 @@ namespace DwarfCorp.GameStates
                 if (saveGame != null)
                 {
                     StartButton.Text = "Load";
-                    CellInfo.Text = "";
+                    CellInfo.Text = saveGame.Metadata.DescriptionString;
                     StartButton.Hidden = false;
                 }
                 else
                 {
                     StartButton.Hidden = false;
                     StartButton.Text = "Create";
-                    CellInfo.Text = "";
+                    CellInfo.Text = String.Format("World Size: {0}x{1}", 
+                        Settings.InstanceSettings.Cell.Bounds.Width * VoxelConstants.ChunkSizeX, 
+                        Settings.InstanceSettings.Cell.Bounds.Height * VoxelConstants.ChunkSizeZ);
                 }
             }
+        }
+
+        public void DrawPreview()
+        {
+            Root.DrawMesh(
+                    Gui.Mesh.Quad()
+                    .Scale(-ZoomedPreview.Rect.Width, -ZoomedPreview.Rect.Height)
+                    .Translate(ZoomedPreview.Rect.X + ZoomedPreview.Rect.Width,
+                        ZoomedPreview.Rect.Y + ZoomedPreview.Rect.Height)
+                    .Texture(Preview.Preview.ZoomedPreviewMatrix),
+                    Preview.Preview.PreviewTexture);
         }
     }
 }

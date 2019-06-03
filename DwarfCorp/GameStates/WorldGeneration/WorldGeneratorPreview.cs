@@ -202,7 +202,7 @@ namespace DwarfCorp.GameStates
                 Root.DrawMesh(mesh, Root.RenderData.Texture);
             }
 
-            foreach (var civ in Generator.Settings.Natives)
+            foreach (var civ in Generator.Settings.Natives.Where(n => n.InteractiveFaction))
             {
                 var civLocation = Camera.WorldToScreen(new Vector2(civ.CenterX, civ.CenterY));
                 if (civLocation.Z > 0.9999f)

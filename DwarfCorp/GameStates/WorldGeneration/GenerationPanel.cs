@@ -34,15 +34,16 @@ namespace DwarfCorp.GameStates
         {
             AddChild(new Gui.Widget
             {
-                Text = "Regenerate",
+                Text = "Randomize",
                 Border = "border-button",
                 ChangeColorOnHover = true,
                 TextColor = new Vector4(0, 0, 0, 1),
                 Font = "font16",
                 AutoLayout = Gui.AutoLayout.DockTop,
                 OnClick = (sender, args) => {
-                    DwarfGame.LogSentryBreadcrumb("WorldGenerator", "User is regeneating the world.");
-                    //Settings = new OverworldGenerationSettings();
+                    DwarfGame.LogSentryBreadcrumb("WorldGenerator", "User is regenerating the world.");
+                    Settings.Seed = MathFunctions.RandInt(Int32.MinValue, Int32.MaxValue);
+                    Settings.Name = OverworldGenerationSettings.GetRandomWorldName();
                     RestartGeneration();
                 }
             });

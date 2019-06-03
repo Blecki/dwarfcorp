@@ -13,7 +13,7 @@ namespace DwarfCorp.GameStates
         public int NumCivilizations = 5;
         public int NumRains = 1000;
         public int NumVolcanoes = 3;
-        public float RainfallScale = 1.0f;
+        public float RainfallScale = 2.0f;
         public int NumFaults = 3;
         public float SeaLevel = 0.17f;
         public float TemperatureScale = 1.0f;
@@ -30,8 +30,7 @@ namespace DwarfCorp.GameStates
 
         public static string GetRandomWorldName()
         {
-            List<List<string>> templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.worlds);
-            return TextGenerator.GenerateRandom(templates);
+            return TextGenerator.GenerateRandom(TextGenerator.GetAtoms(ContentPaths.Text.Templates.worlds));
         }
 
         public OverworldGenerationSettings()

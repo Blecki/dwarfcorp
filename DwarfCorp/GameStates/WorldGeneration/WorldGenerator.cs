@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json.Converters;
 using System.Text;
+using System.Linq;
 
 namespace DwarfCorp.GameStates
 {
@@ -125,28 +126,6 @@ namespace DwarfCorp.GameStates
                 genThread.Abort();
         }
 
-        public void AutoSelectSpawnRegion()
-        {
-            LoadingMessage = "Selecting spawn.";
-
-            Settings.InstanceSettings.Cell = new ColonyCell
-            {
-                Bounds = new Rectangle(MathFunctions.RandInt(0, Settings.Width - 8), MathFunctions.RandInt(0, Settings.Height - 8), 8, 8)
-            };
-
-            bool inWater = true;
-            do
-            {
-                var rect = GetSpawnRectangle();
-                inWater = Overworld.Map[rect.Center.X, rect.Center.Y].Height < Settings.SeaLevel;
-                if (inWater)
-                    Settings.InstanceSettings.Cell = new ColonyCell
-                    {
-                        Bounds = new Rectangle(MathFunctions.RandInt(0, Settings.Width - rect.Width), MathFunctions.RandInt(0, Settings.Height - rect.Height), rect.Width, rect.Height)
-                    };
-            } while (inWater);
-        }
-
         public IEnumerable<KeyValuePair<string, Color>> GetSpawnStats()
         {
             var factions = GetFactionsInSpawn();
@@ -241,11 +220,6 @@ namespace DwarfCorp.GameStates
             LandIndex = null;
             if (CurrentState == GenerationState.NotStarted)
             {
-                Settings.InstanceSettings.Cell = new ColonyCell
-                {
-                    Bounds = new Rectangle(0, 0, 8, 8)
-                };
-
                 genThread = new Thread(unused =>
                 {
                     Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -264,7 +238,7 @@ namespace DwarfCorp.GameStates
         {
             var toReturn = new Dictionary<string, Color>();
             toReturn["Unclaimed"] = Color.Gray;
-            foreach (var faction in Settings.Natives)
+            foreach (var faction in Settings.Natives.Where(n => n.InteractiveFaction))
             {
                 int goodwill = (int)(100 * faction.GoodWill);
                 string goodwillStr = goodwill > 0 ? "+" + goodwill.ToString() : goodwill.ToString();
@@ -450,7 +424,7 @@ namespace DwarfCorp.GameStates
                 for (int i = 0; i < Settings.NumCivilizations; i++)
                     Settings.Natives.Add(library.GenerateOverworldFaction(Settings, i, Settings.NumCivilizations));
 
-                SeedCivs(Overworld.Map, Settings.NumCivilizations, Settings.Natives);
+                SeedCivs(Overworld.Map, Settings.Natives.Count, Settings.Natives);
                 GrowCivs(Overworld.Map, 200, Settings.Natives);
 
 
@@ -466,9 +440,6 @@ namespace DwarfCorp.GameStates
                     Overworld.Map[0, y] = Overworld.Map[1, y];
                     Overworld.Map[Settings.Width - 1, y] = Overworld.Map[Settings.Width - 2, y];
                 }
-
-                LoadingMessage = "Selecting Spawn Point";
-                AutoSelectSpawnRegion();
 
                 CurrentState = GenerationState.Finished;
                 LoadingMessage = "";
@@ -817,12 +788,15 @@ namespace DwarfCorp.GameStates
         {
             for (int i = 0; i < numCivs; i++)
             {
-                Point? randomPoint = GetRandomLandPoint(map);
-
-                if (randomPoint == null) continue;
-                else
+                if (civs[i].InteractiveFaction && !civs[i].IsMotherland)
                 {
-                    map[randomPoint.Value.X, randomPoint.Value.Y].Faction = (byte)(i + 1);
+                    Point? randomPoint = GetRandomLandPoint(map);
+
+                    if (randomPoint == null) continue;
+                    else
+                    {
+                        map[randomPoint.Value.X, randomPoint.Value.Y].Faction = (byte)(i + 1);
+                    }
                 }
             }
         }

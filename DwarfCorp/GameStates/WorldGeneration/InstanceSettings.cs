@@ -15,6 +15,6 @@ namespace DwarfCorp.GameStates
         [JsonIgnore] public Vector2 Origin => new Vector2(Cell.Bounds.X, Cell.Bounds.Y);
         public string ExistingFile = null;
         public LoadType LoadType = LoadType.CreateNew;
-        public ColonyCell Cell;
+        public ColonyCell Cell = new ColonyCell { Bounds = new Rectangle(16, 0, 8, 8) };
     }
 }

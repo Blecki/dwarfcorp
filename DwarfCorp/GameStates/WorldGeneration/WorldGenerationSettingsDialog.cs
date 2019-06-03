@@ -70,7 +70,6 @@ namespace DwarfCorp.Gui.Widgets
         
         public override void Construct()
         {
-            Settings.Seed = Settings.Name.GetHashCode();
             PopupDestructionType = PopupDestructionType.Keep;
             Padding = new Margin(2, 2, 2, 2);
             //Set size and center on screen.
@@ -131,7 +130,6 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     Settings.Name = TextGenerator.GenerateRandom(TextGenerator.GetAtoms(ContentPaths.Text.Templates.worlds));
                     NameEditBox.Text = Settings.Name;
-                    Settings.Seed = Settings.Name.GetHashCode();
                 }
             });
 
@@ -142,7 +140,6 @@ namespace DwarfCorp.Gui.Widgets
                 OnTextChange = (sender) =>
                 {
                     Settings.Name = sender.Text;
-                    Settings.Seed = Settings.Name.GetHashCode();
                 }
             });
 
@@ -169,6 +166,34 @@ namespace DwarfCorp.Gui.Widgets
             AddChild(CreateCombo<float>(Root, "Temperature", "Average temperature.",
                 new float[] { 0.0f, 0.5f, 1.0f, 1.5f, 2.0f }, (f) => Settings.TemperatureScale = f,
                 () => Settings.TemperatureScale));
+
+
+            var srow = AddChild(new Widget
+            {
+                AutoLayout = AutoLayout.DockTop,
+                MinimumSize = new Point(0, 30),
+                Tooltip = "Set the world seed"
+            });
+
+            srow.AddChild(new Widget
+            {
+                AutoLayout = AutoLayout.DockLeft,
+                MinimumSize = new Point(64, 0),
+                Text = "Seed"
+            });
+
+            srow.AddChild(new EditableTextField()
+            {
+                AutoLayout = AutoLayout.DockFill,
+                Text = Settings.Seed.ToString(),
+                BeforeTextChange = (sender, args) =>
+                {
+                    if (Int32.TryParse(args.NewText, out int s))
+                        Settings.Seed = s;
+                    else
+                        args.Cancelled = true;
+                }
+            });
 
             Layout();
         }

@@ -17,6 +17,8 @@ namespace DwarfCorp
         public String Version;
         public String Commit;
         public WorldRendererPersistentSettings RendererSettings;
+
+        public String DescriptionString = "Description";
         
         public static string Extension = "meta";
         public static string CompressedExtension = "zmeta";
@@ -31,7 +33,16 @@ namespace DwarfCorp
                 Time = World.Time,
                 Version = Program.Version,
                 Commit = Program.Commit,
-                RendererSettings = World.Renderer.PersistentSettings
+                RendererSettings = World.Renderer.PersistentSettings,
+                DescriptionString = String.Format("World size: {0}x{1}\nDwarves: {2}/{3}\nLiquid Assets: {4}\nMaterial Assets: {5}",
+                    World.WorldSizeInVoxels.X, World.WorldSizeInVoxels.Z,
+                    World.CalculateSupervisedEmployees(), World.CalculateSupervisionCap(),
+                    World.PlayerFaction.Economy.Funds.ToString(),
+                    World.ListResourcesInStockpilesPlusMinions().Values.Select(r =>
+                    {
+                        var value = ResourceLibrary.GetResourceByName(r.First.Type).MoneyValue.Value;
+                        return (r.First.Count * value) + (r.Second.Count * value);
+                    }).Sum())
             };
         }
     }
