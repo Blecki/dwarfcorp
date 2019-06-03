@@ -252,7 +252,8 @@ namespace DwarfCorp.GameStates
         {
             int volcanoSamples = 4;
             float volcanoSize = 11;
-            for(int i = 0; i < (int) Settings.NumVolcanoes; i++)
+
+            for(int i = 0; i < (int) Settings.NumVolcanoes; i++) // Todo: Need to move the random used for world generation into settings.
             {
                 Vector2 randomPos = new Vector2((float) (MathFunctions.Random.NextDouble() * width), (float) (MathFunctions.Random.NextDouble() * height));
                 float maxFaults = Overworld.Map[(int) randomPos.X, (int) randomPos.Y].Height;
