@@ -63,18 +63,12 @@ namespace DwarfCorp.GameStates
                     var saveGame = SaveGame.LoadMetaFromDirectory(saveName);
                     if (saveGame != null)
                     {
+                        DwarfGame.LogSentryBreadcrumb("WorldGenerator", "User is loading a saved game.");
+                        Settings.InstanceSettings.ExistingFile = saveName;
+                        Settings.InstanceSettings.LoadType = LoadType.LoadFromFile;
+                        
                         GameStateManager.ClearState();
-                        GameStateManager.PushState(new LoadState(Game,
-                            new OverworldGenerationSettings
-                            {
-                                InstanceSettings = new InstanceSettings
-                                {
-                                    ExistingFile = saveName,
-                                    LoadType = LoadType.LoadFromFile,
-                                    Cell = Settings.InstanceSettings.Cell
-                                },
-                                Name = saveName
-                            }));
+                        GameStateManager.PushState(new LoadState(Game, Settings));
                     }
                     else
                     {
@@ -83,15 +77,45 @@ namespace DwarfCorp.GameStates
                         Settings.InstanceSettings.ExistingFile = null;
                         Settings.InstanceSettings.LoadType = LoadType.CreateNew;
 
-                        GameStateManager.ClearState();
-                        GameStateManager.PushState(new LoadState(Game, Settings));
+                        var message = "";
+                        var valid = Settings.InitalEmbarkment.ValidateEmbarkment(Settings, out message);
+                        if (valid == Embarkment.ValidationResult.Pass)
+                        {
+                            GameStateManager.ClearState();
+                            GameStateManager.PushState(new LoadState(Game, Settings));
+                        }
+                        else if (valid == Embarkment.ValidationResult.Query)
+                        {
+                            var popup = new Gui.Widgets.Confirm()
+                            {
+                                Text = message,
+                                OnClose = (_sender) =>
+                                {
+                                    if ((_sender as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
+                                    {
+                                        GameStateManager.ClearState();
+                                        GameStateManager.PushState(new LoadState(Game, Settings));
+                                    }
+                                }
+                            };
+                            Root.ShowModalPopup(popup);
+                        }
+                        else if (valid == Embarkment.ValidationResult.Reject)
+                        {
+                            var popup = new Gui.Widgets.Confirm()
+                            {
+                                Text = message,
+                                CancelText = ""
+                            };
+                            Root.ShowModalPopup(popup);
+                        }
                     }
                 }
             });
 
             CellInfo = AddChild(new Widget
             {
-                AutoLayout = AutoLayout.DockTop,
+                AutoLayout = AutoLayout.DockFill,
                 TextColor = new Vector4(0, 0, 0, 1),
                 Font = "font10"
             });
@@ -101,15 +125,15 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockBottom,
                 OnLayout = (sender) =>
                 {
-                    var space = System.Math.Min(CellInfo.Rect.Width, StartButton.Rect.Top - CellInfo.Rect.Bottom - 4);
-                    sender.Rect.Height = space;
-                    sender.Rect.Width = space;
-                    sender.Rect.Y = StartButton.Rect.Top - space - 2;
-                    sender.Rect.X = CellInfo.Rect.X +  ((CellInfo.Rect.Width - space) / 2);
+                    sender.Rect.Height = StartButton.Rect.Width;
+                    sender.Rect.Width = StartButton.Rect.Width;
+                    sender.Rect.Y = StartButton.Rect.Top - StartButton.Rect.Width - 2;
+                    sender.Rect.X = StartButton.Rect.X;
                 }
             });
 
             UpdateCellInfo();
+            this.Layout();
 
             base.Construct();
         }
@@ -145,12 +169,13 @@ namespace DwarfCorp.GameStates
 
                     CellInfo.AddChild(new Gui.Widget
                     {
-                        Text = "Embarkment",
+                        Text = "Edit Embarkment",
                         Border = "border-button",
                         ChangeColorOnHover = true,
                         TextColor = new Vector4(0, 0, 0, 1),
                         Font = "font16",
                         AutoLayout = Gui.AutoLayout.DockTop,
+                        MinimumSize = new Point(0, 32),
                         OnClick = (sender, args) =>
                         {
                             DwarfGame.LogSentryBreadcrumb("Game Launcher", "User is modifying embarkment.");

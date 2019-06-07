@@ -15,6 +15,10 @@ namespace DwarfCorp.GameStates
         private OverworldGenerationSettings Settings;
         private Gui.Widgets.WidgetListView EmployeeList;
         private EmbarkmentResourceColumns ResourceColumns;
+        private Widget EmployeeCost;
+        private Widget TotalCost;
+        private Widget Cash;
+        private Widget ValidationLabel;
 
         public EmbarkmentEditor(OverworldGenerationSettings Settings) 
         {
@@ -40,6 +44,7 @@ namespace DwarfCorp.GameStates
                 {
                     Settings.InitalEmbarkment.Employees.RemoveAt(Index);
                     RebuildEmployeeList();
+                    UpdateCost();
                 }
             });
 
@@ -60,6 +65,35 @@ namespace DwarfCorp.GameStates
                 EmployeeList.AddItem(CreateEmployeeListing(Settings.InitalEmbarkment.Employees[i], i));
         }
 
+        private Widget CreateBar(String Label)
+        {
+            var r = Root.ConstructWidget(new Widget
+            {
+                MinimumSize = new Point(0, 32),
+                Text = Label,
+                AutoLayout = AutoLayout.DockTop,
+                Font = "font16"
+            });
+            return r;
+        }
+
+        private void UpdateCost()
+        {
+            Cash.Text = Settings.InitalEmbarkment.Money.ToString();
+            Cash.Invalidate();
+
+            EmployeeCost.Text = (new DwarfBux(Settings.InitalEmbarkment.Employees.Sum(e => e.SigningBonus))).ToString();
+            EmployeeCost.Invalidate();
+
+            TotalCost.Text = (Settings.InitalEmbarkment.Money + Settings.InitalEmbarkment.Employees.Sum(e => e.SigningBonus)).ToString();
+            TotalCost.Invalidate();
+
+            var s = "";
+            Settings.InitalEmbarkment.ValidateEmbarkment(Settings, out s);
+            ValidationLabel.Text = s;
+            ValidationLabel.Invalidate();
+        }
+
         public override void Construct()
         {
             PopupDestructionType = PopupDestructionType.Keep;
@@ -69,13 +103,14 @@ namespace DwarfCorp.GameStates
 
             Border = "border-fancy";
 
-            var bottomBar = AddChild(new Widget
+            ValidationLabel = AddChild(new Widget
             {
                 MinimumSize = new Point(0, 48),
-                AutoLayout = AutoLayout.DockBottom
+                AutoLayout = AutoLayout.DockBottom,
+                Font = "font16"
             });
 
-            bottomBar.AddChild(new Gui.Widget
+            ValidationLabel.AddChild(new Gui.Widget
             {
                 Text = "Okay",
                 Border = "border-button",
@@ -88,7 +123,32 @@ namespace DwarfCorp.GameStates
                     foreach (var resource in ResourceColumns.SelectedResources)
                         Settings.InitalEmbarkment.Resources.Add(resource);
 
-                    this.Close();
+                    var message = "";
+                    var valid = Settings.InitalEmbarkment.ValidateEmbarkment(Settings, out message);
+                    if (valid == Embarkment.ValidationResult.Pass)
+                        this.Close();
+                    else if (valid == Embarkment.ValidationResult.Query)
+                    {
+                        var popup = new Gui.Widgets.Confirm()
+                        {
+                            Text = message,
+                            OnClose = (_sender) =>
+                            {
+                                if ((_sender as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
+                                    this.Close();
+                            }
+                        };
+                        Root.ShowModalPopup(popup);
+                    }
+                    else if (valid == Embarkment.ValidationResult.Reject)
+                    {
+                        var popup = new Gui.Widgets.Confirm()
+                        {
+                            Text = message,
+                            CancelText = ""
+                        };
+                        Root.ShowModalPopup(popup);
+                    }
                 }
             });
 
@@ -125,23 +185,61 @@ namespace DwarfCorp.GameStates
                             OnClose = (_s) =>
                             {
                                 RebuildEmployeeList();
+                                UpdateCost();
                             }
                         });
                     Root.ShowModalPopup(dialog);
                 }
             });
 
-            var moneyField = employeeStack.AddChild(new Gui.Widgets.MoneyEditor
+            var costPanel = employeeStack.AddChild(new Widget
+            {
+                MinimumSize = new Point(0, 128),
+                AutoLayout = AutoLayout.DockBottom
+            });
+
+            var availableFunds = costPanel.AddChild(CreateBar("Funds Available:"));
+            availableFunds.AddChild(new Widget
+            {
+                AutoLayout = AutoLayout.DockRight,
+                Text = Settings.PlayerCorporationFunds.ToString(),
+                MinimumSize = new Point(128, 0),
+                TextHorizontalAlign = HorizontalAlign.Right
+            });
+
+            var moneyBar = costPanel.AddChild(CreateBar("Ready Cash:"));
+
+            Cash = moneyBar.AddChild(new Gui.Widgets.MoneyEditor
             {
                 MaximumValue = (int)Settings.PlayerCorporationFunds,
-                MinimumSize = new Point(0, 33),
-                AutoLayout = AutoLayout.DockBottom,
+                MinimumSize = new Point(128, 33),
+                AutoLayout = AutoLayout.DockRight,
                 OnValueChanged = (sender) =>
                 {
                     Settings.InitalEmbarkment.Money = (sender as Gui.Widgets.MoneyEditor).CurrentValue;
+                    UpdateCost();
                 },
-                Tooltip = "Money to take."
+                Tooltip = "Money to take.",
+                TextHorizontalAlign = HorizontalAlign.Right
             }) as Gui.Widgets.MoneyEditor;
+
+            var employeeCostBar = costPanel.AddChild(CreateBar("Signing Bonuses:"));
+            EmployeeCost = employeeCostBar.AddChild(new Widget
+            {
+                AutoLayout = AutoLayout.DockRight,
+                Text = "$0",
+                MinimumSize = new Point(128, 0),
+                TextHorizontalAlign = HorizontalAlign.Right
+            });
+
+            var totalBar = costPanel.AddChild(CreateBar("Total Cost:"));
+            TotalCost = totalBar.AddChild(new Widget
+            {
+                AutoLayout = AutoLayout.DockRight,
+                Text = "$0",
+                MinimumSize = new Point(128, 0),
+                TextHorizontalAlign = HorizontalAlign.Right
+            });
 
             EmployeeList = employeeStack.AddChild(new Gui.Widgets.WidgetListView
             {
@@ -168,7 +266,7 @@ namespace DwarfCorp.GameStates
             // Todo: Capital display
 
             Layout();
-
+            UpdateCost();
             base.Construct();
 
         }

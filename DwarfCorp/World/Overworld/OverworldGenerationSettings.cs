@@ -20,7 +20,7 @@ namespace DwarfCorp.GameStates
         public int NumFaults = 3;
         public float SeaLevel = 0.17f;
         public float TemperatureScale = 1.0f;
-        public Embarkment InitalEmbarkment = null;
+        [JsonIgnore] public Embarkment InitalEmbarkment = null;
         public int Difficulty = 2;
         public bool GenerateFromScratch = false;
         public int Seed = 0;
@@ -44,6 +44,7 @@ namespace DwarfCorp.GameStates
             Overworld = new Overworld(Width, Height);
             InstanceSettings = new InstanceSettings();
             PlayerCorporationResources = new ResourceSet();
+            InitalEmbarkment = new Embarkment();
         }
     }
 }

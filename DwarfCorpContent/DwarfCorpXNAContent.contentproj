@@ -3521,26 +3521,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Necrorot</Name>
     </None>
-    <None Include="World\Embarkments\NormalHardcore.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>NormalHardcore</Name>
-    </None>
-    <None Include="World\Embarkments\Tranquil.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Tranquil</Name>
-    </None>
-    <None Include="World\Embarkments\Easy.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Easy</Name>
-    </None>
-    <None Include="World\Embarkments\Normal.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Normal</Name>
-    </None>
-    <None Include="World\Embarkments\Hard.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Hard</Name>
-    </None>
     <None Include="World\Events\SpawnKobold.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>SpawnKobold</Name>
@@ -3912,10 +3892,6 @@
     <None Include="World\undead.conv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>undead</Name>
-    </None>
-    <None Include="World\Embarkments\Extreme.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Extreme</Name>
     </None>
     <None Include="World\dwarf.conv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

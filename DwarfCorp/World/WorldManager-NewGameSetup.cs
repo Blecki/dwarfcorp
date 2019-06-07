@@ -15,14 +15,9 @@ namespace DwarfCorp
         /// </summary>
         public void CreateInitialDwarves(Vector3 SpawnPos)
         {
-            //foreach (string ent in Settings.InitalEmbarkment.Party)
-            //{
-            //    Physics creat = (Physics)EntityFactory.CreateEntity<Physics>(ent, SpawnPos);
-            //    creat.Velocity = new Vector3(1, 0, 0);
-            //}
-
             foreach (var applicant in Settings.InitalEmbarkment.Employees)
             {
+                Settings.PlayerCorporationFunds -= applicant.SigningBonus;
                 HireImmediately(applicant);
             }
         }

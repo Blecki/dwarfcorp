@@ -21,7 +21,6 @@ namespace DwarfCorp
         public String DescriptionString = "Description";
         
         public static string Extension = "meta";
-        public static string CompressedExtension = "zmeta";
 
         public static MetaData CreateFromWorld(WorldManager World)
         {

@@ -17,9 +17,9 @@ namespace DwarfCorp.Trade
             this.World = SourceEnvoy.OwnerFaction.World; // Gross
         }
 
-        public int AvailableSpace { get { return 0; } }
-        public DwarfBux Money { get { return World.Settings.PlayerCorporationFunds; } }
-        public List<ResourceAmount> Resources { get { return SourceEnvoy.TradeGoods; } } // Todo: Grab overworld resources
+        public int AvailableSpace => 0;
+        public DwarfBux Money => World.Settings.PlayerCorporationFunds;
+        public List<ResourceAmount> Resources => World.Settings.PlayerCorporationResources.Enumerate().ToList();
 
         public void AddMoney(DwarfBux Money)
         {

@@ -24,7 +24,7 @@ namespace DwarfCorp
         public Diplomacy Diplomacy;
         public FactionSet Factions;
         //public RoomBuilder RoomBuilder;
-        public List<Resource> Resources;
+        public List<Resource> Resources; // Todo: Move to overworld
         public DesignationDrawer Designations;
         public TaskManager Tasks;
         public Yarn.MemoryVariableStore ConversationMemory;
