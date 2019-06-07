@@ -30,12 +30,6 @@ namespace DwarfCorp
             var worldFilePath = Settings.Name + System.IO.Path.DirectorySeparatorChar + "world.png";
             var metaFilePath = Settings.Name + System.IO.Path.DirectorySeparatorChar + "meta.txt";
 
-            if (File.Exists(worldFilePath) && File.Exists(metaFilePath))
-            {
-                // Do nothing since overworlds should be saved precisely once.
-                return;
-            }
-
             OverworldMap = Settings.Overworld.Map;
             MetaData = new OverworldMetaData(device, Settings);
             Width = Settings.Overworld.Map.GetLength(0);
@@ -141,6 +135,10 @@ namespace DwarfCorp
             var metaFilePath = filePath + global::System.IO.Path.DirectorySeparatorChar + "meta.txt";
 
             MetaData = FileUtils.LoadJsonFromAbsolutePath<OverworldMetaData>(metaFilePath);
+
+                foreach (var resource in MetaData.Resources)
+                    if (!ResourceLibrary.Exists(resource.Name))
+                        ResourceLibrary.Add(resource);
 
             var worldTexture = AssetManager.LoadUnbuiltTextureFromAbsolutePath(worldFilePath);
 

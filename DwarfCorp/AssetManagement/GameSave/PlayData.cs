@@ -24,7 +24,6 @@ namespace DwarfCorp
         public Diplomacy Diplomacy;
         public FactionSet Factions;
         //public RoomBuilder RoomBuilder;
-        public List<Resource> Resources; // Todo: Move to overworld
         public DesignationDrawer Designations;
         public TaskManager Tasks;
         public Yarn.MemoryVariableStore ConversationMemory;
@@ -41,7 +40,6 @@ namespace DwarfCorp
                 TutorialSaveData = World.TutorialManager.GetSaveData(),
                 Diplomacy = World.Diplomacy,
                 Factions = World.Factions,
-                Resources = ResourceLibrary.Enumerate().Where(r => r.Generated).ToList(),
                 Designations = World.Renderer.DesignationDrawer,
                 Tasks = World.TaskManager,
                 ConversationMemory = World.ConversationMemory,

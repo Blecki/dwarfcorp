@@ -206,11 +206,6 @@ namespace DwarfCorp
             if (gameFile.PlayData.Stats != null)
                 Stats = gameFile.PlayData.Stats;
 
-            if (gameFile.PlayData.Resources != null)
-                foreach (var resource in gameFile.PlayData.Resources)
-                    if (!ResourceLibrary.Exists(resource.Name))
-                        ResourceLibrary.Add(resource);
-
             ComponentManager = new ComponentManager(gameFile.PlayData.Components, this);
 
             foreach (var component in gameFile.PlayData.Components.SaveableComponents)
