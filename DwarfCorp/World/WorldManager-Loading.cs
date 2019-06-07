@@ -124,17 +124,7 @@ namespace DwarfCorp
             Renderer.Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
             Renderer.PersistentSettings = gameFile.Metadata.RendererSettings;
             Time = gameFile.Metadata.Time;
-            WorldSizeInChunks = new Point3(gameFile.Metadata.InstanceSettings.Cell.Bounds.Width, Settings.zLevels, gameFile.Metadata.InstanceSettings.Cell.Bounds.Height);
-
-            if (gameFile.Metadata.OverworldFile != null)
-            {
-                SetLoadingMessage("Loading Overworld " + gameFile.Metadata.OverworldFile);
-                var worldDirectory = Directory.CreateDirectory(DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + gameFile.Metadata.OverworldFile);
-                var overWorldFile = NewOverworldFile.Load(worldDirectory.FullName);
-                var instanceSettings = Settings.InstanceSettings;
-                Settings = overWorldFile.CreateSettings();
-                Settings.InstanceSettings = instanceSettings;
-            }
+            WorldSizeInChunks = new Point3(Settings.InstanceSettings.Cell.Bounds.Width, Settings.zLevels, Settings.InstanceSettings.Cell.Bounds.Height);
 
             #endregion
 
@@ -167,11 +157,7 @@ namespace DwarfCorp
 
             #endregion
 
-
-            SetLoadingMessage("Creating Planner ...");
             PlanService = new PlanService();
-
-            SetLoadingMessage("Creating Shadows...");
 
             SetLoadingMessage("Creating Liquids ...");
 
