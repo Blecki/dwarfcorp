@@ -52,7 +52,7 @@ namespace DwarfCorp
         public void Sense()
         {
             if (!Active) return;
-            if (World.Settings.InitalEmbarkment.Difficulty == 0) return; // Disable enemy sensors on peaceful difficulty.
+            if (World.Settings.Difficulty == 0) return; // Disable enemy sensors on peaceful difficulty.
 
             if (Creature != null)
                 Allies = Creature.Faction;

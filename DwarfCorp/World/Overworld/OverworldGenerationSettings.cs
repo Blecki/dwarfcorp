@@ -4,9 +4,12 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp.GameStates
 {
-    public class OverworldGenerationSettings
+    public class OverworldGenerationSettings // Todo: Rename Overworld Settings?
     {
         public CompanyInformation Company;
+        public ResourceSet PlayerCorporationResources;
+        public DwarfBux PlayerCorporationFunds;
+
         public int Width = 128;
         public int Height = 128;
         public string Name = GetRandomWorldName();
@@ -18,6 +21,7 @@ namespace DwarfCorp.GameStates
         public float SeaLevel = 0.17f;
         public float TemperatureScale = 1.0f;
         public Embarkment InitalEmbarkment = null;
+        public int Difficulty = 2;
         public bool GenerateFromScratch = false;
         public int Seed = 0;
         public int NumCaveLayers = 8;
@@ -39,6 +43,7 @@ namespace DwarfCorp.GameStates
             Company = new CompanyInformation();
             Overworld = new Overworld(Width, Height);
             InstanceSettings = new InstanceSettings();
+            PlayerCorporationResources = new ResourceSet();
         }
     }
 }

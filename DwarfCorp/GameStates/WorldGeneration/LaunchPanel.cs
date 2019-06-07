@@ -127,19 +127,53 @@ namespace DwarfCorp.GameStates
             {
                 SaveName = DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Settings.Overworld.Name + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)Settings.InstanceSettings.Origin.X, (int)Settings.InstanceSettings.Origin.Y);
                 var saveGame = SaveGame.LoadMetaFromDirectory(SaveName);
+
                 if (saveGame != null)
                 {
                     StartButton.Text = "Load";
+                    CellInfo.Clear();
                     CellInfo.Text = saveGame.Metadata.DescriptionString;
                     StartButton.Hidden = false;
+                    CellInfo.Layout();
                 }
                 else
                 {
                     StartButton.Hidden = false;
                     StartButton.Text = "Create";
-                    CellInfo.Text = String.Format("World Size: {0}x{1}", 
-                        Settings.InstanceSettings.Cell.Bounds.Width * VoxelConstants.ChunkSizeX, 
-                        Settings.InstanceSettings.Cell.Bounds.Height * VoxelConstants.ChunkSizeZ);
+                    CellInfo.Clear();
+                    CellInfo.Text = "";
+
+                    CellInfo.AddChild(new Gui.Widget
+                    {
+                        Text = "Embarkment",
+                        Border = "border-button",
+                        ChangeColorOnHover = true,
+                        TextColor = new Vector4(0, 0, 0, 1),
+                        Font = "font16",
+                        AutoLayout = Gui.AutoLayout.DockTop,
+                        OnClick = (sender, args) =>
+                        {
+                            DwarfGame.LogSentryBreadcrumb("Game Launcher", "User is modifying embarkment.");
+                            var embarkmentEditor = Root.ConstructWidget(new EmbarkmentEditor(Settings)
+                            {
+                                OnClose = (s) =>
+                                {
+                                }
+                            });
+
+                            Root.ShowModalPopup(embarkmentEditor);
+                        }
+                    });
+
+                    CellInfo.AddChild(new Widget
+                    {
+                        Text = String.Format("World Size: {0}x{1}",
+                            Settings.InstanceSettings.Cell.Bounds.Width * VoxelConstants.ChunkSizeX,
+                            Settings.InstanceSettings.Cell.Bounds.Height * VoxelConstants.ChunkSizeZ), // Todo: Display cost of embarkment here
+                        AutoLayout = AutoLayout.DockFill
+                    });
+
+                    CellInfo.Layout();
                 }
             }
         }

@@ -646,7 +646,6 @@ namespace DwarfCorp.Gui
             }
 
             RenderData.Device.DepthStencilState = DepthStencilState.None;
-
             RenderData.Effect.CurrentTechnique = RenderData.Effect.Techniques[0];
 
             RenderData.Effect.Parameters["View"].SetValue(Matrix.Identity);

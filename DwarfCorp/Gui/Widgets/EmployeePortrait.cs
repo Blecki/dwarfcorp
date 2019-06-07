@@ -16,13 +16,8 @@ namespace DwarfCorp.Gui.Widgets
         public override void Layout()
         {
             base.Layout();
-            int x = 48;
-            int y = 40;
-            float ratio = Math.Max((float)Rect.Width / x, 1.0f);
-            int posX = Rect.X + Rect.Width / 2 - (int)(ratio * x) / 2;
-            int posY = Rect.Y + Rect.Height / 2 - (int)(ratio * y) / 2;
             SpriteMesh = Gui.Mesh.Quad()
-                .Scale((ratio * x), (ratio * y))
+                .Scale(Rect.Width, Rect.Height)
                 .Translate(Rect.X, Rect.Y);
         }
 
@@ -35,14 +30,10 @@ namespace DwarfCorp.Gui.Widgets
                 return;
 
             if (Sprite == null)
-            {
                 return;
-            }
 
             if (SpriteMesh == null)
-            {
                 Layout();
-            }
 
             var texture = Sprite.GetCompositeTexture();
             if (texture != null)

@@ -48,12 +48,26 @@ namespace DwarfCorp.GameStates
                 (sender, args) =>
                 {
                     DwarfGame.LogSentryBreadcrumb("Menu", "User generating a random world.");
+                    var company = new CompanyInformation();
+
+                    var employees = new List<Applicant>();
+                    employees.Add(Applicant.Random("Crafter", company));
+                    employees.Add(Applicant.Random("Manager", company));
+                    employees.Add(Applicant.Random("Miner", company));
+                    employees.Add(Applicant.Random("Wizard", company));
+                    employees.Add(Applicant.Random("Soldier", company));
+                    employees.Add(Applicant.Random("Musketeer", company));
+
                     GameStateManager.PushState(new LoadState(Game, new OverworldGenerationSettings()
                     {
                         Company = new CompanyInformation(),
                         GenerateFromScratch = true,
                         InstanceSettings = new InstanceSettings(),
-                        InitalEmbarkment = Library.DefaultEmbarkment
+                        InitalEmbarkment = new Embarkment
+                        {
+                            Employees = employees,
+                            Money = 1000u
+                        }
                     }));
                 });
 

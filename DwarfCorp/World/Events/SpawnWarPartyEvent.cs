@@ -14,7 +14,7 @@ namespace DwarfCorp.Events
 
         public override void Trigger(WorldManager world)
         {
-            if (world.Settings.InitalEmbarkment.Difficulty == 0) return;
+            if (world.Settings.Difficulty == 0) return;
 
             var faction = GetFaction(world, PartyFaction, PartyFactionFilter);
             if (!String.IsNullOrEmpty(faction) && world.Factions.Factions.ContainsKey(faction))

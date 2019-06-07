@@ -20,6 +20,9 @@ namespace DwarfCorp
         public string Biography { get; set; }
         public Gender Gender { get; set; }
         public int RandomSeed { get; set; }
+
+        public DwarfBux SigningBonus => Level.Pay * 4;
+
         public Applicant()
         {
             RandomSeed = MathFunctions.Random.Next();
@@ -35,6 +38,13 @@ namespace DwarfCorp
             new List<string> { Name, Gender.ToString(), hobby, Mating.Pronoun(Gender), Mating.Posessive(Gender) },
             biographyTemplates[MathFunctions.Random.Next(biographyTemplates.Count)].ToArray()));
 
+        }
+
+        public static Applicant Random(String ClassName, CompanyInformation info)
+        {
+            var r = new Applicant();
+            r.GenerateRandom(ClassName, 0, info);
+            return r;
         }
 
         public void GenerateRandom(String ClassName, int level, CompanyInformation info)
@@ -114,6 +124,7 @@ namespace DwarfCorp
         private void AddLayerOrDefault(LayeredSprites.LayerStack stack, Random Random, String Layer, CreatureStats stats, LayeredSprites.Palette Palette = null)
         {
             var layers = LayeredSprites.LayerLibrary.EnumerateLayers(Layer).Where(l => !l.DefaultLayer && l.PassesFilter(stats));
+
             if (layers.Count() > 0)
             {
                 var newLayer = layers.SelectRandom(Random);

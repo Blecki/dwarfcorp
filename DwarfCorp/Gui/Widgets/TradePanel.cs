@@ -209,7 +209,8 @@ namespace DwarfCorp.Gui.Widgets
             EnvoyColumns.Reconstruct(Envoy.Resources, new List<ResourceAmount>(), (int)Envoy.Money);
             PlayerColumns.Reconstruct(Player.Resources, new List<ResourceAmount>(), (int)Player.Money);
             UpdateBottomDisplays();
-            Balance.TradeBalance = 0.0f;
+            if (Balance != null)
+                Balance.TradeBalance = 0.0f;
             Layout();
         }
 
@@ -253,6 +254,9 @@ namespace DwarfCorp.Gui.Widgets
 
         private bool IsReasonableTrade(DwarfBux envoyOut, DwarfBux net)
         {
+            if (Envoy.TraderFaction.ParentFaction.IsCorporate)
+                return true; // Trades with Corporate always succeed.
+
             var tradeMin = envoyOut*0.25;
             var tradeMax = envoyOut*3.0;
             return net >= tradeMin && net <= tradeMax && Math.Abs(net) > 1;
@@ -260,6 +264,9 @@ namespace DwarfCorp.Gui.Widgets
 
         private void EqualizeColumns()
         {
+            if (Envoy.TraderFaction.ParentFaction.IsCorporate)
+                return;
+
             if (EnvoyColumns.Valid && PlayerColumns.Valid)
             {
                 var net = ComputeNetValue();
@@ -364,11 +371,15 @@ namespace DwarfCorp.Gui.Widgets
 
             Border = "border-fancy";
 
-            Balance = AddChild(new Balance()
+            if (!Envoy.TraderFaction.ParentFaction.IsCorporate)
             {
-                AutoLayout = AutoLayout.DockBottom,
-                MinimumSize = new Point(32 * 3, 64),
-            })as Balance;
+                Balance = AddChild(new Balance()
+                {
+                    AutoLayout = AutoLayout.DockBottom,
+                    MinimumSize = new Point(32 * 3, 64),
+                }) as Balance;
+            }
+
             var bottomRow = AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockBottom,
@@ -400,7 +411,7 @@ namespace DwarfCorp.Gui.Widgets
                         {
                             Root.ShowModalMessage( "You've selected nothing to trade.");
                         }
-                        else if (net >= tradeTarget)
+                        else if (net >= tradeTarget || Envoy.TraderFaction.ParentFaction.IsCorporate)
                         {
                             Result = TradeDialogResult.Propose;
                             Transaction = new TradeTransaction
@@ -484,16 +495,18 @@ namespace DwarfCorp.Gui.Widgets
                 }                    
             });
 
-
-            TotalDisplay = Balance.AddChild(new Widget
+            if (Balance != null)
             {
-                MinimumSize = new Point(128, 64),
-                AutoLayout = AutoLayout.DockBottom,
-                Font = "font10",
-                TextColor = new Vector4(0, 0, 0, 1),
-                TextVerticalAlign = VerticalAlign.Bottom,
-                TextHorizontalAlign = HorizontalAlign.Center
-            });
+                TotalDisplay = Balance.AddChild(new Widget
+                {
+                    MinimumSize = new Point(128, 64),
+                    AutoLayout = AutoLayout.DockBottom,
+                    Font = "font10",
+                    TextColor = new Vector4(0, 0, 0, 1),
+                    TextVerticalAlign = VerticalAlign.Bottom,
+                    TextHorizontalAlign = HorizontalAlign.Center
+                });
+            }
 
             SpaceDisplay = bottomRow.AddChild(new Widget
             {
@@ -543,24 +556,29 @@ namespace DwarfCorp.Gui.Widgets
         {
             DwarfBux net, tradeTarget;
             CalculateTradeAmount(out net, out tradeTarget);
-            if (net == 0)
-            {
-                Balance.TradeBalance = 0.0f;
-            }
-            else
-            {
-                Balance.TradeBalance = net > 0 ? Math.Min(0.01f * (float)(decimal)net, 1.0f) : Math.Max(0.01f * (float)(decimal)net, -1.0f);
-            }
-            Balance.SetTradeItems(PlayerColumns.SelectedResources, EnvoyColumns.SelectedResources, PlayerColumns.TradeMoney, EnvoyColumns.TradeMoney);
-            TotalDisplay.Text = String.Format("Their {1} {0}", net, net >= 0 ? "Profit" : "Loss");
-            TotalDisplay.Tooltip = String.Format("They are {1} with this trade.\nTheir {0} is " + net + ".\nThey need at least " + tradeTarget + " to be happy.", net >= 0 ? "profit" : "loss",
-                net >= 0 ? "happy" : "unhappy");
-            if (net >= tradeTarget)
-                TotalDisplay.TextColor = GameSettings.Default.Colors.GetColor("Positive", GameSettings.Default.Colors.GetColor("Positive", Color.Green)).ToVector4();
-            else
-                TotalDisplay.TextColor = GameSettings.Default.Colors.GetColor("Negative", GameSettings.Default.Colors.GetColor("Negative", Color.Red)).ToVector4();
 
-            TotalDisplay.Invalidate();
+            if (Balance != null)
+            {
+                if (net == 0)
+                {
+                    Balance.TradeBalance = 0.0f;
+                }
+                else
+                {
+                    Balance.TradeBalance = net > 0 ? Math.Min(0.01f * (float)(decimal)net, 1.0f) : Math.Max(0.01f * (float)(decimal)net, -1.0f);
+                }
+
+                Balance.SetTradeItems(PlayerColumns.SelectedResources, EnvoyColumns.SelectedResources, PlayerColumns.TradeMoney, EnvoyColumns.TradeMoney);
+                TotalDisplay.Text = String.Format("Their {1} {0}", net, net >= 0 ? "Profit" : "Loss");
+                TotalDisplay.Tooltip = String.Format("They are {1} with this trade.\nTheir {0} is " + net + ".\nThey need at least " + tradeTarget + " to be happy.", net >= 0 ? "profit" : "loss",
+                    net >= 0 ? "happy" : "unhappy");
+                if (net >= tradeTarget)
+                    TotalDisplay.TextColor = GameSettings.Default.Colors.GetColor("Positive", GameSettings.Default.Colors.GetColor("Positive", Color.Green)).ToVector4();
+                else
+                    TotalDisplay.TextColor = GameSettings.Default.Colors.GetColor("Negative", GameSettings.Default.Colors.GetColor("Negative", Color.Red)).ToVector4();
+
+                TotalDisplay.Invalidate();
+            }
 
             SpaceDisplay.Text = String.Format("Stockpile space used: {0}/{1}",
                 Math.Max(EnvoyColumns.TotalSelectedItems - PlayerColumns.TotalSelectedItems, 0),

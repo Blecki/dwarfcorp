@@ -123,7 +123,7 @@ namespace DwarfCorp.Events
             switch (filter.Specification)
             {
                 case FactionSpecification.Motherland:
-                    return faction.ParentFaction.IsMotherland;
+                    return faction.ParentFaction.IsCorporate;
 
                 case FactionSpecification.Player:
                     return faction == world.PlayerFaction;

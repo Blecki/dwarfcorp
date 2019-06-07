@@ -19,7 +19,15 @@ namespace DwarfCorp
         public int CenterY { get; set; }
         public float GoodWill { get; set; }
         public bool InteractiveFaction = false;
-        public bool IsMotherland = false;
+        public bool IsCorporate = false;
+
+        public Trade.ITradeEntity CreateTradeEntity(TradeEnvoy Envoy)
+        {
+            if (IsCorporate)
+                return new Trade.CorporateTradeEntity(Envoy);
+            else
+                return new Trade.EnvoyTradeEntity(Envoy);
+        }
     }
 
     [Serializable]

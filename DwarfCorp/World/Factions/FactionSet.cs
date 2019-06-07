@@ -43,12 +43,12 @@ namespace DwarfCorp
                 ClaimsColony = true,
             };
 
-            Factions["The Motherland"] = new Faction(world, new OverworldFaction
+            Factions["Corporate"] = new Faction(world, new OverworldFaction
             {
-                Name = "The Motherland",
+                Name = "Corporate",
                 Race = "Dwarf",
                 InteractiveFaction = true,
-                IsMotherland = true
+                IsCorporate = true
             })
             {
                 TradeMoney = 10000,

@@ -17,7 +17,7 @@ namespace DwarfCorp
     /// temperature, terrain height, etc.  Chunks are generated
     /// from the overworld.
     /// </summary>
-    public class Overworld
+    public class Overworld // Todo: Rename to something like OverworldData so OverworldGenerationSettings can be called the overworld?
     {
         public static Dictionary<string, Color> HeightColors = new Dictionary<string, Color>
         {

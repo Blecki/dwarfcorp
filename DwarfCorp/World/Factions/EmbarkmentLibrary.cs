@@ -4,10 +4,14 @@ using System.Linq;
 
 namespace DwarfCorp
 {
+    public class Difficulty
+    {
+        public int Value = 0;
+        public String Name = "Tranquil";
+    }
+
     public static partial class Library
     {
-        private static List<Embarkment> Embarkments;
-        public static Embarkment DefaultEmbarkment => GetEmbarkment("Normal");
         private static bool EmbarkmentsInitialized = false;
 
         private static void InitializeEmbarkments()
@@ -16,22 +20,22 @@ namespace DwarfCorp
                 return;
             EmbarkmentsInitialized = true;
 
-            Embarkments = FileUtils.LoadJsonListFromDirectory<Embarkment>(ContentPaths.World.embarks, null, e => e.Name);
-            Embarkments.Sort((a, b) => b.Difficulty - a.Difficulty);
-
             Console.WriteLine("Loaded Embarkment Library.");
         }
 
-        public static Embarkment GetEmbarkment(String Name)
+        // Todo: This should be data.
+        public static IEnumerable<Difficulty> EnumerateDifficulties()
         {
-            InitializeEmbarkments();
-            return Embarkments.FirstOrDefault(e => e.Name == Name);
+            yield return new Difficulty { Value = 0, Name = "Tranquil" };
+            yield return new Difficulty { Value = 1, Name = "Easy" };
+            yield return new Difficulty { Value = 2, Name = "Normal" };
+            yield return new Difficulty { Value = 5, Name = "Hard" };
+            yield return new Difficulty { Value = 10, Name = "What" };
         }
 
-        public static IEnumerable<Embarkment> EnumerateEmbarkments()
+        public static int GetDifficulty(String Name)
         {
-            InitializeEmbarkments();
-            return Embarkments;
+            return EnumerateDifficulties().FirstOrDefault(d => Name == d.Name).Value;
         }
     }
 }

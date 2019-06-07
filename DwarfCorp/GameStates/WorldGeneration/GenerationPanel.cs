@@ -132,6 +132,7 @@ namespace DwarfCorp.GameStates
                 {
                     Settings.Company.Name = NameField.Text;
                     Settings.Company.Motto = MottoField.Text;
+                    Settings.InitalEmbarkment = new Embarkment();
 
                     OnVerified?.Invoke();
                 }
@@ -148,12 +149,12 @@ namespace DwarfCorp.GameStates
             var difficultySelectorCombo = AddChild(new Gui.Widgets.ComboBox
             {
                 AutoLayout = Gui.AutoLayout.DockTop,
-                Items = Library.EnumerateEmbarkments().Select(e => e.Name).ToList(),
+                Items = Library.EnumerateDifficulties().Select(e => e.Name).ToList(),
                 TextColor = new Vector4(0, 0, 0, 1),
                 Font = "font8",
                 OnSelectedIndexChanged = (sender) =>
                 {
-                    Settings.InitalEmbarkment = Library.GetEmbarkment((sender as Gui.Widgets.ComboBox).SelectedItem);
+                    Settings.Difficulty = Library.GetDifficulty((sender as Gui.Widgets.ComboBox).SelectedItem);
                 }
             }) as Gui.Widgets.ComboBox;
 

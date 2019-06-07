@@ -789,7 +789,7 @@ namespace DwarfCorp.GameStates
         {
             for (int i = 0; i < numCivs; i++)
             {
-                if (civs[i].InteractiveFaction && !civs[i].IsMotherland)
+                if (civs[i].InteractiveFaction && !civs[i].IsCorporate)
                 {
                     Point? randomPoint = GetRandomLandPoint(map);
 

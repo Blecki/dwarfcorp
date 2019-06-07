@@ -373,7 +373,7 @@ namespace DwarfCorp
             Point playerOrigin = new Point((int)(Settings.InstanceSettings.Origin.X), (int)(Settings.InstanceSettings.Origin.Y));
 
             Factions.Factions["Player"].Center = playerOrigin;
-            Factions.Factions["The Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
+            Factions.Factions["Corporate"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
             PlayerFaction = Factions.Factions["Player"];
             PlayerFaction.Economy = new Company(PlayerFaction, 300.0m, Settings.Company);
             RoomBuilder = new RoomBuilder(PlayerFaction, this);

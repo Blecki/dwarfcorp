@@ -247,6 +247,9 @@
     <Compile Include="Entities\Steam\PowerAnvil.cs" />
     <Compile Include="Entities\Steam\BuildBuff.cs" />
     <Compile Include="Entities\Steam\SteamPipe.cs" />
+    <Compile Include="GameStates\WorldGeneration\ChooseEmployeeTypeDialog.cs" />
+    <Compile Include="GameStates\WorldGeneration\EmbarkmentEditor.cs" />
+    <Compile Include="GameStates\WorldGeneration\EmbarkmentResourceColumns.cs" />
     <Compile Include="Player\Adventure.cs" />
     <Compile Include="Player\BodySelector.cs" />
     <Compile Include="Player\BoxBrush.cs" />
@@ -407,6 +410,7 @@
     <Compile Include="World\Economy\Quantity.cs" />
     <Compile Include="World\Economy\Resources\Resource.cs" />
     <Compile Include="World\Economy\Resources\ResourceAmount.cs" />
+    <Compile Include="World\Economy\Resources\ResourceSet.cs" />
     <Compile Include="World\Economy\Resources\ResourceContainer.cs" />
     <Compile Include="World\Economy\Resources\ResourceLibrary.cs" />
     <Compile Include="World\Economy\Resources\ResourceType.cs" />
@@ -421,6 +425,7 @@
     <Compile Include="Graphics\ParticleEffects\ParticleEmitter.cs" />
     <Compile Include="Graphics\ParticleEffects\ParticleManager.cs" />
     <Compile Include="Graphics\ParticleEffects\ParticleTrigger.cs" />
+    <Compile Include="World\Factions\Trading\CorporateTradeEntity.cs" />
     <Compile Include="World\Gambling.cs" />
     <Compile Include="World\Overworld\BiomeData.cs" />
     <Compile Include="World\Overworld\BiomeLibrary.cs" />

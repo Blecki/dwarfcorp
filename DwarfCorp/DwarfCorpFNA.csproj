@@ -117,6 +117,9 @@
     <Compile Include="GameStates\Play\PrepareExpeditionDialog.cs" />
     <Compile Include="GameStates\Play\SelectEmployeesDialog.cs" />
     <Compile Include="GameStates\Play\SelectResourcesDialog.cs" />
+    <Compile Include="GameStates\WorldGeneration\EmbarkmentEditor.cs" />
+    <Compile Include="GameStates\WorldGeneration\ChooseEmployeeTypeDialog.cs" />
+    <Compile Include="GameStates\WorldGeneration\EmbarkmentResourceColumns.cs" />
     <Compile Include="GameStates\WorldGeneration\SimpleOrbitCamera.cs" />
     <Compile Include="Gui\Widgets\StatsTracker.cs" />
     <Compile Include="LogWriter.cs" />
@@ -303,6 +306,7 @@
     <Compile Include="World\Economy\Resources\ResourceAmount.cs" />
     <Compile Include="World\Economy\Resources\ResourceContainer.cs" />
     <Compile Include="World\Economy\Resources\ResourceLibrary.cs" />
+    <Compile Include="World\Economy\Resources\ResourceSet.cs" />
     <Compile Include="World\Economy\Resources\ResourceType.cs" />
     <Compile Include="Entities\Animals\BatAI.cs" />
     <Compile Include="Entities\Animals\BrownRabbit.cs" />
@@ -595,6 +599,7 @@
     <Compile Include="TaskManagement\ControlFlow\Wrap.cs" />
     <Compile Include="World\Crafting\CraftItem.cs" />
     <Compile Include="World\Crafting\CraftLibrary.cs" />
+    <Compile Include="World\Factions\Trading\CorporateTradeEntity.cs" />
     <Compile Include="World\Gambling.cs" />
     <Compile Include="TaskManagement\LeafActs\ClearBlackboardData.cs" />
     <Compile Include="TaskManagement\LeafActs\ConsumeItemAct.cs" />

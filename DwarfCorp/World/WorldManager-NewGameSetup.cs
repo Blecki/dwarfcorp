@@ -15,10 +15,15 @@ namespace DwarfCorp
         /// </summary>
         public void CreateInitialDwarves(Vector3 SpawnPos)
         {
-            foreach (string ent in Settings.InitalEmbarkment.Party)
+            //foreach (string ent in Settings.InitalEmbarkment.Party)
+            //{
+            //    Physics creat = (Physics)EntityFactory.CreateEntity<Physics>(ent, SpawnPos);
+            //    creat.Velocity = new Vector3(1, 0, 0);
+            //}
+
+            foreach (var applicant in Settings.InitalEmbarkment.Employees)
             {
-                Physics creat = (Physics)EntityFactory.CreateEntity<Physics>(ent, SpawnPos);
-                creat.Velocity = new Vector3(1, 0, 0);
+                HireImmediately(applicant);
             }
         }
 
@@ -32,9 +37,13 @@ namespace DwarfCorp
              
             var port = GenerateInitialBalloonPort(Renderer.Camera.Position.X, Renderer.Camera.Position.Z, 1, Settings);
             PlayerFaction.Economy.Funds = Settings.OverworldSettings.InitalEmbarkment.Money;
+            Settings.OverworldSettings.PlayerCorporationFunds -= Settings.OverworldSettings.InitalEmbarkment.Money;
 
-            foreach (var res in Settings.OverworldSettings.InitalEmbarkment.Resources)
-                AddResources(new ResourceAmount(res.Key, res.Value));
+            foreach (var res in Settings.OverworldSettings.InitalEmbarkment.Resources.Enumerate())
+            {
+                AddResources(res);
+                Settings.OverworldSettings.PlayerCorporationResources.Remove(res);
+            }
 
             var portBox = port.GetBoundingBox();
 

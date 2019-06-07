@@ -42,7 +42,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
             TradePanel = GuiRoot.ConstructWidget(new Gui.Widgets.TradePanel
             {
                 Rect = GuiRoot.RenderData.VirtualScreen,
-                Envoy = new Trade.EnvoyTradeEntity(Envoy),
+                Envoy = Envoy.OwnerFaction.ParentFaction.CreateTradeEntity(Envoy),
                 Player = new Trade.PlayerTradeEntity(PlayerFaction),
             }) as Gui.Widgets.TradePanel;
 

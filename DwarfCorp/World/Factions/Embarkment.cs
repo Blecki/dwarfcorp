@@ -6,10 +6,8 @@ namespace DwarfCorp
 {
     public class Embarkment
     {
-        public String Name;
-        public int Difficulty;
-        public List<String> Party;
-        public Dictionary<String, int> Resources;
+        public List<Applicant> Employees = new List<Applicant>();
+        public ResourceSet Resources = new ResourceSet();
         public DwarfBux Money;
     }
 }
