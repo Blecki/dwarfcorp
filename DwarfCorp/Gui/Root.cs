@@ -675,7 +675,7 @@ namespace DwarfCorp.Gui
             var mesh = RootItem.GetRenderMesh();
             mesh.Render(RenderData.Device);
 
-            foreach(var widget in RootItem.EnumerateTree())
+            foreach(var widget in RootItem.EnumerateTree()) // Todo: Should probably use a registration system. But, hasn't been a performance issue thus far.
             {
                 widget.PostDraw(GameStates.GameState.Game.GraphicsDevice);
             }

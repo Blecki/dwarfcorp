@@ -268,7 +268,8 @@ namespace DwarfCorp.GameStates
             Layout();
             UpdateCost();
             base.Construct();
-
+             
         }
+
     }
 }

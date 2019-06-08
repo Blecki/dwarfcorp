@@ -5,6 +5,7 @@ using System.Text;
 using DwarfCorp.Gui;
 using DwarfCorp.Gui.Widgets;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp.GameStates
 {
@@ -161,10 +162,19 @@ namespace DwarfCorp.GameStates
             {
                 foreach (var applicant in Applicants)
                 {
+                    applicant.Value.Portrait.AnimationPlayer.Update(new DwarfTime(time), false, Timer.TimerMode.Real);
                     applicant.Value.Portrait.Invalidate();
                     applicant.Value.Portrait.Sprite.Update(GameStates.GameState.Game.GraphicsDevice);
                 }
             };
         }
+
+        public override void PostDraw(GraphicsDevice device)
+        {
+            foreach (var applicant in Applicants)
+                applicant.Value.Portrait.PostDraw(device);
+        }
+        // Override post draw and draw portraits??
+
     }
 }
