@@ -27,6 +27,9 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
+            if (agent.Stats.Hunger.IsCritical())
+                return Feasibility.Feasible; // Hunger is more important right now than hostiles!
+            
             return agent.Sensor.Enemies.Count == 0 ? Feasibility.Feasible : Feasibility.Infeasible ;
         }
     }

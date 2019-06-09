@@ -40,7 +40,6 @@ namespace DwarfCorp
             }
         }
 
-
         public override Act CreateScript(Creature creature)
         {
             if (creature.IsDead || creature.AI.IsDead)
@@ -96,6 +95,9 @@ namespace DwarfCorp
                 return true;
             }
 
+            if (Mode == KillType.Auto && (agent.AI.Position - EntityToKill.Position).Length() > 20)
+                return true;
+            
             return false;
         }
 

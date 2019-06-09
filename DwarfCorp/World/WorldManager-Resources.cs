@@ -31,18 +31,20 @@ namespace DwarfCorp
 
     public partial class WorldManager
     {
-        public bool RemoveResources(ResourceAmount resources, Vector3 position, Zone stock)
+        public bool RemoveResourcesWithToss(ResourceAmount resources, Vector3 position, Zone Zone) // Todo: Kill this one.
         {
-            if (!stock.Resources.HasResource(resources))
+            if (!Zone.Resources.HasResource(resources))
                 return false;
-            if (!(stock is Stockpile))
+            if (!(Zone is Stockpile))
                 return false;
+
+            var stock = Zone as Stockpile;
 
             // Todo: Stockpile deals with it's own boxes.
             var resourceType = ResourceLibrary.GetResourceByName(resources.Type);
             var num = stock.Resources.RemoveMaxResources(resources, resources.Count);
 
-            (stock as Stockpile).HandleBoxes();
+            stock.HandleBoxes();
 
             foreach (var tag in resourceType.Tags)
                 if (PersistentData.CachedResourceTagCounts.ContainsKey(tag)) // Move cache into worldmanager...
@@ -53,8 +55,12 @@ namespace DwarfCorp
 
             for (int i = 0; i < num; i++)
             {
-                GameComponent newEntity = EntityFactory.CreateEntity<GameComponent>(resources.Type + " Resource",
-                        (stock as Stockpile).Boxes[(stock as Stockpile).Boxes.Count - 1].LocalTransform.Translation + MathFunctions.RandVector3Cube() * 0.5f);
+                // Make a toss from the last crate to the agent.
+                var startPosition = stock.Voxels.First().Center + new Vector3(0.0f, 1.0f, 0.0f);
+                if (stock.Boxes.Count > 0)
+                    startPosition = stock.Boxes.Last().Position + MathFunctions.RandVector3Cube() * 0.5f;
+
+                GameComponent newEntity = EntityFactory.CreateEntity<GameComponent>(resources.Type + " Resource", startPosition);
 
                 TossMotion toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f), 2.5f + MathFunctions.Rand(-0.5f, 0.5f), newEntity.LocalTransform, position);
                 newEntity.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;

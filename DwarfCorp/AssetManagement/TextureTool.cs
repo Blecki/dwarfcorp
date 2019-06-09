@@ -33,6 +33,7 @@ namespace DwarfCorp
                 return null;
             }
             var r = new Texture2D(Device, Source.Width, Source.Height);
+            r.SetData(Source.Data);
             return r;
         }
 

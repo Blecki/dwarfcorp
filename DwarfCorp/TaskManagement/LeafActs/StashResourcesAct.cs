@@ -64,7 +64,7 @@ namespace DwarfCorp
             }
 
             Timer waitTimer = new Timer(1.0f, true);
-            bool removed = Creature.World.RemoveResources(Resources, Agent.Position, Zone);
+            bool removed = Creature.World.RemoveResourcesWithToss(Resources, Agent.Position, Zone);
 
             if(!removed)
                 yield return Status.Fail;
