@@ -118,7 +118,7 @@ namespace DwarfCorp
             if (worldTexture != null)
             {
                 var worldData = LoadFromTexture(worldTexture);
-                MetaData.Settings.Overworld = new OverworldMap() { Map = worldData };
+                MetaData.Settings.Overworld = new OverworldMap(worldData);
             }
             else
             {

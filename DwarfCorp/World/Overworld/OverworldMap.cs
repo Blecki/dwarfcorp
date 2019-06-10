@@ -37,7 +37,8 @@ namespace DwarfCorp
 
         public List<Vector2> Volcanoes { get; set; }
         public OverworldCell[,] Map { get; set; }
-        public static MemoryTexture BiomeBlend = null;
+
+        private static MemoryTexture BiomeBlend = null;
 
         public OverworldMap()
         {
@@ -49,6 +50,11 @@ namespace DwarfCorp
         public OverworldMap(int Width, int Height) : this()
         {
             Map = new OverworldCell[Width, Height];
+        }
+
+        public OverworldMap(OverworldCell[,] Map) : this()
+        {
+            this.Map = Map;
         }
 
         public float LinearInterpolate(Vector2 position, OverworldField fieldType)

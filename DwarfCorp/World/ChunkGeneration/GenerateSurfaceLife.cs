@@ -24,8 +24,7 @@ namespace DwarfCorp.Generation
                 for (var z = TopChunk.Origin.Z; z < TopChunk.Origin.Z + VoxelConstants.ChunkSizeZ; z++)
                 {
                     var overworldPosition = OverworldMap.WorldToOverworld(new Vector2(x, z), Settings.OverworldSettings.InstanceSettings.Origin);
-                    var biome = Settings.OverworldSettings.Overworld.Map[(int)MathFunctions.Clamp(overworldPosition.X, 0, Settings.OverworldSettings.Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(overworldPosition.Y, 0, Settings.OverworldSettings.Overworld.Map.GetLength(1) - 1)].Biome;
-                    var biomeData = BiomeLibrary.GetBiome(biome);
+                    var biome = Settings.OverworldSettings.Overworld.GetBiomeAt(new Vector3(x, 0, z), Settings.OverworldSettings.InstanceSettings.Origin);
 
                     var normalizedHeight = NormalizeHeight(Settings.OverworldSettings.Overworld.LinearInterpolate(overworldPosition, OverworldField.Height));
                     var height = (int)MathFunctions.Clamp(normalizedHeight * worldDepth, 0.0f, worldDepth - 2);
@@ -44,15 +43,15 @@ namespace DwarfCorp.Generation
                     if (above.IsValid && (above.LiquidLevel != 0 || !above.IsEmpty))
                         continue;
 
-                    foreach (var animal in biomeData.Fauna)
+                    foreach (var animal in biome.Fauna)
                     {
                         if (MathFunctions.RandEvent(animal.SpawnProbability))
                         {
-                            if (!creatureCounts.ContainsKey(biomeData.Name))
+                            if (!creatureCounts.ContainsKey(biome.Name))
                             {
-                                creatureCounts[biomeData.Name] = new Dictionary<string, int>();
+                                creatureCounts[biome.Name] = new Dictionary<string, int>();
                             }
-                            var dict = creatureCounts[biomeData.Name];
+                            var dict = creatureCounts[biome.Name];
                             if (!dict.ContainsKey(animal.Name))
                             {
                                 dict[animal.Name] = 0;
@@ -66,10 +65,10 @@ namespace DwarfCorp.Generation
                         }
                     }
 
-                    if (voxel.Type.Name != biomeData.SoilLayer.VoxelType)
+                    if (voxel.Type.Name != biome.SoilLayer.VoxelType)
                         continue;
 
-                    foreach (VegetationData veg in biomeData.Vegetation)
+                    foreach (VegetationData veg in biome.Vegetation)
                     {
                         if (voxel.GrassType == 0)
                             continue;

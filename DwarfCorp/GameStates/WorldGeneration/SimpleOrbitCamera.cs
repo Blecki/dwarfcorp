@@ -18,7 +18,7 @@ namespace DwarfCorp.GameStates
         private Vector3 GoalFocus = new Vector3(0.5f, 0, 0.5f);
         private Point PreviousMousePosition;
         public Rectangle Rect;
-        public OverworldMap Overworld;
+        public OverworldGenerationSettings Overworld;
 
         public void SetGoalFocus(Vector3 GoalFocus)
         {
@@ -104,7 +104,7 @@ namespace DwarfCorp.GameStates
             if (dist.HasValue)
             {
                 Vector3 pos = rayStart + bearing * dist.Value;
-                return new Point((int)(pos.X * Overworld.Map.GetLength(0)), (int)(pos.Z * Overworld.Map.GetLength(1)));
+                return new Point((int)(pos.X * Overworld.Width), (int)(pos.Z * Overworld.Height));
             }
             else
             {
@@ -116,9 +116,9 @@ namespace DwarfCorp.GameStates
         {
             var height = 0.0f;
             if ((int)worldCoord.X > 0 && (int)worldCoord.Y > 0 &&
-                (int)worldCoord.X < Overworld.Map.GetLength(0) && (int)worldCoord.Y < Overworld.Map.GetLength(1))
-                height = Overworld.Map[(int)worldCoord.X, (int)worldCoord.Y].Height * 0.05f;
-            return new Vector3(worldCoord.X / Overworld.Map.GetLength(0), height, worldCoord.Y / Overworld.Map.GetLength(1));
+                (int)worldCoord.X < Overworld.Width && (int)worldCoord.Y < Overworld.Height)
+                height = Overworld.Overworld.Map[(int)worldCoord.X, (int)worldCoord.Y].Height * 0.05f;
+            return new Vector3(worldCoord.X / Overworld.Width, height, worldCoord.Y / Overworld.Height);
         }
 
         public Vector3 WorldToScreen(Vector2 worldCoord)

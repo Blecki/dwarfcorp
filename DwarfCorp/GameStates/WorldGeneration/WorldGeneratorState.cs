@@ -150,7 +150,7 @@ namespace DwarfCorp.GameStates
                 case PanelStates.Launch:
                     // Setup a dummy generator.
                     Generator = new WorldGenerator(Settings, false);
-                    Generator.LoadDummy(new Color[Settings.Overworld.Map.GetLength(0) * Settings.Overworld.Map.GetLength(1)], Game.GraphicsDevice);
+                    Generator.LoadDummy(new Color[Settings.Width * Settings.Height], Game.GraphicsDevice);
                     Preview.SetGenerator(Generator);
                     (RightPanel as LaunchPanel).Generator = Generator;
                     break;

@@ -82,32 +82,29 @@ namespace DwarfCorp.GameStates
         public void CreateMesh(GraphicsDevice Device)
         {
             if (Overworld.Map == null)
-            {
                 return;
-            }
-           int resolution = 1;
-           int width = Overworld.Map.GetLength(0);
-           int height = Overworld.Map.GetLength(1);
-           int numVerts = ((width + 1) * (height + 1)) / resolution;
-           LandMesh = new VertexBuffer(Device, VertexPositionNormalTexture.VertexDeclaration, numVerts, BufferUsage.None);
-           VertexPositionNormalTexture[] verts = new VertexPositionNormalTexture[numVerts];
+
+            var numVerts = (Settings.Width + 1) * (Settings.Height + 1);
+            LandMesh = new VertexBuffer(Device, VertexPositionNormalTexture.VertexDeclaration, numVerts, BufferUsage.None);
+            var verts = new VertexPositionNormalTexture[numVerts];
 
             int i = 0;
-            for (int x = 0; x <= width; x += resolution)
+            for (int x = 0; x <= Settings.Width; x += 1)
             {
-                for (int y = 0; y <= height; y += resolution)
+                for (int y = 0; y <= Settings.Height; y += 1)
                 {
-                    float landHeight = Overworld.Map[(x < width) ? x : x - 1, (y < height) ? y : y - 1].Height;
-                    verts[i].Position = new Vector3((float)x / width, landHeight * 0.05f, (float)y / height);
-                    verts[i].TextureCoordinate = new Vector2(((float)x) / width, ((float)y) / height);
-                    Vector3 normal = new Vector3(Overworld.Map[MathFunctions.Clamp(x + 1, 0, width - 1), MathFunctions.Clamp(y, 0, height - 1)].Height - height,  1.0f, Overworld.Map[MathFunctions.Clamp(x, 0, width - 1), MathFunctions.Clamp(y + 1, 0, height - 1)].Height - height);
+                    float landHeight = Overworld.Map[(x < Settings.Width) ? x : x - 1, (y < Settings.Height) ? y : y - 1].Height;
+                    verts[i].Position = new Vector3((float)x / Settings.Width, landHeight * 0.05f, (float)y / Settings.Height);
+                    verts[i].TextureCoordinate = new Vector2(((float)x) / Settings.Width, ((float)y) / Settings.Height);
+                    Vector3 normal = new Vector3(Overworld.Map[MathFunctions.Clamp(x + 1, 0, Settings.Width - 1), MathFunctions.Clamp(y, 0, Settings.Height - 1)].Height - Settings.Height, 1.0f, Overworld.Map[MathFunctions.Clamp(x, 0, Settings.Width - 1), MathFunctions.Clamp(y + 1, 0, Settings.Height - 1)].Height - Settings.Height);
                     normal.Normalize();
                     verts[i].Normal = normal;
                     i++;
                 }
             }
             LandMesh.SetData(verts);
-            int[] indices = SetUpTerrainIndices((width + 1) / resolution, (height + 1) / resolution);
+
+            var indices = SetUpTerrainIndices((Settings.Width + 1), (Settings.Height + 1));
             LandIndex = new IndexBuffer(Device, typeof(int), indices.Length, BufferUsage.None);
             LandIndex.SetData(indices);
         }

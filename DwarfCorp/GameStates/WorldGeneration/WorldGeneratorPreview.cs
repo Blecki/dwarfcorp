@@ -36,7 +36,7 @@ namespace DwarfCorp.GameStates
             get
             {
                 var previewRect = Generator.GetSpawnRectangle();
-                var worldRect = new Rectangle(0, 0, Overworld.Overworld.Map.GetLength(0), Overworld.Overworld.Map.GetLength(1));
+                var worldRect = new Rectangle(0, 0, Overworld.Width, Overworld.Height);
                 float vScale = 1.0f / worldRect.Width;
                 float uScale = 1.0f / worldRect.Height;
 
@@ -144,7 +144,7 @@ namespace DwarfCorp.GameStates
                 }
             });
 
-            Camera.Overworld = Overworld.Overworld;
+            Camera.Overworld = Overworld;
         }
             
         public WorldGeneratorPreview(GraphicsDevice Device)
@@ -265,8 +265,8 @@ namespace DwarfCorp.GameStates
         {
             return PreviewTexture == null || PreviewTexture.IsDisposed
                     || PreviewTexture.GraphicsDevice.IsDisposed
-                    || PreviewTexture.Width != Overworld.Overworld.Map.GetLength(0) * 4 ||
-                    PreviewTexture.Height != Overworld.Overworld.Map.GetLength(1) * 4;
+                    || PreviewTexture.Width != Overworld.Width * 4 ||
+                    PreviewTexture.Height != Overworld.Height * 4;
         }
 
         private void DrawRectangle(Rectangle Rect, Color[] Into, int Width, Color Color)
@@ -288,7 +288,7 @@ namespace DwarfCorp.GameStates
         {
             var bkg = Root.GetTileSheet("basic");
             var style = PreviewRenderTypes[PreviewSelector.SelectedItem];
-            var colorData = new Color[Overworld.Overworld.Map.GetLength(0) * Overworld.Overworld.Map.GetLength(1) * 4 * 4];
+            var colorData = new Color[Overworld.Width * Overworld.Height * 4 * 4];
             
             Overworld.Overworld.CreateTexture(style.DisplayType, Generator.Settings.Natives, 4, colorData, Generator.Settings.SeaLevel);
             OverworldMap.Smooth(4, Generator.Settings.Width, Generator.Settings.Height, colorData);
@@ -354,7 +354,7 @@ namespace DwarfCorp.GameStates
                 return;
             }
 
-            PreviewTexture = new Texture2D(graphicsDevice, Overworld.Overworld.Map.GetLength(0) * 4, Overworld.Overworld.Map.GetLength(1) * 4);
+            PreviewTexture = new Texture2D(graphicsDevice, Overworld.Width * 4, Overworld.Height * 4);
         }
 
         private void RegneratePreviewTexture()
@@ -373,15 +373,13 @@ namespace DwarfCorp.GameStates
         private void UpdateTrees()
         {
             Trees = new List<Point3>();
-            int width = Overworld.Overworld.Map.GetLength(0);
-            int height = Overworld.Overworld.Map.GetLength(1);
 
-            TreeProbability = 100.0f / (width * height);
+            TreeProbability = 100.0f / (Overworld.Width * Overworld.Height);
             const int resolution = 1;
 
-            for (int x = 0; x < width; x += resolution)
+            for (int x = 0; x < Overworld.Width; x += resolution)
             {
-                for (int y = 0; y < height; y += resolution)
+                for (int y = 0; y < Overworld.Height; y += resolution)
                 {
                     if (!MathFunctions.RandEvent(TreeProbability)) continue;
                     var h = Overworld.Overworld.Map[x, y].Height;
