@@ -51,7 +51,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 AutoLayout = AutoLayout.DockTop,
                 Padding = new Margin(5, 5, 32, 32),
-                MinimumSize = new Point(32 * 2 * playerClasses.Count, 48 * 2 + 40)
+                MinimumSize = new Point(48 * 2 * playerClasses.Count, 40 * 2 + 40)
             });
 
             var right = AddChild(new Widget()
@@ -83,7 +83,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 var frame = left.AddChild(new Widget()
                 {
-                    MinimumSize = new Point(32*2, 48*2 + 15),
+                    MinimumSize = new Point(48*2, 40*2 + 15),
                     AutoLayout = AutoLayout.DockLeft
                 });
 
@@ -103,8 +103,8 @@ namespace DwarfCorp.Gui.Widgets
                         HireButton.Invalidate();
                         applicantInfo.Applicant = applicant.Applicant;
                     },
-                    MinimumSize = new Point(32 * 2, 48 * 2),
-                    MaximumSize = new Point(32 * 2, 48 * 2),
+                    MinimumSize = new Point(48 * 2, 40 * 2),
+                    MaximumSize = new Point(48 * 2, 40 * 2),
                     Sprite = layers,
                     AnimationPlayer = applicant.Applicant.GetAnimationPlayer(layers)
                 }) as EmployeePortrait;

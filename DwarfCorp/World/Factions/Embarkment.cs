@@ -9,7 +9,7 @@ namespace DwarfCorp
     {
         public List<Applicant> Employees = new List<Applicant>();
         public ResourceSet Resources = new ResourceSet();
-        public DwarfBux Money;
+        public DwarfBux Funds;
 
         public enum ValidationResult
         {
@@ -20,15 +20,15 @@ namespace DwarfCorp
 
         public ValidationResult ValidateEmbarkment(GameStates.OverworldGenerationSettings Settings, out String Message)
         {
-            var cost = Settings.InitalEmbarkment.Money + Settings.InitalEmbarkment.Employees.Sum(e => e.SigningBonus);
+            var cost = Settings.InstanceSettings.InitalEmbarkment.Funds + Settings.InstanceSettings.InitalEmbarkment.Employees.Sum(e => e.SigningBonus);
             if (cost > Settings.PlayerCorporationFunds)
             {
                 Message = "You do not have enough funds.";
                 return ValidationResult.Reject;
             }
 
-            var supervisionCap = Settings.InitalEmbarkment.Employees.Where(e => e.Class.Managerial).Select(e => e.Level.BaseStats.Intelligence).Sum() + 4;
-            var employeeCount = Settings.InitalEmbarkment.Employees.Where(e => !e.Class.Managerial).Count();
+            var supervisionCap = Settings.InstanceSettings.InitalEmbarkment.Employees.Where(e => e.Class.Managerial).Select(e => e.Level.BaseStats.Intelligence).Sum() + 4;
+            var employeeCount = Settings.InstanceSettings.InitalEmbarkment.Employees.Where(e => !e.Class.Managerial).Count();
 
             if (employeeCount > supervisionCap)
             {

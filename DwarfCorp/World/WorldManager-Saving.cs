@@ -7,10 +7,6 @@ using Point = Microsoft.Xna.Framework.Point;
 
 namespace DwarfCorp
 {
-    // Todo: Split into WorldManager and WorldRenderer.
-    /// <summary>
-    /// This is the main game state for actually playing the game.
-    /// </summary>
     public partial class WorldManager : IDisposable
     {
         public delegate void SaveCallback(bool success, Exception e);
@@ -34,7 +30,7 @@ namespace DwarfCorp
             // Ensure we're using the invariant culture.
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-            var worldDirectory = Directory.CreateDirectory(DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Settings.Overworld.Name);
+            var worldDirectory = Directory.CreateDirectory(DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Settings.Name);
 
             var file = new NewOverworldFile(Game.GraphicsDevice, Settings);
             file.WriteFile(worldDirectory.FullName);

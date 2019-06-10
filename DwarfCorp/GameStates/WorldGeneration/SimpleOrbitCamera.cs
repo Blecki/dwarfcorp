@@ -18,7 +18,7 @@ namespace DwarfCorp.GameStates
         private Vector3 GoalFocus = new Vector3(0.5f, 0, 0.5f);
         private Point PreviousMousePosition;
         public Rectangle Rect;
-        public Overworld Overworld;
+        public OverworldMap Overworld;
 
         public void SetGoalFocus(Vector3 GoalFocus)
         {

@@ -913,7 +913,7 @@
     <Compile Include="World\DetailMoteData.cs" />
     <Compile Include="World\Diplomacy.cs" />
     <Compile Include="World\Overworld\OverworldCell.cs" />
-    <Compile Include="World\Overworld\Overworld.cs" />
+    <Compile Include="World\Overworld\OverworldMap.cs" />
     <Compile Include="World\Overworld\OverworldImageOperations.cs" />
     <Compile Include="World\Rail\BuildRailTool.cs" />
     <Compile Include="World\Rail\CombinationTable.cs" />

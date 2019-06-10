@@ -19,7 +19,6 @@ namespace DwarfCorp.GameStates
         public int NumFaults = 3;
         public float SeaLevel = 0.17f;
         public float TemperatureScale = 1.0f;
-        [JsonIgnore] public Embarkment InitalEmbarkment = null;
         public int Difficulty = 2;
         public bool GenerateFromScratch = false;
         public int Seed = 0;
@@ -27,7 +26,10 @@ namespace DwarfCorp.GameStates
         public int zLevels = 4; // This is actually y levels but genre convention is to call depth Z.
         public InstanceSettings InstanceSettings; // These are only saved because it makes the selector default to the last launched branch.
 
-        [JsonIgnore] public Overworld Overworld = null;
+        [JsonIgnore] public OverworldMap Overworld = null;
+
+        public List<ColonyCell> ColonyCells;
+
 
         public List<OverworldFaction> Natives;
 
@@ -40,10 +42,13 @@ namespace DwarfCorp.GameStates
         {
             Seed = Name.GetHashCode();
             Company = new CompanyInformation();
-            Overworld = new Overworld(Width, Height);
-            InstanceSettings = new InstanceSettings();
+            Overworld = new OverworldMap(Width, Height);
             PlayerCorporationResources = new ResourceSet();
-            InitalEmbarkment = new Embarkment();
+
+            InstanceSettings = new InstanceSettings();
+            InstanceSettings.InitalEmbarkment = new Embarkment();
+            ColonyCells = ColonyCell.DeriveFromTexture("World\\colonies");
+            InstanceSettings.Cell = ColonyCells[1];
         }
     }
 }

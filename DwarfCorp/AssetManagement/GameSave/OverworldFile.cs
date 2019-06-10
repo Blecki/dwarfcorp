@@ -41,8 +41,8 @@ namespace DwarfCorp
             DwarfGame.LogSentryBreadcrumb("Saving", String.Format("User saving an overworld with size {0} x {1}", width, height), SharpRaven.Data.BreadcrumbLevel.Info);
             Texture2D toReturn = new Texture2D(device, width, height);
             var colorData = new Color[width * height];
-            Overworld.TextureFromHeightMap("Height", OverworldMap, null, 1, colorData, seaLevel);
-            Overworld.ShadeHeight(OverworldMap, 1, colorData);
+            DwarfCorp.OverworldMap.TextureFromHeightMap("Height", OverworldMap, null, 1, colorData, seaLevel);
+            DwarfCorp.OverworldMap.ShadeHeight(OverworldMap, 1, colorData);
             toReturn.SetData(colorData);
             return toReturn;
         }
@@ -51,7 +51,7 @@ namespace DwarfCorp
         {
             var r = new Texture2D(Device, OverworldMap.GetLength(0), OverworldMap.GetLength(1), false, SurfaceFormat.Color);
             var data = new Color[OverworldMap.GetLength(0) * OverworldMap.GetLength(1)];
-            Overworld.GenerateSaveTexture(OverworldMap, data);
+            DwarfCorp.OverworldMap.GenerateSaveTexture(OverworldMap, data);
             r.SetData(data);
             return r;
         }
@@ -62,7 +62,7 @@ namespace DwarfCorp
             var colorData = new Color[Texture.Width * Texture.Height];
             GameState.Game.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             Texture.GetData(colorData);
-            Overworld.DecodeSaveTexture(OverworldMap, Texture.Width, Texture.Height, colorData);
+            DwarfCorp.OverworldMap.DecodeSaveTexture(OverworldMap, Texture.Width, Texture.Height, colorData);
 
             // Remap the saved voxel ids to the ids of the currently loaded voxels.
             if (MetaData.BiomeTypeMap != null)
@@ -174,17 +174,13 @@ namespace DwarfCorp
                 return true;
         }
 
-        public Overworld CreateOverworld()
-        {
-            var Overworld = new Overworld(OverworldMap.GetLength(0), OverworldMap.GetLength(1));
-            Overworld.Map = OverworldMap;
-            Overworld.Name = MetaData.Settings.Name;
-            return Overworld;
-        }
-
         public OverworldGenerationSettings CreateSettings()
         {
-            MetaData.Settings.Overworld = CreateOverworld();
+            MetaData.Settings.Overworld = new OverworldMap(OverworldMap.GetLength(0), OverworldMap.GetLength(1))
+            {
+                Map = OverworldMap
+            };
+
             return MetaData.Settings;
         }
 

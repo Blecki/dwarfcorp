@@ -48,7 +48,7 @@ namespace DwarfCorp.GameStates
             {
                 AutoLayout = AutoLayout.DockTop,
                 Padding = new Margin(5, 5, 32, 32),
-                MinimumSize = new Point(32 * 2 * playerClasses.Count, 48 * 2 + 40)
+                MinimumSize = new Point(48 * 2 * playerClasses.Count, 40 * 2 + 40)
             });
 
             var right = AddChild(new Widget()
@@ -80,7 +80,7 @@ namespace DwarfCorp.GameStates
             {
                 var frame = left.AddChild(new Widget()
                 {
-                    MinimumSize = new Point(32*2, 48*2 + 15),
+                    MinimumSize = new Point(48*2, 40*2 + 15),
                     AutoLayout = AutoLayout.DockLeft
                 });
 
@@ -100,10 +100,10 @@ namespace DwarfCorp.GameStates
                         HireButton.Invalidate();
                         applicantInfo.Applicant = applicant.Applicant;
                     },
-                    MinimumSize = new Point(32 * 2, 48 * 2),
-                    MaximumSize = new Point(32 * 2, 48 * 2),
+                    MinimumSize = new Point(48 * 2, 40 * 2),
+                    MaximumSize = new Point(48 * 2, 40 * 2),
                     Sprite = layers,
-                    AnimationPlayer = applicant.Applicant.GetAnimationPlayer(layers)
+                    AnimationPlayer = applicant.Applicant.GetAnimationPlayer(layers, "WalkingFORWARD")
                 }) as EmployeePortrait;
 
                 frame.AddChild(new Widget()
@@ -122,10 +122,12 @@ namespace DwarfCorp.GameStates
                 Text = "Back",
                 Border = "border-button",
                 AutoLayout = AutoLayout.DockLeft,
+                Font = "font16",
                 OnClick = (sender, args) =>
                 {
                     this.Close();
-                }
+                },
+                ChangeColorOnHover = true,
             });
 
             HireButton = buttonRow.AddChild(new Button
@@ -138,7 +140,7 @@ namespace DwarfCorp.GameStates
                     var applicant = applicantInfo.Applicant;
                     if (applicant != null)
                     {
-                        Settings.InitalEmbarkment.Employees.Add(applicant);
+                        Settings.InstanceSettings.InitalEmbarkment.Employees.Add(applicant);
 
                         applicantInfo.Hidden = true;
                         HireButton.Hidden = true;
@@ -149,11 +151,13 @@ namespace DwarfCorp.GameStates
                         var newApplicant = GenerateApplicant(applicant.Class.Name);
                         Applicants[applicant.Class.Name].Applicant = newApplicant;
                         Applicants[applicant.Class.Name].Portrait.Sprite = newApplicant.GetLayers();
-                        Applicants[applicant.Class.Name].Portrait.AnimationPlayer = newApplicant.GetAnimationPlayer(Applicants[applicant.Class.Name].Portrait.Sprite);
+                        Applicants[applicant.Class.Name].Portrait.AnimationPlayer = newApplicant.GetAnimationPlayer(Applicants[applicant.Class.Name].Portrait.Sprite, "WalkingFORWARD");
 
                     }
                 },
-                Hidden = true
+                Hidden = true,
+                Font = "font16",
+                ChangeColorOnHover = true,
             }) as Button;
 
             this.Layout();
@@ -168,13 +172,5 @@ namespace DwarfCorp.GameStates
                 }
             };
         }
-
-        public override void PostDraw(GraphicsDevice device)
-        {
-            foreach (var applicant in Applicants)
-                applicant.Value.Portrait.PostDraw(device);
-        }
-        // Override post draw and draw portraits??
-
     }
 }

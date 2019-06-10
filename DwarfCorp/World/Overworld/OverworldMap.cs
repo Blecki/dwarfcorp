@@ -12,12 +12,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// The overworld is a 2D map specifying biomes,
-    /// temperature, terrain height, etc.  Chunks are generated
-    /// from the overworld.
-    /// </summary>
-    public class Overworld // Todo: Rename to something like OverworldData so OverworldGenerationSettings can be called the overworld?
+    public class OverworldMap
     {
         public static Dictionary<string, Color> HeightColors = new Dictionary<string, Color>
         {
@@ -42,14 +37,11 @@ namespace DwarfCorp
 
         public List<Vector2> Volcanoes { get; set; }
         public OverworldCell[,] Map { get; set; }
-        public string Name { get; set; }
-        public List<ColonyCell> ColonyCells;
         public static MemoryTexture BiomeBlend = null;
 
-        public Overworld(int Width, int Height)
+        public OverworldMap(int Width, int Height)
         {
             Map = new OverworldCell[Width, Height];
-            ColonyCells = ColonyCell.DeriveFromTexture("World\\colonies");
 
             BiomeBlend = TextureTool.MemoryTextureFromTexture2D(AssetManager.GetContentTexture("World\\biome-blend"));
             if (BiomeBlend == null || BiomeBlend.Width != VoxelConstants.ChunkSizeX || BiomeBlend.Height != VoxelConstants.ChunkSizeZ)

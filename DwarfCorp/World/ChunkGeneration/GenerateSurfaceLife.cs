@@ -23,11 +23,11 @@ namespace DwarfCorp.Generation
             for (var x = TopChunk.Origin.X; x < TopChunk.Origin.X + VoxelConstants.ChunkSizeX; x++)
                 for (var z = TopChunk.Origin.Z; z < TopChunk.Origin.Z + VoxelConstants.ChunkSizeZ; z++)
                 {
-                    var overworldPosition = Overworld.WorldToOverworld(new Vector2(x, z), Settings.OverworldSettings.InstanceSettings.Origin);
+                    var overworldPosition = OverworldMap.WorldToOverworld(new Vector2(x, z), Settings.OverworldSettings.InstanceSettings.Origin);
                     var biome = Settings.OverworldSettings.Overworld.Map[(int)MathFunctions.Clamp(overworldPosition.X, 0, Settings.OverworldSettings.Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(overworldPosition.Y, 0, Settings.OverworldSettings.Overworld.Map.GetLength(1) - 1)].Biome;
                     var biomeData = BiomeLibrary.GetBiome(biome);
 
-                    var normalizedHeight = NormalizeHeight(Overworld.LinearInterpolate(overworldPosition, Settings.OverworldSettings.Overworld.Map, OverworldField.Height));
+                    var normalizedHeight = NormalizeHeight(OverworldMap.LinearInterpolate(overworldPosition, Settings.OverworldSettings.Overworld.Map, OverworldField.Height));
                     var height = (int)MathFunctions.Clamp(normalizedHeight * worldDepth, 0.0f, worldDepth - 2);
 
                     var voxel = Settings.World.ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(x, height, z));

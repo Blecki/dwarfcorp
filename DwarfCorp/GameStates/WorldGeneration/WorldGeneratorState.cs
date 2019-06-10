@@ -126,7 +126,7 @@ namespace DwarfCorp.GameStates
             {
                 Border = "border-thin",
                 AutoLayout = Gui.AutoLayout.DockFill,
-                Overworld = Settings.Overworld,
+                Overworld = Settings,
                 Hidden = true,
                 OnLayout = (sender) =>
                 {
@@ -195,6 +195,7 @@ namespace DwarfCorp.GameStates
             }
 
             GuiRoot.RedrawPopups();
+            GuiRoot.Postdraw();
             GuiRoot.DrawMouse();
 
             base.Render(gameTime);

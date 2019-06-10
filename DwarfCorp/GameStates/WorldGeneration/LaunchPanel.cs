@@ -59,7 +59,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockBottom,
                 OnClick = (sender, args) =>
                 {
-                    var saveName = DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Settings.Overworld.Name + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)Settings.InstanceSettings.Origin.X, (int)Settings.InstanceSettings.Origin.Y);
+                    var saveName = DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Settings.Name + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)Settings.InstanceSettings.Origin.X, (int)Settings.InstanceSettings.Origin.Y);
                     var saveGame = SaveGame.LoadMetaFromDirectory(saveName);
                     if (saveGame != null)
                     {
@@ -73,12 +73,11 @@ namespace DwarfCorp.GameStates
                     else
                     {
                         DwarfGame.LogSentryBreadcrumb("WorldGenerator", string.Format("User is starting a game with a {0} x {1} world.", Settings.Width, Settings.Height));
-                        Settings.Overworld.Name = Settings.Name;
                         Settings.InstanceSettings.ExistingFile = null;
                         Settings.InstanceSettings.LoadType = LoadType.CreateNew;
 
                         var message = "";
-                        var valid = Settings.InitalEmbarkment.ValidateEmbarkment(Settings, out message);
+                        var valid = Settings.InstanceSettings.InitalEmbarkment.ValidateEmbarkment(Settings, out message);
                         if (valid == Embarkment.ValidationResult.Pass)
                         {
                             GameStateManager.ClearState();
@@ -149,7 +148,7 @@ namespace DwarfCorp.GameStates
             }
             else
             {
-                SaveName = DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Settings.Overworld.Name + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)Settings.InstanceSettings.Origin.X, (int)Settings.InstanceSettings.Origin.Y);
+                SaveName = DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Settings.Name + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)Settings.InstanceSettings.Origin.X, (int)Settings.InstanceSettings.Origin.Y);
                 var saveGame = SaveGame.LoadMetaFromDirectory(SaveName);
 
                 if (saveGame != null)

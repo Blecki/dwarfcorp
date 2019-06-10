@@ -26,10 +26,10 @@ namespace DwarfCorp.Generation
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {
-                    var overworldPosition = Overworld.WorldToOverworld(new Vector2(x + origin.X, z + origin.Z), Settings.OverworldSettings.InstanceSettings.Origin);
-                    var biomeData = Overworld.GetBiomeAt(Settings.OverworldSettings.Overworld.Map, new Vector3(x + origin.X, 0, z + origin.Z), Settings.OverworldSettings.InstanceSettings.Origin);
+                    var overworldPosition = OverworldMap.WorldToOverworld(new Vector2(x + origin.X, z + origin.Z), Settings.OverworldSettings.InstanceSettings.Origin);
+                    var biomeData = OverworldMap.GetBiomeAt(Settings.OverworldSettings.Overworld.Map, new Vector3(x + origin.X, 0, z + origin.Z), Settings.OverworldSettings.InstanceSettings.Origin);
 
-                    var normalizedHeight = NormalizeHeight(Overworld.LinearInterpolate(overworldPosition, Settings.OverworldSettings.Overworld.Map, OverworldField.Height));
+                    var normalizedHeight = NormalizeHeight(OverworldMap.LinearInterpolate(overworldPosition, Settings.OverworldSettings.Overworld.Map, OverworldField.Height));
                     var height = MathFunctions.Clamp(normalizedHeight * worldDepth, 0.0f, worldDepth - 2);
                     var stoneHeight = (int)MathFunctions.Clamp((int)(height - (biomeData.SoilLayer.Depth + (Math.Sin(overworldPosition.X) + Math.Cos(overworldPosition.Y)))), 1, height);
 

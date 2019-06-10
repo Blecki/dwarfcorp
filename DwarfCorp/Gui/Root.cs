@@ -26,6 +26,7 @@ namespace DwarfCorp.Gui
         public Widget RootItem { get; private set; }
         public Widget TooltipItem { get; set; }
         private List<Widget> UpdateItems = new List<Widget>();
+        private List<Widget> PostdrawItems = new List<Widget>();
         public Widget MouseDownItem { get; private set; }
 
         public bool MouseVisible = true;
@@ -127,6 +128,7 @@ namespace DwarfCorp.Gui
             if (Object.ReferenceEquals(HoverItem, Widget)) HoverItem = null;
             if (Object.ReferenceEquals(TooltipItem, Widget)) TooltipItem = null;
             UpdateItems.RemoveAll(p => Object.ReferenceEquals(p, Widget));
+            PostdrawItems.RemoveAll(p => Object.ReferenceEquals(p, Widget));
 
             // If the widget is in the popup stack, remove it and any later popups from stack.
             if (PopupStack.Contains(Widget)) PopupStack = PopupStack.Take(PopupStack.IndexOf(Widget)).ToList();
@@ -145,6 +147,14 @@ namespace DwarfCorp.Gui
             if (!Object.ReferenceEquals(this, Widget.Root)) throw new InvalidOperationException();
             if (!UpdateItems.Contains(Widget))
                 UpdateItems.Add(Widget);
+            return Widget;
+        }
+
+        public Widget RegisterForPostdraw(Widget Widget)
+        {
+            if (!Object.ReferenceEquals(this, Widget.Root)) throw new InvalidOperationException();
+            if (!PostdrawItems.Contains(Widget))
+                PostdrawItems.Add(Widget);
             return Widget;
         }
 
@@ -681,6 +691,12 @@ namespace DwarfCorp.Gui
             }
 
             if (Mouse) DrawMouse();
+        }
+
+        public void Postdraw()
+        {
+            foreach (var widget in PostdrawItems)
+                widget.PostDraw(GameStates.GameState.Game.GraphicsDevice);
         }
 
         public void RedrawPopups()

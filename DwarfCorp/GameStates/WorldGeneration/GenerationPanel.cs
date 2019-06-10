@@ -132,7 +132,7 @@ namespace DwarfCorp.GameStates
                 {
                     Settings.Company.Name = NameField.Text;
                     Settings.Company.Motto = MottoField.Text;
-                    Settings.InitalEmbarkment = new Embarkment();
+                    Settings.InstanceSettings.InitalEmbarkment = new Embarkment();
                     Settings.PlayerCorporationFunds = 1000;
 
                     OnVerified?.Invoke();

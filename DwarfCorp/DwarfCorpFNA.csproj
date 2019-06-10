@@ -692,6 +692,7 @@
     <Compile Include="World\LanguageGenerator\Language.cs" />
     <Compile Include="World\LanguageGenerator\TextAtom.cs" />
     <Compile Include="World\LanguageGenerator\TextGenerator.cs" />
+    <Compile Include="World\Overworld\OverworldMap.cs" />
     <Compile Include="World\Potions\GatherPotionsTask.cs" />
     <Compile Include="World\Potions\Potion.cs" />
     <Compile Include="World\Rooms\RoomData.cs" />
@@ -805,7 +806,6 @@
     <Compile Include="World\ChunkGeneration\GenerateOres.cs" />
     <Compile Include="World\Overworld\ColonyCell.cs" />
     <Compile Include="World\Overworld\InstanceSettings.cs" />
-    <Compile Include="World\Overworld\Overworld.cs" />
     <Compile Include="World\Overworld\OverworldCell.cs" />
     <Compile Include="World\Overworld\OverworldGenerationSettings.cs" />
     <Compile Include="World\Overworld\OverworldImageOperations.cs" />

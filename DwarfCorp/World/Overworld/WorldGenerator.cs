@@ -30,7 +30,7 @@ namespace DwarfCorp.GameStates
         public string LoadingMessage = "";
         private Thread genThread;
         public float Progress = 0.0f;
-        public Overworld Overworld;
+        public OverworldMap Overworld;
         public Action UpdatePreview;
 
         public WorldGenerator(OverworldGenerationSettings Settings, bool ClearOverworld)
@@ -42,7 +42,7 @@ namespace DwarfCorp.GameStates
 
             if (ClearOverworld)
             {
-                Overworld = new Overworld(Settings.Width, Settings.Height);
+                Overworld = new OverworldMap(Settings.Width, Settings.Height);
                 Settings.Overworld = Overworld;
             }
             else
@@ -304,24 +304,22 @@ namespace DwarfCorp.GameStates
            try
 #endif
             {
-                if (Overworld.Name == null)
-                {
-                    Overworld.Name = OverworldGenerationSettings.GetRandomWorldName();
-                }
+                if (Settings.Name == null)
+                    Settings.Name = OverworldGenerationSettings.GetRandomWorldName();
 
                 MathFunctions.Random = new ThreadSafeRandom(Settings.Seed);
                 CurrentState = GenerationState.Generating;
                 
                 LoadingMessage = "Init..";
-                Overworld.heightNoise.Seed = Settings.Seed;
+                OverworldMap.heightNoise.Seed = Settings.Seed;
                 Overworld.Map = new OverworldCell[Settings.Width, Settings.Height];
 
                 Progress = 0.01f;
 
                 LoadingMessage = "Height Map ...";
                 float[,] heightMapLookup = null;
-                heightMapLookup = Overworld.GenerateHeightMapLookup(Settings.Width, Settings.Height);
-                Overworld.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, Settings.Width, Settings.Height, 1.0f, false);
+                heightMapLookup = OverworldMap.GenerateHeightMapLookup(Settings.Width, Settings.Height);
+                OverworldMap.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, Settings.Width, Settings.Height, 1.0f, false);
 
                 Progress = 0.05f;
 
@@ -372,11 +370,11 @@ namespace DwarfCorp.GameStates
 
                 #endregion
 
-                Overworld.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, Settings.Width, Settings.Height, 1.0f, true);
+                OverworldMap.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, Settings.Width, Settings.Height, 1.0f, true);
 
                 Progress = 0.2f;
 
-                Overworld.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, Settings.Width, Settings.Height, 1.0f, true);
+                OverworldMap.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, Settings.Width, Settings.Height, 1.0f, true);
 
                 Progress = 0.25f;
                 if (UpdatePreview != null) UpdatePreview();
@@ -386,7 +384,7 @@ namespace DwarfCorp.GameStates
 
                 float[,] buffer = new float[Settings.Width, Settings.Height];
                 Erode(Settings.Width, Settings.Height, Settings.SeaLevel, Overworld.Map, numRains, rainLength, numRainSamples, buffer);
-                Overworld.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, Settings.Width, Settings.Height, 1.0f, true);
+                OverworldMap.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, Settings.Width, Settings.Height, 1.0f, true);
 
                 #endregion
 
@@ -397,7 +395,7 @@ namespace DwarfCorp.GameStates
                 OverworldImageOperations.Blur(Overworld.Map, Settings.Width, Settings.Height, OverworldField.Erosion);
 
                 LoadingMessage = "Generate height.";
-                Overworld.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, Settings.Width, Settings.Height, 1.0f, true);
+                OverworldMap.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, Settings.Width, Settings.Height, 1.0f, true);
 
 
                 LoadingMessage = "Rain";

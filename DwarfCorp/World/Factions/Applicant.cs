@@ -112,10 +112,10 @@ namespace DwarfCorp
             return sprite;
         }
 
-        public AnimationPlayer GetAnimationPlayer(LayeredSprites.LayerStack stack)
+        public AnimationPlayer GetAnimationPlayer(LayeredSprites.LayerStack stack, String Anim = "IdleFORWARD")
         {
             foreach (var animation in Library.LoadNewLayeredAnimationFormat(ContentPaths.dwarf_animations))
-                if (animation.Key == "IdleFORWARD")
+                if (animation.Key == Anim)
                     return new AnimationPlayer(stack.ProxyAnimation(animation.Value));
             return null;
         }

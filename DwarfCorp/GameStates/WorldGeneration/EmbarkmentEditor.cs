@@ -42,7 +42,7 @@ namespace DwarfCorp.GameStates
                 TextVerticalAlign = VerticalAlign.Center,
                 OnClick = (sender, args) =>
                 {
-                    Settings.InitalEmbarkment.Employees.RemoveAt(Index);
+                    Settings.InstanceSettings.InitalEmbarkment.Employees.RemoveAt(Index);
                     RebuildEmployeeList();
                     UpdateCost();
                 }
@@ -61,8 +61,8 @@ namespace DwarfCorp.GameStates
         {
             EmployeeList.ClearItems();
 
-            for (var i = 0; i < Settings.InitalEmbarkment.Employees.Count; ++i)
-                EmployeeList.AddItem(CreateEmployeeListing(Settings.InitalEmbarkment.Employees[i], i));
+            for (var i = 0; i < Settings.InstanceSettings.InitalEmbarkment.Employees.Count; ++i)
+                EmployeeList.AddItem(CreateEmployeeListing(Settings.InstanceSettings.InitalEmbarkment.Employees[i], i));
         }
 
         private Widget CreateBar(String Label)
@@ -79,17 +79,17 @@ namespace DwarfCorp.GameStates
 
         private void UpdateCost()
         {
-            Cash.Text = Settings.InitalEmbarkment.Money.ToString();
+            Cash.Text = Settings.InstanceSettings.InitalEmbarkment.Funds.ToString();
             Cash.Invalidate();
 
-            EmployeeCost.Text = (new DwarfBux(Settings.InitalEmbarkment.Employees.Sum(e => e.SigningBonus))).ToString();
+            EmployeeCost.Text = (new DwarfBux(Settings.InstanceSettings.InitalEmbarkment.Employees.Sum(e => e.SigningBonus))).ToString();
             EmployeeCost.Invalidate();
 
-            TotalCost.Text = (Settings.InitalEmbarkment.Money + Settings.InitalEmbarkment.Employees.Sum(e => e.SigningBonus)).ToString();
+            TotalCost.Text = (Settings.InstanceSettings.InitalEmbarkment.Funds + Settings.InstanceSettings.InitalEmbarkment.Employees.Sum(e => e.SigningBonus)).ToString();
             TotalCost.Invalidate();
 
             var s = "";
-            Settings.InitalEmbarkment.ValidateEmbarkment(Settings, out s);
+            Settings.InstanceSettings.InitalEmbarkment.ValidateEmbarkment(Settings, out s);
             ValidationLabel.Text = s;
             ValidationLabel.Invalidate();
         }
@@ -121,10 +121,10 @@ namespace DwarfCorp.GameStates
                 OnClick = (sender, args) =>
                 {
                     foreach (var resource in ResourceColumns.SelectedResources)
-                        Settings.InitalEmbarkment.Resources.Add(resource);
+                        Settings.InstanceSettings.InitalEmbarkment.Resources.Add(resource);
 
                     var message = "";
-                    var valid = Settings.InitalEmbarkment.ValidateEmbarkment(Settings, out message);
+                    var valid = Settings.InstanceSettings.InitalEmbarkment.ValidateEmbarkment(Settings, out message);
                     if (valid == Embarkment.ValidationResult.Pass)
                         this.Close();
                     else if (valid == Embarkment.ValidationResult.Query)
@@ -216,7 +216,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockRight,
                 OnValueChanged = (sender) =>
                 {
-                    Settings.InitalEmbarkment.Money = (sender as Gui.Widgets.MoneyEditor).CurrentValue;
+                    Settings.InstanceSettings.InitalEmbarkment.Funds = (sender as Gui.Widgets.MoneyEditor).CurrentValue;
                     UpdateCost();
                 },
                 Tooltip = "Money to take.",
@@ -258,7 +258,7 @@ namespace DwarfCorp.GameStates
                     return r.MoneyValue;
                 },
                 SourceResources = Settings.PlayerCorporationResources.Enumerate().ToList(),
-                SelectedResources = Settings.InitalEmbarkment.Resources.Enumerate().ToList(),
+                SelectedResources = Settings.InstanceSettings.InitalEmbarkment.Resources.Enumerate().ToList(),
                 LeftHeader = "Available",
                 RightHeader = "Taking"
             }) as EmbarkmentResourceColumns;

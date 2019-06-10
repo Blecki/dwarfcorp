@@ -33,11 +33,13 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(48 * 2, 40 * 2)
             });
+
             Portrait = topWidget.AddChild(new EmployeePortrait()
             {
                 MinimumSize = new Point(48 * 2, 40 * 2),
                 AutoLayout = AutoLayout.DockLeft
             }) as EmployeePortrait;
+
             NameLabel = topWidget.AddChild(new Gui.Widget
             {
                 AutoLayout = AutoLayout.DockTop,

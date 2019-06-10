@@ -13,6 +13,12 @@ namespace DwarfCorp.Gui.Widgets
         public DwarfCorp.LayeredSprites.LayerStack Sprite;
         public AnimationPlayer AnimationPlayer;
 
+        public override void Construct()
+        {
+            Root.RegisterForPostdraw(this);
+            base.Construct();
+        }
+
         public override void Layout()
         {
             base.Layout();

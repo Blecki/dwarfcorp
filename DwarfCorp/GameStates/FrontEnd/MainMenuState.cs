@@ -62,11 +62,13 @@ namespace DwarfCorp.GameStates
                     {
                         Company = new CompanyInformation(),
                         GenerateFromScratch = true,
-                        InstanceSettings = new InstanceSettings(),
-                        InitalEmbarkment = new Embarkment
+                        InstanceSettings = new InstanceSettings()
                         {
-                            Employees = employees,
-                            Money = 1000u
+                            InitalEmbarkment = new Embarkment
+                            {
+                                Employees = employees,
+                                Funds = 1000u
+                            }
                         }
                     }));
                 });

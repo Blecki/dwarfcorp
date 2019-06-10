@@ -301,7 +301,7 @@ namespace DwarfCorp.GameStates
                 foreach (var contextCommandFactory in AssetManager.EnumerateModHooks(typeof(ContextCommandAttribute), typeof(ContextCommands.ContextCommand), new Type[] { }))
                     ContextCommands.Add(contextCommandFactory.Invoke(null, new Object[] { }) as ContextCommands.ContextCommand);
 
-                World.LogEvent(String.Format("We have arrived at {0}", World.Settings.Overworld.Name));
+                World.LogEvent(String.Format("We have arrived at {0}", World.Settings.Name));
             }
 
             base.OnEnter();
