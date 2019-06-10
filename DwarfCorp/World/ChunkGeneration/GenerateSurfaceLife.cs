@@ -27,7 +27,7 @@ namespace DwarfCorp.Generation
                     var biome = Settings.OverworldSettings.Overworld.Map[(int)MathFunctions.Clamp(overworldPosition.X, 0, Settings.OverworldSettings.Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(overworldPosition.Y, 0, Settings.OverworldSettings.Overworld.Map.GetLength(1) - 1)].Biome;
                     var biomeData = BiomeLibrary.GetBiome(biome);
 
-                    var normalizedHeight = NormalizeHeight(OverworldMap.LinearInterpolate(overworldPosition, Settings.OverworldSettings.Overworld.Map, OverworldField.Height));
+                    var normalizedHeight = NormalizeHeight(Settings.OverworldSettings.Overworld.LinearInterpolate(overworldPosition, OverworldField.Height));
                     var height = (int)MathFunctions.Clamp(normalizedHeight * worldDepth, 0.0f, worldDepth - 2);
 
                     var voxel = Settings.World.ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(x, height, z));

@@ -39,23 +39,26 @@ namespace DwarfCorp
         public OverworldCell[,] Map { get; set; }
         public static MemoryTexture BiomeBlend = null;
 
-        public OverworldMap(int Width, int Height)
+        public OverworldMap()
         {
-            Map = new OverworldCell[Width, Height];
-
             BiomeBlend = TextureTool.MemoryTextureFromTexture2D(AssetManager.GetContentTexture("World\\biome-blend"));
             if (BiomeBlend == null || BiomeBlend.Width != VoxelConstants.ChunkSizeX || BiomeBlend.Height != VoxelConstants.ChunkSizeZ)
                 BiomeBlend = new MemoryTexture(VoxelConstants.ChunkSizeX, VoxelConstants.ChunkSizeZ);
         }
 
-        public static float LinearInterpolate(Vector2 position, OverworldCell[,] map, OverworldField fieldType)
+        public OverworldMap(int Width, int Height) : this()
+        {
+            Map = new OverworldCell[Width, Height];
+        }
+
+        public float LinearInterpolate(Vector2 position, OverworldField fieldType)
         {
             float x = position.X;
             float y = position.Y;
-            float x1 = (int) MathFunctions.Clamp((float) Math.Ceiling(x), 0, map.GetLength(0) - 2);
-            float y1 = (int) MathFunctions.Clamp((float) Math.Ceiling(y), 0, map.GetLength(1) - 2);
-            float x2 = (int) MathFunctions.Clamp((float) Math.Floor(x), 0, map.GetLength(0) - 2);
-            float y2 = (int) MathFunctions.Clamp((float) Math.Floor(y), 0, map.GetLength(1) - 2);
+            float x1 = (int) MathFunctions.Clamp((float) Math.Ceiling(x), 0, Map.GetLength(0) - 2);
+            float y1 = (int) MathFunctions.Clamp((float) Math.Ceiling(y), 0, Map.GetLength(1) - 2);
+            float x2 = (int) MathFunctions.Clamp((float) Math.Floor(x), 0, Map.GetLength(0) - 2);
+            float y2 = (int) MathFunctions.Clamp((float) Math.Floor(y), 0, Map.GetLength(1) - 2);
 
             if(Math.Abs(x1 - x2) < 0.5f)
                 x1 = x1 + 1;
@@ -63,20 +66,12 @@ namespace DwarfCorp
             if(Math.Abs(y1 - y2) < 0.5f)
                 y1 = y1 + 1;
          
-            float q11 = map[(int) x1, (int) y1].GetValue(fieldType);
-            float q12 = map[(int) x1, (int) y2].GetValue(fieldType);
-            float q21 = map[(int) x2, (int) y1].GetValue(fieldType);
-            float q22 = map[(int) x2, (int) y2].GetValue(fieldType);
+            float q11 = Map[(int) x1, (int) y1].GetValue(fieldType);
+            float q12 = Map[(int) x1, (int) y2].GetValue(fieldType);
+            float q21 = Map[(int) x2, (int) y1].GetValue(fieldType);
+            float q22 = Map[(int) x2, (int) y2].GetValue(fieldType);
 
             return MathFunctions.LinearCombination(x, y, x1, y1, x2, y2, q11, q12, q21, q22);
-        }
-
-        public static float Interpolate(float wx, float wy, float globalScale, float[,] map)
-        {
-            float x = (wx) / globalScale;
-            float y = (wy) / globalScale;
-
-            return MathFunctions.LinearInterpolate(new Vector2(x, y), map);
         }
 
         public static float[,] GenerateHeightMapLookup(int width, int height)
@@ -109,40 +104,32 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public static void GenerateHeightMapFromLookup(OverworldCell[,] Map, float[,] lookup, int width, int height, float globalScale, bool erode)
+        public void CreateHeightFromLookupWithErosion(float[,] lookup)
         {
-            if (!erode)
-            {
-                for (int x = 0; x < width; x++)
+            for (int x = 0; x < Map.GetLength(0); x++)
+                for (int y = 0; y < Map.GetLength(1); y++)
                 {
-                    for (int y = 0; y < height; y++)
-                    {
-                        Map[x, y].Height = OverworldImageOperations.clamp(lookup[x, y], 0, 1);
-                    }
+                    float h = lookup[x, y];
+                    Vector2 vec = new Vector2(x, y);
+                    h *= LinearInterpolate(vec, OverworldField.Faults);
+                    h += LinearInterpolate(vec, OverworldField.Weathering);
+                    h *= LinearInterpolate(vec, OverworldField.Erosion);
+                    Map[x, y].Height = OverworldImageOperations.clamp(h, 0, 1);
                 }
-            }
-            else
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    for (int y = 0; y < height; y++)
-                    {
-                        float h = lookup[x, y];
-                        Vector2 vec = new Vector2(x, y);
-                        h *= LinearInterpolate(vec, Map, OverworldField.Faults);
-                        h += LinearInterpolate(vec, Map, OverworldField.Weathering);
-                        h *= LinearInterpolate(vec, Map, OverworldField.Erosion);
-                        Map[x, y].Height = OverworldImageOperations.clamp(h, 0, 1);
-                    }
-                }
-            }
         }
 
-        public static void GenerateSaveTexture(OverworldCell[,] map, Color[] worldData)
+        public void CreateHeightFromLookup(float[,] lookup)
         {
-            for (var x = 0; x < map.GetLength(0); ++x)
-                for (var y = 0; y < map.GetLength(1); ++y)
-                    worldData[(y * map.GetLength(0)) + x] = new Color(map[x, y].Height_, map[x, y].Faction, (byte)map[x, y].Biome, (byte)255);
+            for (int x = 0; x < Map.GetLength(0); x++)
+                for (int y = 0; y < Map.GetLength(1); y++)
+                    Map[x, y].Height = OverworldImageOperations.clamp(lookup[x, y], 0, 1);
+        }
+
+        public static void GenerateSaveTexture(OverworldCell[,] Map, Color[] worldData)
+        {
+            for (var x = 0; x < Map.GetLength(0); ++x)
+                for (var y = 0; y < Map.GetLength(1); ++y)
+                    worldData[(y * Map.GetLength(0)) + x] = new Color(Map[x, y].Height_, Map[x, y].Faction, (byte)Map[x, y].Biome, (byte)255);
         }
 
         public static void DecodeSaveTexture(
@@ -365,7 +352,5 @@ namespace DwarfCorp
             Vector2 v = WorldToOverworld(worldPos, origin);
             return OverworldImageOperations.GetValue(Map, v, fieldType);
         }
-
     }
-
 }

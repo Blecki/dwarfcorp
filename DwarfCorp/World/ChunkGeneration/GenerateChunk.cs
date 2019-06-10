@@ -29,7 +29,7 @@ namespace DwarfCorp.Generation
                     var overworldPosition = OverworldMap.WorldToOverworld(new Vector2(x + origin.X, z + origin.Z), Settings.OverworldSettings.InstanceSettings.Origin);
                     var biomeData = OverworldMap.GetBiomeAt(Settings.OverworldSettings.Overworld.Map, new Vector3(x + origin.X, 0, z + origin.Z), Settings.OverworldSettings.InstanceSettings.Origin);
 
-                    var normalizedHeight = NormalizeHeight(OverworldMap.LinearInterpolate(overworldPosition, Settings.OverworldSettings.Overworld.Map, OverworldField.Height));
+                    var normalizedHeight = NormalizeHeight(Settings.OverworldSettings.Overworld.LinearInterpolate(overworldPosition, OverworldField.Height));
                     var height = MathFunctions.Clamp(normalizedHeight * worldDepth, 0.0f, worldDepth - 2);
                     var stoneHeight = (int)MathFunctions.Clamp((int)(height - (biomeData.SoilLayer.Depth + (Math.Sin(overworldPosition.X) + Math.Cos(overworldPosition.Y)))), 1, height);
 

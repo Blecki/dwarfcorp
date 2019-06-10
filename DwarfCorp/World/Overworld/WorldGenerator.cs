@@ -319,7 +319,7 @@ namespace DwarfCorp.GameStates
                 LoadingMessage = "Height Map ...";
                 float[,] heightMapLookup = null;
                 heightMapLookup = OverworldMap.GenerateHeightMapLookup(Settings.Width, Settings.Height);
-                OverworldMap.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, Settings.Width, Settings.Height, 1.0f, false);
+                Overworld.CreateHeightFromLookup(heightMapLookup);
 
                 Progress = 0.05f;
 
@@ -370,11 +370,11 @@ namespace DwarfCorp.GameStates
 
                 #endregion
 
-                OverworldMap.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, Settings.Width, Settings.Height, 1.0f, true);
+                Overworld.CreateHeightFromLookupWithErosion(heightMapLookup);
 
                 Progress = 0.2f;
 
-                OverworldMap.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, Settings.Width, Settings.Height, 1.0f, true);
+                Overworld.CreateHeightFromLookupWithErosion(heightMapLookup);
 
                 Progress = 0.25f;
                 if (UpdatePreview != null) UpdatePreview();
@@ -384,7 +384,7 @@ namespace DwarfCorp.GameStates
 
                 float[,] buffer = new float[Settings.Width, Settings.Height];
                 Erode(Settings.Width, Settings.Height, Settings.SeaLevel, Overworld.Map, numRains, rainLength, numRainSamples, buffer);
-                OverworldMap.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, Settings.Width, Settings.Height, 1.0f, true);
+                Overworld.CreateHeightFromLookupWithErosion(heightMapLookup);
 
                 #endregion
 
@@ -395,7 +395,7 @@ namespace DwarfCorp.GameStates
                 OverworldImageOperations.Blur(Overworld.Map, Settings.Width, Settings.Height, OverworldField.Erosion);
 
                 LoadingMessage = "Generate height.";
-                OverworldMap.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, Settings.Width, Settings.Height, 1.0f, true);
+                Overworld.CreateHeightFromLookupWithErosion(heightMapLookup);
 
 
                 LoadingMessage = "Rain";
