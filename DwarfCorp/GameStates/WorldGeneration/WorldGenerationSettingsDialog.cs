@@ -144,28 +144,29 @@ namespace DwarfCorp.Gui.Widgets
             });
 
             AddChild(CreateCombo<int>(Root, "Natives", "Number of native civilizations",
-                new int[] { 0, 2, 4, 8, 16 }, (i) => Settings.NumCivilizations = i,
-                () => Settings.NumCivilizations));
+                new int[] { 0, 2, 4, 8, 16 }, (i) => Settings.GenerationSettings.NumCivilizations = i,
+                () => Settings.GenerationSettings.NumCivilizations));
 
 
             AddChild(CreateCombo<int>(Root, "Faults", "Number of straights, seas, etc.",
-                new int[] { 0, 1, 3, 5, 10 }, (i) => Settings.NumFaults = i, () => Settings.NumFaults));
+                new int[] { 0, 1, 3, 5, 10 }, (i) => Settings.GenerationSettings.NumFaults = i, () => Settings.GenerationSettings.NumFaults));
 
             AddChild(CreateCombo<float>(Root, "Rainfall", "Amount of moisture in the world.",
-                new float[] { 0.0f, 0.5f, 1.0f, 1.5f, 2.0f }, (f) => Settings.RainfallScale = f,
-                () => Settings.RainfallScale));
+                new float[] { 0.0f, 0.5f, 1.0f, 1.5f, 2.0f }, (f) => Settings.GenerationSettings.RainfallScale = f,
+                () => Settings.GenerationSettings.RainfallScale));
 
+            // Todo: Better name?
             AddChild(CreateCombo<int>(Root, "Erosion", "How eroded is the landscape.",
-                new int[] { 50, 1000, 8000, 20000, 50000 }, (i) => Settings.NumRains = i,
-                () => Settings.NumRains));
+                new int[] { 50, 1000, 8000, 20000, 50000 }, (i) => Settings.GenerationSettings.NumRains = i,
+                () => Settings.GenerationSettings.NumRains));
 
             AddChild(CreateCombo<float>(Root, "Sea Level", "Height of the sea.",
-                new float[] { 0.05f, 0.1f, 0.17f, 0.25f, 0.3f }, (f) => Settings.SeaLevel = f,
-                () => Settings.SeaLevel));
+                new float[] { 0.05f, 0.1f, 0.17f, 0.25f, 0.3f }, (f) => Settings.GenerationSettings.SeaLevel = f,
+                () => Settings.GenerationSettings.SeaLevel));
             
             AddChild(CreateCombo<float>(Root, "Temperature", "Average temperature.",
-                new float[] { 0.0f, 0.5f, 1.0f, 1.5f, 2.0f }, (f) => Settings.TemperatureScale = f,
-                () => Settings.TemperatureScale));
+                new float[] { 0.0f, 0.5f, 1.0f, 1.5f, 2.0f }, (f) => Settings.GenerationSettings.TemperatureScale = f,
+                () => Settings.GenerationSettings.TemperatureScale));
 
 
             var srow = AddChild(new Widget

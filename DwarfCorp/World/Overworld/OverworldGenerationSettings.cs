@@ -3,15 +3,8 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp.GameStates
 {
-    public class OverworldGenerationSettings // Todo: Rename Overworld Settings?
+    public class GenerationParameters
     {
-        public CompanyInformation Company;
-        public ResourceSet PlayerCorporationResources;
-        public DwarfBux PlayerCorporationFunds;
-
-        public int Width = 128;
-        public int Height = 128;
-        public string Name = GetRandomWorldName();
         public int NumCivilizations = 5;
         public int NumRains = 1000;
         public int NumVolcanoes = 3;
@@ -19,6 +12,19 @@ namespace DwarfCorp.GameStates
         public int NumFaults = 3;
         public float SeaLevel = 0.17f;
         public float TemperatureScale = 1.0f;
+    }
+
+    public class OverworldGenerationSettings // Todo: Rename Overworld Settings?
+    {
+        public CompanyInformation Company;
+        public ResourceSet PlayerCorporationResources;
+        public DwarfBux PlayerCorporationFunds;
+
+        public GenerationParameters GenerationSettings = new GenerationParameters();
+
+        public int Width = 128;
+        public int Height = 128;
+        public string Name = GetRandomWorldName();
         public int Difficulty = 2;
         public bool GenerateFromScratch = false;
         public int Seed = 0;

@@ -30,7 +30,7 @@ namespace DwarfCorp.Generation
                     }
 
             var worldDepth = Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY;
-            Settings.NormalizedSeaLevel = Math.Min((int)(worldDepth * NormalizeHeight(Settings.OverworldSettings.SeaLevel + 1.0f / worldDepth)), worldDepth - 1);
+            Settings.NormalizedSeaLevel = Math.Min((int)(worldDepth * NormalizeHeight(Settings.OverworldSettings.GenerationSettings.SeaLevel + 1.0f / worldDepth)), worldDepth - 1);
 
             SetLoadingMessage("");
             foreach (var chunk in EnumerateTopChunks(Settings))

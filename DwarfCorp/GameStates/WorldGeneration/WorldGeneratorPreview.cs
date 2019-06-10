@@ -290,7 +290,7 @@ namespace DwarfCorp.GameStates
             var style = PreviewRenderTypes[PreviewSelector.SelectedItem];
             var colorData = new Color[Overworld.Width * Overworld.Height * 4 * 4];
             
-            Overworld.Overworld.CreateTexture(style.DisplayType, Generator.Settings.Natives, 4, colorData, Generator.Settings.SeaLevel);
+            Overworld.Overworld.CreateTexture(style.DisplayType, Generator.Settings.Natives, 4, colorData, Generator.Settings.GenerationSettings.SeaLevel);
             OverworldMap.Smooth(4, Generator.Settings.Width, Generator.Settings.Height, colorData);
             Overworld.Overworld.ShadeHeight(4, colorData);
 
@@ -383,7 +383,7 @@ namespace DwarfCorp.GameStates
                 {
                     if (!MathFunctions.RandEvent(TreeProbability)) continue;
                     var h = Overworld.Overworld.Map[x, y].Height;
-                    if (!(h > Generator.Settings.SeaLevel)) continue;
+                    if (!(h > Generator.Settings.GenerationSettings.SeaLevel)) continue;
                     var biome = BiomeLibrary.GetBiome(Overworld.Overworld.Map[x, y].Biome);
                     if (biome.Icon > 0)
                     {

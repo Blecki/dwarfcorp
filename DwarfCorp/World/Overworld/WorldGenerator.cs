@@ -250,7 +250,7 @@ namespace DwarfCorp.GameStates
             int volcanoSamples = 4;
             float volcanoSize = 11;
 
-            for(int i = 0; i < (int) Settings.NumVolcanoes; i++) // Todo: Need to move the random used for world generation into settings.
+            for(int i = 0; i < (int) Settings.GenerationSettings.NumVolcanoes; i++) // Todo: Need to move the random used for world generation into settings.
             {
                 Vector2 randomPos = new Vector2((float) (MathFunctions.Random.NextDouble() * width), (float) (MathFunctions.Random.NextDouble() * height));
                 float maxFaults = Overworld.Map[(int) randomPos.X, (int) randomPos.Y].Height;
@@ -320,7 +320,7 @@ namespace DwarfCorp.GameStates
 
                 Progress = 0.05f;
 
-                int numRains = (int)Settings.NumRains;
+                int numRains = (int)Settings.GenerationSettings.NumRains;
                 int rainLength = 250;
                 int numRainSamples = 3;
 
@@ -339,7 +339,7 @@ namespace DwarfCorp.GameStates
                 {
                     for (int y = 0; y < Settings.Height; y++)
                     {
-                        Overworld.Map[x, y].Temperature = ((float)(y) / (float)(Settings.Height)) * Settings.TemperatureScale;
+                        Overworld.Map[x, y].Temperature = ((float)(y) / (float)(Settings.Height)) * Settings.GenerationSettings.TemperatureScale;
                         //Overworld.Map[x, y].Rainfall = Math.Max(Math.Min(Overworld.noise(x, y, 1000.0f, 0.01f) + Overworld.noise(x, y, 100.0f, 0.1f) * 0.05f, 1.0f), 0.0f) * RainfallScale;
                     }
                 }
@@ -354,7 +354,7 @@ namespace DwarfCorp.GameStates
                     }
                 }
         
-                int numVoronoiPoints = (int)Settings.NumFaults;
+                int numVoronoiPoints = (int)Settings.GenerationSettings.NumFaults;
 
                 if (UpdatePreview != null) UpdatePreview();
 
@@ -380,7 +380,7 @@ namespace DwarfCorp.GameStates
                 #region erosion
 
                 float[,] buffer = new float[Settings.Width, Settings.Height];
-                Erode(Settings.Width, Settings.Height, Settings.SeaLevel, Overworld.Map, numRains, rainLength, numRainSamples, buffer);
+                Erode(Settings.Width, Settings.Height, Settings.GenerationSettings.SeaLevel, Overworld.Map, numRains, rainLength, numRainSamples, buffer);
                 Overworld.CreateHeightFromLookupWithErosion(heightMapLookup);
 
                 #endregion
@@ -417,8 +417,8 @@ namespace DwarfCorp.GameStates
                 Settings.Natives = new List<OverworldFaction>();
                 foreach (var fact in library.Factions)
                     Settings.Natives.Add(fact.Value.ParentFaction); // Todo: Don't create a whole faction just to grab the overworldfactions from them.
-                for (int i = 0; i < Settings.NumCivilizations; i++)
-                    Settings.Natives.Add(library.GenerateOverworldFaction(Settings, i, Settings.NumCivilizations));
+                for (int i = 0; i < Settings.GenerationSettings.NumCivilizations; i++)
+                    Settings.Natives.Add(library.GenerateOverworldFaction(Settings, i, Settings.GenerationSettings.NumCivilizations));
 
                 SeedCivs(Overworld.Map, Settings.Natives.Count, Settings.Natives);
                 GrowCivs(Overworld.Map, 200, Settings.Natives);
@@ -454,16 +454,16 @@ namespace DwarfCorp.GameStates
         {
             for (int y = 0; y < height; y++)
             {
-                float currentMoisture = Settings.RainfallScale * 10;
+                float currentMoisture = Settings.GenerationSettings.RainfallScale * 10;
                 for (int x = 0; x < width; x++)
                 {
                     float h = Overworld.Map[x, y].Height;
-                    bool isWater = h < Settings.SeaLevel;
+                    bool isWater = h < Settings.GenerationSettings.SeaLevel;
 
                     if (isWater)
                     {
                         currentMoisture += MathFunctions.Rand(0.1f, 0.3f);
-                        currentMoisture = Math.Min(currentMoisture, Settings.RainfallScale * 20);
+                        currentMoisture = Math.Min(currentMoisture, Settings.GenerationSettings.RainfallScale * 20);
                         Overworld.Map[x, y].Rainfall = 0.5f;
                     }
                     else
@@ -472,7 +472,7 @@ namespace DwarfCorp.GameStates
                         currentMoisture -= rainAmount;
                         float evapAmount = MathFunctions.Rand(0.01f, 0.02f);
                         currentMoisture += evapAmount;
-                        Overworld.Map[x, y].Rainfall = rainAmount * Settings.RainfallScale * Settings.Width * 0.015f;
+                        Overworld.Map[x, y].Rainfall = rainAmount * Settings.GenerationSettings.RainfallScale * Settings.Width * 0.015f;
                     }
                 }
             }
@@ -493,28 +493,6 @@ namespace DwarfCorp.GameStates
             List<List<Vector2>> vPoints = new List<List<Vector2>>();
             List<float> rands = new List<float>();
 
-            /*
-            List<Vector2> edge = new List<Vector2>
-            {
-                new Vector2(0, 0),
-                new Vector2(width, 0),
-                new Vector2(width, height),
-                new Vector2(0, height),
-                new Vector2(0, 0)
-            };
-
-            List<Vector2> randEdge = new List<Vector2>();
-            for (int i = 1; i < edge.Count; i++)
-            {
-                if (MathFunctions.RandEvent(0.5f))
-                {
-                    randEdge.Add(edge[i]);
-                    randEdge.Add(edge[i - 1]);
-                }
-            }
-
-            vPoints.Add(randEdge);
-             */
             for(int i = 0; i < numVoronoiPoints; i++)
             {
                 Vector2 v = GetEdgePoint(width, height);
@@ -769,7 +747,7 @@ namespace DwarfCorp.GameStates
                 int x = MathFunctions.Random.Next(0, width);
                 int y = MathFunctions.Random.Next(0, height);
 
-                if (map[x, y].Height > Settings.SeaLevel)
+                if (map[x, y].Height > Settings.GenerationSettings.SeaLevel)
                 {
                     return new Point(x, y);
                 }
@@ -811,7 +789,7 @@ namespace DwarfCorp.GameStates
                     for (int y = 1; y < height - 1; y++)
                     {
                         bool isUnclaimed = map[x, y].Faction == 0;
-                        bool isWater = map[x, y].Height < Settings.SeaLevel;
+                        bool isWater = map[x, y].Height < Settings.GenerationSettings.SeaLevel;
                         if (!isUnclaimed && !isWater)
                         {
                             neighbors[0] = map[x + 1, y].Faction;
@@ -828,7 +806,7 @@ namespace DwarfCorp.GameStates
 
                             for (int k = 0; k < 4; k++)
                             {
-                                if (neighbors[k] == 0 && neighborheights[k] < minHeight && neighborheights[k] > Settings.SeaLevel)
+                                if (neighbors[k] == 0 && neighborheights[k] < minHeight && neighborheights[k] > Settings.GenerationSettings.SeaLevel)
                                 {
                                     minHeight = neighborheights[k];
                                     minNeighbor = k;
