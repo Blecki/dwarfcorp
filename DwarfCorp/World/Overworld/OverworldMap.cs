@@ -125,7 +125,7 @@ namespace DwarfCorp
                     Map[x, y].Height = OverworldImageOperations.clamp(lookup[x, y], 0, 1);
         }
 
-        public static void GenerateSaveTexture(OverworldCell[,] Map, Color[] worldData)
+        public void GenerateSaveTexture(Color[] worldData)
         {
             for (var x = 0; x < Map.GetLength(0); ++x)
                 for (var y = 0; y < Map.GetLength(1); ++y)
@@ -150,8 +150,7 @@ namespace DwarfCorp
                 }
         }
 
-        public static void TextureFromHeightMap(string displayMode,
-            OverworldCell[,] map,
+        public void CreateTexture(string displayMode,
             List<OverworldFaction> NativeFactions,
             int scale,
             Color[] worldData,
@@ -159,11 +158,11 @@ namespace DwarfCorp
         {
             string index = "";
 
-            for (int x = 0; x < map.GetLength(0); ++x)
+            for (int x = 0; x < Map.GetLength(0); ++x)
             {
-                for (int y = 0; y < map.GetLength(1); ++y)
+                for (int y = 0; y < Map.GetLength(1); ++y)
                 {
-                    var h1 = map[x, y].GetValue(OverworldField.Height);
+                    var h1 = Map[x, y].GetValue(OverworldField.Height);
                     var cellColor = Color.DarkBlue;
 
                     if (displayMode == "Height")
@@ -193,28 +192,28 @@ namespace DwarfCorp
                             cellColor = HeightColors["Water"];
                         else
                         {
-                            var _biome = BiomeLibrary.GetBiome(map[x, y].Biome);
+                            var _biome = BiomeLibrary.GetBiome(Map[x, y].Biome);
                             if (_biome != null)
                                 cellColor = _biome.MapColor;
                         }
                     }
                     else if (displayMode == "Factions")
                     {
-                        var faction = map[x, y].Faction;
+                        var faction = Map[x, y].Faction;
 
                         if (faction > 0 && faction <= NativeFactions.Count)
                         {
-                            bool inside = x > 0 && x < map.GetLength(0) - 1 && y > 0 && y < map.GetLength(1) - 1;
+                            bool inside = x > 0 && x < Map.GetLength(0) - 1 && y > 0 && y < Map.GetLength(1) - 1;
                             cellColor = NativeFactions[faction - 1].PrimaryColor;
                             if (inside &&
-                                (map[x + 1, y].Faction != faction ||
-                                map[x - 1, y].Faction != faction ||
-                                map[x, y - 1].Faction != faction ||
-                                map[x, y + 1].Faction != faction ||
-                                map[x + 1, y + 1].Faction != faction ||
-                                map[x - 1, y - 1].Faction != faction ||
-                                map[x + 1, y - 1].Faction != faction ||
-                                map[x - 1, y + 1].Faction != faction))
+                                (Map[x + 1, y].Faction != faction ||
+                                Map[x - 1, y].Faction != faction ||
+                                Map[x, y - 1].Faction != faction ||
+                                Map[x, y + 1].Faction != faction ||
+                                Map[x + 1, y + 1].Faction != faction ||
+                                Map[x - 1, y - 1].Faction != faction ||
+                                Map[x + 1, y - 1].Faction != faction ||
+                                Map[x - 1, y + 1].Faction != faction))
                                 cellColor = NativeFactions[faction - 1].SecondaryColor;
                         }
                         else if (h1 > sealevel)
@@ -226,30 +225,27 @@ namespace DwarfCorp
                         {
                             var rx = (x * scale) + tx;
                             var ry = (y * scale) + ty;
-                            var pixelIndex = ry * map.GetLength(0) * scale + rx;
+                            var pixelIndex = ry * Map.GetLength(0) * scale + rx;
                             worldData[pixelIndex] = cellColor;
                         }
                 }
             }
         }
         
-        public static void ShadeHeight(
-            OverworldCell[,] map,
-            int scale,
-            Color[] worldData)
+        public void ShadeHeight(int scale, Color[] worldData)
         {
-            for (int x = 0; x < map.GetLength(0); ++x)
+            for (int x = 0; x < Map.GetLength(0); ++x)
             {
-                for (int y = 0; y < map.GetLength(1); ++y)
+                for (int y = 0; y < Map.GetLength(1); ++y)
                 {
-                    var h1 = map[x, y].GetValue(OverworldField.Height);
+                    var h1 = Map[x, y].GetValue(OverworldField.Height);
 
                     for (var tx = 0; tx < scale; ++tx)
                         for (var ty = 0; ty < scale; ++ty)
                         {
                             var rx = (x * scale) + tx;
                             var ry = (y * scale) + ty;
-                            var pixelIndex = ry * map.GetLength(0) * scale + rx;
+                            var pixelIndex = ry * Map.GetLength(0) * scale + rx;
                             var cellColor = worldData[pixelIndex];
                             cellColor = new Color((float)(cellColor.R) * (h1 + 0.5f) / 255.0f, (float)(cellColor.G * (h1 + 0.5f)) / 255.0f, (float)(cellColor.B * (h1 + 0.5f)) / 255.0f, 1.0f);
                             worldData[pixelIndex] = cellColor;
@@ -335,9 +331,8 @@ namespace DwarfCorp
             return WorldToOverworld(new Vector2(worldXYZ.X, worldXYZ.Z), origin);
         }
 
-        public static BiomeData GetBiomeAt(OverworldCell[,] Map, Vector3 worldPos, Vector2 origin)
+        public BiomeData GetBiomeAt(Vector3 worldPos, Vector2 origin)
         {
-            DebugHelper.AssertNotNull(Map);
             var v = WorldToOverworld(worldPos, origin);
             var r = WorldToOverworldRemainder(new Vector2(worldPos.X, worldPos.Z));
             var blendColor = BiomeBlend.Data[BiomeBlend.Index((int)MathFunctions.Clamp(r.X, 0, VoxelConstants.ChunkSizeX), (int)MathFunctions.Clamp(r.Y, 0, VoxelConstants.ChunkSizeZ))];
@@ -347,7 +342,7 @@ namespace DwarfCorp
             return BiomeLibrary.GetBiome(Math.Max(biome1, biome2));
         }
 
-        public static float GetValueAt(OverworldCell[,] Map, Vector3 worldPos, OverworldField fieldType, Vector2 origin)
+        public float GetValueAt(Vector3 worldPos, OverworldField fieldType, Vector2 origin)
         {
             Vector2 v = WorldToOverworld(worldPos, origin);
             return OverworldImageOperations.GetValue(Map, v, fieldType);

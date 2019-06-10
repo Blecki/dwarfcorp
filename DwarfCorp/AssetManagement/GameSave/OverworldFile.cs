@@ -134,8 +134,8 @@ namespace DwarfCorp
             DwarfGame.LogSentryBreadcrumb("Saving", String.Format("User saving an overworld with size {0} x {1}", MetaData.Settings.Width, MetaData.Settings.Height), SharpRaven.Data.BreadcrumbLevel.Info);
             Texture2D toReturn = new Texture2D(GameState.Game.GraphicsDevice, MetaData.Settings.Width, MetaData.Settings.Height);
             var colorData = new Color[MetaData.Settings.Width * MetaData.Settings.Height];
-            DwarfCorp.OverworldMap.TextureFromHeightMap("Height", MetaData.Settings.Overworld.Map, null, 1, colorData, MetaData.Settings.SeaLevel);
-            DwarfCorp.OverworldMap.ShadeHeight(MetaData.Settings.Overworld.Map, 1, colorData);
+            MetaData.Settings.Overworld.CreateTexture("Height", null, 1, colorData, MetaData.Settings.SeaLevel);
+            MetaData.Settings.Overworld.ShadeHeight(1, colorData);
             toReturn.SetData(colorData);
             return toReturn;
         }
@@ -144,7 +144,7 @@ namespace DwarfCorp
         {
             var r = new Texture2D(GameState.Game.GraphicsDevice, MetaData.Settings.Width, MetaData.Settings.Height, false, SurfaceFormat.Color);
             var data = new Color[MetaData.Settings.Width * MetaData.Settings.Height];
-            DwarfCorp.OverworldMap.GenerateSaveTexture(MetaData.Settings.Overworld.Map, data);
+            MetaData.Settings.Overworld.GenerateSaveTexture(data);
             r.SetData(data);
             return r;
         }

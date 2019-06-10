@@ -290,10 +290,9 @@ namespace DwarfCorp.GameStates
             var style = PreviewRenderTypes[PreviewSelector.SelectedItem];
             var colorData = new Color[Overworld.Overworld.Map.GetLength(0) * Overworld.Overworld.Map.GetLength(1) * 4 * 4];
             
-            OverworldMap.TextureFromHeightMap(style.DisplayType, Overworld.Overworld.Map, Generator.Settings.Natives,
-                4, colorData, Generator.Settings.SeaLevel);
-            OverworldMap.Smooth(4, Overworld.Overworld.Map.GetLength(0), Overworld.Overworld.Map.GetLength(1), colorData);
-            OverworldMap.ShadeHeight(Overworld.Overworld.Map, 4, colorData);
+            Overworld.Overworld.CreateTexture(style.DisplayType, Generator.Settings.Natives, 4, colorData, Generator.Settings.SeaLevel);
+            OverworldMap.Smooth(4, Generator.Settings.Width, Generator.Settings.Height, colorData);
+            Overworld.Overworld.ShadeHeight(4, colorData);
 
             foreach (var cell in Overworld.ColonyCells)
                 DrawRectangle(new Rectangle(cell.Bounds.X * 4, cell.Bounds.Y * 4, cell.Bounds.Width * 4, cell.Bounds.Height * 4), colorData, Overworld.Overworld.Map.GetLength(0) * 4, Color.Yellow);
