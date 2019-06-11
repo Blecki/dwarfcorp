@@ -8,6 +8,7 @@ namespace DwarfCorp
     public class StockMoneyAct : CompoundCreatureAct
     {
         public DwarfBux Money { get; set; }
+
         public StockMoneyAct()
         {
 
@@ -35,5 +36,4 @@ namespace DwarfCorp
             return base.Run();
         }
     }
-
 }

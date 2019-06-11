@@ -41,7 +41,7 @@ namespace DwarfCorp
             var craftList = FileUtils.LoadJsonListFromDirectory<CraftItem>(ContentPaths.craft_items, null, c => c.Name);
             CraftItems = new Dictionary<string, CraftItem>();
 
-            foreach (var type in craftList)
+            foreach (var type in craftList.Where(c => !c.Disable))
             {
                 type.InitializeStrings();
                 CraftItems.Add(type.Name, type);

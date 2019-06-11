@@ -33,6 +33,7 @@ namespace DwarfCorp
         public static String GetString(String Name)
         {
             if (Strings == null) InitializeStrings();
+
             String r = null;
             if (Strings.TryGetValue(Name, out r))
                 return r;

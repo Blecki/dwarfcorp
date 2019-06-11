@@ -97,7 +97,7 @@ namespace DwarfCorp.GameStates
             {
                 // Todo: Just keep a reference to the settings OMG.
                 WorldSizeInChunks = new Point3(Settings.InstanceSettings.Cell.Bounds.Width, Settings.zLevels, Settings.InstanceSettings.Cell.Bounds.Height),
-                Settings = Settings,
+                Overworld = Settings,
             };
 
             World.Renderer.PersistentSettings.MaxViewingLevel = World.WorldSizeInVoxels.Y;

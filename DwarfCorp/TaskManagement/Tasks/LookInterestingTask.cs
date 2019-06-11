@@ -69,10 +69,6 @@ namespace DwarfCorp
             if (goToItem && items.Count > 0)
                 return new GoToEntityAct(Datastructures.SelectRandom(items), creature.AI) & new Wrap(() => ConverseFriends(creature.AI));
 
-            bool getDrink = MathFunctions.RandEvent(0.005f);
-            if (getDrink && creature.World.HasResources(new List<Quantitiy<Resource.ResourceTags>>(){new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Alcohol)}))
-                return new FindAndEatFoodAct(creature.AI) { FoodTag = Resource.ResourceTags.Alcohol, FallbackTag = Resource.ResourceTags.Alcohol};
-
             return creature.AI.ActOnWander();
         }
 

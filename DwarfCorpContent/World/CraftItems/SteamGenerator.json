@@ -1,4 +1,7 @@
 {
+  "Disable": true,
+
+
   "Name": "Steam Generator",
   "EntityName": "Steam Generator",
   "DisplayName": "@anvil",

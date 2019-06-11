@@ -31,24 +31,24 @@ namespace DwarfCorp.GameStates
         private Thread genThread;
         public float Progress = 0.0f;
         public Action UpdatePreview;
+        private Random Random;
 
         public OverworldGenerator(Overworld Settings, bool ClearOverworld)
         {
             CurrentState = GenerationState.NotStarted;
             this.Settings = Settings;
 
-            MathFunctions.Random = new ThreadSafeRandom(Settings.Seed);
-
-            if (ClearOverworld)
-            {
-                Settings.Map = new OverworldMap(Settings.Width, Settings.Height);
-            }
-
-            Settings.Map.Volcanoes = new List<Vector2>();
             LandMesh = null;
             LandIndex = null;
+
+            Random = new Random(Settings.Seed);
+
+            if (ClearOverworld)
+                Settings.Map = new OverworldMap(Settings.Width, Settings.Height);
+
         }
 
+        // Todo: Should this mesh creation be part of the preview?
         public static int[] SetUpTerrainIndices(int width, int height)
         {
             int[] indices = new int[(width - 1) * (height - 1) * 6];
@@ -246,11 +246,11 @@ namespace DwarfCorp.GameStates
 
             for(int i = 0; i < (int) Settings.GenerationSettings.NumVolcanoes; i++) // Todo: Need to move the random used for world generation into settings.
             {
-                Vector2 randomPos = new Vector2((float) (MathFunctions.Random.NextDouble() * width), (float) (MathFunctions.Random.NextDouble() * height));
+                Vector2 randomPos = new Vector2((float) (Random.NextDouble() * width), (float) (Random.NextDouble() * height));
                 float maxFaults = Settings.Map.Map[(int) randomPos.X, (int) randomPos.Y].Height;
                 for(int j = 0; j < volcanoSamples; j++)
                 {
-                    Vector2 randomPos2 = new Vector2((float) (MathFunctions.Random.NextDouble() * width), (float) (MathFunctions.Random.NextDouble() * height));
+                    Vector2 randomPos2 = new Vector2((float) (Random.NextDouble() * width), (float) (Random.NextDouble() * height));
                     float faults = Settings.Map.Map[(int) randomPos2.X, (int) randomPos2.Y].Height;
 
                     if(faults > maxFaults)
@@ -259,9 +259,6 @@ namespace DwarfCorp.GameStates
                         maxFaults = faults;
                     }
                 }
-
-                Settings.Map.Volcanoes.Add(randomPos);
-
 
                 for(int dx = -(int) volcanoSize; dx <= (int) volcanoSize; dx++)
                 {
@@ -273,7 +270,6 @@ namespace DwarfCorp.GameStates
                         float dist = (float) Math.Sqrt(dx * dx + dy * dy);
                         float fDist = (float) Math.Sqrt((dx / 3.0f) * (dx / 3.0f) + (dy / 3.0f) * (dy / 3.0f));
 
-                        //Overworld.Map[x, y].Erosion = MathFunctions.Clamp(dist, 0.0f, 0.5f);
                         float f = (float) (Math.Pow(Math.Sin(fDist), 3.0f) + 1.0f) * 0.2f;
                         Settings.Map.Map[x, y].Height += f;
 
@@ -295,10 +291,6 @@ namespace DwarfCorp.GameStates
            try
 #endif
             {
-                if (Settings.Name == null)
-                    Settings.Name = Overworld.GetRandomWorldName();
-
-                MathFunctions.Random = new ThreadSafeRandom(Settings.Seed);
                 CurrentState = GenerationState.Generating;
                 
                 LoadingMessage = "Init..";
@@ -345,12 +337,7 @@ namespace DwarfCorp.GameStates
                 Progress = 0.1f;
                 LoadingMessage = "Faults ...";
 
-                #region voronoi
-
                 Voronoi(Settings.Width, Settings.Height, numVoronoiPoints);
-
-                #endregion
-
                 Settings.Map.CreateHeightFromLookupWithErosion(heightMapLookup);
 
                 Progress = 0.2f;
@@ -358,26 +345,19 @@ namespace DwarfCorp.GameStates
                 Settings.Map.CreateHeightFromLookupWithErosion(heightMapLookup);
 
                 Progress = 0.25f;
-                if (UpdatePreview != null) UpdatePreview();
+
                 LoadingMessage = "Erosion...";
-
-                #region erosion
-
                 var buffer = new float[Settings.Width, Settings.Height];
                 Erode(Settings.Width, Settings.Height, Settings.GenerationSettings.SeaLevel, Settings.Map.Map, numRains, rainLength, numRainSamples, buffer);
                 Settings.Map.CreateHeightFromLookupWithErosion(heightMapLookup);
 
-                #endregion
-
                 Progress = 0.9f;
-
 
                 LoadingMessage = "Blur.";
                 OverworldImageOperations.Blur(Settings.Map.Map, Settings.Width, Settings.Height, OverworldField.Erosion);
 
                 LoadingMessage = "Generate height.";
                 Settings.Map.CreateHeightFromLookupWithErosion(heightMapLookup);
-
 
                 LoadingMessage = "Rain";
                 CalculateRain(Settings.Width, Settings.Height);
@@ -388,11 +368,7 @@ namespace DwarfCorp.GameStates
                         Settings.Map.Map[x, y].Biome = BiomeLibrary.GetBiomeForConditions(Settings.Map.Map[x, y].Temperature, Settings.Map.Map[x, y].Rainfall, Settings.Map.Map[x, y].Height).Biome;
 
                 LoadingMessage = "Volcanoes";
-
                 GenerateVolcanoes(Settings.Width, Settings.Height);
-
-                if (UpdatePreview != null) UpdatePreview();
-
 
                 LoadingMessage = "Factions";
                 FactionSet library = new FactionSet();
@@ -406,8 +382,6 @@ namespace DwarfCorp.GameStates
 
                 SeedCivs(Settings.Map.Map, Settings.Natives.Count, Settings.Natives);
                 GrowCivs(Settings.Map.Map, 200, Settings.Natives);
-
-
 
                 for (int x = 0; x < Settings.Width; x++)
                 {
@@ -535,8 +509,8 @@ namespace DwarfCorp.GameStates
                 float bestHeight = 0.0f;
                 for(int k = 0; k < numRainSamples; k++)
                 {
-                    int randX = MathFunctions.Random.Next(1, width - 1);
-                    int randY = MathFunctions.Random.Next(1, height - 1);
+                    int randX = Random.Next(1, width - 1);
+                    int randY = Random.Next(1, height - 1);
 
                     currentPos = new Vector2(randX, randY);
                     float h = OverworldImageOperations.GetHeight(buffer, currentPos);
@@ -629,9 +603,9 @@ namespace DwarfCorp.GameStates
                     Settings.Map.Map[x, y].Weathering = buffer[x, y] - Settings.Map.Map[x, y].Height * Settings.Map.Map[x, y].Faults;
         }
 
-        private static Vector2 GetEdgePoint(int width, int height)
+        private Vector2 GetEdgePoint(int width, int height)
         {
-            return new Vector2(MathFunctions.Random.Next(0, width), MathFunctions.Random.Next(0, height));
+            return new Vector2(Random.Next(0, width), Random.Next(0, height));
         }
 
         private static void ScaleMap(OverworldCell[,] map, int width, int height, OverworldField fieldType)
@@ -715,8 +689,8 @@ namespace DwarfCorp.GameStates
             int height = map.GetLength(1);
             while (i < maxIters)
             {
-                int x = MathFunctions.Random.Next(0, width);
-                int y = MathFunctions.Random.Next(0, height);
+                int x = Random.Next(0, width);
+                int y = Random.Next(0, height);
 
                 if (map[x, y].Height > Settings.GenerationSettings.SeaLevel)
                 {

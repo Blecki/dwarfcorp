@@ -251,10 +251,9 @@ namespace DwarfCorp
             {
 #endif
                 var dir = GetGameDirectory();
-                if (!global::System.IO.Directory.Exists(dir))
-                {
-                    global::System.IO.Directory.CreateDirectory(dir);
-                }
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+
                 InitializeLogger();
                 Thread.CurrentThread.Name = "Main";
                 // Goes before anything else so we can track from the very start.
@@ -288,7 +287,7 @@ namespace DwarfCorp
                 GumInput = new Gui.Input.Input(GumInputMapper);
             }
 
-                GuiSkin = new RenderData(GraphicsDevice, Content);
+            GuiSkin = new RenderData(GraphicsDevice, Content);
 
             // Create console.
             ConsoleGui = new Gui.Root(GuiSkin);
@@ -305,23 +304,23 @@ namespace DwarfCorp
 
             Console.Out.WriteLine("Console created.");
 
-                if (SoundManager.Content == null)
-                {
-                    SoundManager.Content = Content;
-                    SoundManager.LoadDefaultSounds();
-                }
+            if (SoundManager.Content == null)
+            {
+                SoundManager.Content = Content;
+                SoundManager.LoadDefaultSounds();
+            }
 
-                if (GameStateManager.StateStackIsEmpty)
-                {
-                    LogSentryBreadcrumb("GameState", "There was nothing in the state stack. Starting over.");
-                    if (GameSettings.Default.DisplayIntro)
-                        GameStateManager.PushState(new IntroState(this));
-                    else
-                        GameStateManager.PushState(new MainMenuState(this));
-                }
+            if (GameStateManager.StateStackIsEmpty)
+            {
+                LogSentryBreadcrumb("GameState", "There was nothing in the state stack. Starting over.");
+                if (GameSettings.Default.DisplayIntro)
+                    GameStateManager.PushState(new IntroState(this));
+                else
+                    GameStateManager.PushState(new MainMenuState(this));
+            }
 
-                ControlSettings.Load();
-                Drawer2D.Initialize(Content, GraphicsDevice);
+            ControlSettings.Load();
+            Drawer2D.Initialize(Content, GraphicsDevice);
             ScreenSaver = new Terrain2D(this);
 
             base.LoadContent();
@@ -335,7 +334,7 @@ namespace DwarfCorp
                 throw;
             }
 #endif
-            }
+        }
 
         public static void RebuildConsole()
         {

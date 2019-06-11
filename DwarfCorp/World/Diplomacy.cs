@@ -400,7 +400,7 @@ namespace DwarfCorp
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
             Politics politics = GetPolitics(natives, natives.World.PlayerFaction);
             politics.IsAtWar = true;
-            List<CreatureAI> creatures = natives.World.MonsterSpawner.Spawn(natives.World.MonsterSpawner.GenerateSpawnEvent(natives, natives.World.PlayerFaction, MathFunctions.Random.Next(World.Settings.Difficulty) + 1, false));
+            List<CreatureAI> creatures = natives.World.MonsterSpawner.Spawn(natives.World.MonsterSpawner.GenerateSpawnEvent(natives, natives.World.PlayerFaction, MathFunctions.Random.Next(World.Overworld.Difficulty) + 1, false));
             var party = new WarParty(natives.World.Time.CurrentDate)
             {
                 Creatures = creatures,

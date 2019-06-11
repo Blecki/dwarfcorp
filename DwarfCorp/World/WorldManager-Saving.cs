@@ -30,13 +30,13 @@ namespace DwarfCorp
             // Ensure we're using the invariant culture.
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-            var worldDirectory = Directory.CreateDirectory(DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Settings.Name);
+            var worldDirectory = Directory.CreateDirectory(DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Overworld.Name);
 
-            var file = new NewOverworldFile(Game.GraphicsDevice, Settings);
+            var file = new NewOverworldFile(Game.GraphicsDevice, Overworld);
             file.WriteFile(worldDirectory.FullName);
 
             var gameFile = SaveGame.CreateFromWorld(this);
-            var path = worldDirectory.FullName + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)Settings.InstanceSettings.Origin.X, (int)Settings.InstanceSettings.Origin.Y);
+            var path = worldDirectory.FullName + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)Overworld.InstanceSettings.Origin.X, (int)Overworld.InstanceSettings.Origin.Y);
             SaveGame.DeleteOldestSave(path, GameSettings.Default.MaxSaves, "Autosave");
             gameFile.WriteFile(path);
             ComponentManager.CleanupSaveData();

@@ -324,7 +324,7 @@ namespace DwarfCorp
                                                            (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
                                                      new Select(
                                                             new Sequence(new Wrap(ReserveResources), 
-                                                                         new GetResourcesAct(Agent, Item.ItemType.RequiredResources) { AllowHeterogenous = false }, 
+                                                                         new GetResourcesAct(Agent, Item.ItemType.RequiredResources), 
                                                                          new Wrap(SetSelectedResources)),
                                                             new Sequence(new Wrap(UnReserve), Act.Status.Fail)
                                                             )
@@ -335,7 +335,7 @@ namespace DwarfCorp
             {
                 getResources = new Select(new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true),
                                           new Domain(() => !Item.HasResources && (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
-                                                     new Sequence(new Wrap(ReserveResources), new GetResourcesAct(Agent, Item.SelectedResources) { AllowHeterogenous = false }) | (new Wrap(UnReserve)) & false),
+                                                     new Sequence(new Wrap(ReserveResources), new GetResourcesAct(Agent, Item.SelectedResources)) | (new Wrap(UnReserve)) & false),
                                           new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true));
             }
 

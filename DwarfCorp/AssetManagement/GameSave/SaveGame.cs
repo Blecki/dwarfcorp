@@ -100,7 +100,7 @@ namespace DwarfCorp
         public bool LoadPlayData(string filePath, WorldManager world)
         {
             // Todo: Use actual set path
-            string[] worldFiles = global::System.IO.Directory.GetFiles(filePath, "*." + PlayData.Extension);
+            string[] worldFiles = Directory.GetFiles(filePath, "*." + PlayData.Extension);
 
             if (worldFiles.Length > 0)
                 PlayData = FileUtils.LoadJsonFromAbsolutePath<PlayData>(worldFiles[0], world);

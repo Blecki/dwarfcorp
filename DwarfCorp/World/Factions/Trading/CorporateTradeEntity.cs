@@ -18,18 +18,18 @@ namespace DwarfCorp.Trade
         }
 
         public int AvailableSpace => 0;
-        public DwarfBux Money => World.Settings.PlayerCorporationFunds;
-        public List<ResourceAmount> Resources => World.Settings.PlayerCorporationResources.Enumerate().ToList();
+        public DwarfBux Money => World.Overworld.PlayerCorporationFunds;
+        public List<ResourceAmount> Resources => World.Overworld.PlayerCorporationResources.Enumerate().ToList();
 
         public void AddMoney(DwarfBux Money)
         {
-            World.Settings.PlayerCorporationFunds += Money;
+            World.Overworld.PlayerCorporationFunds += Money;
         }
 
         public void AddResources(List<ResourceAmount> Resources)
         {
             foreach(var resource in Resources)
-                World.Settings.PlayerCorporationResources.Add(resource);
+                World.Overworld.PlayerCorporationResources.Add(resource);
         }
 
         public Race TraderRace { get { return SourceEnvoy.OwnerFaction.Race; } }
@@ -48,7 +48,7 @@ namespace DwarfCorp.Trade
         public void RemoveResources(List<ResourceAmount> Resources)
         {
             foreach (var r in Resources)
-                World.Settings.PlayerCorporationResources.Remove(r);
+                World.Overworld.PlayerCorporationResources.Remove(r);
         }
     }
 }

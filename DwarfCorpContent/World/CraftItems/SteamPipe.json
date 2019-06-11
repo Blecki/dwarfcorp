@@ -1,4 +1,7 @@
 {
+  "Disable": true,
+
+
   "Name": "Steam Pipe",
   "EntityName": "Steam Pipe",
   "DisplayName": "@anvil",

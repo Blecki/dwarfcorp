@@ -64,6 +64,8 @@ namespace DwarfCorp
         public string Tutorial = "";
         public bool AllowUserCrafting = true;
 
+        public bool Disable = false;
+
         public void InitializeStrings()
         {
             DisplayName = Library.TransformDataString(DisplayName, Name);

@@ -77,7 +77,7 @@ namespace DwarfCorp
             try
             {
 #endif
-            if (Settings.InstanceSettings.LoadType == LoadType.CreateNew)
+            if (Overworld.InstanceSettings.LoadType == LoadType.CreateNew)
                 CreateNewWorld();
             else
                 LoadFromFile();
@@ -100,9 +100,9 @@ namespace DwarfCorp
 
             #region Reading game file
 
-            SetLoadingMessage("Loading " + Settings.InstanceSettings.ExistingFile);
+            SetLoadingMessage("Loading " + Overworld.InstanceSettings.ExistingFile);
 
-            var gameFile = SaveGame.LoadMetaFromDirectory(Settings.InstanceSettings.ExistingFile);
+            var gameFile = SaveGame.LoadMetaFromDirectory(Overworld.InstanceSettings.ExistingFile);
 
             if (gameFile == null)
                 throw new InvalidOperationException("Game File does not exist.");
@@ -114,7 +114,7 @@ namespace DwarfCorp
             Renderer.Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
             Renderer.PersistentSettings = gameFile.Metadata.RendererSettings;
             Time = gameFile.Metadata.Time;
-            WorldSizeInChunks = new Point3(Settings.InstanceSettings.Cell.Bounds.Width, Settings.zLevels, Settings.InstanceSettings.Cell.Bounds.Height);
+            WorldSizeInChunks = new Point3(Overworld.InstanceSettings.Cell.Bounds.Width, Overworld.zLevels, Overworld.InstanceSettings.Cell.Bounds.Height);
 
             #endregion
 
@@ -172,7 +172,7 @@ namespace DwarfCorp
             ChunkManager.LoadChunks(gameFile.LoadChunks(), ChunkManager);
 
             SetLoadingMessage("Loading Entities...");
-            gameFile.LoadPlayData(Settings.InstanceSettings.ExistingFile, this);
+            gameFile.LoadPlayData(Overworld.InstanceSettings.ExistingFile, this);
 
             PersistentData = gameFile.PlayData.PersistentData;
 
@@ -338,15 +338,15 @@ namespace DwarfCorp
 
             Factions = new FactionSet();
             //Factions.Initialize(this, Settings.Company);
-            foreach (var faction in Settings.Natives)
+            foreach (var faction in Overworld.Natives)
                 Factions.AddFaction(new Faction(this, faction));
 
-            Point playerOrigin = new Point((int)(Settings.InstanceSettings.Origin.X), (int)(Settings.InstanceSettings.Origin.Y));
+            Point playerOrigin = new Point((int)(Overworld.InstanceSettings.Origin.X), (int)(Overworld.InstanceSettings.Origin.Y));
 
             Factions.Factions["Player"].Center = playerOrigin;
             Factions.Factions["Corporate"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
             PlayerFaction = Factions.Factions["Player"];
-            PlayerFaction.Economy = new Company(PlayerFaction, 300.0m, Settings.Company);
+            PlayerFaction.Economy = new Company(PlayerFaction, 300.0m, Overworld.Company);
             RoomBuilder = new RoomBuilder(PlayerFaction, this);
 
             #endregion
@@ -380,7 +380,7 @@ namespace DwarfCorp
             Time.NewDay += (time) => PayEmployees();
 
 
-            var generatorSettings = new Generation.ChunkGeneratorSettings(MathFunctions.Random.Next(), 0.02f, Settings)
+            var generatorSettings = new Generation.ChunkGeneratorSettings(MathFunctions.Random.Next(), 0.02f, Overworld)
             {
                 WorldSizeInChunks = WorldSizeInChunks,
                 SetLoadingMessage = SetLoadingMessage,
@@ -388,7 +388,7 @@ namespace DwarfCorp
             };
 
             SetLoadingMessage("Generating Chunks...");
-            Generation.Generator.Generate(Settings.InstanceSettings.Cell.Bounds, ChunkManager, this, generatorSettings, SetLoadingMessage);
+            Generation.Generator.Generate(Overworld.InstanceSettings.Cell.Bounds, ChunkManager, this, generatorSettings, SetLoadingMessage);
             CreateInitialEmbarkment(generatorSettings);
             ChunkManager.NeedsMinimapUpdate = true;
             ChunkManager.RecalculateBounds();

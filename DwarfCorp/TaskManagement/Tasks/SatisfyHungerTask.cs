@@ -7,6 +7,8 @@ namespace DwarfCorp
 {
     public class SatisfyHungerTask : Task
     {
+        public bool MustPay = false;
+
         public SatisfyHungerTask()
         {
             ReassignOnDeath = false;
@@ -17,7 +19,7 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature agent)
         {
-            return new FindAndEatFoodAct(agent.AI);
+            return new FindAndEatFoodAct(agent.AI, MustPay);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

@@ -9,6 +9,8 @@ namespace DwarfCorp
 {
     public class FindAndEatFoodAct : CompoundCreatureAct
     {
+        private bool MustPay = false;
+
         public FindAndEatFoodAct()
         {
             Name = "Find and Eat Edible";
@@ -16,12 +18,13 @@ namespace DwarfCorp
             FallbackTag = Resource.ResourceTags.Edible;
         }
 
-        public FindAndEatFoodAct(CreatureAI agent) :
+        public FindAndEatFoodAct(CreatureAI agent, bool MustPay) :
             base(agent)
         {
             Name = "Find and Eat Edible";
             FoodTag = Resource.ResourceTags.PreparedFood;
             FallbackTag = Resource.ResourceTags.Edible;
+            this.MustPay = MustPay;
         }
 
         public Resource.ResourceTags FoodTag { get; set; }
@@ -30,9 +33,10 @@ namespace DwarfCorp
         public override void Initialize()
         {
             Tree = new Sequence(new Select(new GetResourcesAct(Agent, FoodTag) { Name = "Get " + FoodTag },
-                                            new GetResourcesAct(Agent, FallbackTag) { Name = "Get " + FallbackTag }) { Name = "Get Food"}, 
+                                            new GetResourcesAct(Agent, FallbackTag) { Name = "Get " + FallbackTag })
+            { Name = "Get Food" },
                                 new Select(new GoToChairAndSitAct(Agent), true) { Name = "Find a place to eat." },
-                                new EatFoodAct(Agent));
+                                new EatFoodAct(Agent, MustPay));
                 
             base.Initialize();
         }
@@ -42,17 +46,13 @@ namespace DwarfCorp
     public class EatFoodAct : CreatureAct
     {
         private GameComponent FoodBody = null;
+        private bool MustPay = false;
 
-        public EatFoodAct()
-        {
-            Name = "Eat food";
-        }
-
-
-        public EatFoodAct(CreatureAI creature) :
+        public EatFoodAct(CreatureAI creature, bool MustPay) :
             base(creature)
         {
             Name = "Eat food";
+            this.MustPay = MustPay;
         }
 
         public override void OnCanceled()
@@ -98,7 +98,6 @@ namespace DwarfCorp
                     {
                         FoodBody = bodies[0];
 
-
                         while (!eatTimer.HasTriggered)
                         {
                             eatTimer.Update(DwarfTime.LastTime);
@@ -125,6 +124,15 @@ namespace DwarfCorp
                             Agent.Creature.AddThought(Thought.ThoughtType.HadAle);
                         }
                         FoodBody.GetRoot().Delete();
+
+                        if (MustPay)
+                        {
+                            var depositAct = new DepositMoney(Agent, resource.MoneyValue);
+                            foreach (var result in depositAct.Run())
+                                if (result == Status.Running)
+                                    yield return result;
+                        }
+
                         yield return Act.Status.Success;
                     }
                     yield break;

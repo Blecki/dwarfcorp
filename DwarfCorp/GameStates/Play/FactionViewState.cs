@@ -149,8 +149,8 @@ namespace DwarfCorp.GameStates
                                                     adventure.Resources = selectResources.SelectedResources;
                                                     adventure.DestinationFaction = faction.Key;
                                                     adventure.OwnerFaction = World.PlayerFaction.ParentFaction.Name;
-                                                    adventure.Position = World.Settings.InstanceSettings.Origin;
-                                                    adventure.Start = World.Settings.InstanceSettings.Origin;
+                                                    adventure.Position = World.Overworld.InstanceSettings.Origin;
+                                                    adventure.Start = World.Overworld.InstanceSettings.Origin;
                                                     World.Diplomacy.Adventures.Add(adventure);
                                                     World.RemoveResources(selectResources.SelectedResources);
                                                     World.PlayerFaction.AddMoney(-selectResources.SelectedMoney);

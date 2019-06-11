@@ -63,10 +63,10 @@ namespace DwarfCorp
                 case 1:
                 {
                     if (World.ListResourcesWithTag(Resource.ResourceTags.Alcohol).Count > 0)
-                        return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(this) { FoodTag = Resource.ResourceTags.Alcohol, FallbackTag = Resource.ResourceTags.Alcohol}, 3, false) { Name = "Binge drink." }) { Name = "Binge drink.", Priority = Task.PriorityType.High, BoredomIncrease = GameSettings.Default.Boredom_Eat };
+                        return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(this, true) { FoodTag = Resource.ResourceTags.Alcohol, FallbackTag = Resource.ResourceTags.Alcohol}, 3, false) { Name = "Binge drink." }) { Name = "Binge drink.", Priority = Task.PriorityType.High, BoredomIncrease = GameSettings.Default.Boredom_Eat };
 
                     if (!Stats.Hunger.IsSatisfied())
-                        return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(this), 3, false) { Name = "Binge eat." }) { Name = "Binge eat.", Priority = Task.PriorityType.High, BoredomIncrease = GameSettings.Default.Boredom_Eat };
+                        return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(this, true), 3, false) { Name = "Binge eat." }) { Name = "Binge eat.", Priority = Task.PriorityType.High, BoredomIncrease = GameSettings.Default.Boredom_Eat };
 
                     return ActOnIdle();
                 }
@@ -141,7 +141,7 @@ namespace DwarfCorp
             // Try to find food if we are hungry.
             if (Stats.Hunger.IsDissatisfied() && World.CountResourcesWithTag(Resource.ResourceTags.Edible) > 0)
             {
-                Task toReturn = new SatisfyHungerTask();
+                Task toReturn = new SatisfyHungerTask() { MustPay = true };
                 if (Stats.Hunger.IsCritical())
                     toReturn.Priority = Task.PriorityType.Urgent;
                 if (!Tasks.Contains(toReturn) && CurrentTask != toReturn)

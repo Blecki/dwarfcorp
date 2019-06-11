@@ -327,7 +327,7 @@ namespace DwarfCorp
                             (Faction.Race.EatsPlants && !resource.Tags.Contains(Resource.ResourceTags.AnimalProduct)))
                         {
                             Creature.GatherImmediately(body);
-                            AssignTask(new ActWrapperTask(new EatFoodAct(this)));
+                            AssignTask(new ActWrapperTask(new EatFoodAct(this, false)));
                         }
                     }
                 }

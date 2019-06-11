@@ -1,4 +1,7 @@
 {
+  "Disable": true,
+
+
   "Name": "Power Anvil",
   "EntityName": "Power Anvil",
   "DisplayName": "@anvil",

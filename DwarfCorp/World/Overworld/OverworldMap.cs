@@ -35,9 +35,7 @@ namespace DwarfCorp
             Persistence = 0.2f
         };
 
-        public List<Vector2> Volcanoes { get; set; }
-        public OverworldCell[,] Map { get; set; }
-
+        public OverworldCell[,] Map;
         private static MemoryTexture BiomeBlend = null;
 
         public OverworldMap()

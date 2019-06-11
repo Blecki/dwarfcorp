@@ -12,7 +12,6 @@ namespace DwarfCorp
     {
         public List<Quantitiy<Resource.ResourceTags>> Resources { get; set; }
         public List<KeyValuePair<Zone, ResourceAmount> > ResourcesToStash { get; set; }
-        public bool AllowHeterogenous { get; set; } // Todo: Unused
 
         public GetResourcesAct()
         {
@@ -24,8 +23,6 @@ namespace DwarfCorp
         {
             Name = "Get Resources";
             ResourcesToStash = agent.World.GetStockpilesContainingResources(agent.Position, resources).ToList();
-            AllowHeterogenous = false;
-
         }
 
 
@@ -34,7 +31,6 @@ namespace DwarfCorp
         {
             Name = "Get Resources";
             Resources = resources;
-            AllowHeterogenous = false;
         }
 
         public GetResourcesAct(CreatureAI agent, Resource.ResourceTags resources) :
@@ -42,9 +38,7 @@ namespace DwarfCorp
         {
             Name = "Get Resources";
             Resources = new List<Quantitiy<Resource.ResourceTags>>(){new Quantitiy<Resource.ResourceTags>(resources)};
-            AllowHeterogenous = false;
         }
-
 
         public IEnumerable<Status> AlwaysTrue()
         {
@@ -58,7 +52,6 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-
             bool hasAllResources = true;
 
             if (Resources != null)
@@ -135,4 +128,5 @@ namespace DwarfCorp
             base.Initialize();
         }
     }
+
 }

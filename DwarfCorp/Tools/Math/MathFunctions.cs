@@ -880,18 +880,6 @@ namespace DwarfCorp
             return Random.Next(min, max);
         }
 
-        /// <summary>
-        /// Gets or sets the static random seed shared by all functions using this random generator..
-        /// </summary>
-        /// <value>
-        /// The seed.
-        /// </value>
-        public static int Seed { get; set; }
-        /// <summary>
-        /// The random generator used by everything in the game. Why does it have the same seed everywhere?
-        /// so that randomly generated worlds are exactly the same. Even though this is called "ThreadSafe"
-        /// it should probably NOT be called from threads other than the main thread to maintain seed consistency.
-        /// </summary>
         public static ThreadSafeRandom Random = new ThreadSafeRandom();
 
         public static Vector3 ProjectOutOfHalfPlane(Vector3 position, Vector3 origin, float dist)

@@ -18,12 +18,12 @@ namespace DwarfCorp
     {
         public static string Extension = "save";
 
+        // Todo: Move stuff to PersistentData so it doesn't have to be gathered like this.
         public OrbitCamera Camera;
         public ComponentManager.ComponentSaveData Components;
         public Tutorial.TutorialSaveData TutorialSaveData;
         public Diplomacy Diplomacy;
         public FactionSet Factions;
-        //public RoomBuilder RoomBuilder;
         public DesignationDrawer Designations;
         public TaskManager Tasks;
         public Yarn.MemoryVariableStore ConversationMemory;

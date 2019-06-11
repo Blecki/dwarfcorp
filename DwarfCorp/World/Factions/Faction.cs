@@ -37,7 +37,7 @@ namespace DwarfCorp
         public void OnDeserialized(StreamingContext ctx)
         {
             World = ctx.Context as WorldManager;
-            ParentFaction = World.Settings.Natives.FirstOrDefault(n => n.Name == ParentFactionName);
+            ParentFaction = World.Overworld.Natives.FirstOrDefault(n => n.Name == ParentFactionName);
 
             Threats.RemoveAll(threat => threat == null || threat.IsDead);
             Minions.RemoveAll(minion => minion == null || minion.IsDead);

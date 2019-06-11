@@ -21,7 +21,7 @@ namespace DwarfCorp.Events
                 var envoy = world.Diplomacy.SendTradeEnvoy(world.Factions.Factions[faction], world);
                 if (envoy != null)
                 {
-                    envoy.TributeDemanded = (int)(TributeDemanded * world.Settings.Difficulty * MathFunctions.Rand(0.9f, 1.5f));
+                    envoy.TributeDemanded = (int)(TributeDemanded * world.Overworld.Difficulty * MathFunctions.Rand(0.9f, 1.5f));
                 }
             }
             base.Trigger(world);
