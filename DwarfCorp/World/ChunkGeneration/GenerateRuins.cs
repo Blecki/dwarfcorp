@@ -15,7 +15,7 @@ namespace DwarfCorp.Generation
 {
     public static partial class Generator
     {
-        public static void GenerateRuin(VoxelChunk Chunk, GeneratorSettings Settings)
+        public static void GenerateRuin(VoxelChunk Chunk, ChunkGeneratorSettings Settings)
         {
             var noiseVector = Chunk.Origin.ToVector3() * Settings.CaveNoiseScale;
             var ruinsNoise = Settings.CaveNoise.GetValue(noiseVector.X, noiseVector.Y, noiseVector.Z);
@@ -28,7 +28,7 @@ namespace DwarfCorp.Generation
             int wallHeight = MathFunctions.RandInt(2, 6);
             int heightOffset = MathFunctions.RandInt(-4, 2);
 
-            var biome = Settings.OverworldSettings.Overworld.GetBiomeAt(Chunk.Origin.ToVector3(), Settings.OverworldSettings.InstanceSettings.Origin);
+            var biome = Settings.Overworld.Map.GetBiomeAt(Chunk.Origin.ToVector3(), Settings.Overworld.InstanceSettings.Origin);
             var avgHeight = GetAverageHeight(Chunk.Origin.X, Chunk.Origin.Z, structureWidth, structureDepth, Settings);
 
             bool[] doors = new bool[4];

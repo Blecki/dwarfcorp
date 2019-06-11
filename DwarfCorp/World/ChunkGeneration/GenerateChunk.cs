@@ -15,21 +15,21 @@ namespace DwarfCorp.Generation
 {
     public static partial class Generator
     {
-        public static VoxelChunk GenerateChunk(GlobalChunkCoordinate ID, GeneratorSettings Settings)
+        public static VoxelChunk GenerateChunk(GlobalChunkCoordinate ID, ChunkGeneratorSettings Settings)
         {
             var origin = new GlobalVoxelCoordinate(ID, new LocalVoxelCoordinate(0, 0, 0));
             var worldDepth = Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY;
-            var waterHeight = NormalizeHeight(Settings.OverworldSettings.GenerationSettings.SeaLevel + 1.0f / worldDepth);
+            var waterHeight = NormalizeHeight(Settings.Overworld.GenerationSettings.SeaLevel + 1.0f / worldDepth);
 
             var c = new VoxelChunk(Settings.World.ChunkManager, ID);
 
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {
-                    var overworldPosition = OverworldMap.WorldToOverworld(new Vector2(x + origin.X, z + origin.Z), Settings.OverworldSettings.InstanceSettings.Origin);
-                    var biomeData = Settings.OverworldSettings.Overworld.GetBiomeAt(new Vector3(x + origin.X, 0, z + origin.Z), Settings.OverworldSettings.InstanceSettings.Origin);
+                    var overworldPosition = OverworldMap.WorldToOverworld(new Vector2(x + origin.X, z + origin.Z), Settings.Overworld.InstanceSettings.Origin);
+                    var biomeData = Settings.Overworld.Map.GetBiomeAt(new Vector3(x + origin.X, 0, z + origin.Z), Settings.Overworld.InstanceSettings.Origin);
 
-                    var normalizedHeight = NormalizeHeight(Settings.OverworldSettings.Overworld.LinearInterpolate(overworldPosition, OverworldField.Height));
+                    var normalizedHeight = NormalizeHeight(Settings.Overworld.Map.LinearInterpolate(overworldPosition, OverworldField.Height));
                     var height = MathFunctions.Clamp(normalizedHeight * worldDepth, 0.0f, worldDepth - 2);
                     var stoneHeight = (int)MathFunctions.Clamp((int)(height - (biomeData.SoilLayer.Depth + (Math.Sin(overworldPosition.X) + Math.Cos(overworldPosition.Y)))), 1, height);
 

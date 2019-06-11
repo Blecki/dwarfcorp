@@ -21,7 +21,7 @@ namespace DwarfCorp.GameStates
             CreateMenuItem(frame,
                 Library.GetString("new-game"),
                 Library.GetString("new-game-tooltip"),
-                (sender, args) => GameStateManager.PushState(new WorldGeneratorState(Game, new OverworldGenerationSettings(), WorldGeneratorState.PanelStates.Generate)));
+                (sender, args) => GameStateManager.PushState(new WorldGeneratorState(Game, new Overworld(), WorldGeneratorState.PanelStates.Generate)));
 
             CreateMenuItem(frame, 
                 Library.GetString("load-game"),
@@ -48,29 +48,17 @@ namespace DwarfCorp.GameStates
                 (sender, args) =>
                 {
                     DwarfGame.LogSentryBreadcrumb("Menu", "User generating a random world.");
-                    var company = new CompanyInformation();
 
-                    var employees = new List<Applicant>();
-                    employees.Add(Applicant.Random("Crafter", company));
-                    employees.Add(Applicant.Random("Manager", company));
-                    employees.Add(Applicant.Random("Miner", company));
-                    employees.Add(Applicant.Random("Wizard", company));
-                    employees.Add(Applicant.Random("Soldier", company));
-                    employees.Add(Applicant.Random("Musketeer", company));
+                    var overworldSettings = new Overworld();
+                    overworldSettings.InstanceSettings.InitalEmbarkment.Funds = 1000u;
+                    overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Crafter", overworldSettings.Company));
+                    overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Manager", overworldSettings.Company));
+                    overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Miner", overworldSettings.Company));
+                    overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Wizard", overworldSettings.Company));
+                    overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Soldier", overworldSettings.Company));
+                    overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Musketeer", overworldSettings.Company));
 
-                    GameStateManager.PushState(new LoadState(Game, new OverworldGenerationSettings()
-                    {
-                        Company = new CompanyInformation(),
-                        GenerateFromScratch = true,
-                        InstanceSettings = new InstanceSettings()
-                        {
-                            InitalEmbarkment = new Embarkment
-                            {
-                                Employees = employees,
-                                Funds = 1000u
-                            }
-                        }
-                    }));
+                    GameStateManager.PushState(new LoadState(Game, overworldSettings, LoadTypes.GenerateOverworld));
                 });
 
             CreateMenuItem(frame, "Dwarf Designer", "Open the dwarf designer.",

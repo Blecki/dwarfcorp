@@ -12,7 +12,7 @@ namespace DwarfCorp
     {
         public Dictionary<string, Faction> Factions = new Dictionary<string, Faction>();
         
-        public OverworldFaction GenerateOverworldFaction(OverworldGenerationSettings Settings, int idx, int n)
+        public OverworldFaction GenerateOverworldFaction(Overworld Settings, int idx, int n)
         {
             var race = Library.GetRandomIntelligentRace();
 

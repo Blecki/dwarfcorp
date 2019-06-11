@@ -14,22 +14,22 @@ namespace DwarfCorp.GameStates
     public class LaunchPanel : Widget
     {
         private Gui.Widget StartButton;
-        public WorldGenerator Generator = null;
-        private OverworldGenerationSettings Settings;
+        public OverworldGenerator Generator = null;
+        private Overworld Settings;
         private Widget CellInfo;
         private String SaveName;
         private DwarfGame Game;
         private WorldGeneratorState Preview;
         private Widget ZoomedPreview;
 
-        public LaunchPanel(DwarfGame Game, WorldGenerator Generator, OverworldGenerationSettings Settings, WorldGeneratorState Preview) 
+        public LaunchPanel(DwarfGame Game, OverworldGenerator Generator, Overworld Settings, WorldGeneratorState Preview) 
         {
             this.Generator = Generator;
             this.Settings = Settings;
             this.Game = Game;
             this.Preview = Preview;
 
-            if (Generator != null && Generator.CurrentState != WorldGenerator.GenerationState.Finished)
+            if (Generator != null && Generator.CurrentState != OverworldGenerator.GenerationState.Finished)
                 throw new InvalidProgramException();
         }
 
@@ -68,7 +68,7 @@ namespace DwarfCorp.GameStates
                         Settings.InstanceSettings.LoadType = LoadType.LoadFromFile;
                         
                         GameStateManager.ClearState();
-                        GameStateManager.PushState(new LoadState(Game, Settings));
+                        GameStateManager.PushState(new LoadState(Game, Settings, LoadTypes.UseExistingOverworld));
                     }
                     else
                     {
@@ -81,7 +81,7 @@ namespace DwarfCorp.GameStates
                         if (valid == Embarkment.ValidationResult.Pass)
                         {
                             GameStateManager.ClearState();
-                            GameStateManager.PushState(new LoadState(Game, Settings));
+                            GameStateManager.PushState(new LoadState(Game, Settings, LoadTypes.UseExistingOverworld));
                         }
                         else if (valid == Embarkment.ValidationResult.Query)
                         {
@@ -93,7 +93,7 @@ namespace DwarfCorp.GameStates
                                     if ((_sender as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
                                     {
                                         GameStateManager.ClearState();
-                                        GameStateManager.PushState(new LoadState(Game, Settings));
+                                        GameStateManager.PushState(new LoadState(Game, Settings, LoadTypes.UseExistingOverworld));
                                     }
                                 }
                             };

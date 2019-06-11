@@ -13,10 +13,9 @@ using Math = System.Math;
 
 namespace DwarfCorp.Generation
 {
-    // Todo: Why are these different settings from WorldGenerationSettings?
-    public class GeneratorSettings
+    public class ChunkGeneratorSettings
     {
-        public OverworldGenerationSettings OverworldSettings;
+        public Overworld Overworld;
         public Action<String> SetLoadingMessage;
 
         public Perlin NoiseGenerator;
@@ -39,9 +38,9 @@ namespace DwarfCorp.Generation
 
         public WorldManager World;
 
-        public GeneratorSettings(int Seed, float NoiseScale, OverworldGenerationSettings OverworldSettings)
+        public ChunkGeneratorSettings(int Seed, float NoiseScale, Overworld Overworld)
         {
-            this.OverworldSettings = OverworldSettings;
+            this.Overworld = Overworld;
 
             NoiseGenerator = new Perlin(Seed);
             this.NoiseScale = NoiseScale;
@@ -60,9 +59,9 @@ namespace DwarfCorp.Generation
             };
 
             CaveLevels = new List<int>();
-            var caveStep = 48 / OverworldSettings.NumCaveLayers;
+            var caveStep = 48 / Overworld.NumCaveLayers;
 
-            for (var i = 0; i < OverworldSettings.NumCaveLayers; ++i)
+            for (var i = 0; i < Overworld.NumCaveLayers; ++i)
                 CaveLevels.Add(4 + (caveStep * i));
         }
     }

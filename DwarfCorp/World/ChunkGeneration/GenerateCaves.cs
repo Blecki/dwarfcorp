@@ -22,7 +22,7 @@ namespace DwarfCorp.Generation
             public int Height;
         }
 
-        private static CaveGenerationData GetCaveGenerationData(GlobalVoxelCoordinate At, int LayerIndex, GeneratorSettings Settings)
+        private static CaveGenerationData GetCaveGenerationData(GlobalVoxelCoordinate At, int LayerIndex, ChunkGeneratorSettings Settings)
         {
             var frequency = LayerIndex < Settings.CaveFrequencies.Count ? Settings.CaveFrequencies[LayerIndex] : Settings.CaveFrequencies[Settings.CaveFrequencies.Count - 1];
 
@@ -40,7 +40,7 @@ namespace DwarfCorp.Generation
             };
         }
 
-        public static void GenerateCaves(VoxelChunk Chunk, GeneratorSettings Settings)
+        public static void GenerateCaves(VoxelChunk Chunk, ChunkGeneratorSettings Settings)
         {
             var caveBiome = BiomeLibrary.GetBiome("Cave");
             var hellBiome = BiomeLibrary.GetBiome("Hell");
@@ -119,7 +119,7 @@ namespace DwarfCorp.Generation
             }
         }
 
-        private static void GenerateCaveFlora(VoxelHandle CaveFloor, BiomeData Biome, GeneratorSettings Settings)
+        private static void GenerateCaveFlora(VoxelHandle CaveFloor, BiomeData Biome, ChunkGeneratorSettings Settings)
         {
             foreach (var floraType in Biome.Vegetation)
             {
@@ -154,9 +154,9 @@ namespace DwarfCorp.Generation
             }
         }
 
-        public static void GenerateCaveFauna(VoxelHandle CaveFloor, BiomeData Biome, GeneratorSettings Settings)
+        public static void GenerateCaveFauna(VoxelHandle CaveFloor, BiomeData Biome, ChunkGeneratorSettings Settings)
         {
-            var spawnLikelihood = (Settings.OverworldSettings.Difficulty + 0.1f);
+            var spawnLikelihood = (Settings.Overworld.Difficulty + 0.1f);
 
             foreach (var animalType in Biome.Fauna)
             {

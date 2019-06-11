@@ -15,7 +15,7 @@ namespace DwarfCorp.Generation
 {
     public static partial class Generator
     {
-        public static void GenerateLava(VoxelChunk chunk, GeneratorSettings Settings)
+        public static void GenerateLava(VoxelChunk chunk, ChunkGeneratorSettings Settings)
         {
             if (chunk.Origin.Y >= Settings.LavaLevel)
                 return;

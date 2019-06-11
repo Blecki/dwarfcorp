@@ -11,7 +11,7 @@ namespace DwarfCorp.Generation
             public List<VoxelHandle> StockpileVoxels;
         }
 
-        public static BalloonPortVoxelSets GenerateBalloonPort(ChunkManager chunkManager, float x, float z, int size, GeneratorSettings Settings)
+        public static BalloonPortVoxelSets GenerateBalloonPort(ChunkManager chunkManager, float x, float z, int size, ChunkGeneratorSettings Settings)
         {
             var centerCoordinate = GlobalVoxelCoordinate.FromVector3(new Vector3(x, (Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY) - 1, z));
 

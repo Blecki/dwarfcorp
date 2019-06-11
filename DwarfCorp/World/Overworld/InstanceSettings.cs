@@ -15,9 +15,20 @@ namespace DwarfCorp.GameStates
         public string ExistingFile = null;
         public LoadType LoadType = LoadType.CreateNew;
 
-        [JsonIgnore] public Embarkment InitalEmbarkment = null;
+        [JsonIgnore] public Embarkment InitalEmbarkment = new Embarkment();
         [JsonIgnore] public Vector2 Origin => new Vector2(Cell.Bounds.X, Cell.Bounds.Y);
 
-        public ColonyCell Cell = new ColonyCell { Bounds = new Rectangle(16, 0, 8, 8) };
+        public ColonyCell Cell = null;
+
+        public InstanceSettings()
+        {
+
+        }
+
+        public InstanceSettings(ColonyCell Cell)
+        {
+            this.Cell = Cell;
+        }
+        
     }
 }

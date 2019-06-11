@@ -11,7 +11,7 @@ namespace DwarfCorp.GameStates
 {
     public class WorldGeneratorPreview : Gui.Widget
     {
-        private WorldGenerator Generator;
+        private OverworldGenerator Generator;
         private GraphicsDevice Device { get { return GameState.Game.GraphicsDevice; } }
         public Gui.Widget PreviewPanel;
         private IEnumerable<KeyValuePair<string, Color>> previewText = null;
@@ -29,7 +29,7 @@ namespace DwarfCorp.GameStates
         private List<Point3> Trees { get; set; }
         private float TreeProbability = 0.001f;
         private SamplerState previewSampler = null;
-        public OverworldGenerationSettings Overworld;
+        public Overworld Overworld;
 
         public Matrix ZoomedPreviewMatrix
         {
@@ -49,11 +49,11 @@ namespace DwarfCorp.GameStates
 
         class PreviewRenderType
         {
-            public Func<WorldGenerator, Dictionary<string, Color>> GetColorKeys;
+            public Func<OverworldGenerator, Dictionary<string, Color>> GetColorKeys;
             public String DisplayType;
             public OverworldField Scalar;
 
-            public PreviewRenderType(String DisplayType, OverworldField Scalar, Func<WorldGenerator, Dictionary<String, Color>> GetColorKeys)
+            public PreviewRenderType(String DisplayType, OverworldField Scalar, Func<OverworldGenerator, Dictionary<String, Color>> GetColorKeys)
             {
                 this.DisplayType = DisplayType;
                 this.Scalar = Scalar;
@@ -108,7 +108,7 @@ namespace DwarfCorp.GameStates
                 },
                 OnClick = (sender, args) =>
                 {
-                    if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
+                    if (Generator.CurrentState != OverworldGenerator.GenerationState.Finished)
                         return;
 
                     if (args.MouseButton == 0)
@@ -120,7 +120,7 @@ namespace DwarfCorp.GameStates
                         {
                             Generator.Settings.InstanceSettings.Cell = colonyCell;
                             previewText = Generator.GetSpawnStats();
-                            Camera.SetGoalFocus(new Vector3((float)colonyCell.Bounds.Center.X / (float)Overworld.Overworld.Map.GetLength(0), 0, (float)colonyCell.Bounds.Center.Y / (float)Overworld.Overworld.Map.GetLength(1)));
+                            Camera.SetGoalFocus(new Vector3((float)colonyCell.Bounds.Center.X / (float)Overworld.Width, 0, (float)colonyCell.Bounds.Center.Y / (float)Overworld.Height));
                         }
 
                         UpdatePreview = true;
@@ -131,13 +131,13 @@ namespace DwarfCorp.GameStates
                 },
                 OnMouseMove = (sender, args) => 
                 {
-                    if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
+                    if (Generator.CurrentState != OverworldGenerator.GenerationState.Finished)
                         return;
                     Camera.OnMouseMove(args);
                 },
                 OnScroll = (sender, args) =>
                 {
-                    if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
+                    if (Generator.CurrentState != OverworldGenerator.GenerationState.Finished)
                         return;
 
                     Camera.OnScroll(args);
@@ -157,7 +157,7 @@ namespace DwarfCorp.GameStates
             PreviewEffect.AmbientLightColor = new Vector3(1.0f, 1.0f, 1.0f);
         }
 
-        public void SetGenerator(WorldGenerator Generator)
+        public void SetGenerator(OverworldGenerator Generator)
         {
             this.Generator = Generator;
             this.Overworld = Generator.Settings;
@@ -178,7 +178,7 @@ namespace DwarfCorp.GameStates
         public void DrawPreview()
         {
             if (PreviewRenderTarget == null) return;
-            if (Generator.CurrentState != WorldGenerator.GenerationState.Finished) return;
+            if (Generator.CurrentState != OverworldGenerator.GenerationState.Finished) return;
 
             Root.DrawQuad(PreviewPanel.Rect, PreviewRenderTarget);
                        
@@ -290,16 +290,16 @@ namespace DwarfCorp.GameStates
             var style = PreviewRenderTypes[PreviewSelector.SelectedItem];
             var colorData = new Color[Overworld.Width * Overworld.Height * 4 * 4];
             
-            Overworld.Overworld.CreateTexture(style.DisplayType, Generator.Settings.Natives, 4, colorData, Generator.Settings.GenerationSettings.SeaLevel);
+            Overworld.Map.CreateTexture(style.DisplayType, Generator.Settings.Natives, 4, colorData, Generator.Settings.GenerationSettings.SeaLevel);
             OverworldMap.Smooth(4, Generator.Settings.Width, Generator.Settings.Height, colorData);
-            Overworld.Overworld.ShadeHeight(4, colorData);
+            Overworld.Map.ShadeHeight(4, colorData);
 
             foreach (var cell in Overworld.ColonyCells)
-                DrawRectangle(new Rectangle(cell.Bounds.X * 4, cell.Bounds.Y * 4, cell.Bounds.Width * 4, cell.Bounds.Height * 4), colorData, Overworld.Overworld.Map.GetLength(0) * 4, Color.Yellow);
+                DrawRectangle(new Rectangle(cell.Bounds.X * 4, cell.Bounds.Y * 4, cell.Bounds.Width * 4, cell.Bounds.Height * 4), colorData, Overworld.Width * 4, Color.Yellow);
 
             var spawnRect = new Rectangle((int)Generator.Settings.InstanceSettings.Origin.X * 4, (int)Generator.Settings.InstanceSettings.Origin.Y * 4,
                 Generator.Settings.InstanceSettings.Cell.Bounds.Width * 4, Generator.Settings.InstanceSettings.Cell.Bounds.Height * 4);
-            DrawRectangle(spawnRect, colorData, Overworld.Overworld.Map.GetLength(0) * 4, Color.Red);
+            DrawRectangle(spawnRect, colorData, Overworld.Width * 4, Color.Red);
 
             PreviewTexture.SetData(colorData);
 
@@ -348,7 +348,7 @@ namespace DwarfCorp.GameStates
         private void SetNewPreviewTexture()
         {
             var graphicsDevice = Device;
-            if (graphicsDevice == null || graphicsDevice.IsDisposed || Overworld.Overworld.Map == null)
+            if (graphicsDevice == null || graphicsDevice.IsDisposed)
             {
                 PreviewTexture = null;
                 return;
@@ -382,9 +382,9 @@ namespace DwarfCorp.GameStates
                 for (int y = 0; y < Overworld.Height; y += resolution)
                 {
                     if (!MathFunctions.RandEvent(TreeProbability)) continue;
-                    var h = Overworld.Overworld.Map[x, y].Height;
+                    var h = Overworld.Map.Height(x,y);
                     if (!(h > Generator.Settings.GenerationSettings.SeaLevel)) continue;
-                    var biome = BiomeLibrary.GetBiome(Overworld.Overworld.Map[x, y].Biome);
+                    var biome = BiomeLibrary.GetBiome(Overworld.Map.Map[x, y].Biome);
                     if (biome.Icon > 0)
                     {
                         Trees.Add(new Point3(x, y, biome.Icon));
@@ -452,7 +452,7 @@ namespace DwarfCorp.GameStates
         {
             try
             {
-                if (Generator == null || Generator.CurrentState != WorldGenerator.GenerationState.Finished)
+                if (Generator == null || Generator.CurrentState != OverworldGenerator.GenerationState.Finished)
                 {
                     KeyMesh = null;
                     return;

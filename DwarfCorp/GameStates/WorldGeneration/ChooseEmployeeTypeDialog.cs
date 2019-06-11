@@ -17,7 +17,7 @@ namespace DwarfCorp.GameStates
             public Applicant Applicant;
         }
 
-        public OverworldGenerationSettings Settings;
+        public Overworld Settings;
 
         public WorldManager World;
         private Button HireButton;

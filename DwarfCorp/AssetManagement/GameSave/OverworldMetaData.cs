@@ -9,32 +9,12 @@ using System.Linq;
 
 namespace DwarfCorp
 {
-    public class OverworldFaction
-    {
-        public string Name { get; set; }
-        public string Race { get; set; }
-        public Color PrimaryColor { get; set; }
-        public Color SecondaryColor { get; set; }
-        public int CenterX { get; set; }
-        public int CenterY { get; set; }
-        public float GoodWill { get; set; }
-        public bool InteractiveFaction = false;
-        public bool IsCorporate = false;
-
-        public Trade.ITradeEntity CreateTradeEntity(TradeEnvoy Envoy)
-        {
-            if (IsCorporate)
-                return new Trade.CorporateTradeEntity(Envoy);
-            else
-                return new Trade.EnvoyTradeEntity(Envoy);
-        }
-    }
-
     [Serializable]
     public class OverworldMetaData
     {
         public string Version;
-        public OverworldGenerationSettings Settings;
+        public Overworld Overworld;
+
         public Dictionary<int, String> BiomeTypeMap;
         public List<Resource> Resources; // Dislike the way resources are generated on the fly.
 
@@ -42,9 +22,9 @@ namespace DwarfCorp
         {
         }
 
-        public OverworldMetaData(GraphicsDevice device, OverworldGenerationSettings Settings)
+        public OverworldMetaData(GraphicsDevice device, Overworld Overworld)
         {
-            this.Settings = Settings;
+            this.Overworld = Overworld;
 
             BiomeTypeMap = BiomeLibrary.GetBiomeTypeMap(); // This may need to be saved in branch meta data.
             Resources = ResourceLibrary.Enumerate().Where(r => r.Generated).ToList();

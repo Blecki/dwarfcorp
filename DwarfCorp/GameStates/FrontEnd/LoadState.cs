@@ -11,6 +11,12 @@ using System.Text;
 
 namespace DwarfCorp.GameStates
 {
+    public enum LoadTypes
+    {
+        GenerateOverworld,
+        UseExistingOverworld
+    }
+
     public class LoadState : GameState
     {
         public WorldManager World { get; set; }
@@ -21,15 +27,17 @@ namespace DwarfCorp.GameStates
         private Gui.Root GuiRoot;
         private Gui.Widget Tip;
         private InfoTicker LoadTicker;
-        private WorldGenerator Generator;
+        private OverworldGenerator Generator;
         public Tutorial.TutorialManager TutorialManager;
+        private LoadTypes LoadType;
 
         private Timer TipTimer = new Timer(1, false, Timer.TimerMode.Real);
-        public OverworldGenerationSettings Settings { get; set; }
+        public Overworld Settings { get; set; }
 
-        public LoadState(DwarfGame game, OverworldGenerationSettings settings) :
+        public LoadState(DwarfGame game, Overworld settings, LoadTypes LoadType) :
             base(game)
         {
+            this.LoadType = LoadType;
             Settings = settings;
             EnableScreensaver = true;
 
@@ -70,9 +78,9 @@ namespace DwarfCorp.GameStates
 
             GuiRoot.RootItem.Layout();
 
-            if (Settings.GenerateFromScratch)
+            if (LoadType == LoadTypes.GenerateOverworld)
             {
-                Generator = new WorldGenerator(Settings, true);
+                Generator = new OverworldGenerator(Settings, true);
                 Generator.Generate();
             }
             else
@@ -114,12 +122,15 @@ namespace DwarfCorp.GameStates
             }
             else
             {
-                if (Settings.GenerateFromScratch && Generator.CurrentState == WorldGenerator.GenerationState.Finished && World == null)
-                    CreateWorld();
-                else if (Settings.GenerateFromScratch)
+                if (LoadType == LoadTypes.GenerateOverworld)
                 {
-                    if (!LoadTicker.HasMesssage(Generator.LoadingMessage))
-                        LoadTicker.AddMessage(Generator.LoadingMessage);
+                    if (Generator.CurrentState == OverworldGenerator.GenerationState.Finished && World == null)
+                        CreateWorld();
+                    else
+                    {
+                        if (!LoadTicker.HasMesssage(Generator.LoadingMessage))
+                            LoadTicker.AddMessage(Generator.LoadingMessage);
+                    }
                 }
 
                 foreach (var item in DwarfGame.GumInputMapper.GetInputQueue())

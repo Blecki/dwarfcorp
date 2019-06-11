@@ -27,7 +27,7 @@ namespace DwarfCorp
         public WorldManager World;
         public float CaveView = 0;
         public float TargetCaveView = 0;
-        public OverworldGenerationSettings Settings = null;
+        public Overworld Settings = null;
         public WorldRendererPersistentSettings PersistentSettings = new WorldRendererPersistentSettings();
         public Vector3 CursorLightPos = Vector3.Zero;
         public Vector3[] LightPositions = new Vector3[16];

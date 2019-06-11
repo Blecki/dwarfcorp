@@ -121,7 +121,7 @@ namespace DwarfCorp
                 }
             }
             BackgroundMesh.SetData(verts);
-            int[] indices = WorldGenerator.SetUpTerrainIndices(width / resolution, height / resolution);
+            int[] indices = OverworldGenerator.SetUpTerrainIndices(width / resolution, height / resolution);
             BackgroundIndex = new IndexBuffer(Device, typeof(int), indices.Length, BufferUsage.None);
             BackgroundIndex.SetData(indices);
         }

@@ -692,6 +692,8 @@
     <Compile Include="World\LanguageGenerator\Language.cs" />
     <Compile Include="World\LanguageGenerator\TextAtom.cs" />
     <Compile Include="World\LanguageGenerator\TextGenerator.cs" />
+    <Compile Include="World\Overworld\Overworld.cs" />
+    <Compile Include="World\Overworld\OverworldFaction.cs" />
     <Compile Include="World\Overworld\OverworldMap.cs" />
     <Compile Include="World\Potions\GatherPotionsTask.cs" />
     <Compile Include="World\Potions\Potion.cs" />
@@ -770,7 +772,7 @@
     <Compile Include="World\ChunkGeneration\GenerateWater.cs" />
     <Compile Include="World\ChunkGeneration\Generate.cs" />
     <Compile Include="World\ChunkGeneration\GenerateRuins.cs" />
-    <Compile Include="World\ChunkGeneration\GeneratorSettings.cs" />
+    <Compile Include="World\ChunkGeneration\ChunkGeneratorSettings.cs" />
     <Compile Include="World\ChunkGeneration\Misc.cs" />
     <Compile Include="World\MonsterSpawner.cs" />
     <Compile Include="World\Rail\BuildRailTool.cs" />
@@ -809,7 +811,7 @@
     <Compile Include="World\Overworld\OverworldCell.cs" />
     <Compile Include="World\Overworld\OverworldGenerationSettings.cs" />
     <Compile Include="World\Overworld\OverworldImageOperations.cs" />
-    <Compile Include="World\Overworld\WorldGenerator.cs" />
+    <Compile Include="World\Overworld\OverworldGenerator.cs" />
     <Compile Include="World\PersistentWorldData.cs" />
     <Compile Include="World\Voxels\BoxTransition.cs" />
     <Compile Include="World\Voxels\ChunkManager-Data.cs" />

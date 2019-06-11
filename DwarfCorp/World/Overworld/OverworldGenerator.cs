@@ -13,7 +13,7 @@ using System.Linq;
 
 namespace DwarfCorp.GameStates
 {
-    public class WorldGenerator
+    public class OverworldGenerator
     {
         public enum GenerationState
         {
@@ -24,16 +24,15 @@ namespace DwarfCorp.GameStates
 
         public GenerationState CurrentState { get; private set; }
 
-        public OverworldGenerationSettings Settings { get; set; }
+        public Overworld Settings { get; set; }
         public VertexBuffer LandMesh { get; set; }
         public IndexBuffer LandIndex { get; set; }
         public string LoadingMessage = "";
         private Thread genThread;
         public float Progress = 0.0f;
-        public OverworldMap Overworld;
         public Action UpdatePreview;
 
-        public WorldGenerator(OverworldGenerationSettings Settings, bool ClearOverworld)
+        public OverworldGenerator(Overworld Settings, bool ClearOverworld)
         {
             CurrentState = GenerationState.NotStarted;
             this.Settings = Settings;
@@ -42,13 +41,10 @@ namespace DwarfCorp.GameStates
 
             if (ClearOverworld)
             {
-                Overworld = new OverworldMap(Settings.Width, Settings.Height);
-                Settings.Overworld = Overworld;
+                Settings.Map = new OverworldMap(Settings.Width, Settings.Height);
             }
-            else
-                Overworld = Settings.Overworld;
 
-            Overworld.Volcanoes = new List<Vector2>();
+            Settings.Map.Volcanoes = new List<Vector2>();
             LandMesh = null;
             LandIndex = null;
         }
@@ -81,7 +77,7 @@ namespace DwarfCorp.GameStates
 
         public void CreateMesh(GraphicsDevice Device)
         {
-            if (Overworld.Map == null)
+            if (Settings.Map.Map == null)
                 return;
 
             var numVerts = (Settings.Width + 1) * (Settings.Height + 1);
@@ -93,10 +89,13 @@ namespace DwarfCorp.GameStates
             {
                 for (int y = 0; y <= Settings.Height; y += 1)
                 {
-                    float landHeight = Overworld.Map[(x < Settings.Width) ? x : x - 1, (y < Settings.Height) ? y : y - 1].Height;
+                    float landHeight = Settings.Map.Map[(x < Settings.Width) ? x : x - 1, (y < Settings.Height) ? y : y - 1].Height;
                     verts[i].Position = new Vector3((float)x / Settings.Width, landHeight * 0.05f, (float)y / Settings.Height);
                     verts[i].TextureCoordinate = new Vector2(((float)x) / Settings.Width, ((float)y) / Settings.Height);
-                    Vector3 normal = new Vector3(Overworld.Map[MathFunctions.Clamp(x + 1, 0, Settings.Width - 1), MathFunctions.Clamp(y, 0, Settings.Height - 1)].Height - Settings.Height, 1.0f, Overworld.Map[MathFunctions.Clamp(x, 0, Settings.Width - 1), MathFunctions.Clamp(y + 1, 0, Settings.Height - 1)].Height - Settings.Height);
+                    Vector3 normal = new Vector3(
+                        Settings.Map.Map[MathFunctions.Clamp(x + 1, 0, Settings.Width - 1), MathFunctions.Clamp(y, 0, Settings.Height - 1)].Height - Settings.Height,
+                        1.0f, 
+                        Settings.Map.Map[MathFunctions.Clamp(x, 0, Settings.Width - 1), MathFunctions.Clamp(y + 1, 0, Settings.Height - 1)].Height - Settings.Height);
                     normal.Normalize();
                     verts[i].Normal = normal;
                     i++;
@@ -127,15 +126,11 @@ namespace DwarfCorp.GameStates
         {
             var factions = GetFactionsInSpawn();
             var biomes = new HashSet<byte>();
-            Rectangle spawnRect = GetSpawnRectangle();
-            for (int x = Math.Max(spawnRect.X, 0); x < Math.Min(spawnRect.X + spawnRect.Width, Overworld.Map.GetLength(0) - 1); x++)
-            {
-                for (int y = Math.Max(spawnRect.Y, 0); y < Math.Min(spawnRect.Y + spawnRect.Height, Overworld.Map.GetLength(1) - 1); y++)
-                {
-                    biomes.Add(Overworld.Map[x, y].Biome);
-                }
-            }
+            var spawnRect = GetSpawnRectangle();
 
+            for (int x = Math.Max(spawnRect.X, 0); x < Math.Min(spawnRect.X + spawnRect.Width, Settings.Width - 1); x++)
+                for (int y = Math.Max(spawnRect.Y, 0); y < Math.Min(spawnRect.Y + spawnRect.Height, Settings.Height - 1); y++)
+                    biomes.Add(Settings.Map.Map[x, y].Biome);
 
             if (factions.Count == 0)
             {
@@ -189,7 +184,7 @@ namespace DwarfCorp.GameStates
                 {
                     for (int y = spawnRect.Y; y < spawnRect.Y + spawnRect.Height; y++)
                     {
-                        byte factionIdx = Overworld.Map[x, y].Faction;
+                        byte factionIdx = Settings.Map.Map[x, y].Faction;
 
                         if (factionIdx > 0 && factionIdx <= Settings.Natives.Count)
                         {
@@ -242,8 +237,7 @@ namespace DwarfCorp.GameStates
                 toReturn[faction.Name + " (" + faction.Race + ") " + goodwillStr] = faction.PrimaryColor;
             }
             return toReturn;
-        }
-        
+        }        
         
         public void GenerateVolcanoes(int width, int height)
         {
@@ -253,11 +247,11 @@ namespace DwarfCorp.GameStates
             for(int i = 0; i < (int) Settings.GenerationSettings.NumVolcanoes; i++) // Todo: Need to move the random used for world generation into settings.
             {
                 Vector2 randomPos = new Vector2((float) (MathFunctions.Random.NextDouble() * width), (float) (MathFunctions.Random.NextDouble() * height));
-                float maxFaults = Overworld.Map[(int) randomPos.X, (int) randomPos.Y].Height;
+                float maxFaults = Settings.Map.Map[(int) randomPos.X, (int) randomPos.Y].Height;
                 for(int j = 0; j < volcanoSamples; j++)
                 {
                     Vector2 randomPos2 = new Vector2((float) (MathFunctions.Random.NextDouble() * width), (float) (MathFunctions.Random.NextDouble() * height));
-                    float faults = Overworld.Map[(int) randomPos2.X, (int) randomPos2.Y].Height;
+                    float faults = Settings.Map.Map[(int) randomPos2.X, (int) randomPos2.Y].Height;
 
                     if(faults > maxFaults)
                     {
@@ -266,7 +260,7 @@ namespace DwarfCorp.GameStates
                     }
                 }
 
-                Overworld.Volcanoes.Add(randomPos);
+                Settings.Map.Volcanoes.Add(randomPos);
 
 
                 for(int dx = -(int) volcanoSize; dx <= (int) volcanoSize; dx++)
@@ -281,15 +275,15 @@ namespace DwarfCorp.GameStates
 
                         //Overworld.Map[x, y].Erosion = MathFunctions.Clamp(dist, 0.0f, 0.5f);
                         float f = (float) (Math.Pow(Math.Sin(fDist), 3.0f) + 1.0f) * 0.2f;
-                        Overworld.Map[x, y].Height += f;
+                        Settings.Map.Map[x, y].Height += f;
 
                         if(dist <= 2)
                         {
-                            Overworld.Map[x, y].Height = 0.1f;
+                            Settings.Map.Map[x, y].Height = 0.1f;
                         }
 
                         if(dist < volcanoSize)
-                            Overworld.Map[x, y].Biome = BiomeLibrary.GetBiome("Waste").Biome;
+                            Settings.Map.Map[x, y].Biome = BiomeLibrary.GetBiome("Waste").Biome;
                     }
                 }
             }
@@ -302,21 +296,21 @@ namespace DwarfCorp.GameStates
 #endif
             {
                 if (Settings.Name == null)
-                    Settings.Name = OverworldGenerationSettings.GetRandomWorldName();
+                    Settings.Name = Overworld.GetRandomWorldName();
 
                 MathFunctions.Random = new ThreadSafeRandom(Settings.Seed);
                 CurrentState = GenerationState.Generating;
                 
                 LoadingMessage = "Init..";
                 OverworldMap.heightNoise.Seed = Settings.Seed;
-                Overworld.Map = new OverworldCell[Settings.Width, Settings.Height];
+                Settings.Map.Map = new OverworldCell[Settings.Width, Settings.Height];
 
                 Progress = 0.01f;
 
                 LoadingMessage = "Height Map ...";
                 float[,] heightMapLookup = null;
                 heightMapLookup = OverworldMap.GenerateHeightMapLookup(Settings.Width, Settings.Height);
-                Overworld.CreateHeightFromLookup(heightMapLookup);
+                Settings.Map.CreateHeightFromLookup(heightMapLookup);
 
                 Progress = 0.05f;
 
@@ -328,31 +322,21 @@ namespace DwarfCorp.GameStates
                 {
                     for (int y = 0; y < Settings.Height; y++)
                     {
-                        Overworld.Map[x, y].Erosion = 1.0f;
-                        Overworld.Map[x, y].Weathering = 0;
-                        Overworld.Map[x, y].Faults = 1.0f;
+                        Settings.Map.Map[x, y].Erosion = 1.0f;
+                        Settings.Map.Map[x, y].Weathering = 0;
+                        Settings.Map.Map[x, y].Faults = 1.0f;
                     }
                 }
 
                 LoadingMessage = "Climate";
                 for (int x = 0; x < Settings.Width; x++)
-                {
                     for (int y = 0; y < Settings.Height; y++)
-                    {
-                        Overworld.Map[x, y].Temperature = ((float)(y) / (float)(Settings.Height)) * Settings.GenerationSettings.TemperatureScale;
-                        //Overworld.Map[x, y].Rainfall = Math.Max(Math.Min(Overworld.noise(x, y, 1000.0f, 0.01f) + Overworld.noise(x, y, 100.0f, 0.1f) * 0.05f, 1.0f), 0.0f) * RainfallScale;
-                    }
-                }
+                        Settings.Map.Map[x, y].Temperature = ((float)(y) / (float)(Settings.Height)) * Settings.GenerationSettings.TemperatureScale;
 
-                //Overworld.Distort(width, height, 60.0f, 0.005f, Overworld.ScalarFieldType.Rainfall);
-                OverworldImageOperations.Distort(Overworld.Map, Settings.Width, Settings.Height, 30.0f, 0.005f, OverworldField.Temperature);
+                OverworldImageOperations.Distort(Settings.Map.Map, Settings.Width, Settings.Height, 30.0f, 0.005f, OverworldField.Temperature);
                 for (int x = 0; x < Settings.Width; x++)
-                {
                     for (int y = 0; y < Settings.Height; y++)
-                    {
-                        Overworld.Map[x, y].Temperature = Math.Max(Math.Min(Overworld.Map[x, y].Temperature, 1.0f), 0.0f);
-                    }
-                }
+                        Settings.Map.Map[x, y].Temperature = Math.Max(Math.Min(Settings.Map.Map[x, y].Temperature, 1.0f), 0.0f);
         
                 int numVoronoiPoints = (int)Settings.GenerationSettings.NumFaults;
 
@@ -367,11 +351,11 @@ namespace DwarfCorp.GameStates
 
                 #endregion
 
-                Overworld.CreateHeightFromLookupWithErosion(heightMapLookup);
+                Settings.Map.CreateHeightFromLookupWithErosion(heightMapLookup);
 
                 Progress = 0.2f;
 
-                Overworld.CreateHeightFromLookupWithErosion(heightMapLookup);
+                Settings.Map.CreateHeightFromLookupWithErosion(heightMapLookup);
 
                 Progress = 0.25f;
                 if (UpdatePreview != null) UpdatePreview();
@@ -379,9 +363,9 @@ namespace DwarfCorp.GameStates
 
                 #region erosion
 
-                float[,] buffer = new float[Settings.Width, Settings.Height];
-                Erode(Settings.Width, Settings.Height, Settings.GenerationSettings.SeaLevel, Overworld.Map, numRains, rainLength, numRainSamples, buffer);
-                Overworld.CreateHeightFromLookupWithErosion(heightMapLookup);
+                var buffer = new float[Settings.Width, Settings.Height];
+                Erode(Settings.Width, Settings.Height, Settings.GenerationSettings.SeaLevel, Settings.Map.Map, numRains, rainLength, numRainSamples, buffer);
+                Settings.Map.CreateHeightFromLookupWithErosion(heightMapLookup);
 
                 #endregion
 
@@ -389,10 +373,10 @@ namespace DwarfCorp.GameStates
 
 
                 LoadingMessage = "Blur.";
-                OverworldImageOperations.Blur(Overworld.Map, Settings.Width, Settings.Height, OverworldField.Erosion);
+                OverworldImageOperations.Blur(Settings.Map.Map, Settings.Width, Settings.Height, OverworldField.Erosion);
 
                 LoadingMessage = "Generate height.";
-                Overworld.CreateHeightFromLookupWithErosion(heightMapLookup);
+                Settings.Map.CreateHeightFromLookupWithErosion(heightMapLookup);
 
 
                 LoadingMessage = "Rain";
@@ -401,7 +385,7 @@ namespace DwarfCorp.GameStates
                 LoadingMessage = "Biome";
                 for (int x = 0; x < Settings.Width; x++)
                     for (int y = 0; y < Settings.Height; y++)
-                        Overworld.Map[x, y].Biome = BiomeLibrary.GetBiomeForConditions(Overworld.Map[x, y].Temperature, Overworld.Map[x, y].Rainfall, Overworld.Map[x, y].Height).Biome;
+                        Settings.Map.Map[x, y].Biome = BiomeLibrary.GetBiomeForConditions(Settings.Map.Map[x, y].Temperature, Settings.Map.Map[x, y].Rainfall, Settings.Map.Map[x, y].Height).Biome;
 
                 LoadingMessage = "Volcanoes";
 
@@ -420,21 +404,21 @@ namespace DwarfCorp.GameStates
                 for (int i = 0; i < Settings.GenerationSettings.NumCivilizations; i++)
                     Settings.Natives.Add(library.GenerateOverworldFaction(Settings, i, Settings.GenerationSettings.NumCivilizations));
 
-                SeedCivs(Overworld.Map, Settings.Natives.Count, Settings.Natives);
-                GrowCivs(Overworld.Map, 200, Settings.Natives);
+                SeedCivs(Settings.Map.Map, Settings.Natives.Count, Settings.Natives);
+                GrowCivs(Settings.Map.Map, 200, Settings.Natives);
 
 
 
                 for (int x = 0; x < Settings.Width; x++)
                 {
-                    Overworld.Map[x, 0] = Overworld.Map[x, 1];
-                    Overworld.Map[x, Settings.Height - 1] = Overworld.Map[x, Settings.Height - 2];
+                    Settings.Map.Map[x, 0] = Settings.Map.Map[x, 1];
+                    Settings.Map.Map[x, Settings.Height - 1] = Settings.Map.Map[x, Settings.Height - 2];
                 }
 
                 for (int y = 0; y < Settings.Height; y++)
                 {
-                    Overworld.Map[0, y] = Overworld.Map[1, y];
-                    Overworld.Map[Settings.Width - 1, y] = Overworld.Map[Settings.Width - 2, y];
+                    Settings.Map.Map[0, y] = Settings.Map.Map[1, y];
+                    Settings.Map.Map[Settings.Width - 1, y] = Settings.Map.Map[Settings.Width - 2, y];
                 }
 
                 CurrentState = GenerationState.Finished;
@@ -457,14 +441,14 @@ namespace DwarfCorp.GameStates
                 float currentMoisture = Settings.GenerationSettings.RainfallScale * 10;
                 for (int x = 0; x < width; x++)
                 {
-                    float h = Overworld.Map[x, y].Height;
+                    float h = Settings.Map.Map[x, y].Height;
                     bool isWater = h < Settings.GenerationSettings.SeaLevel;
 
                     if (isWater)
                     {
                         currentMoisture += MathFunctions.Rand(0.1f, 0.3f);
                         currentMoisture = Math.Min(currentMoisture, Settings.GenerationSettings.RainfallScale * 20);
-                        Overworld.Map[x, y].Rainfall = 0.5f;
+                        Settings.Map.Map[x, y].Rainfall = 0.5f;
                     }
                     else
                     {
@@ -472,13 +456,12 @@ namespace DwarfCorp.GameStates
                         currentMoisture -= rainAmount;
                         float evapAmount = MathFunctions.Rand(0.01f, 0.02f);
                         currentMoisture += evapAmount;
-                        Overworld.Map[x, y].Rainfall = rainAmount * Settings.GenerationSettings.RainfallScale * Settings.Width * 0.015f;
+                        Settings.Map.Map[x, y].Rainfall = rainAmount * Settings.GenerationSettings.RainfallScale * Settings.Width * 0.015f;
                     }
                 }
             }
 
-            OverworldImageOperations.Distort(Overworld.Map, width, height, 5.0f, 0.03f, OverworldField.Rainfall);
-
+            OverworldImageOperations.Distort(Settings.Map.Map, width, height, 5.0f, 0.03f, OverworldField.Rainfall);
         }
 
         internal void LoadDummy(Color[] color, GraphicsDevice Device)
@@ -525,15 +508,11 @@ namespace DwarfCorp.GameStates
             }
 
             for(int x = 0; x < width; x++)
-            {
                 for(int y = 0; y < height; y++)
-                {
-                    Overworld.Map[x, y].Faults = GetVoronoiValue(nodes, x, y);
-                }
-            }
+                    Settings.Map.Map[x, y].Faults = GetVoronoiValue(nodes, x, y);
 
-            ScaleMap(Overworld.Map, width, height, OverworldField.Faults);
-            OverworldImageOperations.Distort(Overworld.Map, width, height, 20, 0.01f, OverworldField.Faults);
+            ScaleMap(Settings.Map.Map, width, height, OverworldField.Faults);
+            OverworldImageOperations.Distort(Settings.Map.Map, width, height, 20, 0.01f, OverworldField.Faults);
         }
 
         private void Erode(int width, int height, float seaLevel, OverworldCell[,] heightMap, int numRains, int rainLength, int numRainSamples, float[,] buffer)
@@ -584,7 +563,7 @@ namespace DwarfCorp.GameStates
                         break;
                     }
 
-                    OverworldImageOperations.MinBlend(Overworld.Map, currentPos, erosionRate * OverworldImageOperations.GetValue(Overworld.Map, currentPos, OverworldField.Erosion), OverworldField.Erosion);
+                    OverworldImageOperations.MinBlend(Settings.Map.Map, currentPos, erosionRate * OverworldImageOperations.GetValue(Settings.Map.Map, currentPos, OverworldField.Erosion), OverworldField.Erosion);
 
                     velocity = 0.1f * g + 0.7f * velocity + 0.2f * MathFunctions.RandVector2Circle();
                     currentPos += velocity;
@@ -595,12 +574,8 @@ namespace DwarfCorp.GameStates
         private void Weather(int width, int height, float T, Vector2[] neighbs, float[,] buffer)
         {
             for(int x = 0; x < width; x++)
-            {
                 for(int y = 0; y < height; y++)
-                {
-                    buffer[x, y] = Overworld.Map[x, y].Height * Overworld.Map[x, y].Faults;
-                }
-            }
+                    buffer[x, y] = Settings.Map.Map[x, y].Height * Settings.Map.Map[x, y].Faults;
 
             int weatheringIters = 10;
 
@@ -631,8 +606,8 @@ namespace DwarfCorp.GameStates
 
                         if(maxDiff > T)
                         {
-                            OverworldImageOperations.AddValue(Overworld.Map, p + maxDiffNeigh, OverworldField.Weathering, (float)(maxDiff * 0.4f));
-                            OverworldImageOperations.AddValue(Overworld.Map, p, OverworldField.Weathering, (float)(-maxDiff * 0.4f));
+                            OverworldImageOperations.AddValue(Settings.Map.Map, p + maxDiffNeigh, OverworldField.Weathering, (float)(maxDiff * 0.4f));
+                            OverworldImageOperations.AddValue(Settings.Map.Map, p, OverworldField.Weathering, (float)(-maxDiff * 0.4f));
                         }
                     }
                 }
@@ -642,20 +617,16 @@ namespace DwarfCorp.GameStates
                     for(int y = 0; y < height; y++)
                     {
                         Vector2 p = new Vector2(x, y);
-                        float w = OverworldImageOperations.GetValue(Overworld.Map, p, OverworldField.Weathering);
+                        float w = OverworldImageOperations.GetValue(Settings.Map.Map, p, OverworldField.Weathering);
                         OverworldImageOperations.AddHeight(buffer, p, w);
-                        Overworld.Map[x, y].Weathering = 0.0f;
+                        Settings.Map.Map[x, y].Weathering = 0.0f;
                     }
                 }
             }
 
             for(int x = 0; x < width; x++)
-            {
                 for(int y = 0; y < height; y++)
-                {
-                    Overworld.Map[x, y].Weathering = buffer[x, y] - Overworld.Map[x, y].Height * Overworld.Map[x, y].Faults;
-                }
-            }
+                    Settings.Map.Map[x, y].Weathering = buffer[x, y] - Settings.Map.Map[x, y].Height * Settings.Map.Map[x, y].Faults;
         }
 
         private static Vector2 GetEdgePoint(int width, int height)

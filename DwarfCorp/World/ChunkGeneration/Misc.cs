@@ -20,7 +20,7 @@ namespace DwarfCorp.Generation
             return 0.25f + (height * 0.5f);
         }
 
-        public static IEnumerable<VoxelChunk> EnumerateTopChunks(GeneratorSettings Settings)
+        public static IEnumerable<VoxelChunk> EnumerateTopChunks(ChunkGeneratorSettings Settings)
         {
             return Settings.World.ChunkManager.GetChunkEnumerator().Where(c => c.ID.Y == Settings.WorldSizeInChunks.Y - 1);
         }

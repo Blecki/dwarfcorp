@@ -385,6 +385,7 @@
     <Compile Include="TaskManagement\Tasks\WrangleAnimalTask.cs" />
     <Compile Include="TaskManagement\TestBehaviors.cs" />
     <Compile Include="World\ChunkGeneration\CastSunlight.cs" />
+    <Compile Include="World\ChunkGeneration\ChunkGeneratorSettings.cs" />
     <Compile Include="World\ChunkGeneration\FaunaData.cs" />
     <Compile Include="World\ChunkGeneration\Generate.cs" />
     <Compile Include="World\ChunkGeneration\GenerateBalloonPort.cs" />
@@ -395,7 +396,6 @@
     <Compile Include="World\ChunkGeneration\GenerateRuins.cs" />
     <Compile Include="World\ChunkGeneration\GenerateSurfaceLife.cs" />
     <Compile Include="World\ChunkGeneration\GenerateWater.cs" />
-    <Compile Include="World\ChunkGeneration\GeneratorSettings.cs" />
     <Compile Include="World\ChunkGeneration\GetAverageHeight.cs" />
     <Compile Include="World\ChunkGeneration\Misc.cs" />
     <Compile Include="World\ChunkGeneration\VegetationData.cs" />
@@ -434,6 +434,8 @@
     <Compile Include="World\Overworld\InstanceSettings.cs" />
     <Compile Include="GameStates\WorldGeneration\LaunchPanel.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGeneratorState.cs" />
+    <Compile Include="World\Overworld\OverworldFaction.cs" />
+    <Compile Include="World\Overworld\Overworld.cs" />
     <Compile Include="World\Overworld\OverworldGenerationSettings.cs" />
     <Compile Include="GameStates\WorldGeneration\SimpleOrbitCamera.cs" />
     <Compile Include="Gui\Widgets\EmployeePortrait.cs" />
@@ -591,6 +593,7 @@
     <Compile Include="Tools\PerformanceMonitor.cs" />
     <Compile Include="Tools\SparseVoxelTree-Levels.cs" />
     <Compile Include="Tools\SparseVoxelTree.cs" />
+    <Compile Include="World\Overworld\OverworldGenerator.cs" />
     <Compile Include="World\Potions\GatherPotionsTask.cs" />
     <Compile Include="World\Potions\Potion.cs" />
     <Compile Include="World\Rooms\AnimalPen.cs" />
@@ -697,7 +700,6 @@
     <Compile Include="GameStates\FrontEnd\MainMenuState.cs" />
     <Compile Include="GameStates\FrontEnd\OptionsState.cs" />
     <Compile Include="GameStates\Play\PlayState.cs" />
-    <Compile Include="World\Overworld\WorldGenerator.cs" />
     <Compile Include="Graphics\Cameras\Camera.cs" />
     <Compile Include="Graphics\Cameras\OrbitCamera.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\DrawCommand2D.cs" />

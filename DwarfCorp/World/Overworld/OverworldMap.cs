@@ -353,5 +353,10 @@ namespace DwarfCorp
             Vector2 v = WorldToOverworld(worldPos, origin);
             return OverworldImageOperations.GetValue(Map, v, fieldType);
         }
+
+        public float Height(int x, int y)
+        {
+            return Map[x, y].Height;
+        }
     }
 }

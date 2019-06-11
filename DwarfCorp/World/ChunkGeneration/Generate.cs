@@ -16,7 +16,7 @@ namespace DwarfCorp.Generation
 {
     public static partial class Generator
     {
-        public static void Generate(Rectangle spawnRect, ChunkManager ChunkData, WorldManager World, GeneratorSettings Settings, Action<String> SetLoadingMessage)
+        public static void Generate(Rectangle spawnRect, ChunkManager ChunkData, WorldManager World, ChunkGeneratorSettings Settings, Action<String> SetLoadingMessage)
         {
             SetLoadingMessage(String.Format("{0} chunks to generate!", Settings.WorldSizeInChunks.X * Settings.WorldSizeInChunks.Y * Settings.WorldSizeInChunks.Z));
             SetLoadingMessage("");
@@ -30,7 +30,7 @@ namespace DwarfCorp.Generation
                     }
 
             var worldDepth = Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY;
-            Settings.NormalizedSeaLevel = Math.Min((int)(worldDepth * NormalizeHeight(Settings.OverworldSettings.GenerationSettings.SeaLevel + 1.0f / worldDepth)), worldDepth - 1);
+            Settings.NormalizedSeaLevel = Math.Min((int)(worldDepth * NormalizeHeight(Settings.Overworld.GenerationSettings.SeaLevel + 1.0f / worldDepth)), worldDepth - 1);
 
             SetLoadingMessage("");
             foreach (var chunk in EnumerateTopChunks(Settings))

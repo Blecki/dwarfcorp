@@ -15,7 +15,7 @@ namespace DwarfCorp.Generation
 {
     public static partial class Generator
     {
-        public static float GetAverageHeight(int X, int Z, int Width, int Height, GeneratorSettings Settings)
+        public static float GetAverageHeight(int X, int Z, int Width, int Height, ChunkGeneratorSettings Settings)
         {
             var avgHeight = 0;
             var numHeight = 0;

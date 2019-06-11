@@ -9,8 +9,8 @@ namespace DwarfCorp.GameStates
         private Gui.Root GuiRoot;
         private Gui.Widgets.ProgressBar GenerationProgress;
         public WorldGeneratorPreview Preview;
-        private WorldGenerator Generator;
-        private OverworldGenerationSettings Settings;
+        private OverworldGenerator Generator;
+        private Overworld Settings;
         private Gui.Widget RightPanel;
         private Widget MainPanel;
 
@@ -22,7 +22,7 @@ namespace DwarfCorp.GameStates
 
         private PanelStates PanelState = PanelStates.Generate;
         
-        public WorldGeneratorState(DwarfGame Game, OverworldGenerationSettings Settings, PanelStates StartingState) :
+        public WorldGeneratorState(DwarfGame Game, Overworld Settings, PanelStates StartingState) :
             base(Game)
         {
             this.PanelState = StartingState;
@@ -37,7 +37,7 @@ namespace DwarfCorp.GameStates
             if (Settings.Natives != null)
                 Settings.Natives.Clear();
 
-            Generator = new WorldGenerator(Settings, true);
+            Generator = new OverworldGenerator(Settings, true);
             if (Preview != null) Preview.SetGenerator(Generator);
 
             GuiRoot.RootItem.GetChild(0).Text = Settings.Name;
@@ -149,7 +149,7 @@ namespace DwarfCorp.GameStates
 
                 case PanelStates.Launch:
                     // Setup a dummy generator.
-                    Generator = new WorldGenerator(Settings, false);
+                    Generator = new OverworldGenerator(Settings, false);
                     Generator.LoadDummy(new Color[Settings.Width * Settings.Height], Game.GraphicsDevice);
                     Preview.SetGenerator(Generator);
                     (RightPanel as LaunchPanel).Generator = Generator;
@@ -171,7 +171,7 @@ namespace DwarfCorp.GameStates
             // Enable or disable start button based on Generator state.
 
             GuiRoot.Update(gameTime.ToRealTime());
-            if (Generator.CurrentState == WorldGenerator.GenerationState.Finished)
+            if (Generator.CurrentState == OverworldGenerator.GenerationState.Finished)
             {
                 Preview.Hidden = false;
                 GenerationProgress.Hidden = true;
@@ -186,7 +186,7 @@ namespace DwarfCorp.GameStates
         {
             GuiRoot.Draw();
 
-            if (Generator.CurrentState == WorldGenerator.GenerationState.Finished)
+            if (Generator.CurrentState == OverworldGenerator.GenerationState.Finished)
             {
                 Preview.DrawPreview();
                 GuiRoot.MousePointer = new MousePointer("mouse", 1, 0);

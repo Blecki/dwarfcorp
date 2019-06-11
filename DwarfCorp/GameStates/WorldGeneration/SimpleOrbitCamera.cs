@@ -18,7 +18,7 @@ namespace DwarfCorp.GameStates
         private Vector3 GoalFocus = new Vector3(0.5f, 0, 0.5f);
         private Point PreviousMousePosition;
         public Rectangle Rect;
-        public OverworldGenerationSettings Overworld;
+        public Overworld Overworld;
 
         public void SetGoalFocus(Vector3 GoalFocus)
         {
@@ -117,7 +117,7 @@ namespace DwarfCorp.GameStates
             var height = 0.0f;
             if ((int)worldCoord.X > 0 && (int)worldCoord.Y > 0 &&
                 (int)worldCoord.X < Overworld.Width && (int)worldCoord.Y < Overworld.Height)
-                height = Overworld.Overworld.Map[(int)worldCoord.X, (int)worldCoord.Y].Height * 0.05f;
+                height = Overworld.Map.Map[(int)worldCoord.X, (int)worldCoord.Y].Height * 0.05f;
             return new Vector3(worldCoord.X / Overworld.Width, height, worldCoord.Y / Overworld.Height);
         }
 

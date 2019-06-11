@@ -36,7 +36,7 @@ namespace DwarfCorp
 
             if (CachedBiome == null)
             {
-                var biome = World.Settings.Overworld.GetBiomeAt(LocalPosition, chunks.World.Settings.InstanceSettings.Origin);
+                var biome = World.Settings.Map.GetBiomeAt(LocalPosition, chunks.World.Settings.InstanceSettings.Origin);
                 if (biome != null)
                 {
                     CachedBiome = biome.Name;

@@ -26,7 +26,7 @@ namespace DwarfCorp
         public Exception LoadingException = null;
 
         public Thread LoadingThread { get; set; }
-        public Action<String> OnSetLoadingMessage = null;
+        public Action<String> OnSetLoadingMessage = null; // ? Pass through as argument? Should it really be stored here like this?
 
         public void SetLoadingMessage(String Message)
         {
@@ -380,7 +380,7 @@ namespace DwarfCorp
             Time.NewDay += (time) => PayEmployees();
 
 
-            var generatorSettings = new Generation.GeneratorSettings(MathFunctions.Random.Next(), 0.02f, Settings)
+            var generatorSettings = new Generation.ChunkGeneratorSettings(MathFunctions.Random.Next(), 0.02f, Settings)
             {
                 WorldSizeInChunks = WorldSizeInChunks,
                 SetLoadingMessage = SetLoadingMessage,

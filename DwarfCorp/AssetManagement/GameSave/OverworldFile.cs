@@ -12,13 +12,13 @@ namespace DwarfCorp
     public class NewOverworldFile
     {
         public OverworldMetaData MetaData;
-        public OverworldGenerationSettings Settings;
+        public Overworld Settings;
 
         public NewOverworldFile()
         {
         }
 
-        public NewOverworldFile(GraphicsDevice device, OverworldGenerationSettings Settings)
+        public NewOverworldFile(GraphicsDevice device, Overworld Settings)
         {
             this.Settings = Settings;
 
@@ -95,7 +95,7 @@ namespace DwarfCorp
             try
             {
                 var metaFilePath = filePath + Path.DirectorySeparatorChar + "meta.txt";
-                return FileUtils.LoadJsonFromAbsolutePath<OverworldMetaData>(metaFilePath).Settings.Name;
+                return FileUtils.LoadJsonFromAbsolutePath<OverworldMetaData>(metaFilePath).Overworld.Name;
             }
             catch (Exception)
             {
@@ -118,7 +118,7 @@ namespace DwarfCorp
             if (worldTexture != null)
             {
                 var worldData = LoadFromTexture(worldTexture);
-                MetaData.Settings.Overworld = new OverworldMap(worldData);
+                MetaData.Overworld.Map = new OverworldMap(worldData);
             }
             else
             {
@@ -131,20 +131,20 @@ namespace DwarfCorp
 
         private Texture2D CreateScreenshot()
         {
-            DwarfGame.LogSentryBreadcrumb("Saving", String.Format("User saving an overworld with size {0} x {1}", MetaData.Settings.Width, MetaData.Settings.Height), SharpRaven.Data.BreadcrumbLevel.Info);
-            Texture2D toReturn = new Texture2D(GameState.Game.GraphicsDevice, MetaData.Settings.Width, MetaData.Settings.Height);
-            var colorData = new Color[MetaData.Settings.Width * MetaData.Settings.Height];
-            MetaData.Settings.Overworld.CreateTexture("Height", null, 1, colorData, MetaData.Settings.GenerationSettings.SeaLevel);
-            MetaData.Settings.Overworld.ShadeHeight(1, colorData);
+            DwarfGame.LogSentryBreadcrumb("Saving", String.Format("User saving an overworld with size {0} x {1}", MetaData.Overworld.Width, MetaData.Overworld.Height), SharpRaven.Data.BreadcrumbLevel.Info);
+            Texture2D toReturn = new Texture2D(GameState.Game.GraphicsDevice, MetaData.Overworld.Width, MetaData.Overworld.Height);
+            var colorData = new Color[MetaData.Overworld.Width * MetaData.Overworld.Height];
+            MetaData.Overworld.Map.CreateTexture("Height", null, 1, colorData, MetaData.Overworld.GenerationSettings.SeaLevel);
+            MetaData.Overworld.Map.ShadeHeight(1, colorData);
             toReturn.SetData(colorData);
             return toReturn;
         }
 
         private Texture2D CreateSaveTexture()
         {
-            var r = new Texture2D(GameState.Game.GraphicsDevice, MetaData.Settings.Width, MetaData.Settings.Height, false, SurfaceFormat.Color);
-            var data = new Color[MetaData.Settings.Width * MetaData.Settings.Height];
-            MetaData.Settings.Overworld.GenerateSaveTexture(data);
+            var r = new Texture2D(GameState.Game.GraphicsDevice, MetaData.Overworld.Width, MetaData.Overworld.Height, false, SurfaceFormat.Color);
+            var data = new Color[MetaData.Overworld.Width * MetaData.Overworld.Height];
+            MetaData.Overworld.Map.GenerateSaveTexture(data);
             r.SetData(data);
             return r;
         }
@@ -169,9 +169,9 @@ namespace DwarfCorp
                 return true;
         }
 
-        public OverworldGenerationSettings CreateSettings()
+        public Overworld CreateSettings()
         {
-            return MetaData.Settings;
+            return MetaData.Overworld;
         }
 
         public static NewOverworldFile Load(String Path)

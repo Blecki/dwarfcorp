@@ -12,19 +12,19 @@ namespace DwarfCorp.GameStates
     public class GenerationPanel : Widget
     {
         private Gui.Widget StartButton;
-        private WorldGenerator Generator => GetGenerator();
-        private OverworldGenerationSettings Settings;
+        private OverworldGenerator Generator => GetGenerator();
+        private Overworld Settings;
         private DwarfGame Game;
 
         public Action RestartGeneration;
-        public Func<WorldGenerator> GetGenerator;
+        public Func<OverworldGenerator> GetGenerator;
         public Action OnVerified;
 
         private Gui.Widgets.EditableTextField NameField;
         private Gui.Widgets.EditableTextField MottoField;
         private Gui.Widgets.CompanyLogo CompanyLogoDisplay;
 
-        public GenerationPanel(DwarfGame Game, OverworldGenerationSettings Settings)
+        public GenerationPanel(DwarfGame Game, Overworld Settings)
         {
             this.Settings = Settings;
             this.Game = Game;
@@ -43,7 +43,7 @@ namespace DwarfCorp.GameStates
                 OnClick = (sender, args) => {
                     DwarfGame.LogSentryBreadcrumb("WorldGenerator", "User is regenerating the world.");
                     Settings.Seed = MathFunctions.RandInt(Int32.MinValue, Int32.MaxValue);
-                    Settings.Name = OverworldGenerationSettings.GetRandomWorldName();
+                    Settings.Name = Overworld.GetRandomWorldName();
                     RestartGeneration();
                 }
             });
@@ -59,7 +59,7 @@ namespace DwarfCorp.GameStates
                 OnClick = (sender, args) =>
                 {
                     DwarfGame.LogSentryBreadcrumb("WorldGenerator", "User is saving the world.");
-                    if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
+                    if (Generator.CurrentState != OverworldGenerator.GenerationState.Finished)
                         Root.ShowTooltip(Root.MousePosition, "Generator is not finished.");
                     else
                     {

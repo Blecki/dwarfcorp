@@ -12,7 +12,7 @@ namespace DwarfCorp.GameStates
 {
     public class EmbarkmentEditor : Widget
     {
-        private OverworldGenerationSettings Settings;
+        private Overworld Settings;
         private Gui.Widgets.WidgetListView EmployeeList;
         private EmbarkmentResourceColumns ResourceColumns;
         private Widget EmployeeCost;
@@ -20,7 +20,7 @@ namespace DwarfCorp.GameStates
         private Widget Cash;
         private Widget ValidationLabel;
 
-        public EmbarkmentEditor(OverworldGenerationSettings Settings) 
+        public EmbarkmentEditor(Overworld Settings) 
         {
             this.Settings = Settings;
         }

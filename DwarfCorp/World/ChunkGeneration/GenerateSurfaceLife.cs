@@ -15,7 +15,7 @@ namespace DwarfCorp.Generation
 {
     public static partial class Generator
     {
-        public static void GenerateSurfaceLife(VoxelChunk TopChunk, GeneratorSettings Settings)
+        public static void GenerateSurfaceLife(VoxelChunk TopChunk, ChunkGeneratorSettings Settings)
         {
             var creatureCounts = new Dictionary<string, Dictionary<string, int>>();
             var worldDepth = Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY;
@@ -23,10 +23,10 @@ namespace DwarfCorp.Generation
             for (var x = TopChunk.Origin.X; x < TopChunk.Origin.X + VoxelConstants.ChunkSizeX; x++)
                 for (var z = TopChunk.Origin.Z; z < TopChunk.Origin.Z + VoxelConstants.ChunkSizeZ; z++)
                 {
-                    var overworldPosition = OverworldMap.WorldToOverworld(new Vector2(x, z), Settings.OverworldSettings.InstanceSettings.Origin);
-                    var biome = Settings.OverworldSettings.Overworld.GetBiomeAt(new Vector3(x, 0, z), Settings.OverworldSettings.InstanceSettings.Origin);
+                    var overworldPosition = OverworldMap.WorldToOverworld(new Vector2(x, z), Settings.Overworld.InstanceSettings.Origin);
+                    var biome = Settings.Overworld.Map.GetBiomeAt(new Vector3(x, 0, z), Settings.Overworld.InstanceSettings.Origin);
 
-                    var normalizedHeight = NormalizeHeight(Settings.OverworldSettings.Overworld.LinearInterpolate(overworldPosition, OverworldField.Height));
+                    var normalizedHeight = NormalizeHeight(Settings.Overworld.Map.LinearInterpolate(overworldPosition, OverworldField.Height));
                     var height = (int)MathFunctions.Clamp(normalizedHeight * worldDepth, 0.0f, worldDepth - 2);
 
                     var voxel = Settings.World.ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(x, height, z));

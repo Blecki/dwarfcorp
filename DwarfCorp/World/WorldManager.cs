@@ -29,7 +29,7 @@ namespace DwarfCorp
     {
         #region fields
 
-        public OverworldGenerationSettings Settings = null;
+        public Overworld Settings = null;
         public PersistentWorldData PersistentData = null;
 
         public WorldRenderer Renderer;

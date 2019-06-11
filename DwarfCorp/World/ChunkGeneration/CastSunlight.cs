@@ -16,7 +16,7 @@ namespace DwarfCorp.Generation
 {
     public static partial class Generator
     {
-        public static void CastSunlightColumn(int X, int Z, GeneratorSettings Settings)
+        public static void CastSunlightColumn(int X, int Z, ChunkGeneratorSettings Settings)
         {
             for (var y = (Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY) - 1; y >= 0; y--)
             {
@@ -29,7 +29,7 @@ namespace DwarfCorp.Generation
             }
         }
 
-        public static void CastSunlight(VoxelChunk TopChunk, GeneratorSettings Settings)
+        public static void CastSunlight(VoxelChunk TopChunk, ChunkGeneratorSettings Settings)
         {
             for (var x = TopChunk.Origin.X; x < TopChunk.Origin.X + VoxelConstants.ChunkSizeX; x++)
                 for (var z = TopChunk.Origin.Z; z < TopChunk.Origin.Z + VoxelConstants.ChunkSizeZ; z++)

@@ -18,7 +18,7 @@ namespace DwarfCorp
             Pass
         }
 
-        public ValidationResult ValidateEmbarkment(GameStates.OverworldGenerationSettings Settings, out String Message)
+        public ValidationResult ValidateEmbarkment(GameStates.Overworld Settings, out String Message)
         {
             var cost = Settings.InstanceSettings.InitalEmbarkment.Funds + Settings.InstanceSettings.InitalEmbarkment.Employees.Sum(e => e.SigningBonus);
             if (cost > Settings.PlayerCorporationFunds)
