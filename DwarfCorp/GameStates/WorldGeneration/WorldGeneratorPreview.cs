@@ -31,11 +31,15 @@ namespace DwarfCorp.GameStates
         private SamplerState previewSampler = null;
         public Overworld Overworld;
 
+        public VertexBuffer LandMesh;
+        public IndexBuffer LandIndex;
+
+
         public Matrix ZoomedPreviewMatrix
         {
             get
             {
-                var previewRect = Generator.GetSpawnRectangle();
+                var previewRect = Overworld.InstanceSettings.Cell.Bounds;
                 var worldRect = new Rectangle(0, 0, Overworld.Width, Overworld.Height);
                 float vScale = 1.0f / worldRect.Width;
                 float uScale = 1.0f / worldRect.Height;
@@ -118,7 +122,7 @@ namespace DwarfCorp.GameStates
                         var colonyCell = Overworld.ColonyCells.FirstOrDefault(c => c.Bounds.Contains(new Point(clickPoint.X, clickPoint.Y)));
                         if (colonyCell != null)
                         {
-                            Generator.Settings.InstanceSettings.Cell = colonyCell;
+                            Overworld.InstanceSettings.Cell = colonyCell;
                             previewText = Generator.GetSpawnStats();
                             Camera.SetGoalFocus(new Vector3((float)colonyCell.Bounds.Center.X / (float)Overworld.Width, 0, (float)colonyCell.Bounds.Center.Y / (float)Overworld.Height));
                         }
@@ -144,6 +148,17 @@ namespace DwarfCorp.GameStates
                 }
             });
 
+            OnClose += (sender) =>
+            {
+                if (LandMesh != null)
+                    LandMesh.Dispose();
+                if (LandIndex != null)
+                    LandIndex.Dispose();
+
+                LandMesh = null;
+                LandIndex = null;
+            };
+
             Camera.Overworld = Overworld;
         }
             
@@ -157,11 +172,10 @@ namespace DwarfCorp.GameStates
             PreviewEffect.AmbientLightColor = new Vector3(1.0f, 1.0f, 1.0f);
         }
 
-        public void SetGenerator(OverworldGenerator Generator)
+        public void SetGenerator(OverworldGenerator Generator, Overworld Overworld)
         {
             this.Generator = Generator;
-            this.Overworld = Generator.Settings;
-            Generator.UpdatePreview += () => UpdatePreview = true;
+            this.Overworld = Overworld;
         }
 
         public void Update(DwarfTime Time)
@@ -202,7 +216,7 @@ namespace DwarfCorp.GameStates
                 Root.DrawMesh(mesh, Root.RenderData.Texture);
             }
 
-            foreach (var civ in Generator.Settings.Natives.Where(n => n.InteractiveFaction))
+            foreach (var civ in Overworld.Natives.Where(n => n.InteractiveFaction))
             {
                 var civLocation = Camera.WorldToScreen(new Vector2(civ.CenterX, civ.CenterY));
                 if (civLocation.Z > 0.9999f)
@@ -231,7 +245,7 @@ namespace DwarfCorp.GameStates
                 Root.DrawMesh(iconMesh, Root.RenderData.Texture);
             }
 
-            Rectangle spawnWorld = Generator.GetSpawnRectangle();
+            Rectangle spawnWorld = Overworld.InstanceSettings.Cell.Bounds;
             Vector2 newSpawn = new Vector2(spawnWorld.Center.X, spawnWorld.Center.Y);
             Vector2 spawnCenter = newSpawn * 0.1f + lastSpawnWorld * 0.9f;
             Vector3 newCenter = Camera.WorldToScreen(newSpawn);
@@ -290,15 +304,15 @@ namespace DwarfCorp.GameStates
             var style = PreviewRenderTypes[PreviewSelector.SelectedItem];
             var colorData = new Color[Overworld.Width * Overworld.Height * 4 * 4];
             
-            Overworld.Map.CreateTexture(style.DisplayType, Generator.Settings.Natives, 4, colorData, Generator.Settings.GenerationSettings.SeaLevel);
-            OverworldMap.Smooth(4, Generator.Settings.Width, Generator.Settings.Height, colorData);
+            Overworld.Map.CreateTexture(style.DisplayType, Overworld.Natives, 4, colorData, Overworld.GenerationSettings.SeaLevel);
+            OverworldMap.Smooth(4, Overworld.Width, Overworld.Height, colorData);
             Overworld.Map.ShadeHeight(4, colorData);
 
             foreach (var cell in Overworld.ColonyCells)
                 DrawRectangle(new Rectangle(cell.Bounds.X * 4, cell.Bounds.Y * 4, cell.Bounds.Width * 4, cell.Bounds.Height * 4), colorData, Overworld.Width * 4, Color.Yellow);
 
-            var spawnRect = new Rectangle((int)Generator.Settings.InstanceSettings.Origin.X * 4, (int)Generator.Settings.InstanceSettings.Origin.Y * 4,
-                Generator.Settings.InstanceSettings.Cell.Bounds.Width * 4, Generator.Settings.InstanceSettings.Cell.Bounds.Height * 4);
+            var spawnRect = new Rectangle((int)Overworld.InstanceSettings.Origin.X * 4, (int)Overworld.InstanceSettings.Origin.Y * 4,
+                Overworld.InstanceSettings.Cell.Bounds.Width * 4, Overworld.InstanceSettings.Cell.Bounds.Height * 4);
             DrawRectangle(spawnRect, colorData, Overworld.Width * 4, Color.Red);
 
             PreviewTexture.SetData(colorData);
@@ -383,7 +397,7 @@ namespace DwarfCorp.GameStates
                 {
                     if (!MathFunctions.RandEvent(TreeProbability)) continue;
                     var h = Overworld.Map.Height(x,y);
-                    if (!(h > Generator.Settings.GenerationSettings.SeaLevel)) continue;
+                    if (!(h > Overworld.GenerationSettings.SeaLevel)) continue;
                     var biome = BiomeLibrary.GetBiome(Overworld.Map.Map[x, y].Biome);
                     if (biome.Icon > 0)
                     {
@@ -437,10 +451,9 @@ namespace DwarfCorp.GameStates
             foreach (EffectPass pass in PreviewEffect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                Device.SetVertexBuffer(Generator.LandMesh);
-                Device.Indices = Generator.LandIndex;
-                Device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, Generator.LandMesh.VertexCount, 0,
-                        Generator.LandIndex.IndexCount / 3);
+                Device.SetVertexBuffer(LandMesh);
+                Device.Indices = LandIndex;
+                Device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, LandMesh.VertexCount, 0, LandIndex.IndexCount / 3);
             }
             Device.SetRenderTarget(null);
             Device.Textures[0] = null;
@@ -461,9 +474,9 @@ namespace DwarfCorp.GameStates
                 RegneratePreviewTexture();
                 SetupPreviewShader();
 
-                if (Generator.LandMesh == null || Generator.LandMesh.IsDisposed || Generator.LandMesh.GraphicsDevice.IsDisposed)
+                if (LandMesh == null || LandMesh.IsDisposed || LandMesh.GraphicsDevice.IsDisposed)
                 {
-                    Generator.CreateMesh(Device);
+                    CreateMesh(Device);
                     UpdatePreview = true;
                 }
 
@@ -482,6 +495,61 @@ namespace DwarfCorp.GameStates
             PreviewRenderTarget = new RenderTarget2D(Device, PreviewPanel.Rect.Width, PreviewPanel.Rect.Height, false, SurfaceFormat.Color, DepthFormat.Depth16);
             PreviewRenderTarget.ContentLost += PreviewRenderTarget_ContentLost;
         }
-    }
 
+        public static int[] SetUpTerrainIndices(int width, int height)
+        {
+            int[] indices = new int[(width - 1) * (height - 1) * 6];
+            int counter = 0;
+            for (int y = 0; y < height - 1; y++)
+            {
+                for (int x = 0; x < width - 1; x++)
+                {
+                    int lowerLeft = x + y * width;
+                    int lowerRight = (x + 1) + y * width;
+                    int topLeft = x + (y + 1) * width;
+                    int topRight = (x + 1) + (y + 1) * width;
+
+                    indices[counter++] = topLeft;
+                    indices[counter++] = lowerRight;
+                    indices[counter++] = lowerLeft;
+
+                    indices[counter++] = topLeft;
+                    indices[counter++] = topRight;
+                    indices[counter++] = lowerRight;
+                }
+            }
+
+            return indices;
+        }
+
+        public void CreateMesh(GraphicsDevice Device)
+        {
+            var numVerts = (Overworld.Width + 1) * (Overworld.Height + 1);
+            LandMesh = new VertexBuffer(Device, VertexPositionNormalTexture.VertexDeclaration, numVerts, BufferUsage.None);
+            var verts = new VertexPositionNormalTexture[numVerts];
+
+            int i = 0;
+            for (int x = 0; x <= Overworld.Width; x += 1)
+            {
+                for (int y = 0; y <= Overworld.Height; y += 1)
+                {
+                    var landHeight = Overworld.Map.Height((x < Overworld.Width) ? x : x - 1, (y < Overworld.Height) ? y : y - 1);
+                    verts[i].Position = new Vector3((float)x / Overworld.Width, landHeight * 0.05f, (float)y / Overworld.Height);
+                    verts[i].TextureCoordinate = new Vector2(((float)x) / Overworld.Width, ((float)y) / Overworld.Height);
+                    var normal = new Vector3(
+                        Overworld.Map.Height(MathFunctions.Clamp(x + 1, 0, Overworld.Width - 1), MathFunctions.Clamp(y, 0, Overworld.Height - 1)) - Overworld.Height,
+                        1.0f,
+                        Overworld.Map.Height(MathFunctions.Clamp(x, 0, Overworld.Width - 1), MathFunctions.Clamp(y + 1, 0, Overworld.Height - 1)) - Overworld.Height);
+                    normal.Normalize();
+                    verts[i].Normal = normal;
+                    i++;
+                }
+            }
+            LandMesh.SetData(verts);
+
+            var indices = SetUpTerrainIndices((Overworld.Width + 1), (Overworld.Height + 1));
+            LandIndex = new IndexBuffer(Device, typeof(int), indices.Length, BufferUsage.None);
+            LandIndex.SetData(indices);
+        }
+    }
 }

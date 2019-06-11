@@ -38,7 +38,7 @@ namespace DwarfCorp.GameStates
                 Settings.Natives.Clear();
 
             Generator = new OverworldGenerator(Settings, true);
-            if (Preview != null) Preview.SetGenerator(Generator);
+            if (Preview != null) Preview.SetGenerator(Generator, Settings);
 
             GuiRoot.RootItem.GetChild(0).Text = Settings.Name;
             GuiRoot.RootItem.GetChild(0).Invalidate();
@@ -150,8 +150,8 @@ namespace DwarfCorp.GameStates
                 case PanelStates.Launch:
                     // Setup a dummy generator.
                     Generator = new OverworldGenerator(Settings, false);
-                    Generator.LoadDummy(new Color[Settings.Width * Settings.Height], Game.GraphicsDevice);
-                    Preview.SetGenerator(Generator);
+                    Generator.LoadDummy();
+                    Preview.SetGenerator(Generator, Settings);
                     (RightPanel as LaunchPanel).Generator = Generator;
                     break;
             }
@@ -171,14 +171,15 @@ namespace DwarfCorp.GameStates
             // Enable or disable start button based on Generator state.
 
             GuiRoot.Update(gameTime.ToRealTime());
+
             if (Generator.CurrentState == OverworldGenerator.GenerationState.Finished)
             {
                 Preview.Hidden = false;
                 GenerationProgress.Hidden = true;
                 Preview.Update(gameTime);
+                Preview.PreparePreview(Game.GraphicsDevice);
             }
 
-            Preview.PreparePreview(Game.GraphicsDevice);
             base.Update(gameTime);
         }
 
@@ -203,11 +204,7 @@ namespace DwarfCorp.GameStates
 
         public override void OnPopped()
         {
-            if (this.Generator.LandMesh != null)
-                this.Generator.LandMesh.Dispose();
-            if (this.Generator.LandIndex != null)
-                this.Generator.LandIndex.Dispose();
-
+            Preview.Close();
             base.OnPopped();
         }
     }
