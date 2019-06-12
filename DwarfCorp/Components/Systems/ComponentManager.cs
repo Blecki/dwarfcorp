@@ -279,36 +279,6 @@ namespace DwarfCorp
             ExitThreads = true;
         }
 
-        private ConcurrentQueue<GameComponent> WorkOrders = new ConcurrentQueue<GameComponent>();
-
-        private void EntityTransformUpdateThread()
-        {
-            Console.Out.WriteLine("Starting chunk regeneration thread.");
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-
-#if !DEBUG
-            try
-#endif
-            {
-                while (!DwarfGame.ExitGame && !ExitThreads)
-                {
-                    if (WorkOrders.TryDequeue(out GameComponent body))
-                        body.ProcessTransformChange();
-                    else
-                        Thread.Sleep(100); // Nothing in the queue - lets take a break.
-                }
-            }
-#if !DEBUG
-            catch (Exception exception)
-            {
-                Console.Out.WriteLine("Component transform update thread exited due to an exception.");
-                ProgramData.WriteExceptionLog(exception);
-                throw;
-            }
-#endif
-        }
-
         private void ReceiveMessage()
         {
             lock (_msgLock)

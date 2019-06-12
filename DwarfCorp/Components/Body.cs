@@ -146,13 +146,6 @@ namespace DwarfCorp
                 if (anim.IsDone())
                     AnimationQueue.RemoveAt(0);
             }
-
-            //if (HasMoved)
-            //{
-            //    UpdateTransform();
-            //    for (var i = 0; i < Children.Count; ++i)
-            //        if (Children[i] is Body child) child.HasMoved = true;
-            //}
         }
 
         public void ProcessTransformChange()
@@ -161,7 +154,7 @@ namespace DwarfCorp
             {
                 UpdateTransform();
                 for (var i = 0; i < Children.Count; ++i)
-                    if (Children[i] is GameComponent child) child.HasMoved = true;
+                    Children[i].HasMoved = true;
             }
         }
 
@@ -176,43 +169,18 @@ namespace DwarfCorp
 
             PerformanceMonitor.PushFrame("Body.UpdateTransform");
 
-            var newTransform = Matrix.Identity;
-
-            if ((Parent as GameComponent) != null)
-                newTransform = LocalTransform * (Parent as GameComponent).GlobalTransform;
+            if (Parent != null)
+                globalTransform = LocalTransform * Parent.GlobalTransform;
             else
-                newTransform = LocalTransform;
-
-            globalTransform = newTransform;
+                globalTransform = LocalTransform;
 
             UpdateBoundingBox();
 
+            // Todo: Only bother if we are not fully contained in the current voxel chunk OR we've crossed a boundary.
             Manager.World.RemoveGameObject(this, LastBounds);
             Manager.World.AddGameObject(this, BoundingBox);
             LastBounds = BoundingBox;
-
-            /*
-            if (CollisionType != CollisionType.None && (CachedOcttreeNode == null || MaxDiff(LastBounds, BoundingBox) > 0.1f))
-            {
-                {
-                    if (CachedOcttreeNode == null || CachedOcttreeNode.Contains(BoundingBox) == ContainmentType.Disjoint)
-                    {
-                        RemoveFromOctTree();
-                        if (!IsDead)
-                            CachedOcttreeNode = Manager.World.AddGameObject(this, BoundingBox);
-                    }
-                    else // Drill down to the lowest level of the tree possible,
-                    {
-                        CachedOcttreeNode.Remove(this, LastBounds);
-                        if (!IsDead)
-                            CachedOcttreeNode = CachedOcttreeNode.Add(this, BoundingBox);
-                    }
-                }
-
-                LastBounds = BoundingBox;
-            }
-            */
-
+           
             PerformanceMonitor.PopFrame();
         }
 
@@ -222,7 +190,7 @@ namespace DwarfCorp
 
             UpdateTransform();
             for (var i = 0; i < Children.Count; ++i)
-                if (Children[i] is GameComponent child) child.PropogateTransforms();
+                Children[i].PropogateTransforms();
 
             PerformanceMonitor.PopFrame();
         }

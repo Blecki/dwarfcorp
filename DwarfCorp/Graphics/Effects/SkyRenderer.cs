@@ -121,9 +121,35 @@ namespace DwarfCorp
                 }
             }
             BackgroundMesh.SetData(verts);
-            int[] indices = WorldGeneratorPreview.SetUpTerrainIndices(width / resolution, height / resolution); // Wut
+            int[] indices = SetUpTerrainIndices(width / resolution, height / resolution);
             BackgroundIndex = new IndexBuffer(Device, typeof(int), indices.Length, BufferUsage.None);
             BackgroundIndex.SetData(indices);
+        }
+
+        private static int[] SetUpTerrainIndices(int width, int height)
+        {
+            int[] indices = new int[(width - 1) * (height - 1) * 6];
+            int counter = 0;
+            for (int y = 0; y < height - 1; y++)
+            {
+                for (int x = 0; x < width - 1; x++)
+                {
+                    int lowerLeft = x + y * width;
+                    int lowerRight = (x + 1) + y * width;
+                    int topLeft = x + (y + 1) * width;
+                    int topRight = (x + 1) + (y + 1) * width;
+
+                    indices[counter++] = topLeft;
+                    indices[counter++] = lowerRight;
+                    indices[counter++] = lowerLeft;
+
+                    indices[counter++] = topLeft;
+                    indices[counter++] = topRight;
+                    indices[counter++] = lowerRight;
+                }
+            }
+
+            return indices;
         }
 
         public void RenderBackgroundMesh(GraphicsDevice device, Camera camera, Color fogColor, BoundingBox scale)

@@ -486,7 +486,7 @@ namespace DwarfCorp
             var transform = Agent.Physics.LocalTransform;
             transform.Translation = T;
             Agent.Physics.LocalTransform = transform;
-            Agent.Physics.PropogateTransforms();
+            //Agent.Physics.PropogateTransforms();
         }
     }
 }

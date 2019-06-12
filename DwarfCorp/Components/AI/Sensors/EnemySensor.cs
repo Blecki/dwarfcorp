@@ -10,13 +10,14 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-
     /// <summary>
     /// Component which fires when an enemy creature enters a box. Attached to other components.
     /// REQUIRES that the EnemySensor be attached to a creature
     /// </summary>
     public class EnemySensor : GameComponent
     {
+        private const float SenseTime = 5.0f;
+
         public delegate void EnemySensed(List<CreatureAI> enemies);
 
         public event EnemySensed OnEnemySensed;
@@ -25,15 +26,13 @@ namespace DwarfCorp
         public CreatureAI Creature { get; set; }
         public List<CreatureAI> Enemies { get; set; }
         public Timer SenseTimer { get; set; }
-        public float SenseRadius { get; set; }
         public bool DetectCloaked { get; set; }
 
         public EnemySensor() : base()
         {
             Enemies = new List<CreatureAI>();
             OnEnemySensed += EnemySensor_OnEnemySensed;
-            SenseTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
-            SenseRadius = 15 * 15;
+            SenseTimer = new Timer(SenseTime, false, Timer.TimerMode.Game);
             CollisionType = CollisionType.None;
         }
 
@@ -43,8 +42,7 @@ namespace DwarfCorp
             Enemies = new List<CreatureAI>();
             OnEnemySensed += EnemySensor_OnEnemySensed;
             Tags.Add("Sensor");
-            SenseTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
-            SenseRadius = 15 * 15;
+            SenseTimer = new Timer(SenseTime, false, Timer.TimerMode.Game);
             CollisionType = CollisionType.None;
         }
 
@@ -52,7 +50,6 @@ namespace DwarfCorp
         public void Sense()
         {
             if (!Active) return;
-            if (World.Overworld.Difficulty == 0) return; // Disable enemy sensors on peaceful difficulty.
 
             if (Creature != null)
                 Allies = Creature.Faction;
@@ -101,7 +98,7 @@ namespace DwarfCorp
 
                 float dist = (minion.Position - GlobalTransform.Translation).LengthSquared();
 
-                if (dist < SenseRadius && !VoxelHelpers.DoesRayHitSolidVoxel(Manager.World.ChunkManager, Position, minion.Position))
+                if (!VoxelHelpers.DoesRayHitSolidVoxel(Manager.World.ChunkManager, Position, minion.Position))
                     sensed.Add(minion);
             }
 
@@ -113,10 +110,13 @@ namespace DwarfCorp
         {
             base.Update(gameTime, chunks, camera);
 
+            if (World.Overworld.Difficulty == 0) return; // Disable enemy sensors on peaceful difficulty.
+
             SenseTimer.Update(gameTime);
             
             if (SenseTimer.HasTriggered)
                 Sense();
+
             Enemies.RemoveAll(ai => ai.IsDead);
         }
 

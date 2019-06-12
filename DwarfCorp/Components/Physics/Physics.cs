@@ -38,7 +38,6 @@ namespace DwarfCorp
         public Timer SleepTimer { get; set; }
         public Timer WakeTimer { get; set; }
 
-        private bool applyGravityThisFrame = true;
         private float Rotation = 0.0f;
         private bool overrideSleepThisFrame = true;
 
@@ -112,9 +111,7 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
 
             if (!Active)
-            {
                 return;
-            }
 
             // Never apply physics when animating!
             if (AnimationQueue.Count > 0)
@@ -123,42 +120,37 @@ namespace DwarfCorp
                 return;
             }
 
-            if (gameTime.Speed < 0.01)
-            {
+            if (gameTime.Speed < 0.01) // This a poor man's IsPaused? Does this even get called if paused?
                 return;
-            }
 
             // How would this get a NaN anyway?
             if (MathFunctions.HasNan(Velocity))
-            {
                 Velocity = Vector3.Zero;
-                //throw new InvalidOperationException(string.Format("Physics went haywire for object {0} : {1}", GlobalID, Name));
-            }
 
-            if (IsSleeping)
+            if (AllowPhysicsSleep)
             {
-                applyGravityThisFrame = false;
-            }
+                bool goingSlow = Velocity.LengthSquared() < 0.05f;
+                // If we're not sleeping and moving very slowly, go to sleep.
 
-            bool goingSlow = Velocity.LengthSquared() < 0.05f;
-            // If we're not sleeping and moving very slowly, go to sleep.
-            if (AllowPhysicsSleep && !IsSleeping && goingSlow)
-            {
-                SleepTimer.Update(gameTime);
-                if (SleepTimer.HasTriggered)
+                if (!IsSleeping && goingSlow)
                 {
                     WakeTimer.Reset();
-                    Velocity = Vector3.Zero;
-                    IsSleeping = true;
+                    SleepTimer.Update(gameTime);
+                    if (SleepTimer.HasTriggered)
+                    {
+                        WakeTimer.Reset();
+                        Velocity = Vector3.Zero;
+                        IsSleeping = true;
+                    }
                 }
-            }
-            else if (AllowPhysicsSleep && IsSleeping && !goingSlow)
-            {
-                WakeTimer.Update(gameTime);
-                SleepTimer.Reset();
-                if (WakeTimer.HasTriggered)
+                else if (IsSleeping && !goingSlow)
                 {
-                    IsSleeping = false;
+                    WakeTimer.Update(gameTime);
+                    SleepTimer.Reset();
+                    if (WakeTimer.HasTriggered)
+                    {
+                        IsSleeping = false;
+                    }
                 }
             }
 
@@ -223,10 +215,7 @@ namespace DwarfCorp
                     }
 
                     // Apply gravity.
-                    if (applyGravityThisFrame)
-                    {
-                        ApplyForce(Gravity, FixedDT / velocityLength);
-                    }
+                    ApplyForce(Gravity, FixedDT / velocityLength);
 
                     // Damp the velocity.
                     Vector3 dampingForce = -Velocity * (1.0f - LinearDamping);
@@ -302,7 +291,7 @@ namespace DwarfCorp
                 }
 
             }
-            applyGravityThisFrame = true;
+
             CheckLiquids(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
             PreviousVelocity = Velocity;
             PreviousPosition = Position;
@@ -319,14 +308,10 @@ namespace DwarfCorp
                 IsInLiquid = true;
             }
             else
-            {
                 IsInLiquid = false;
-            }
 
             if (IsInLiquid && Velocity.LengthSquared() > 0.5f)
-            {
                 Manager.World.ParticleManager.Trigger("splat", Position + MathFunctions.RandVector3Box(-0.5f, 0.5f, 0.1f, 0.25f, -0.5f, 0.5f), Color.White, MathFunctions.Random.Next(0, 2));
-            }
         }
 
         public virtual void OnTerrainCollision(VoxelHandle vox)

@@ -24,7 +24,7 @@ namespace DwarfCorp
                 
         public List<DynamicLight> DynamicLights { get; set; }
 
-        public List<GameComponent> Entities = new List<GameComponent>();
+        public HashSet<GameComponent> Entities = new HashSet<GameComponent>();
 
 
         public void InvalidateSlice(int LocalY)

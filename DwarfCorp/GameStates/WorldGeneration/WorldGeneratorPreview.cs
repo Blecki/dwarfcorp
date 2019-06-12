@@ -180,7 +180,8 @@ namespace DwarfCorp.GameStates
 
         public void Update(DwarfTime Time)
         {
-            Camera.Update(Root.MousePosition, Time);
+            if (Root != null)
+                Camera.Update(Root.MousePosition, Time);
         }
 
         private float GetIconScale(Point pos)
@@ -496,9 +497,9 @@ namespace DwarfCorp.GameStates
             PreviewRenderTarget.ContentLost += PreviewRenderTarget_ContentLost;
         }
 
-        public static int[] SetUpTerrainIndices(int width, int height)
+        private static int[] SetUpTerrainIndices(int width, int height)
         {
-            int[] indices = new int[(width - 1) * (height - 1) * 6];
+            var indices = new int[(width - 1) * (height - 1) * 6];
             int counter = 0;
             for (int y = 0; y < height - 1; y++)
             {
@@ -522,7 +523,7 @@ namespace DwarfCorp.GameStates
             return indices;
         }
 
-        public void CreateMesh(GraphicsDevice Device)
+        private void CreateMesh(GraphicsDevice Device)
         {
             var numVerts = (Overworld.Width + 1) * (Overworld.Height + 1);
             LandMesh = new VertexBuffer(Device, VertexPositionNormalTexture.VertexDeclaration, numVerts, BufferUsage.None);
@@ -545,6 +546,7 @@ namespace DwarfCorp.GameStates
                     i++;
                 }
             }
+
             LandMesh.SetData(verts);
 
             var indices = SetUpTerrainIndices((Overworld.Width + 1), (Overworld.Height + 1));
