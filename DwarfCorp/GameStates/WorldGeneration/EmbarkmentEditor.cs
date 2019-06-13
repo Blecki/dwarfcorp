@@ -25,6 +25,8 @@ namespace DwarfCorp.GameStates
             this.Settings = Settings;
         }
 
+        private DwarfBux FundsAvailable => Settings.PlayerCorporationFunds - Settings.InstanceSettings.CalculateLandValue();
+
         private Widget CreateEmployeeListing(Applicant Applicant, int Index)
         {
             var bar = Root.ConstructWidget(new Widget
@@ -89,7 +91,7 @@ namespace DwarfCorp.GameStates
             TotalCost.Invalidate();
 
             var s = "";
-            Settings.InstanceSettings.InitalEmbarkment.ValidateEmbarkment(Settings, out s);
+            InstanceSettings.ValidateEmbarkment(Settings, out s);
             ValidationLabel.Text = s;
             ValidationLabel.Invalidate();
         }
@@ -124,10 +126,10 @@ namespace DwarfCorp.GameStates
                         Settings.InstanceSettings.InitalEmbarkment.Resources.Add(resource);
 
                     var message = "";
-                    var valid = Settings.InstanceSettings.InitalEmbarkment.ValidateEmbarkment(Settings, out message);
-                    if (valid == Embarkment.ValidationResult.Pass)
+                    var valid = Embarkment.ValidateEmbarkment(Settings, out message);
+                    if (valid == InstanceSettings.ValidationResult.Pass)
                         this.Close();
-                    else if (valid == Embarkment.ValidationResult.Query)
+                    else if (valid == InstanceSettings.ValidationResult.Query)
                     {
                         var popup = new Gui.Widgets.Confirm()
                         {
@@ -140,7 +142,7 @@ namespace DwarfCorp.GameStates
                         };
                         Root.ShowModalPopup(popup);
                     }
-                    else if (valid == Embarkment.ValidationResult.Reject)
+                    else if (valid == InstanceSettings.ValidationResult.Reject)
                     {
                         var popup = new Gui.Widgets.Confirm()
                         {
@@ -202,7 +204,7 @@ namespace DwarfCorp.GameStates
             availableFunds.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockRight,
-                Text = Settings.PlayerCorporationFunds.ToString(),
+                Text = FundsAvailable.ToString(),
                 MinimumSize = new Point(128, 0),
                 TextHorizontalAlign = HorizontalAlign.Right
             });
@@ -211,7 +213,7 @@ namespace DwarfCorp.GameStates
 
             Cash = moneyBar.AddChild(new Gui.Widgets.MoneyEditor
             {
-                MaximumValue = (int)Settings.PlayerCorporationFunds,
+                MaximumValue = (int)FundsAvailable,
                 MinimumSize = new Point(128, 33),
                 AutoLayout = AutoLayout.DockRight,
                 OnValueChanged = (sender) =>

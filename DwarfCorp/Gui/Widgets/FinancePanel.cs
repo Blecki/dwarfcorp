@@ -66,6 +66,8 @@ namespace DwarfCorp.Gui.Widgets
             {
                 numrows = 0;
                 InfoWidget.Clear();
+                AddRow("Corporate Liquid Assets:", World.Overworld.PlayerCorporationFunds.ToString());
+                AddRow("Corporate Material Assets:", new DwarfBux(World.Overworld.PlayerCorporationResources.Enumerate().Sum(r => ResourceLibrary.GetResourceByName(r.Type).MoneyValue * r.Count)).ToString());
                 AddRow("Liquid assets:", Faction.Economy.Funds.ToString());
                 var resources = World.ListResourcesInStockpilesPlusMinions();
                 AddRow("Material assets:", String.Format("{0} goods valued at ${1}", resources.Values.Select(r => r.First.Count + r.Second.Count).Sum(),

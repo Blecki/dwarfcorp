@@ -11,20 +11,17 @@ namespace DwarfCorp
         public ResourceSet Resources = new ResourceSet();
         public DwarfBux Funds;
 
-        public enum ValidationResult
+        public DwarfBux TotalCost()
         {
-            Reject,
-            Query,
-            Pass
+            return Funds + Employees.Sum(e => e.SigningBonus);
         }
 
-        public ValidationResult ValidateEmbarkment(GameStates.Overworld Settings, out String Message)
+        public static InstanceSettings.ValidationResult ValidateEmbarkment(GameStates.Overworld Settings, out String Message)
         {
-            var cost = Settings.InstanceSettings.InitalEmbarkment.Funds + Settings.InstanceSettings.InitalEmbarkment.Employees.Sum(e => e.SigningBonus);
-            if (cost > Settings.PlayerCorporationFunds)
+            if (Settings.InstanceSettings.TotalCreationCost() > Settings.PlayerCorporationFunds)
             {
-                Message = "You do not have enough funds.";
-                return ValidationResult.Reject;
+                Message = "You do not have enough funds. Save Anyway?";
+                return InstanceSettings.ValidationResult.Query;
             }
 
             var supervisionCap = Settings.InstanceSettings.InitalEmbarkment.Employees.Where(e => e.Class.Managerial).Select(e => e.Level.BaseStats.Intelligence).Sum() + 4;
@@ -33,17 +30,17 @@ namespace DwarfCorp
             if (employeeCount > supervisionCap)
             {
                 Message = "You do not have enough supervision.";
-                return ValidationResult.Reject;
+                return InstanceSettings.ValidationResult.Reject;
             }
 
             if (employeeCount == 0)
             {
                 Message = "Are you sure you don't want any employees?";
-                return ValidationResult.Query;
+                return InstanceSettings.ValidationResult.Query;
             }
 
             Message = "Looks good, let's go!";
-            return ValidationResult.Pass;
+            return InstanceSettings.ValidationResult.Pass;
         }
     }
 }

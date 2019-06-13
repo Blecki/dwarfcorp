@@ -12,8 +12,10 @@ namespace DwarfCorp
             if (!string.IsNullOrEmpty(Settings.Overworld.InstanceSettings.ExistingFile)) return; // Todo: Don't call in the first place??
              
             var port = GenerateInitialBalloonPort(Renderer.Camera.Position.X, Renderer.Camera.Position.Z, 1, Settings);
+
             PlayerFaction.Economy.Funds = Settings.Overworld.InstanceSettings.InitalEmbarkment.Funds;
             Settings.Overworld.PlayerCorporationFunds -= Settings.Overworld.InstanceSettings.InitalEmbarkment.Funds;
+            Settings.Overworld.PlayerCorporationFunds -= Settings.Overworld.InstanceSettings.CalculateLandValue();
 
             foreach (var res in Settings.Overworld.InstanceSettings.InitalEmbarkment.Resources.Enumerate())
             {

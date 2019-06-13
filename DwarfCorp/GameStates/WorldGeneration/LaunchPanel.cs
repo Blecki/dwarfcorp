@@ -35,20 +35,8 @@ namespace DwarfCorp.GameStates
 
         public override void Construct()
         {
-            AddChild(new Gui.Widget
-            {
-                Text = "Back",
-                Border = "border-button",
-                ChangeColorOnHover = true,
-                TextColor = new Vector4(0, 0, 0, 1),
-                Font = "font16",
-                AutoLayout = Gui.AutoLayout.DockTop,
-                OnClick = (sender, args) =>
-                {
-                    GameStateManager.PopState();
-                }
-            });
-
+            Padding = new Margin(2, 2, 0, 0);
+            
             StartButton = AddChild(new Gui.Widget
             {
                 Text = "Start Game",
@@ -77,13 +65,13 @@ namespace DwarfCorp.GameStates
                         Settings.InstanceSettings.LoadType = LoadType.CreateNew;
 
                         var message = "";
-                        var valid = Settings.InstanceSettings.InitalEmbarkment.ValidateEmbarkment(Settings, out message);
-                        if (valid == Embarkment.ValidationResult.Pass)
+                        var valid = InstanceSettings.ValidateEmbarkment(Settings, out message);
+                        if (valid == InstanceSettings.ValidationResult.Pass)
                         {
                             GameStateManager.ClearState();
                             GameStateManager.PushState(new LoadState(Game, Settings, LoadTypes.UseExistingOverworld));
                         }
-                        else if (valid == Embarkment.ValidationResult.Query)
+                        else if (valid == InstanceSettings.ValidationResult.Query)
                         {
                             var popup = new Gui.Widgets.Confirm()
                             {
@@ -99,7 +87,7 @@ namespace DwarfCorp.GameStates
                             };
                             Root.ShowModalPopup(popup);
                         }
-                        else if (valid == Embarkment.ValidationResult.Reject)
+                        else if (valid == InstanceSettings.ValidationResult.Reject)
                         {
                             var popup = new Gui.Widgets.Confirm()
                             {
@@ -143,7 +131,7 @@ namespace DwarfCorp.GameStates
                 Settings.InstanceSettings.Origin.Y < 0 || Settings.InstanceSettings.Origin.Y >= Settings.Height)
             {
                 StartButton.Hidden = true;
-                CellInfo.Text = "Select a spawn cell to continue";
+                CellInfo.Text = "\nSelect a spawn cell to continue";
                 SaveName = "";
             }
             else
@@ -155,7 +143,7 @@ namespace DwarfCorp.GameStates
                 {
                     StartButton.Text = "Load";
                     CellInfo.Clear();
-                    CellInfo.Text = saveGame.Metadata.DescriptionString;
+                    CellInfo.Text = "\n" + saveGame.Metadata.DescriptionString;
                     StartButton.Hidden = false;
                     CellInfo.Layout();
                 }
@@ -165,6 +153,11 @@ namespace DwarfCorp.GameStates
                     StartButton.Text = "Create";
                     CellInfo.Clear();
                     CellInfo.Text = "";
+
+                    var cellInfoText = Root.ConstructWidget(new Widget
+                    {
+                        AutoLayout = AutoLayout.DockFill
+                    });
 
                     CellInfo.AddChild(new Gui.Widget
                     {
@@ -182,6 +175,7 @@ namespace DwarfCorp.GameStates
                             {
                                 OnClose = (s) =>
                                 {
+                                    SetCreateCellInfoText(cellInfoText);
                                 }
                             });
 
@@ -189,17 +183,28 @@ namespace DwarfCorp.GameStates
                         }
                     });
 
-                    CellInfo.AddChild(new Widget
-                    {
-                        Text = String.Format("World Size: {0}x{1}",
-                            Settings.InstanceSettings.Cell.Bounds.Width * VoxelConstants.ChunkSizeX,
-                            Settings.InstanceSettings.Cell.Bounds.Height * VoxelConstants.ChunkSizeZ), // Todo: Display cost of embarkment here
-                        AutoLayout = AutoLayout.DockFill
-                    });
+                    CellInfo.AddChild(cellInfoText);
+                    SetCreateCellInfoText(cellInfoText);
 
                     CellInfo.Layout();
                 }
             }
+        }
+
+        private void SetCreateCellInfoText(Widget Widget)
+        {
+            Widget.Text = String.Format("\nCorporate Funds: {5}\nWorld Size: {0}x{1}\nLand Cost: {2}\nEmbarkment Cost: {3}\nTotal Cost: {4}",
+                Settings.InstanceSettings.Cell.Bounds.Width * VoxelConstants.ChunkSizeX,
+                Settings.InstanceSettings.Cell.Bounds.Height * VoxelConstants.ChunkSizeZ,
+                Settings.InstanceSettings.CalculateLandValue(),
+                Settings.InstanceSettings.InitalEmbarkment.TotalCost(),
+                Settings.InstanceSettings.TotalCreationCost(),
+                Settings.PlayerCorporationFunds);
+
+            if (Settings.InstanceSettings.TotalCreationCost() > Settings.PlayerCorporationFunds)
+                Widget.TextColor = new Vector4(1, 0, 0, 1);
+            else
+                Widget.TextColor = new Vector4(0, 0, 0, 1);
         }
 
         public void DrawPreview()

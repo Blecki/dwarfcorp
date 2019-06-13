@@ -57,9 +57,10 @@ namespace DwarfCorp.GameStates
             PanelState = PanelStates.Launch;
 
             var rect = RightPanel.Rect;
-            MainPanel.RemoveChild(RightPanel);
+            var parent = RightPanel.Parent;
+            RightPanel.Close();
 
-            RightPanel = MainPanel.AddChild(new LaunchPanel(Game, Generator, Settings, this)
+            RightPanel = parent.AddChild(new LaunchPanel(Game, Generator, Settings, this)
             {
                 Rect = rect
             });
@@ -86,10 +87,31 @@ namespace DwarfCorp.GameStates
                 InteriorMargin = new Gui.Margin(24, 0, 0, 0),
             });
 
+            var rightPanel = MainPanel.AddChild(new Widget
+            {
+                MinimumSize = new Point(256, 0),
+                Padding = new Margin(2, 2, 2, 2),
+                AutoLayout = AutoLayout.DockRight
+            });
+
+            rightPanel.AddChild(new Gui.Widget
+            {
+                Text = "Back",
+                Border = "border-button",
+                ChangeColorOnHover = true,
+                TextColor = new Vector4(0, 0, 0, 1),
+                Font = "font16",
+                AutoLayout = Gui.AutoLayout.DockTop,
+                OnClick = (sender, args) =>
+                {
+                    GameStateManager.PopState();
+                }
+            });
+
             switch (PanelState)
             {
                 case PanelStates.Generate:
-                    RightPanel = MainPanel.AddChild(new GenerationPanel(Game, Settings)
+                    RightPanel = rightPanel.AddChild(new GenerationPanel(Game, Settings)
                     {
                         RestartGeneration = () => RestartGeneration(),
                         GetGenerator = () => Generator,
@@ -97,17 +119,13 @@ namespace DwarfCorp.GameStates
                         {
                             SwitchToLaunchPanel();
                         },
-                        AutoLayout = Gui.AutoLayout.DockRight,
-                        MinimumSize = new Point(256, 0),
-                        Padding = new Gui.Margin(2, 2, 2, 2)
+                        AutoLayout = Gui.AutoLayout.DockFill,
                     });
                     break;
                 case PanelStates.Launch:
-                    RightPanel = MainPanel.AddChild(new LaunchPanel(Game, Generator, Settings, this)
+                    RightPanel = rightPanel.AddChild(new LaunchPanel(Game, Generator, Settings, this)
                     {
-                        AutoLayout = AutoLayout.DockRight,
-                        MinimumSize = new Point(256, 0),
-                        Padding = new Gui.Margin(2, 2, 2, 2)
+                        AutoLayout = AutoLayout.DockFill,
                     });
 
                     break;

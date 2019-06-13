@@ -1,8 +1,10 @@
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System;
+using System.Linq;
 
-namespace DwarfCorp.GameStates
+namespace DwarfCorp
 {
     public enum LoadType
     {
@@ -29,6 +31,33 @@ namespace DwarfCorp.GameStates
         {
             this.Cell = Cell;
         }
+
+        public DwarfBux CalculateLandValue()
+        {
+            return Cell.Bounds.Width * Cell.Bounds.Height * 5;
+        }
         
+        public DwarfBux TotalCreationCost()
+        {
+            return CalculateLandValue() + InitalEmbarkment.TotalCost();
+        }
+
+        public enum ValidationResult
+        {
+            Reject,
+            Query,
+            Pass
+        }
+
+        public static ValidationResult ValidateEmbarkment(GameStates.Overworld Settings, out String Message)
+        {
+            if (Settings.InstanceSettings.TotalCreationCost() > Settings.PlayerCorporationFunds)
+            {
+                Message = "You do not have enough funds.";
+                return ValidationResult.Reject;
+            }
+
+            return Embarkment.ValidateEmbarkment(Settings, out Message);
+        }
     }
 }

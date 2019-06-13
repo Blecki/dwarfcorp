@@ -32,6 +32,8 @@ namespace DwarfCorp.GameStates
 
         public override void Construct()
         {
+            Padding = new Margin(2, 2, 0, 0);
+
             AddChild(new Gui.Widget
             {
                 Text = "Randomize",
@@ -99,35 +101,14 @@ namespace DwarfCorp.GameStates
                 }
             });
 
-            var lastRow = AddChild(new Widget
-            {
-                AutoLayout = AutoLayout.DockBottom,
-                MinimumSize = new Point(0, 32)
-            });
-
-            lastRow.AddChild(new Gui.Widget
-            {
-                Text = "Back",
-                Border = "border-button",
-                ChangeColorOnHover = true,
-                TextColor = new Vector4(0, 0, 0, 1),
-                Font = "font16",
-                AutoLayout = Gui.AutoLayout.DockLeft,
-                OnClick = (sender, args) =>
-                {
-                    Generator.Abort();
-                    GameStateManager.PopState();
-                }
-            });
-
-            StartButton = lastRow.AddChild(new Gui.Widget
+            StartButton = AddChild(new Gui.Widget
             {
                 Text = "Launch",
                 Border = "border-button",
                 ChangeColorOnHover = true,
                 TextColor = new Vector4(0, 0, 0, 1),
                 Font = "font16",
-                AutoLayout = Gui.AutoLayout.DockFill,
+                AutoLayout = Gui.AutoLayout.DockBottom,
                 OnClick = (sender, args) =>
                 {
                     Settings.Company.Name = NameField.Text;
