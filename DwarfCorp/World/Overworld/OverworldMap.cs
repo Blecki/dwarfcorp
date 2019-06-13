@@ -247,11 +247,12 @@ namespace DwarfCorp
                     for (var tx = 0; tx < scale; ++tx)
                         for (var ty = 0; ty < scale; ++ty)
                         {
+                            var h2 = LinearInterpolate(new Vector2((x * scale) + tx, (y * scale) + ty) / scale, OverworldField.Height);
                             var rx = (x * scale) + tx;
                             var ry = (y * scale) + ty;
                             var pixelIndex = ry * Map.GetLength(0) * scale + rx;
                             var cellColor = worldData[pixelIndex];
-                            cellColor = new Color((float)(cellColor.R) * (h1 + 0.5f) / 255.0f, (float)(cellColor.G * (h1 + 0.5f)) / 255.0f, (float)(cellColor.B * (h1 + 0.5f)) / 255.0f, 1.0f);
+                            cellColor = new Color((float)(cellColor.R) * (h2 + 0.5f) / 255.0f, (float)(cellColor.G * (h2 + 0.5f)) / 255.0f, (float)(cellColor.B * (h2 + 0.5f)) / 255.0f, 1.0f);
                             worldData[pixelIndex] = cellColor;
                         }
                 }
