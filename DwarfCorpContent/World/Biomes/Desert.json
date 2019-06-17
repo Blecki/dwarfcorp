@@ -1,6 +1,6 @@
 {
   "Name": "Desert",
-  "Icon": 12,
+  "Icon": "0, 3",
   "DayAmbience": "sfx_amb_desert",
   "RuinFloorType" : "Brown Tile",
   "RuinWallType" : "Sandstone",

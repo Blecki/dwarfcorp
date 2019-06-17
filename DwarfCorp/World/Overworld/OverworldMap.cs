@@ -14,15 +14,11 @@ namespace DwarfCorp
 {
     public class OverworldMap
     {
-        public static Dictionary<string, Color> HeightColors = new Dictionary<string, Color>
+        // Todo: Kill
+        private static Dictionary<string, Color> HeightColors = new Dictionary<string, Color>
         {
             {"Sea", new Color(30, 30, 150)},
             {"Water", new Color(50, 50, 255)},
-            {"Shore", new Color(180, 180, 100)},
-            {"Lowlands", new Color(50, 180, 40)},
-            {"Highlands", new Color(20, 100, 20)},
-            {"Mountains", new Color(80, 70, 50)},
-            {"Peaks", new Color(200, 200, 200)},
         };
 
         public static LibNoise.Perlin heightNoise = new LibNoise.Perlin()
@@ -133,7 +129,7 @@ namespace DwarfCorp
         {
             for (var x = 0; x < Map.GetLength(0); ++x)
                 for (var y = 0; y < Map.GetLength(1); ++y)
-                    worldData[(y * Map.GetLength(0)) + x] = new Color(Map[x, y].Height_, Map[x, y].Faction, (byte)Map[x, y].Biome, (byte)255);
+                    worldData[(y * Map.GetLength(0)) + x] = new Color(Map[x, y].Height_, (byte)0, (byte)Map[x, y].Biome, (byte)255);
         }
 
         public static void DecodeSaveTexture(
@@ -147,21 +143,18 @@ namespace DwarfCorp
                 {
                     var color = worldData[(y * width) + x];
                     map[x, y].Height_ = color.R;
-                    map[x, y].Faction = color.G;
                     map[x, y].Biome = color.B;
                     map[x, y].Rainfall_ = (byte)(BiomeLibrary.GetBiome(map[x, y].Biome).Rain * 255);
                     map[x, y].Temperature = (float)(BiomeLibrary.GetBiome(map[x, y].Biome).Temp);
                 }
         }
 
-        public void CreateTexture(string displayMode,
+        public void CreateTexture(
             List<OverworldFaction> NativeFactions,
             int scale,
             Color[] worldData,
             float sealevel)
         {
-            string index = "";
-
             for (int x = 0; x < Map.GetLength(0); ++x)
             {
                 for (int y = 0; y < Map.GetLength(1); ++y)
@@ -169,59 +162,15 @@ namespace DwarfCorp
                     var h1 = Map[x, y].GetValue(OverworldField.Height);
                     var cellColor = Color.DarkBlue;
 
-                    if (displayMode == "Height")
+                    if (h1 < 0.1f)
+                        cellColor = HeightColors["Sea"];
+                    else if (h1 >= 0.1f && h1 <= sealevel)
+                        cellColor = HeightColors["Water"];
+                    else
                     {
-                        if (h1 < 0.1f)
-                            index = "Sea";
-                        else if (h1 >= 0.1f && h1 <= sealevel)
-                            index = "Water";
-                        else if (h1 >= 0.2f && h1 < 0.21f)
-                            index = "Shore";
-                        else if (h1 >= 0.21f && h1 < 0.4f)
-                            index = "Lowlands";
-                        else if (h1 >= 0.4f && h1 < 0.6f)
-                            index = "Highlands";
-                        else if (h1 >= 0.6f && h1 < 0.9f)
-                            index = "Mountains";
-                        else
-                            index = "Peaks";
-
-                        cellColor = HeightColors[index];
-                    }
-                    else if (displayMode == "Biomes")
-                    {
-                        if (h1 < 0.1f)
-                            cellColor = HeightColors["Sea"];
-                        else if (h1 >= 0.1f && h1 <= sealevel)
-                            cellColor = HeightColors["Water"];
-                        else
-                        {
-                            var _biome = BiomeLibrary.GetBiome(Map[x, y].Biome);
-                            if (_biome != null)
-                                cellColor = _biome.MapColor;
-                        }
-                    }
-                    else if (displayMode == "Factions")
-                    {
-                        var faction = Map[x, y].Faction;
-
-                        if (faction > 0 && faction <= NativeFactions.Count)
-                        {
-                            bool inside = x > 0 && x < Map.GetLength(0) - 1 && y > 0 && y < Map.GetLength(1) - 1;
-                            cellColor = NativeFactions[faction - 1].PrimaryColor;
-                            if (inside &&
-                                (Map[x + 1, y].Faction != faction ||
-                                Map[x - 1, y].Faction != faction ||
-                                Map[x, y - 1].Faction != faction ||
-                                Map[x, y + 1].Faction != faction ||
-                                Map[x + 1, y + 1].Faction != faction ||
-                                Map[x - 1, y - 1].Faction != faction ||
-                                Map[x + 1, y - 1].Faction != faction ||
-                                Map[x - 1, y + 1].Faction != faction))
-                                cellColor = NativeFactions[faction - 1].SecondaryColor;
-                        }
-                        else if (h1 > sealevel)
-                            cellColor = Color.Gray;
+                        var _biome = BiomeLibrary.GetBiome(Map[x, y].Biome);
+                        if (_biome != null)
+                            cellColor = _biome.MapColor;
                     }
 
                     for (var tx = 0; tx < scale; ++tx)

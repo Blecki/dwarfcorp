@@ -1,6 +1,6 @@
 {
   "Name": "Jolly Forest",
-  "Icon": 10,
+  "Icon": "2, 2",
   "DayAmbience": "sfx_amb_tundra",
   "RuinFloorType" : "Blue Tile",
   "RuinWallType" : "Ice",

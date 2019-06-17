@@ -20,7 +20,6 @@ namespace DwarfCorp
         Height = 3,
         Temperature = 4,
         Rainfall = 5,
-        Factions = 6,
         NumFields = 7
     }
 
@@ -74,8 +73,6 @@ namespace DwarfCorp
             set { Rainfall_ = ClampValue(value); }
         }
 
-        public byte Faction { get; set; }
-
         [JsonProperty] private byte Erosion_;
         [JsonProperty] private byte Weathering_;
         [JsonProperty] private byte Faults_;
@@ -100,8 +97,6 @@ namespace DwarfCorp
                     return Temperature;
                 case OverworldField.Weathering:
                     return Weathering;
-                case OverworldField.Factions:
-                    return Faction;
             }
 
             return -1.0f;
@@ -128,9 +123,6 @@ namespace DwarfCorp
                     break;
                 case OverworldField.Weathering:
                     Weathering = value;
-                    break;
-                case OverworldField.Factions:
-                    Faction = (byte)(value * 255.0f);
                     break;
             }
         }

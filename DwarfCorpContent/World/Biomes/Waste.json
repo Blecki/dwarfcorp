@@ -1,6 +1,6 @@
 {
   "Name": "Waste",
-  "Icon": 11,
+  "Icon": "3, 2",
   "Vegetation": [],
   "DayAmbience": "sfx_amb_forest_day",
   "NightAmbience": "sfx_amb_forest_night",

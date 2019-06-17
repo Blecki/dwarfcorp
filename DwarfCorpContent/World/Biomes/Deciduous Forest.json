@@ -1,6 +1,6 @@
 {
   "Name": "Deciduous Forest",
-  "Icon": 8,
+  "Icon": "0, 3",
   "DayAmbience": "sfx_amb_forest_day",
   "NightAmbience": "sfx_amb_forest_night",
   "RuinFloorType" : "Stockpile",

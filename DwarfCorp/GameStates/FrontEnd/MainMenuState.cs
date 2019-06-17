@@ -21,7 +21,7 @@ namespace DwarfCorp.GameStates
             CreateMenuItem(frame,
                 Library.GetString("new-game"),
                 Library.GetString("new-game-tooltip"),
-                (sender, args) => GameStateManager.PushState(new WorldGeneratorState(Game, new Overworld(), WorldGeneratorState.PanelStates.Generate)));
+                (sender, args) => GameStateManager.PushState(new WorldGeneratorState(Game, Overworld.Create(), WorldGeneratorState.PanelStates.Generate)));
 
             CreateMenuItem(frame, 
                 Library.GetString("load-game"),
@@ -49,7 +49,7 @@ namespace DwarfCorp.GameStates
                 {
                     DwarfGame.LogSentryBreadcrumb("Menu", "User generating a random world.");
 
-                    var overworldSettings = new Overworld();
+                    var overworldSettings = Overworld.Create();
                     overworldSettings.InstanceSettings.InitalEmbarkment.Funds = 1000u;
                     overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Crafter", overworldSettings.Company));
                     overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Manager", overworldSettings.Company));

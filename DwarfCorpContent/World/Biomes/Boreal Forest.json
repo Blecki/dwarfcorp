@@ -1,6 +1,6 @@
 {
   "Name": "Boreal Forest",
-  "Icon": 1,
+  "Icon": "1, 0",
   "DayAmbience": "sfx_amb_forest_day",
   "NightAmbience": "sfx_amb_forest_night",
   "RuinFloorType" : "Stockpile",

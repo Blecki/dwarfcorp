@@ -8,7 +8,7 @@ namespace DwarfCorp.GameStates
         public CompanyInformation Company;
         public ResourceSet PlayerCorporationResources;
         public DwarfBux PlayerCorporationFunds;
-        public List<ColonyCell> ColonyCells;
+        public CellSet ColonyCells;
         public List<OverworldFaction> Natives;
 
         public int Width = 128;
@@ -29,16 +29,19 @@ namespace DwarfCorp.GameStates
             return TextGenerator.GenerateRandom(TextGenerator.GetAtoms(ContentPaths.Text.Templates.worlds));
         }
 
-        public Overworld()
+        public static Overworld Create()
         {
-            Name = GetRandomWorldName();
-            Seed = Name.GetHashCode();
-            Company = new CompanyInformation();
-            Map = new OverworldMap(Width, Height);
-            PlayerCorporationResources = new ResourceSet();
-            ColonyCells = ColonyCell.DeriveFromTexture("World\\colonies");
+            var r = new Overworld();
+            r.Name = GetRandomWorldName();
+            r.Seed = r.Name.GetHashCode();
+            r.Company = new CompanyInformation();
+            r.Map = new OverworldMap(r.Width, r.Height);
+            r.PlayerCorporationResources = new ResourceSet();
 
-            InstanceSettings = new InstanceSettings(ColonyCells[1]);
+            r.ColonyCells = new CellSet("World\\colonies");
+            r.InstanceSettings = new InstanceSettings(r.ColonyCells.GetCellAt(16, 0));
+
+            return r;
         }
     }
 }

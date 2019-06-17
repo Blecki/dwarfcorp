@@ -10,7 +10,6 @@ using System.IO;
 
 namespace DwarfCorp.GameStates
 {
-    // Todo: Make this use wait cursor while generating.
     public class LaunchPanel : Widget
     {
         private Gui.Widget StartButton;
@@ -31,6 +30,15 @@ namespace DwarfCorp.GameStates
 
             if (Generator != null && Generator.CurrentState != OverworldGenerator.GenerationState.Finished)
                 throw new InvalidProgramException();
+        }
+
+        private void LaunchNewGame()
+        {
+            // Todo: Anger faction when you claim their land.
+            Settings.InstanceSettings.Cell.Faction = Settings.Natives.FirstOrDefault(f => f.Name == "Player");
+
+            GameStateManager.ClearState();
+            GameStateManager.PushState(new LoadState(Game, Settings, LoadTypes.UseExistingOverworld));
         }
 
         public override void Construct()
@@ -67,10 +75,7 @@ namespace DwarfCorp.GameStates
                         var message = "";
                         var valid = InstanceSettings.ValidateEmbarkment(Settings, out message);
                         if (valid == InstanceSettings.ValidationResult.Pass)
-                        {
-                            GameStateManager.ClearState();
-                            GameStateManager.PushState(new LoadState(Game, Settings, LoadTypes.UseExistingOverworld));
-                        }
+                            LaunchNewGame();
                         else if (valid == InstanceSettings.ValidationResult.Query)
                         {
                             var popup = new Gui.Widgets.Confirm()
@@ -79,10 +84,7 @@ namespace DwarfCorp.GameStates
                                 OnClose = (_sender) =>
                                 {
                                     if ((_sender as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
-                                    {
-                                        GameStateManager.ClearState();
-                                        GameStateManager.PushState(new LoadState(Game, Settings, LoadTypes.UseExistingOverworld));
-                                    }
+                                        LaunchNewGame();
                                 }
                             };
                             Root.ShowModalPopup(popup);

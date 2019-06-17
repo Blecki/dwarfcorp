@@ -1,6 +1,6 @@
 {
   "Name": "Jungle",
-  "Icon": 9,
+  "Icon": "1, 2",
   "DayAmbience": "sfx_amb_forest_day",
   "NightAmbience": "sfx_amb_forest_night",
   "RuinFloorType" : "Cobble",

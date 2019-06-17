@@ -1,6 +1,6 @@
 {
   "Name": "Tundra",
-  "Icon": -1,
+  "Icon": "0, 0",
   "WaterSurfaceIce": true,
   "DayAmbience": "sfx_amb_tundra",
   "RuinFloorType" : "Snow",

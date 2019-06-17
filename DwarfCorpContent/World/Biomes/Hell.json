@@ -1,6 +1,6 @@
 {
   "Name": "Hell",
-  "Icon": 11,
+  "Icon": "0, 0",
   "Vegetation": [
     {
       "Name": "Cave Mushroom",

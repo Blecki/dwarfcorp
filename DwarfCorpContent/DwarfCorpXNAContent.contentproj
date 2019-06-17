@@ -2086,6 +2086,11 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="World\stripes.png">
+      <Name>stripes</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <None Include="World\Classes\Manager.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Manager</Name>
@@ -2263,6 +2268,11 @@
       <Name>manager_hat</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Shaders\OverworldShader.fx">
+      <Name>OverworldShader</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
     </Compile>
     <Content Include="Text\Templates\names_demon.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

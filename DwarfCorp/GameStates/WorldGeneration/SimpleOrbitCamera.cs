@@ -13,7 +13,7 @@ namespace DwarfCorp.GameStates
     {
         private float phi = 1.2f;
         private float theta = -0.25f;
-        private float zoom = 0.9f;
+        private float zoom = 0.5f;
         private Vector3 Focus = new Vector3(0.5f, 0.0f, 0.5f);
         private Vector3 GoalFocus = new Vector3(0.5f, 0, 0.5f);
         private Point PreviousMousePosition;
@@ -55,7 +55,7 @@ namespace DwarfCorp.GameStates
             get
             {
                 return Matrix.CreatePerspectiveFieldOfView(1.5f, (float)Rect.Width /
-                    (float)Rect.Height, 0.01f, 3.0f);
+                    (float)Rect.Height, 0.01f, 300.0f);
             }
         }
 

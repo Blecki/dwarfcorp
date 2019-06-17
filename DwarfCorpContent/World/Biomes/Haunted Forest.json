@@ -1,6 +1,6 @@
 {
   "Name": "Haunted Forest",
-  "Icon": 11,
+  "Icon": "3, 2",
   "DayAmbience": "sfx_amb_forest_day",
   "NightAmbience": "sfx_amb_forest_night",
   "RuinFloorType" : "Blue Tile",

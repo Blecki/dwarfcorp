@@ -47,9 +47,9 @@ namespace DwarfCorp.GameStates
                 genThread.Abort();
         }
 
+        // Todo: Should belong to preview
         public IEnumerable<KeyValuePair<string, Color>> GetSpawnStats()
         {
-            var factions = GetFactionsInSpawn();
             var biomes = new HashSet<byte>();
             var spawnRect = Overworld.InstanceSettings.Cell.Bounds;
 
@@ -57,28 +57,11 @@ namespace DwarfCorp.GameStates
                 for (int y = Math.Max(spawnRect.Y, 0); y < Math.Min(spawnRect.Y + spawnRect.Height, Overworld.Height - 1); y++)
                     biomes.Add(Overworld.Map.Map[x, y].Biome);
 
-            if (factions.Count == 0)
+            if (Overworld.InstanceSettings.Cell.Faction == null)
                 yield return new KeyValuePair<string, Color>("Unclaimed land.", Color.White);
             else
-                yield return new KeyValuePair<string, Color>("Claimed by:", Color.White);
+                yield return new KeyValuePair<string, Color>(String.Format("Claimed by: {0}", Overworld.InstanceSettings.Cell.Faction.Name), Color.White);
             
-            foreach (var faction in factions)
-            {
-                int goodwill = (int)(faction.GoodWill * 100);
-                string dsc = "Neutral";
-                Color color = Color.White;
-                if (goodwill < -80)
-                {
-                    color = Color.Red;
-                    dsc = "Enemies";
-                }
-                else if (goodwill > 80)
-                {
-                    color = Color.Green;
-                    dsc = "Friendly";
-                }
-                yield return new KeyValuePair<string, Color>("    " + faction.Name + " (" + faction.Race + ") --" + dsc, color);
-            }
             yield return new KeyValuePair<string, Color>("Biomes: ", Color.White);
             foreach (var biome in biomes)
             {
@@ -93,40 +76,7 @@ namespace DwarfCorp.GameStates
                 yield return new KeyValuePair<string, Color>("    " + _biome.Name, biomeColor);
             }
         }
-
-        public List<OverworldFaction> GetFactionsInSpawn()
-        {
-            Rectangle spawnRect = Overworld.InstanceSettings.Cell.Bounds;
-            var toReturn = new List<OverworldFaction>();
-
-            try
-            {
-                for (int x = spawnRect.X; x < spawnRect.X + spawnRect.Width; x++)
-                {
-                    for (int y = spawnRect.Y; y < spawnRect.Y + spawnRect.Height; y++)
-                    {
-                        byte factionIdx = Overworld.Map.Map[x, y].Faction;
-
-                        if (factionIdx > 0 && factionIdx <= Overworld.Natives.Count)
-                        {
-                            var faction = Overworld.Natives[factionIdx - 1];
-
-                            if (!toReturn.Contains(faction))
-                                toReturn.Add(faction);
-
-                        }
-                    }
-                }
-            }
-            catch (IndexOutOfRangeException)
-            {
-                // Not sure how this is possible - it almost has to be that the spawnrect is somehow outside the overworld. 
-                // So, we'll just give up. Worst case is the land defaults to 'unclaimed'.
-            }
-
-            return toReturn;
-        }
-                
+              
         public void Generate()
         {
             if (CurrentState == GenerationState.NotStarted)
@@ -297,8 +247,11 @@ namespace DwarfCorp.GameStates
                 for (int i = 0; i < Overworld.GenerationSettings.NumCivilizations; i++)
                     Overworld.Natives.Add(library.GenerateOverworldFaction(Overworld, i, Overworld.GenerationSettings.NumCivilizations));
 
-                SeedCivs(Overworld.Map.Map, Overworld.Natives.Count, Overworld.Natives);
-                GrowCivs(Overworld.Map.Map, 200, Overworld.Natives);
+                Overworld.ColonyCells = new CellSet("World\\colonies");
+                Overworld.InstanceSettings = new InstanceSettings(Overworld.ColonyCells.GetCellAt(16, 0));
+
+                SeedCivs();
+                GrowCivs();
 
                 for (int x = 0; x < Overworld.Width; x++)
                 {
@@ -619,77 +572,34 @@ namespace DwarfCorp.GameStates
             return null;
         }
 
-        public void SeedCivs(OverworldCell[,] map, int numCivs, List<OverworldFaction> civs )
+        public void SeedCivs()
         {
-            for (int i = 0; i < numCivs; i++)
-            {
-                if (civs[i].InteractiveFaction && !civs[i].IsCorporate)
+            foreach (var civ in Overworld.Natives)
+                if (civ.InteractiveFaction && !civ.IsCorporate)
                 {
-                    Point? randomPoint = GetRandomLandPoint(map);
-
-                    if (randomPoint == null) continue;
-                    else
-                    {
-                        map[randomPoint.Value.X, randomPoint.Value.Y].Faction = (byte)(i + 1);
-                    }
+                    var randomCell = Overworld.ColonyCells.EnumerateCells().Where(c => c.Faction == null).SelectRandom();
+                    randomCell.Faction = civ;
                 }
-            }
         }
 
-        public void GrowCivs(OverworldCell[,] map, int iters, List<OverworldFaction> civs)
+        public void GrowCivs()
         {
-            int width = map.GetLength(0);
-            int height = map.GetLength(1);
-            byte[] neighbors = new byte[] {0, 0, 0, 0};
-            float[] neighborheights = new float[] { 0, 0, 0, 0};
-            Point[] deltas = new Point[] { new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(1, -1) };
-            for (int i = 0; i < iters; i++)
+            while (true)
             {
-                for (int x = 1; x < width - 1; x++)
+                var cellsChanged = 0;
+                foreach (var cell in Overworld.ColonyCells.EnumerateCells().Where(c => c.Faction == null).OrderBy(c => Random.NextDouble()))
                 {
-                    for (int y = 1; y < height - 1; y++)
+                    var neighborCiv = Overworld.ColonyCells.EnumerateManhattanNeighbors(cell).Where(c => c.Faction != null).SelectRandom();
+                    if (neighborCiv != null)
                     {
-                        bool isUnclaimed = map[x, y].Faction == 0;
-                        bool isWater = map[x, y].Height < Overworld.GenerationSettings.SeaLevel;
-                        if (!isUnclaimed && !isWater)
-                        {
-                            neighbors[0] = map[x + 1, y].Faction;
-                            neighbors[1] = map[x, y + 1].Faction;
-                            neighbors[2] = map[x - 1, y].Faction;
-                            neighbors[3] = map[x, y - 1].Faction;
-                            neighborheights[0] = map[x + 1, y].Height;
-                            neighborheights[1] = map[x, y + 1].Height;
-                            neighborheights[2] = map[x - 1, y].Height;
-                            neighborheights[3] = map[x, y - 1].Height;
-
-                            int minNeighbor = -1;
-                            float minHeight = float.MaxValue;
-
-                            for (int k = 0; k < 4; k++)
-                            {
-                                if (neighbors[k] == 0 && neighborheights[k] < minHeight && neighborheights[k] > Overworld.GenerationSettings.SeaLevel)
-                                {
-                                    minHeight = neighborheights[k];
-                                    minNeighbor = k;
-                                }
-                            }
-
-                            if (minNeighbor >= 0 && MathFunctions.RandEvent(0.25f / (neighborheights[minNeighbor] + 1e-2f)))
-                            {
-                                var faction = map[x, y].Faction;
-                                map[x + deltas[minNeighbor].X, y + deltas[minNeighbor].Y].Faction = faction;
-                                var biome = map[x + deltas[minNeighbor].X, y + deltas[minNeighbor].Y].Biome;
-                                var biomeName = BiomeLibrary.GetBiome(biome).Name;
-                                var myFaction = civs[faction - 1];
-                                var race = Library.GetRace(myFaction.Race);
-                                if (race.Biomes.ContainsKey(biomeName))
-                                    map[x + deltas[minNeighbor].X, y + deltas[minNeighbor].Y].Biome =
-                                        BiomeLibrary.GetBiome(race.Biomes[biomeName]).Biome;
-                            }
-                        }
+                        cell.Faction = neighborCiv.Faction;
+                        cellsChanged += 1;
                     }
                 }
-            }            
+
+                if (cellsChanged == 0)
+                    return;
+            }
         }
     }
 }

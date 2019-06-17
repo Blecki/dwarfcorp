@@ -1,6 +1,6 @@
 {
   "Name": "Cave",
-  "Icon": 11,
+  "Icon": "0, 0",
   "DayAmbience": "sfx_amb_cave",
   "Underground": true,
   "Vegetation": [

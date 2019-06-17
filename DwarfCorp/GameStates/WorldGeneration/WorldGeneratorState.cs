@@ -13,6 +13,7 @@ namespace DwarfCorp.GameStates
         private Overworld Settings;
         private Gui.Widget RightPanel;
         private Widget MainPanel;
+        public Gui.Widgets.CheckBox PoliticsToggle;
 
         public enum PanelStates
         {
@@ -45,6 +46,7 @@ namespace DwarfCorp.GameStates
             GuiRoot.MousePointer = new MousePointer("mouse", 15.0f, 16, 17, 18, 19, 20, 21, 22, 23);
             Preview.Hidden = true;
             GenerationProgress.Hidden = false;
+            PoliticsToggle.Hidden = true;
 
             Generator.Generate();
         }
@@ -83,8 +85,8 @@ namespace DwarfCorp.GameStates
                 Text = Settings.Name,
                 Font = "font16",
                 TextColor = new Vector4(0, 0, 0, 1),
-                Padding = new Gui.Margin(4, 4, 4, 4),
-                InteriorMargin = new Gui.Margin(24, 0, 0, 0),
+                Padding = new Margin(4, 4, 4, 4),
+                InteriorMargin = new Margin(24, 0, 0, 0)
             });
 
             var rightPanel = MainPanel.AddChild(new Widget
@@ -140,6 +142,20 @@ namespace DwarfCorp.GameStates
                 TextColor = new Vector4(1,1,1,1)                
             }) as Gui.Widgets.ProgressBar;
 
+            PoliticsToggle = MainPanel.AddChild(new Gui.Widgets.CheckBox
+            {
+                Text = "Show Political Boundaries",
+                Hidden = true,
+                OnLayout = (sender) =>
+                {
+                    sender.Rect = GenerationProgress.Rect;
+                },
+                OnCheckStateChange = (sender) =>
+                {
+                    Preview.ShowPolitics = (sender as Gui.Widgets.CheckBox).CheckState;
+                }
+            }) as Gui.Widgets.CheckBox;
+
             Preview = MainPanel.AddChild(new WorldGeneratorPreview(Game.GraphicsDevice)
             {
                 Border = "border-thin",
@@ -148,7 +164,7 @@ namespace DwarfCorp.GameStates
                 Hidden = true,
                 OnLayout = (sender) =>
                 {
-                    sender.Rect = new Rectangle(sender.Rect.X, sender.Rect.Y, sender.Rect.Width, GenerationProgress.Rect.Bottom - sender.Rect.Y);
+                    //sender.Rect = new Rectangle(sender.Rect.X, sender.Rect.Y, sender.Rect.Width, GenerationProgress.Rect.Bottom - sender.Rect.Y);
                 },
                 OnCellSelectionMade = () =>
                 {
@@ -194,8 +210,9 @@ namespace DwarfCorp.GameStates
             {
                 Preview.Hidden = false;
                 GenerationProgress.Hidden = true;
+                PoliticsToggle.Hidden = false;
                 Preview.Update(gameTime);
-                Preview.PreparePreview(Game.GraphicsDevice);
+                Preview.RenderPreview(Game.GraphicsDevice);
             }
 
             base.Update(gameTime);

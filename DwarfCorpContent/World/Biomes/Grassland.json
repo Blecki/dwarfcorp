@@ -1,6 +1,6 @@
 {
   "Name": "Grassland",
-  "Icon": -1,
+  "Icon": "0, 0",
   "DayAmbience": "grassland_ambience_day",
   "NightAmbience": "grassland_ambience_night",
   "RuinFloorType" : "Cobble",
