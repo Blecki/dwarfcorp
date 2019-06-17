@@ -107,6 +107,7 @@ namespace DwarfCorp
         {
             var metaFilePath = filePath + global::System.IO.Path.DirectorySeparatorChar + "meta.txt";
             MetaData = FileUtils.LoadJsonFromAbsolutePath<OverworldMetaData>(metaFilePath);
+            MetaData.Overworld.ColonyCells.InitializeCellMap();
 
             foreach (var resource in MetaData.Resources)
                 if (!ResourceLibrary.Exists(resource.Name))

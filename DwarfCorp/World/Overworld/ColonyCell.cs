@@ -22,7 +22,7 @@ namespace DwarfCorp
     public class CellSet
     {
         [JsonProperty] private List<ColonyCell> Cells;
-        [JsonProperty] private int[,] CellMap;
+        private int[,] CellMap; // Todo: Reconstruct on deserialize; do not save!
 
         public CellSet(String Filename)
         {
@@ -47,7 +47,14 @@ namespace DwarfCorp
 
             Cells = cells.Values.Select(r => new ColonyCell { Bounds = r }).ToList();
 
-            CellMap = new int[rawTexture.Width, rawTexture.Height];
+            InitializeCellMap();
+        }
+
+        public void InitializeCellMap()
+        {
+            var width = Cells.Select(c => c.Bounds.Right).Max();
+            var height = Cells.Select(c => c.Bounds.Bottom).Max();
+            CellMap = new int[width, height];
 
             for (var i = 0; i < Cells.Count; ++i)
                 for (var x = Cells[i].Bounds.Left; x < Cells[i].Bounds.Right; ++x)

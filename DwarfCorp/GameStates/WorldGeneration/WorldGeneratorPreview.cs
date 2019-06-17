@@ -37,8 +37,6 @@ namespace DwarfCorp.GameStates
         private Texture2D IconTexture;
         private RawPrimitive BalloonPrimitive;
 
-        private MemoryTexture StripeTexture;
-
         public Matrix ZoomedPreviewMatrix
         {
             get
@@ -117,7 +115,6 @@ namespace DwarfCorp.GameStates
         public WorldGeneratorPreview(GraphicsDevice Device)
         {
             PreviewEffect = GameState.Game.Content.Load<Effect>("Content\\Shaders\\OverworldShader");
-            StripeTexture = TextureTool.MemoryTextureFromTexture2D(AssetManager.GetContentTexture("World\\stripes"));
         }
 
         public void SetGenerator(OverworldGenerator Generator, Overworld Overworld)
@@ -161,28 +158,13 @@ namespace DwarfCorp.GameStates
                     PreviewTexture.Height != Overworld.Height * 4;
         }
 
-        private void DrawRectangle(Rectangle Rect, Color[] Into, int Width, Color Color)
-        {
-            for (var x = 0; x < Rect.Width; ++x)
-            {
-                Into[(Rect.Y * Width) + Rect.X + x] = Color;
-                Into[((Rect.Y + Rect.Height - 1) * Width) + Rect.X + x] = Color;
-            }
-
-            for (var y = 1; y < Rect.Height - 1; ++y)
-            {
-                Into[((Rect.Y + y) * Width) + Rect.X] = Color;
-                Into[((Rect.Y + y) * Width) + Rect.X + Rect.Width - 1] = Color;
-            }
-        }
-
         private void CreatePreviewGUI()
         {
             if (Root == null) return;
 
             var background = Root.GetTileSheet("basic");
 
-            GenerateTerrainTexture();
+            OverworldTextureGenerator.Generate(Overworld, ShowPolitics, PreviewTexture);
 
             var colorKeyEntries = BiomeLibrary.CreateBiomeColors().ToList();
             var font = Root.GetTileSheet("font8");
@@ -227,79 +209,6 @@ namespace DwarfCorp.GameStates
                 new Rectangle(Rect.Right - thinBorder.TileWidth - maxWidth - 8 - font.TileHeight, Rect.Y, maxWidth + thinBorder.TileWidth + 8 + font.TileHeight, y - Rect.Y + thinBorder.TileHeight),
                 thinBorder, Scale9Corners.Bottom | Scale9Corners.Left);
             KeyMesh = Gui.Mesh.Merge(bgMesh, KeyMesh);
-        }
-
-        private void GenerateTerrainTexture()
-        {
-            var colorData = new Color[Overworld.Width * Overworld.Height * 4 * 4];
-
-            Overworld.Map.CreateTexture(Overworld.Natives, 4, colorData, Overworld.GenerationSettings.SeaLevel);
-            OverworldMap.Smooth(4, Overworld.Width, Overworld.Height, colorData);
-            Overworld.Map.ShadeHeight(4, colorData);
-
-            // Draw political boundaries
-            if (ShowPolitics)
-            {
-                foreach (var cell in Overworld.ColonyCells.EnumerateCells())
-                {
-                    FillPoliticalRectangle(new Rectangle(cell.Bounds.Left * 4, cell.Bounds.Top * 4, cell.Bounds.Width * 4, cell.Bounds.Height * 4), colorData, cell.Faction.PrimaryColor);
-                    foreach (var neighbor in Overworld.ColonyCells.EnumerateManhattanNeighbors(cell))
-                    {
-                        if (Object.ReferenceEquals(cell.Faction, neighbor.Faction))
-                            continue;
-
-                        if (neighbor.Bounds.Right <= cell.Bounds.Left)
-                            DrawVerticalPoliticalEdge(cell.Bounds.Left, System.Math.Max(cell.Bounds.Top, neighbor.Bounds.Top), System.Math.Min(cell.Bounds.Bottom, neighbor.Bounds.Bottom), colorData, cell.Faction.PrimaryColor);
-                        if (neighbor.Bounds.Left >= cell.Bounds.Right)
-                            DrawVerticalPoliticalEdge(cell.Bounds.Right - 2, System.Math.Max(cell.Bounds.Top, neighbor.Bounds.Top), System.Math.Min(cell.Bounds.Bottom, neighbor.Bounds.Bottom), colorData, cell.Faction.PrimaryColor);
-                        if (neighbor.Bounds.Bottom <= cell.Bounds.Top)
-                            DrawHorizontalPoliticalEdge(System.Math.Max(cell.Bounds.Left, neighbor.Bounds.Left), System.Math.Min(cell.Bounds.Right, neighbor.Bounds.Right), cell.Bounds.Top, colorData, cell.Faction.PrimaryColor);
-                        if (neighbor.Bounds.Top >= cell.Bounds.Bottom)
-                            DrawHorizontalPoliticalEdge(System.Math.Max(cell.Bounds.Left, neighbor.Bounds.Left), System.Math.Min(cell.Bounds.Right, neighbor.Bounds.Right), cell.Bounds.Bottom - 2, colorData, cell.Faction.PrimaryColor);
-
-                    }
-                }
-            }
-
-            foreach (var cell in Overworld.ColonyCells.EnumerateCells())
-                DrawRectangle(new Rectangle(cell.Bounds.X * 4, cell.Bounds.Y * 4, cell.Bounds.Width * 4, cell.Bounds.Height * 4), colorData, Overworld.Width * 4, Color.Black);
-
-            var spawnRect = new Rectangle((int)Overworld.InstanceSettings.Origin.X * 4, (int)Overworld.InstanceSettings.Origin.Y * 4,
-                Overworld.InstanceSettings.Cell.Bounds.Width * 4, Overworld.InstanceSettings.Cell.Bounds.Height * 4);
-            DrawRectangle(spawnRect, colorData, Overworld.Width * 4, Color.Red);
-
-            PreviewTexture.SetData(colorData);
-        }
-
-        private void DrawVerticalPoliticalEdge(int X, int MinY, int MaxY, Color[] Data, Color FactionColor)
-        {
-            FillSolidRectangle(new Rectangle(X * 4, MinY * 4, 8, (MaxY - MinY) * 4), Data, FactionColor);
-        }
-
-        private void DrawHorizontalPoliticalEdge(int MinX, int MaxX, int Y, Color[] Data, Color FactionColor)
-        {
-            FillSolidRectangle(new Rectangle(MinX * 4, Y * 4, (MaxX - MinX) * 4, 8), Data, FactionColor);
-        }
-
-        private void FillPoliticalRectangle(Rectangle R, Color[] Data, Color Color)
-        {
-            var stride = Overworld.Width * 4;
-            for (var x = R.Left; x < R.Right; ++x)
-                for (var y = R.Top; y < R.Bottom; ++y)
-                {
-                    var tX = x % StripeTexture.Width;
-                    var tY = y % StripeTexture.Height;
-                    if (StripeTexture.Data[(tY * StripeTexture.Width) + tX].R != 0)
-                        Data[(y * stride) + x] = Color;
-                }
-        }
-
-        private void FillSolidRectangle(Rectangle R, Color[] Data, Color Color)
-        {
-            var stride = Overworld.Width * 4;
-            for (var x = R.Left; x < R.Right; ++x)
-                for (var y = R.Top; y < R.Bottom; ++y)
-                    Data[(y * stride) + x] = Color;
         }
 
         public void RenderPreview(GraphicsDevice device)
@@ -470,7 +379,7 @@ namespace DwarfCorp.GameStates
             for (int x = 0; x < Overworld.Width; x += 1)
                 for (int y = 0; y < Overworld.Height; y += 1)
                 {
-                    if (!MathFunctions.RandEvent(0.01f)) continue;
+                    if (!MathFunctions.RandEvent(0.05f)) continue;
                     var elevation = Overworld.Map.Height(x, y);
                     if (elevation <= Overworld.GenerationSettings.SeaLevel) continue;
                     var biome = BiomeLibrary.GetBiome(Overworld.Map.Map[x, y].Biome);
