@@ -532,7 +532,7 @@ namespace DwarfCorp.Scripting.Adventure
                 }
             }
 
-            politics.AddEvent(new Diplomacy.PoliticalEvent()
+            politics.AddEvent(new PoliticalEvent()
             {
                 Change = -5,
                 Description = "You attacked us!",
@@ -616,7 +616,7 @@ namespace DwarfCorp.Scripting.Adventure
             var politics = world.Diplomacy.GetPolitics(owner, des);
             if (Resources.Any(r => ResourceLibrary.GetResourceByName(r.Type).Tags.Any(t => des.Race.HatedResources.Contains(t))))
             {
-                politics.AddEvent(new Diplomacy.PoliticalEvent()
+                politics.AddEvent(new PoliticalEvent()
                 {
                     Description = "You gave us something we hate!",
                     Change = -5,
@@ -636,7 +636,7 @@ namespace DwarfCorp.Scripting.Adventure
             if (MathFunctions.Rand(0, 500) < (float)tradeValue)
             {
 
-                politics.AddEvent(new Diplomacy.PoliticalEvent()
+                politics.AddEvent(new PoliticalEvent()
                 {
                     Description = "You sent a peace envoy.",
                     Change = 10,
@@ -718,7 +718,7 @@ namespace DwarfCorp.Scripting.Adventure
                     string badTrade = "You gave us something we hate.";
                     if (!politics.HasEvent(badTrade))
                     {
-                        politics.AddEvent(new Diplomacy.PoliticalEvent()
+                        politics.AddEvent(new PoliticalEvent()
                         {
                             Description = badTrade,
                             Change = -5,
@@ -734,7 +734,7 @@ namespace DwarfCorp.Scripting.Adventure
                     string goodTrade = "You gave us something we like.";
                     if (!politics.HasEvent(goodTrade))
                     {
-                        politics.AddEvent(new Diplomacy.PoliticalEvent()
+                        politics.AddEvent(new PoliticalEvent()
                         {
                             Description = goodTrade,
                             Change = 5,

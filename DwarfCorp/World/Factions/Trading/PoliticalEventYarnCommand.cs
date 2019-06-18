@@ -23,7 +23,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
             var politics = world.Diplomacy.GetPolitics(playerFaction, envoy.OwnerFaction);
             if (!politics.HasEvent((string)Arguments[0].Value))
             {
-                politics.AddEvent(new Diplomacy.PoliticalEvent()
+                politics.AddEvent(new PoliticalEvent()
                 {
                     Description = (string)Arguments[0].Value,
                     Change = (float)Arguments[1].Value,

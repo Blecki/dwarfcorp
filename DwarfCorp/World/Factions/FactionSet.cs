@@ -21,7 +21,6 @@ namespace DwarfCorp
                 Race = race.Name,
                 Name = TextGenerator.ToTitleCase(TextGenerator.GenerateRandom(Datastructures.SelectRandom(race.FactionNameTemplates).ToArray())),
                 PrimaryColor = new HSLColor(idx * (255.0f / n), 255.0, MathFunctions.Rand(100.0f, 200.0f)),
-                SecondaryColor = new HSLColor(MathFunctions.Rand(0, 255.0f), 255.0, MathFunctions.Rand(100.0f, 200.0f)),
                 CenterX = MathFunctions.RandInt(0, Settings.Width),
                 CenterY = MathFunctions.RandInt(0, Settings.Height),
                 GoodWill = MathFunctions.Rand(-1, 1),

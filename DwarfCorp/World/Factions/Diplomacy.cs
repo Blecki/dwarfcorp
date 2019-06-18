@@ -11,89 +11,6 @@ namespace DwarfCorp
 {
     public class Diplomacy
     {
-        public class PoliticalEvent
-        {
-            public float Change { get; set; }
-            public string Description { get; set; }
-            public TimeSpan Duration { get; set; }
-            public DateTime Time { get; set; }
-        }
-
-        // Todo: Move out of this class. Can't without breaking save games.
-        public class Politics
-        {
-            public Faction Faction { get; set; }
-
-            [JsonProperty]
-            private List<PoliticalEvent> RecentEvents { get; set; }
-
-            public IEnumerable<PoliticalEvent> GetEvents() { return RecentEvents; }
-
-            public bool HasMet { get; set; }
-            public bool IsAtWar { get; set; }
-            public TimeSpan DistanceToCapital { get; set; }
-
-            [JsonProperty]
-            private float? _cachedFeeling = null;
-
-            public void AddEvent(PoliticalEvent E)
-            {
-                RecentEvents.Add(E);
-                _cachedFeeling = null;
-            }
-
-            public Politics()
-            {
-                RecentEvents = new List<PoliticalEvent>();
-            }
-
-            public Politics(DateTime currentDate, TimeSpan distanceToCapital)
-            {
-                DistanceToCapital = distanceToCapital;
-                IsAtWar = false;
-                HasMet = false;
-                RecentEvents = new List<PoliticalEvent>();
-            }
-
-            public Relationship GetCurrentRelationship()
-            {
-                float feeling = GetCurrentFeeling();
-
-                if (feeling < -0.5f)
-                {
-                    return Relationship.Hateful;
-                }
-                else if (feeling < 0.5f)
-                {
-                    return Relationship.Indifferent;
-                }
-                else
-                {
-                    return Relationship.Loving;
-                }
-            }
-
-            public bool HasEvent(string text)
-            {
-                return RecentEvents.Any(e => e.Description == text);
-            }
-
-            public float GetCurrentFeeling()
-            {
-                // Todo: Cache this value so it's not constantly recalculated.
-                if (!_cachedFeeling.HasValue)
-                    _cachedFeeling = RecentEvents.Sum(e => e.Change);
-                return _cachedFeeling.Value;
-                //return RecentEvents.Sum(e => e.Change);
-            }
-
-            public void UpdateEvents(DateTime currentDate)
-            {
-                RecentEvents.RemoveAll((e) => currentDate - e.Time > e.Duration);
-                _cachedFeeling = null;
-            }
-        }
-
         [JsonIgnore]
         public FactionSet Factions { get { return World.Factions; }}
 
@@ -533,7 +450,7 @@ namespace DwarfCorp
                     envoy.Creatures.ForEach((creature) => creature.GetRoot().Die());
                 }
 
-                Diplomacy.Politics politics = faction.World.Diplomacy.GetPolitics(faction, envoy.OtherFaction);
+                var politics = faction.World.Diplomacy.GetPolitics(faction, envoy.OtherFaction);
                 if (politics.GetCurrentRelationship() == Relationship.Hateful)
                 {
                     World.MakeAnnouncement(String.Format("The envoy from {0} left: we are at war with them.", envoy.OwnerFaction.ParentFaction.Name));
@@ -549,7 +466,7 @@ namespace DwarfCorp
 
                         if (!politics.HasEvent("You attacked our trade delegates"))
                         {
-                            politics.AddEvent(new Diplomacy.PoliticalEvent()
+                            politics.AddEvent(new PoliticalEvent()
                             {
                                 Change = -1.0f,
                                 Description = "You attacked our trade delegates",
@@ -559,7 +476,7 @@ namespace DwarfCorp
                         }
                         else
                         {
-                            politics.AddEvent(new Diplomacy.PoliticalEvent()
+                            politics.AddEvent(new PoliticalEvent()
                             {
                                 Change = -2.0f,
                                 Description = "You attacked our trade delegates more than once",
@@ -657,7 +574,7 @@ namespace DwarfCorp
                 if (party.DeathTimer.Update(World.Time.CurrentDate))
                     party.Creatures.ForEach((creature) => creature.Die());
 
-                Diplomacy.Politics politics = faction.World.Diplomacy.GetPolitics(faction, party.OtherFaction);
+                var politics = faction.World.Diplomacy.GetPolitics(faction, party.OtherFaction);
 
                 if (politics.GetCurrentRelationship() != Relationship.Hateful)
                     RecallWarParty(party);
