@@ -123,6 +123,7 @@
     <Compile Include="GameStates\WorldGeneration\EmbarkmentResourceColumns.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldTextureGenerator.cs" />
     <Compile Include="GameStates\WorldGeneration\SimpleOrbitCamera.cs" />
+    <Compile Include="GameStates\WorldGeneration\OverworldPreviewMesh.cs" />
     <Compile Include="Gui\Widgets\StatsTracker.cs" />
     <Compile Include="LogWriter.cs" />
     <Compile Include="EventLog.cs" />

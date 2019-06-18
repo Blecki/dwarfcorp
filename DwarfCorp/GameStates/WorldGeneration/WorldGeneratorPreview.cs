@@ -20,7 +20,8 @@ namespace DwarfCorp.GameStates
         private bool _showPolitics = false;
         public bool ShowPolitics { get { return _showPolitics; } set { _showPolitics = value; UpdatePreview = true; } }
 
-        public Texture2D PreviewTexture { get; private set; }
+        private Texture2D PreviewTexture;
+        public Texture2D TerrainTexture { get; private set; }
         private Effect PreviewEffect;
         private RenderTarget2D PreviewRenderTarget;
         private Gui.Mesh KeyMesh;
@@ -28,14 +29,7 @@ namespace DwarfCorp.GameStates
         private SimpleOrbitCamera Camera = new SimpleOrbitCamera();
         private Vector2 lastSpawnWorld = Vector2.Zero;
         public Overworld Overworld;
-
-        public VertexBuffer LandMesh;
-        public IndexBuffer LandIndex;
-        private float HeightScale = 0.02f;
-
-        private RawPrimitive TreePrimitive;
-        private Texture2D IconTexture;
-        private RawPrimitive BalloonPrimitive;
+        private OverworldPreviewMesh Mesh;
 
         public Matrix ZoomedPreviewMatrix
         {
@@ -100,13 +94,9 @@ namespace DwarfCorp.GameStates
 
             OnClose += (sender) =>
             {
-                if (LandMesh != null)
-                    LandMesh.Dispose();
-                if (LandIndex != null)
-                    LandIndex.Dispose();
-
-                LandMesh = null;
-                LandIndex = null;
+                Mesh.Dispose();
+                TerrainTexture.Dispose();
+                PreviewTexture.Dispose();
             };
 
             Camera.Overworld = Overworld;
@@ -122,13 +112,9 @@ namespace DwarfCorp.GameStates
             this.Generator = Generator;
             this.Overworld = Overworld;
 
-            if (LandMesh != null)
-                LandMesh.Dispose();
-            LandMesh = null;
-
-            if (LandIndex != null)
-                LandIndex.Dispose();
-            LandIndex = null;
+            if (Mesh != null)
+                Mesh.Dispose();
+            Mesh = new OverworldPreviewMesh();
         }
 
         public void Update(DwarfTime Time)
@@ -164,7 +150,7 @@ namespace DwarfCorp.GameStates
 
             var background = Root.GetTileSheet("basic");
 
-            OverworldTextureGenerator.Generate(Overworld, ShowPolitics, PreviewTexture);
+            OverworldTextureGenerator.Generate(Overworld, ShowPolitics, TerrainTexture, PreviewTexture);
 
             var colorKeyEntries = BiomeLibrary.CreateBiomeColors().ToList();
             var font = Root.GetTileSheet("font8");
@@ -197,8 +183,8 @@ namespace DwarfCorp.GameStates
             foreach (var line in previewText)
             {
                 Rectangle previewBounds;
-                var previewMesh = Mesh.CreateStringMesh(line.Key, font, new Vector2(1, 1), out previewBounds);
-                stringMeshes.Add(Mesh.FittedSprite(previewBounds, background, 0).Translate(PreviewPanel.Rect.Left + 16, PreviewPanel.Rect.Top + 16 + dy).Colorize(new Vector4(0.0f, 0.0f, 0.0f, 0.7f)));
+                var previewMesh = Gui.Mesh.CreateStringMesh(line.Key, font, new Vector2(1, 1), out previewBounds);
+                stringMeshes.Add(Gui.Mesh.FittedSprite(previewBounds, background, 0).Translate(PreviewPanel.Rect.Left + 16, PreviewPanel.Rect.Top + 16 + dy).Colorize(new Vector4(0.0f, 0.0f, 0.0f, 0.7f)));
                 stringMeshes.Add(previewMesh.Translate(PreviewPanel.Rect.Left + 16, PreviewPanel.Rect.Top + 16 + dy).Colorize(line.Value.ToVector4()));
                 dy += previewBounds.Height;
             }
@@ -221,11 +207,7 @@ namespace DwarfCorp.GameStates
                     return;
                 }
 
-                if (LandMesh == null || LandMesh.IsDisposed || LandMesh.GraphicsDevice.IsDisposed)
-                {
-                    CreateMesh(Device);
-                    UpdatePreview = true;
-                }
+                UpdatePreview |= Mesh.CreateIfNeeded(Overworld);
 
                 if (PreviewTextureNeedsRegeneration())
                 {
@@ -237,6 +219,7 @@ namespace DwarfCorp.GameStates
                     }
 
                     PreviewTexture = new Texture2D(graphicsDevice, Overworld.Width * 4, Overworld.Height * 4);
+                    TerrainTexture = new Texture2D(graphicsDevice, Overworld.Width * 4, Overworld.Height * 4);
                 }
 
                 if (PreviewTexture != null && UpdatePreview)
@@ -266,33 +249,33 @@ namespace DwarfCorp.GameStates
                 foreach (EffectPass pass in PreviewEffect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    Device.SetVertexBuffer(LandMesh);
-                    Device.Indices = LandIndex;
-                    Device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, LandMesh.VertexCount, 0, LandIndex.IndexCount / 3);
+                    Device.SetVertexBuffer(Mesh.LandMesh);
+                    Device.Indices = Mesh.LandIndex;
+                    Device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, Mesh.LandMesh.VertexCount, 0, Mesh.LandIndex.IndexCount / 3);
                 }
 
-                if (TreePrimitive != null)
+                if (Mesh.TreePrimitive != null)
                 {
-                    PreviewEffect.Parameters["Texture"].SetValue(IconTexture);
+                    PreviewEffect.Parameters["Texture"].SetValue(Mesh.IconTexture);
 
                     foreach (EffectPass pass in PreviewEffect.CurrentTechnique.Passes)
                     {
                         pass.Apply();
-                        TreePrimitive.Render(Device);
+                        Mesh.TreePrimitive.Render(Device);
                     }
                 }
 
-                if (BalloonPrimitive == null)
-                    CreatBalloonMesh();
+                if (Mesh.BalloonPrimitive == null)
+                    Mesh.CreatBalloonMesh(Overworld);
 
                 var balloonPos = Overworld.InstanceSettings.Cell.Bounds.Center;
 
-                PreviewEffect.Parameters["Texture"].SetValue(IconTexture);
+                PreviewEffect.Parameters["Texture"].SetValue(Mesh.IconTexture);
                 PreviewEffect.Parameters["World"].SetValue(Matrix.CreateTranslation((float)balloonPos.X / Overworld.Width, 0.1f, (float)balloonPos.Y / Overworld.Height));
                 foreach (EffectPass pass in PreviewEffect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    BalloonPrimitive.Render(Device);
+                    Mesh.BalloonPrimitive.Render(Device);
                 }
 
                 Device.SetRenderTarget(null);
@@ -310,122 +293,5 @@ namespace DwarfCorp.GameStates
             PreviewRenderTarget = new RenderTarget2D(Device, PreviewPanel.Rect.Width, PreviewPanel.Rect.Height, false, SurfaceFormat.Color, DepthFormat.Depth16);
             PreviewRenderTarget.ContentLost += PreviewRenderTarget_ContentLost;
         }
-
-        private static int[] SetUpTerrainIndices(int width, int height)
-        {
-            var indices = new int[(width - 1) * (height - 1) * 6];
-            int counter = 0;
-            for (int y = 0; y < height - 1; y++)
-            {
-                for (int x = 0; x < width - 1; x++)
-                {
-                    int lowerLeft = x + y * width;
-                    int lowerRight = (x + 1) + y * width;
-                    int topLeft = x + (y + 1) * width;
-                    int topRight = (x + 1) + (y + 1) * width;
-
-                    indices[counter++] = topLeft;
-                    indices[counter++] = lowerRight;
-                    indices[counter++] = lowerLeft;
-
-                    indices[counter++] = topLeft;
-                    indices[counter++] = topRight;
-                    indices[counter++] = lowerRight;
-                }
-            }
-
-            return indices;
-        }
-
-        private void CreateMesh(GraphicsDevice Device)
-        {
-            var numVerts = (Overworld.Width + 1) * (Overworld.Height + 1);
-            LandMesh = new VertexBuffer(Device, VertexPositionNormalTexture.VertexDeclaration, numVerts, BufferUsage.None);
-            var verts = new VertexPositionNormalTexture[numVerts];
-
-            int i = 0;
-            for (int x = 0; x <= Overworld.Width; x += 1)
-            {
-                for (int y = 0; y <= Overworld.Height; y += 1)
-                {
-                    var landHeight = Overworld.Map.Height((x < Overworld.Width) ? x : x - 1, (y < Overworld.Height) ? y : y - 1);
-                    verts[i].Position = new Vector3((float)x / Overworld.Width, landHeight * HeightScale, (float)y / Overworld.Height);
-                    verts[i].TextureCoordinate = new Vector2((float)x / Overworld.Width, (float)y / Overworld.Height);
-
-                    var normal = new Vector3(
-                        Overworld.Map.Height(MathFunctions.Clamp(x + 1, 0, Overworld.Width - 1), MathFunctions.Clamp(y, 0, Overworld.Height - 1)) - Overworld.Height,
-                        1.0f,
-                        Overworld.Map.Height(MathFunctions.Clamp(x, 0, Overworld.Width - 1), MathFunctions.Clamp(y + 1, 0, Overworld.Height - 1)) - Overworld.Height);
-                    normal.Normalize();
-                    verts[i].Normal = normal;
-
-                    i++;
-                }
-            }
-
-            LandMesh.SetData(verts);
-
-            var indices = SetUpTerrainIndices((Overworld.Width + 1), (Overworld.Height + 1));
-            LandIndex = new IndexBuffer(Device, typeof(int), indices.Length, BufferUsage.None);
-            LandIndex.SetData(indices);
-
-            // Create tree mesh.
-
-            TreePrimitive = new RawPrimitive();
-            if (IconTexture == null)
-                IconTexture = AssetManager.GetContentTexture("GUI\\map_icons");
-            var iconSheet = new SpriteSheet(IconTexture, 16, 16);
-
-            for (int x = 0; x < Overworld.Width; x += 1)
-                for (int y = 0; y < Overworld.Height; y += 1)
-                {
-                    if (!MathFunctions.RandEvent(0.05f)) continue;
-                    var elevation = Overworld.Map.Height(x, y);
-                    if (elevation <= Overworld.GenerationSettings.SeaLevel) continue;
-                    var biome = BiomeLibrary.GetBiome(Overworld.Map.Map[x, y].Biome);
-                    if (biome.Icon.X > 0 || biome.Icon.Y > 0)
-                    {
-                        var bounds = Vector4.Zero;
-                        var uvs = iconSheet.GenerateTileUVs(biome.Icon, out bounds);
-                        var angle = MathFunctions.Rand() * (float)System.Math.PI;
-
-                        TreePrimitive.AddQuad(
-                            Matrix.CreateRotationX(-(float)System.Math.PI / 2)
-                            * Matrix.CreateRotationY(angle)
-                            * Matrix.CreateScale(2.0f / Overworld.Width)
-                            * Matrix.CreateTranslation((float)x / Overworld.Width, elevation * HeightScale + 1.0f / Overworld.Width, (float)y / Overworld.Height),
-                            Color.White, Color.White, uvs, bounds);
-
-                        TreePrimitive.AddQuad(
-                            Matrix.CreateRotationX(-(float)System.Math.PI / 2)
-                            * Matrix.CreateRotationY((float)System.Math.PI / 2)
-                            * Matrix.CreateRotationY(angle)
-                            * Matrix.CreateScale(2.0f / Overworld.Width)
-                            * Matrix.CreateTranslation((float)x / Overworld.Width, elevation * HeightScale + 1.0f / Overworld.Width, (float)y / Overworld.Height),
-                            Color.White, Color.White, uvs, bounds);
-                    }
-                }
-        }
-
-        private void CreatBalloonMesh()
-        {
-            BalloonPrimitive = new RawPrimitive();
-            if (IconTexture == null)
-                IconTexture = AssetManager.GetContentTexture("GUI\\map_icons");
-            var iconSheet = new SpriteSheet(IconTexture, 16, 16);
-            var bounds = Vector4.Zero;
-            var uvs = iconSheet.GenerateTileUVs(new Point(2, 0), out bounds);
-            var angle = MathFunctions.Rand() * (float)System.Math.PI;
-
-            BalloonPrimitive.AddQuad(
-                Matrix.CreateRotationX(-(float)System.Math.PI / 2)
-                * Matrix.CreateScale(6.0f / Overworld.Width),
-                Color.White, Color.White, uvs, bounds);
-
-            BalloonPrimitive.AddQuad(
-                Matrix.CreateRotationX(-(float)System.Math.PI / 2)
-                * Matrix.CreateRotationY((float)System.Math.PI / 2)
-                * Matrix.CreateScale(6.0f / Overworld.Width),
-                Color.White, Color.White, uvs, bounds);
-        }    }
+    }
 }

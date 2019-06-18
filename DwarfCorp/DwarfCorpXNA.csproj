@@ -250,6 +250,7 @@
     <Compile Include="GameStates\WorldGeneration\ChooseEmployeeTypeDialog.cs" />
     <Compile Include="GameStates\WorldGeneration\EmbarkmentEditor.cs" />
     <Compile Include="GameStates\WorldGeneration\EmbarkmentResourceColumns.cs" />
+    <Compile Include="GameStates\WorldGeneration\OverworldPreviewMesh.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldTextureGenerator.cs" />
     <Compile Include="Player\Adventure.cs" />
     <Compile Include="Player\BodySelector.cs" />

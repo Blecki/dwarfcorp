@@ -217,7 +217,7 @@ namespace DwarfCorp.GameStates
                     .Translate(ZoomedPreview.Rect.X + ZoomedPreview.Rect.Width,
                         ZoomedPreview.Rect.Y + ZoomedPreview.Rect.Height)
                     .Texture(Preview.Preview.ZoomedPreviewMatrix),
-                    Preview.Preview.PreviewTexture);
+                    Preview.Preview.TerrainTexture);
         }
     }
 }
