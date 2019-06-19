@@ -17,6 +17,8 @@ namespace DwarfCorp
         public bool InteractiveFaction = false;
         public bool IsCorporate = false;
 
+        public Dictionary<String, Politics> Politics = new Dictionary<string, Politics>();
+
         public Trade.ITradeEntity CreateTradeEntity(TradeEnvoy Envoy)
         {
             if (IsCorporate)

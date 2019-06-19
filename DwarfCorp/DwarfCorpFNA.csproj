@@ -602,6 +602,7 @@
     <Compile Include="TaskManagement\ControlFlow\Wrap.cs" />
     <Compile Include="World\Crafting\CraftItem.cs" />
     <Compile Include="World\Crafting\CraftLibrary.cs" />
+    <Compile Include="World\Factions\TradeTask.cs" />
     <Compile Include="World\Factions\PoliticalEvent.cs" />
     <Compile Include="World\Factions\Politics.cs" />
     <Compile Include="World\Factions\Diplomacy.cs" />

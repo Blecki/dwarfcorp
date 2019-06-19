@@ -7,7 +7,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
 {
     static class PoliticalEventYarnCommand
     {
-        [YarnCommand("political_event", "STRING", "NUMBER", "NUMBER")]
+        [YarnCommand("political_event", "STRING", "NUMBER")]
         private static void _political_event(YarnEngine State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
         {
             var envoy = Memory.GetValue("$envoy").AsObject as TradeEnvoy;
@@ -27,8 +27,6 @@ namespace DwarfCorp.Scripting.Factions.Trading
                 {
                     Description = (string)Arguments[0].Value,
                     Change = (float)Arguments[1].Value,
-                    Duration = new TimeSpan((int)((float)Arguments[2].Value), 0, 0, 0),
-                    Time = world.Time.CurrentDate
                 });
             }
         }

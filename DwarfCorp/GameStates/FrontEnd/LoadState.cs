@@ -30,6 +30,7 @@ namespace DwarfCorp.GameStates
         private OverworldGenerator Generator;
         public Tutorial.TutorialManager TutorialManager;
         private LoadTypes LoadType;
+        private Embarkment InitialEmbarkment;
 
         private Timer TipTimer = new Timer(1, false, Timer.TimerMode.Real);
         public Overworld Settings { get; set; }
@@ -40,6 +41,7 @@ namespace DwarfCorp.GameStates
             this.LoadType = LoadType;
             Settings = settings;
             EnableScreensaver = true;
+            InitialEmbarkment = settings.InstanceSettings.InitalEmbarkment;
 
             Runner = new DwarfRunner(game);
         }
@@ -93,6 +95,9 @@ namespace DwarfCorp.GameStates
 
         private void CreateWorld()
         {
+            if (LoadType == LoadTypes.GenerateOverworld)
+                Settings.InstanceSettings.InitalEmbarkment = InitialEmbarkment;
+
             World = new WorldManager(Game)
             {
                 // Todo: Just keep a reference to the settings OMG.

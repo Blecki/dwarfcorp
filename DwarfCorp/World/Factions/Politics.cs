@@ -11,46 +11,35 @@ namespace DwarfCorp
 {
     public class Politics
     {
-        public Faction Faction { get; set; }
+        public OverworldFaction OwnerFaction;
+        public OverworldFaction OtherFaction;
 
-        [JsonProperty]
-        private List<PoliticalEvent> RecentEvents { get; set; }
+        [JsonProperty] private List<PoliticalEvent> RecentEvents = new List<PoliticalEvent>();
 
         public IEnumerable<PoliticalEvent> GetEvents() { return RecentEvents; }
 
-        public bool HasMet { get; set; }
-        public bool IsAtWar { get; set; }
-        public TimeSpan DistanceToCapital { get; set; }
+        public bool HasMet = false;
+        public bool IsAtWar = false;
 
-        [JsonProperty]
-        private float? _cachedFeeling = null;
+        [JsonProperty] private float Feeling = 0.0f;
 
         public void AddEvent(PoliticalEvent E)
         {
             RecentEvents.Add(E);
-            _cachedFeeling = null;
+            if (RecentEvents.Count > 8)
+                RecentEvents.RemoveAt(0);
+            Feeling += E.Change;
         }
 
         public Politics()
         {
-            RecentEvents = new List<PoliticalEvent>();
-        }
-
-        public Politics(DateTime currentDate, TimeSpan distanceToCapital)
-        {
-            DistanceToCapital = distanceToCapital;
-            IsAtWar = false;
-            HasMet = false;
-            RecentEvents = new List<PoliticalEvent>();
         }
 
         public Relationship GetCurrentRelationship()
         {
-            float feeling = GetCurrentFeeling();
-
-            if (feeling < -0.5f)
+            if (Feeling < -0.5f)
                 return Relationship.Hateful;
-            else if (feeling < 0.5f)
+            else if (Feeling < 0.5f)
                 return Relationship.Indifferent;
             else
                 return Relationship.Loving;
@@ -63,15 +52,7 @@ namespace DwarfCorp
 
         public float GetCurrentFeeling()
         {
-            if (!_cachedFeeling.HasValue)
-                _cachedFeeling = RecentEvents.Sum(e => e.Change);
-            return _cachedFeeling.Value;
-        }
-
-        public void UpdateEvents(DateTime currentDate)
-        {
-            RecentEvents.RemoveAll((e) => currentDate - e.Time > e.Duration);
-            _cachedFeeling = null;
+            return Feeling;
         }
     }
 }

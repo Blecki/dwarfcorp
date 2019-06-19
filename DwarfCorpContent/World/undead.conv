@@ -62,7 +62,7 @@ title: Trade2
 		$envoy_name: How could we accept something so alive?
 	<<end>>
 	<<set $offensive_trades = $offensive_trades + 1>>
-	<<political_event "you tried to give us something offensive" -0.25 4>> // Description, change, duration (days)
+	<<political_event "you tried to give us something offensive" -0.25>> // Description, change, duration (days)
 	<<if $offensive_trades >= 3>>
 		$envoy_name: A complete waste of my time. At least I am still immortal so you are nothing but an annoyance. Goodbye!
 		<<end_trade>>
@@ -80,10 +80,10 @@ title: Trade2
 <<else>>
 	<<set $trades = $trades + 1>>
 	<<if $trade_result == "liked">>
-		<<political_event "you gave us something we liked" 0.25 4>>
+		<<political_event "you gave us something we liked" 0.25>>
 	<<endif>>
 	<<finalize_trade>> // Applys the trade and creates the events the achievement engine needs.
-	<<political_event "we had profitable trade" 0.25 2>>
+	<<political_event "we had profitable trade" 0.25>>
 	<<pick>>
 		$envoy_name: Agreeable.
 		$envoy_name: Hmm, yes. This will do.
@@ -144,7 +144,7 @@ title: DeclareWar
 	$envoy_name: More warriors for my army, then.
 	$envoy_name: Each dwarf that falls will be another soldier in my ranks.
 <<end>>
-<<political_event "you declared war on us" -2.0 4>>
+<<political_event "you declared war on us" -2.0>>
 <<declare_war>> // This is what actually turns them hostile. Also generates the events for the achievement system.
 <<recall_envoy>>
 <<end_conversation>>
@@ -155,7 +155,7 @@ title: MakePeace
 ---
 $envoy_name: Nations that once fought often become the strongest of allies.
 <<make_peace>>
-<<political_event "you made peace with us" 0.4 4>>
+<<political_event "you made peace with us" 0.4>>
 [[Main]]
 ===
 
@@ -168,7 +168,7 @@ title: PayTribute
 	<<end_conversation>>
 <<else>>
 	<<pay_tribute>>
-	<<political_event "you paid us tribute" 0.5 4>>
+	<<political_event "you paid us tribute" 0.5>>
 	$envoy_name: A wise decision.
 	<<set $envoy_tribute_demanded = 0.0>>
 <<endif>>

@@ -63,7 +63,7 @@ title: Trade2
 <<elseif $trade_result == "hated">>
 	$envoy_name: What is this? The deal is off! This is outrageous!
 	<<set $offensive_trades = $offensive_trades + 1>>
-	<<political_event "you tried to give us something offensive" -0.25 4>> // Description, change, duration (days)
+	<<political_event "you tried to give us something offensive" -0.25>> // Description, change, duration (days)
 	<<if $offensive_trades >= 3>>
 		$envoy_name: There is obviously nothing here I want. Goodbye.
 		<<end_trade>>
@@ -82,10 +82,10 @@ title: Trade2
 <<else>>
 	<<set $trades = $trades + 1>>
 	<<if $trade_result == "liked">>
-		<<political_event "you gave us something we liked" 0.25 4>>
+		<<political_event "you gave us something we liked" 0.25>>
 	<<endif>>
 	<<finalize_trade>> // Applys the trade and creates the events the achievement engine needs.
-	<<political_event "we had profitable trade" 0.25 2>>
+	<<political_event "we had profitable trade" 0.25>>
 	<<pick>>
 		$envoy_name: Yes, this is profitable.
 		$envoy_name: We will both be rich at this rate.
@@ -165,7 +165,7 @@ title: DeclareWar
 	$envoy_name: In the name of the king, we shall strike you down!
 	$envoy_name: Your rebellious corporation ends now.
 <<end>>
-<<political_event "you declared war on us" -2.0 4>>
+<<political_event "you declared war on us" -2.0>>
 <<declare_war>> // This is what actually turns them hostile. Also generates the events for the achievement system.
 <<recall_envoy>>
 <<end_conversation>>
@@ -176,7 +176,7 @@ title: MakePeace
 ---
 $envoy_name: War of this kind is not profitable.
 <<make_peace>>
-<<political_event "you made peace with us" 0.4 4>>
+<<political_event "you made peace with us" 0.4>>
 [[Main]]
 ===
 
@@ -189,7 +189,7 @@ title: PayTribute
 	<<end_conversation>>
 <<else>>
 	<<pay_tribute>>
-	<<political_event "you paid us tribute" 0.5 4>>
+	<<political_event "you paid us tribute" 0.5>>
 	$envoy_name: A wonderfully straightforward transaction.
 	<<set $envoy_tribute_demanded = 0.0>>
 	[[Main]]

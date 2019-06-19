@@ -65,7 +65,7 @@ title: Trade2
 		$envoy_name: Ew that is just gross. No way am I taking that.
 	<<end>>
 	<<set $offensive_trades = $offensive_trades + 1>>
-	<<political_event "you tried to give us something offensive" -0.25 4>> // Description, change, duration (days)
+	<<political_event "you tried to give us something offensive" -0.25>> // Description, change, duration (days)
 	<<if $offensive_trades >= 3>>
 		$envoy_name: You know you could be a little more considerate! We're leaving.
 		<<end_trade>>
@@ -81,10 +81,10 @@ title: Trade2
 <<else>>
 	<<set $trades = $trades + 1>>
 	<<if $trade_result == "liked">>
-		<<political_event "you gave us something we liked" 0.25 4>>
+		<<political_event "you gave us something we liked" 0.25>>
 	<<endif>>
 	<<finalize_trade>> // Applys the trade and creates the events the achievement engine needs.
-	<<political_event "we had profitable trade" 0.25 2>>
+	<<political_event "we had profitable trade" 0.25>>
 	<<pick>>
 		$envoy_name: Dwarves make all the best things.
 		$envoy_name: Delightful!
@@ -142,7 +142,7 @@ $envoy_name: Uh really?
 title: DeclareWar
 ---
 $envoy_name: Ho ho, you will rue this day when we cut out your eyes and serve them as garnish on a plate of your own flesh. Teedle-dee!
-<<political_event "you declared war on us" -2.0 4>>
+<<political_event "you declared war on us" -2.0>>
 <<declare_war>> // This is what actually turns them hostile. Also generates the events for the achievement system.
 <<recall_envoy>>
 <<end_conversation>>
@@ -153,7 +153,7 @@ title: MakePeace
 ---
 $envoy_name: Oh wonderous! I did so hate slaughtering you.
 <<make_peace>>
-<<political_event "you made peace with us" 0.4 4>>
+<<political_event "you made peace with us" 0.4>>
 [[Main]]
 ===
 
@@ -166,7 +166,7 @@ title: PayTribute
 	<<end_conversation>>
 <<else>>
 	<<pay_tribute>>
-	<<political_event "you paid us tribute" 0.5 4>>
+	<<political_event "you paid us tribute" 0.5>>
 	$envoy_name: Oh wonderous! Delightful! Exclamation!
 	<<set $envoy_tribute_demanded = 0.0>>
 	[[Did you just say 'exclamation'?|Main]]

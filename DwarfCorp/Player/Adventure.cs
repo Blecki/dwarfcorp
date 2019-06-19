@@ -536,8 +536,6 @@ namespace DwarfCorp.Scripting.Adventure
             {
                 Change = -5,
                 Description = "You attacked us!",
-                Duration = new TimeSpan(5, 0, 0, 0, 0),
-                Time = world.Time.CurrentDate
             });
 
             politics.IsAtWar = true;
@@ -620,8 +618,6 @@ namespace DwarfCorp.Scripting.Adventure
                 {
                     Description = "You gave us something we hate!",
                     Change = -5,
-                    Duration = new TimeSpan(4, 0, 0, 0),
-                    Time = world.Time.CurrentDate
                 });
                 LastEvent = String.Format("The {0} of {1} were offended by our peace offering. They captured the envoy.", des.Race.Plural, des.ParentFaction.Name);
                 Party.Clear();
@@ -640,8 +636,6 @@ namespace DwarfCorp.Scripting.Adventure
                 {
                     Description = "You sent a peace envoy.",
                     Change = 10,
-                    Duration = new TimeSpan(8, 0, 0, 0),
-                    Time = world.Time.CurrentDate
                 });
                 politics.HasMet = true;
                 politics.IsAtWar = false;
@@ -722,8 +716,6 @@ namespace DwarfCorp.Scripting.Adventure
                         {
                             Description = badTrade,
                             Change = -5,
-                            Duration = new TimeSpan(4, 0, 0, 0),
-                            Time = world.Time.CurrentDate
                         });
                     }
                     wasBadTrade = true;
@@ -738,8 +730,6 @@ namespace DwarfCorp.Scripting.Adventure
                         {
                             Description = goodTrade,
                             Change = 5,
-                            Duration = new TimeSpan(4, 0, 0, 0),
-                            Time = world.Time.CurrentDate
                         });
                     }
                 }

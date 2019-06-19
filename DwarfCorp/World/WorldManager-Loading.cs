@@ -352,7 +352,6 @@ namespace DwarfCorp
             #endregion
 
             Diplomacy = new Diplomacy(this);
-            Diplomacy.Initialize(Time.CurrentDate);
 
             EventScheduler = new Events.Scheduler();
 

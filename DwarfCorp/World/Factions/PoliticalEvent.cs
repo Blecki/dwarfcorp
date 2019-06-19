@@ -13,7 +13,5 @@ namespace DwarfCorp
     {
         public float Change { get; set; }
         public string Description { get; set; }
-        public TimeSpan Duration { get; set; }
-        public DateTime Time { get; set; }
     }
 }
