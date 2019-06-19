@@ -6,7 +6,6 @@ using DwarfCorp.Gui.Widgets;
 using System.Linq;
 using System.Text;
 using System;
-using DwarfCorp.Scripting.Adventure;
 
 namespace DwarfCorp.GameStates
 { 

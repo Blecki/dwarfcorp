@@ -6,7 +6,6 @@ using DwarfCorp.Gui.Widgets;
 using System.Linq;
 using System.Text;
 using System;
-using DwarfCorp.Scripting.Adventure;
 
 namespace DwarfCorp.GameStates
 {
@@ -57,9 +56,6 @@ namespace DwarfCorp.GameStates
                 if (k.Value.Race.Name == "Dwarf")
                     return 0;
 
-                var currentExpedition = World.Diplomacy.Adventures.Where(a => a.DestinationFaction == k.Key).FirstOrDefault();
-                if (currentExpedition != null)
-                    return k.Value.DistanceToCapital;
                 return k.Value.DistanceToCapital + 100000.0f;
             });
 
@@ -103,86 +99,6 @@ namespace DwarfCorp.GameStates
                     Font = "font10",
                     AutoLayout = AutoLayout.DockLeft
                 });
-
-                var currentAdventure = World.Diplomacy.Adventures.Where(a => a.DestinationFaction == faction.Key).FirstOrDefault();
-
-                if (currentAdventure == null && World.PlayerFaction.Minions.Count > 0)
-                {
-                    titlebar.AddChild(new Button()
-                    {
-                        Text = "Send Expedition...",
-                        TextHorizontalAlign = HorizontalAlign.Center,
-                        TextVerticalAlign = VerticalAlign.Center,
-                        Font = "font10",
-                        AutoLayout = AutoLayout.DockRight,
-                        OnClick = (sender, args) =>
-                        {
-                            World.Tutorial("adventures");
-                            GuiRoot.ShowModalPopup(GuiRoot.ConstructWidget(new PrepareExpeditionDialog()
-                            {
-                                Faction = World.PlayerFaction,
-
-
-
-
-                                World = World,
-                                DestinationFaction = faction.Value,
-                                Rect = GuiRoot.RenderData.VirtualScreen.Interior(128, 128, 128, 128),
-                                OnProceed = (dialog) =>
-                                {
-                                    GuiRoot.ShowModalPopup(GuiRoot.ConstructWidget(new SelectEmployeesDialog()
-                                    {
-                                        Faction = World.PlayerFaction,
-                                        World = World,
-                                        Rect = GuiRoot.RenderData.VirtualScreen.Interior(32, 32, 32, 32),
-                                        OnProceed = (selectEmployees) =>
-                                        {
-                                            GuiRoot.ShowModalPopup(new SelectResourcesDialog()
-                                            {
-                                                Rect = GuiRoot.RenderData.VirtualScreen.Interior(32, 32, 32, 32),
-                                                Faction = World.PlayerFaction,
-                                                OnProceed = (selectResources) =>
-                                                {
-                                                    var adventure = dialog.SelectedAdventure;
-                                                    adventure.Party = selectEmployees.GoingCreatures;
-                                                    adventure.Money = selectResources.SelectedMoney;
-                                                    adventure.Resources = selectResources.SelectedResources;
-                                                    adventure.DestinationFaction = faction.Key;
-                                                    adventure.OwnerFaction = World.PlayerFaction.ParentFaction.Name;
-                                                    adventure.Position = World.Overworld.InstanceSettings.Origin;
-                                                    adventure.Start = World.Overworld.InstanceSettings.Origin;
-                                                    World.Diplomacy.Adventures.Add(adventure);
-                                                    World.RemoveResources(selectResources.SelectedResources);
-                                                    World.PlayerFaction.AddMoney(-selectResources.SelectedMoney);
-                                                    Reset();
-                                                }
-                                            });
-                                        }
-                                    }));
-                                }
-                            }));
-                        }
-                    });
-                }
-                else if (currentAdventure != null)
-                {
-                    var eta = currentAdventure.GetStatusString(World);
-                    titlebar.AddChild(new TextProgressBar()
-                    {
-                        MinimumSize = new Point(128, 32),
-                        Percentage = currentAdventure.GetProgress(World),
-                        SegmentCount = 10,
-                        AutoLayout = AutoLayout.DockRight
-                    });
-                    titlebar.AddChild(new Widget()
-                    {
-                        Text = string.Format("Expedition underway ...\n {0}", eta),
-                        TextHorizontalAlign = HorizontalAlign.Center,
-                        TextVerticalAlign = VerticalAlign.Center,
-                        Font = "font10",
-                        AutoLayout = AutoLayout.DockRight,
-                    });
-                }
 
 
                 var relation = diplomacy.GetCurrentRelationship();

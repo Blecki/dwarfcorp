@@ -115,9 +115,6 @@
     <Compile Include="AssetManagement\JsonConverters\TextureContentConverter.cs" />
     <Compile Include="Components\AI\DwarfAI.cs" />
     <Compile Include="Components\Physics\Fire.cs" />
-    <Compile Include="GameStates\Play\PrepareExpeditionDialog.cs" />
-    <Compile Include="GameStates\Play\SelectEmployeesDialog.cs" />
-    <Compile Include="GameStates\Play\SelectResourcesDialog.cs" />
     <Compile Include="GameStates\WorldGeneration\EmbarkmentEditor.cs" />
     <Compile Include="GameStates\WorldGeneration\ChooseEmployeeTypeDialog.cs" />
     <Compile Include="GameStates\WorldGeneration\EmbarkmentResourceColumns.cs" />
@@ -563,7 +560,6 @@
     <Compile Include=".\Properties\AssemblyInfo.cs" />
     <Compile Include="GameStates\Screensaver\DwarfRunner.cs" />
     <Compile Include="GameStates\Screensaver\Terrain2D.cs" />
-    <Compile Include="Player\Adventure.cs" />
     <Compile Include="World\Combat\Alliance.cs" />
     <Compile Include="TaskManagement\CompoundActs\BuildRoomAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\ChopEntityAct.cs" />

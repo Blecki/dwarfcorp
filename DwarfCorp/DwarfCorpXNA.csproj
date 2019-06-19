@@ -252,7 +252,6 @@
     <Compile Include="GameStates\WorldGeneration\EmbarkmentResourceColumns.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldPreviewMesh.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldTextureGenerator.cs" />
-    <Compile Include="Player\Adventure.cs" />
     <Compile Include="Player\BodySelector.cs" />
     <Compile Include="Player\BoxBrush.cs" />
     <Compile Include="Player\Building\BuildRoomOrder.cs" />
@@ -417,9 +416,6 @@
     <Compile Include="World\Economy\Resources\ResourceLibrary.cs" />
     <Compile Include="World\Economy\Resources\ResourceType.cs" />
     <Compile Include="World\Events\Library.cs" />
-    <Compile Include="GameStates\Play\SelectEmployeesDialog.cs" />
-    <Compile Include="GameStates\Play\SelectResourcesDialog.cs" />
-    <Compile Include="GameStates\Play\PrepareExpeditionDialog.cs" />
     <Compile Include="GameStates\Play\WorldPopup.cs" />
     <Compile Include="GameStates\Screensaver\DwarfRunner.cs" />
     <Compile Include="GameStates\Screensaver\Terrain2D.cs" />

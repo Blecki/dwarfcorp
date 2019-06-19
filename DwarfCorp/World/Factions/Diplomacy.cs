@@ -11,8 +11,6 @@ namespace DwarfCorp
 {
     public class Diplomacy
     {
-        public List<Scripting.Adventure.Adventure> Adventures = new List<Scripting.Adventure.Adventure>();
-
         [JsonIgnore]
         public WorldManager World { get; set; }
 
@@ -34,122 +32,6 @@ namespace DwarfCorp
         public Politics GetPolitics(Faction factionA, Faction factionB)
         {
             return factionA.ParentFaction.Politics[factionB.ParentFaction.Name];
-        }
-
-        private static void InitializeFactionPolitics(OverworldFaction NewFaction, Overworld Overworld)
-        {
-            foreach (var faction in Overworld.Natives)
-            {
-                if (faction.Name == NewFaction.Name)
-                {
-                    var politics = new Politics()
-                    {
-                        OwnerFaction = faction,
-                        OtherFaction = NewFaction,
-                        HasMet = true
-                    };
-
-                    politics.AddEvent(new PoliticalEvent()
-                    {
-                        Change = 1.0f,
-                        Description = "we are of the same faction",
-                    });
-
-                    faction.Politics[NewFaction.Name] = politics;
-                }
-                else
-                {
-                    Politics politics = new Politics()
-                    {
-                        OwnerFaction = faction,
-                        OtherFaction = NewFaction,
-                        HasMet = false,
-                    };
-
-                    if (faction.Race == NewFaction.Race)
-                    {
-                        politics.AddEvent(new PoliticalEvent()
-                        {
-                            Change = 0.5f,
-                            Description = "we are of the same people",
-                        });
-
-                    }
-
-                    var thisFactionRace = Library.GetRace(faction.Race);
-                    var otherRace = Library.GetRace(NewFaction.Race);
-                    if (thisFactionRace.NaturalEnemies.Any(name => name == otherRace.Name))
-                    {
-                        if (!politics.HasEvent("we are taught to hate your kind"))
-                        {
-                            politics.AddEvent(new PoliticalEvent()
-                            {
-                                Change = -10.0f, // Make this negative and we get an instant war party rush.
-                                Description = "we are taught to hate your kind",
-                            });
-                        }
-                    }
-
-                    if (thisFactionRace.IsIntelligent && otherRace.IsIntelligent)
-                    {
-                        float trustingness = faction.GoodWill;
-
-                        if (trustingness < -0.8f)
-                        {
-                            if (!politics.HasEvent("we just don't trust you"))
-                            {
-                                politics.AddEvent(new PoliticalEvent()
-                                {
-                                    Change = -10.0f, // Make this negative and we get an instant war party rush.
-                                    Description = "we just don't trust you",
-                                });
-                                politics.IsAtWar = true;
-                            }
-
-                            if (!politics.HasEvent("you stole our land"))
-                            {
-                                politics.AddEvent(new PoliticalEvent()
-                                {
-                                    Change = -1.0f,
-                                    Description = "you stole our land",
-                                });
-                            }
-                        }
-                        else if (trustingness > 0.8f)
-                        {
-                            if (!politics.HasEvent("we just trust you"))
-                            {
-                                politics.AddEvent(new PoliticalEvent()
-                                {
-                                    Change = 10.0f,
-                                    Description = "we just trust you",
-                                });
-                            }
-                        }
-                        //else if (faction.Value.ClaimsColony && !faction.Value.ParentFaction.IsCorporate)
-                        //{
-                        //    if (!politics.HasEvent("you stole our land"))
-                        //    {
-                        //        politics.AddEvent(new PoliticalEvent()
-                        //        {
-                        //            Change = -0.1f,
-                        //            Description = "you stole our land",
-                        //        });
-                        //    }
-                        //}
-                    }
-
-                    faction.Politics[NewFaction.Name] = politics;
-                }
-
-            }
-
-        }
-
-        public static void Initialize(Overworld Overworld)
-        {
-            foreach (var faction in Overworld.Natives)
-                InitializeFactionPolitics(faction, Overworld);
         }
 
         public TradeEnvoy SendTradeEnvoy(Faction natives, WorldManager world)
@@ -328,23 +210,6 @@ namespace DwarfCorp
                 UpdateTradeEnvoys(faction.Value);
                 UpdateWarParties(faction.Value);
             }
-
-            foreach (var adventure in Adventures)
-            {
-                var prevEvent = adventure.LastEvent;
-                foreach (var creature in adventure.Party)
-                {
-                    creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Active, false);
-                    creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
-                }
-                adventure.Update(world, time);
-                if (adventure.LastEvent != prevEvent)
-                {
-                    world.MakeAnnouncement(adventure.LastEvent);
-                }
-            }
-
-            Adventures.RemoveAll(adv => adv.AdventureState == Scripting.Adventure.Adventure.State.Done);
         }
 
         public void UpdateTradeEnvoys(Faction faction)
