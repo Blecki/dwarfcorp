@@ -117,7 +117,7 @@ namespace DwarfCorp
         {
             IEnumerable<CreatureAI> enemies = (from faction in Creature.Manager.World.Factions.Factions
                 where
-                    Manager.World.Diplomacy.GetPolitics(Creature.Faction, faction.Value)
+                    Manager.World.GetPolitics(Creature.Faction, faction.Value)
                         .GetCurrentRelationship() == Relationship.Hateful
                 from minion in faction.Value.Minions
                 let dist = (minion.Position - Creature.AI.Position).Length()
@@ -136,7 +136,7 @@ namespace DwarfCorp
         {
             List<GameComponent> graves = (from faction in Creature.Manager.World.Factions.Factions // Todo: Rewrite in method syntax
                 where
-                    Manager.World.Diplomacy.GetPolitics(Creature.Faction, faction.Value)
+                    Manager.World.GetPolitics(Creature.Faction, faction.Value)
                         .GetCurrentRelationship() == Relationship.Hateful
                 from zone in Manager.World.EnumerateZones()
                 from body in zone.ZoneBodies

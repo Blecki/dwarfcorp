@@ -50,7 +50,7 @@ namespace DwarfCorp
                 return false;
             }
 
-            if (World.Diplomacy.GetPolitics(creature.Faction, World.PlayerFaction).GetCurrentRelationship() ==
+            if (World.GetPolitics(creature.Faction, World.PlayerFaction).GetCurrentRelationship() ==
                 Relationship.Loving)
             {
                 return false;
@@ -69,7 +69,7 @@ namespace DwarfCorp
                     continue;
                 }
 
-                if (World.Diplomacy.GetPolitics(creature.Faction, World.PlayerFaction).GetCurrentRelationship() ==
+                if (World.GetPolitics(creature.Faction, World.PlayerFaction).GetCurrentRelationship() ==
                     Relationship.Loving)
                 {
                     World.UserInterface.ShowTooltip("We refuse to attack allies.");
@@ -125,7 +125,7 @@ namespace DwarfCorp
                     continue;
                 }
 
-                if (World.Diplomacy.GetPolitics(creature.Faction, World.PlayerFaction).GetCurrentRelationship() == Relationship.Loving)
+                if (World.GetPolitics(creature.Faction, World.PlayerFaction).GetCurrentRelationship() == Relationship.Loving)
                 {
                     World.UserInterface.ShowToolPopup("We refuse to attack allies.");
                     continue;

@@ -9,10 +9,10 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    // Todo: Combine with WorldManager!!
     public class Diplomacy
     {
-        [JsonIgnore]
-        public WorldManager World { get; set; }
+        [JsonIgnore] public WorldManager World;
 
         public void OnDeserializing(StreamingContext ctx)
         {
@@ -29,11 +29,7 @@ namespace DwarfCorp
             World = world;
         }
 
-        public Politics GetPolitics(Faction factionA, Faction factionB)
-        {
-            return factionA.ParentFaction.Politics[factionB.ParentFaction.Name];
-        }
-
+        // Todo: Combine war party and trade envoy handling code?
         public TradeEnvoy SendTradeEnvoy(Faction natives, WorldManager world)
         {
             if (!world.EnumerateZones().Any(room => room is BalloonPort && room.IsBuilt))
@@ -155,7 +151,7 @@ namespace DwarfCorp
         {
             natives.World.Tutorial("war");
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
-            Politics politics = GetPolitics(natives, natives.World.PlayerFaction);
+            Politics politics = World.GetPolitics(natives, natives.World.PlayerFaction);
             politics.IsAtWar = true;
             List<CreatureAI> creatures = natives.World.MonsterSpawner.Spawn(natives.World.MonsterSpawner.GenerateSpawnEvent(natives, natives.World.PlayerFaction, MathFunctions.Random.Next(World.Overworld.Difficulty) + 1, false));
             var party = new WarParty(natives.World.Time.CurrentDate)
@@ -231,7 +227,7 @@ namespace DwarfCorp
                     envoy.Creatures.ForEach((creature) => creature.GetRoot().Die());
                 }
 
-                var politics = faction.World.Diplomacy.GetPolitics(faction, envoy.OtherFaction);
+                var politics = faction.World.GetPolitics(faction, envoy.OtherFaction);
                 if (politics.GetCurrentRelationship() == Relationship.Hateful)
                 {
                     World.MakeAnnouncement(String.Format("The envoy from {0} left: we are at war with them.", envoy.OwnerFaction.ParentFaction.Name));
@@ -351,7 +347,7 @@ namespace DwarfCorp
                 if (party.DeathTimer.Update(World.Time.CurrentDate))
                     party.Creatures.ForEach((creature) => creature.Die());
 
-                var politics = faction.World.Diplomacy.GetPolitics(faction, party.OtherFaction);
+                var politics = faction.World.GetPolitics(faction, party.OtherFaction);
 
                 if (politics.GetCurrentRelationship() != Relationship.Hateful)
                     RecallWarParty(party);
@@ -404,6 +400,5 @@ namespace DwarfCorp
                 creature.LeaveWorld();
             }
         }
-
     }
 }

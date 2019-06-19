@@ -61,7 +61,7 @@ namespace DwarfCorp.GameStates
 
             foreach (var faction in factions)
             {
-                var diplomacy = World.Diplomacy.GetPolitics(faction.Value, World.PlayerFaction);
+                var diplomacy = World.GetPolitics(faction.Value, World.PlayerFaction);
                 var details = diplomacy.GetEvents().Select(e => string.Format("{0} ({1})", TextGenerator.ToSentenceCase(e.Description), e.Change > 0 ? "+" + e.Change.ToString() : e.Change.ToString()));
 
                 var entry = widgetList.AddItem(new Widget()

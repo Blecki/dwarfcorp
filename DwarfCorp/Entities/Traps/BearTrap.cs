@@ -138,7 +138,7 @@ namespace DwarfCorp
                 var creature = body.EnumerateAll().OfType<CreatureAI>().FirstOrDefault();
 
                 if (creature == null) continue;
-                if (World.Diplomacy.GetPolitics(creature.Creature.Faction, Allies).GetCurrentRelationship() == Relationship.Loving) continue;
+                if (World.GetPolitics(creature.Creature.Faction, Allies).GetCurrentRelationship() == Relationship.Loving) continue;
 
                 creature.Creature.Damage(DamageAmount);
                 creature.Creature.Physics.Velocity *= 0.0f;

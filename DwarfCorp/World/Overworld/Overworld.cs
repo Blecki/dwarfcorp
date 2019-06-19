@@ -42,6 +42,6 @@ namespace DwarfCorp.GameStates
             r.InstanceSettings = new InstanceSettings(r.ColonyCells.GetCellAt(16, 0));
 
             return r;
-        }
+        }        
     }
 }

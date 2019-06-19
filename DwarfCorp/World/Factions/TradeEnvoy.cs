@@ -113,7 +113,7 @@ namespace DwarfCorp
             cMem.SetValue("$offensive_trades", new Yarn.Value(0));
             cMem.SetValue("$trades", new Yarn.Value(0));
 
-            var politics = World.Diplomacy.GetPolitics(OtherFaction, OwnerFaction);
+            var politics = World.GetPolitics(OtherFaction, OwnerFaction);
             cMem.SetValue("$faction_was_at_war", new Yarn.Value(politics.IsAtWar));
             cMem.SetValue("$envoy_relationship", new Yarn.Value(politics.GetCurrentRelationship().ToString()));
 

@@ -238,7 +238,7 @@ namespace DwarfCorp
 
                             if (creature.Faction == performer.Faction)
                                 continue;
-                            var alliance = performer.World.Diplomacy.GetPolitics(creature.Faction, performer.Faction).GetCurrentRelationship() != Relationship.Hateful;
+                            var alliance = performer.World.GetPolitics(creature.Faction, performer.Faction).GetCurrentRelationship() != Relationship.Hateful;
                             if (alliance)
                                 continue;
 

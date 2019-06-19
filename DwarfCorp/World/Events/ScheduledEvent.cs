@@ -146,7 +146,7 @@ namespace DwarfCorp.Events
                         case FactionClaimFilter.Any:
                             break;
                     }
-                    var relationship = world.Diplomacy.GetPolitics(faction, world.PlayerFaction).GetCurrentRelationship();
+                    var relationship = world.GetPolitics(faction, world.PlayerFaction).GetCurrentRelationship();
                     switch (filter.Hostility)
                     {
                         case FactionHostilityFilter.Ally:
