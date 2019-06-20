@@ -280,7 +280,7 @@ namespace DwarfCorp.Gui.Widgets
                                 return new HorizontalMenuTray.MenuItem
                                 {
                                     Text = s.ParentFaction.Name,
-                                    OnClick = (sender, args) => World.Diplomacy.SendTradeEnvoy(s, World)
+                                    OnClick = (sender, args) => s.SendTradeEnvoy()
                                 };
 
                             }),
@@ -313,7 +313,7 @@ namespace DwarfCorp.Gui.Widgets
                                 return new HorizontalMenuTray.MenuItem
                                 {
                                     Text = s.ParentFaction.Name,
-                                    OnClick = (sender, args) => World.Diplomacy.SendWarParty(s)
+                                    OnClick = (sender, args) => s.SendWarParty()
                                 };
 
                             }),

@@ -12,16 +12,15 @@ namespace DwarfCorp.Events
         public string PartyFaction;
         public FactionFilter PartyFactionFilter;
 
-        public override void Trigger(WorldManager world)
+        public override void Trigger(WorldManager World)
         {
-            if (world.Overworld.Difficulty == 0) return;
+            if (World.Overworld.Difficulty == 0) return;
 
-            var faction = GetFaction(world, PartyFaction, PartyFactionFilter);
-            if (!String.IsNullOrEmpty(faction) && world.Factions.Factions.ContainsKey(faction))
-            {
-                world.Diplomacy.SendWarParty(world.Factions.Factions[faction]);
-            }
-            base.Trigger(world);
+            var faction = GetFaction(World, PartyFaction, PartyFactionFilter);
+            if (!String.IsNullOrEmpty(faction) && World.Factions.Factions.ContainsKey(faction))
+                World.Factions.Factions[faction].SendWarParty();
+
+            base.Trigger(World);
         }
     }
 }

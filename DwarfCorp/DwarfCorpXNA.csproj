@@ -914,7 +914,6 @@
     <Compile Include="World\Water\WaterManager.cs" />
     <Compile Include="Graphics\Effects\WaterRenderer.cs" />
     <Compile Include="World\DetailMoteData.cs" />
-    <Compile Include="World\Factions\Diplomacy.cs" />
     <Compile Include="World\Overworld\OverworldCell.cs" />
     <Compile Include="World\Overworld\OverworldMap.cs" />
     <Compile Include="World\Overworld\OverworldImageOperations.cs" />

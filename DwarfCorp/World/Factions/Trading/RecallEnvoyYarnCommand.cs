@@ -18,7 +18,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
                 return;
             }
 
-            Diplomacy.RecallEnvoy(envoy);
+            envoy.RecallEnvoy();
         }
     }
 }

@@ -601,7 +601,6 @@
     <Compile Include="World\Factions\TradeTask.cs" />
     <Compile Include="World\Factions\PoliticalEvent.cs" />
     <Compile Include="World\Factions\Politics.cs" />
-    <Compile Include="World\Factions\Diplomacy.cs" />
     <Compile Include="World\Factions\Trading\CorporateTradeEntity.cs" />
     <Compile Include="World\Gambling.cs" />
     <Compile Include="TaskManagement\LeafActs\ClearBlackboardData.cs" />

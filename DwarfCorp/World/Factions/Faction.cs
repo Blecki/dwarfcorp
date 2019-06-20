@@ -77,6 +77,27 @@ namespace DwarfCorp
 
             if (World.ComponentManager.NumComponents() > 0)
                 OwnedObjects.RemoveAll(obj => obj.IsDead || obj.Parent == null || !obj.Manager.HasComponent(obj.GlobalID));
+
+            #region Update Expeditions
+
+            foreach (TradeEnvoy envoy in TradeEnvoys)
+                envoy.Update(World);
+
+            var hadFactions = TradeEnvoys.Count > 0;
+            TradeEnvoys.RemoveAll(t => t == null || t.ShouldRemove);
+
+            if (hadFactions && TradeEnvoys.Count == 0)
+            {
+                var music = World.Time.IsDay() ? "main_theme_day" : "main_theme_night";
+                SoundManager.PlayMusic(music);
+            }
+
+            foreach (var party in WarParties)
+                party.Update(World);
+
+            WarParties.RemoveAll(w => w.ShouldRemove);
+
+            #endregion
         }
 
         public CreatureAI GetNearestMinion(Vector3 location)
@@ -190,6 +211,7 @@ namespace DwarfCorp
 
             return toReturn;
         }
+
         public void AddMoney(DwarfBux money)
         {
             if (money == 0.0m)
@@ -197,5 +219,169 @@ namespace DwarfCorp
 
             Economy.Funds += money;
         }
+
+        public TradeEnvoy SendTradeEnvoy()
+        {
+            if (!World.EnumerateZones().Any(room => room is BalloonPort && room.IsBuilt))
+            {
+                World.MakeAnnouncement(String.Format("Trade envoy from {0} left: No balloon port!", ParentFaction.Name));
+                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.15f);
+                return null;
+            }
+
+            TradeEnvoy envoy = null;
+
+            var creatures = World.MonsterSpawner.Spawn(World.MonsterSpawner.GenerateSpawnEvent(this, World.PlayerFaction, MathFunctions.Random.Next(4) + 1, false));
+
+            if (TradeMoney < 100m)
+                TradeMoney += MathFunctions.Rand(250.0f, 5000.0f);
+
+            envoy = new TradeEnvoy(World.Time.CurrentDate)
+            {
+                Creatures = creatures,
+                OtherFaction = World.PlayerFaction,
+                ShouldRemove = false,
+                OwnerFaction = this,
+                TradeGoods = Race.GenerateResources(World),
+                TradeMoney = TradeMoney
+            };
+
+            if (Race.IsNative)
+            {
+                if (Economy == null)
+                {
+                    Economy = new Company(this, 1000.0m, new CompanyInformation()
+                    {
+                        Name = ParentFaction.Name
+                    });
+                }
+
+                foreach (CreatureAI creature in envoy.Creatures)
+                {
+                    creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
+                    creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, Economy.Information));
+                }
+            }
+            else
+            {
+                GameComponent balloon = null;
+
+                var rooms = World.EnumerateZones().Where(room => room.Type.Name == "Balloon Port").ToList();
+
+                if (rooms.Count != 0)
+                {
+                    Vector3 pos = rooms.First().GetBoundingBox().Center();
+                    balloon = Balloon.CreateBalloon(pos + new Vector3(0, 1000, 0), pos + Vector3.UnitY * 15, World.ComponentManager, this);
+                }
+
+                if (balloon != null)
+                {
+                    foreach (CreatureAI creature in creatures)
+                    {
+                        Matrix tf = creature.Physics.LocalTransform;
+                        tf.Translation = balloon.LocalTransform.Translation;
+                        creature.Physics.LocalTransform = tf;
+                    }
+                }
+                else
+                {
+                    if (Economy == null)
+                    {
+                        Economy = new Company(this, 1000.0m, new CompanyInformation()
+                        {
+                            Name = ParentFaction.Name
+                        });
+                    }
+
+                    foreach (CreatureAI creature in envoy.Creatures)
+                    {
+                        creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
+                        creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, Economy.Information));
+                    }
+                }
+            }
+
+            foreach (CreatureAI creature in envoy.Creatures)
+                creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
+
+            envoy.DistributeGoods();
+            TradeEnvoys.Add(envoy);
+
+            World.MakeAnnouncement(new DwarfCorp.Gui.Widgets.QueuedAnnouncement
+            {
+                Text = String.Format("Trade envoy from {0} has arrived!", ParentFaction.Name),
+                ClickAction = (gui, sender) =>
+                {
+                    if (envoy.Creatures.Count > 0)
+                    {
+                        envoy.Creatures.First().ZoomToMe();
+                        World.UserInterface.MakeWorldPopup(String.Format("Traders from {0} ({1}) have entered our territory.\nThey will try to get to our balloon port to trade with us.", ParentFaction.Name, Race.Name),
+                            envoy.Creatures.First().Physics, -10);
+                    }
+                },
+                ShouldKeep = () =>
+                {
+                    return envoy.ExpiditionState == Expedition.State.Arriving;
+                }
+            });
+
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
+
+            World.Tutorial("trade");
+            if (!String.IsNullOrEmpty(Race.TradeMusic))
+                SoundManager.PlayMusic(Race.TradeMusic);
+
+            return envoy;
+        }
+
+        public WarParty SendWarParty()
+        {
+            World.Tutorial("war");
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
+            Politics politics = World.GetPolitics(this, World.PlayerFaction);
+            politics.IsAtWar = true;
+            List<CreatureAI> creatures = World.MonsterSpawner.Spawn(World.MonsterSpawner.GenerateSpawnEvent(this, World.PlayerFaction, MathFunctions.Random.Next(World.Overworld.Difficulty) + 1, false));
+            var party = new WarParty(World.Time.CurrentDate)
+            {
+                Creatures = creatures,
+                OtherFaction = World.PlayerFaction,
+                ShouldRemove = false,
+                OwnerFaction = this
+            };
+            WarParties.Add(party);
+
+            World.MakeAnnouncement(new Gui.Widgets.QueuedAnnouncement()
+            {
+                Text = String.Format("A war party from {0} has arrived!", ParentFaction.Name),
+                SecondsVisible = 60,
+                ClickAction = (gui, sender) =>
+                {
+                    if (party.Creatures.Count > 0)
+                    {
+                        party.Creatures.First().ZoomToMe();
+                        World.UserInterface.MakeWorldPopup(String.Format("Warriors from {0} ({1}) have entered our territory. They will prepare for a while and then attack us.", ParentFaction.Name, Race.Name), party.Creatures.First().Physics, -10);
+                    }
+                },
+                ShouldKeep = () =>
+                {
+                    return party.ExpiditionState == Expedition.State.Arriving;
+                }
+            });
+
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.15f);
+
+            foreach (var creature in creatures)
+            {
+                if (Economy == null)
+                    Economy = new Company(this, (decimal)MathFunctions.Rand(1000, 9999), null);
+
+                if (Economy.Information == null)
+                    Economy.Information = new CompanyInformation();
+
+                creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, Economy.Information));
+            }
+            return party;
+        }
+
     }
 }

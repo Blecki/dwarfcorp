@@ -22,7 +22,6 @@ namespace DwarfCorp
         public OrbitCamera Camera;
         public ComponentManager.ComponentSaveData Components;
         public Tutorial.TutorialSaveData TutorialSaveData;
-        public Diplomacy Diplomacy;
         public FactionSet Factions;
         public DesignationDrawer Designations;
         public TaskManager Tasks;
@@ -38,7 +37,6 @@ namespace DwarfCorp
                 Camera = World.Renderer.Camera,
                 Components = World.ComponentManager.GetSaveData(),
                 TutorialSaveData = World.TutorialManager.GetSaveData(),
-                Diplomacy = World.Diplomacy,
                 Factions = World.Factions,
                 Designations = World.Renderer.DesignationDrawer,
                 Tasks = World.TaskManager,

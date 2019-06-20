@@ -1,37 +1,5 @@
-// Faction.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
 using System;
+using System.Linq;
 
 namespace DwarfCorp
 {
@@ -53,6 +21,47 @@ namespace DwarfCorp
         {
             PrepareTimer.Update(now);
             return PrepareTimer.HasTriggered;
+        }
+
+        public void Update(WorldManager World)
+        {
+            var doneWaiting = UpdateTimer(World.Time.CurrentDate);
+            Creatures.RemoveAll(creature => creature.IsDead);
+            if (DeathTimer.Update(World.Time.CurrentDate))
+                Creatures.ForEach((creature) => creature.Die());
+
+            var politics = World.GetPolitics(OwnerFaction, OtherFaction);
+
+            if (politics.GetCurrentRelationship() != Relationship.Hateful)
+                RecallWarParty();
+
+            if (Creatures.All(creature => creature.IsDead))
+                ShouldRemove = true;
+
+            if (doneWaiting)
+            {
+                foreach (var creature in OwnerFaction.Minions)
+                    if (creature.Tasks.Count == 0)
+                    {
+                        var enemyMinion = OtherFaction.GetNearestMinion(creature.Position);
+                        if (enemyMinion != null)// && !enemyMinion.Stats.IsFleeing)
+                            creature.AssignTask(new KillEntityTask(enemyMinion.Physics, KillEntityTask.KillType.Auto));
+                    }
+
+                if (ExpiditionState == Expedition.State.Arriving)
+                {
+                    World.MakeAnnouncement(String.Format("The war party from {0} is attacking!", OwnerFaction.ParentFaction.Name));
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.15f);
+                    ExpiditionState = Expedition.State.Fighting;
+                }
+            }
+        }
+
+        public void RecallWarParty()
+        {
+            ExpiditionState = Expedition.State.Leaving;
+            foreach (CreatureAI creature in Creatures)
+                creature.LeaveWorld();
         }
     }
 }

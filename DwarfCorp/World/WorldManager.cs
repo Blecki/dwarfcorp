@@ -49,7 +49,6 @@ namespace DwarfCorp
 
         #endregion
 
-        public Diplomacy Diplomacy;
         public Scripting.Gambling GamblingState = new Scripting.Gambling();
 
         public ContentManager Content;
@@ -275,8 +274,6 @@ namespace DwarfCorp
                     }
                     catch (Exception) { }
                 }
-
-                Diplomacy.Update(gameTime, Time.CurrentDate, this);
 
                 RoomBuilder.Faction = PlayerFaction;
                 RoomBuilder.Update(gameTime);

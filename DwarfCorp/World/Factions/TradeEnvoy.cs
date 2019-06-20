@@ -145,5 +145,111 @@ namespace DwarfCorp
                 }
             }
         }
+
+        public void Update(WorldManager World)
+        {
+            if (ExpiditionState == Expedition.State.Trading)
+            {
+                if (UpdateWaitTimer(World.Time.CurrentDate))
+                {
+                    World.MakeAnnouncement(String.Format("The envoy from {0} is leaving.", OwnerFaction.ParentFaction.Name));
+                    RecallEnvoy();
+                }
+            }
+
+            Creatures.RemoveAll(creature => creature.IsDead);
+            if (DeathTimer.Update(World.Time.CurrentDate))
+                Creatures.ForEach((creature) => creature.GetRoot().Die());
+
+            var politics = World.GetPolitics(OwnerFaction, OtherFaction);
+            if (politics.GetCurrentRelationship() == Relationship.Hateful)
+            {
+                World.MakeAnnouncement(String.Format("The envoy from {0} left: we are at war with them.", OwnerFaction.ParentFaction.Name));
+                RecallEnvoy();
+            }
+            else
+            {
+                if (Creatures.Any(
+                    // TODO (mklingen) why do I need this null check?
+                    creature => creature.Creature != null &&
+                    OtherFaction.Designations.IsDesignation(creature.Physics, DesignationType.Attack)))
+                {
+
+                    if (!politics.HasEvent("You attacked our trade delegates"))
+                    {
+                        politics.AddEvent(new PoliticalEvent()
+                        {
+                            Change = -1.0f,
+                            Description = "You attacked our trade delegates",
+                        });
+                    }
+                    else
+                    {
+                        politics.AddEvent(new PoliticalEvent()
+                        {
+                            Change = -2.0f,
+                            Description = "You attacked our trade delegates more than once",
+                        });
+                    }
+                }
+            }
+
+            if (!ShouldRemove && ExpiditionState == Expedition.State.Arriving)
+            {
+                foreach (var creature in Creatures)
+                {
+
+                    var tradePort = World.GetNearestRoomOfType("Balloon Port", creature.Position);
+
+                    if (tradePort == null)
+                    {
+                        World.MakeAnnouncement("We need a balloon trade port to trade.", null, () =>
+                        {
+                            return World.GetNearestRoomOfType("Balloon Port", creature.Position) == null;
+                        });
+                        World.Tutorial("trade");
+                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
+                        RecallEnvoy();
+                        break;
+                    }
+
+                    if (creature.Tasks.Count == 0)
+                        creature.Tasks.Add(new TradeTask(tradePort, this));
+
+                    if (!tradePort.IsRestingOnZone(creature.Position)) continue;
+
+                    if (ExpiditionState != Expedition.State.Trading || !IsTradeWidgetValid())
+                        MakeTradeWidget(World);
+
+                    StartTrading(World.Time.CurrentDate);
+                    ExpiditionState = Expedition.State.Trading;
+                    break;
+                }
+            }
+            else if (ExpiditionState == Expedition.State.Leaving)
+            {
+                BoundingBox worldBBox = World.ChunkManager.Bounds;
+
+                foreach (CreatureAI creature in Creatures)
+                    if (creature.Tasks.Count == 0)
+                        creature.LeaveWorld();
+
+                foreach (var creature in Creatures)
+                    if (MathFunctions.Dist2D(worldBBox, creature.Position) < 2.0f)
+                        creature.GetRoot().Delete();
+            }
+            else if (!IsTradeWidgetValid())
+                MakeTradeWidget(World);
+
+            if (Creatures.All(creature => creature.IsDead))
+                ShouldRemove = true;
+        }
+
+        public void RecallEnvoy()
+        {
+            ExpiditionState = Expedition.State.Leaving;
+            foreach (var creature in Creatures)
+                creature.LeaveWorld();
+        }
     }
 }

@@ -27,16 +27,16 @@ namespace DwarfCorp
             Envoy = envoy;
         }
 
-        IEnumerable<Act.Status> RecallEnvoyOnFail(TradeEnvoy envoy)
+        IEnumerable<Act.Status> RecallEnvoyOnFail()
         {
-            Diplomacy.RecallEnvoy(envoy);
-            TradePort.Faction.World.MakeAnnouncement("Envoy from " + envoy.OwnerFaction.ParentFaction.Name + " left. Trade port inaccessible.");
+            Envoy.RecallEnvoy();
+            TradePort.Faction.World.MakeAnnouncement("Envoy from " + Envoy.OwnerFaction.ParentFaction.Name + " left. Trade port inaccessible.");
             yield return Act.Status.Success;
         }
 
         public override Act CreateScript(Creature agent)
         {
-            return new GoToZoneAct(agent.AI, TradePort) | new Wrap(() => RecallEnvoyOnFail(Envoy));
+            return new GoToZoneAct(agent.AI, TradePort) | new Wrap(() => RecallEnvoyOnFail());
         }
 
     }

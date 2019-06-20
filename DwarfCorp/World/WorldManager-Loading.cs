@@ -204,10 +204,6 @@ namespace DwarfCorp
             Time = gameFile.Metadata.Time;
 
             PlayerFaction = Factions.Factions["Player"];
-            
-            //RoomBuilder = gameFile.PlayData.RoomBuilder;
-
-            Diplomacy = gameFile.PlayData.Diplomacy;
 
             EventScheduler = new Events.Scheduler();
 
@@ -350,8 +346,6 @@ namespace DwarfCorp
             RoomBuilder = new RoomBuilder(PlayerFaction, this);
 
             #endregion
-
-            Diplomacy = new Diplomacy(this);
 
             EventScheduler = new Events.Scheduler();
 

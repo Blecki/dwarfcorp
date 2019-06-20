@@ -18,11 +18,9 @@ namespace DwarfCorp.Events
             var faction = GetFaction(world, PartyFaction, PartyFactionFilter);
             if (!String.IsNullOrEmpty(faction) && world.Factions.Factions.ContainsKey(faction))
             {
-                var envoy = world.Diplomacy.SendTradeEnvoy(world.Factions.Factions[faction], world);
+                var envoy = world.Factions.Factions[faction].SendTradeEnvoy();
                 if (envoy != null)
-                {
                     envoy.TributeDemanded = (int)(TributeDemanded * world.Overworld.Difficulty * MathFunctions.Rand(0.9f, 1.5f));
-                }
             }
             base.Trigger(world);
         }
