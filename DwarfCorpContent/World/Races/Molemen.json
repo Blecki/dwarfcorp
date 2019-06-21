@@ -33,13 +33,13 @@
   "CommonResources": [ "Gem", "Fungus", "Soil", "Stone" ],
   "RareResources": [ "Craft", "Magical", "Wood", "Metal" ],
   "TradeGoods": {
-    "Gem": 64,
-    "Stone": 64,
-    "Fungus": 32,
-    "Soil": 64,
-    "Craft": 2,
-    "Sand": 16,
-    "Glass": 8
+    "Gem": 4,
+    "Stone": 8,
+    "Fungus": 4,
+    "Soil": 2,
+    "Craft": 1,
+    "Sand": 2,
+    "Glass": 2
   },
   "Crafts": [ "Stone" ],
   "Encrustings": [ "Gem" ],

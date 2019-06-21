@@ -231,7 +231,7 @@ namespace DwarfCorp
                 OtherFaction = World.PlayerFaction,
                 ShouldRemove = false,
                 OwnerFaction = this,
-                TradeGoods = Race.GenerateResources(World),
+                TradeGoods = Race.GenerateTradeItems(World),
                 TradeMoney = new DwarfBux((decimal)MathFunctions.Rand(50.0f, 250.0f))
             };
 

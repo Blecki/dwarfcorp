@@ -37,11 +37,11 @@
   "CommonResources": [ "Wood", "Craft", "Fruit", "Magical" ],
   "RareResources": [ "Metal", "Gem", "Precious" ],
   "TradeGoods": {
-    "AboveGroundPlant": 64,
-    "BelowGroundPlant": 16,
+    "AboveGroundPlant": 10,
+    "BelowGroundPlant": 2,
     "Magical": 8,
-    "Precious": 5,
-    "Craft": 16
+    "Precious": 1,
+    "Craft": 1
   },
   "Crafts": [ "Wood" ],
   "Encrustings": [ "Gem" ],

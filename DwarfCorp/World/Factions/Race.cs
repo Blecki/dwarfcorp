@@ -57,56 +57,42 @@ namespace DwarfCorp
             NameTemplates = TextGenerator.GetAtoms(NameFile);
         }
 
-        public List<ResourceAmount> GenerateResources(WorldManager world)
+        public List<ResourceAmount> GenerateTradeItems(WorldManager world)
         {
-            Dictionary<String, ResourceAmount> toReturn =
-                new Dictionary<String, ResourceAmount>();
+            var toReturn = new Dictionary<String, ResourceAmount>();
             Resource.ResourceTags[] blacklistTags = { Resource.ResourceTags.Money, Resource.ResourceTags.Corpse };
+
             foreach (var tags in TradeGoods)
             {
                 int num = MathFunctions.RandInt(tags.Value - 5, tags.Value + 5);
 
-
-                IEnumerable<Resource> resources = ResourceLibrary.FindResourcesWithTag(tags.Key);
+                var resources = ResourceLibrary.FindResourcesWithTag(tags.Key);
 
                 if (resources.Count() <= 0) continue;
 
                 for (int i = 0; i < num; i++)
                 {
-                    Resource randResource = Datastructures.SelectRandom(resources);
+                    var randResource = Datastructures.SelectRandom(resources);
 
                     if (randResource.Tags.Any(blacklistTags.Contains))
                         continue;
 
                     if (tags.Key == Resource.ResourceTags.Craft)
                     {
-                        Resource.ResourceTags craftTag = Datastructures.SelectRandom(Crafts);
-                        IEnumerable<Resource> availableCrafts = ResourceLibrary.FindResourcesWithTag(craftTag);
-
-                        Resource trinket = ResourceLibrary.GenerateTrinket(
-                            Datastructures.SelectRandom(availableCrafts).Name, MathFunctions.Rand(0.1f, 3.0f));
+                        var craftTag = Datastructures.SelectRandom(Crafts);
+                        var availableCrafts = ResourceLibrary.FindResourcesWithTag(craftTag);
+                        var trinket = ResourceLibrary.GenerateTrinket(Datastructures.SelectRandom(availableCrafts).Name, MathFunctions.Rand(0.1f, 3.0f));
 
                         if (MathFunctions.RandEvent(0.3f) && Encrustings.Count > 0)
-                        {
-                            IEnumerable<Resource> availableGems =
-                                ResourceLibrary.FindResourcesWithTag(Datastructures.SelectRandom(Encrustings));
-                            randResource = ResourceLibrary.EncrustTrinket(trinket.Name,
-                                Datastructures.SelectRandom(availableGems).Name);
-                        }
+                            randResource = ResourceLibrary.EncrustTrinket(trinket.Name, Datastructures.SelectRandom(ResourceLibrary.FindResourcesWithTag(Datastructures.SelectRandom(Encrustings))).Name);
                         else
-                        {
                             randResource = trinket;
-                        }
                     }
 
                     if (!toReturn.ContainsKey(randResource.Name))
-                    {
                         toReturn[randResource.Name] = new ResourceAmount(randResource.Name, 1);
-                    }
                     else
-                    {
                         toReturn[randResource.Name].Count += 1;
-                    }
                 }
             }
 
@@ -116,25 +102,19 @@ namespace DwarfCorp
                     TradeGoods.Any(good => good.Key == tags.Type))));
                 if (randomObject == null)
                     continue;
-                List<ResourceAmount> selectedResources = new List<ResourceAmount>();
-                foreach(var requirement in randomObject.RequiredResources)
-                {
-                    IEnumerable<Resource> resources = ResourceLibrary.FindResourcesWithTag(requirement.Type);
-                    selectedResources.Add(new ResourceAmount(Datastructures.SelectRandom(resources), requirement.Count));
-                }
+
+                var selectedResources = new List<ResourceAmount>();
+                foreach (var requirement in randomObject.RequiredResources)
+                    selectedResources.Add(new ResourceAmount(Datastructures.SelectRandom(ResourceLibrary.FindResourcesWithTag(requirement.Type)), requirement.Count));
+
                 var randResource = randomObject.ToResource(world, selectedResources, Posessive + " ");
                 if (!toReturn.ContainsKey(randResource.Name))
-                {
                     toReturn[randResource.Name] = new ResourceAmount(randResource.Name, 1);
-                }
                 else
-                {
                     toReturn[randResource.Name].Count += 1;
-                }
             }
 
-            List<ResourceAmount> resList = toReturn.Select(amount => amount.Value).ToList();
-            return resList;
+            return toReturn.Select(amount => amount.Value).ToList();
         }
        
     }

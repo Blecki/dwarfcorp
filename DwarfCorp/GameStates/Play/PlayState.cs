@@ -1212,7 +1212,7 @@ namespace DwarfCorp.GameStates
                                  Icon = new Gui.TileReference("tool-icons", 36),
                                 OnClick = (sender, args) =>
                                 {
-                                    GameStateManager.PushState(new FactionViewState(GameState.Game, World));
+                                    GameStateManager.PushState(new PlayFactionViewState(GameState.Game, World));
                                 },
                                 Text =  Library.GetString("diplomacy-label"),
                                 TextVerticalAlign = VerticalAlign.Below,

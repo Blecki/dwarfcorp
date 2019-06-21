@@ -34,8 +34,8 @@
   "CommonResources": [ "AnimalProduct" ],
   "RareResources": [ "Metal", "Gem", "Precious", "Alcohol" ],
   "TradeGoods": {
-    "AnimalProduct": 32,
-    "Craft": 3
+    "AnimalProduct": 5,
+    "Craft": 1
   },
   "Crafts": [ "Bone" ],
   "Encrustings": [],

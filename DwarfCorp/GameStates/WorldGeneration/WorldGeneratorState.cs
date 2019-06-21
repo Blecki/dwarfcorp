@@ -14,6 +14,7 @@ namespace DwarfCorp.GameStates
         private Gui.Widget RightPanel;
         private Widget MainPanel;
         public Gui.Widgets.CheckBox PoliticsToggle;
+        private bool SuppressEnter = false;
 
         public enum PanelStates
         {
@@ -72,6 +73,12 @@ namespace DwarfCorp.GameStates
 
         public override void OnEnter()
         {
+            if (SuppressEnter)
+            {
+                SuppressEnter = false;
+                return;
+            }
+
             DwarfGame.GumInputMapper.GetInputQueue();
 
             #region Setup GUI
@@ -107,6 +114,21 @@ namespace DwarfCorp.GameStates
                 OnClick = (sender, args) =>
                 {
                     GameStateManager.PopState();
+                }
+            });
+
+            rightPanel.AddChild(new Widget
+            {
+                Text = "Factions",
+                Border = "border-button",
+                ChangeColorOnHover = true,
+                TextColor = new Vector4(0, 0, 0, 1),
+                Font = "font16",
+                AutoLayout = AutoLayout.DockTop,
+                OnClick = (sender, args) =>
+                {
+                    SuppressEnter = true;
+                    GameStateManager.PushState(new FactionViewState(GameState.Game, Settings));
                 }
             });
 

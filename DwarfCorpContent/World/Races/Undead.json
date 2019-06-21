@@ -34,10 +34,10 @@
   "CommonResources": [ "Bone", "Magical", "Evil" ],
   "RareResources": [ "RawFood", "AnimalProduct", "Metal", "Gem" ],
   "TradeGoods": {
-    "Bone": 128,
-    "Magical": 64,
-    "Precious": 5,
-    "Craft": 16,
+    "Bone": 10,
+    "Magical": 5,
+    "Precious": 2,
+    "Craft": 2,
     "Evil": 4
   },
   "Biomes": {

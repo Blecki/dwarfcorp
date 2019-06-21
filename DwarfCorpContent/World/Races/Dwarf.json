@@ -37,15 +37,15 @@
   "TradeGoods": {
     "Alcohol": 20,
     "Craft": 5,
-    "Fuel": 10,
+    "Fuel": 1,
     "Encrustable": 3,
-    "Wood": 10,
+    "Wood": 1,
     "Precious": 4,
-    "Fungus": 32,
-    "Stone": 64,
-    "Metal": 64,
-    "Sand": 16,
-    "Glass": 8
+    "Fungus": 10,
+    "Stone": 2,
+    "Metal": 2,
+    "Sand": 2,
+    "Glass": 2
   },
   "NumFurniture": 4,
   "Crafts": [ "Metal" ],

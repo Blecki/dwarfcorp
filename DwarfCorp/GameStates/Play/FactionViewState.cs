@@ -11,13 +11,13 @@ namespace DwarfCorp.GameStates
 {
     public class FactionViewState : GameState
     {
-        private Gui.Root GuiRoot;
-        public WorldManager World;
-        private Gui.Widget mainPanel;
-        public FactionViewState(DwarfGame game, WorldManager world) :
-            base(game)
+        protected Root GuiRoot;
+        private Overworld Overworld;
+        private Widget mainPanel;
+
+        public FactionViewState(DwarfGame game, Overworld Overworld) : base(game)
         {
-            World = world;
+            this.Overworld = Overworld;
         }
 
         public void Reset()
@@ -51,11 +51,11 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(0, 3 * GuiRoot.RenderData.VirtualScreen.Height / 4)
             }) as WidgetListView;
 
-            var factions = World.Factions.Factions.Where(f => f.Value.ParentFaction.InteractiveFaction && f.Value.Race.IsIntelligent && f.Value != World.PlayerFaction);
+            var factions = Overworld.Natives.Where(f => f.InteractiveFaction && Library.GetRace(f.Race).IsIntelligent && f.Name != "Player");
 
             foreach (var faction in factions)
             {
-                var diplomacy = World.Overworld.GetPolitics(faction.Value.ParentFaction, World.PlayerFaction.ParentFaction);
+                var diplomacy = Overworld.GetPolitics(faction, Overworld.Natives.FirstOrDefault(n => n.Name == "Player"));
                 var details = diplomacy.GetEvents().Select(e => string.Format("{0} ({1})", TextGenerator.ToSentenceCase(e.Description), e.Change > 0 ? "+" + e.Change.ToString() : e.Change.ToString()));
 
                 var entry = widgetList.AddItem(new Widget()
@@ -80,14 +80,14 @@ namespace DwarfCorp.GameStates
                 });
                 titlebar.AddChild(new Widget()
                 {
-                    Background = new TileReference("map-icons", faction.Value.Race.Icon),
+                    Background = new TileReference("map-icons", Library.GetRace(faction.Race).Icon),
                     MaximumSize = new Point(32, 32),
                     MinimumSize = new Point(32, 32),
                     AutoLayout = AutoLayout.DockLeft,
                 });
                 titlebar.AddChild(new Widget()
                 {
-                    Text = String.Format("{0} ({1}){2}", faction.Value.ParentFaction.Name, faction.Value.Race.Name, diplomacy.IsAtWar ? " -- At war!" : ""),
+                    Text = String.Format("{0} ({1}){2}", faction.Name, faction.Race, diplomacy.IsAtWar ? " -- At war!" : ""),
                     TextHorizontalAlign = HorizontalAlign.Right,
                     TextVerticalAlign = VerticalAlign.Bottom,
                     Font = "font10",
@@ -155,7 +155,6 @@ namespace DwarfCorp.GameStates
 
         public override void Update(DwarfTime gameTime)
         {
-            World.Tutorial("diplomacy");
             foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
             {
                 GuiRoot.HandleInput(@event.Message, @event.Args);
@@ -164,7 +163,7 @@ namespace DwarfCorp.GameStates
                     // Pass event to game...
                 }
             }
-            World.TutorialManager.Update(GuiRoot);
+
             GuiRoot.Update(gameTime.ToRealTime());
             base.Update(gameTime);
         }
@@ -173,6 +172,28 @@ namespace DwarfCorp.GameStates
         {
             GuiRoot.Draw();
             base.Render(gameTime);
+        }
+
+        public virtual void UpdateTutorialHandler()
+        {
+
+        }
+    }
+
+    public class PlayFactionViewState : FactionViewState
+    {
+        private WorldManager World;
+
+        public PlayFactionViewState(DwarfGame Game, WorldManager World) : base(Game, World.Overworld)
+        {
+            this.World = World;
+        }
+
+        public override void UpdateTutorialHandler()
+        {
+            World.Tutorial("diplomacy");
+            World.TutorialManager.Update(GuiRoot);
+            base.UpdateTutorialHandler();
         }
     }
 
