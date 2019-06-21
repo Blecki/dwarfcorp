@@ -33,13 +33,13 @@ namespace DwarfCorp
             Factions["Player"] = new Faction(world, new OverworldFaction
             {
                 Name = "Player",
-                Race = "Dwarf"
+                Race = "Corporate",
             });
 
             Factions["Corporate"] = new Faction(world, new OverworldFaction
             {
                 Name = "Corporate",
-                Race = "Dwarf",
+                Race = "Corporate",
                 InteractiveFaction = true,
                 IsCorporate = true
             });

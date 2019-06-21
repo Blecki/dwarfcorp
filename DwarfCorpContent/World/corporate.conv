@@ -1,0 +1,63 @@
+title: Start
+---
+<<set_portrait "GUI\diplo-dorf" 64 64 5.0 0 1 0>>
+<<show_portrait>>
+<<set_language "Dwarf">>
+<<pick>>
+	Dwarf: Hello!
+	Dwarf: Well met.
+	Dwarf: Greetings!
+	Dwarf: Salutations!
+	Dwarf: Good to see you, fellow dwarf!
+<<end>>
+Dwarf: I am $envoy_name of $envoy_faction.
+[[Main]]
+===
+
+
+title: Main
+---
+[[Trade.|Trade]]
+[[Goodbye.|Goodbye]]
+===
+
+
+title: Trade
+---
+<<begin_trade>>
+[[Trade2]]
+===
+
+title: Trade2
+---
+<<wait_for_trade>>
+<<if $trade_result == "cancelled">>
+	<<if $trades == 0>>
+		$envoy_name: Not sure what you think I'm here for.
+	<<else>>
+		$envoy_name: Shall we continue?
+	<<endif>>
+	<<end_trade>>
+	[[Main]]
+<<else>>
+	<<set $trades = $trades + 1>>
+	<<finalize_trade>> // Applys the trade and creates the events the achievement engine needs.
+	<<pick>>
+		$envoy_name: We will both be rich at this rate.
+		$envoy_name: Ha! The balloon can barely stay in the air now!
+	<<end>>
+	[[Trade2]]
+<<endif>>
+<<end_trade>>
+[[Main]]
+===
+
+
+title: Goodbye
+---
+<<pick>>
+	$envoy_name: May our mines be deep and profitable.
+	$envoy_name: Remember the motherland.
+<<end>>
+<<end_conversation>>
+===  

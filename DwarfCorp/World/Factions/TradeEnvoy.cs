@@ -241,7 +241,7 @@ namespace DwarfCorp
             else if (!IsTradeWidgetValid())
                 MakeTradeWidget(World);
 
-            if (Creatures.All(creature => creature.IsDead))
+            if (!OwnerFaction.ParentFaction.IsCorporate && Creatures.All(creature => creature.IsDead))
                 ShouldRemove = true;
         }
 

@@ -1,14 +1,11 @@
 {
-  "Name": "Dwarf",
-  "Plural": "Dwarfs",
+  "Name": "Corporate",
+  "Plural": "Drones",
   "Posessive": "Dwarvish",
-  "DiplomacyConversation": "World/dwarf.conv",
-  "CreatureTypes": [
-    "Dwarf Crafter",
-    "Dwarf Soldier"
-  ],
+  "DiplomacyConversation": "World/corporate.conv",
+  "CreatureTypes": [ "Dwarf Crafter" ],
   "IsIntelligent": true,
-  "IsNative": true,
+  "IsNative": false,
   "FactionNameFile": "Text\\Templates\\nations_dwarf.txt",
   "NameFile": "Text\\Templates\\names_dwarf.txt",
   "NaturalEnemies": [ "Demon", "Evil" ],
@@ -30,9 +27,9 @@
       "Audio/oscar/sfx_ic_dwarf_tantrum_3"
     ]
   },
-  "LikedResources": [ "Metal", "Precious", "Gem", "Craft" ],
-  "CommonResources": [ "Stone", "Metal", "Fungus", "Alcohol" ],
-  "RareResources": [ "Magical", "Wood", "Gem", "Precious", "Craft" ],
+  "LikedResources": [],
+  "CommonResources": [],
+  "RareResources": [],
   "HatedResources": [],
   "TradeGoods": {
     "Alcohol": 20,

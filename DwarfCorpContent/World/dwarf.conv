@@ -89,7 +89,7 @@ title: Trade2
 	<<pick>>
 		$envoy_name: Yes, this is profitable.
 		$envoy_name: We will both be rich at this rate.
-		$envoy_name: Ha! The baloon can barely stay in the air now!
+		$envoy_name: Ha! The balloon can barely stay in the air now!
 		$envoy_name: Thank Seleprak for inventing mercantilism!
 	<<end>>
 	[[Trade2]]

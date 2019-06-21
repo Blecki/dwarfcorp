@@ -51,7 +51,7 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(0, 3 * GuiRoot.RenderData.VirtualScreen.Height / 4)
             }) as WidgetListView;
 
-            var factions = Overworld.Natives.Where(f => f.InteractiveFaction && Library.GetRace(f.Race).IsIntelligent && f.Name != "Player");
+            var factions = Overworld.Natives.Where(f => f.InteractiveFaction && Library.GetRace(f.Race).IsIntelligent);
 
             foreach (var faction in factions)
             {
