@@ -30,7 +30,7 @@ namespace DwarfCorp
             if (DeathTimer.Update(World.Time.CurrentDate))
                 Creatures.ForEach((creature) => creature.Die());
 
-            var politics = World.GetPolitics(OwnerFaction, OtherFaction);
+            var politics = World.Overworld.GetPolitics(OwnerFaction.ParentFaction, OtherFaction.ParentFaction);
 
             if (politics.GetCurrentRelationship() != Relationship.Hateful)
                 RecallWarParty();

@@ -33,13 +33,6 @@ namespace DwarfCorp.Events
             NotAlly
         }
 
-        public enum FactionClaimFilter
-        {
-            Any,
-            ClaimsTerritory,
-            DoesNotClaimTerritory
-        }
-
         public enum FactionSpecification
         {
             Specific,
@@ -52,7 +45,6 @@ namespace DwarfCorp.Events
         {
             public FactionHostilityFilter Hostility;
             public FactionSpecification Specification;
-            public FactionClaimFilter Claim;
         }
 
         public enum EntitySpawnLocation
@@ -112,13 +104,10 @@ namespace DwarfCorp.Events
             }
         }
 
-
-        private bool CanSpawnFaction(WorldManager world, Faction faction, string EntityFaction, FactionFilter filter)
+        private bool CanSpawnFaction(WorldManager World, Faction faction, string EntityFaction, FactionFilter filter)
         {
-            if (filter.Specification != FactionSpecification.Player && faction == world.PlayerFaction)
-            {
+            if (filter.Specification != FactionSpecification.Player && faction == World.PlayerFaction)
                 return false;
-            }
 
             switch (filter.Specification)
             {
@@ -126,27 +115,11 @@ namespace DwarfCorp.Events
                     return faction.ParentFaction.IsCorporate;
 
                 case FactionSpecification.Player:
-                    return faction == world.PlayerFaction;
+                    return faction == World.PlayerFaction;
 
                 case FactionSpecification.Random:
-                    switch (filter.Claim)
-                    {
-                        case FactionClaimFilter.ClaimsTerritory:
-                            if (!faction.ClaimsColony)
-                            {
-                                return false;
-                            }
-                            break;
-                        case FactionClaimFilter.DoesNotClaimTerritory:
-                            if (faction.ClaimsColony)
-                            {
-                                return false;
-                            }
-                            break;
-                        case FactionClaimFilter.Any:
-                            break;
-                    }
-                    var relationship = world.GetPolitics(faction, world.PlayerFaction).GetCurrentRelationship();
+                    
+                    var relationship = World.Overworld.GetPolitics(faction.ParentFaction, World.PlayerFaction.ParentFaction).GetCurrentRelationship();
                     switch (filter.Hostility)
                     {
                         case FactionHostilityFilter.Ally:
@@ -174,25 +147,11 @@ namespace DwarfCorp.Events
         {
             var factions = world.Factions.Factions.Where(f => f.Value.Race.IsIntelligent && f.Value.ParentFaction.InteractiveFaction &&
                 CanSpawnFaction(world, f.Value, EntityFaction, EntityFactionFilter)).Select(f => f.Value).ToList();
-            factions.Sort((f1, f2) => f1.DistanceToCapital.CompareTo(f2.DistanceToCapital));
 
             if (factions.Count == 0)
                 return EntityFaction;
 
-            float sumDistance = factions.Sum(f => 1.0f / (f.DistanceToCapital + 1.0f));
-            float randPick = MathFunctions.Rand(0, sumDistance);
-
-            float dist = 0;
-            foreach(var faction in factions)
-            {
-                dist += 1.0f / (1.0f + faction.DistanceToCapital);
-                if (randPick < dist)
-                {
-                    return faction.ParentFaction.Name;
-                }
-            }
-
-            return EntityFaction;
+            return factions.SelectRandom().ParentFaction.Name;
         }
 
         public Microsoft.Xna.Framework.Vector3 GetSpawnLocation(WorldManager world, EntitySpawnLocation SpawnLocation)

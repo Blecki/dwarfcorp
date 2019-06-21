@@ -12,18 +12,6 @@ namespace DwarfCorp
 
     public static partial class Library
     {
-        private static bool EmbarkmentsInitialized = false;
-
-        private static void InitializeEmbarkments()
-        {
-            if (EmbarkmentsInitialized)
-                return;
-            EmbarkmentsInitialized = true;
-
-            Console.WriteLine("Loaded Embarkment Library.");
-        }
-
-        // Todo: This should be data.
         public static IEnumerable<Difficulty> EnumerateDifficulties()
         {
             yield return new Difficulty { Value = 0, Name = "Tranquil" };

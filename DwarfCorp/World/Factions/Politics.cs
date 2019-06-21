@@ -125,15 +125,6 @@ namespace DwarfCorp
                                     });
                                     politics.IsAtWar = true;
                                 }
-
-                                if (!politics.HasEvent("you stole our land"))
-                                {
-                                    politics.AddEvent(new PoliticalEvent()
-                                    {
-                                        Change = -1.0f,
-                                        Description = "you stole our land",
-                                    });
-                                }
                             }
                             else if (trustingness > 0.8f)
                             {
@@ -146,17 +137,6 @@ namespace DwarfCorp
                                     });
                                 }
                             }
-                            //else if (faction.Value.ClaimsColony && !faction.Value.ParentFaction.IsCorporate)
-                            //{
-                            //    if (!politics.HasEvent("you stole our land"))
-                            //    {
-                            //        politics.AddEvent(new PoliticalEvent()
-                            //        {
-                            //            Change = -0.1f,
-                            //            Description = "you stole our land",
-                            //        });
-                            //    }
-                            //}
                         }
 
                         thisFaction.Politics[otherFaction.Name] = politics;

@@ -479,11 +479,6 @@ namespace DwarfCorp
                 return;
 
             RoomBuilder.OnVoxelDestroyed(V);
-        }
-
-        public Politics GetPolitics(Faction ThisFaction, Faction OtherFaction)
-        {
-            return ThisFaction.ParentFaction.Politics[OtherFaction.ParentFaction.Name];
-        }
+        }        
     }
 }

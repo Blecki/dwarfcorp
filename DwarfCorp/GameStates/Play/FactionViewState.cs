@@ -51,17 +51,11 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(0, 3 * GuiRoot.RenderData.VirtualScreen.Height / 4)
             }) as WidgetListView;
 
-            var factions = World.Factions.Factions.Where(f => f.Value.ParentFaction.InteractiveFaction && f.Value.Race.IsIntelligent && f.Value != World.PlayerFaction).OrderBy(k =>
-            {
-                if (k.Value.Race.Name == "Dwarf")
-                    return 0;
-
-                return k.Value.DistanceToCapital + 100000.0f;
-            });
+            var factions = World.Factions.Factions.Where(f => f.Value.ParentFaction.InteractiveFaction && f.Value.Race.IsIntelligent && f.Value != World.PlayerFaction);
 
             foreach (var faction in factions)
             {
-                var diplomacy = World.GetPolitics(faction.Value, World.PlayerFaction);
+                var diplomacy = World.Overworld.GetPolitics(faction.Value.ParentFaction, World.PlayerFaction.ParentFaction);
                 var details = diplomacy.GetEvents().Select(e => string.Format("{0} ({1})", TextGenerator.ToSentenceCase(e.Description), e.Change > 0 ? "+" + e.Change.ToString() : e.Change.ToString()));
 
                 var entry = widgetList.AddItem(new Widget()
@@ -113,7 +107,7 @@ namespace DwarfCorp.GameStates
                 }
                 entry.AddChild(new Widget()
                 {
-                    Text = global::System.String.Format("    Relationship: {0}{1}", diplomacy.GetCurrentRelationship(), faction.Value.ClaimsColony ? " (Claims this territory)" : ""),
+                    Text = String.Format("    Relationship: {0}", diplomacy.GetCurrentRelationship()),
                     TextHorizontalAlign = HorizontalAlign.Left,
                     TextVerticalAlign = VerticalAlign.Top,
                     Font = "font8",
@@ -122,7 +116,7 @@ namespace DwarfCorp.GameStates
                 });
                 entry.AddChild(new Widget()
                 {
-                    Text = global::System.String.Format("    GDP: {0}    Size: {1}    Distance to capital: {2} miles", faction.Value.TradeMoney, faction.Value.TerritorySize, (int)faction.Value.DistanceToCapital),
+                    Text = "",
                     TextHorizontalAlign = HorizontalAlign.Left,
                     TextVerticalAlign = VerticalAlign.Top,
                     Font = "font8",

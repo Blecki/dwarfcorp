@@ -379,7 +379,7 @@ namespace DwarfCorp
                             if (door != null)
                             {
                                 if (
-                                    Creature.World.GetPolitics(door.TeamFaction, Creature.Faction)
+                                    Creature.World.Overworld.GetPolitics(door.TeamFaction.ParentFaction, Creature.Faction.ParentFaction)
                                         .GetCurrentRelationship() ==
                                     Relationship.Hateful)
                                 {

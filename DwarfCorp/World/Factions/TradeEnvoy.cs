@@ -113,7 +113,7 @@ namespace DwarfCorp
             cMem.SetValue("$offensive_trades", new Yarn.Value(0));
             cMem.SetValue("$trades", new Yarn.Value(0));
 
-            var politics = World.GetPolitics(OtherFaction, OwnerFaction);
+            var politics = World.Overworld.GetPolitics(OtherFaction.ParentFaction, OwnerFaction.ParentFaction);
             cMem.SetValue("$faction_was_at_war", new Yarn.Value(politics.IsAtWar));
             cMem.SetValue("$envoy_relationship", new Yarn.Value(politics.GetCurrentRelationship().ToString()));
 
@@ -161,7 +161,7 @@ namespace DwarfCorp
             if (DeathTimer.Update(World.Time.CurrentDate))
                 Creatures.ForEach((creature) => creature.GetRoot().Die());
 
-            var politics = World.GetPolitics(OwnerFaction, OtherFaction);
+            var politics = World.Overworld.GetPolitics(OwnerFaction.ParentFaction, OtherFaction.ParentFaction);
             if (politics.GetCurrentRelationship() == Relationship.Hateful)
             {
                 World.MakeAnnouncement(String.Format("The envoy from {0} left: we are at war with them.", OwnerFaction.ParentFaction.Name));

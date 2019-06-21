@@ -11,8 +11,6 @@ namespace DwarfCorp
         public string Name { get; set; }
         public string Race { get; set; }
         public Color PrimaryColor { get; set; }
-        public int CenterX { get; set; }
-        public int CenterY { get; set; }
         public float GoodWill { get; set; }
         public bool InteractiveFaction = false;
         public bool IsCorporate = false;

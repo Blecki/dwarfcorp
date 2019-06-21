@@ -93,7 +93,7 @@ namespace DwarfCorp
                 else if (DetectCloaked && minion.Creature.IsCloaked)
                     minion.Creature.IsCloaked = false;
 
-                if (World.GetPolitics(Allies, minion.Faction).GetCurrentRelationship() != Relationship.Hateful)
+                if (World.Overworld.GetPolitics(Allies.ParentFaction, minion.Faction.ParentFaction).GetCurrentRelationship() != Relationship.Hateful)
                     continue;
 
                 float dist = (minion.Position - GlobalTransform.Translation).LengthSquared();

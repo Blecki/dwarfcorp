@@ -54,11 +54,9 @@ namespace DwarfCorp
 
         public void SummonSkeleton(Vector3 pos)
         {
-            Skeleton skeleton = EntityFactory.CreateEntity<Physics>("Skeleton", pos).GetRoot().GetComponent<Skeleton>();
+            var skeleton = EntityFactory.CreateEntity<Physics>("Skeleton", pos).GetRoot().GetComponent<Skeleton>();
             if (skeleton.Faction != null)
-            {
                 skeleton.Faction.Minions.Remove(skeleton.AI);
-            }
             skeleton.Faction = this.Faction;
             this.Faction.AddMinion(skeleton.AI);
             Skeletons.Add(skeleton);
@@ -71,16 +69,12 @@ namespace DwarfCorp
             var myEnvoy = Faction.TradeEnvoys.Where(envoy => envoy.Creatures.Contains(this)).FirstOrDefault();
             
             if (myEnvoy != null)
-            {
                 myEnvoy.Creatures.Add(skeleton.AI);
-            }
 
             var myWarParty = Faction.WarParties.Where(party => party.Creatures.Contains(this)).FirstOrDefault();
             
             if (myWarParty != null)
-            {
                 myWarParty.Creatures.Add(skeleton.AI);
-            }
         }
 
         public IEnumerable<Act.Status> SummonSkeleton(GameComponent grave)
@@ -102,7 +96,7 @@ namespace DwarfCorp
                 var offset = Position - skeleton.AI.Position;
                 if (offset.Length() > 4 && skeleton.AI.Tasks.Count <= 1)
                 {
-                    Task goToTask = new ActWrapperTask(new GoToEntityAct(Physics, skeleton.AI))
+                    var goToTask = new ActWrapperTask(new GoToEntityAct(Physics, skeleton.AI))
                     {
                         Priority = Task.PriorityType.High
                     };
@@ -117,7 +111,7 @@ namespace DwarfCorp
         {
             IEnumerable<CreatureAI> enemies = (from faction in Creature.Manager.World.Factions.Factions
                 where
-                    Manager.World.GetPolitics(Creature.Faction, faction.Value)
+                    Manager.World.Overworld.GetPolitics(Creature.Faction.ParentFaction, faction.Value.ParentFaction)
                         .GetCurrentRelationship() == Relationship.Hateful
                 from minion in faction.Value.Minions
                 let dist = (minion.Position - Creature.AI.Position).Length()
@@ -136,7 +130,7 @@ namespace DwarfCorp
         {
             List<GameComponent> graves = (from faction in Creature.Manager.World.Factions.Factions // Todo: Rewrite in method syntax
                 where
-                    Manager.World.GetPolitics(Creature.Faction, faction.Value)
+                    Manager.World.Overworld.GetPolitics(Creature.Faction.ParentFaction, faction.Value.ParentFaction)
                         .GetCurrentRelationship() == Relationship.Hateful
                 from zone in Manager.World.EnumerateZones()
                 from body in zone.ZoneBodies

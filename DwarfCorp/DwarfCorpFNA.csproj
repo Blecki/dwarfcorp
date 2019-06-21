@@ -665,12 +665,12 @@
     <Compile Include="World\Events\SpawnTradeEnvoyEvent.cs" />
     <Compile Include="World\Events\SpawnWarPartyEvent.cs" />
     <Compile Include="World\Events\TimedIndicatorWidget.cs" />
-    <Compile Include="World\Factions\Applicant.cs" />
+    <Compile Include="World\Economy\Applicant.cs" />
     <Compile Include="World\Factions\DesignationDrawer.cs" />
     <Compile Include="World\Factions\DesignationSet.cs" />
     <Compile Include="World\Factions\DesignationType.cs" />
-    <Compile Include="World\Factions\Embarkment.cs" />
-    <Compile Include="World\Factions\EmbarkmentLibrary.cs" />
+    <Compile Include="World\Overworld\Embarkment.cs" />
+    <Compile Include="World\Overworld\DifficultyLibrary.cs" />
     <Compile Include="World\Factions\Expedition.cs" />
     <Compile Include="World\Factions\Faction.cs" />
     <Compile Include="World\Factions\FactionSet.cs" />

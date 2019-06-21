@@ -21,8 +21,6 @@ namespace DwarfCorp
                 Race = race.Name,
                 Name = TextGenerator.ToTitleCase(TextGenerator.GenerateRandom(Datastructures.SelectRandom(race.FactionNameTemplates).ToArray())),
                 PrimaryColor = new HSLColor(idx * (255.0f / n), 255.0, MathFunctions.Rand(100.0f, 200.0f)),
-                CenterX = MathFunctions.RandInt(0, Settings.Width),
-                CenterY = MathFunctions.RandInt(0, Settings.Height),
                 GoodWill = MathFunctions.Rand(-1, 1),
                 InteractiveFaction = true
             };
@@ -36,11 +34,7 @@ namespace DwarfCorp
             {
                 Name = "Player",
                 Race = "Dwarf"
-            })
-            {
-                DistanceToCapital = 0,
-                ClaimsColony = true,
-            };
+            });
 
             Factions["Corporate"] = new Faction(world, new OverworldFaction
             {
@@ -48,13 +42,7 @@ namespace DwarfCorp
                 Race = "Dwarf",
                 InteractiveFaction = true,
                 IsCorporate = true
-            })
-            {
-                TradeMoney = 10000,
-                TerritorySize = 9999,
-                DistanceToCapital = 600,
-                ClaimsColony = true
-            };
+            });
 
             Factions["Herbivore"] = new Faction(world, new OverworldFaction
             {

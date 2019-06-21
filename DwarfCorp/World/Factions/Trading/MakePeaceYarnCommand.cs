@@ -20,7 +20,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
                 return;
             }
 
-            world.GetPolitics(playerFaction, envoy.OwnerFaction).IsAtWar = false;
+            world.Overworld.GetPolitics(playerFaction.ParentFaction, envoy.OwnerFaction.ParentFaction).IsAtWar = false;
         }
     }
 }

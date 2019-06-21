@@ -20,7 +20,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
                 return;
             }
 
-            var politics = world.GetPolitics(playerFaction, envoy.OwnerFaction);
+            var politics = world.Overworld.GetPolitics(playerFaction.ParentFaction, envoy.OwnerFaction.ParentFaction);
             if (!politics.HasEvent((string)Arguments[0].Value))
             {
                 politics.AddEvent(new PoliticalEvent()

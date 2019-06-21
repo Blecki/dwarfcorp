@@ -15,9 +15,6 @@ namespace DwarfCorp
         public String ParentFactionName = "";
         [JsonIgnore] public OverworldFaction ParentFaction;
 
-        public DwarfBux TradeMoney { get; set; }
-        public Point Center { get; set; }
-        public int TerritorySize { get; set; }
         public Company Economy { get; set; }
         public List<TradeEnvoy> TradeEnvoys = new List<TradeEnvoy>();
         public List<WarParty> WarParties = new List<WarParty>();
@@ -26,8 +23,6 @@ namespace DwarfCorp
         public Timer HandleThreatsTimer = new Timer(1.0f, false, Timer.TimerMode.Real);
         public DesignationSet Designations = new DesignationSet(); // Todo: Still want to get this out of faction.
         public Dictionary<ulong, VoxelHandle> GuardedVoxels = new Dictionary<ulong, VoxelHandle>();
-        public bool ClaimsColony = false;
-        public float DistanceToCapital = 0.0f;
         public List<Creature> Threats = new List<Creature>();
 
         [JsonIgnore] public Race Race => Library.GetRace(ParentFaction.Race);
@@ -52,9 +47,6 @@ namespace DwarfCorp
             this.World = World;
             ParentFaction = descriptor;
             ParentFactionName = descriptor.Name;
-
-            TradeMoney = 0.0m;
-            Center = new Point(descriptor.CenterX, descriptor.CenterY);
         }
 
         public static List<CreatureAI> FilterMinionsWithCapability(List<CreatureAI> minions, Task.TaskCategory action)
@@ -233,9 +225,6 @@ namespace DwarfCorp
 
             var creatures = World.MonsterSpawner.Spawn(World.MonsterSpawner.GenerateSpawnEvent(this, World.PlayerFaction, MathFunctions.Random.Next(4) + 1, false));
 
-            if (TradeMoney < 100m)
-                TradeMoney += MathFunctions.Rand(250.0f, 5000.0f);
-
             envoy = new TradeEnvoy(World.Time.CurrentDate)
             {
                 Creatures = creatures,
@@ -243,7 +232,7 @@ namespace DwarfCorp
                 ShouldRemove = false,
                 OwnerFaction = this,
                 TradeGoods = Race.GenerateResources(World),
-                TradeMoney = TradeMoney
+                TradeMoney = new DwarfBux((decimal)MathFunctions.Rand(50.0f, 250.0f))
             };
 
             if (Race.IsNative)
@@ -338,7 +327,7 @@ namespace DwarfCorp
         {
             World.Tutorial("war");
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
-            Politics politics = World.GetPolitics(this, World.PlayerFaction);
+            Politics politics = World.Overworld.GetPolitics(ParentFaction, World.PlayerFaction.ParentFaction);
             politics.IsAtWar = true;
             List<CreatureAI> creatures = World.MonsterSpawner.Spawn(World.MonsterSpawner.GenerateSpawnEvent(this, World.PlayerFaction, MathFunctions.Random.Next(World.Overworld.Difficulty) + 1, false));
             var party = new WarParty(World.Time.CurrentDate)

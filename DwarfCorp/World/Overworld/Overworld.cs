@@ -42,6 +42,11 @@ namespace DwarfCorp.GameStates
             r.InstanceSettings = new InstanceSettings(r.ColonyCells.GetCellAt(16, 0));
 
             return r;
-        }        
+        }
+
+        public Politics GetPolitics(OverworldFaction ThisFaction, OverworldFaction OtherFaction)
+        {
+            return ThisFaction.Politics[OtherFaction.Name];
+        }
     }
 }

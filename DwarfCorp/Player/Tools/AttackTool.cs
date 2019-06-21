@@ -46,31 +46,24 @@ namespace DwarfCorp
         {
             var creature = other.EnumerateAll().OfType<Creature>().FirstOrDefault();
             if (creature == null)
-            {
                 return false;
-            }
 
-            if (World.GetPolitics(creature.Faction, World.PlayerFaction).GetCurrentRelationship() ==
-                Relationship.Loving)
-            {
+            if (World.Overworld.GetPolitics(creature.Faction.ParentFaction, World.PlayerFaction.ParentFaction).GetCurrentRelationship() == Relationship.Loving)
                 return false;
-            }
+
             return true;
         }
 
         public override void OnMouseOver(IEnumerable<GameComponent> bodies)
         {
-            bool shown = false;
+            var shown = false;
             foreach (GameComponent other in bodies)
             {
                 var creature = other.EnumerateAll().OfType<Creature>().FirstOrDefault();
                 if (creature == null)
-                {
                     continue;
-                }
 
-                if (World.GetPolitics(creature.Faction, World.PlayerFaction).GetCurrentRelationship() ==
-                    Relationship.Loving)
+                if (World.Overworld.GetPolitics(creature.Faction.ParentFaction, World.PlayerFaction.ParentFaction).GetCurrentRelationship() == Relationship.Loving)
                 {
                     World.UserInterface.ShowTooltip("We refuse to attack allies.");
                     shown = true;
@@ -79,6 +72,7 @@ namespace DwarfCorp
                 World.UserInterface.ShowTooltip("Click to attack this " + creature.Stats.CurrentClass.Name);
                 shown = true;
             }
+
             if (!shown)
                 DefaultOnMouseOver(bodies);
         }
@@ -125,7 +119,7 @@ namespace DwarfCorp
                     continue;
                 }
 
-                if (World.GetPolitics(creature.Faction, World.PlayerFaction).GetCurrentRelationship() == Relationship.Loving)
+                if (World.Overworld.GetPolitics(creature.Faction.ParentFaction, World.PlayerFaction.ParentFaction).GetCurrentRelationship() == Relationship.Loving)
                 {
                     World.UserInterface.ShowToolPopup("We refuse to attack allies.");
                     continue;
