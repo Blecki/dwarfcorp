@@ -147,7 +147,7 @@ namespace DwarfCorp.Rail
                     if (!addNewDesignation) break;
                     if (Object.ReferenceEquals(entity, body)) continue;
 
-                    var existingDesignation = World.PlayerFaction.Designations.EnumerateEntityDesignations(DesignationType.Craft).FirstOrDefault(d => Object.ReferenceEquals(d.Body, entity));
+                    var existingDesignation = World.PersistentData.Designations.EnumerateEntityDesignations(DesignationType.Craft).FirstOrDefault(d => Object.ReferenceEquals(d.Body, entity));
                     if (existingDesignation != null)
                     {
                         (entity as RailEntity).UpdatePiece(piece, actualPosition);
@@ -190,20 +190,20 @@ namespace DwarfCorp.Rail
                     World.ParticleManager.Trigger("puff", endPos, Color.White, 10);
 
                     var task = new CraftItemTask(designation);
-                    World.PlayerFaction.Designations.AddEntityDesignation(body, DesignationType.Craft, designation, task);
+                    World.PersistentData.Designations.AddEntityDesignation(body, DesignationType.Craft, designation, task);
                     assignments.Add(task);
                 }
 
                 if (GodModeSwitch)
                 {
                     // Go ahead and activate the entity and destroy the designation and workpile.
-                    var existingDesignation = World.PlayerFaction.Designations.EnumerateEntityDesignations(DesignationType.Craft).FirstOrDefault(d => Object.ReferenceEquals(d.Body, finalEntity));
+                    var existingDesignation = World.PersistentData.Designations.EnumerateEntityDesignations(DesignationType.Craft).FirstOrDefault(d => Object.ReferenceEquals(d.Body, finalEntity));
                     if (existingDesignation != null)
                     {
                         var designation = existingDesignation.Tag as CraftDesignation;
                         if (designation != null && designation.WorkPile != null)
                             designation.WorkPile.GetRoot().Delete();
-                        World.PlayerFaction.Designations.RemoveEntityDesignation(finalEntity, DesignationType.Craft);
+                        World.PersistentData.Designations.RemoveEntityDesignation(finalEntity, DesignationType.Craft);
                     }
 
                     finalEntity.SetFlagRecursive(GameComponent.Flag.Active, true);

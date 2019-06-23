@@ -21,7 +21,6 @@ namespace DwarfCorp
         public List<GameComponent> OwnedObjects = new List<GameComponent>();
         public List<CreatureAI> Minions = new List<CreatureAI>();
         public Timer HandleThreatsTimer = new Timer(1.0f, false, Timer.TimerMode.Real);
-        public DesignationSet Designations = new DesignationSet(); // Todo: Still want to get this out of faction.
         public Dictionary<ulong, VoxelHandle> GuardedVoxels = new Dictionary<ulong, VoxelHandle>();
         public List<Creature> Threats = new List<Creature>();
 
@@ -58,7 +57,6 @@ namespace DwarfCorp
         {
             Minions.RemoveAll(m => m.IsDead);
 
-            Designations.CleanupDesignations();
 
             if (HandleThreatsTimer == null)
                 HandleThreatsTimer = new Timer(1.0f, false, Timer.TimerMode.Real);
@@ -115,15 +113,15 @@ namespace DwarfCorp
             {
                 if (threat != null && !threat.IsDead)
                 {
-                    if (!Designations.IsDesignation(threat.Physics, DesignationType.Attack))
+//                    if (!Designations.IsDesignation(threat.Physics, DesignationType.Attack))
                     {
-                        //var g = new KillEntityTask(threat.Physics, KillEntityTask.KillType.Auto);
+                        var g = new KillEntityTask(threat.Physics, KillEntityTask.KillType.Auto);
                         //Designations.AddEntityDesignation(threat.Physics, DesignationType.Attack, null, g);
-                        //tasks.Add(g);
+                        tasks.Add(g);
                     }
-                    else
+  //                  else
                     {
-                        threatsToRemove.Add(threat);
+                        //threatsToRemove.Add(threat);
                     }
                 }
                 else
@@ -133,9 +131,7 @@ namespace DwarfCorp
             }
 
             foreach (Creature threat in threatsToRemove)
-            {
                 Threats.Remove(threat);
-            }
 
             TaskManager.AssignTasksGreedy(tasks, Minions);
         }

@@ -23,7 +23,7 @@ namespace DwarfCorp
         {
             if (creature.Blackboard.GetData<bool>("NoPath", false))
             {
-                var designation = creature.Faction.Designations.GetEntityDesignation(ItemToGather, DesignationType.Gather);
+                var designation = creature.World.PersistentData.Designations.GetEntityDesignation(ItemToGather, DesignationType.Gather);
                 if (designation != null)
                 {
                     creature.World.MakeAnnouncement(String.Format("{0} cancelled gather task because it is unreachable", creature.Stats.FullName));

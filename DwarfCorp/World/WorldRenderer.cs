@@ -420,7 +420,7 @@ namespace DwarfCorp
             DefaultShader.ClippingEnabled = true;
 
             // Render simple geometry (boxes, etc.)
-            Drawer3D.Render(GraphicsDevice, DefaultShader, Camera, DesignationDrawer, World.PlayerFaction.Designations, World);
+            Drawer3D.Render(GraphicsDevice, DefaultShader, Camera, DesignationDrawer, World.PersistentData.Designations, World);
 
             DefaultShader.EnableShadows = false;
 

@@ -339,6 +339,8 @@ namespace DwarfCorp
                 }
                 #endregion
 
+                PersistentData.Designations.CleanupDesignations();
+
                 Factions.Update(gameTime);
 
                 foreach (var applicant in PersistentData.NewArrivals)
@@ -442,7 +444,7 @@ namespace DwarfCorp
             {
                 List<Task> orphanedTasks = new List<Task>();
 
-                foreach (var ent in PlayerFaction.Designations.EnumerateEntityDesignations())
+                foreach (var ent in PersistentData.Designations.EnumerateEntityDesignations())
                 {
                     if (ent.Type == DesignationType.Attack)
                     {

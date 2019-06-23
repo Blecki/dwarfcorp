@@ -23,7 +23,7 @@ namespace DwarfCorp
         public ComponentManager.ComponentSaveData Components;
         public Tutorial.TutorialSaveData TutorialSaveData;
         public FactionSet Factions;
-        public DesignationDrawer Designations;
+        public DesignationDrawer Designations; // Todo: ??
         public TaskManager Tasks;
         public Yarn.MemoryVariableStore ConversationMemory;
         public DwarfCorp.Gui.Widgets.StatsTracker Stats;

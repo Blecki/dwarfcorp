@@ -40,7 +40,7 @@ namespace DwarfCorp
 
             if (button == InputManager.MouseButton.Left)
             {
-                int count = World.PlayerFaction.Designations.EnumerateDesignations(DesignationType.Dig).Count();
+                int count = World.PersistentData.Designations.EnumerateDesignations(DesignationType.Dig).Count();
 
                 World.Tutorial("slice");
                 List<Task> assignments = new List<Task>();
@@ -61,7 +61,7 @@ namespace DwarfCorp
                     }
 
                     // Todo: Should this be removed from the existing compound task and put in the new one?
-                    if (!World.PlayerFaction.Designations.IsVoxelDesignation(v, DesignationType.Dig) && !(World.RoomBuilder.IsInRoom(v) || World.RoomBuilder.IsBuildDesignation(v)))
+                    if (!World.PersistentData.Designations.IsVoxelDesignation(v, DesignationType.Dig) && !(World.RoomBuilder.IsInRoom(v) || World.RoomBuilder.IsBuildDesignation(v)))
                     {
                         var task = new KillVoxelTask(v);
                         task.Hidden = true;
@@ -86,7 +86,7 @@ namespace DwarfCorp
                 {
                     if (r.IsValid)
                     {
-                        var designation = World.PlayerFaction.Designations.GetVoxelDesignation(r, DesignationType.Dig);
+                        var designation = World.PersistentData.Designations.GetVoxelDesignation(r, DesignationType.Dig);
                         if (designation != null && designation.Task != null)
                             World.TaskManager.CancelTask(designation.Task);
                     }

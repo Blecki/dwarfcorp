@@ -52,7 +52,7 @@ namespace DwarfCorp
             }
         }
 
-        public IEnumerable<Act.Status> AddAnimal(GameComponent animal, Faction faction)
+        public IEnumerable<Act.Status> AddAnimal(GameComponent animal, WorldManager World)
         {
             Animals.Add(animal);
             BoundingBox animalBounds = GetBoundingBox();
@@ -61,7 +61,7 @@ namespace DwarfCorp
             animalBounds.Min.Y -= 0.25f;
             animal.GetComponent<Physics>().ReservedFor = null; ;
             animal.GetComponent<CreatureAI>().PositionConstraint = animalBounds;
-            faction.Designations.RemoveEntityDesignation(animal.GetComponent<Physics>(), DesignationType.Wrangle);
+            World.PersistentData.Designations.RemoveEntityDesignation(animal.GetComponent<Physics>(), DesignationType.Wrangle);
            yield return Act.Status.Success;
         }
 

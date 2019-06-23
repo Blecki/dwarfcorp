@@ -43,7 +43,7 @@ namespace DwarfCorp
 
         public override void OnEnqueued(Faction Faction)
         {
-            Faction.Designations.AddEntityDesignation(CraftDesignation.Entity, DesignationType.Craft, CraftDesignation, this);
+            Faction.World.PersistentData.Designations.AddEntityDesignation(CraftDesignation.Entity, DesignationType.Craft, CraftDesignation, this);
         }
 
         public override void OnDequeued(Faction Faction)
@@ -60,7 +60,7 @@ namespace DwarfCorp
                 CraftDesignation.Entity.GetRoot().Delete();
             }
 
-            Faction.Designations.RemoveEntityDesignation(CraftDesignation.Entity, DesignationType.Craft);
+            Faction.World.PersistentData.Designations.RemoveEntityDesignation(CraftDesignation.Entity, DesignationType.Craft);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

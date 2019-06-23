@@ -8,11 +8,6 @@ using DwarfCorp.GameStates;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// Tells a creature that it should get a resource, and put it into a voxel
-    /// to build it.
-    /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class BuildVoxelTask : Task
     {
         public string VoxType { get; set; }
@@ -43,7 +38,7 @@ namespace DwarfCorp
             if (agent.AI.Stats.IsAsleep)
                 return Feasibility.Infeasible;
 
-            if (!agent.AI.Faction.Designations.IsVoxelDesignation(Voxel, DesignationType.Put))
+            if (!agent.World.PersistentData.Designations.IsVoxelDesignation(Voxel, DesignationType.Put))
             {
                 return Feasibility.Infeasible;
             }
@@ -54,12 +49,12 @@ namespace DwarfCorp
 
         public override bool ShouldDelete(Creature agent)
         {
-            return !Voxel.IsValid || !agent.AI.Faction.Designations.IsVoxelDesignation(Voxel, DesignationType.Put);
+            return !Voxel.IsValid || !agent.World.PersistentData.Designations.IsVoxelDesignation(Voxel, DesignationType.Put);
         }
 
         public override bool ShouldRetry(Creature agent)
         {
-            return Voxel.IsValid && agent.AI.Faction.Designations.IsVoxelDesignation(Voxel, DesignationType.Put);
+            return Voxel.IsValid && agent.World.PersistentData.Designations.IsVoxelDesignation(Voxel, DesignationType.Put);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
@@ -116,12 +111,12 @@ namespace DwarfCorp
 
         public override void OnEnqueued(Faction Faction)
         {
-            Faction.Designations.AddVoxelDesignation(Voxel, DesignationType.Put, VoxType, this);
+            Faction.World.PersistentData.Designations.AddVoxelDesignation(Voxel, DesignationType.Put, VoxType, this);
         }
 
         public override void OnDequeued(Faction Faction)
         {
-            Faction.Designations.RemoveVoxelDesignation(Voxel, DesignationType.Put);
+            Faction.World.PersistentData.Designations.RemoveVoxelDesignation(Voxel, DesignationType.Put);
         }
     }
 }

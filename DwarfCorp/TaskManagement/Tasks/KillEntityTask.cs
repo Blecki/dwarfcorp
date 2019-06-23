@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    // Todo: Seperate tasks for chop/attack
     public class KillEntityTask : Task
     {
         public enum KillType
@@ -124,12 +123,12 @@ namespace DwarfCorp
 
         public override void OnEnqueued(Faction Faction)
         {
-            Faction.Designations.AddEntityDesignation(EntityToKill, DesignationType.Attack, null, this);
+            Faction.World.PersistentData.Designations.AddEntityDesignation(EntityToKill, DesignationType.Attack, null, this);
         }
 
         public override void OnDequeued(Faction Faction)
         {
-            Faction.Designations.RemoveEntityDesignation(EntityToKill, DesignationType.Attack);
+            Faction.World.PersistentData.Designations.RemoveEntityDesignation(EntityToKill, DesignationType.Attack);
         }
     }
 

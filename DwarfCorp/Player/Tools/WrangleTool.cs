@@ -76,7 +76,7 @@ namespace DwarfCorp
                         break;
                     case InputManager.MouseButton.Right:
                         {
-                            var existingOrder = World.PlayerFaction.Designations.GetEntityDesignation(animal, DesignationType.Wrangle);
+                            var existingOrder = World.PersistentData.Designations.GetEntityDesignation(animal, DesignationType.Wrangle);
                             if (existingOrder != null)
                                 World.TaskManager.CancelTask(existingOrder.Task);
                         }

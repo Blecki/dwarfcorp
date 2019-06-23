@@ -34,7 +34,7 @@ namespace DwarfCorp
 
         public IEnumerable<Act.Status> PenAnimal(CreatureAI agent, CreatureAI creature, AnimalPen animalPen)
         {
-            foreach (var status in animalPen.AddAnimal(Animal.Physics, agent.Faction))
+            foreach (var status in animalPen.AddAnimal(Animal.Physics, agent.World))
             {
                 if (status == Act.Status.Fail)
                 {
@@ -51,7 +51,7 @@ namespace DwarfCorp
         {
             if (creature.Blackboard.GetData<bool>("NoPath", false))
             {
-                var designation = creature.Faction.Designations.GetEntityDesignation(animal.GetRoot().GetComponent<Physics>(), DesignationType.Wrangle);
+                var designation = creature.World.PersistentData.Designations.GetEntityDesignation(animal.GetRoot().GetComponent<Physics>(), DesignationType.Wrangle);
                 if (designation != null)
                 {
                     if (creature.Faction == creature.World.PlayerFaction)
@@ -144,12 +144,12 @@ namespace DwarfCorp
 
         public override void OnEnqueued(Faction Faction)
         {
-            Faction.Designations.AddEntityDesignation(Animal.Physics, DesignationType.Wrangle, null, this);
+            Faction.World.PersistentData.Designations.AddEntityDesignation(Animal.Physics, DesignationType.Wrangle, null, this);
         }
 
         public override void OnDequeued(Faction Faction)
         {
-            Faction.Designations.RemoveEntityDesignation(Animal.Physics, DesignationType.Wrangle);
+            Faction.World.PersistentData.Designations.RemoveEntityDesignation(Animal.Physics, DesignationType.Wrangle);
         }
     }
 }

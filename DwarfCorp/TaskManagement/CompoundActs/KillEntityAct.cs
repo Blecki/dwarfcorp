@@ -25,7 +25,7 @@ namespace DwarfCorp
         {
             if (creature.Blackboard.GetData<bool>("NoPath", false))
             {
-                var designation = creature.Faction.Designations.GetEntityDesignation(Entity, DesignationType.Attack);
+                var designation = creature.World.PersistentData.Designations.GetEntityDesignation(Entity, DesignationType.Attack);
                 if (designation != null)
                 {
                     if (creature.Faction == creature.World.PlayerFaction)

@@ -135,12 +135,12 @@ namespace DwarfCorp
 
         public override void OnEnqueued(Faction Faction)
         {
-            Faction.Designations.AddVoxelDesignation(Voxel, DesignationType.Dig, null, this);
+            Faction.World.PersistentData.Designations.AddVoxelDesignation(Voxel, DesignationType.Dig, null, this);
         }
 
         public override void OnDequeued(Faction Faction)
         {
-            Faction.Designations.RemoveVoxelDesignation(Voxel, DesignationType.Dig);
+            Faction.World.PersistentData.Designations.RemoveVoxelDesignation(Voxel, DesignationType.Dig);
         }
         
     }

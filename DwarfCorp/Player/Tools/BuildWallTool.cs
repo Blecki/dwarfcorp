@@ -45,7 +45,7 @@ namespace DwarfCorp
                     {
 
                         List<Task> assignments = new List<Task>();
-                        var validRefs = voxels.Where(r => !World.PlayerFaction.Designations.IsVoxelDesignation(r, DesignationType.Put)
+                        var validRefs = voxels.Where(r => !World.PersistentData.Designations.IsVoxelDesignation(r, DesignationType.Put)
                             && World.UserInterface.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? r.IsEmpty : !r.IsEmpty).ToList();
 
                         foreach (var r in voxels)
@@ -54,7 +54,7 @@ namespace DwarfCorp
                             if (World.UserInterface.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty && !r.IsEmpty) continue;
                             if (World.UserInterface.VoxSelector.SelectionType == VoxelSelectionType.SelectFilled && r.IsEmpty) continue;
 
-                            var existingDesignation = World.PlayerFaction.Designations.GetVoxelDesignation(r, DesignationType.Put);
+                            var existingDesignation = World.PersistentData.Designations.GetVoxelDesignation(r, DesignationType.Put);
                             if (existingDesignation != null)
                                 World.TaskManager.CancelTask(existingDesignation.Task);
 
@@ -75,7 +75,7 @@ namespace DwarfCorp
                     {
                         foreach (var r in voxels)
                         {
-                            var designation = World.PlayerFaction.Designations.GetVoxelDesignation(r, DesignationType.Put);
+                            var designation = World.PersistentData.Designations.GetVoxelDesignation(r, DesignationType.Put);
                             if (designation != null)
                                 World.TaskManager.CancelTask(designation.Task);
                         }

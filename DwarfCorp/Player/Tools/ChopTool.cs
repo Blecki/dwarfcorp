@@ -122,7 +122,7 @@ namespace DwarfCorp
                 {
                     if (!plant.IsVisible) continue;
                     if (World.ChunkManager.IsAboveCullPlane(plant.BoundingBox)) continue;
-                    var designation = World.PlayerFaction.Designations.GetEntityDesignation(plant, DesignationType.Chop);
+                    var designation = World.PersistentData.Designations.GetEntityDesignation(plant, DesignationType.Chop);
                     if (designation != null)
                         World.TaskManager.CancelTask(designation.Task);
                 }

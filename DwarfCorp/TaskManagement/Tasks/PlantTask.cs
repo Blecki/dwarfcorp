@@ -100,12 +100,12 @@ namespace DwarfCorp
 
         public override void OnEnqueued(Faction Faction)
         {
-            Faction.Designations.AddVoxelDesignation(FarmToWork.Voxel, DesignationType.Plant, FarmToWork, this);
+            Faction.World.PersistentData.Designations.AddVoxelDesignation(FarmToWork.Voxel, DesignationType.Plant, FarmToWork, this);
         }
 
         public override void OnDequeued(Faction Faction)
         {
-            Faction.Designations.RemoveVoxelDesignation(FarmToWork.Voxel, DesignationType.Plant);
+            Faction.World.PersistentData.Designations.RemoveVoxelDesignation(FarmToWork.Voxel, DesignationType.Plant);
         }
     }
 }

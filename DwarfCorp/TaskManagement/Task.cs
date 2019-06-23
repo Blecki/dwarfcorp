@@ -132,7 +132,7 @@ namespace DwarfCorp
             return false;
         }
 
-        public virtual void OnEnqueued(Faction Faction)
+        public virtual void OnEnqueued(Faction Faction) // Todo: Take world instead of faction?
         {
 
         }

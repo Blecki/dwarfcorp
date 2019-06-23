@@ -111,10 +111,10 @@ namespace DwarfCorp
                     }
                 case (InputManager.MouseButton.Right):
                     {
-                        var designation = World.PlayerFaction.Designations.EnumerateEntityDesignations(DesignationType.Craft).Select(d => d.Tag as CraftDesignation).FirstOrDefault(d => d.Location == World.UserInterface.VoxSelector.VoxelUnderMouse);
+                        var designation = World.PersistentData.Designations.EnumerateEntityDesignations(DesignationType.Craft).Select(d => d.Tag as CraftDesignation).FirstOrDefault(d => d.Location == World.UserInterface.VoxSelector.VoxelUnderMouse);
                         if (designation != null)
                         {
-                            var realDesignation = World.PlayerFaction.Designations.GetEntityDesignation(designation.Entity, DesignationType.Craft);
+                            var realDesignation = World.PersistentData.Designations.GetEntityDesignation(designation.Entity, DesignationType.Craft);
                             if (realDesignation != null)
                                 World.TaskManager.CancelTask(realDesignation.Task);
                         }
@@ -127,7 +127,7 @@ namespace DwarfCorp
         {
             var resources = World.ListResources().Where(r => ResourceLibrary.GetResourceByName(r.Value.Type).CraftInfo.CraftItemType == CraftType.Name).ToList();
 
-            var toPlace = World.PlayerFaction.Designations.EnumerateEntityDesignations().Where(designation => designation.Type == DesignationType.Craft &&
+            var toPlace = World.PersistentData.Designations.EnumerateEntityDesignations().Where(designation => designation.Type == DesignationType.Craft &&
                 ((CraftDesignation)designation.Tag).ItemType.Name == CraftType.Name).ToList();
 
             if (resources.Sum(r => r.Value.Count) <= toPlace.Count)

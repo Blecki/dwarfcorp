@@ -38,7 +38,7 @@ namespace DwarfCorp.Gui.Widgets.Minimap
 
                 if (SurfaceVoxel.IsVisible)
                 {
-                    foreach (var designation in World.PlayerFaction.Designations.EnumerateDesignations(SurfaceVoxel))
+                    foreach (var designation in World.PersistentData.Designations.EnumerateDesignations(SurfaceVoxel))
                     {
                         if ((designation.Type & World.Renderer.DesignationDrawer.VisibleTypes) == designation.Type)
                         {

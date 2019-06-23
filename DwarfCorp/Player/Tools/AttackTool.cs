@@ -136,7 +136,7 @@ namespace DwarfCorp
                 }
                 else if (button == InputManager.MouseButton.Right)
                 {
-                    var designation = World.PlayerFaction.Designations.GetEntityDesignation(other, DesignationType.Attack);
+                    var designation = World.PersistentData.Designations.GetEntityDesignation(other, DesignationType.Attack);
                     if (designation != null)
                     {
                         World.TaskManager.CancelTask(designation.Task);

@@ -55,7 +55,7 @@ namespace DwarfCorp
                 }
             }
 
-            var designation = World.PlayerFaction.Designations.GetVoxelDesignation(voxel, DesignationType.Plant);
+            var designation = World.PersistentData.Designations.GetVoxelDesignation(voxel, DesignationType.Plant);
 
             if (designation != null)
             {
@@ -95,7 +95,7 @@ namespace DwarfCorp
             if (button == InputManager.MouseButton.Left)
             {
                 var goals = new List<PlantTask>();
-                int count = World.PlayerFaction.Designations.EnumerateDesignations(DesignationType.Plant).Count();
+                int count = World.PersistentData.Designations.EnumerateDesignations(DesignationType.Plant).Count();
 
                 foreach (var voxel in voxels)
                 {
@@ -135,7 +135,7 @@ namespace DwarfCorp
             {
                 foreach (var voxel in voxels)
                 {
-                    var designation = World.PlayerFaction.Designations.GetVoxelDesignation(voxel, DesignationType.Plant);
+                    var designation = World.PersistentData.Designations.GetVoxelDesignation(voxel, DesignationType.Plant);
 
                     if (designation != null)
                         World.TaskManager.CancelTask(designation.Task);

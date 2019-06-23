@@ -66,12 +66,12 @@ namespace DwarfCorp
 
         public override void OnEnqueued(Faction Faction)
         {
-            Faction.Designations.AddEntityDesignation(EntityToGather, DesignationType.Gather, null, this);
+            Faction.World.PersistentData.Designations.AddEntityDesignation(EntityToGather, DesignationType.Gather, null, this);
         }
 
         public override void OnDequeued(Faction Faction)
         {
-            Faction.Designations.RemoveEntityDesignation(EntityToGather, DesignationType.Gather);
+            Faction.World.PersistentData.Designations.RemoveEntityDesignation(EntityToGather, DesignationType.Gather);
         }
     }
 

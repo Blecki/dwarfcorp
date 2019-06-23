@@ -57,7 +57,7 @@ namespace DwarfCorp
             {
                 if (Item.Entity != null && !Item.Entity.IsDead)
                 {
-                    var designation = Agent.Faction.Designations.GetEntityDesignation(Item.Entity, DesignationType.Craft);
+                    var designation = Agent.World.PersistentData.Designations.GetEntityDesignation(Item.Entity, DesignationType.Craft);
                     if (designation != null)
                     {
                         if (Agent.Faction == Agent.World.PlayerFaction)
@@ -248,7 +248,7 @@ namespace DwarfCorp
 
         public bool IsNotCancelled()
         {
-            return Creature.Faction.Designations.IsDesignation(Item.Entity, DesignationType.Craft);
+            return Creature.World.PersistentData.Designations.IsDesignation(Item.Entity, DesignationType.Craft);
         }
 
         public bool ResourceStateValid()

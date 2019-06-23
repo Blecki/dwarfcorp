@@ -54,7 +54,7 @@ namespace DwarfCorp
                 return false;
             }
 
-            if (Voxels.Any(v => Faction.Designations.GetVoxelDesignation(v, DesignationType._All) != null))
+            if (Voxels.Any(v => World.PersistentData.Designations.GetVoxelDesignation(v, DesignationType._All) != null))
             {
                 World.UserInterface.ShowTooltip("Something else is designated for this area.");
                 return false;

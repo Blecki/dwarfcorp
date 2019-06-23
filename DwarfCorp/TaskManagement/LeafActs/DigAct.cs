@@ -45,7 +45,7 @@ namespace DwarfCorp
                 }
 
                 // If the voxel has already been destroyed, just ignore it and return.
-                if (OwnerTask.VoxelHealth <= 0 || (CheckOwnership && !Creature.Faction.Designations.IsVoxelDesignation(vox, DesignationType.Dig)))
+                if (OwnerTask.VoxelHealth <= 0 || (CheckOwnership && !Creature.World.PersistentData.Designations.IsVoxelDesignation(vox, DesignationType.Dig)))
                 {
                     Creature.CurrentCharacterMode = CharacterMode.Idle;
                     yield return Act.Status.Success;

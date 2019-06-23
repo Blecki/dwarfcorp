@@ -273,7 +273,7 @@ namespace DwarfCorp
                             SelectionBuffer.RemoveAll(v =>
                             {
                                 if (v.Equals(underMouse)) return false;
-                                if (World.PlayerFaction.Designations.IsVoxelDesignation(v, DesignationType.Put)) return false; // Treat put designations as solid.
+                                if (World.PersistentData.Designations.IsVoxelDesignation(v, DesignationType.Put)) return false; // Treat put designations as solid.
                                 return !VoxelHelpers.DoesVoxelHaveVisibleSurface(World, v);
                             });
                         }
@@ -418,7 +418,7 @@ namespace DwarfCorp
             switch (SelectionType)
             {
                 case VoxelSelectionType.SelectFilled:
-                    return !V.IsEmpty || World.PlayerFaction.Designations.IsVoxelDesignation(V, DesignationType.Put);
+                    return !V.IsEmpty || World.PersistentData.Designations.IsVoxelDesignation(V, DesignationType.Put);
                 case VoxelSelectionType.SelectEmpty:
                     return V.IsEmpty && V.IsExplored;
                 default:
@@ -429,7 +429,7 @@ namespace DwarfCorp
         private bool VoxelPassesRayFilter(VoxelHandle V)
         {
             if (!V.IsValid) return false;
-            return !V.IsEmpty || World.PlayerFaction.Designations.IsVoxelDesignation(V, DesignationType.Put);
+            return !V.IsEmpty || World.PersistentData.Designations.IsVoxelDesignation(V, DesignationType.Put);
         }
     }
 }

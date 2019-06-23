@@ -21,7 +21,7 @@ namespace DwarfCorp
         public bool CheckIsDigDesignation(CreatureAI creature, KillVoxelTask OwnerTask)
         {
             if (OwnerTask.Voxel.IsValid)
-                return creature.Faction.Designations.IsVoxelDesignation(OwnerTask.Voxel, DesignationType.Dig);
+                return creature.World.PersistentData.Designations.IsVoxelDesignation(OwnerTask.Voxel, DesignationType.Dig);
 
             return false;
         }

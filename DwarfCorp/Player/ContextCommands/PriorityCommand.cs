@@ -22,12 +22,12 @@ namespace DwarfCorp.ContextCommands
 
         public override bool CanBeAppliedTo(GameComponent Entity, WorldManager World)
         {
-            return World.PlayerFaction.Designations.EnumerateEntityDesignations(Entity).Any();
+            return World.PersistentData.Designations.EnumerateEntityDesignations(Entity).Any();
         }
 
         public override void Apply(GameComponent Entity, WorldManager World)
         {
-            foreach (var des in World.PlayerFaction.Designations.EnumerateEntityDesignations(Entity).ToList())
+            foreach (var des in World.PersistentData.Designations.EnumerateEntityDesignations(Entity).ToList())
                 if (des.Task != null)
                 {
                     CreateTaskPrioritySelector(World, des.Task, des);

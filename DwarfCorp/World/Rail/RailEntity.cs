@@ -138,10 +138,10 @@ namespace DwarfCorp.Rail
                 if (_event.Type == VoxelChangeEventType.VoxelTypeChanged && _event.NewVoxelType == 0)
                 {
                     Die();
-                    var designation = World.PlayerFaction.Designations.EnumerateEntityDesignations(DesignationType.Craft).FirstOrDefault(d => Object.ReferenceEquals(d.Body, this));
+                    var designation = World.PersistentData.Designations.EnumerateEntityDesignations(DesignationType.Craft).FirstOrDefault(d => Object.ReferenceEquals(d.Body, this));
                     if (designation != null)
                     {
-                        World.PlayerFaction.Designations.RemoveEntityDesignation(this, DesignationType.Craft);
+                        World.PersistentData.Designations.RemoveEntityDesignation(this, DesignationType.Craft);
                         var craftDesignation = designation.Tag as CraftDesignation;
                         if (craftDesignation.WorkPile != null)
                             craftDesignation.WorkPile.Die();

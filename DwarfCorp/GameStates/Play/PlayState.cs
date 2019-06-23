@@ -827,7 +827,7 @@ namespace DwarfCorp.GameStates
                 .Where(r => data.CanBuildWith(ResourceLibrary.GetResourceByName(r.Key))).Sum(r => r.Value.First.Count + r.Value.Second.Count);
 
             int newNum = Math.Max(resourceCount -
-                World.PlayerFaction.Designations.EnumerateDesignations(DesignationType.Put).Count(d =>
+                World.PersistentData.Designations.EnumerateDesignations(DesignationType.Put).Count(d =>
                     BuildRequirementsEqual(Library.GetVoxelType(d.Tag.ToString()), data)), 0);
 
             if (newNum != numResources)
@@ -1016,7 +1016,7 @@ namespace DwarfCorp.GameStates
             var markerFilter = Gui.RootItem.AddChild(new DesignationFilter
             {
                 DesignationDrawer = Renderer.DesignationDrawer,
-                DesignationSet = World.PlayerFaction.Designations,
+                DesignationSet = World.PersistentData.Designations,
                 Hidden = true,
                 Border = "border-fancy",
                 AutoLayout = AutoLayout.FloatBottomLeft,
