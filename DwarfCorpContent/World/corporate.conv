@@ -18,7 +18,24 @@ Dwarf: I am $envoy_name of $envoy_faction.
 title: Main
 ---
 [[Trade.|Trade]]
+[[Market.|Market]]
 [[Goodbye.|Goodbye]]
+===
+
+
+title: Market
+---
+<<begin_market>>
+[[Market2]]
+===
+
+
+title: Market2
+---
+<<wait_for_market>>
+<<finalize_market>>
+<<end_market>>
+[[Main]]
 ===
 
 
@@ -27,6 +44,7 @@ title: Trade
 <<begin_trade>>
 [[Trade2]]
 ===
+
 
 title: Trade2
 ---

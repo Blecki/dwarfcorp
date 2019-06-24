@@ -38,7 +38,7 @@ namespace DwarfCorp.Events
             Specific,
             Random,
             Player,
-            Motherland,
+            Corporate,
         }
 
         public struct FactionFilter
@@ -111,7 +111,7 @@ namespace DwarfCorp.Events
 
             switch (filter.Specification)
             {
-                case FactionSpecification.Motherland:
+                case FactionSpecification.Corporate:
                     return faction.ParentFaction.IsCorporate;
 
                 case FactionSpecification.Player:

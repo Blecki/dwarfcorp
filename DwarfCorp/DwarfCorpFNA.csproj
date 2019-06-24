@@ -122,6 +122,7 @@
     <Compile Include="GameStates\WorldGeneration\SimpleOrbitCamera.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldPreviewMesh.cs" />
     <Compile Include="Gui\Widgets\StatsTracker.cs" />
+    <Compile Include="Gui\Widgets\MarketPanel.cs" />
     <Compile Include="LogWriter.cs" />
     <Compile Include="EventLog.cs" />
     <Compile Include="EventLogState.cs" />
@@ -685,7 +686,6 @@
     <Compile Include="World\Factions\Trading\PlayerTradeEntity.cs" />
     <Compile Include="World\Factions\Trading\PoliticalEventYarnCommand.cs" />
     <Compile Include="World\Factions\Trading\RecallEnvoyYarnCommand.cs" />
-    <Compile Include="World\Factions\Trading\TradeGameState.cs" />
     <Compile Include="World\Factions\Trading\TradeTransaction.cs" />
     <Compile Include="World\Factions\Trading\TradeYarnCommand.cs" />
     <Compile Include="World\Factions\WarParty.cs" />

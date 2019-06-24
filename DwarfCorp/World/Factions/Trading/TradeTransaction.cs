@@ -14,26 +14,36 @@ namespace DwarfCorp.Trade
         public List<ResourceAmount> PlayerItems;
         public DwarfBux PlayerMoney;
 
-        public DwarfBux ValueForPlayer
+        public void Apply(WorldManager World)
         {
-            get
+            if (EnvoyEntity != null)
             {
-                return (EnvoyEntity.ComputeValue(EnvoyItems) + EnvoyMoney) -
-                  (EnvoyEntity.ComputeValue(PlayerItems) + PlayerMoney);
+                EnvoyEntity.AddMoney(-EnvoyMoney);
+                EnvoyEntity.AddMoney(PlayerMoney);
+                EnvoyEntity.RemoveResources(EnvoyItems);
+                EnvoyEntity.AddResources(PlayerItems);
+            }
+
+            if (PlayerEntity != null)
+            {
+                PlayerEntity.AddMoney(-PlayerMoney);
+                PlayerEntity.AddMoney(EnvoyMoney);
+                PlayerEntity.RemoveResources(PlayerItems);
+                PlayerEntity.AddResources(EnvoyItems);
             }
         }
+    }
+
+    public class MarketTransaction
+    {
+        public ITradeEntity PlayerEntity;
+        public List<ResourceAmount> PlayerItems;
+        public DwarfBux PlayerMoney;
 
         public void Apply(WorldManager World)
         {
-            EnvoyEntity.AddMoney(-EnvoyMoney);
-            EnvoyEntity.AddMoney(PlayerMoney);
-            EnvoyEntity.RemoveResources(EnvoyItems);
-            EnvoyEntity.AddResources(PlayerItems);
-
-            PlayerEntity.AddMoney(-PlayerMoney);
-            PlayerEntity.AddMoney(EnvoyMoney);
+            PlayerEntity.AddMoney(PlayerMoney);
             PlayerEntity.RemoveResources(PlayerItems);
-            PlayerEntity.AddResources(EnvoyItems);           
         }
     }
 }

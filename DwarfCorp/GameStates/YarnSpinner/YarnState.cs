@@ -25,6 +25,7 @@ namespace DwarfCorp
         private IEnumerator<String> CurrentSpeach;
         public bool SkipNextLine = false;
         private Gui.Widgets.TradePanel TradePanel;
+        private Gui.Widgets.MarketPanel MarketPanel;
         private bool AutoHideBubble = false;
         private float TimeSinceOutput = 0.0f;
         private DwarfCorp.Gui.Widgets.EmployeePortrait Icon = null;
@@ -369,6 +370,31 @@ namespace DwarfCorp
             GuiRoot.RootItem.Invalidate();
         }
 
+        public void BeginMarket(TradeEnvoy Envoy, Faction PlayerFaction)
+        {
+            PlayerFaction.World.Tutorial("market_screen");
+            MarketPanel = GuiRoot.ConstructWidget(new Gui.Widgets.MarketPanel
+            {
+                Rect = GuiRoot.RenderData.VirtualScreen,
+                Player = new Trade.PlayerTradeEntity(PlayerFaction),
+            }) as Gui.Widgets.MarketPanel;
+
+            MarketPanel.Layout();
+
+            GuiRoot.ShowDialog(MarketPanel);
+            GuiRoot.RootItem.SendToBack(MarketPanel);
+
+            AutoHideBubble = true;
+
+            SpeakerBorder.Rect = new Rectangle(16, GuiRoot.RenderData.VirtualScreen.Height - (256 - 16), 256 - 32, 256 - 32);
+            SpeakerRectangle = Gui.Mesh.Quad().Scale(256, 256).Translate(0, GuiRoot.RenderData.VirtualScreen.Height - 256);
+            _Output.Rect = new Rectangle(256, GuiRoot.RenderData.VirtualScreen.Height - 260, global::System.Math.Min(GuiRoot.RenderData.VirtualScreen.Width - 256, 550), 260);
+
+            SpeakerBorder.Invalidate();
+            _Output.Invalidate();
+            GuiRoot.RootItem.Invalidate();
+        }
+
         public void EndTrade()
         {
             TradePanel.Close();
@@ -381,6 +407,20 @@ namespace DwarfCorp
         {
             TradePanel.Reset();
             TradePanel.OnPlayerAction = (sender) => Callback(TradePanel.Result, TradePanel.Transaction);
+        }
+
+        public void EndMarket()
+        {
+            MarketPanel.Close();
+            MarketPanel = null;
+            AutoHideBubble = false;
+            PositionItems();
+        }
+
+        public void WaitForMarket(Action<Gui.Widgets.MarketDialogResult, Trade.MarketTransaction> Callback)
+        {
+            MarketPanel.Reset();
+            MarketPanel.OnPlayerAction = (sender) => Callback(MarketPanel.Result, MarketPanel.Transaction);
         }
     }
 }

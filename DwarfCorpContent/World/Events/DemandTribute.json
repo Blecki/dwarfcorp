@@ -3,8 +3,7 @@
   "PartyFaction": null,
   "PartyFactionFilter": {
     "Hostility": "Neutral",
-    "Specification": "Random",
-    "Claim": "ClaimsTerritory"
+    "Specification": "Random"
   },
   "TributeDemanded": {
     "Value": 100.0

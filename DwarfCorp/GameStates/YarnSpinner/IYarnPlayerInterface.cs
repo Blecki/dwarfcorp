@@ -26,7 +26,11 @@ namespace DwarfCorp
         void HidePortrait();
         void EndConversation();
         void BeginTrade(TradeEnvoy Envoy, Faction PlayerFaction);
+        void BeginMarket(TradeEnvoy Envoy, Faction PlayerFaction);
         void WaitForTrade(Action<Gui.Widgets.TradeDialogResult, Trade.TradeTransaction> Callback);
         void EndTrade();
+        void WaitForMarket(Action<Gui.Widgets.MarketDialogResult, Trade.MarketTransaction> Callback);
+        void EndMarket();
+
     }
 }

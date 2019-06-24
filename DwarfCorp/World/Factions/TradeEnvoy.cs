@@ -13,9 +13,14 @@ using Newtonsoft.Json.Converters;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference =true)]
     public class TradeEnvoy : Expedition
     {
+        public DwarfBux TradeMoney;
+        public List<ResourceAmount> TradeGoods;
+        public DateTimer WaitForTradeTimer = null;
+        public DwarfBux TributeDemanded = 0m;
+        [JsonIgnore] public WorldPopup TradeWidget = null;
+
         public TradeEnvoy()
         {
 
@@ -23,19 +28,13 @@ namespace DwarfCorp
 
         public TradeEnvoy(DateTime date) : base(date)
         {
-            WaitForTradeTimer = new DateTimer(date, new TimeSpan(0, 6, 0, 0, 0));
+            WaitForTradeTimer = new DateTimer(date, new TimeSpan(0, 2, 0, 0, 0));
         }
 
         public void StartTrading(DateTime date)
         {
-            WaitForTradeTimer = new DateTimer(date, new TimeSpan(0, 6, 0, 0, 0));
+            WaitForTradeTimer = new DateTimer(date, new TimeSpan(0, 2, 0, 0, 0));
         }
-
-        public DwarfBux TradeMoney { get; set; }
-        public List<ResourceAmount> TradeGoods { get; set; }
-        public DateTimer WaitForTradeTimer = null;
-        public DwarfBux TributeDemanded = 0m;
-        [JsonIgnore] public WorldPopup TradeWidget = null;
 
         public bool IsTradeWidgetValid()
         {
@@ -46,9 +45,7 @@ namespace DwarfCorp
         {
             var liveCreatures = Creatures.Where(creature => creature != null && !creature.IsDead);
             if (!liveCreatures.Any())
-            {
                 return;
-            }
 
             var zones = World.EnumerateZones().OfType<BalloonPort>();
 
@@ -69,9 +66,7 @@ namespace DwarfCorp
                 }
             }
             else
-            {
                 closestCreature = liveCreatures.First();
-            }
 
             TradeWidget = World.UserInterface.MakeWorldPopup(new Events.TimedIndicatorWidget()
             {

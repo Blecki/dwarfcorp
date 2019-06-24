@@ -105,9 +105,8 @@ namespace DwarfCorp.Events
             }
 
             if (!foundEvent)
-            {
                 return;
-            }
+
             DateTime randomTime = now;
             if (Forecast.Count == 0)
                 randomTime = now + new TimeSpan(MinimumStartTime + MathFunctions.RandInt(MinSpacingHours, MaxSpacingHours), 0, 0);

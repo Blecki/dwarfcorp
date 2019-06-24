@@ -5,7 +5,7 @@
   "SpawnOnTranquil": false,
   "Difficulty": 20.0,
   "AllowedTime": "All",
-  "CooldownHours": 2,
+  "CooldownHours": 4,
   "AnnouncementText": null,
   "AnnouncementDetails": null,
   "AnnouncementSound": null,

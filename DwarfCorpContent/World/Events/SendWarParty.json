@@ -11,7 +11,7 @@
   "Name": "Send War Party",
   "Difficulty": 10.0,
   "AllowedTime": "All",
-  "CooldownHours": 8,
+  "CooldownHours": 4,
   "AnnouncementText": null,
   "AnnouncementDetails": null,
   "AnnouncementSound": null,

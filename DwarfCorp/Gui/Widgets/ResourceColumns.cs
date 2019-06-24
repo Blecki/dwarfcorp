@@ -19,13 +19,14 @@ namespace DwarfCorp.Gui.Widgets
         public String RightHeader;
         public MoneyEditor MoneyField;
         public String MoneyLabel;
+        public bool ShowMoneyField = true;
 
         public DwarfBux TradeMoney
         {
-            get { return (decimal)MoneyField.CurrentValue; }
-            set { MoneyField.CurrentValue = (int) value; }
+            get { return (decimal)(MoneyField == null ? 0 : MoneyField.CurrentValue); }
+            set { if (MoneyField != null) MoneyField.CurrentValue = (int) value; }
         }
-        public bool Valid { get { return MoneyField.Valid; } }
+        public bool Valid { get { return MoneyField == null ? true : MoneyField.Valid; } }
         
         public int TotalSelectedItems
         {
@@ -73,16 +74,17 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockTop
             });
 
-            rightmostPanel.AddChild(new Gui.Widget
-            {
-                MinimumSize = new Point(0, 32),
-                AutoLayout = AutoLayout.DockBottom,
-                Font = "font10",
-                TextColor = new Vector4(0, 0, 0, 1),
-                Text = String.Format(MoneyLabel + ": {0}", TradeEntity.Money.ToString()),
-                TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center
-            });
+            if (ShowMoneyField)
+                rightmostPanel.AddChild(new Gui.Widget
+                {
+                    MinimumSize = new Point(0, 32),
+                    AutoLayout = AutoLayout.DockBottom,
+                    Font = "font10",
+                    TextColor = new Vector4(0, 0, 0, 1),
+                    Text = String.Format(MoneyLabel + ": {0}", TradeEntity.Money.ToString()),
+                    TextHorizontalAlign = HorizontalAlign.Center,
+                    TextVerticalAlign = VerticalAlign.Center
+                });
 
             var rightmostList = rightmostPanel.AddChild(new Gui.Widgets.WidgetListView
             {
@@ -94,14 +96,17 @@ namespace DwarfCorp.Gui.Widgets
                 Font = GameSettings.Default.GuiScale == 1 ? "font10" : "font8"
             }) as Gui.Widgets.WidgetListView;
 
-            MoneyField = leftmostPanel.AddChild(new MoneyEditor
+            if (ShowMoneyField)
             {
-                MaximumValue = (int)TradeEntity.Money,
-                MinimumSize = new Point(0, 33),
-                AutoLayout = AutoLayout.DockBottom,
-                OnValueChanged = (sender) => Root.SafeCall(OnTotalSelectedChanged, this),
-                Tooltip = "Money to trade."
-            }) as MoneyEditor;
+                MoneyField = leftmostPanel.AddChild(new MoneyEditor
+                {
+                    MaximumValue = (int)TradeEntity.Money,
+                    MinimumSize = new Point(0, 33),
+                    AutoLayout = AutoLayout.DockBottom,
+                    OnValueChanged = (sender) => Root.SafeCall(OnTotalSelectedChanged, this),
+                    Tooltip = "Money to trade."
+                }) as MoneyEditor;
+            }
 
             var leftmostList = leftmostPanel.AddChild(new Gui.Widgets.WidgetListView
             {

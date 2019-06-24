@@ -252,6 +252,7 @@
     <Compile Include="GameStates\WorldGeneration\EmbarkmentResourceColumns.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldPreviewMesh.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldTextureGenerator.cs" />
+    <Compile Include="Gui\Widgets\MarketPanel.cs" />
     <Compile Include="Player\BodySelector.cs" />
     <Compile Include="Player\BoxBrush.cs" />
     <Compile Include="Player\Building\BuildRoomOrder.cs" />
@@ -589,7 +590,6 @@
     <Compile Include="World\Factions\Trading\DeclareWarYarnCommand.cs" />
     <Compile Include="World\Factions\Trading\PayTributeYarnCommand.cs" />
     <Compile Include="World\Factions\Trading\RecallEnvoyYarnCommand.cs" />
-    <Compile Include="World\Factions\Trading\TradeGameState.cs" />
     <Compile Include="World\Factions\Trading\PoliticalEventYarnCommand.cs" />
     <Compile Include="World\Factions\Trading\TradeYarnCommand.cs" />
     <Compile Include="Tools\MiniPoint3.cs" />

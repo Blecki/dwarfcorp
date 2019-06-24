@@ -186,7 +186,7 @@ namespace DwarfCorp.Gui.Widgets
             base.Construct();
         }
     }
-    
+
     public class TradePanel : Widget
     {
         public ITradeEntity Player;

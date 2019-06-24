@@ -3551,9 +3551,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>SendTradeEnvoy</Name>
     </None>
-    <None Include="World\Events\MotherlandTradeEnvoy.json">
+    <None Include="World\Events\CorporateTradeEnvoy.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>MotherlandTradeEnvoy</Name>
+      <Name>CorporateTradeEnvoy</Name>
     </None>
     <None Include="World\Events\DemandTribute.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
