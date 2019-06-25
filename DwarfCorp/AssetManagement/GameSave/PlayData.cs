@@ -23,7 +23,6 @@ namespace DwarfCorp
         public ComponentManager.ComponentSaveData Components;
         public Tutorial.TutorialSaveData TutorialSaveData;
         public FactionSet Factions;
-        public DesignationDrawer Designations; // Todo: ??
         public TaskManager Tasks;
         public Yarn.MemoryVariableStore ConversationMemory;
         public DwarfCorp.Gui.Widgets.StatsTracker Stats;
@@ -38,7 +37,6 @@ namespace DwarfCorp
                 Components = World.ComponentManager.GetSaveData(),
                 TutorialSaveData = World.TutorialManager.GetSaveData(),
                 Factions = World.Factions,
-                Designations = World.Renderer.DesignationDrawer,
                 Tasks = World.TaskManager,
                 ConversationMemory = World.ConversationMemory,
                 Stats = World.Stats,

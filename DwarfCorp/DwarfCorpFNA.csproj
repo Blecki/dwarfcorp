@@ -297,7 +297,6 @@
     <Compile Include="Components\AI\StatAdjustment.cs" />
     <Compile Include="Components\AI\Status.cs" />
     <Compile Include="Components\Graphics\PrimitiveComponent.cs" />
-    <Compile Include="World\Designations\DesignationDrawer.cs" />
     <Compile Include="World\Designations\DesignationLibrary.cs" />
     <Compile Include="World\Designations\DesignationSet.cs" />
     <Compile Include="World\Designations\DesignationType.cs" />

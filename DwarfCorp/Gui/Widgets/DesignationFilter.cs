@@ -10,7 +10,6 @@ namespace DwarfCorp.Gui.Widgets
 {
     public class DesignationFilter : Widget
     {
-        public DesignationDrawer DesignationDrawer;
         public DesignationSet DesignationSet;
         public int ColumnCount = 2;
         public WorldManager World;

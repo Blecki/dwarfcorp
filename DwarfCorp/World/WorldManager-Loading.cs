@@ -177,7 +177,6 @@ namespace DwarfCorp
             PersistentData = gameFile.PlayData.PersistentData;
 
             Renderer.Camera = gameFile.PlayData.Camera;
-            Renderer.DesignationDrawer = gameFile.PlayData.Designations;
 
             if (gameFile.PlayData.Stats != null)
                 Stats = gameFile.PlayData.Stats;

@@ -142,11 +142,10 @@ namespace DwarfCorp
             }
         }
 
-        public void InitializeFromChunk(VoxelChunk chunk, DesignationSet DesignationSet, DesignationDrawer DesignationDrawer, WorldManager World)
+        public void InitializeFromChunk(VoxelChunk chunk, DesignationSet DesignationSet, WorldManager World)
         {
             DebugHelper.AssertNotNull(chunk);
             DebugHelper.AssertNotNull(DesignationSet);
-            DebugHelper.AssertNotNull(DesignationDrawer);
             DebugHelper.AssertNotNull(World);
 
             BoxPrimitive bedrockModel = Library.GetVoxelPrimitive("Bedrock");
@@ -192,7 +191,7 @@ namespace DwarfCorp
                     chunk.RebuildMoteLayer(localY);
 
                 DebugHelper.AssertNotNull(sliceGeometry);
-                BuildSliceGeometry(chunk, bedrockModel, cache, localY, sliceGeometry, DesignationSet, DesignationDrawer, World);
+                BuildSliceGeometry(chunk, bedrockModel, cache, localY, sliceGeometry, DesignationSet, World);
 
                 sliceStack.Add(sliceGeometry);
             }
@@ -212,13 +211,12 @@ namespace DwarfCorp
             int LocalY, 
             RawPrimitive sliceGeometry,
             DesignationSet DesignationSet,
-            DesignationDrawer DesignationDrawer,
             WorldManager World)
         {
 
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
-                    BuildVoxelGeometry(sliceGeometry, x, LocalY, z, chunk, bedrockModel, Cache, DesignationSet, DesignationDrawer, World);
+                    BuildVoxelGeometry(sliceGeometry, x, LocalY, z, chunk, bedrockModel, Cache, DesignationSet, World);
         }
 
         private static GlobalVoxelCoordinate GetCacheKey(VoxelHandle Handle, VoxelVertex Vertex)
@@ -261,12 +259,11 @@ namespace DwarfCorp
             BoxPrimitive BedrockModel,
             Cache Cache,
             DesignationSet Designations,
-            DesignationDrawer DesignationDrawer,
             WorldManager World)
         {
             var v = VoxelHandle.UnsafeCreateLocalHandle(Chunk, new LocalVoxelCoordinate(X, Y, Z));
             if (!v.IsValid || !v.IsVisible) return; // How did this even get called then??
-            BuildDesignationGeometry(Into, Chunk, Cache, Designations, DesignationDrawer, World, v);
+            BuildDesignationGeometry(Into, Chunk, Cache, Designations, World, v);
 
             if ((v.IsExplored && v.IsEmpty)) return;
 
@@ -289,7 +286,7 @@ namespace DwarfCorp
                 BuildVoxelFaceGeometry(Into, Chunk, Cache, primitive, v, tint, uvs, Matrix.Identity, i, true);
         }
 
-        private static void BuildDesignationGeometry(RawPrimitive Into, VoxelChunk Chunk, Cache Cache, DesignationSet Designations, DesignationDrawer DesignationDrawer, WorldManager World, VoxelHandle v)
+        private static void BuildDesignationGeometry(RawPrimitive Into, VoxelChunk Chunk, Cache Cache, DesignationSet Designations, WorldManager World, VoxelHandle v)
         {
             var designations = Designations == null ? new List<DesignationSet.VoxelDesignation>() : Designations.EnumerateDesignations(v).ToList();
             int maxViewingLevel = World.Renderer.PersistentSettings.MaxViewingLevel;

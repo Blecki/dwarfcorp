@@ -629,7 +629,6 @@
     <Compile Include="Gui\Widgets\DesignationFilter.cs" />
     <Compile Include="Gui\Widgets\TrayBackground.cs" />
     <Compile Include="World\Designations\DesignationType.cs" />
-    <Compile Include="World\Designations\DesignationDrawer.cs" />
     <Compile Include="Graphics\Instancing\InstanceRenderData.cs" />
     <Compile Include="Graphics\Instancing\InstanceRenderer.cs" />
     <Compile Include="Graphics\Instancing\NewInstanceData.cs" />

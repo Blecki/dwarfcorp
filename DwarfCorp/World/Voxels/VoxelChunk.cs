@@ -107,7 +107,7 @@ namespace DwarfCorp
                 return;
 
             var primitive = new VoxelListPrimitive();
-            primitive.InitializeFromChunk(this, Manager.World.PersistentData.Designations, Manager.World.Renderer.DesignationDrawer, Manager.World);
+            primitive.InitializeFromChunk(this, Manager.World.PersistentData.Designations, Manager.World);
 
             PrimitiveMutex.WaitOne();
             if (Primitive != null)

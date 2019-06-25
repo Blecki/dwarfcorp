@@ -1,35 +1,3 @@
-// Drawer3D.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -354,7 +322,6 @@ namespace DwarfCorp
             GraphicsDevice Device, 
             Shader Effect, 
             OrbitCamera Camera,
-            DesignationDrawer DesignationDrawer,
             DesignationSet Designations,
             WorldManager World)
         {
@@ -365,32 +332,7 @@ namespace DwarfCorp
 
                 var colorModulation = Math.Abs(Math.Sin(DwarfTime.LastTime.TotalGameTime.TotalSeconds*2.0f));
 
-                DesignationDrawer.DrawHilites(
-                    World,
-                    Designations,
-                    _addBox,
-                    (pos, type) =>
-                    {
-                        Effect.MainTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
-                        Effect.LightRamp = Color.White;
-                        // Todo: Alpha pulse
-                        Effect.VertexColorTint = new Color(0.1f, 0.9f, 1.0f, 1.0f);
-                        var prevTechnique = Effect.CurrentTechnique;
-                        Effect.CurrentTechnique = Effect.Techniques[Shader.Technique.Stipple];
-                        var pos_distorted = pos + Vector3.Up * 0.15f + VertexNoise.GetNoiseVectorFromRepeatingTexture(pos + Vector3.One * 0.5f);
-                        Effect.World = Matrix.CreateTranslation(pos_distorted);
-
-                        foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
-                        {
-                            pass.Apply();
-                            Library.GetVoxelPrimitive(type).Render(Device);
-                        }
-
-                        Effect.LightRamp = Color.White;
-                        Effect.VertexColorTint = Color.White;
-                        Effect.World = Matrix.Identity;
-                        Effect.CurrentTechnique = prevTechnique;
-                    });
+                DrawEntityDesignations(World, Designations);
 
                 foreach (var box in Boxes)
                     _addBox(box.RealBox.Min, box.RealBox.Max - box.RealBox.Min, box.Color, box.Thickness, box.Warp);
@@ -402,6 +344,36 @@ namespace DwarfCorp
 
                 Boxes.Clear();
                 Segments.Clear();
+            }
+        }
+
+        private static void DrawEntityDesignations(WorldManager World, DesignationSet Set)
+        {
+            // Todo: Can this be drawn by the entity, allowing it to be properly frustrum culled?
+            // - Need to add a 'gestating' entity state to the alive/dead/active mess.
+
+            foreach (var entity in Set.EnumerateEntityDesignations())
+            {
+                if ((entity.Type & World.Renderer.PersistentSettings.VisibleTypes) == entity.Type)
+                {
+                    var props = Library.GetDesignationTypeProperties(entity.Type);
+
+                    // Todo: More consistent drawing?
+                    if (entity.Type == DesignationType.Craft)
+                    {
+                        entity.Body.SetFlagRecursive(GameComponent.Flag.Visible, true);
+                        if (!entity.Body.Active)
+                            entity.Body.SetVertexColorRecursive(props.Color);
+                    }
+                    else
+                    {
+                        var box = entity.Body.GetBoundingBox();
+                        _addBox(box.Min, box.Max - box.Min, props.Color, props.LineWidth, false);
+                        entity.Body.SetVertexColorRecursive(props.Color);
+                    }
+                }
+                else if (entity.Type == DesignationType.Craft) // Make the ghost object invisible if these designations are turned off.
+                    entity.Body.SetFlagRecursive(GameComponent.Flag.Visible, false);
             }
         }
 

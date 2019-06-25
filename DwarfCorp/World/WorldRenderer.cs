@@ -58,8 +58,6 @@ namespace DwarfCorp
         // Hack to smooth water reflections TODO: Put into water manager
         private float lastWaterHeight = -1.0f;
 
-        public DesignationDrawer DesignationDrawer = new DesignationDrawer();
-
         public struct Screenshot
         {
             public string FileName { get; set; }
@@ -420,7 +418,7 @@ namespace DwarfCorp
             DefaultShader.ClippingEnabled = true;
 
             // Render simple geometry (boxes, etc.)
-            Drawer3D.Render(GraphicsDevice, DefaultShader, Camera, DesignationDrawer, World.PersistentData.Designations, World);
+            Drawer3D.Render(GraphicsDevice, DefaultShader, Camera, World.PersistentData.Designations, World);
 
             DefaultShader.EnableShadows = false;
 

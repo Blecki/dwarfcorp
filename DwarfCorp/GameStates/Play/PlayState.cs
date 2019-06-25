@@ -1015,7 +1015,6 @@ namespace DwarfCorp.GameStates
 
             var markerFilter = Gui.RootItem.AddChild(new DesignationFilter
             {
-                DesignationDrawer = Renderer.DesignationDrawer,
                 DesignationSet = World.PersistentData.Designations,
                 World = World,
                 Hidden = true,
