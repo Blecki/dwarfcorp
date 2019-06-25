@@ -20,17 +20,21 @@ namespace DwarfCorp
     /// </summary>
     public class ZoneBuilder
     {
-        public List<Zone> Zones { get; set; } // Todo: Track down all references to the room list. Channel all room management through this type.
-        public List<BuildZoneOrder> BuildDesignations { get; set; }
-        public ZoneType CurrentZoneData { get; set; }
+        public List<Zone> Zones { get; set; } 
+        [JsonProperty] private List<BuildZoneOrder> BuildDesignations { get; set; }
+        public ZoneType CurrentZoneType { get; set; }
 
-        [JsonIgnore]
         private WorldManager World { get; set; }
 
         [OnDeserialized]
         public void OnDeserializing(StreamingContext ctx)
         {
             World = ((WorldManager)ctx.Context);
+        }
+
+        public bool IsActiveBuildZoneOrder(BuildZoneOrder buildRooom)
+        {
+            return BuildDesignations.Contains(buildRooom);
         }
 
         public void DestroyBuildDesignation(VoxelHandle V)
@@ -82,7 +86,7 @@ namespace DwarfCorp
 
         public void End()
         {
-            CurrentZoneData = null;
+            CurrentZoneType = null;
         }
 
         public ZoneBuilder()
@@ -95,7 +99,6 @@ namespace DwarfCorp
             World = world;
             Zones = new List<Zone>();
             BuildDesignations = new List<BuildZoneOrder>();
-            CurrentZoneData = Library.GetZoneType("BedRoom");
         }
 
         public void OnEnter()
@@ -220,7 +223,7 @@ namespace DwarfCorp
                                 resourceList.Append(" ");
                                 resourceList.Append(resource.Type);
                             }
-                            var order = buildOrder;
+
                             buildOrder.DisplayWidget = World.UserInterface.Gui.RootItem.AddChild(new Gui.Widget()
                             {
                                 Border = "border-dark",
@@ -263,14 +266,14 @@ namespace DwarfCorp
             }
         }
 
-        private void BuildNewVoxels(IEnumerable<VoxelHandle> designations)
+        private void BuildNewVoxels(IEnumerable<VoxelHandle> Voxels)
         {
-            var toBuild = Library.CreateZone(CurrentZoneData.Name, World);
+            var toBuild = Library.CreateZone(CurrentZoneType.Name, World);
             var order = new BuildZoneOrder(toBuild, World);
             BuildDesignations.Add(order);
             Zones.Add(toBuild);
 
-            foreach (var v in designations.Where(v => v.IsValid && !v.IsEmpty))
+            foreach (var v in Voxels.Where(v => v.IsValid && !v.IsEmpty))
                 order.VoxelOrders.Add(new BuildVoxelOrder(order, order.ToBuild, v));
 
             order.WorkObjects.AddRange(Fence.CreateFences(World.ComponentManager,
@@ -293,36 +296,15 @@ namespace DwarfCorp
             foreach (var room in World.EnumerateZones())
                 room.SetTint(Color.White);
             
-            if (CurrentZoneData == null)
+            if (CurrentZoneType == null)
                 return;
             
             if (button == InputManager.MouseButton.Left)
             {
-                World.Tutorial("build " + CurrentZoneData.Name);
+                World.Tutorial("build " + CurrentZoneType.Name);
 
-                if (CurrentZoneData.CanBuildHere(refs, World))
-                {
-                    List<Quantitiy<Resource.ResourceTags>> requirements = CurrentZoneData.GetRequiredResources(refs.Count);
-
-                    string tip = "Needs ";
-
-
-                    if (requirements.Count == 0)
-                    {
-                        tip = "";
-                    }
-                    int i = 0;
-                    foreach (var requirement in requirements)
-                    {
-                        i++;
-                        tip += requirement.Count.ToString();
-                        tip += " ";
-                        tip += requirement.Type;
-                        tip += "\n";
-                    }
-
+                if (CurrentZoneType.CanBuildHere(refs, World))
                     World.UserInterface.ShowTooltip("Release to build here.");
-                }
                 else
                     World.UserInterface.VoxSelector.SelectionColor = GameSettings.Default.Colors.GetColor("Negative", Color.Red);
             }
@@ -336,11 +318,11 @@ namespace DwarfCorp
             foreach (var room in World.EnumerateZones()) // Todo: Doesn't this loopback? L-O-L.
                 room.SetTint(Color.White);
 
-            if(CurrentZoneData == null)
+            if(CurrentZoneType == null)
                 return;
 
             if(button == InputManager.MouseButton.Left)
-                if (CurrentZoneData.CanBuildHere(refs, World))
+                if (CurrentZoneType.CanBuildHere(refs, World))
                     BuildNewVoxels(refs);    
         }
     }

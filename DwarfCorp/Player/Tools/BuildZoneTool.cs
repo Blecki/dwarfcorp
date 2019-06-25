@@ -29,14 +29,14 @@ namespace DwarfCorp
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
             if (button == InputManager.MouseButton.Left)
-                World.RoomBuilder.VoxelsSelected(voxels, button);
+                World.ZoneBuilder.VoxelsSelected(voxels, button);
             else
                 DestroyZoneTool.OnVoxelsSelected(voxels, button);
         }
 
         public override void OnBegin()
         {
-            World.RoomBuilder.OnEnter();
+            World.ZoneBuilder.OnEnter();
 
             if (DestroyZoneTool == null)
                 DestroyZoneTool = new DestroyZoneTool(World);
@@ -44,9 +44,9 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-            World.RoomBuilder.End();
+            World.ZoneBuilder.End();
             World.UserInterface.VoxSelector.Clear();
-            World.RoomBuilder.OnExit();
+            World.ZoneBuilder.OnExit();
         }
 
         public override void OnMouseOver(IEnumerable<GameComponent> bodies)
@@ -95,7 +95,7 @@ namespace DwarfCorp
                 DestroyZoneTool.Render3D(game, time);
             else
             {
-                World.RoomBuilder.Render(time, GameState.Game.GraphicsDevice);
+                World.ZoneBuilder.Render(time, GameState.Game.GraphicsDevice);
             }
         }
 
@@ -111,7 +111,7 @@ namespace DwarfCorp
                 DestroyZoneTool.OnVoxelsDragged(voxels, button);
             else
             {
-                World.RoomBuilder.OnVoxelsDragged(voxels, button);
+                World.ZoneBuilder.OnVoxelsDragged(voxels, button);
             }
         }
     }

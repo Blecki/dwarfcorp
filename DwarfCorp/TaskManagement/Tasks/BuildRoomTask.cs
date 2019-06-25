@@ -63,7 +63,7 @@ namespace DwarfCorp
 
         private bool IsRoomBuildOrder(Faction faction, BuildZoneOrder buildRooom)
         {
-            return faction.World.RoomBuilder.BuildDesignations.Contains(buildRooom);
+            return faction.World.ZoneBuilder.IsActiveBuildZoneOrder(buildRooom);
         }
 
 
@@ -79,7 +79,7 @@ namespace DwarfCorp
             if (Zone == null)
                 return null;
 
-            return new BuildRoomAct(creature.AI, Zone, creature.World.RoomBuilder);
+            return new BuildRoomAct(creature.AI, Zone, creature.World.ZoneBuilder);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

@@ -94,7 +94,7 @@ namespace DwarfCorp
                     return false;
                 }
 
-                if (World.RoomBuilder.IsInZone(voxel) || World.RoomBuilder.IsBuildDesignation(voxel))
+                if (World.ZoneBuilder.IsInZone(voxel) || World.ZoneBuilder.IsBuildDesignation(voxel))
                 {
                     World.UserInterface.ShowTooltip("Room's can't overlap!");
                     return false;

@@ -48,7 +48,7 @@ namespace DwarfCorp
 
         public bool IsRoomBuildOrder(BuildZoneOrder buildRooom)
         {
-            return Builder.BuildDesignations.Contains(buildRooom);
+            return Builder.IsActiveBuildZoneOrder(BuildRoom);
         }
 
         public BuildRoomAct()

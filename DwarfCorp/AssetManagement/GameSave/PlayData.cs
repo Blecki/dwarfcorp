@@ -40,7 +40,7 @@ namespace DwarfCorp
                 Tasks = World.TaskManager,
                 ConversationMemory = World.ConversationMemory,
                 Stats = World.Stats,
-                RoomBuilder = World.RoomBuilder,
+                RoomBuilder = World.ZoneBuilder,
                 PersistentData = World.PersistentData
             };
         }

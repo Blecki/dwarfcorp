@@ -88,11 +88,11 @@ namespace DwarfCorp
 
             var v = World.UserInterface.VoxSelector.VoxelUnderMouse;
 
-            if (World.RoomBuilder.IsBuildDesignation(v))
-                World.RoomBuilder.DestroyBuildDesignation(v);
-            else if (World.RoomBuilder.IsInZone(v))
+            if (World.ZoneBuilder.IsBuildDesignation(v))
+                World.ZoneBuilder.DestroyBuildDesignation(v);
+            else if (World.ZoneBuilder.IsInZone(v))
             {
-                var existingRoom = World.RoomBuilder.GetMostLikelyZone(v);
+                var existingRoom = World.ZoneBuilder.GetMostLikelyZone(v);
 
                 if (existingRoom != null)
                     World.UserInterface.Gui.ShowModalPopup(new Gui.Widgets.Confirm
@@ -106,7 +106,7 @@ namespace DwarfCorp
         void destroyDialog_OnClosed(Gui.Widgets.Confirm.Result status, Zone room)
         {
             if (status == Gui.Widgets.Confirm.Result.OKAY)
-                World.RoomBuilder.DestroyZone(room);
+                World.ZoneBuilder.DestroyZone(room);
         }
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
@@ -136,7 +136,7 @@ namespace DwarfCorp
                 var v = World.UserInterface.VoxSelector.VoxelUnderMouse;
                 if (v.IsValid && !v.IsEmpty)
                 {
-                    var room = World.RoomBuilder.GetRoomThatContainsVoxel(v);
+                    var room = World.ZoneBuilder.GetRoomThatContainsVoxel(v);
                     if (room != null)
                         Drawer3D.DrawBox(room.GetBoundingBox(), GameSettings.Default.Colors.GetColor("Positive", Color.Green), 0.2f, true);
                 }

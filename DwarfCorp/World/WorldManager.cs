@@ -35,7 +35,7 @@ namespace DwarfCorp
         private Timer orphanedTaskRateLimiter = new Timer(10.0f, false, Timer.TimerMode.Real);
         public MonsterSpawner MonsterSpawner;
         public Faction PlayerFaction;
-        public ZoneBuilder RoomBuilder;
+        public ZoneBuilder ZoneBuilder;
 
         #region Tutorial Hooks
 
@@ -275,7 +275,7 @@ namespace DwarfCorp
                     catch (Exception) { }
                 }
 
-                RoomBuilder.Update(gameTime);
+                ZoneBuilder.Update(gameTime);
 
                 #region Mourn dead minions
                 if (PlayerFaction.Minions.Any(m => m.IsDead))
@@ -479,7 +479,7 @@ namespace DwarfCorp
             if (!V.IsValid)
                 return;
 
-            RoomBuilder.OnVoxelDestroyed(V);
+            ZoneBuilder.OnVoxelDestroyed(V);
         }        
     }
 }

@@ -27,7 +27,7 @@ namespace DwarfCorp
     {
         public IEnumerable<Zone> EnumerateZones() // Todo: Belongs to world manager??
         {
-            foreach (var room in RoomBuilder.Zones)
+            foreach (var room in ZoneBuilder.Zones)
                 yield return room;
             yield break;
         }
