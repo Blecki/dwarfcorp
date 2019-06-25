@@ -1017,6 +1017,7 @@ namespace DwarfCorp.GameStates
             {
                 DesignationDrawer = Renderer.DesignationDrawer,
                 DesignationSet = World.PersistentData.Designations,
+                World = World,
                 Hidden = true,
                 Border = "border-fancy",
                 AutoLayout = AutoLayout.FloatBottomLeft,

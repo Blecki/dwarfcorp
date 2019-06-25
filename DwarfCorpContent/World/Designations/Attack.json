@@ -1,0 +1,11 @@
+{
+  "Name": "Attack",
+  "Color": [
+    255,
+    0,
+    0,
+    255
+  ],
+  "LineWidth": 0.1,
+  "DrawType": "FullBox"
+}

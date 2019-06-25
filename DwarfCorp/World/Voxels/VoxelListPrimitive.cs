@@ -295,12 +295,9 @@ namespace DwarfCorp
             int maxViewingLevel = World.Renderer.PersistentSettings.MaxViewingLevel;
             foreach (var designation in designations)
             {
-                if ((designation.Type & DesignationDrawer.VisibleTypes) == designation.Type)
+                if ((designation.Type & World.Renderer.PersistentSettings.VisibleTypes) == designation.Type)
                 {
-                    var props = DesignationDrawer.DefaultProperties;
-                    if (DesignationDrawer.DesignationProperties.ContainsKey(designation.Type))
-                        props = DesignationDrawer.DesignationProperties[designation.Type];
-
+                    var props = Library.GetDesignationTypeProperties(designation.Type);
                     var designationVisible = false;
 
                     if (designation.Type == DesignationType.Put)
@@ -313,14 +310,14 @@ namespace DwarfCorp
                         var desPrim = Library.GetVoxelPrimitive(Library.DesignationVoxelType);
                         switch (props.DrawType)
                         {
-                            case DesignationDrawer.DesignationTypeProperties.DrawBoxType.FullBox:
+                            case DrawBoxType.FullBox:
                                 for (int i = 0; i < 6; i++)
                                     BuildVoxelFaceGeometry(Into, Chunk, Cache, desPrim, v, props.Color, desPrim.UVs, DesignationTransform, i, false);
                                 break;
-                            case DesignationDrawer.DesignationTypeProperties.DrawBoxType.TopBox:
+                            case DrawBoxType.TopBox:
                                 BuildVoxelFaceGeometry(Into, Chunk, Cache, desPrim, v, props.Color, desPrim.UVs, DesignationTransform, 0, false);
                                 break;
-                            case DesignationDrawer.DesignationTypeProperties.DrawBoxType.PreviewVoxel:
+                            case DrawBoxType.PreviewVoxel:
                                 {
                                     var previewPrim = Library.GetVoxelPrimitive(Library.GetVoxelType(designation.Tag.ToString()));
                                     var offsetMatrix = Matrix.Identity;

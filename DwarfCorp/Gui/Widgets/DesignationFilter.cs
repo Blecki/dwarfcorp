@@ -13,6 +13,7 @@ namespace DwarfCorp.Gui.Widgets
         public DesignationDrawer DesignationDrawer;
         public DesignationSet DesignationSet;
         public int ColumnCount = 2;
+        public WorldManager World;
 
         private List<CheckBox> Designations = new List<CheckBox>();
         
@@ -56,7 +57,7 @@ namespace DwarfCorp.Gui.Widgets
                 }) as CheckBox;
 
                 Designations.Add(box);
-                box.CheckState = (DesignationDrawer.VisibleTypes & (DesignationType)type) == (DesignationType)type;
+                box.CheckState = (World.Renderer.PersistentSettings.VisibleTypes & (DesignationType)type) == (DesignationType)type;
                 box.OnCheckStateChange += (sender) => CheckChanged();
 
                 column = (column + 1) % ColumnCount;
@@ -70,7 +71,7 @@ namespace DwarfCorp.Gui.Widgets
             var visibleTypes = DesignationType._None;
             foreach (var box in Designations)
                 if (box.CheckState) visibleTypes |= (DesignationType)box.Tag;
-            DesignationDrawer.VisibleTypes = visibleTypes;
+            World.Renderer.PersistentSettings.VisibleTypes = visibleTypes;
             foreach (var designation in DesignationSet.EnumerateDesignations())
                 designation.Voxel.Invalidate();
         }

@@ -1,0 +1,11 @@
+{
+  "Name": "Put",
+  "Color": [
+    180,
+    255,
+    255,
+    180
+  ],
+  "LineWidth": 0.1,
+  "DrawType": "PreviewVoxel"
+}

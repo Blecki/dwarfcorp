@@ -297,6 +297,11 @@
     <Compile Include="Components\AI\StatAdjustment.cs" />
     <Compile Include="Components\AI\Status.cs" />
     <Compile Include="Components\Graphics\PrimitiveComponent.cs" />
+    <Compile Include="World\Designations\DesignationDrawer.cs" />
+    <Compile Include="World\Designations\DesignationLibrary.cs" />
+    <Compile Include="World\Designations\DesignationSet.cs" />
+    <Compile Include="World\Designations\DesignationType.cs" />
+    <Compile Include="World\Designations\DesignationTypeProperties.cs" />
     <Compile Include="World\Economy\Company.cs" />
     <Compile Include="World\Economy\Money.cs" />
     <Compile Include="World\Economy\Payroll\CollectMoney.cs" />
@@ -667,9 +672,6 @@
     <Compile Include="World\Events\SpawnWarPartyEvent.cs" />
     <Compile Include="World\Events\TimedIndicatorWidget.cs" />
     <Compile Include="World\Economy\Applicant.cs" />
-    <Compile Include="World\Factions\DesignationDrawer.cs" />
-    <Compile Include="World\Factions\DesignationSet.cs" />
-    <Compile Include="World\Factions\DesignationType.cs" />
     <Compile Include="World\Overworld\Embarkment.cs" />
     <Compile Include="World\Overworld\DifficultyLibrary.cs" />
     <Compile Include="World\Factions\Expedition.cs" />

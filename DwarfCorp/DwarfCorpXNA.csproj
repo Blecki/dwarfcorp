@@ -425,8 +425,10 @@
     <Compile Include="Graphics\ParticleEffects\ParticleEmitter.cs" />
     <Compile Include="Graphics\ParticleEffects\ParticleManager.cs" />
     <Compile Include="Graphics\ParticleEffects\ParticleTrigger.cs" />
+    <Compile Include="World\Designations\DesignationTypeProperties.cs" />
     <Compile Include="World\Factions\PoliticalEvent.cs" />
     <Compile Include="World\Factions\Politics.cs" />
+    <Compile Include="World\Designations\DesignationLibrary.cs" />
     <Compile Include="World\Factions\TradeTask.cs" />
     <Compile Include="World\Factions\Trading\CorporateTradeEntity.cs" />
     <Compile Include="World\Gambling.cs" />
@@ -626,8 +628,8 @@
     <Compile Include="Gui\Widgets\AllowedTaskFilter.cs" />
     <Compile Include="Gui\Widgets\DesignationFilter.cs" />
     <Compile Include="Gui\Widgets\TrayBackground.cs" />
-    <Compile Include="World\Factions\DesignationType.cs" />
-    <Compile Include="World\Factions\DesignationDrawer.cs" />
+    <Compile Include="World\Designations\DesignationType.cs" />
+    <Compile Include="World\Designations\DesignationDrawer.cs" />
     <Compile Include="Graphics\Instancing\InstanceRenderData.cs" />
     <Compile Include="Graphics\Instancing\InstanceRenderer.cs" />
     <Compile Include="Graphics\Instancing\NewInstanceData.cs" />
@@ -745,7 +747,7 @@
     <Compile Include="Gui\Widgets\AudioMixerWidget.cs" />
     <Compile Include="Gui\Widgets\TextProgressBar.cs" />
     <Compile Include="Gui\Widgets\TutorialPopup.cs" />
-    <Compile Include="World\Factions\DesignationSet.cs" />
+    <Compile Include="World\Designations\DesignationSet.cs" />
     <Compile Include="World\Factions\WarParty.cs" />
     <Compile Include="World\Factions\RaceLibrary.cs" />
     <Compile Include="Components\AI\Status.cs" />

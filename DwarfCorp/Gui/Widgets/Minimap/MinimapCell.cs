@@ -40,13 +40,9 @@ namespace DwarfCorp.Gui.Widgets.Minimap
                 {
                     foreach (var designation in World.PersistentData.Designations.EnumerateDesignations(SurfaceVoxel))
                     {
-                        if ((designation.Type & World.Renderer.DesignationDrawer.VisibleTypes) == designation.Type)
+                        if ((designation.Type & World.Renderer.PersistentSettings.VisibleTypes) == designation.Type)
                         {
-                            var props = DesignationDrawer.DefaultProperties;
-                            if (DesignationDrawer.DesignationProperties.ContainsKey(designation.Type))
-                                props = DesignationDrawer.DesignationProperties[designation.Type];
-
-                            Color = props.Color;
+                            Color = Library.GetDesignationTypeProperties(designation.Type).Color;
                             return;
                         }
                     }

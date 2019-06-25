@@ -1,0 +1,11 @@
+{
+  "Name": "Craft",
+  "Color": [
+    250,
+    235,
+    215,
+    255
+  ],
+  "LineWidth": 0.1,
+  "DrawType": "FullBox"
+}

@@ -2099,6 +2099,42 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>corporate</Name>
     </None>
+    <None Include="World\Designations\default.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>default</Name>
+    </None>
+    <None Include="World\Designations\Attack.json">
+      <Name>Attack</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="World\Designations\Chop.json">
+      <Name>Chop</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="World\Designations\Craft.json">
+      <Name>Craft</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="World\Designations\Dig.json">
+      <Name>Dig</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="World\Designations\Gather.json">
+      <Name>Gather</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="World\Designations\Plant.json">
+      <Name>Plant</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="World\Designations\Put.json">
+      <Name>Put</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="World\Designations\Wrangle.json">
+      <Name>Wrangle</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="World\Races\Corporate.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Corporate</Name>
