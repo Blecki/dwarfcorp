@@ -42,7 +42,7 @@ namespace DwarfCorp
                 OnClick = (sender, args) => {
                 try
                 {
-                    FileUtils.SaveBasicJson(SoundManager.Mixer, AssetManager.ResolveContentPath(ContentPaths.mixer));
+                    FileUtils.SaveJSON(SoundManager.Mixer, AssetManager.ResolveContentPath(ContentPaths.mixer));
                 }
                 catch (Exception exception)
                 {

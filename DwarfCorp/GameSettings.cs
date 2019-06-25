@@ -292,7 +292,7 @@ namespace DwarfCorp
         {
             try
             {
-                FileUtils.SaveBasicJson(Default, file);
+                FileUtils.SaveJSON(Default, file);
                 Console.Out.WriteLine("Saving settings to {0} : {1}", file, GameSettings.Default.ToString());
             }
             catch (Exception exception)

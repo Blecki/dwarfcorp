@@ -32,7 +32,7 @@ namespace DwarfCorp
 
     public partial class WorldManager
     {
-        public IEnumerable<Zone> EnumerateZones() // Todo: Belongs to world manager??
+        public IEnumerable<Zone> EnumerateZones()
         {
             foreach (var room in PersistentData.Zones)
                 yield return room;

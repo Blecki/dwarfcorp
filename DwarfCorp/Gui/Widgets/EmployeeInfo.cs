@@ -398,24 +398,6 @@ namespace DwarfCorp.Gui.Widgets
                 }
             });
 
-            // Todo: If posession is disabled - can it just be removed?
-            /*
-            if (EnablePosession)
-            {
-                bottomBar.AddChild(new Button()
-                {
-                    Text = "Follow",
-                    Tooltip = "Click to directly control this dwarf and have the camera follow.",
-                    AutoLayout = AutoLayout.DockRight,
-                    OnClick = (sender, args) =>
-                    {
-                        (sender.Parent.Parent.Parent as EmployeeInfo).Employee.World.Tutorial("dwarf follow");
-                        (sender.Parent.Parent.Parent as EmployeeInfo).Employee.IsPosessed = true;
-                    }
-                });
-            }
-            */
-
             bottomBar.AddChild(new Button()
             {
                 Text = "Tasks...",

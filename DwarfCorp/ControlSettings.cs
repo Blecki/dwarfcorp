@@ -94,7 +94,7 @@ namespace DwarfCorp
 
         public static void Save(string file)
         {
-            FileUtils.SaveBasicJson(Mappings, file);
+            FileUtils.SaveJSON(Mappings, file);
         }
 
         public static void Load(string file)

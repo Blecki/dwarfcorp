@@ -157,7 +157,7 @@ namespace DwarfCorp
 
             // Write meta info
             MetaData.Version = Program.Version;
-            FileUtils.SaveJSon(MetaData, metaFilePath);
+            FileUtils.SaveJSON(MetaData, metaFilePath);
 
             using (var texture = CreateSaveTexture())
             using (var stream = new System.IO.FileStream(worldFilePath, System.IO.FileMode.Create))

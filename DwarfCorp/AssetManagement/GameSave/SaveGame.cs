@@ -26,11 +26,11 @@ namespace DwarfCorp
             foreach (ChunkFile chunk in ChunkData)
             {
                 var filename = directory + System.IO.Path.DirectorySeparatorChar + "Chunks" + System.IO.Path.DirectorySeparatorChar + chunk.ID.X + "_" + chunk.ID.Y + "_" + chunk.ID.Z + ".";
-                FileUtils.SaveJSon(chunk, filename + ChunkFile.Extension);
+                FileUtils.SaveJSON(chunk, filename + ChunkFile.Extension);
             }
 
-            FileUtils.SaveJSon(this.Metadata, directory + System.IO.Path.DirectorySeparatorChar + "Metadata." + MetaData.Extension);
-            FileUtils.SaveJSon(this.PlayData, directory + System.IO.Path.DirectorySeparatorChar + "World." + PlayData.Extension);
+            FileUtils.SaveJSON(this.Metadata, directory + System.IO.Path.DirectorySeparatorChar + "Metadata." + MetaData.Extension);
+            FileUtils.SaveJSON(this.PlayData, directory + System.IO.Path.DirectorySeparatorChar + "World." + PlayData.Extension);
         }
 
         public static void DeleteOldestSave(string subdir, int maxToKeep, string blacklist)

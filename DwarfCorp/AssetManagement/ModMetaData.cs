@@ -33,7 +33,7 @@ namespace DwarfCorp
         public void Save()
         {
             var metaDataPath = Directory + global::System.IO.Path.DirectorySeparatorChar + "meta.json";
-            FileUtils.SaveBasicJson(this, metaDataPath);
+            FileUtils.SaveJSON(this, metaDataPath);
         }
 
         public String IdentifierString

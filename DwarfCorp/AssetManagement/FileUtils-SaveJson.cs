@@ -69,18 +69,6 @@ namespace DwarfCorp
             return serializer;
         }
 
-        /// <summary>
-        /// Serializes an object and writes it to a file using the most basic Json settings.
-        /// </summary>
-        /// <typeparam name="T">The type of the object to save.</typeparam>
-        /// <param name="obj">The object.</param>
-        /// <param name="filePath">The file path.</param>
-        /// <returns>True if the object could be saved.</returns>
-        public static bool SaveBasicJson<T>(T obj, string filePath) // Todo: Kill
-        {
-            return Save(GetStandardSerializer(null), obj, filePath);
-        }
-
         public static string SerializeBasicJSON<T>(T obj)
         {
             return JsonConvert.SerializeObject(obj, Formatting.Indented, StandardConverters.ToArray());
@@ -93,7 +81,7 @@ namespace DwarfCorp
         /// <param name="obj">The object to save.</param>
         /// <param name="filePath">The file path.</param>
         /// <returns>True if the object could be saved.</returns>
-        public static bool SaveJSon<T>(T obj, string filePath)
+        public static bool SaveJSON<T>(T obj, string filePath)
         {
             return Save(GetStandardSerializer(null), obj, filePath);
 
