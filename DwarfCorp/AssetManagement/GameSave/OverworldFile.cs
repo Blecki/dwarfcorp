@@ -41,7 +41,7 @@ namespace DwarfCorp
             {
                 // First build a replacement mapping.
 
-                var newBiomeMap = BiomeLibrary.GetBiomeTypeMap();
+                var newBiomeMap = Library.GetBiomeTypeMap();
                 var newReverseMap = new Dictionary<String, int>();
                 foreach (var mapping in newBiomeMap)
                     newReverseMap.Add(mapping.Value, mapping.Key);

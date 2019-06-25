@@ -700,11 +700,12 @@
     <Compile Include="World\Overworld\OverworldMap.cs" />
     <Compile Include="World\Potions\GatherPotionsTask.cs" />
     <Compile Include="World\Potions\Potion.cs" />
-    <Compile Include="World\Rooms\RoomData.cs" />
+    <Compile Include="World\Rooms\RoomFactoryAttribute.cs" />
     <Compile Include="World\Rooms\RoomLibrary.cs" />
     <Compile Include="World\Rooms\AnimalPen.cs" />
     <Compile Include="World\Rooms\BalloonPort.cs" />
     <Compile Include="World\Rooms\Graveyard.cs" />
+    <Compile Include="World\Rooms\RoomType.cs" />
     <Compile Include="World\Rooms\Stockpile.cs" />
     <Compile Include="World\Rooms\Zone.cs" />
     <Compile Include="TaskManagement\CompoundTask.cs" />

@@ -152,7 +152,7 @@ namespace DwarfCorp.GameStates
 
             OverworldTextureGenerator.Generate(Overworld, ShowPolitics, TerrainTexture, PreviewTexture);
 
-            var colorKeyEntries = BiomeLibrary.CreateBiomeColors().ToList();
+            var colorKeyEntries = Library.CreateBiomeColors().ToList();
             var font = Root.GetTileSheet("font8");
             var stringMeshes = new List<Gui.Mesh>();
             var y = Rect.Y;

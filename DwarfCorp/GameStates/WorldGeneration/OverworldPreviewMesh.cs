@@ -104,7 +104,7 @@ namespace DwarfCorp.GameStates
                     if (!MathFunctions.RandEvent(0.05f)) continue;
                     var elevation = Overworld.Map.Height(x, y);
                     if (elevation <= Overworld.GenerationSettings.SeaLevel) continue;
-                    var biome = BiomeLibrary.GetBiome(Overworld.Map.Map[x, y].Biome);
+                    var biome = Library.GetBiome(Overworld.Map.Map[x, y].Biome);
                     if (biome.Icon.X > 0 || biome.Icon.Y > 0)
                     {
                         var bounds = Vector4.Zero;

@@ -50,7 +50,7 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "BUILD",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
-                        ItemSource = RoomLibrary.GetRoomTypes().Select(r =>
+                        ItemSource = Library.EnumerateRoomTypeNames().Select(r =>
                             new HorizontalMenuTray.MenuItem
                             {
                                 Text = r,

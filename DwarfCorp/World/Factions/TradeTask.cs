@@ -30,7 +30,7 @@ namespace DwarfCorp
         IEnumerable<Act.Status> RecallEnvoyOnFail()
         {
             Envoy.RecallEnvoy();
-            TradePort.Faction.World.MakeAnnouncement("Envoy from " + Envoy.OwnerFaction.ParentFaction.Name + " left. Trade port inaccessible.");
+            Envoy.OwnerFaction.World.MakeAnnouncement("Envoy from " + Envoy.OwnerFaction.ParentFaction.Name + " left. Trade port inaccessible.");
             yield return Act.Status.Success;
         }
 

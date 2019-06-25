@@ -11,9 +11,9 @@ namespace DwarfCorp
     public class Graveyard : Stockpile
     {
         [RoomFactory("Graveyard")]
-        private static Zone _factory(RoomData Data, Faction Faction, WorldManager World)
+        private static Zone _factory(RoomType Data, WorldManager World)
         {
-            return new Graveyard(Data, Faction, World);
+            return new Graveyard(Data, World);
         }
 
         public Graveyard()
@@ -25,8 +25,8 @@ namespace DwarfCorp
             return "Graveyard " + ID + " - " + Boxes.Count + " of " + Voxels.Count + " plots filled.";
         }
 
-        private Graveyard(RoomData Data, Faction Faction, WorldManager World) :
-            base(Data, Faction, World)
+        private Graveyard(RoomType Data, WorldManager World) :
+            base(Data, World)
         {
             Resources = new ResourceContainer();
 
@@ -45,7 +45,7 @@ namespace DwarfCorp
             foreach (var fence in  Fence.CreateFences(World.ComponentManager,
                 ContentPaths.Entities.DwarfObjects.fence, Voxels, false))
             {
-                AddBody(fence, false);
+                AddBody(fence);
                 fence.Manager.RootComponent.AddChild(fence);
             }
         }

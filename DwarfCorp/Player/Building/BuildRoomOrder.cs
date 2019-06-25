@@ -17,7 +17,6 @@ namespace DwarfCorp
         public Zone ToBuild { get; set; }
         public Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> PutResources { get; set; }
         public List<BuildVoxelOrder> VoxelOrders { get; set; }
-        public Faction Faction { get; set; }
         public List<GameComponent> WorkObjects = new List<GameComponent>(); 
         public bool IsBuilt { get; set; }
         public float BuildProgress { get; set; }
@@ -40,7 +39,7 @@ namespace DwarfCorp
         }
 
 
-        public BuildRoomOrder(Zone toBuild, Faction faction, WorldManager world)
+        public BuildRoomOrder(Zone toBuild, WorldManager world)
         {
             BuildProgress = 0;
             World = world;
@@ -48,7 +47,6 @@ namespace DwarfCorp
             PutResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>();
             VoxelOrders = new List<BuildVoxelOrder>();
             IsBuilt = false;
-            Faction = faction;
             IsDestroyed = false;
         }
 
@@ -98,7 +96,7 @@ namespace DwarfCorp
                 return;
             IsBuilt = true;
 
-            RoomLibrary.CompleteRoomImmediately(ToBuild, VoxelOrders.Select(o => o.Voxel).ToList());
+            Library.CompleteRoomImmediately(ToBuild, VoxelOrders.Select(o => o.Voxel).ToList());
 
             if (!silent)
             {

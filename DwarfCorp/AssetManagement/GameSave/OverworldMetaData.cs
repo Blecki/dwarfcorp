@@ -26,7 +26,7 @@ namespace DwarfCorp
         {
             this.Overworld = Overworld;
 
-            BiomeTypeMap = BiomeLibrary.GetBiomeTypeMap(); // This may need to be saved in branch meta data.
+            BiomeTypeMap = Library.GetBiomeTypeMap(); // This may need to be saved in branch meta data.
             Resources = ResourceLibrary.Enumerate().Where(r => r.Generated).ToList();
         }
     }

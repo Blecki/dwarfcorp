@@ -65,7 +65,7 @@ namespace DwarfCorp.GameStates
             yield return new KeyValuePair<string, Color>("Biomes: ", Color.White);
             foreach (var biome in biomes)
             {
-                var _biome = BiomeLibrary.GetBiome(biome);
+                var _biome = Library.GetBiome(biome);
                 if (_biome == null)
                     continue;
 
@@ -148,7 +148,7 @@ namespace DwarfCorp.GameStates
                         }
 
                         if(dist < volcanoSize)
-                            Overworld.Map.Map[x, y].Biome = BiomeLibrary.GetBiome("Waste").Biome;
+                            Overworld.Map.Map[x, y].Biome = Library.GetBiome("Waste").Biome;
                     }
                 }
             }
@@ -232,7 +232,7 @@ namespace DwarfCorp.GameStates
                 LoadingMessage = "Biome";
                 for (int x = 0; x < Overworld.Width; x++)
                     for (int y = 0; y < Overworld.Height; y++)
-                        Overworld.Map.Map[x, y].Biome = BiomeLibrary.GetBiomeForConditions(Overworld.Map.Map[x, y].Temperature, Overworld.Map.Map[x, y].Rainfall, Overworld.Map.Map[x, y].Height).Biome;
+                        Overworld.Map.Map[x, y].Biome = Library.GetBiomeForConditions(Overworld.Map.Map[x, y].Temperature, Overworld.Map.Map[x, y].Rainfall, Overworld.Map.Map[x, y].Height).Biome;
 
                 LoadingMessage = "Volcanoes";
                 GenerateVolcanoes(Overworld.Width, Overworld.Height);

@@ -144,8 +144,8 @@ namespace DwarfCorp
                     var color = worldData[(y * width) + x];
                     map[x, y].Height_ = color.R;
                     map[x, y].Biome = color.B;
-                    map[x, y].Rainfall_ = (byte)(BiomeLibrary.GetBiome(map[x, y].Biome).Rain * 255);
-                    map[x, y].Temperature = (float)(BiomeLibrary.GetBiome(map[x, y].Biome).Temp);
+                    map[x, y].Rainfall_ = (byte)(Library.GetBiome(map[x, y].Biome).Rain * 255);
+                    map[x, y].Temperature = (float)(Library.GetBiome(map[x, y].Biome).Temp);
                 }
         }
 
@@ -168,7 +168,7 @@ namespace DwarfCorp
                         cellColor = HeightColors["Water"];
                     else
                     {
-                        var _biome = BiomeLibrary.GetBiome(Map[x, y].Biome);
+                        var _biome = Library.GetBiome(Map[x, y].Biome);
                         if (_biome != null)
                             cellColor = _biome.MapColor;
                     }
@@ -293,7 +293,7 @@ namespace DwarfCorp
             var offsetV = v + new Vector2((blendColor.R - 127.0f) / 128.0f, (blendColor.G - 127.0f) / 128.0f);
             var biome1 = Map[(int)MathFunctions.Clamp(v.X, 0, Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Map.GetLength(1) - 1)].Biome;
             var biome2 = Map[(int)MathFunctions.Clamp(offsetV.X, 0, Map.GetLength(0) - 1), (int)MathFunctions.Clamp(offsetV.Y, 0, Map.GetLength(1) - 1)].Biome;
-            return BiomeLibrary.GetBiome(Math.Max(biome1, biome2));
+            return Library.GetBiome(Math.Max(biome1, biome2));
         }
 
         public float GetValueAt(Vector3 worldPos, OverworldField fieldType, Vector2 origin)

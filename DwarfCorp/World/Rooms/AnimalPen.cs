@@ -11,9 +11,9 @@ namespace DwarfCorp
     public class AnimalPen : Zone
     {
         [RoomFactory("Animal Pen")]
-        private static Zone _factory(RoomData Data, Faction Faction, WorldManager World)
+        private static Zone _factory(RoomType Data, WorldManager World)
         {
-            return new AnimalPen(Data, Faction, World);
+            return new AnimalPen(Data, World);
         }
 
         public List<GameComponent> Animals = new List<GameComponent>();
@@ -25,8 +25,8 @@ namespace DwarfCorp
 
         }
         
-        private AnimalPen(RoomData Data, Faction Faction, WorldManager World) :
-            base(Data, World, Faction)
+        private AnimalPen(RoomType Data, WorldManager World) :
+            base(Data, World)
         {
         }
 

@@ -18,9 +18,9 @@ namespace DwarfCorp
     public class Stockpile : Zone
     {
         [RoomFactory("Stockpile")]
-        private static Zone _factory(RoomData Data, Faction Faction, WorldManager World)
+        private static Zone _factory(RoomType Data, WorldManager World)
         {
-            return new Stockpile(Data, Faction, World);
+            return new Stockpile(Data, World);
         }
 
         public Stockpile()
@@ -28,11 +28,10 @@ namespace DwarfCorp
 
         }
 
-        protected Stockpile(RoomData Data, Faction Faction, WorldManager World) :
-            base(Data, World, Faction)
+        protected Stockpile(RoomType Data, WorldManager World) :
+            base(Data, World)
         {
             Boxes = new List<GameComponent>();
-            this.Faction = Faction;
             BlacklistResources = new List<Resource.ResourceTags>()
             {
                 Resource.ResourceTags.Corpse,
@@ -86,7 +85,7 @@ namespace DwarfCorp
             component.AnimationQueue.Add(deathMotion);
             deathMotion.OnComplete += component.Die;
             SoundManager.PlaySound(ContentPaths.Audio.whoosh, component.LocalTransform.Translation);
-            Faction.World.ParticleManager.Trigger("puff", component.LocalTransform.Translation + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 90);
+            World.ParticleManager.Trigger("puff", component.LocalTransform.Translation + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 90);
         }
 
         public void CreateBox(Vector3 pos)
@@ -99,10 +98,10 @@ namespace DwarfCorp
                 GameComponent crate = EntityFactory.CreateEntity<GameComponent>(BoxType, startPos);
                 crate.AnimationQueue.Add(new EaseMotion(0.8f, crate.LocalTransform, endPos));
                 Boxes.Add(crate);
-                AddBody(crate, false);
+                AddBody(crate);
                 SoundManager.PlaySound(ContentPaths.Audio.whoosh, startPos);
-                if (Faction != null && Faction.World.ParticleManager != null)
-                    Faction.World.ParticleManager.Trigger("puff", pos + new Vector3(0.5f, 1.5f, 0.5f), Color.White, 90);
+                if (World.ParticleManager != null)
+                    World.ParticleManager.Trigger("puff", pos + new Vector3(0.5f, 1.5f, 0.5f), Color.White, 90);
             //});
         }
 

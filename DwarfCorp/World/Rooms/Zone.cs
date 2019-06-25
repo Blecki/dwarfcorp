@@ -9,10 +9,6 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// A zone is a collection of voxel storages.
-    /// </summary>
-    [JsonObject(IsReference = true)]
     public class Zone
     {
         public string ID = "";
@@ -23,12 +19,11 @@ namespace DwarfCorp
         // was created. When the zone is destroyed, the voxel types will be restored.
         public List<byte> OriginalVoxelTypes = new List<byte>(); 
         public List<GameComponent> ZoneBodies = new List<GameComponent>();
-        public RoomData Type;
+        public RoomType Type;
         [JsonIgnore] public Gui.Widget GuiTag;
         public bool IsBuilt;
         public virtual String GetDescriptionString() { return Library.GetString("generic-room-description"); }
-
-
+        
         [JsonProperty]
         protected int ResPerVoxel = 32;
 
@@ -46,8 +41,6 @@ namespace DwarfCorp
 
         public ResourceContainer Resources { get; set; }
 
-        public Faction Faction { get; set; }
-
         [OnDeserialized]
         public void OnDeserialized(StreamingContext ctx)
         {
@@ -59,18 +52,18 @@ namespace DwarfCorp
             }
         }
 
-        public Zone(RoomData Type, WorldManager world, Faction faction)
+        public Zone(RoomType Type, WorldManager World)
         {
+            this.World = World;
+            this.Type = Type;
+
             ID = Counter + ". " + Type.Name;
-            World = world;
+            ++Counter;
+
             Resources = new ResourceContainer
             {
                 MaxResources = 1
             };
-            Faction = faction;
-            this.Type = Type;
-
-            ++Counter;
         }
 
         public Zone()
@@ -128,10 +121,8 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public void AddBody(GameComponent body, bool addToOwnedObjects = true)
+        public void AddBody(GameComponent body)
         {
-            if (addToOwnedObjects)
-                this.Faction.OwnedObjects.Add(body);
             ZoneBodies.Add(body);
             body.OnDestroyed += () => body_onDestroyed(body);
         }

@@ -42,8 +42,8 @@ namespace DwarfCorp.Generation
 
         public static void GenerateCaves(VoxelChunk Chunk, ChunkGeneratorSettings Settings)
         {
-            var caveBiome = BiomeLibrary.GetBiome("Cave");
-            var hellBiome = BiomeLibrary.GetBiome("Hell");
+            var caveBiome = Library.GetBiome("Cave");
+            var hellBiome = Library.GetBiome("Hell");
 
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {

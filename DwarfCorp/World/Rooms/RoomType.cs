@@ -1,14 +1,11 @@
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using DwarfCorp.GameStates;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-    public class RoomData
+    public class RoomType
     {
         public string Name;
         public string Description;
@@ -17,33 +14,18 @@ namespace DwarfCorp
         public string FloorType;
         public Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> RequiredResources;
         public Gui.TileReference NewIcon;
-        public string Descraiption;
         public bool CanBuildAboveGround = true;
         public bool CanBuildBelowGround = true;
         public int MinimumSideLength = 3;
         public int MinimumSideWidth = 3;
         public int MaxNumRooms = int.MaxValue;
 
-        public List<Quantitiy<Resource.ResourceTags> > GetRequiredResources(int numVoxels, Faction faction)
+        public List<Quantitiy<Resource.ResourceTags>> GetRequiredResources(int numVoxels)
         {
-            List<Quantitiy<Resource.ResourceTags> > toReturn = new List<Quantitiy<Resource.ResourceTags>>();
-            foreach (var resources in RequiredResources)
-            {
-                Quantitiy<Resource.ResourceTags> required = new Quantitiy<Resource.ResourceTags>(resources.Value)
-                {
-                    Count = (int)(numVoxels * resources.Value.Count * 0.25f)
-                };
-
-                toReturn.Add(required);
-            }
-
-            return toReturn;
+            return RequiredResources.Select(r => new Quantitiy<Resource.ResourceTags>(r.Value) { Count = (int)(numVoxels * r.Value.Count * 0.25f) }).ToList();
         }
 
-        public bool Verify(
-            List<VoxelHandle> Voxels, 
-            Faction Faction, 
-            WorldManager World)
+        public bool CanBuildHere(List<VoxelHandle> Voxels, WorldManager World)
         {
             if (Voxels.Count == 0)
                 return false;

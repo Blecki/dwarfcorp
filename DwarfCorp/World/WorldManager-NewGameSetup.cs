@@ -48,9 +48,17 @@ namespace DwarfCorp
             var roomVoxels = Generation.Generator.GenerateBalloonPort(Settings.World.ChunkManager, x, z, size, Settings);
 
             // Actually create the BuildRoom.
-            var toBuild = RoomLibrary.CreateRoom(Settings.World.PlayerFaction, "Balloon Port", Settings.World); // Todo: Trim redundant parameters
+            var toBuild = Library.CreateRoom("Balloon Port", Settings.World);
             Settings.World.RoomBuilder.AddZone(toBuild);
-            RoomLibrary.CompleteRoomImmediately(toBuild, roomVoxels.StockpileVoxels);
+            Library.CompleteRoomImmediately(toBuild, roomVoxels.StockpileVoxels);
+
+            DoLazy(() =>
+            {
+                var box = toBuild.GetBoundingBox();
+                var at = new Vector3((box.Min.X + box.Max.X - 1) / 2, box.Max.Y, (box.Min.Z + box.Max.Z - 1) / 2);
+                var flag = EntityFactory.CreateEntity<Flag>("Flag", at + new Vector3(0.5f, 0.5f, 0.5f));
+                Settings.World.PlayerFaction.OwnedObjects.Add(flag);
+            });
 
             return toBuild;
         }

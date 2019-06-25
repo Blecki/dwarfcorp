@@ -275,7 +275,6 @@ namespace DwarfCorp
                     catch (Exception) { }
                 }
 
-                RoomBuilder.Faction = PlayerFaction;
                 RoomBuilder.Update(gameTime);
 
                 #region Mourn dead minions

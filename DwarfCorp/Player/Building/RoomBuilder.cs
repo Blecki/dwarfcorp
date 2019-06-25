@@ -22,8 +22,7 @@ namespace DwarfCorp
     {
         public List<Zone> Zones { get; set; } // Todo: Track down all references to the room list. Channel all room management through this type.
         public List<BuildRoomOrder> BuildDesignations { get; set; }
-        public RoomData CurrentRoomData { get; set; }
-        public Faction Faction { get; set; }
+        public RoomType CurrentRoomData { get; set; }
 
         [JsonIgnore]
         private WorldManager World { get; set; }
@@ -91,28 +90,21 @@ namespace DwarfCorp
             
         }
 
-        public RoomBuilder(Faction faction, WorldManager world)
+        public RoomBuilder(WorldManager world)
         {
             World = world;
             Zones = new List<Zone>();
             BuildDesignations = new List<BuildRoomOrder>();
-            CurrentRoomData = RoomLibrary.GetData("BedRoom");
-            Faction = faction;
+            CurrentRoomData = Library.GetRoomData("BedRoom");
         }
-
 
         public void OnEnter()
         {
-            if (Faction == null)
-            {
-                Faction = World.PlayerFaction;
-            }
         }
 
         public void OnExit()
         {
         }
-
 
         public bool IsInRoom(VoxelHandle v)
         {
@@ -257,7 +249,7 @@ namespace DwarfCorp
                         else
                         {
                             var center = buildOrder.GetBoundingBox().Center();
-                            var projection = Faction.World.Renderer.Camera.Project(center);
+                            var projection = World.Renderer.Camera.Project(center);
                             if (projection.Z < 0.9999)
                             {
                                 buildOrder.DisplayWidget.Rect = new Rectangle((int)(projection.X - buildOrder.DisplayWidget.Rect.Width / 2),
@@ -273,8 +265,8 @@ namespace DwarfCorp
 
         private void BuildNewVoxels(IEnumerable<VoxelHandle> designations)
         {
-            var toBuild = RoomLibrary.CreateRoom(Faction, CurrentRoomData.Name, World);
-            var order = new BuildRoomOrder(toBuild, Faction, Faction.World);
+            var toBuild = Library.CreateRoom(CurrentRoomData.Name, World);
+            var order = new BuildRoomOrder(toBuild, World);
             BuildDesignations.Add(order);
             Zones.Add(toBuild);
 
@@ -295,9 +287,6 @@ namespace DwarfCorp
         {
             World.UserInterface.VoxSelector.SelectionColor = Color.White;
 
-            if (Faction == null)
-                Faction = World.PlayerFaction;
-            
             foreach (BuildRoomOrder order in BuildDesignations)
                 order.SetTint(Color.White);
             
@@ -311,9 +300,9 @@ namespace DwarfCorp
             {
                 World.Tutorial("build " + CurrentRoomData.Name);
 
-                if (CurrentRoomData.Verify(refs, Faction, World))
+                if (CurrentRoomData.CanBuildHere(refs, World))
                 {
-                    List<Quantitiy<Resource.ResourceTags>> requirements = CurrentRoomData.GetRequiredResources(refs.Count, Faction);
+                    List<Quantitiy<Resource.ResourceTags>> requirements = CurrentRoomData.GetRequiredResources(refs.Count);
 
                     string tip = "Needs ";
 
@@ -351,7 +340,7 @@ namespace DwarfCorp
                 return;
 
             if(button == InputManager.MouseButton.Left)
-                if (CurrentRoomData.Verify(refs, Faction, World))
+                if (CurrentRoomData.CanBuildHere(refs, World))
                     BuildNewVoxels(refs);    
         }
     }
