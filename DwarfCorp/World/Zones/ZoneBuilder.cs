@@ -21,8 +21,7 @@ namespace DwarfCorp
     public class ZoneBuilder
     {
         public List<Zone> Zones { get; set; } 
-        [JsonProperty] private List<BuildZoneOrder> BuildDesignations { get; set; }
-        public ZoneType CurrentZoneType { get; set; }
+        [JsonProperty] public List<BuildZoneOrder> BuildDesignations { get; set; }
 
         private WorldManager World { get; set; }
 
@@ -79,16 +78,6 @@ namespace DwarfCorp
             return Zones.FirstOrDefault(s => s.ID == ID);
         }
 
-        public List<Zone> FilterRoomsByType(string type)
-        {
-            return Zones.Where(r => r.Type.Name == type).ToList();
-        }
-
-        public void End()
-        {
-            CurrentZoneType = null;
-        }
-
         public ZoneBuilder()
         {
             
@@ -99,14 +88,6 @@ namespace DwarfCorp
             World = world;
             Zones = new List<Zone>();
             BuildDesignations = new List<BuildZoneOrder>();
-        }
-
-        public void OnEnter()
-        {
-        }
-
-        public void OnExit()
-        {
         }
 
         public bool IsInZone(VoxelHandle v)
@@ -129,16 +110,6 @@ namespace DwarfCorp
             return BuildDesignations.SelectMany(room => room.VoxelOrders).FirstOrDefault(buildDesignation => buildDesignation.Voxel == v);
         }
 
-        public BuildZoneOrder GetMostLikelyDesignation(VoxelHandle v)
-        {
-            BoundingBox larger = new BoundingBox(v.GetBoundingBox().Min - new Vector3(0.5f, 0.5f, 0.5f), v.GetBoundingBox().Max + new Vector3(0.5f, 0.5f, 0.5f));
-
-            return (from room in BuildDesignations
-                from buildDesignation in room.VoxelOrders
-                where larger.Intersects(buildDesignation.Voxel.GetBoundingBox())
-                select room).FirstOrDefault();
-        }
-
         public Zone GetMostLikelyZone(VoxelHandle v)
         {
             foreach(var r in Zones.Where(r => r.ContainsVoxel(v)))
@@ -158,31 +129,6 @@ namespace DwarfCorp
                 from des in roomDesignation.VoxelOrders
                 where des.ToBuild == room
                 select des).ToList();
-        }
-
-        public void Render(DwarfTime game, GraphicsDevice graphics)
-        {
-            
-        }
-
-        public void OnVoxelDestroyed(VoxelHandle voxDestroyed)
-        {
-            var toDestroy = new List<Zone>();
-
-            lock (Zones)
-            {
-                var toCheck = new List<Zone>();
-                toCheck.AddRange(Zones.Where(r => r.IsBuilt));
-                foreach (var r in toCheck)
-                    if (r.RemoveVoxel(voxDestroyed))
-                        toDestroy.Add(r);
-
-                foreach (var r in toDestroy)
-                {
-                    Zones.Remove(r);
-                    r.Destroy();
-                }
-            }
         }
 
         public void Update(DwarfTime Time)
@@ -264,66 +210,6 @@ namespace DwarfCorp
                     }
                 }
             }
-        }
-
-        private void BuildNewVoxels(IEnumerable<VoxelHandle> Voxels)
-        {
-            var toBuild = Library.CreateZone(CurrentZoneType.Name, World);
-            var order = new BuildZoneOrder(toBuild, World);
-            BuildDesignations.Add(order);
-            Zones.Add(toBuild);
-
-            foreach (var v in Voxels.Where(v => v.IsValid && !v.IsEmpty))
-                order.VoxelOrders.Add(new BuildVoxelOrder(order, order.ToBuild, v));
-
-            order.WorkObjects.AddRange(Fence.CreateFences(World.ComponentManager,
-                ContentPaths.Entities.DwarfObjects.constructiontape,
-                order.VoxelOrders.Select(o => o.Voxel),
-                true));
-            foreach (var obj in order.WorkObjects)
-                obj.Manager.RootComponent.AddChild(obj);
-
-            World.TaskManager.AddTask(new BuildRoomTask(order, this));
-        }
-
-        public void OnVoxelsDragged(List<VoxelHandle> refs, InputManager.MouseButton button)
-        {
-            World.UserInterface.VoxSelector.SelectionColor = Color.White;
-
-            foreach (BuildZoneOrder order in BuildDesignations)
-                order.SetTint(Color.White);
-            
-            foreach (var room in World.EnumerateZones())
-                room.SetTint(Color.White);
-            
-            if (CurrentZoneType == null)
-                return;
-            
-            if (button == InputManager.MouseButton.Left)
-            {
-                World.Tutorial("build " + CurrentZoneType.Name);
-
-                if (CurrentZoneType.CanBuildHere(refs, World))
-                    World.UserInterface.ShowTooltip("Release to build here.");
-                else
-                    World.UserInterface.VoxSelector.SelectionColor = GameSettings.Default.Colors.GetColor("Negative", Color.Red);
-            }
-        }
-
-        public void VoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
-        {
-            foreach (BuildZoneOrder order in BuildDesignations)
-                order.SetTint(Color.White);
-
-            foreach (var room in World.EnumerateZones()) // Todo: Doesn't this loopback? L-O-L.
-                room.SetTint(Color.White);
-
-            if(CurrentZoneType == null)
-                return;
-
-            if(button == InputManager.MouseButton.Left)
-                if (CurrentZoneType.CanBuildHere(refs, World))
-                    BuildNewVoxels(refs);    
         }
     }
 }

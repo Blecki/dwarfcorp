@@ -19,6 +19,8 @@ namespace DwarfCorp
             return new BuildZoneTool(World);
         }
 
+        public ZoneType CurrentZoneType = null;
+
         public BuildZoneTool(WorldManager World)
         {
             this.World = World;
@@ -29,24 +31,50 @@ namespace DwarfCorp
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
             if (button == InputManager.MouseButton.Left)
-                World.ZoneBuilder.VoxelsSelected(voxels, button);
+            {
+                foreach (BuildZoneOrder order in World.ZoneBuilder.BuildDesignations)
+                    order.SetTint(Color.White);
+
+                foreach (var room in World.EnumerateZones()) // Todo: Doesn't this loopback? L-O-L.
+                    room.SetTint(Color.White);
+
+                if (CurrentZoneType == null)
+                    return;
+
+                if (button == InputManager.MouseButton.Left)
+                    if (CurrentZoneType.CanBuildHere(voxels, World))
+                    {
+                        var toBuild = Library.CreateZone(CurrentZoneType.Name, World);
+                        var order = new BuildZoneOrder(toBuild, World);
+                        World.ZoneBuilder.BuildDesignations.Add(order);
+                        World.ZoneBuilder.Zones.Add(toBuild);
+
+                        foreach (var v in voxels.Where(v => v.IsValid && !v.IsEmpty))
+                            order.VoxelOrders.Add(new BuildVoxelOrder(order, order.ToBuild, v));
+
+                        order.WorkObjects.AddRange(Fence.CreateFences(World.ComponentManager,
+                            ContentPaths.Entities.DwarfObjects.constructiontape,
+                            order.VoxelOrders.Select(o => o.Voxel),
+                            true));
+                        foreach (var obj in order.WorkObjects)
+                            obj.Manager.RootComponent.AddChild(obj);
+
+                        World.TaskManager.AddTask(new BuildZoneTask(order, World.ZoneBuilder));
+                    }
+            }
             else
                 DestroyZoneTool.OnVoxelsSelected(voxels, button);
         }
 
         public override void OnBegin()
         {
-            World.ZoneBuilder.OnEnter();
-
             if (DestroyZoneTool == null)
                 DestroyZoneTool = new DestroyZoneTool(World);
         }
 
         public override void OnEnd()
         {
-            World.ZoneBuilder.End();
             World.UserInterface.VoxSelector.Clear();
-            World.ZoneBuilder.OnExit();
         }
 
         public override void OnMouseOver(IEnumerable<GameComponent> bodies)
@@ -93,10 +121,6 @@ namespace DwarfCorp
             MouseState mouse = Mouse.GetState();
             if (mouse.RightButton == ButtonState.Pressed)
                 DestroyZoneTool.Render3D(game, time);
-            else
-            {
-                World.ZoneBuilder.Render(time, GameState.Game.GraphicsDevice);
-            }
         }
 
         public override void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)
@@ -111,7 +135,26 @@ namespace DwarfCorp
                 DestroyZoneTool.OnVoxelsDragged(voxels, button);
             else
             {
-                World.ZoneBuilder.OnVoxelsDragged(voxels, button);
+                World.UserInterface.VoxSelector.SelectionColor = Color.White;
+
+                foreach (var order in World.ZoneBuilder.BuildDesignations)
+                    order.SetTint(Color.White);
+
+                foreach (var room in World.EnumerateZones())
+                    room.SetTint(Color.White);
+
+                if (CurrentZoneType == null)
+                    return;
+
+                if (button == InputManager.MouseButton.Left)
+                {
+                    World.Tutorial("build " + CurrentZoneType.Name);
+
+                    if (CurrentZoneType.CanBuildHere(voxels, World))
+                        World.UserInterface.ShowTooltip("Release to build here.");
+                    else
+                        World.UserInterface.VoxSelector.SelectionColor = GameSettings.Default.Colors.GetColor("Negative", Color.Red);
+                }
             }
         }
     }

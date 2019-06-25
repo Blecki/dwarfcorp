@@ -141,6 +141,8 @@
     <Compile Include="TaskManagement\Blackboard.cs" />
     <Compile Include="TaskManagement\CompoundActs\TransferResourcesAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\TransferResourcesTask.cs" />
+    <Compile Include="TaskManagement\Tasks\BuildZoneTask.cs" />
+    <Compile Include="TaskManagement\Tasks\GoToZoneTask.cs" />
     <Compile Include="TaskManagement\TestBehaviors.cs" />
     <Compile Include="World\AutoScaleThread.cs" />
     <Compile Include="World\Crafting\CraftDetails.cs" />
@@ -711,7 +713,6 @@
     <Compile Include="TaskManagement\CompoundTask.cs" />
     <Compile Include="TaskManagement\Task.cs" />
     <Compile Include="TaskManagement\TaskManager.cs" />
-    <Compile Include="TaskManagement\Tasks\BuildRoomTask.cs" />
     <Compile Include="TaskManagement\Tasks\BuildVoxelTask.cs" />
     <Compile Include="TaskManagement\Tasks\ChopEntityTask.cs" />
     <Compile Include="TaskManagement\Tasks\CraftItemTask.cs" />

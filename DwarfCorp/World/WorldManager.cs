@@ -479,7 +479,22 @@ namespace DwarfCorp
             if (!V.IsValid)
                 return;
 
-            ZoneBuilder.OnVoxelDestroyed(V);
+            var toDestroy = new List<Zone>();
+
+            lock (ZoneBuilder.Zones)
+            {
+                var toCheck = new List<Zone>();
+                toCheck.AddRange(ZoneBuilder.Zones.Where(r => r.IsBuilt));
+                foreach (var r in toCheck)
+                    if (r.RemoveVoxel(V))
+                        toDestroy.Add(r);
+
+                foreach (var r in toDestroy)
+                {
+                    ZoneBuilder.Zones.Remove(r);
+                    r.Destroy();
+                }
+            }
         }        
     }
 }

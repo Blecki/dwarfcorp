@@ -365,7 +365,8 @@
     <Compile Include="TaskManagement\LeafActs\WanderAct.cs" />
     <Compile Include="TaskManagement\Task.cs" />
     <Compile Include="TaskManagement\TaskManager.cs" />
-    <Compile Include="TaskManagement\Tasks\BuildRoomTask.cs" />
+    <Compile Include="TaskManagement\Tasks\GoToZoneTask.cs" />
+    <Compile Include="TaskManagement\Tasks\BuildZoneTask.cs" />
     <Compile Include="TaskManagement\Tasks\BuildVoxelTask.cs" />
     <Compile Include="TaskManagement\Tasks\ChopEntityTask.cs" />
     <Compile Include="TaskManagement\Tasks\CraftItemTask.cs" />
