@@ -10,8 +10,8 @@ namespace DwarfCorp
 {
     public class BalloonPort : Stockpile
     {
-        [RoomFactory("Balloon Port")]
-        private static Zone _factory(RoomType Data, WorldManager World)
+        [ZoneFactory("Balloon Port")]
+        private static Zone _factory(ZoneType Data, WorldManager World)
         {
             return new BalloonPort(Data, World);
         }
@@ -21,7 +21,7 @@ namespace DwarfCorp
 
         }
 
-        private BalloonPort(RoomType Data, WorldManager World) :
+        private BalloonPort(ZoneType Data, WorldManager World) :
             base(Data, World)
         {
         }

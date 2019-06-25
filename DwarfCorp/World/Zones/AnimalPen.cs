@@ -10,8 +10,8 @@ namespace DwarfCorp
 {
     public class AnimalPen : Zone
     {
-        [RoomFactory("Animal Pen")]
-        private static Zone _factory(RoomType Data, WorldManager World)
+        [ZoneFactory("Animal Pen")]
+        private static Zone _factory(ZoneType Data, WorldManager World)
         {
             return new AnimalPen(Data, World);
         }
@@ -25,7 +25,7 @@ namespace DwarfCorp
 
         }
         
-        private AnimalPen(RoomType Data, WorldManager World) :
+        private AnimalPen(ZoneType Data, WorldManager World) :
             base(Data, World)
         {
         }

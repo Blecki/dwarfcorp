@@ -1503,7 +1503,7 @@ namespace DwarfCorp.GameStates
                 ItemSource = (new Widget[] {
                     icon_menu_RoomTypes_Return,
                     icon_destroy_room
-                }).Concat(Library.EnumerateRoomTypeNames().Select(Library.GetRoomData)
+                }).Concat(Library.EnumerateZoneTypeNames().Select(Library.GetZoneType)
                     .Select(data => new FlatToolTray.Icon
                     {
                         Icon = data.NewIcon,
@@ -1519,7 +1519,7 @@ namespace DwarfCorp.GameStates
                         },
                         OnClick = (sender, args) =>
                         {
-                            World.RoomBuilder.CurrentRoomData = data;
+                            World.RoomBuilder.CurrentZoneData = data;
                             VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
                             ChangeTool("BuildZone");
                             ShowToolPopup("Click and drag to build " + data.Name);
@@ -1619,7 +1619,7 @@ namespace DwarfCorp.GameStates
                             },
                             OnClick = (sender, args) =>
                             {
-                                World.RoomBuilder.CurrentRoomData = null;
+                                World.RoomBuilder.CurrentZoneData = null;
                                 VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
                                 var tool = Tools["BuildWall"] as BuildWallTool;
                                 tool.BuildFloor = false;
@@ -1669,7 +1669,7 @@ namespace DwarfCorp.GameStates
                             },
                             OnClick = (sender, args) =>
                             {
-                                World.RoomBuilder.CurrentRoomData = null;
+                                World.RoomBuilder.CurrentZoneData = null;
                                 VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
                                 var tool = Tools["BuildWall"] as BuildWallTool;
                                 tool.BuildFloor = true;
@@ -1786,7 +1786,7 @@ namespace DwarfCorp.GameStates
                                     sender.Parent.Parent.Hidden = true;
                                     var tool = Tools["BuildObject"] as BuildObjectTool;
                                     tool.SelectedResources = buildInfo.GetSelectedResources();
-                                    World.RoomBuilder.CurrentRoomData = null;
+                                    World.RoomBuilder.CurrentZoneData = null;
                                     VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
                                     tool.CraftType = data;
                                     tool.Mode = BuildObjectTool.PlacementMode.BuildNew;
@@ -1809,7 +1809,7 @@ namespace DwarfCorp.GameStates
                                     sender.Parent.Parent.Hidden = true;
                                     var tool = Tools["BuildObject"] as BuildObjectTool;
                                     tool.SelectedResources = null;
-                                    World.RoomBuilder.CurrentRoomData = null;
+                                    World.RoomBuilder.CurrentZoneData = null;
                                     VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
                                     tool.CraftType = data;
                                     tool.Mode = BuildObjectTool.PlacementMode.PlaceExisting;

@@ -48,9 +48,9 @@ namespace DwarfCorp
             var roomVoxels = Generation.Generator.GenerateBalloonPort(Settings.World.ChunkManager, x, z, size, Settings);
 
             // Actually create the BuildRoom.
-            var toBuild = Library.CreateRoom("Balloon Port", Settings.World);
+            var toBuild = Library.CreateZone("Balloon Port", Settings.World);
             Settings.World.RoomBuilder.AddZone(toBuild);
-            Library.CompleteRoomImmediately(toBuild, roomVoxels.StockpileVoxels);
+            toBuild.CompleteRoomImmediately(roomVoxels.StockpileVoxels);
 
             DoLazy(() =>
             {

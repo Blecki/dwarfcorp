@@ -17,8 +17,8 @@ namespace DwarfCorp
 {
     public class Stockpile : Zone
     {
-        [RoomFactory("Stockpile")]
-        private static Zone _factory(RoomType Data, WorldManager World)
+        [ZoneFactory("Stockpile")]
+        private static Zone _factory(ZoneType Data, WorldManager World)
         {
             return new Stockpile(Data, World);
         }
@@ -28,7 +28,7 @@ namespace DwarfCorp
 
         }
 
-        protected Stockpile(RoomType Data, WorldManager World) :
+        protected Stockpile(ZoneType Data, WorldManager World) :
             base(Data, World)
         {
             Boxes = new List<GameComponent>();

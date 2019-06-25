@@ -90,9 +90,9 @@ namespace DwarfCorp
 
             if (World.RoomBuilder.IsBuildDesignation(v))
                 World.RoomBuilder.DestroyBuildDesignation(v);
-            else if (World.RoomBuilder.IsInRoom(v))
+            else if (World.RoomBuilder.IsInZone(v))
             {
-                var existingRoom = World.RoomBuilder.GetMostLikelyRoom(v);
+                var existingRoom = World.RoomBuilder.GetMostLikelyZone(v);
 
                 if (existingRoom != null)
                     World.UserInterface.Gui.ShowModalPopup(new Gui.Widgets.Confirm

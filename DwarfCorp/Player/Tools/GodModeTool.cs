@@ -66,9 +66,9 @@ namespace DwarfCorp
             if(Command.Contains("Build/"))
             {
                 string type = Command.Substring(6);
-                var room = Library.CreateRoom(type, World);
+                var room = Library.CreateZone(type, World);
                 World.RoomBuilder.AddZone(room);
-                Library.CompleteRoomImmediately(room, refs);
+                room.CompleteRoomImmediately(refs);
             }
             if (Command.Contains("Spawn/"))
             {

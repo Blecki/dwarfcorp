@@ -12,7 +12,7 @@ namespace DwarfCorp.Gui.Widgets
     /// </summary>
     public class BuildRoomInfo : Widget
     {
-        public RoomType Data;
+        public ZoneType Data;
         public WorldManager World;
 
         public override void Construct()

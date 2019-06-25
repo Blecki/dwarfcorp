@@ -18,11 +18,11 @@ namespace DwarfCorp
     /// The BuildRoom designator keeps track of voxels selected by the player and turns
     /// them into BuildRoom designations (so that dwarves can build BuildRoom).
     /// </summary>
-    public class RoomBuilder
+    public class ZoneBuilder
     {
         public List<Zone> Zones { get; set; } // Todo: Track down all references to the room list. Channel all room management through this type.
-        public List<BuildRoomOrder> BuildDesignations { get; set; }
-        public RoomType CurrentRoomData { get; set; }
+        public List<BuildZoneOrder> BuildDesignations { get; set; }
+        public ZoneType CurrentZoneData { get; set; }
 
         [JsonIgnore]
         private WorldManager World { get; set; }
@@ -50,8 +50,8 @@ namespace DwarfCorp
         {
             Zones.Remove(Z);
 
-            var existingDesignations = GetDesignationsAssociatedWithRoom(Z);
-            BuildRoomOrder buildRoomDes = null;
+            var existingDesignations = GetDesignationsAssociatedWithZone(Z);
+            BuildZoneOrder buildRoomDes = null;
             foreach (var des in existingDesignations)
             {
                 des.Order.VoxelOrders.Remove(des);
@@ -82,20 +82,20 @@ namespace DwarfCorp
 
         public void End()
         {
-            CurrentRoomData = null;
+            CurrentZoneData = null;
         }
 
-        public RoomBuilder()
+        public ZoneBuilder()
         {
             
         }
 
-        public RoomBuilder(WorldManager world)
+        public ZoneBuilder(WorldManager world)
         {
             World = world;
             Zones = new List<Zone>();
-            BuildDesignations = new List<BuildRoomOrder>();
-            CurrentRoomData = Library.GetRoomData("BedRoom");
+            BuildDesignations = new List<BuildZoneOrder>();
+            CurrentZoneData = Library.GetZoneType("BedRoom");
         }
 
         public void OnEnter()
@@ -106,7 +106,7 @@ namespace DwarfCorp
         {
         }
 
-        public bool IsInRoom(VoxelHandle v)
+        public bool IsInZone(VoxelHandle v)
         {
             return Zones.Any(r => r.ContainsVoxel(v));
         }
@@ -126,7 +126,7 @@ namespace DwarfCorp
             return BuildDesignations.SelectMany(room => room.VoxelOrders).FirstOrDefault(buildDesignation => buildDesignation.Voxel == v);
         }
 
-        public BuildRoomOrder GetMostLikelyDesignation(VoxelHandle v)
+        public BuildZoneOrder GetMostLikelyDesignation(VoxelHandle v)
         {
             BoundingBox larger = new BoundingBox(v.GetBoundingBox().Min - new Vector3(0.5f, 0.5f, 0.5f), v.GetBoundingBox().Max + new Vector3(0.5f, 0.5f, 0.5f));
 
@@ -136,7 +136,7 @@ namespace DwarfCorp
                 select room).FirstOrDefault();
         }
 
-        public Zone GetMostLikelyRoom(VoxelHandle v)
+        public Zone GetMostLikelyZone(VoxelHandle v)
         {
             foreach(var r in Zones.Where(r => r.ContainsVoxel(v)))
                 return r;
@@ -149,7 +149,7 @@ namespace DwarfCorp
                 select buildDesignation.ToBuild).FirstOrDefault();
         }
 
-        public List<BuildVoxelOrder> GetDesignationsAssociatedWithRoom(Zone room)
+        public List<BuildVoxelOrder> GetDesignationsAssociatedWithZone(Zone room)
         {
             return (from roomDesignation in BuildDesignations
                 from des in roomDesignation.VoxelOrders
@@ -265,8 +265,8 @@ namespace DwarfCorp
 
         private void BuildNewVoxels(IEnumerable<VoxelHandle> designations)
         {
-            var toBuild = Library.CreateRoom(CurrentRoomData.Name, World);
-            var order = new BuildRoomOrder(toBuild, World);
+            var toBuild = Library.CreateZone(CurrentZoneData.Name, World);
+            var order = new BuildZoneOrder(toBuild, World);
             BuildDesignations.Add(order);
             Zones.Add(toBuild);
 
@@ -287,22 +287,22 @@ namespace DwarfCorp
         {
             World.UserInterface.VoxSelector.SelectionColor = Color.White;
 
-            foreach (BuildRoomOrder order in BuildDesignations)
+            foreach (BuildZoneOrder order in BuildDesignations)
                 order.SetTint(Color.White);
             
             foreach (var room in World.EnumerateZones())
                 room.SetTint(Color.White);
             
-            if (CurrentRoomData == null)
+            if (CurrentZoneData == null)
                 return;
             
             if (button == InputManager.MouseButton.Left)
             {
-                World.Tutorial("build " + CurrentRoomData.Name);
+                World.Tutorial("build " + CurrentZoneData.Name);
 
-                if (CurrentRoomData.CanBuildHere(refs, World))
+                if (CurrentZoneData.CanBuildHere(refs, World))
                 {
-                    List<Quantitiy<Resource.ResourceTags>> requirements = CurrentRoomData.GetRequiredResources(refs.Count);
+                    List<Quantitiy<Resource.ResourceTags>> requirements = CurrentZoneData.GetRequiredResources(refs.Count);
 
                     string tip = "Needs ";
 
@@ -330,17 +330,17 @@ namespace DwarfCorp
 
         public void VoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
         {
-            foreach (BuildRoomOrder order in BuildDesignations)
+            foreach (BuildZoneOrder order in BuildDesignations)
                 order.SetTint(Color.White);
 
             foreach (var room in World.EnumerateZones()) // Todo: Doesn't this loopback? L-O-L.
                 room.SetTint(Color.White);
 
-            if(CurrentRoomData == null)
+            if(CurrentZoneData == null)
                 return;
 
             if(button == InputManager.MouseButton.Left)
-                if (CurrentRoomData.CanBuildHere(refs, World))
+                if (CurrentZoneData.CanBuildHere(refs, World))
                     BuildNewVoxels(refs);    
         }
     }

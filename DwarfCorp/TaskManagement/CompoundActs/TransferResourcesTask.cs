@@ -10,14 +10,14 @@ namespace DwarfCorp
         public string StockpileFrom;
         private Stockpile stockpile;
         public ResourceAmount Resources;
-        public RoomBuilder Builder;
+        public ZoneBuilder Builder;
 
         public TransferResourcesTask()
         {
 
         }
 
-        public TransferResourcesTask(string stockpile, ResourceAmount resources, RoomBuilder Builder)
+        public TransferResourcesTask(string stockpile, ResourceAmount resources, ZoneBuilder Builder)
         {
             Priority = PriorityType.Medium;
             StockpileFrom = stockpile;

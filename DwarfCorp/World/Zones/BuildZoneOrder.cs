@@ -8,11 +8,7 @@ using System.Runtime.Serialization;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// This designation specifies a list of voxels which are to be turned
-    /// into a BuildRoom.
-    /// </summary>
-    public class BuildRoomOrder
+    public class BuildZoneOrder
     {
         public Zone ToBuild { get; set; }
         public Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> PutResources { get; set; }
@@ -33,13 +29,13 @@ namespace DwarfCorp
             World = (WorldManager)ctx.Context;
         }
 
-        public BuildRoomOrder()
+        public BuildZoneOrder()
         {
             BuildProgress = 0;
         }
 
 
-        public BuildRoomOrder(Zone toBuild, WorldManager world)
+        public BuildZoneOrder(Zone toBuild, WorldManager world)
         {
             BuildProgress = 0;
             World = world;
@@ -96,7 +92,7 @@ namespace DwarfCorp
                 return;
             IsBuilt = true;
 
-            Library.CompleteRoomImmediately(ToBuild, VoxelOrders.Select(o => o.Voxel).ToList());
+            ToBuild.CompleteRoomImmediately(VoxelOrders.Select(o => o.Voxel).ToList());
 
             if (!silent)
             {

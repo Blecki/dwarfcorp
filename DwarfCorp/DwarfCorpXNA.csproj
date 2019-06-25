@@ -255,10 +255,8 @@
     <Compile Include="Gui\Widgets\MarketPanel.cs" />
     <Compile Include="Player\BodySelector.cs" />
     <Compile Include="Player\BoxBrush.cs" />
-    <Compile Include="Player\Building\BuildRoomOrder.cs" />
     <Compile Include="Player\Building\BuildVoxelOrder.cs" />
     <Compile Include="Player\Building\CraftDesignation.cs" />
-    <Compile Include="Player\Building\RoomBuilder.cs" />
     <Compile Include="Player\ContextCommands\AttackCommand.cs" />
     <Compile Include="Player\ContextCommands\CancelCommand.cs" />
     <Compile Include="Player\ContextCommands\CancelDwarfCommand.cs" />
@@ -601,14 +599,6 @@
     <Compile Include="World\Overworld\OverworldGenerator.cs" />
     <Compile Include="World\Potions\GatherPotionsTask.cs" />
     <Compile Include="World\Potions\Potion.cs" />
-    <Compile Include="World\Rooms\AnimalPen.cs" />
-    <Compile Include="World\Rooms\BalloonPort.cs" />
-    <Compile Include="World\Rooms\Graveyard.cs" />
-    <Compile Include="World\Rooms\RoomType.cs" />
-    <Compile Include="World\Rooms\RoomFactoryAttribute.cs" />
-    <Compile Include="World\Rooms\RoomLibrary.cs" />
-    <Compile Include="World\Rooms\Stockpile.cs" />
-    <Compile Include="World\Rooms\Zone.cs" />
     <Compile Include="World\Voxels\ChunkManager-Data.cs" />
     <Compile Include="Entities\Plants\Pumpkin.cs" />
     <Compile Include="Entities\Plants\Cactus.cs" />
@@ -951,6 +941,16 @@
     <Compile Include="World\WorldRendererPersistentSettings.cs" />
     <Compile Include="World\WorldRenderer.cs" />
     <Compile Include="World\WorldTime.cs" />
+    <Compile Include="World\Zones\AnimalPen.cs" />
+    <Compile Include="World\Zones\BalloonPort.cs" />
+    <Compile Include="World\Zones\BuildZoneOrder.cs" />
+    <Compile Include="World\Zones\Graveyard.cs" />
+    <Compile Include="World\Zones\Stockpile.cs" />
+    <Compile Include="World\Zones\Zone.cs" />
+    <Compile Include="World\Zones\ZoneBuilder.cs" />
+    <Compile Include="World\Zones\ZoneFactoryAttribute.cs" />
+    <Compile Include="World\Zones\ZoneLibrary.cs" />
+    <Compile Include="World\Zones\ZoneType.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />

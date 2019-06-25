@@ -35,7 +35,7 @@ namespace DwarfCorp
         private Timer orphanedTaskRateLimiter = new Timer(10.0f, false, Timer.TimerMode.Real);
         public MonsterSpawner MonsterSpawner;
         public Faction PlayerFaction;
-        public RoomBuilder RoomBuilder;
+        public ZoneBuilder RoomBuilder;
 
         #region Tutorial Hooks
 

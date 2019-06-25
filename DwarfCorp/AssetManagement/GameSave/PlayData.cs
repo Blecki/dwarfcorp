@@ -26,7 +26,7 @@ namespace DwarfCorp
         public TaskManager Tasks;
         public Yarn.MemoryVariableStore ConversationMemory;
         public DwarfCorp.Gui.Widgets.StatsTracker Stats;
-        public RoomBuilder RoomBuilder;
+        public ZoneBuilder RoomBuilder;
         public PersistentWorldData PersistentData;
 
         public static PlayData CreateFromWorld(WorldManager World)

@@ -41,7 +41,7 @@ namespace DwarfCorp
     /// </summary>
     internal class BuildRoomTask : Task
     {
-        public BuildRoomOrder Zone;
+        public BuildZoneOrder Zone;
 
         public BuildRoomTask()
         {
@@ -51,7 +51,7 @@ namespace DwarfCorp
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
-        public BuildRoomTask(BuildRoomOrder zone, RoomBuilder Builder)
+        public BuildRoomTask(BuildZoneOrder zone, ZoneBuilder Builder)
         {
             Category = TaskCategory.BuildZone;
             MaxAssignable = 3;
@@ -61,7 +61,7 @@ namespace DwarfCorp
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
-        private bool IsRoomBuildOrder(Faction faction, BuildRoomOrder buildRooom)
+        private bool IsRoomBuildOrder(Faction faction, BuildZoneOrder buildRooom)
         {
             return faction.World.RoomBuilder.BuildDesignations.Contains(buildRooom);
         }

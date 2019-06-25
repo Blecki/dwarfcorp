@@ -43,9 +43,9 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class CreateRoomAct : CreatureAct
     {
-        public BuildRoomOrder BuildRoom { get; set; }
+        public BuildZoneOrder BuildRoom { get; set; }
 
-        public CreateRoomAct(CreatureAI agent, BuildRoomOrder buildRoom) :
+        public CreateRoomAct(CreatureAI agent, BuildZoneOrder buildRoom) :
             base(agent)
         {
             Name = "Build room.";

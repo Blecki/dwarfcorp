@@ -19,7 +19,7 @@ namespace DwarfCorp
         // was created. When the zone is destroyed, the voxel types will be restored.
         public List<byte> OriginalVoxelTypes = new List<byte>(); 
         public List<GameComponent> ZoneBodies = new List<GameComponent>();
-        public RoomType Type;
+        public ZoneType Type;
         [JsonIgnore] public Gui.Widget GuiTag;
         public bool IsBuilt;
         public virtual String GetDescriptionString() { return Library.GetString("generic-room-description"); }
@@ -52,7 +52,7 @@ namespace DwarfCorp
             }
         }
 
-        public Zone(RoomType Type, WorldManager World)
+        public Zone(ZoneType Type, WorldManager World)
         {
             this.World = World;
             this.Type = Type;
@@ -300,5 +300,14 @@ namespace DwarfCorp
         {
             ZoneBodies.RemoveAll(body => body.IsDead);
         }
+
+        public void CompleteRoomImmediately(List<VoxelHandle> Voxels)
+        {
+            foreach (var voxel in Voxels)
+                AddVoxel(voxel);
+            IsBuilt = true;
+            OnBuilt();
+        }
+
     }
 }

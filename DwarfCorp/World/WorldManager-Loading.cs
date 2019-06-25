@@ -340,7 +340,7 @@ namespace DwarfCorp
 
             PlayerFaction = Factions.Factions["Player"];
             PlayerFaction.Economy = new Company(PlayerFaction, 300.0m, Overworld.Company);
-            RoomBuilder = new RoomBuilder(this);
+            RoomBuilder = new ZoneBuilder(this);
 
             #endregion
 

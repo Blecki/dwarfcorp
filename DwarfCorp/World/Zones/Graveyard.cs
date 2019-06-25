@@ -10,8 +10,8 @@ namespace DwarfCorp
 {
     public class Graveyard : Stockpile
     {
-        [RoomFactory("Graveyard")]
-        private static Zone _factory(RoomType Data, WorldManager World)
+        [ZoneFactory("Graveyard")]
+        private static Zone _factory(ZoneType Data, WorldManager World)
         {
             return new Graveyard(Data, World);
         }
@@ -25,7 +25,7 @@ namespace DwarfCorp
             return "Graveyard " + ID + " - " + Boxes.Count + " of " + Voxels.Count + " plots filled.";
         }
 
-        private Graveyard(RoomType Data, WorldManager World) :
+        private Graveyard(ZoneType Data, WorldManager World) :
             base(Data, World)
         {
             Resources = new ResourceContainer();

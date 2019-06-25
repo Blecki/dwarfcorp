@@ -11,9 +11,9 @@ namespace DwarfCorp
     {
         public Zone ToBuild;
         public VoxelHandle Voxel;
-        public BuildRoomOrder Order;
+        public BuildZoneOrder Order;
 
-        public BuildVoxelOrder(BuildRoomOrder Order, Zone ToBuild, VoxelHandle Voxel)
+        public BuildVoxelOrder(BuildZoneOrder Order, Zone ToBuild, VoxelHandle Voxel)
         {
             this.Order = Order;
             this.ToBuild = ToBuild;

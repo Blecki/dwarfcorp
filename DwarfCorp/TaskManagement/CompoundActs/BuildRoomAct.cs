@@ -11,11 +11,11 @@ namespace DwarfCorp
     /// </summary>
     public class BuildRoomAct : CompoundCreatureAct
     {
-        public BuildRoomOrder BuildRoom { get; set; }
-        public RoomBuilder Builder;
+        public BuildZoneOrder BuildRoom { get; set; }
+        public ZoneBuilder Builder;
         public List<Quantitiy<Resource.ResourceTags>> Resources { get; set; } 
 
-        public IEnumerable<Status> SetTargetVoxelFromRoom(BuildRoomOrder buildRoom, string target)
+        public IEnumerable<Status> SetTargetVoxelFromRoom(BuildZoneOrder buildRoom, string target)
         {
             if (buildRoom.VoxelOrders.Count == 0)
             {
@@ -41,12 +41,12 @@ namespace DwarfCorp
             }
         }
 
-        public Act SetTargetVoxelFromRoomAct(BuildRoomOrder buildRoom, string target)
+        public Act SetTargetVoxelFromRoomAct(BuildZoneOrder buildRoom, string target)
         {
             return new Wrap(() => SetTargetVoxelFromRoom(buildRoom, target));
         }
 
-        public bool IsRoomBuildOrder(BuildRoomOrder buildRooom)
+        public bool IsRoomBuildOrder(BuildZoneOrder buildRooom)
         {
             return Builder.BuildDesignations.Contains(buildRooom);
         }
@@ -139,7 +139,7 @@ namespace DwarfCorp
         }
 
 
-        public BuildRoomAct(CreatureAI agent, BuildRoomOrder buildRoom, RoomBuilder Builder) :
+        public BuildRoomAct(CreatureAI agent, BuildZoneOrder buildRoom, ZoneBuilder Builder) :
             base(agent)
         {
             this.Builder = Builder;

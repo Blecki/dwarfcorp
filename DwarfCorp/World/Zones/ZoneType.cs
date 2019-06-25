@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace DwarfCorp
 {
-    public class RoomType
+    public class ZoneType
     {
         public string Name;
         public string Description;
@@ -94,7 +94,7 @@ namespace DwarfCorp
                     return false;
                 }
 
-                if (World.RoomBuilder.IsInRoom(voxel) || World.RoomBuilder.IsBuildDesignation(voxel))
+                if (World.RoomBuilder.IsInZone(voxel) || World.RoomBuilder.IsBuildDesignation(voxel))
                 {
                     World.UserInterface.ShowTooltip("Room's can't overlap!");
                     return false;
