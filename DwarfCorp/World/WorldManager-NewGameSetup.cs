@@ -49,7 +49,7 @@ namespace DwarfCorp
 
             // Actually create the BuildRoom.
             var toBuild = Library.CreateZone("Balloon Port", Settings.World);
-            Settings.World.ZoneBuilder.AddZone(toBuild);
+            Settings.World.AddZone(toBuild);
             toBuild.CompleteRoomImmediately(roomVoxels.StockpileVoxels);
 
             DoLazy(() =>

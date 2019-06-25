@@ -26,7 +26,6 @@ namespace DwarfCorp
         public TaskManager Tasks;
         public Yarn.MemoryVariableStore ConversationMemory;
         public DwarfCorp.Gui.Widgets.StatsTracker Stats;
-        public ZoneBuilder RoomBuilder;
         public PersistentWorldData PersistentData;
 
         public static PlayData CreateFromWorld(WorldManager World)
@@ -40,7 +39,6 @@ namespace DwarfCorp
                 Tasks = World.TaskManager,
                 ConversationMemory = World.ConversationMemory,
                 Stats = World.Stats,
-                RoomBuilder = World.ZoneBuilder,
                 PersistentData = World.PersistentData
             };
         }

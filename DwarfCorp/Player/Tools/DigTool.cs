@@ -61,7 +61,7 @@ namespace DwarfCorp
                     }
 
                     // Todo: Should this be removed from the existing compound task and put in the new one?
-                    if (!World.PersistentData.Designations.IsVoxelDesignation(v, DesignationType.Dig) && !(World.ZoneBuilder.IsInZone(v) || World.ZoneBuilder.IsBuildDesignation(v)))
+                    if (!World.PersistentData.Designations.IsVoxelDesignation(v, DesignationType.Dig) && !(World.IsInZone(v) || World.IsBuildDesignation(v)))
                     {
                         var task = new KillVoxelTask(v);
                         task.Hidden = true;

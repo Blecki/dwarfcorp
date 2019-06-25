@@ -638,7 +638,6 @@
     <Compile Include="World\Zones\BuildZoneOrder.cs" />
     <Compile Include="Player\Building\BuildVoxelOrder.cs" />
     <Compile Include="Player\Building\CraftDesignation.cs" />
-    <Compile Include="World\Zones\ZoneBuilder.cs" />
     <Compile Include="Player\InputManager.cs" />
     <Compile Include="Player\IVoxelBrush.cs" />
     <Compile Include="Player\KeyManager.cs" />

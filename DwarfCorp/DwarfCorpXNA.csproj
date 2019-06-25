@@ -948,7 +948,6 @@
     <Compile Include="World\Zones\Graveyard.cs" />
     <Compile Include="World\Zones\Stockpile.cs" />
     <Compile Include="World\Zones\Zone.cs" />
-    <Compile Include="World\Zones\ZoneBuilder.cs" />
     <Compile Include="World\Zones\ZoneFactoryAttribute.cs" />
     <Compile Include="World\Zones\ZoneLibrary.cs" />
     <Compile Include="World\Zones\ZoneType.cs" />

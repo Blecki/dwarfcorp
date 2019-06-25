@@ -12,8 +12,7 @@ namespace DwarfCorp
     public class BuildRoomAct : CompoundCreatureAct
     {
         public BuildZoneOrder BuildRoom { get; set; }
-        public ZoneBuilder Builder;
-        public List<Quantitiy<Resource.ResourceTags>> Resources { get; set; } 
+        public List<Quantitiy<Resource.ResourceTags>> Resources { get; set; }
 
         public IEnumerable<Status> SetTargetVoxelFromRoom(BuildZoneOrder buildRoom, string target)
         {
@@ -48,7 +47,7 @@ namespace DwarfCorp
 
         public bool IsRoomBuildOrder(BuildZoneOrder buildRooom)
         {
-            return Builder.IsActiveBuildZoneOrder(BuildRoom);
+            return Agent.World.IsActiveBuildZoneOrder(BuildRoom);
         }
 
         public BuildRoomAct()
@@ -139,17 +138,14 @@ namespace DwarfCorp
         }
 
 
-        public BuildRoomAct(CreatureAI agent, BuildZoneOrder buildRoom, ZoneBuilder Builder) :
+        public BuildRoomAct(CreatureAI agent, BuildZoneOrder buildRoom) :
             base(agent)
         {
-            this.Builder = Builder;
             Name = "Build BuildRoom " + buildRoom.ToString();
             Resources = buildRoom.ListRequiredResources();
             BuildRoom = buildRoom;
             if (BuildRoom.ResourcesReservedFor != null && BuildRoom.ResourcesReservedFor.IsDead)
-            {
                 BuildRoom.ResourcesReservedFor = null;
-            }
 
             Tree = new Sequence(new Select(new Domain(buildRoom.MeetsBuildRequirements() || buildRoom.ResourcesReservedFor != null, true), 
                                            new Domain(!buildRoom.MeetsBuildRequirements() && (buildRoom.ResourcesReservedFor == null || buildRoom.ResourcesReservedFor == Agent), new Sequence(new Wrap(Reserve), new GetResourcesAct(Agent, Resources))),

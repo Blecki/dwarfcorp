@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -10,15 +12,22 @@ namespace DwarfCorp
         public string StockpileFrom;
         private Stockpile stockpile;
         public ResourceAmount Resources;
-        public ZoneBuilder Builder;
+
+        [JsonIgnore] public WorldManager World;
+        [OnDeserialized]
+        public void OnDeserialized(StreamingContext ctx)
+        {
+            World = ctx.Context as WorldManager;
+        }
 
         public TransferResourcesTask()
         {
 
         }
 
-        public TransferResourcesTask(string stockpile, ResourceAmount resources, ZoneBuilder Builder)
+        public TransferResourcesTask(WorldManager World, string stockpile, ResourceAmount resources)
         {
+            this.World = World;
             Priority = PriorityType.Medium;
             StockpileFrom = stockpile;
             Resources = resources;
@@ -37,7 +46,7 @@ namespace DwarfCorp
 
         public bool GetStockpile(Faction faction)
         {
-            stockpile = Builder.FindZone(StockpileFrom) as Stockpile;
+            stockpile = World.FindZone(StockpileFrom) as Stockpile;
             return stockpile != null;
         }
 

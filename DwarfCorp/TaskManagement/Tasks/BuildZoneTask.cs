@@ -18,7 +18,7 @@ namespace DwarfCorp
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
-        public BuildZoneTask(BuildZoneOrder zone, ZoneBuilder Builder)
+        public BuildZoneTask(BuildZoneOrder zone)
         {
             Category = TaskCategory.BuildZone;
             MaxAssignable = 3;
@@ -30,7 +30,7 @@ namespace DwarfCorp
 
         private bool IsZoneBuildOrder(Faction faction, BuildZoneOrder buildRooom)
         {
-            return faction.World.ZoneBuilder.IsActiveBuildZoneOrder(buildRooom);
+            return faction.World.IsActiveBuildZoneOrder(buildRooom);
         }
 
 
@@ -46,7 +46,7 @@ namespace DwarfCorp
             if (Zone == null)
                 return null;
 
-            return new BuildRoomAct(creature.AI, Zone, creature.World.ZoneBuilder);
+            return new BuildRoomAct(creature.AI, Zone);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

@@ -196,7 +196,6 @@ namespace DwarfCorp
             ConversationMemory = gameFile.PlayData.ConversationMemory;
 
             Factions = gameFile.PlayData.Factions;
-            ZoneBuilder = gameFile.PlayData.RoomBuilder;
             ComponentManager.World = this;
 
             Renderer.Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
@@ -340,7 +339,6 @@ namespace DwarfCorp
 
             PlayerFaction = Factions.Factions["Player"];
             PlayerFaction.Economy = new Company(PlayerFaction, 300.0m, Overworld.Company);
-            ZoneBuilder = new ZoneBuilder(this);
 
             #endregion
 

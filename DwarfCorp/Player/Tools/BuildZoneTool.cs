@@ -32,7 +32,7 @@ namespace DwarfCorp
         {
             if (button == InputManager.MouseButton.Left)
             {
-                foreach (BuildZoneOrder order in World.ZoneBuilder.BuildDesignations)
+                foreach (BuildZoneOrder order in World.PersistentData.BuildDesignations)
                     order.SetTint(Color.White);
 
                 foreach (var room in World.EnumerateZones()) // Todo: Doesn't this loopback? L-O-L.
@@ -46,8 +46,8 @@ namespace DwarfCorp
                     {
                         var toBuild = Library.CreateZone(CurrentZoneType.Name, World);
                         var order = new BuildZoneOrder(toBuild, World);
-                        World.ZoneBuilder.BuildDesignations.Add(order);
-                        World.ZoneBuilder.Zones.Add(toBuild);
+                        World.PersistentData.BuildDesignations.Add(order);
+                        World.PersistentData.Zones.Add(toBuild);
 
                         foreach (var v in voxels.Where(v => v.IsValid && !v.IsEmpty))
                             order.VoxelOrders.Add(new BuildVoxelOrder(order, order.ToBuild, v));
@@ -59,7 +59,7 @@ namespace DwarfCorp
                         foreach (var obj in order.WorkObjects)
                             obj.Manager.RootComponent.AddChild(obj);
 
-                        World.TaskManager.AddTask(new BuildZoneTask(order, World.ZoneBuilder));
+                        World.TaskManager.AddTask(new BuildZoneTask(order));
                     }
             }
             else
@@ -137,7 +137,7 @@ namespace DwarfCorp
             {
                 World.UserInterface.VoxSelector.SelectionColor = Color.White;
 
-                foreach (var order in World.ZoneBuilder.BuildDesignations)
+                foreach (var order in World.PersistentData.BuildDesignations)
                     order.SetTint(Color.White);
 
                 foreach (var room in World.EnumerateZones())

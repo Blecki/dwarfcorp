@@ -27,11 +27,11 @@ namespace DwarfCorp
         {
             var v = World.UserInterface.VoxSelector.VoxelUnderMouse;
 
-            if (World.ZoneBuilder.IsBuildDesignation(v))
-                World.ZoneBuilder.DestroyBuildDesignation(v);
-            else if (World.ZoneBuilder.IsInZone(v))
+            if (World.IsBuildDesignation(v))
+                World.DestroyBuildDesignation(v);
+            else if (World.IsInZone(v))
             {
-                var existingRoom = World.ZoneBuilder.GetMostLikelyZone(v);
+                var existingRoom = World.GetMostLikelyZone(v);
 
                 if (existingRoom != null)
                     World.UserInterface.Gui.ShowModalPopup(new Gui.Widgets.Confirm
@@ -45,7 +45,7 @@ namespace DwarfCorp
         public static void DestroyRoom(Gui.Widgets.Confirm.Result status, Zone room, WorldManager World)
         {
             if (status == Gui.Widgets.Confirm.Result.OKAY)
-                World.ZoneBuilder.DestroyZone(room);
+                World.DestroyZone(room);
         }
 
         public override void OnBegin()
@@ -90,7 +90,7 @@ namespace DwarfCorp
             var v = World.UserInterface.VoxSelector.VoxelUnderMouse;
             if (v.IsValid && !v.IsEmpty)
             {
-                var room = World.ZoneBuilder.GetRoomThatContainsVoxel(v);
+                var room = World.GetZoneThatContainsVoxel(v);
                 if (room != null)
                     Drawer3D.DrawBox(room.GetBoundingBox(), GameSettings.Default.Colors.GetColor("Positive", Color.Green), 0.2f, true);
             }
@@ -109,9 +109,9 @@ namespace DwarfCorp
         {
             var v = World.UserInterface.VoxSelector.VoxelUnderMouse;
 
-            if (World.ZoneBuilder.IsBuildDesignation(v))
+            if (World.IsBuildDesignation(v))
             {
-                var order = World.ZoneBuilder.GetBuildDesignation(v);
+                var order = World.GetBuildDesignation(v);
                 if (order == null || order.Order == null)
                     return;
 
@@ -120,9 +120,9 @@ namespace DwarfCorp
                 else
                     order.ToBuild.SetTint(GameSettings.Default.Colors.GetColor("Negative", Color.Red));
             }
-            else if (World.ZoneBuilder.IsInZone(v))
+            else if (World.IsInZone(v))
             {
-                var existingRoom = World.ZoneBuilder.GetMostLikelyZone(v);
+                var existingRoom = World.GetMostLikelyZone(v);
                 if (existingRoom != null)
                     existingRoom.SetTint(GameSettings.Default.Colors.GetColor("Negative", Color.Red));
             }

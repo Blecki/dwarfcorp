@@ -35,7 +35,6 @@ namespace DwarfCorp
         private Timer orphanedTaskRateLimiter = new Timer(10.0f, false, Timer.TimerMode.Real);
         public MonsterSpawner MonsterSpawner;
         public Faction PlayerFaction;
-        public ZoneBuilder ZoneBuilder;
 
         #region Tutorial Hooks
 
@@ -275,7 +274,7 @@ namespace DwarfCorp
                     catch (Exception) { }
                 }
 
-                ZoneBuilder.Update(gameTime);
+                UpdateZones(gameTime);
 
                 #region Mourn dead minions
                 if (PlayerFaction.Minions.Any(m => m.IsDead))
@@ -481,17 +480,17 @@ namespace DwarfCorp
 
             var toDestroy = new List<Zone>();
 
-            lock (ZoneBuilder.Zones)
+            lock (PersistentData.Zones)
             {
                 var toCheck = new List<Zone>();
-                toCheck.AddRange(ZoneBuilder.Zones.Where(r => r.IsBuilt));
+                toCheck.AddRange(PersistentData.Zones.Where(r => r.IsBuilt));
                 foreach (var r in toCheck)
                     if (r.RemoveVoxel(V))
                         toDestroy.Add(r);
 
                 foreach (var r in toDestroy)
                 {
-                    ZoneBuilder.Zones.Remove(r);
+                    PersistentData.Zones.Remove(r);
                     r.Destroy();
                 }
             }
