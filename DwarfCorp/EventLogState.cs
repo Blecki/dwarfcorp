@@ -1,23 +1,13 @@
 using System;
-using System.Diagnostics;
-using System.IO;
-using System.Threading;
 using DwarfCorp.GameStates;
 using DwarfCorp.Gui;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System.Linq;
-using Newtonsoft.Json;
 #if !XNA_BUILD && !GEMMONO
 using SDL2;
 #endif
-using SharpRaven;
-using SharpRaven.Data;
-using System.Collections.Generic;
 
 namespace DwarfCorp
 {
-    public class EventLogState : GameStates.GameState // Todo: Split file...
+    public class EventLogState : GameState
     {
         public EventLog Log { get; set; }
         public DateTime Now { get; set; }

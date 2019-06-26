@@ -387,7 +387,7 @@ namespace DwarfCorp.Gui.Widgets
                                 {
                                     foreach(var employee in World.PlayerFaction.Minions)
                                     {
-                                        employee.Stats.Boredom.SetValue(employee.Stats.Boredom.MinValue);
+                                        employee.Stats.Boredom.CurrentValue = employee.Stats.Boredom.MinValue;
                                         employee.AddMoney(100);
                                         employee.AssignTask(new Scripting.GambleTask() { Priority = Task.PriorityType.High });
                                     }

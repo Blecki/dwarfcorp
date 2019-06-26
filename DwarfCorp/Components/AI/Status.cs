@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using DwarfCorp.GameStates;
-using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
+using System;
 
 namespace DwarfCorp
 {
@@ -17,7 +13,7 @@ namespace DwarfCorp
         public float CurrentValue
         {
             get { return currentValue; }
-            set { SetValue(value); } // Todo: Migrate all to SetValue function?
+            set { currentValue = Math.Abs(MaxValue - MinValue) < 1e-12 ? value : Math.Max(Math.Min(value, MaxValue), MinValue); }
         }
 
         public float MinValue { get; set; }
@@ -35,11 +31,6 @@ namespace DwarfCorp
         public bool IsDissatisfied()
         {
             return CurrentValue <= DissatisfiedThreshold;
-        }
-
-        public void SetValue(float v)
-        {
-            currentValue = Math.Abs(MaxValue - MinValue) < 1e-12 ? v : Math.Max(Math.Min(v, MaxValue), MinValue);
         }
 
         public bool IsCritical()

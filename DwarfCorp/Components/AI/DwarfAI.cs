@@ -117,7 +117,7 @@ namespace DwarfCorp
 
             if (CurrentTask != null)
             {
-                Stats.Boredom.SetValue(Stats.Boredom.CurrentValue - (float)(CurrentTask.BoredomIncrease * gameTime.ElapsedGameTime.TotalSeconds));
+                Stats.Boredom.CurrentValue -= (float)(CurrentTask.BoredomIncrease * gameTime.ElapsedGameTime.TotalSeconds);
                 if (Stats.Boredom.IsCritical())
                     Creature.AddThought("I have been overworked recently.", new TimeSpan(0, 4, 0, 0), -2.0f);
             }
