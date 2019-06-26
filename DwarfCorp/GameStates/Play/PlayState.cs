@@ -762,7 +762,7 @@ namespace DwarfCorp.GameStates
                 foreach (CreatureAI creature in World.PersistentData.SelectedMinions)
                 {
                     foreach (Task task in creature.Tasks)
-                        if (task.IsFeasible(creature.Creature) == Task.Feasibility.Feasible)
+                        if (task.IsFeasible(creature.Creature) == Feasibility.Feasible)
                             task.Render(gameTime);
 
                     if (creature.CurrentTask != null)
@@ -2135,8 +2135,8 @@ namespace DwarfCorp.GameStates
                 KeepChildVisible = true,
                 OnConstruct = (sender) =>
                 {
-                    AddToolbarIcon(sender, () => World.PlayerFaction.Minions.Any(minion =>
-                        minion.Stats.IsTaskAllowed(Task.TaskCategory.BuildZone)));
+                    AddToolbarIcon(sender, () => World.PlayerFaction.Minions.Any(minion => // Todo: Remove the toolbar icon enable/disable stuff.
+                        minion.Stats.IsTaskAllowed(TaskCategory.BuildZone)));
                     AddToolSelectIcon("BuildZone", sender);
                 },
                 Tooltip = "Build",
@@ -2214,7 +2214,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     World.PlayerFaction.Minions.Any(minion =>
-                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Cook)));
+                        minion.Stats.IsTaskAllowed(TaskCategory.Cook)));
                 },
                 ReplacementMenu = menu_Edibles,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
@@ -2293,7 +2293,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     World.PlayerFaction.Minions.Any(minion =>
-                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Research)) && World.PlayerFaction.OwnedObjects.Any(obj => obj.Tags.Contains("Apothecary")));
+                        minion.Stats.IsTaskAllowed(TaskCategory.Research)) && World.PlayerFaction.OwnedObjects.Any(obj => obj.Tags.Contains("Apothecary")));
                 },
                 ReplacementMenu = menu_potions,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
@@ -2314,7 +2314,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     World.PlayerFaction.Minions.Any(minion =>
-                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Dig)));
+                        minion.Stats.IsTaskAllowed(TaskCategory.Dig)));
                     AddToolSelectIcon("Dig", sender);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
@@ -2336,7 +2336,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     World.PlayerFaction.Minions.Any(minion =>
-                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Gather)));
+                        minion.Stats.IsTaskAllowed(TaskCategory.Gather)));
                     AddToolSelectIcon("Gather", sender);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
@@ -2358,7 +2358,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     World.PlayerFaction.Minions.Any(minion =>
-                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Chop)));
+                        minion.Stats.IsTaskAllowed(TaskCategory.Chop)));
                     AddToolSelectIcon("Chop", sender);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
@@ -2380,7 +2380,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     World.PlayerFaction.Minions.Any(minion =>
-                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Attack)));
+                        minion.Stats.IsTaskAllowed(TaskCategory.Attack)));
                     AddToolSelectIcon("Attack", sender);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
@@ -2502,7 +2502,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     World.PlayerFaction.Minions.Any(minion =>
-                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Wrangle)));
+                        minion.Stats.IsTaskAllowed(TaskCategory.Wrangle)));
                     AddToolSelectIcon("Wrangle", sender);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon

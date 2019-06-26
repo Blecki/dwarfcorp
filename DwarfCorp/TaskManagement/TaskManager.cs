@@ -58,7 +58,7 @@ namespace DwarfCorp
         {
             Task best = null;
             float bestCost = float.MaxValue;
-            Task.PriorityType bestPriority = Task.PriorityType.Eventually;
+            var bestPriority = TaskPriority.Eventually;
             var creature = creatureAI.Creature;
             foreach(var task in Tasks)
             {
@@ -68,7 +68,7 @@ namespace DwarfCorp
                     continue;
                 if (task.IsComplete(World))
                     continue;
-                if (task.IsFeasible(creature) != Task.Feasibility.Feasible)
+                if (task.IsFeasible(creature) != Feasibility.Feasible)
                     continue;
                 if (task.Priority < bestPriority)
                     continue;
@@ -208,7 +208,7 @@ namespace DwarfCorp
             List<int> costsPositions = new List<int>(creatures.Count);
             for (int costIndex = 0; costIndex < creatures.Count; costIndex++)
             {
-                creatureTaskCounts.Add(creatures[costIndex].CountFeasibleTasks(Task.PriorityType.Eventually));
+                creatureTaskCounts.Add(creatures[costIndex].CountFeasibleTasks(TaskPriority.Eventually));
                 List<KeyValuePair<int, float>> costs = new List<KeyValuePair<int, float>>();
                 CreatureAI creature = creatures[costIndex];
 
@@ -225,7 +225,7 @@ namespace DwarfCorp
                     float cost = 0;
                     // We've swapped the order of the two checks to take advantage of a new ComputeCost that can act different
                     // if we say we've already called IsFeasible first.  This allows us to skip any calculations that are repeated in both.
-                    if (task.IsFeasible(creature.Creature) == Task.Feasibility.Infeasible)
+                    if (task.IsFeasible(creature.Creature) == Feasibility.Infeasible)
                     {
                         cost += 1e10f;
                     }
@@ -270,8 +270,8 @@ namespace DwarfCorp
                         // if it's going to fail the maxPerGoal check anyways is very good.
                         if (newGoals[taskCost.Key].AssignedCreatures.Count < newGoals[taskCost.Key].MaxAssignable && 
                             !creature.Tasks.Contains(newGoals[taskCost.Key]) && 
-                            (creatureTaskCounts[randomCreature] < maxPerDwarf || newGoals[taskCost.Key].Priority >= Task.PriorityType.High) &&
-                            newGoals[taskCost.Key].IsFeasible(creature.Creature) == Task.Feasibility.Feasible)
+                            (creatureTaskCounts[randomCreature] < maxPerDwarf || newGoals[taskCost.Key].Priority >= TaskPriority.High) &&
+                            newGoals[taskCost.Key].IsFeasible(creature.Creature) == Feasibility.Feasible)
                         {
                             
                             // We have to check to see if the task we are assigning is fully unassigned.  If so 
@@ -330,7 +330,7 @@ namespace DwarfCorp
                     int assignment = assignments[i];
 
                     if (assignment >= unassignedGoals.Count || creatures[i].IsDead 
-                        || unassignedGoals[assignment].IsFeasible(creatures[i].Creature) != Task.Feasibility.Feasible ||
+                        || unassignedGoals[assignment].IsFeasible(creatures[i].Creature) != Feasibility.Feasible ||
                         creatures[i].CountFeasibleTasks(unassignedGoals[assignment].Priority) >=  maxPerDwarf)
                     {
                         continue;
@@ -373,7 +373,7 @@ namespace DwarfCorp
 
                     int cost = (int)(floatCost * multiplier);
 
-                    if (goal.IsFeasible(agent.Creature) == Task.Feasibility.Infeasible)
+                    if (goal.IsFeasible(agent.Creature) == Feasibility.Infeasible)
                     {
                         cost += 99999;
                     }

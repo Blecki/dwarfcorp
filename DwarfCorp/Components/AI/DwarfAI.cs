@@ -36,8 +36,8 @@ namespace DwarfCorp
             if (World.GamblingState.State == Scripting.Gambling.Status.Gaming ||
                 World.GamblingState.State == Scripting.Gambling.Status.WaitingForPlayers && World.GamblingState.Participants.Count > 0)
             {
-                var task = new Scripting.GambleTask() { Priority = Task.PriorityType.High };
-                if (task.IsFeasible(Creature) == Task.Feasibility.Feasible)
+                var task = new Scripting.GambleTask() { Priority = TaskPriority.High };
+                if (task.IsFeasible(Creature) == Feasibility.Feasible)
                 {
                     return task;
                 }
@@ -56,28 +56,28 @@ namespace DwarfCorp
                         })
                     {
                         Name = "Go on a walk.",
-                        Priority = Task.PriorityType.High,
+                        Priority = TaskPriority.High,
                         BoredomIncrease = GameSettings.Default.Boredom_Walk
                     };
                 }
                 case 1:
                 {
                     if (World.ListResourcesWithTag(Resource.ResourceTags.Alcohol).Count > 0)
-                        return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(this, true) { FoodTag = Resource.ResourceTags.Alcohol, FallbackTag = Resource.ResourceTags.Alcohol}, 3, false) { Name = "Binge drink." }) { Name = "Binge drink.", Priority = Task.PriorityType.High, BoredomIncrease = GameSettings.Default.Boredom_Eat };
+                        return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(this, true) { FoodTag = Resource.ResourceTags.Alcohol, FallbackTag = Resource.ResourceTags.Alcohol}, 3, false) { Name = "Binge drink." }) { Name = "Binge drink.", Priority = TaskPriority.High, BoredomIncrease = GameSettings.Default.Boredom_Eat };
 
                     if (!Stats.Hunger.IsSatisfied())
-                        return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(this, true), 3, false) { Name = "Binge eat." }) { Name = "Binge eat.", Priority = Task.PriorityType.High, BoredomIncrease = GameSettings.Default.Boredom_Eat };
+                        return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(this, true), 3, false) { Name = "Binge eat." }) { Name = "Binge eat.", Priority = TaskPriority.High, BoredomIncrease = GameSettings.Default.Boredom_Eat };
 
                     return ActOnIdle();
                 }
                 case 2:
                 {
-                    return new ActWrapperTask(new GoToChairAndSitAct(this) { SitTime = 60, Name = "Relax." }) { Name = "Relax.", Priority = Task.PriorityType.High, BoredomIncrease = GameSettings.Default.Boredom_Sleep };
+                    return new ActWrapperTask(new GoToChairAndSitAct(this) { SitTime = 60, Name = "Relax." }) { Name = "Relax.", Priority = TaskPriority.High, BoredomIncrease = GameSettings.Default.Boredom_Sleep };
                 }
                 case 3:
                 {
-                    var task = new Scripting.GambleTask() { Priority = Task.PriorityType.High };
-                    if (task.IsFeasible(Creature) == Task.Feasibility.Feasible)
+                    var task = new Scripting.GambleTask() { Priority = TaskPriority.High };
+                    if (task.IsFeasible(Creature) == Feasibility.Feasible)
                        return task;
 
                     break;
@@ -143,7 +143,7 @@ namespace DwarfCorp
             {
                 Task toReturn = new SatisfyHungerTask() { MustPay = true };
                 if (Stats.Hunger.IsCritical())
-                    toReturn.Priority = Task.PriorityType.Urgent;
+                    toReturn.Priority = TaskPriority.Urgent;
                 if (!Tasks.Contains(toReturn) && CurrentTask != toReturn)
                     AssignTask(toReturn);
             }
@@ -348,11 +348,9 @@ namespace DwarfCorp
                 if (World.GamblingState.State == Scripting.Gambling.Status.Gaming ||
                     World.GamblingState.State == Scripting.Gambling.Status.WaitingForPlayers && World.GamblingState.Participants.Count > 0)
                 {
-                    var task = new Scripting.GambleTask() { Priority = Task.PriorityType.High };
-                    if (task.IsFeasible(Creature) == Task.Feasibility.Feasible)
-                    {
+                    var task = new Scripting.GambleTask() { Priority = TaskPriority.High };
+                    if (task.IsFeasible(Creature) == Feasibility.Feasible)
                         return task;
-                    }
                 }
 
             if (!Stats.IsOnStrike)
@@ -376,11 +374,9 @@ namespace DwarfCorp
                 if (Faction.Economy.Funds >= Stats.CurrentLevel.Pay)
                 {
                     var task = new ActWrapperTask(new GetMoneyAct(this, Math.Min(Stats.CurrentLevel.Pay * NumDaysNotPaid, Faction.Economy.Funds)) { IncrementDays = false })
-                    { AutoRetry = true, Name = "Get paid.", Priority = Task.PriorityType.High };
+                    { AutoRetry = true, Name = "Get paid.", Priority = TaskPriority.High };
                     if (!HasTaskWithName(task))
-                    {
                         return task;
-                    }
                 }
             }
 
@@ -394,7 +390,7 @@ namespace DwarfCorp
             if (Tasks.Count == 0)
             {
                 // Craft random items for fun.
-                if (Stats.IsTaskAllowed(Task.TaskCategory.CraftItem) && MathFunctions.RandEvent(0.0005f)) // Todo: These chances need to be configurable.
+                if (Stats.IsTaskAllowed(TaskCategory.CraftItem) && MathFunctions.RandEvent(0.0005f)) // Todo: These chances need to be configurable.
                 {
                     var item = Library.GetRandomApplicableCraftItem(Faction, World);
 
@@ -410,24 +406,24 @@ namespace DwarfCorp
                         }
 
                         if (resources.Count > 0)
-                            return new CraftResourceTask(item, 1, 1, resources) { IsAutonomous = true, Priority = Task.PriorityType.Low };
+                            return new CraftResourceTask(item, 1, 1, resources) { IsAutonomous = true, Priority = TaskPriority.Low };
                     }
                 }
 
                 // Find a room to train in, if applicable.
-                if (Stats.IsTaskAllowed(Task.TaskCategory.Attack) && MathFunctions.RandEvent(GameSettings.Default.TrainChance))
+                if (Stats.IsTaskAllowed(TaskCategory.Attack) && MathFunctions.RandEvent(GameSettings.Default.TrainChance))
                 {
-                    if (!Stats.IsTaskAllowed(Task.TaskCategory.Research))
+                    if (!Stats.IsTaskAllowed(TaskCategory.Research))
                     {
                         var closestTraining = Faction.FindNearestItemWithTags("Train", Position, true, this);
                         if (closestTraining != null)
-                            return new ActWrapperTask(new GoTrainAct(this)) { Name = "train", ReassignOnDeath = false, Priority = Task.PriorityType.Medium };
+                            return new ActWrapperTask(new GoTrainAct(this)) { Name = "train", ReassignOnDeath = false, Priority = TaskPriority.Medium };
                     }
                     else
                     {
                         var closestTraining = Faction.FindNearestItemWithTags("Research", Position, true, this);
                         if (closestTraining != null)
-                            return new ActWrapperTask(new GoTrainAct(this) { Magical = true }) { Name = "do magic research", ReassignOnDeath = false, Priority = Task.PriorityType.Medium };
+                            return new ActWrapperTask(new GoTrainAct(this) { Magical = true }) { Name = "do magic research", ReassignOnDeath = false, Priority = TaskPriority.Medium };
                     }
                 }
 
@@ -435,7 +431,7 @@ namespace DwarfCorp
                 {
                     return new ActWrapperTask(new MournGraves(this))
                     {
-                        Priority = Task.PriorityType.Medium,
+                        Priority = TaskPriority.Medium,
                         AutoRetry = false
                     };
                 }
@@ -445,7 +441,7 @@ namespace DwarfCorp
                 {
                     return new ActWrapperTask(new GoToChairAndSitAct(this))
                     {
-                        Priority = Task.PriorityType.Eventually,
+                        Priority = TaskPriority.Eventually,
                         AutoRetry = false
                     };
                 }

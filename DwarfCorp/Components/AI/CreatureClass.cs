@@ -23,14 +23,14 @@ namespace DwarfCorp
         public List<Weapon> Weapons;
         public List<Level> Levels;
         public string Name;
-        public Task.TaskCategory Actions = Task.TaskCategory.None;
+        public TaskCategory Actions = TaskCategory.None;
         public CharacterMode AttackMode;
         public bool PlayerClass = false;
         public bool Managerial = false;
 
         // Todo: Should just include name of attack animation. Kinda what the AttackMode is.
 
-        public bool IsTaskAllowed(Task.TaskCategory TaskCategory)
+        public bool IsTaskAllowed(TaskCategory TaskCategory)
         {
             return (Actions & TaskCategory) == TaskCategory;
         }

@@ -91,7 +91,7 @@ namespace DwarfCorp.Gui.Widgets
                             AutoLayout = AutoLayout.DockRightCentered,
                             OnClick = (_sender, args) =>
                             {
-                                lambdaCopy.Priority = (Task.PriorityType)(Math.Min(4, (int)lambdaCopy.Priority + 1));
+                                lambdaCopy.Priority = (TaskPriority)(Math.Min(4, (int)lambdaCopy.Priority + 1));
                                 priorityDisplay.Text = lambdaCopy.Priority.ToString();
                                 priorityDisplay.Invalidate();
                             },
@@ -124,7 +124,7 @@ namespace DwarfCorp.Gui.Widgets
                             AutoLayout = AutoLayout.DockRightCentered,
                             OnClick = (_sender, args) =>
                             {
-                                lambdaCopy.Priority = (Task.PriorityType)(Math.Max(0, (int)lambdaCopy.Priority - 1));
+                                lambdaCopy.Priority = (TaskPriority)(Math.Max(0, (int)lambdaCopy.Priority - 1));
                                 priorityDisplay.Text = lambdaCopy.Priority.ToString();
                                 priorityDisplay.Invalidate();
                             },

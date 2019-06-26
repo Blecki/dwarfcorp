@@ -129,7 +129,7 @@ namespace DwarfCorp
 
                 World.TaskManager.AddTasks(goals);
                 
-                OnConfirm(World.PlayerFaction.Minions.Where(minion => minion.Stats.IsTaskAllowed(Task.TaskCategory.Plant)).ToList());
+                OnConfirm(World.PlayerFaction.Minions.Where(minion => minion.Stats.IsTaskAllowed(TaskCategory.Plant)).ToList());
             }
             else if (button == InputManager.MouseButton.Right)
             {

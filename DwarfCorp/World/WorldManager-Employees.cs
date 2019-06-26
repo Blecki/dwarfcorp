@@ -116,7 +116,7 @@ namespace DwarfCorp
                 else
                     creature.Creature.AddThought("I got paid recently.", new TimeSpan(1, 0, 0, 0), 10.0f);
 
-                creature.AssignTask(new ActWrapperTask(new GetMoneyAct(creature, pay)) { AutoRetry = true, Name = "Get paid.", Priority = Task.PriorityType.High });
+                creature.AssignTask(new ActWrapperTask(new GetMoneyAct(creature, pay)) { AutoRetry = true, Name = "Get paid.", Priority = TaskPriority.High });
             }
 
             MakeAnnouncement(String.Format("We paid our employees {0} today.", total));

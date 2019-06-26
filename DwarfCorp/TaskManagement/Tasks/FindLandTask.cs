@@ -17,7 +17,7 @@ namespace DwarfCorp
         public FindLandTask()
         {
             Name = "Find Land";
-            Priority = PriorityType.High;
+            Priority = TaskPriority.High;
         }
 
         public VoxelHandle FindLand(

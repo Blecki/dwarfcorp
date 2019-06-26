@@ -14,7 +14,7 @@ namespace DwarfCorp
         public CraftItemTask()
         {
             MaxAssignable = 3;
-            Priority = PriorityType.Medium;
+            Priority = TaskPriority.Medium;
             AutoRetry = true;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
@@ -24,7 +24,7 @@ namespace DwarfCorp
             Category = TaskCategory.BuildObject;
             MaxAssignable = 3;
             Name = Library.GetString("craft-at", CraftDesignation.Entity.GlobalID, CraftDesignation.ItemType.DisplayName, CraftDesignation.Location);
-            Priority = PriorityType.Medium;
+            Priority = TaskPriority.Medium;
             AutoRetry = true;
             this.CraftDesignation = CraftDesignation;
 

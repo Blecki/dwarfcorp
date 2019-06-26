@@ -39,7 +39,7 @@ namespace DwarfCorp
             };
             string verb = selectedResource.Verb;
             Name = String.Format("{4} order {0}: {1}/{2} {3}", TaskID, CurrentRepeat, NumRepeats, selectedResource.PluralDisplayName, verb);
-            Priority = PriorityType.Medium;
+            Priority = TaskPriority.Medium;
 
             if (ResourceLibrary.GetResourceByName(Item.ItemType.ResourceCreated).Tags.Contains(Resource.ResourceTags.Edible))
             {

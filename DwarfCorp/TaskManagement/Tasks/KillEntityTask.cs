@@ -29,7 +29,7 @@ namespace DwarfCorp
             Mode = type;
             Name = "Kill Entity: " + entity.Name + " " + entity.GlobalID;
             EntityToKill = entity;
-            Priority = PriorityType.Urgent;
+            Priority = TaskPriority.Urgent;
             AutoRetry = true;
             Category = TaskCategory.Attack;
             BoredomIncrease = GameSettings.Default.Boredom_ExcitingTask;

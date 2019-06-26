@@ -20,7 +20,7 @@ namespace DwarfCorp
         {
             Zone = zone;
             Category = TaskCategory.Other;
-            Priority = PriorityType.Medium;
+            Priority = TaskPriority.Medium;
             ReassignOnDeath = false;
             Name = "Go to " + Zone.ID;
         }

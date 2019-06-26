@@ -73,7 +73,7 @@ namespace DwarfCorp
                 {
                     var task = new FleeEntityTask(body, 5)
                     {
-                        Priority = Task.PriorityType.Urgent,
+                        Priority = TaskPriority.Urgent,
                         AutoRetry = false,
                         ReassignOnDeath = false
                     };

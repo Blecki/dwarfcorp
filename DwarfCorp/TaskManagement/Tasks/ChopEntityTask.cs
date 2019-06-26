@@ -22,7 +22,7 @@ namespace DwarfCorp
             MaxAssignable = 3;
             Name = "Harvest Plant: " + entity.Name + " " + entity.GlobalID;
             EntityToKill = entity;
-            Priority = PriorityType.Medium;
+            Priority = TaskPriority.Medium;
             AutoRetry = true;
             Category = TaskCategory.Chop;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
@@ -69,7 +69,7 @@ namespace DwarfCorp
             else
             {
 
-                if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Chop))
+                if (!agent.Stats.IsTaskAllowed(TaskCategory.Chop))
                     return Feasibility.Infeasible;
 
                 if (!agent.World.PersistentData.Designations.IsDesignation(EntityToKill, DesignationType.Chop))

@@ -22,7 +22,7 @@ namespace DwarfCorp
         public TradeTask(Zone tradePort, TradeEnvoy envoy)
         {
             Name = "Trade";
-            Priority = PriorityType.High;
+            Priority = TaskPriority.High;
             TradePort = tradePort;
             Envoy = envoy;
         }

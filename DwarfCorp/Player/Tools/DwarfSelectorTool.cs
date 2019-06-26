@@ -73,7 +73,7 @@ namespace DwarfCorp
 
                 minion.ChangeTask(new GoToNamedVoxelAct("MoveTarget", PlanAct.PlanType.Adjacent, minion).AsTask());
                 minion.CurrentTask.AutoRetry = false;
-                minion.CurrentTask.Priority = Task.PriorityType.Urgent;
+                minion.CurrentTask.Priority = TaskPriority.Urgent;
             }
             OnConfirm(World.PersistentData.SelectedMinions);
 

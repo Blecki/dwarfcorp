@@ -168,7 +168,7 @@ namespace DwarfCorp
         {
             Name = "Heal Ally Magically";
             ReassignOnDeath = false;
-            Priority = PriorityType.High;
+            Priority = TaskPriority.High;
         }
 
         public MagicHealAllyTask(CreatureAI ally)
@@ -176,7 +176,7 @@ namespace DwarfCorp
             Ally = ally;
             Name = String.Format("Heal {0} magically.", ally.Stats.FullName);
             ReassignOnDeath = false;
-            Priority = PriorityType.High;
+            Priority = TaskPriority.High;
         }
 
         public override Feasibility IsFeasible(Creature agent)
@@ -201,7 +201,7 @@ namespace DwarfCorp
         {
             Name = "Heal Ally";
             ReassignOnDeath = true;
-            Priority = PriorityType.High;
+            Priority = TaskPriority.High;
         }
 
         public HealAllyTask(CreatureAI ally)
@@ -209,7 +209,7 @@ namespace DwarfCorp
             Ally = ally;
             Name = String.Format("Heal {0}", ally.Stats.FullName);
             ReassignOnDeath = true;
-            Priority = PriorityType.High;
+            Priority = TaskPriority.High;
         }
 
         public override Feasibility IsFeasible(Creature agent)

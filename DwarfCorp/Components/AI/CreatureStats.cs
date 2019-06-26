@@ -96,7 +96,7 @@ namespace DwarfCorp
         public String SpeciesName = "";
         [JsonIgnore] public CreatureSpecies Species { get; private set; }
 
-        public Task.TaskCategory AllowedTasks = Task.TaskCategory.Attack | Task.TaskCategory.Gather | Task.TaskCategory.Plant | Task.TaskCategory.Harvest | Task.TaskCategory.Chop | Task.TaskCategory.Wrangle | Task.TaskCategory.TillSoil;
+        public TaskCategory AllowedTasks = TaskCategory.Attack | TaskCategory.Gather | TaskCategory.Plant | TaskCategory.Harvest | TaskCategory.Chop | TaskCategory.Wrangle | TaskCategory.TillSoil;
         [JsonIgnore] public bool IsOverQualified => CurrentClass != null ? CurrentClass.Levels.Count > LevelIndex + 1 && XP > CurrentClass.Levels[LevelIndex + 1].XP : false;
         public bool IsAsleep = false;
         public float HungerDamageRate = 10.0f;
@@ -104,7 +104,7 @@ namespace DwarfCorp
         public DwarfBux Money = 0;
         public bool IsFleeing = false;
 
-        public bool IsTaskAllowed(Task.TaskCategory TaskCategory)
+        public bool IsTaskAllowed(TaskCategory TaskCategory)
         {
             return (AllowedTasks & TaskCategory) == TaskCategory;
         }

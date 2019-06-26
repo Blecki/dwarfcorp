@@ -28,7 +28,7 @@ namespace DwarfCorp
         public TransferResourcesTask(WorldManager World, string stockpile, ResourceAmount resources)
         {
             this.World = World;
-            Priority = PriorityType.Medium;
+            Priority = TaskPriority.Medium;
             StockpileFrom = stockpile;
             Resources = resources;
             Name = String.Format("Transfer {0} {1} from {2}", Resources.Count, Resources.Type, stockpile);

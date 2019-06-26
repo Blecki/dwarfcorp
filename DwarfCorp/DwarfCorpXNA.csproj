@@ -340,6 +340,7 @@
     <Compile Include="TaskManagement\ControlFlow\Wait.cs" />
     <Compile Include="TaskManagement\ControlFlow\WhileLoop.cs" />
     <Compile Include="TaskManagement\ControlFlow\Wrap.cs" />
+    <Compile Include="TaskManagement\Enums.cs" />
     <Compile Include="TaskManagement\LeafActs\ClearBlackboardData.cs" />
     <Compile Include="TaskManagement\LeafActs\ConsumeItemAct.cs" />
     <Compile Include="TaskManagement\LeafActs\CreateCraftItemAct.cs" />

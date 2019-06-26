@@ -42,7 +42,7 @@ namespace DwarfCorp
         {
             return new ActWrapperTask(SummonFromGraves())
             {
-                Priority = Task.PriorityType.High
+                Priority = TaskPriority.High
             };
         }
 
@@ -98,7 +98,7 @@ namespace DwarfCorp
                 {
                     var goToTask = new ActWrapperTask(new GoToEntityAct(Physics, skeleton.AI))
                     {
-                        Priority = Task.PriorityType.High
+                        Priority = TaskPriority.High
                     };
 
                     if (!skeleton.AI.Tasks.Contains(goToTask))

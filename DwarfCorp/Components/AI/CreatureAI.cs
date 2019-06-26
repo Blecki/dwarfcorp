@@ -149,13 +149,13 @@ namespace DwarfCorp
 
             float bestCost = float.MaxValue;
             Task bestTask = null;
-            var bestPriority = Task.PriorityType.Eventually;
+            var bestPriority = TaskPriority.Eventually;
 
             foreach (Task task in tasks)
             {
                 float cost = task.ComputeCost(Creature);
 
-                if (task.IsFeasible(Creature) == Task.Feasibility.Feasible && task.Priority >= bestPriority && cost < bestCost && !WasTaskFailed(task))
+                if (task.IsFeasible(Creature) == Feasibility.Feasible && task.Priority >= bestPriority && cost < bestCost && !WasTaskFailed(task))
                 {
                     bestCost = cost;
                     bestTask = task;
@@ -195,7 +195,7 @@ namespace DwarfCorp
 
                 foreach (Task task in Tasks)
                 {
-                    if (task.Priority > CurrentTask.Priority && task.IsFeasible(Creature) == Task.Feasibility.Feasible)
+                    if (task.Priority > CurrentTask.Priority && task.IsFeasible(Creature) == Feasibility.Feasible)
                     {
                         newTask = task;
                         break;
@@ -344,7 +344,7 @@ namespace DwarfCorp
             {
                 Task toReturn = new SatisfyHungerTask();
                 if (Stats.Hunger.IsCritical())
-                    toReturn.Priority = Task.PriorityType.Urgent;
+                    toReturn.Priority = TaskPriority.Urgent;
                 if (!Tasks.Contains(toReturn) && CurrentTask != toReturn)
                     AssignTask(toReturn);
             }
@@ -457,7 +457,7 @@ namespace DwarfCorp
         {
             Task leaveTask = new LeaveWorldTask
             {
-                Priority = Task.PriorityType.Urgent,
+                Priority = TaskPriority.Urgent,
                 AutoRetry = true,
                 Name = "Leave the world."
             };
@@ -669,9 +669,9 @@ namespace DwarfCorp
             AssignTask(task);
         }
 
-        public int CountFeasibleTasks(Task.PriorityType minPriority)
+        public int CountFeasibleTasks(TaskPriority minPriority)
         {
-            return Tasks.Count(task => task.Priority >= minPriority && task.IsFeasible(Creature) == Task.Feasibility.Feasible);
+            return Tasks.Count(task => task.Priority >= minPriority && task.IsFeasible(Creature) == Feasibility.Feasible);
         }
 
         public override void Die()

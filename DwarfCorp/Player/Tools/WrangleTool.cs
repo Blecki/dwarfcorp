@@ -69,7 +69,7 @@ namespace DwarfCorp
                         {
                             if (CanCatch(animal, true))
                             {
-                                var task = new WrangleAnimalTask(animal.GetRoot().GetComponent<Creature>()) { Priority = Task.PriorityType.Medium };
+                                var task = new WrangleAnimalTask(animal.GetRoot().GetComponent<Creature>()) { Priority = TaskPriority.Medium };
                                 tasks.Add(task);
                             }
                         }

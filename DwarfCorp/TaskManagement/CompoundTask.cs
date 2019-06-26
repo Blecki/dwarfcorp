@@ -12,7 +12,7 @@ namespace DwarfCorp
         private List<Task> SubTasks = new List<Task>();
         private String NameFormat;
 
-        public CompoundTask(String Name, TaskCategory Category, PriorityType Priority)
+        public CompoundTask(String Name, TaskCategory Category, TaskPriority Priority)
         {
             this.NameFormat = Name + " ({0} left)";
             this.Name= String.Format(NameFormat, 0);

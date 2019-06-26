@@ -68,11 +68,11 @@ namespace DwarfCorp.Gui.Widgets
 
             var column = 0;
             
-            foreach (var type in Enum.GetValues(typeof(Task.TaskCategory)))
+            foreach (var type in Enum.GetValues(typeof(TaskCategory)))
             {
                 if (type.ToString().StartsWith("_")) continue;
-                if ((Task.TaskCategory)type == Task.TaskCategory.None) continue;
-                if (Employee != null && (Employee.Stats.CurrentClass.Actions & (Task.TaskCategory)type) != (Task.TaskCategory)type)
+                if ((TaskCategory)type == TaskCategory.None) continue;
+                if (Employee != null && (Employee.Stats.CurrentClass.Actions & (TaskCategory)type) != (TaskCategory)type)
                     continue;
                 var box = columns.GetChild(column).AddChild(new CheckBox
                 {
@@ -93,9 +93,9 @@ namespace DwarfCorp.Gui.Widgets
 
         private void CheckChanged()
         {
-            var visibleTypes = Task.TaskCategory.None;
+            var visibleTypes = TaskCategory.None;
             foreach (var box in TaskCategories)
-                if (box.CheckState) visibleTypes |= (Task.TaskCategory)box.Tag;
+                if (box.CheckState) visibleTypes |= (TaskCategory)box.Tag;
             Employee.Stats.AllowedTasks = visibleTypes;
         }
 
@@ -121,7 +121,7 @@ namespace DwarfCorp.Gui.Widgets
                 EmployeeName.Text = String.Format("{0}'s Allowed Tasks", Employee.Stats.FullName);
                 foreach (var checkbox in TaskCategories)
                 {
-                    var type = (Task.TaskCategory)checkbox.Tag;
+                    var type = (TaskCategory)checkbox.Tag;
                     checkbox.SilentSetCheckState(Employee.Stats.IsTaskAllowed(type));
                     checkbox.Enabled = Employee.Stats.CurrentClass.IsTaskAllowed(type);
                 }

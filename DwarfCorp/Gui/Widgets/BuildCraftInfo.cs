@@ -108,7 +108,7 @@ namespace DwarfCorp.Gui.Widgets
                     AutoResizeToTextHeight = true
                 });
 
-                var minion = World.PlayerFaction.Minions.FirstOrDefault(m => Data.IsMagical ? m.Stats.IsTaskAllowed(Task.TaskCategory.Research) : m.Stats.IsTaskAllowed(Task.TaskCategory.BuildObject));
+                var minion = World.PlayerFaction.Minions.FirstOrDefault(m => Data.IsMagical ? m.Stats.IsTaskAllowed(TaskCategory.Research) : m.Stats.IsTaskAllowed(TaskCategory.BuildObject));
 
                 var nearestBuildLocation = World.PlayerFaction.FindNearestItemWithTags(Data.CraftLocation, Vector3.Zero, false, null);
                 if (minion == null)

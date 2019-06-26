@@ -58,13 +58,13 @@ namespace DwarfCorp.ContextCommands
                 var combobox = AddChild(new ComboBox()
                 {
                     MinimumSize = new Point(90, 20),
-                    Items = Enum.GetValues(typeof(Task.PriorityType)).Cast<Task.PriorityType>().Select(s => s.ToString()).ToList(),
+                    Items = Enum.GetValues(typeof(TaskPriority)).Cast<TaskPriority>().Select(s => s.ToString()).ToList(),
                     OnSelectedIndexChanged = (sender) =>
                     {
-                        var type = (Task.PriorityType)((sender as ComboBox).SelectedIndex);
+                        var type = (TaskPriority)((sender as ComboBox).SelectedIndex);
                         if (type != Task.Priority)
                         {
-                            Task.Priority = (Task.PriorityType)((sender as ComboBox).SelectedIndex);
+                            Task.Priority = (TaskPriority)((sender as ComboBox).SelectedIndex);
                             sender.Parent.Close();
                         }
                     },

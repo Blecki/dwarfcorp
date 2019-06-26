@@ -73,11 +73,11 @@ namespace DwarfCorp
 
                 World.TaskManager.AddTasks(assignments);
 
-                var compoundTask = new CompoundTask("DIG A HOLE", Task.TaskCategory.Dig, Task.PriorityType.Medium);
+                var compoundTask = new CompoundTask("DIG A HOLE", TaskCategory.Dig, TaskPriority.Medium);
                 compoundTask.AddSubTasks(assignments);
                 World.TaskManager.AddTask(compoundTask);
 
-                var minions = Faction.FilterMinionsWithCapability(World.PersistentData.SelectedMinions, Task.TaskCategory.Dig);
+                var minions = Faction.FilterMinionsWithCapability(World.PersistentData.SelectedMinions, TaskCategory.Dig);
                 OnConfirm(minions);
             }
             else

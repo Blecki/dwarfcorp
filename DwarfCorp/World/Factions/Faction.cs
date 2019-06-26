@@ -48,7 +48,7 @@ namespace DwarfCorp
             ParentFactionName = descriptor.Name;
         }
 
-        public static List<CreatureAI> FilterMinionsWithCapability(List<CreatureAI> minions, Task.TaskCategory action)
+        public static List<CreatureAI> FilterMinionsWithCapability(List<CreatureAI> minions, TaskCategory action)
         {
             return minions.Where(creature => creature.Stats.IsTaskAllowed(action)).ToList();
         }

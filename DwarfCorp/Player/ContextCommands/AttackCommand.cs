@@ -27,7 +27,7 @@ namespace DwarfCorp.ContextCommands
 
         public override void Apply(GameComponent Entity, WorldManager World)
         {
-            var minions = Faction.FilterMinionsWithCapability(World.PlayerFaction.Minions, Task.TaskCategory.Attack);
+            var minions = Faction.FilterMinionsWithCapability(World.PlayerFaction.Minions, TaskCategory.Attack);
             if (minions.Count > 0)
                 World.TaskManager.AddTask(new KillEntityTask(Entity, KillEntityTask.KillType.Attack));
         }

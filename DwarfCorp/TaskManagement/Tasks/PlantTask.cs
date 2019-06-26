@@ -13,7 +13,7 @@ namespace DwarfCorp
 
         public PlantTask()
         {
-            Priority = PriorityType.Medium;
+            Priority = TaskPriority.Medium;
             Category = TaskCategory.Plant;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
@@ -22,7 +22,7 @@ namespace DwarfCorp
         {
             FarmToWork = farmToWork;
             Name = "Plant " + FarmToWork.Voxel.Coordinate;
-            Priority = PriorityType.Medium;
+            Priority = TaskPriority.Medium;
             AutoRetry = true;
             Category = TaskCategory.Plant;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
@@ -40,7 +40,7 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Plant))
+            if (!agent.Stats.IsTaskAllowed(TaskCategory.Plant))
                 return Feasibility.Infeasible;
 
             if (agent.AI.Stats.IsAsleep)

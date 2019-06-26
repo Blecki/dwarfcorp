@@ -56,7 +56,7 @@ namespace DwarfCorp
             Entity = entity;
             MaxAssignable = 3;
             Name = "Recharge " + entity.Name + " " + entity.GlobalID;
-            Priority = PriorityType.Medium;
+            Priority = TaskPriority.Medium;
             AutoRetry = true;
             Category = TaskCategory.Research;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;

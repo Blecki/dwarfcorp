@@ -16,7 +16,7 @@ namespace DwarfCorp
 
         public GatherItemTask()
         {
-            Priority = PriorityType.Medium;
+            Priority = TaskPriority.Medium;
             Category = TaskCategory.Gather;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
@@ -25,7 +25,7 @@ namespace DwarfCorp
         {
             EntityToGather = entity;
             Name = "Gather Entity: " + entity.Name + " " + entity.GlobalID;
-            Priority = PriorityType.Medium;
+            Priority = TaskPriority.Medium;
             Category = TaskCategory.Gather;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }

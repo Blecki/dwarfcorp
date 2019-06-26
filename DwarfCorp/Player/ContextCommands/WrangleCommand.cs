@@ -27,9 +27,9 @@ namespace DwarfCorp.ContextCommands
 
         public override void Apply(GameComponent Entity, WorldManager World)
         {
-            var minions = Faction.FilterMinionsWithCapability(World.PlayerFaction.Minions, Task.TaskCategory.Wrangle);
+            var minions = Faction.FilterMinionsWithCapability(World.PlayerFaction.Minions, TaskCategory.Wrangle);
             if (minions.Count > 0)
-                World.TaskManager.AddTask(new WrangleAnimalTask(Entity.GetRoot().GetComponent<Creature>()) { Priority = Task.PriorityType.Medium });
+                World.TaskManager.AddTask(new WrangleAnimalTask(Entity.GetRoot().GetComponent<Creature>()) { Priority = TaskPriority.Medium });
         }
     }
 }

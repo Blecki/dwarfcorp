@@ -68,7 +68,7 @@ namespace DwarfCorp
 
             World.TaskManager.AddTasks(assignments);
 
-            OnConfirm(Faction.FilterMinionsWithCapability(World.PersistentData.SelectedMinions, Task.TaskCategory.Gather));
+            OnConfirm(Faction.FilterMinionsWithCapability(World.PersistentData.SelectedMinions, TaskCategory.Gather));
         }
 
         public override void OnMouseOver(IEnumerable<GameComponent> bodies)

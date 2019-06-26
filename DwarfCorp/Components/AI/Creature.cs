@@ -495,7 +495,7 @@ namespace DwarfCorp
         public void Gather(GameComponent item)
         {
 
-            var task = new GatherItemTask(item) { Priority = Task.PriorityType.High };
+            var task = new GatherItemTask(item) { Priority = TaskPriority.High };
             if (AI.Faction == World.PlayerFaction)
                 World.TaskManager.AddTask(task);
             else

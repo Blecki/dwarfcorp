@@ -13,7 +13,7 @@ namespace DwarfCorp
         public BuildZoneTask()
         {
             Category = TaskCategory.BuildZone;
-            Priority = PriorityType.Medium;
+            Priority = TaskPriority.Medium;
             MaxAssignable = 3;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
@@ -24,7 +24,7 @@ namespace DwarfCorp
             MaxAssignable = 3;
             Name = "Build Room " + zone.ToBuild.Type.Name + zone.ToBuild.ID;
             Zone = zone;
-            Priority = PriorityType.Medium;
+            Priority = TaskPriority.Medium;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
@@ -37,7 +37,7 @@ namespace DwarfCorp
         public override Feasibility IsFeasible(Creature agent)
         {
             return Zone != null && !Zone.IsBuilt && IsZoneBuildOrder(agent.World, Zone) &&
-                agent.Stats.IsTaskAllowed(Task.TaskCategory.BuildZone) &&
+                agent.Stats.IsTaskAllowed(TaskCategory.BuildZone) &&
                 agent.World.HasResources(Zone.ListRequiredResources()) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 

@@ -26,22 +26,15 @@ namespace DwarfCorp
         {
             if (StealFromPlayerProbability > 0 && MathFunctions.RandEvent(StealFromPlayerProbability))
             {
-                // Todo: Doesn't make sense for kobolds to steal money without treasuries.
-                //bool stealMoney = MathFunctions.RandEvent(0.5f);
-                //if (World.PlayerFaction.Economy.Funds > 0 && stealMoney)
-                //    AssignTask(new ActWrapperTask(new GetMoneyAct(this, 100m, World.PlayerFaction)) { Name = "Steal money", Priority = Task.PriorityType.High });
-                //else
-                //{
-                    var resources = World.ListResources();
-                    if (resources.Count > 0)
+                var resources = World.ListResources();
+                if (resources.Count > 0)
+                {
+                    var resource = Datastructures.SelectRandom(resources);
+                    if (resource.Value.Count > 0)
                     {
-                        var resource = Datastructures.SelectRandom(resources);
-                        if (resource.Value.Count > 0)
-                        {
-                            AssignTask(new ActWrapperTask(new GetResourcesAct(this, new List<ResourceAmount>() { new ResourceAmount(resource.Value.Type, 1) })) { Name = "Steal stuff", Priority = Task.PriorityType.High });
-                        }
+                        AssignTask(new ActWrapperTask(new GetResourcesAct(this, new List<ResourceAmount>() { new ResourceAmount(resource.Value.Type, 1) })) { Name = "Steal stuff", Priority = TaskPriority.High });
                     }
-                //}
+                }
             }
 
             LeaveWorldTimer.Update(DwarfTime.LastTime);

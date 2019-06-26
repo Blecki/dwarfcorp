@@ -389,7 +389,7 @@ namespace DwarfCorp.Gui.Widgets
                                     {
                                         employee.Stats.Boredom.CurrentValue = employee.Stats.Boredom.MinValue;
                                         employee.AddMoney(100);
-                                        employee.AssignTask(new Scripting.GambleTask() { Priority = Task.PriorityType.High });
+                                        employee.AssignTask(new Scripting.GambleTask() { Priority = TaskPriority.High });
                                     }
                                 }
                             },

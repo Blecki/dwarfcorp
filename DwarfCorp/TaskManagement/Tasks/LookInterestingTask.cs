@@ -17,7 +17,7 @@ namespace DwarfCorp
         public LookInterestingTask()
         {
             Name = "Look Interesting";
-            Priority = PriorityType.Eventually;
+            Priority = TaskPriority.Eventually;
         }
 
         public IEnumerable<Act.Status> ConverseFriends(CreatureAI c)

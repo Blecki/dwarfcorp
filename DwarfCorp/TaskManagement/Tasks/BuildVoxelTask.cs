@@ -16,7 +16,7 @@ namespace DwarfCorp
         public BuildVoxelTask()
         {
             Category = TaskCategory.BuildBlock;
-            Priority = PriorityType.Medium;
+            Priority = TaskPriority.Medium;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
@@ -26,7 +26,7 @@ namespace DwarfCorp
             Name = "Put voxel of type: " + type + " on voxel " + voxel.Coordinate;
             Voxel = voxel;
             VoxType = type;
-            Priority = PriorityType.Medium;
+            Priority = TaskPriority.Medium;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 

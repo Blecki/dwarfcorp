@@ -142,6 +142,7 @@
     <Compile Include="TaskManagement\Blackboard.cs" />
     <Compile Include="TaskManagement\CompoundActs\TransferResourcesAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\TransferResourcesTask.cs" />
+    <Compile Include="TaskManagement\Enums.cs" />
     <Compile Include="TaskManagement\Tasks\BuildZoneTask.cs" />
     <Compile Include="TaskManagement\Tasks\GoToZoneTask.cs" />
     <Compile Include="TaskManagement\TestBehaviors.cs" />

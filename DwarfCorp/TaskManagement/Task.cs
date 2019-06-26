@@ -7,39 +7,8 @@ namespace DwarfCorp
 {
     public abstract class Task
     {
-        public enum PriorityType
-        {
-            Eventually = 0,
-            Low = 1,
-            Medium = 2,
-            High = 3,
-            Urgent = 4
-        }
-
-        public enum TaskCategory
-        {
-            None        = 0,
-            Other       = 1,
-            Dig         = 2,
-            Chop        = 4,
-            Harvest     = 8,
-            Attack      = 16,
-            Hunt        = 32,
-            Research    = 64,
-            BuildBlock  = 128,
-            BuildObject = 256,
-            BuildZone   = 512,
-            CraftItem   = 1024,
-            Cook        = 2048,
-            TillSoil    = 4096,
-            Gather      = 8192,
-            Guard       = 16384,
-            Wrangle     = 32768,
-            Plant       = 65536
-        }
-
         public TaskCategory Category { get; set; }
-        public PriorityType Priority { get; set; }
+        public TaskPriority Priority { get; set; }
         public int MaxAssignable = 1;
         public bool ReassignOnDeath = true;
         public List<CreatureAI> AssignedCreatures = new List<CreatureAI>();
@@ -47,14 +16,10 @@ namespace DwarfCorp
 
         [JsonIgnore] public object GuiTag = null;
 
-        public enum Feasibility
-        {
-            Feasible,
-            Infeasible,
-            Unknown
-        }
-
         public bool AutoRetry = false;
+        public string Name;
+        // Todo: Need to add energy cost per task. Apply it to their energy status the same way as boredom.
+        public float BoredomIncrease = 0.0f;
 
         protected bool Equals(Task other)
         {
@@ -69,11 +34,6 @@ namespace DwarfCorp
         {
             return (Name != null ? Name.GetHashCode() : 0);
         }
-
-        public string Name { get; set; }
-
-        // Todo: Need to add energy cost per task. Apply it to their energy status the same way as boredom.
-        public float BoredomIncrease = 0.0f;
 
         public virtual void Render(DwarfTime time)
         {

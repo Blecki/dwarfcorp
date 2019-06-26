@@ -14,7 +14,7 @@ namespace DwarfCorp
         {
             ReassignOnDeath = false;
             Name = "Go to sleep";
-            Priority = PriorityType.High;
+            Priority = TaskPriority.High;
             BoredomIncrease = GameSettings.Default.Boredom_Sleep;
         }
 
@@ -43,7 +43,7 @@ namespace DwarfCorp
         public GetHealedTask()
         {
             Name = "Heal thyself";
-            Priority = PriorityType.Urgent;
+            Priority = TaskPriority.Urgent;
             ReassignOnDeath = false;
         }
 

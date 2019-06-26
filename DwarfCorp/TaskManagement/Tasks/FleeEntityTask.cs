@@ -52,7 +52,7 @@ namespace DwarfCorp
         {
             Name = "Kill Entity: " + entity.Name + " " + entity.GlobalID;
             ScaryEntity = entity;
-            Priority = PriorityType.Urgent;
+            Priority = TaskPriority.Urgent;
             AutoRetry = true;
                 Category = TaskCategory.Other;
             this.Distance = Distance;

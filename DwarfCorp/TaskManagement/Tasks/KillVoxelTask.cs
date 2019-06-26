@@ -53,7 +53,7 @@ namespace DwarfCorp
         public KillVoxelTask()
         {
             MaxAssignable = 3;
-            Priority = PriorityType.Medium;
+            Priority = TaskPriority.Medium;
             Category = TaskCategory.Dig;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
@@ -63,7 +63,7 @@ namespace DwarfCorp
             MaxAssignable = 3;
             Name = "Mine Block " + vox.Coordinate;
             Voxel = vox;
-            Priority = PriorityType.Medium;
+            Priority = TaskPriority.Medium;
             Category = TaskCategory.Dig;
             VoxelHealth = Voxel.Type.StartingHealth;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
@@ -101,7 +101,7 @@ namespace DwarfCorp
             if (agent.Stats.IsAsleep || agent.IsDead || !agent.Active)
                 return Feasibility.Infeasible;
 
-            if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Dig))
+            if (!agent.Stats.IsTaskAllowed(TaskCategory.Dig))
                 return Feasibility.Infeasible;
 
             if (agent.AI.Stats.IsAsleep)
