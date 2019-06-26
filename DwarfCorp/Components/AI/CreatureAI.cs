@@ -616,7 +616,7 @@ namespace DwarfCorp
                 return FightOrFlightResponse.Fight;
             else
             { 
-                Creature.AddThought(Thought.ThoughtType.Frightened);
+                Creature.AddThought("I was frightened recently.", new TimeSpan(0, 4, 0, 0), -2.0f);
                 return FightOrFlightResponse.Flee;
             }
         }

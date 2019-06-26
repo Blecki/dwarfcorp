@@ -118,11 +118,12 @@ namespace DwarfCorp
                         }
 
                         Agent.Creature.Stats.Hunger.CurrentValue += resource.FoodContent;
-                        Agent.Creature.AddThought(Thought.ThoughtType.AteFood);
+
                         if (resource.Tags.Contains(Resource.ResourceTags.Alcohol))
-                        {
-                            Agent.Creature.AddThought(Thought.ThoughtType.HadAle);
-                        }
+                            Agent.Creature.AddThought("I had good ale recently.", new TimeSpan(0, 8, 0, 0), 10.0f);
+                        else
+                            Agent.Creature.AddThought("I ate good food recently.", new TimeSpan(0, 8, 0, 0), 5.0f);
+
                         FoodBody.GetRoot().Delete();
 
                         if (MustPay)

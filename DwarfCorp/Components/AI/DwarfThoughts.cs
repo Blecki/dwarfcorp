@@ -11,8 +11,7 @@ namespace DwarfCorp
 {
     public class DwarfThoughts : GameComponent
     {
-        public int MaxMessages = 10;
-        public List<string> MessageBuffer = new List<string>();
+        public List<Thought> Thoughts = new List<Thought>();
 
         public DwarfThoughts()
         {
@@ -20,7 +19,6 @@ namespace DwarfCorp
 
         public DwarfThoughts(ComponentManager Manager, string name) : base(name, Manager)
         {
-            Thoughts = new List<Thought>();
         }
 
         private Creature _cachedCreature = null;
@@ -28,66 +26,37 @@ namespace DwarfCorp
         {
             get
             {
-                if (Parent == null)
-                    return null;
-                if (_cachedCreature == null)
-                    _cachedCreature = Parent.EnumerateAll().OfType<Creature>().FirstOrDefault();
-                global::System.Diagnostics.Debug.Assert(_cachedCreature != null, "AI Could not find creature");
+                if (Parent == null) return null;
+                if (_cachedCreature == null) _cachedCreature = Parent.EnumerateAll().OfType<Creature>().FirstOrDefault();
+                System.Diagnostics.Debug.Assert(_cachedCreature != null, "AI Could not find creature");
                 return _cachedCreature;
             }
         }
 
-        public List<Thought> Thoughts { get; set; }     // Todo: Make thoughts more generic. No ThoughtType enum!
-
-        /// <summary> returns whether or not the creature already has a thought of the given type. </summary>
-        public bool HasThought(Thought.ThoughtType type) 
+        public bool HasThought(String Description) 
         {
-            return Thoughts.Any(existingThought => existingThought.Type == type);
-        }
-
-        /// <summary> Add a standard thought to the creature. </summary>
-        public void AddThought(Thought.ThoughtType type)
-        {
-            if (!HasThought(type))
-            {
-                var thought = Thought.CreateStandardThought(type, Manager.World.Time.CurrentDate);
-                AddThought(thought, true);
-
-                if (thought.HappinessModifier > 0.01)
-                    Creature.NoiseMaker.MakeNoise("Pleased", Creature.Physics.Position, true);
-                else
-                    Creature.NoiseMaker.MakeNoise("Tantrum", Creature.Physics.Position, true);
-            }
+            return Thoughts.Any(t => t.Description == Description);
         }
 
         /// <summary> Remove a standard thought from the creature. </summary>
-        public void RemoveThought(Thought.ThoughtType thoughtType)
+        public void RemoveThought(Thought Thought)
         {
-            Thoughts.RemoveAll(thought => thought.Type == thoughtType);
+            Thoughts.Remove(Thought);
         }
 
         /// <summary> Add a custom thought to the creature </summary>
-        public void AddThought(Thought thought, bool allowDuplicates)
+        public void AddThought(Thought thought)
         {
-            if (allowDuplicates)
-            {
-                Thoughts.Add(thought);
-            }
-            else
-            {
-                if (HasThought(thought.Type))
-                {
-                    return;
-                }
+            if (HasThought(thought.Description))
+                return;
 
-                Thoughts.Add(thought);
-            }
-            bool good = thought.HappinessModifier > 0;
-            Color textColor = good ? GameSettings.Default.Colors.GetColor("Positive", Color.Green) : GameSettings.Default.Colors.GetColor("Negative", Color.Red);
-            string prefix = good ? "+" : "";
-            string postfix = good ? ":)" : ":(";
-            IndicatorManager.DrawIndicator(prefix + thought.HappinessModifier + " " + postfix,
-                Creature.Physics.Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 1.0f, textColor);
+            Thoughts.Add(thought);
+
+            var good = thought.HappinessModifier > 0;
+            var textColor = good ? GameSettings.Default.Colors.GetColor("Positive", Color.Green) : GameSettings.Default.Colors.GetColor("Negative", Color.Red);
+            var prefix = good ? "+" : "";
+            var postfix = good ? ":)" : ":(";
+            IndicatorManager.DrawIndicator(prefix + thought.HappinessModifier + " " + postfix, Creature.Physics.Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 1.0f, textColor);
         }
 
         override public void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
@@ -98,13 +67,15 @@ namespace DwarfCorp
             foreach (Thought thought in Thoughts)
                 Creature.Stats.Happiness.CurrentValue += thought.HappinessModifier;
 
+            // Todo: Should this be here?
             if (Creature.Stats.IsAsleep)
-                AddThought(Thought.ThoughtType.Slept);
+                Creature.AddThought("I slept recently.", new TimeSpan(0, 8, 0, 0), 5.0f);
+
             else if (Creature.Stats.Energy.IsDissatisfied())
-                AddThought(Thought.ThoughtType.FeltSleepy);
+                Creature.AddThought("I was sleepy recently.", new TimeSpan(0, 4, 0, 0), -3.0f);
 
             if (Creature.Stats.Hunger.IsDissatisfied())
-                AddThought(Thought.ThoughtType.FeltHungry);
+                Creature.AddThought("I was hungry recently.", new TimeSpan(0, 8, 0, 0), -3.0f);
         }
     }
 }

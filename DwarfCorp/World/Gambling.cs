@@ -362,7 +362,7 @@ namespace DwarfCorp.Scripting
                  maxParticipant.AI.Position + Microsoft.Xna.Framework.Vector3.Up + Microsoft.Xna.Framework.Vector3.Forward * 0.1f, 10.0f,
                     GameSettings.Default.Colors.GetColor("Positive", Microsoft.Xna.Framework.Color.Green));
                 Pot = 0.0m;
-                maxParticipant.AddThought(Thought.ThoughtType.WonGambling);
+                maxParticipant.AddThought("I won a game of dice!", new TimeSpan(1, 0, 0, 0), 10.0f);
             }
             else
             {

@@ -24,22 +24,12 @@ namespace DwarfCorp
         public CollisionType CollisionType = CollisionType.Static;
         public Vector3 BoundingBoxSize = Vector3.One;
         public Vector3 LocalBoundingBoxOffset = Vector3.Zero;
-        [JsonIgnore]
-        public Action OnDestroyed;
-        [JsonIgnore]
-        public bool IsReserved
-        {
-            get { return ReservedFor != null; }
-        }
-        [JsonIgnore]
-        public GameComponent ReservedFor = null;
+        [JsonIgnore] public Action OnDestroyed;
+        [JsonIgnore] public bool IsReserved => ReservedFor != null;
+        [JsonIgnore] public GameComponent ReservedFor = null;
         private BoundingBox LastBounds = new BoundingBox();
-        private OctTreeNode<GameComponent> CachedOcttreeNode = null;
-        [JsonIgnore]
-        public Matrix GlobalTransform
-        {
-            get { return globalTransform; }
-        }
+
+        [JsonIgnore] public Matrix GlobalTransform => globalTransform;
 
         public Matrix LocalTransform
         {
@@ -219,21 +209,7 @@ namespace DwarfCorp
                 BoundingBox.Max = GlobalTransform.Translation + LocalBoundingBoxOffset + (BoundingBoxSize * 0.5f);
             }
         }
-
-        //public override void Delete()
-        //{
-        //    RemoveFromOctTree();
-        //    base.Delete();
-        //}
-
-        //public override void Die()
-        //{
-        //    RemoveFromOctTree();
-        //    if (OnDestroyed != null) OnDestroyed();
-
-        //    base.Die();
-        //}
-
+        
         public virtual void CreateCosmeticChildren(ComponentManager Manager)
         {
             PropogateTransforms();
@@ -252,7 +228,6 @@ namespace DwarfCorp
         {
             if (Manager != null)
                 Manager.World.RemoveGameObject(this, LastBounds);
-            CachedOcttreeNode = null;
         }
     }
 }

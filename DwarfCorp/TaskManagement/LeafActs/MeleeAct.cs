@@ -383,7 +383,7 @@ namespace DwarfCorp
                         Agent.AddXP(10);
                         Creature.Physics.Face(Creature.Physics.Velocity + Creature.Physics.GlobalTransform.Translation);
                         Creature.Stats.NumThingsKilled++;
-                        Creature.AddThought(Thought.ThoughtType.KilledThing);
+                        Creature.AddThought("I killed somehing!", new TimeSpan(0, 8, 0, 0), 1.0f);
                         Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                         Creature.OverrideCharacterMode = false;
                         Creature.CurrentCharacterMode = defaultCharachterMode;

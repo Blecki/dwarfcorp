@@ -2,34 +2,31 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary> Causes the creature to have a Thought for a specified time </summary>
+    /// Literally only used by PotionOfGlee...
     public class ThoughtBuff : StatusEffect
     {
+        public string Description = "";
+        public float HappinessModifier = 0.0f;
+        [JsonProperty] private Thought SavedThought;
+
         public ThoughtBuff()
         {
         }
 
-        public ThoughtBuff(float time, Thought.ThoughtType type) :
-            base(time)
-        {
-            ThoughtType = type;
-        }
-
-        /// <summary> The Thought the creature has during the buff </summary>
-        public Thought.ThoughtType ThoughtType { get; set; }
-
         public override void OnApply(Creature creature)
         {
-            creature.Physics.GetComponent<DwarfThoughts>()?.AddThought(ThoughtType);
+            SavedThought = creature.AddThought(Description, new TimeSpan(1, 0, 0, 0), HappinessModifier);
             base.OnApply(creature);
         }
 
         public override void OnEnd(Creature creature)
         {
-            creature.Physics.GetComponent<DwarfThoughts>()?.RemoveThought(ThoughtType);
+            creature.Physics.GetComponent<DwarfThoughts>()?.RemoveThought(SavedThought);
             base.OnApply(creature);
         }
 
@@ -42,7 +39,8 @@ namespace DwarfCorp
                 ParticleTimer = Timer.Clone(ParticleTimer),
                 SoundOnEnd = SoundOnEnd,
                 SoundOnStart = SoundOnStart,
-                ThoughtType = ThoughtType
+                Description = Description,
+                HappinessModifier = HappinessModifier
             };
         }
 

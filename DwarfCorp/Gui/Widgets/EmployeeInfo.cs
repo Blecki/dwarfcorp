@@ -456,7 +456,7 @@ namespace DwarfCorp.Gui.Widgets
                     }
                     SoundManager.PlaySound(ContentPaths.Audio.change, 0.5f);
                     Invalidate();
-                    Employee.Creature.AddThought(Thought.ThoughtType.GotPromoted);
+                    Employee.Creature.AddThought("I got promoted recently.", new TimeSpan(3, 0, 0, 0), 20.0f);
                 }
             });
 

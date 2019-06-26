@@ -317,7 +317,7 @@ namespace DwarfCorp
                 case Message.MessageType.OnHurt:
                     NoiseMaker.MakeNoise("Hurt", AI.Position);
                     Sprite.Blink(0.5f);
-                    AddThought(Thought.ThoughtType.TookDamage);
+                    AddThought("I got hurt recently.", new TimeSpan(2, 0, 0, 0), -5.0f);
 
                     var deathParticleTriggers = Parent.EnumerateAll().OfType<ParticleTrigger>().Where(p => p.Name == "Death Gibs");
 
@@ -330,14 +330,19 @@ namespace DwarfCorp
             base.ReceiveMessageRecursive(messageToReceive);
         }
 
-        public void AddThought(Thought.ThoughtType ThoughtType)
+        public Thought AddThought(String Description, TimeSpan TimeLimit, float HappinessModifier)
         {
-            Physics.GetComponent<DwarfThoughts>()?.AddThought(ThoughtType);
-        }
+            var r = new Thought
+            {
+                Description = Description,
+                TimeLimit = TimeLimit,
+                HappinessModifier = HappinessModifier,
+                TimeStamp = Manager.World.Time.CurrentDate
+            };
 
-        public void AddThought(Thought thought, bool allowDuplicates)
-        {
-            Physics.GetComponent<DwarfThoughts>()?.AddThought(thought, allowDuplicates);
+            Physics.GetComponent<DwarfThoughts>()?.AddThought(r);
+
+            return r;
         }
 
         /// <summary>
@@ -464,7 +469,7 @@ namespace DwarfCorp
                 AI.Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, color);
                 NoiseMaker.MakeNoise("Hurt", AI.Position);
                 Sprite.Blink(0.5f);
-                AddThought(Thought.ThoughtType.TookDamage);
+                AddThought("I got hurt recently.", new TimeSpan(2, 0, 0, 0), -5.0f);
 
                 var deathParticleTriggers = Parent.EnumerateAll().OfType<ParticleTrigger>().Where(p => p.Name == "Death Gibs");
 

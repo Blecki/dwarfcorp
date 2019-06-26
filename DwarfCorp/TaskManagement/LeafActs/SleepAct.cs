@@ -104,7 +104,7 @@ namespace DwarfCorp
                     Creature.Physics.AllowPhysicsSleep = false;
                 }
 
-                Creature.AddThought(Thought.ThoughtType.Slept);
+                Creature.AddThought("I slept recently.", new TimeSpan(0, 8, 0, 0), 5.0f);
                 Creature.Stats.IsAsleep = false;
                 Creature.Physics.IsSleeping = false;
                 Creature.Physics.AllowPhysicsSleep = false;
@@ -145,7 +145,8 @@ namespace DwarfCorp
                     Creature.Physics.IsSleeping = false;
                     Creature.Physics.AllowPhysicsSleep = false;
                 }
-                Creature.AddThought(Thought.ThoughtType.Slept);
+
+                Creature.AddThought("I slept recently.", new TimeSpan(0, 8, 0, 0), 5.0f);
                 Creature.Stats.IsAsleep = false;
                 Creature.Physics.IsSleeping = false;
                 Creature.Physics.AllowPhysicsSleep = false;

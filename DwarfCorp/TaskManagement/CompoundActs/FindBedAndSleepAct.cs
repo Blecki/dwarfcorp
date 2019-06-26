@@ -55,7 +55,7 @@ namespace DwarfCorp
             }
             else if (!Agent.Stats.Energy.IsSatisfied() && closestItem == null && closestZone != null)
             {
-                Creature.AddThought(Thought.ThoughtType.SleptOnGround);
+                Creature.AddThought("I slept on the ground.", new TimeSpan(0, 8, 0, 0), -6.0f);
 
                 Tree = new Sequence(new GoToZoneAct(Creature.AI, closestZone),
                                     new SleepAct(Creature.AI)
@@ -65,7 +65,7 @@ namespace DwarfCorp
             }
             else if (!Agent.Stats.Energy.IsSatisfied() && closestItem == null && closestZone == null)
             {
-                Creature.AddThought(Thought.ThoughtType.SleptOnGround);
+                Creature.AddThought("I slept on the ground.", new TimeSpan(0, 8, 0, 0), -6.0f);
 
                 Tree = new SleepAct(Creature.AI)
                 {

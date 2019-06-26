@@ -93,7 +93,7 @@ namespace DwarfCorp
             foreach (CreatureAI creature in PlayerFaction.Minions)
             {
                 if (creature.Stats.IsOverQualified)
-                    creature.Creature.AddThought(Thought.ThoughtType.IsOverQualified);
+                    creature.Creature.AddThought("I am overqualified for this job.", new TimeSpan(1, 0, 0, 0), -10.0f);
 
                 var thoughts = creature.Physics.GetComponent<DwarfThoughts>();
 
@@ -114,9 +114,7 @@ namespace DwarfCorp
                     noMoney = true;
                 }
                 else
-                {
-                    creature.Creature.AddThought(Thought.ThoughtType.GotPaid);
-                }
+                    creature.Creature.AddThought("I got paid recently.", new TimeSpan(1, 0, 0, 0), 10.0f);
 
                 creature.AssignTask(new ActWrapperTask(new GetMoneyAct(creature, pay)) { AutoRetry = true, Name = "Get paid.", Priority = Task.PriorityType.High });
             }

@@ -55,7 +55,7 @@ namespace DwarfCorp
             int Level, Gender gender, int seed)
         {
             Dwarf toReturn = new Dwarf(Manager, new CreatureStats("Dwarf", DwarfClass, Level) { Gender = gender, RandomSeed = seed, VoicePitch  = GetRandomVoicePitch(gender) }, Manager.World.PlayerFaction, "Dwarf", Position);
-            toReturn.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, Manager.World.Time.CurrentDate), false);
+            toReturn.AddThought("I just arrived to this new land.", new TimeSpan(3, 0, 0, 0), 20.0f);
             return toReturn.Physics;
         }
 

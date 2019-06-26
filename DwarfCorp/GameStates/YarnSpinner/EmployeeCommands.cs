@@ -26,14 +26,7 @@ namespace DwarfCorp.GameStates.YarnSpinner
             var creature = employee.AsObject as CreatureAI;
             if (creature == null)
                 return;
-            creature.Creature.AddThought(new Thought()
-            {
-                Description = (string)Arguments[0].Value,
-                TimeLimit = new TimeSpan((int)(float)Arguments[2].Value, 0, 0),
-                HappinessModifier = (float)Arguments[1].Value,
-                Type = Thought.ThoughtType.Other,
-                TimeStamp = creature.World.Time.CurrentDate
-            }, false);
+            creature.Creature.AddThought((string)Arguments[0].Value, new TimeSpan((int)(float)Arguments[2].Value, 0, 0), (float)Arguments[1].Value);
         }
 
         [YarnCommand("end_strike", ArgumentTypeBehavior = YarnCommandAttribute.ArgumentTypeBehaviors.Strict)]
@@ -49,7 +42,7 @@ namespace DwarfCorp.GameStates.YarnSpinner
             if (thoughts != null)
             {
                 thoughts.Thoughts.RemoveAll(t => t.Description.Contains("paid"));
-                thoughts.AddThought(Thought.ThoughtType.GotPaid);
+                creature.Creature.AddThought("I got paid recently.", new TimeSpan(1, 0, 0, 0), 10.0f);
             }
 
             if (creature is DwarfAI dorf)

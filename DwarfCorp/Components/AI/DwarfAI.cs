@@ -119,7 +119,7 @@ namespace DwarfCorp
             {
                 Stats.Boredom.SetValue(Stats.Boredom.CurrentValue - (float)(CurrentTask.BoredomIncrease * gameTime.ElapsedGameTime.TotalSeconds));
                 if (Stats.Boredom.IsCritical())
-                    Creature.AddThought(Thought.ThoughtType.FeltBored);
+                    Creature.AddThought("I have been overworked recently.", new TimeSpan(0, 4, 0, 0), -2.0f);
             }
 
             // Heal thyself
@@ -461,7 +461,7 @@ namespace DwarfCorp
         {
             if (SpeakTimer.HasTriggered)
             {
-                Creature.Physics.GetComponent<DwarfThoughts>()?.AddThought(Thought.ThoughtType.Talked);
+                Creature.AddThought("I spoke to a friend recently.", new TimeSpan(0, 8, 0, 0), 5.0f);
                 Creature.DrawIndicator(IndicatorManager.StandardIndicators.Dots);
                 Creature.Physics.Face(other.Position);
                 SpeakTimer.Reset(SpeakTimer.TargetTimeSeconds);
@@ -473,18 +473,9 @@ namespace DwarfCorp
             NumDaysNotPaid++;
 
             if (NumDaysNotPaid < 2)
-                Creature.AddThought(Thought.ThoughtType.NotPaid);
+                Creature.AddThought("I have not been paid!", new TimeSpan(1, 0, 0, 0), -25.0f);
             else
-            {
-                Creature.AddThought(new Thought()
-                {
-                    Description = String.Format("I have not been paid in {0} days!", NumDaysNotPaid),
-                    HappinessModifier = -25 * NumDaysNotPaid,
-                    TimeLimit = new TimeSpan(1, 0, 0, 0, 0),
-                    TimeStamp = World.Time.CurrentDate,
-                    Type = Thought.ThoughtType.Other
-                }, false);
-            }
+                Creature.AddThought("I have not been paid for days!", new TimeSpan(1, 0, 0, 0), -25.0f * NumDaysNotPaid);
         }
 
         public void OnPaid()

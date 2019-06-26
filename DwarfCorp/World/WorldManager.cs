@@ -281,7 +281,7 @@ namespace DwarfCorp
                 {
                     foreach (var minion in PlayerFaction.Minions)
                     {
-                        minion.Creature.AddThought(Thought.ThoughtType.FriendDied);
+                        minion.Creature.AddThought("A friend died recently.", new TimeSpan(2, 0, 0, 0), -25.0f);
 
                         if (!minion.IsDead) continue;
 
@@ -413,7 +413,6 @@ namespace DwarfCorp
         public void Quit()
         {
             ChunkManager.Destroy();
-            ComponentManager.Destroy();
             ComponentManager = null;
 
             ChunkManager = null;

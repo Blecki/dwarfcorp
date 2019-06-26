@@ -1997,10 +1997,10 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
-    <Content Include="Entities\Animals\Chimp\chimp_animation.json">
+    <None Include="Entities\Animals\Chimp\chimp_animation.json">
       <Name>chimp_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
     <Compile Include="newgui\tutorials\trade_balance.png">
       <Name>trade_balance</Name>
       <Importer>TextureImporter</Importer>
@@ -2318,34 +2318,34 @@
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
     </Compile>
-    <Content Include="Text\Templates\names_demon.txt">
+    <None Include="Text\Templates\names_demon.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>names_demon</Name>
-    </Content>
+    </None>
     <None Include="Text\Templates\injuries.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>injuries</Name>
     </None>
-    <Content Include="Text\violence.txt">
+    <None Include="Text\violence.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>violence</Name>
-    </Content>
-    <Content Include="Text\title.txt">
+    </None>
+    <None Include="Text\title.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>title</Name>
-    </Content>
-    <Content Include="Text\demon_phoneme.txt">
+    </None>
+    <None Include="Text\demon_phoneme.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>demon_phoneme</Name>
-    </Content>
-    <Content Include="Text\undead_phoneme.txt">
+    </None>
+    <None Include="Text\undead_phoneme.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>undead_phoneme</Name>
-    </Content>
-    <Content Include="Text\goblin_phoneme.txt">
+    </None>
+    <None Include="Text\goblin_phoneme.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>goblin_phoneme</Name>
-    </Content>
+    </None>
     <None Include="World\Classes\Slime.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Slime</Name>
@@ -4127,10 +4127,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>intejection</Name>
     </None>
-    <Content Include="Text\goblinname.txt">
+    <None Include="Text\goblinname.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>goblinname</Name>
-    </Content>
+    </None>
     <None Include="Text\goblinfamily.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>goblinfamily</Name>

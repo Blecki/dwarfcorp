@@ -368,11 +368,7 @@ namespace DwarfCorp.Gui.Widgets
                                 OnClick = (sender, args) =>
                                 {
                                     foreach (var minion in World.PlayerFaction.Minions)
-                                    {
-                                        var thoughts = minion.GetRoot().GetComponent<DwarfThoughts>();
-                                        if (thoughts != null)
-                                            thoughts.AddThought(Thought.ThoughtType.CheatedHappy);
-                                    }
+                                        minion.Creature.AddThought("You used the god menu to make me happy.", new TimeSpan(0, 8, 0, 0), 100.0f);
                                 }
                             },
                             new HorizontalMenuTray.MenuItem
@@ -381,11 +377,7 @@ namespace DwarfCorp.Gui.Widgets
                                 OnClick = (sender, args) =>
                                 {
                                     foreach (var minion in World.PlayerFaction.Minions)
-                                    {
-                                        var thoughts = minion.GetRoot().GetComponent<DwarfThoughts>();
-                                        if (thoughts != null)
-                                            thoughts.AddThought(Thought.ThoughtType.CheatedPissed);
-                                    }
+                                        minion.Creature.AddThought("You used the god menu to piss me off.", new TimeSpan(0, 8, 0, 0), -100.0f);
                                 }
                             },
                             new HorizontalMenuTray.MenuItem

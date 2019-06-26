@@ -105,15 +105,11 @@ namespace DwarfCorp
             Creature.Sprite.ResetAnimations(Creature.Stats.CurrentClass.AttackMode);
             Creature.Sprite.PlayAnimations(Creature.Stats.CurrentClass.AttackMode);
             while (!Creature.Sprite.AnimPlayer.IsDone())
-            {
                 yield return Status.Running;
-            }
 
             var resource = ResourceLibrary.GetResourceByName(Resource.Type);
             if (resource.Tags.Contains(DwarfCorp.Resource.ResourceTags.Corpse))
-            {
-                Creature.AddThought(Thought.ThoughtType.BuriedDead);
-            }
+                Creature.AddThought("I laid a friend to rest.", new TimeSpan(0, 8, 0, 0), 10.0f);
 
             yield return Status.Running;
             Creature.CurrentCharacterMode = CharacterMode.Idle;

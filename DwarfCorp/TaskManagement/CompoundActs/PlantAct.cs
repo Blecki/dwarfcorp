@@ -78,8 +78,9 @@ namespace DwarfCorp
                     yield return Status.Running;
                     Creature.Sprite.ReloopAnimations(Creature.Stats.CurrentClass.AttackMode);
                 }
+
                 Creature.CurrentCharacterMode = CharacterMode.Idle;
-                Creature.AddThought(Thought.ThoughtType.Farmed);
+                Creature.AddThought("I farmed something!", new TimeSpan(0, 4, 0, 0), 1.0f);
                 Creature.AI.AddXP(1);
                 Creature.Sprite.PauseAnimations(Creature.Stats.CurrentClass.AttackMode);
                 yield return Status.Success;

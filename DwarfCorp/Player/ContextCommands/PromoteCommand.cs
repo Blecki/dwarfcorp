@@ -28,7 +28,7 @@ namespace DwarfCorp.ContextCommands
             return World.PlayerFaction.Minions.Contains(creature) && creature.Stats.IsOverQualified;
         }
 
-        public override void Apply(GameComponent Entity, WorldManager World)
+        public override void Apply(GameComponent Entity, WorldManager World) // Todo: This logic is duplicated
         {
             var Employee = Entity.GetComponent<CreatureAI>();
             var prevLevel = Employee.Stats.CurrentLevel;
@@ -43,7 +43,7 @@ namespace DwarfCorp.ContextCommands
                 World.MakeAnnouncement(String.Format("{0} learned to cast {1}!", Employee.Stats.FullName, Employee.Stats.CurrentLevel.ExtraWeapons.Last().Name));
             }
             SoundManager.PlaySound(ContentPaths.Audio.change, 0.5f);
-            Employee.Creature.AddThought(Thought.ThoughtType.GotPromoted);
+            Employee.Creature.AddThought("I got promoted recently.", new TimeSpan(3, 0, 0, 0), 20.0f);
         }
     }
 }

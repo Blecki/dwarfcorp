@@ -272,13 +272,6 @@ namespace DwarfCorp
             ReceiveMessage();
         }
 
-        private bool ExitThreads = false;
-
-        public void Destroy()
-        {
-            ExitThreads = true;
-        }
-
         private void ReceiveMessage()
         {
             lock (_msgLock)

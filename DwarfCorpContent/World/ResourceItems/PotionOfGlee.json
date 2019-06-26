@@ -56,7 +56,8 @@
     "Description": "Dwarfs drink this potion when they are feeling down.",
     "Effects": {
       "$type": "DwarfCorp.ThoughtBuff, /Content",
-      "ThoughtType": "Magic",
+      "Description": "Wow, that potion was great!",
+      "HappinessModifier": 25.0,
       "EffectTime": {
         "TargetTimeSeconds": 120.0,
         "CurrentTimeSeconds": 0.0,
