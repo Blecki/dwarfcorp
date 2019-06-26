@@ -38,21 +38,21 @@ namespace DwarfCorp
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            if (!GetStockpile(agent.Faction))
+            if (!GetStockpile())
                 return 9999;
 
             return (stockpile.GetBoundingBox().Center() - agent.AI.Position).LengthSquared();
         }
 
-        public bool GetStockpile(Faction faction)
+        public bool GetStockpile()
         {
             stockpile = World.FindZone(StockpileFrom) as Stockpile;
             return stockpile != null;
         }
 
-        public override bool IsComplete(Faction faction)
+        public override bool IsComplete(WorldManager World)
         {
-            if (!GetStockpile(faction))
+            if (!GetStockpile())
                 return true;
 
             return !stockpile.Resources.HasResources(Resources);
@@ -65,7 +65,7 @@ namespace DwarfCorp
                 return Feasibility.Infeasible;
             }
 
-            if (!GetStockpile(agent.Faction))
+            if (!GetStockpile())
             {
                 return Feasibility.Infeasible;
             }
@@ -80,7 +80,7 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature agent)
         {
-            if (!GetStockpile(agent.Faction))
+            if (!GetStockpile())
             {
                 return null;
             }

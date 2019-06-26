@@ -363,6 +363,7 @@
     <Compile Include="TaskManagement\LeafActs\StopAct.cs" />
     <Compile Include="TaskManagement\LeafActs\TeleportAct.cs" />
     <Compile Include="TaskManagement\LeafActs\WanderAct.cs" />
+    <Compile Include="TaskManagement\ActWrapperTask.cs" />
     <Compile Include="TaskManagement\Task.cs" />
     <Compile Include="TaskManagement\TaskManager.cs" />
     <Compile Include="TaskManagement\Tasks\GoToZoneTask.cs" />

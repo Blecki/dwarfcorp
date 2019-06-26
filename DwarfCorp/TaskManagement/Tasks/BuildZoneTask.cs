@@ -28,15 +28,15 @@ namespace DwarfCorp
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
-        private bool IsZoneBuildOrder(Faction faction, BuildZoneOrder buildRooom)
+        private bool IsZoneBuildOrder(WorldManager World, BuildZoneOrder buildRooom)
         {
-            return faction.World.IsActiveBuildZoneOrder(buildRooom);
+            return World.IsActiveBuildZoneOrder(buildRooom);
         }
 
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            return Zone != null && !Zone.IsBuilt && IsZoneBuildOrder(agent.Faction, Zone) &&
+            return Zone != null && !Zone.IsBuilt && IsZoneBuildOrder(agent.World, Zone) &&
                 agent.Stats.IsTaskAllowed(Task.TaskCategory.BuildZone) &&
                 agent.World.HasResources(Zone.ListRequiredResources()) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
@@ -56,7 +56,7 @@ namespace DwarfCorp
 
         public override bool ShouldDelete(Creature agent)
         {
-            return Zone == null || Zone.IsBuilt || Zone.IsDestroyed || !IsZoneBuildOrder(agent.Faction, Zone);
+            return Zone == null || Zone.IsBuilt || Zone.IsDestroyed || !IsZoneBuildOrder(agent.World, Zone);
         }
 
         public override bool ShouldRetry(Creature agent)
@@ -64,12 +64,12 @@ namespace DwarfCorp
             return Zone != null && !Zone.IsBuilt && !Zone.IsDestroyed;
         }
 
-        public override bool IsComplete(Faction faction)
+        public override bool IsComplete(WorldManager World)
         {
-            return Zone == null || Zone.IsBuilt || !IsZoneBuildOrder(faction, Zone);
+            return Zone == null || Zone.IsBuilt || !IsZoneBuildOrder(World, Zone);
         }
 
-        public override void OnDequeued(Faction Faction)
+        public override void OnDequeued(WorldManager World)
         {
             if (!Zone.IsBuilt)
                 Zone.Destroy();

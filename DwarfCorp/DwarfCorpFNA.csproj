@@ -137,6 +137,7 @@
     <Compile Include="Player\Tutorial\TutorialSaveData.cs" />
     <Compile Include="TaskManagement\Act.cs" />
     <Compile Include="TaskManagement\ActData.cs" />
+    <Compile Include="TaskManagement\ActWrapperTask.cs" />
     <Compile Include="TaskManagement\BehaviorExtensions.cs" />
     <Compile Include="TaskManagement\Blackboard.cs" />
     <Compile Include="TaskManagement\CompoundActs\TransferResourcesAct.cs" />

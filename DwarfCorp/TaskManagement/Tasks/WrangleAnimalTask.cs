@@ -137,19 +137,19 @@ namespace DwarfCorp
             return (agent.AI.Position - Animal.Physics.Position).LengthSquared();
         }
 
-        public override bool IsComplete(Faction faction)
+        public override bool IsComplete(WorldManager World)
         {
             return Animal == null || Animal.IsDead || (LastPen != null && LastPen.Animals.Contains(Animal.Physics));
         }
 
-        public override void OnEnqueued(Faction Faction)
+        public override void OnEnqueued(WorldManager World)
         {
-            Faction.World.PersistentData.Designations.AddEntityDesignation(Animal.Physics, DesignationType.Wrangle, null, this);
+            World.PersistentData.Designations.AddEntityDesignation(Animal.Physics, DesignationType.Wrangle, null, this);
         }
 
-        public override void OnDequeued(Faction Faction)
+        public override void OnDequeued(WorldManager World)
         {
-            Faction.World.PersistentData.Designations.RemoveEntityDesignation(Animal.Physics, DesignationType.Wrangle);
+            World.PersistentData.Designations.RemoveEntityDesignation(Animal.Physics, DesignationType.Wrangle);
         }
     }
 }

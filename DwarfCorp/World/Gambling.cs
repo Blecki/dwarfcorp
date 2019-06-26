@@ -23,9 +23,9 @@ namespace DwarfCorp.Scripting
             return Feasibility.Feasible;
         }
 
-        public override bool IsComplete(Faction faction)
+        public override bool IsComplete(WorldManager World)
         {
-            return faction.World.GamblingState.State == Gambling.Status.Ended;
+            return World.GamblingState.State == Gambling.Status.Ended;
         }
 
         public override bool ShouldRetry(Creature agent)

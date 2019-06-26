@@ -34,7 +34,6 @@ namespace DwarfCorp.GameStates
 
         private void LaunchNewGame()
         {
-            // Todo: Anger faction when you claim their land.
             var playerFaction = Settings.Natives.FirstOrDefault(f => f.Name == "Player");
             var politics = Settings.GetPolitics(Settings.InstanceSettings.Cell.Faction, playerFaction);
             politics.AddEvent(new PoliticalEvent

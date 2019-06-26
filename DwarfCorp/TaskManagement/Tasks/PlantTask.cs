@@ -58,7 +58,7 @@ namespace DwarfCorp
             return Feasibility.Feasible;
         }
 
-        public override bool IsComplete(Faction faction)
+        public override bool IsComplete(WorldManager World)
         {
             if (FarmToWork == null) return true;
             if (FarmToWork.Finished) return true;
@@ -98,14 +98,14 @@ namespace DwarfCorp
             }
         }
 
-        public override void OnEnqueued(Faction Faction)
+        public override void OnEnqueued(WorldManager World)
         {
-            Faction.World.PersistentData.Designations.AddVoxelDesignation(FarmToWork.Voxel, DesignationType.Plant, FarmToWork, this);
+            World.PersistentData.Designations.AddVoxelDesignation(FarmToWork.Voxel, DesignationType.Plant, FarmToWork, this);
         }
 
-        public override void OnDequeued(Faction Faction)
+        public override void OnDequeued(WorldManager World)
         {
-            Faction.World.PersistentData.Designations.RemoveVoxelDesignation(FarmToWork.Voxel, DesignationType.Plant);
+            World.PersistentData.Designations.RemoveVoxelDesignation(FarmToWork.Voxel, DesignationType.Plant);
         }
     }
 }

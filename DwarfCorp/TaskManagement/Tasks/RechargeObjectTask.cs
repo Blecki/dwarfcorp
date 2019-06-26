@@ -103,7 +103,7 @@ namespace DwarfCorp
             }
         }
 
-        public override bool IsComplete(Faction faction)
+        public override bool IsComplete(WorldManager World)
         {
             return Entity == null || Entity.IsDead || Entity.CurrentCharges == Entity.MaxCharges;
         }

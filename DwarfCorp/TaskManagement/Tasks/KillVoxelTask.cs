@@ -127,20 +127,20 @@ namespace DwarfCorp
             return (agent.AI.Position - Voxel.WorldPosition).LengthSquared() + 10 * Math.Abs(agent.World.WorldSizeInVoxels.Y - Voxel.Coordinate.Y); // Is this a bias to make deeper voxels more costly?
         }
 
-        public override bool IsComplete(Faction faction)
+        public override bool IsComplete(WorldManager World)
         {
             if (!Voxel.IsValid) return false;
             return Voxel.IsEmpty;
         }
 
-        public override void OnEnqueued(Faction Faction)
+        public override void OnEnqueued(WorldManager World)
         {
-            Faction.World.PersistentData.Designations.AddVoxelDesignation(Voxel, DesignationType.Dig, null, this);
+            World.PersistentData.Designations.AddVoxelDesignation(Voxel, DesignationType.Dig, null, this);
         }
 
-        public override void OnDequeued(Faction Faction)
+        public override void OnDequeued(WorldManager World)
         {
-            Faction.World.PersistentData.Designations.RemoveVoxelDesignation(Voxel, DesignationType.Dig);
+            World.PersistentData.Designations.RemoveVoxelDesignation(Voxel, DesignationType.Dig);
         }
         
     }

@@ -397,7 +397,7 @@ namespace DwarfCorp
                         }
                     }
 
-                    if (CurrentTask != null && CurrentTask.IsComplete(Faction))
+                    if (CurrentTask != null && CurrentTask.IsComplete(World))
                         ChangeTask(null);
                     else if (status != Act.Status.Running && !retried)
                         ChangeTask(null);

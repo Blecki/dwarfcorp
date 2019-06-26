@@ -56,7 +56,7 @@ namespace DwarfCorp
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
-        public override bool IsComplete(Faction faction)
+        public override bool IsComplete(WorldManager World)
         {
             return Item.Finished;
         }

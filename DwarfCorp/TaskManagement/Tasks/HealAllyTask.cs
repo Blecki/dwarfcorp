@@ -184,7 +184,7 @@ namespace DwarfCorp
             return agent.AI != Ally && !Ally.IsDead && !Ally.Stats.Health.IsSatisfied() && agent.Stats.CurrentLevel.HealingPower > 0 ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
-        public override bool IsComplete(Faction faction)
+        public override bool IsComplete(WorldManager World)
         {
             return Ally.IsDead || Ally.Stats.Health.IsSatisfied();
         }
@@ -217,7 +217,7 @@ namespace DwarfCorp
             return agent.AI != Ally && !Ally.IsDead && Ally.Stats.Health.IsDissatisfied() ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
-        public override bool IsComplete(Faction faction)
+        public override bool IsComplete(WorldManager World)
         {
             return Ally.IsDead || !Ally.Stats.Health.IsDissatisfied();
         }

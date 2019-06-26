@@ -45,14 +45,14 @@ namespace DwarfCorp
             return Feasibility.Infeasible;
         }
 
-        private void Cleanup(Faction Faction)
+        private void Cleanup(WorldManager World)
         {
-            SubTasks.RemoveAll(t => t.IsComplete(Faction));
+            SubTasks.RemoveAll(t => t.IsComplete(World));
         }
 
         public override bool ShouldDelete(Creature agent)
         {
-            Cleanup(agent.Faction);
+            Cleanup(agent.World);
             return SubTasks.Count == 0;
         }
 
@@ -61,15 +61,15 @@ namespace DwarfCorp
             return float.PositiveInfinity;
         }
 
-        public override bool IsComplete(Faction faction)
+        public override bool IsComplete(WorldManager World)
         {
-            Cleanup(faction);
+            Cleanup(World);
             return SubTasks.Count == 0;
         }
 
-        public override void OnCancelled(TaskManager Manager, Faction Faction)
+        public override void OnCancelled(TaskManager Manager, WorldManager World)
         {
-            Cleanup(Faction);
+            Cleanup(World);
             foreach (var task in SubTasks)
                 Manager.CancelTask(task);
         }

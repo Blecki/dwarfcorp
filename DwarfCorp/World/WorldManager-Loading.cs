@@ -218,14 +218,14 @@ namespace DwarfCorp
             SetLoadingMessage("Creating GameMaster ...");
 
             TaskManager = new TaskManager();
-            TaskManager.Faction = PlayerFaction;
+            TaskManager.World = this;
             Time.NewDay += (time) => PayEmployees();
 
             DwarfGame.LogSentryBreadcrumb("Loading", "Started new game with an existing file.");
             if (gameFile.PlayData.Tasks != null)
             {
                 TaskManager = gameFile.PlayData.Tasks;
-                TaskManager.Faction = PlayerFaction;
+                TaskManager.World = this;
             }
 
             if (PlayerFaction.Economy.Information == null)
@@ -364,7 +364,7 @@ namespace DwarfCorp
             SetLoadingMessage("Creating GameMaster ...");
 
             TaskManager = new TaskManager();
-            TaskManager.Faction = PlayerFaction;
+            TaskManager.World = this;
             Time.NewDay += (time) => PayEmployees();
 
 

@@ -265,13 +265,9 @@ namespace DwarfCorp.GameStates
                 RightHeader = "Taking"
             }) as EmbarkmentResourceColumns;
 
-            // Todo: Capital display
-
             Layout();
             UpdateCost();
             base.Construct();
-             
         }
-
     }
 }

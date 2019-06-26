@@ -59,19 +59,19 @@ namespace DwarfCorp
             return EntityToGather == null  || EntityToGather.IsDead ? 1000 : (agent.AI.Position - EntityToGather.GlobalTransform.Translation).LengthSquared();
         }
         
-        public override bool IsComplete(Faction Faction)
+        public override bool IsComplete(WorldManager World)
         {
             return EntityToGather == null || !EntityToGather.Active || EntityToGather.IsDead;
         }
 
-        public override void OnEnqueued(Faction Faction)
+        public override void OnEnqueued(WorldManager World)
         {
-            Faction.World.PersistentData.Designations.AddEntityDesignation(EntityToGather, DesignationType.Gather, null, this);
+            World.PersistentData.Designations.AddEntityDesignation(EntityToGather, DesignationType.Gather, null, this);
         }
 
-        public override void OnDequeued(Faction Faction)
+        public override void OnDequeued(WorldManager World)
         {
-            Faction.World.PersistentData.Designations.RemoveEntityDesignation(EntityToGather, DesignationType.Gather);
+            World.PersistentData.Designations.RemoveEntityDesignation(EntityToGather, DesignationType.Gather);
         }
     }
 

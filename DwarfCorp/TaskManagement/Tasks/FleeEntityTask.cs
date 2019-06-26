@@ -92,7 +92,7 @@ namespace DwarfCorp
                 return Feasibility.Feasible;
         }
 
-        public override bool IsComplete(Faction faction)
+        public override bool IsComplete(WorldManager World)
         {
             return ScaryEntity == null || ScaryEntity.IsDead;
         }

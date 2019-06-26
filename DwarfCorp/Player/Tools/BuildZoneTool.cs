@@ -35,7 +35,7 @@ namespace DwarfCorp
                 foreach (BuildZoneOrder order in World.PersistentData.BuildDesignations)
                     order.SetTint(Color.White);
 
-                foreach (var room in World.EnumerateZones()) // Todo: Doesn't this loopback? L-O-L.
+                foreach (var room in World.EnumerateZones())
                     room.SetTint(Color.White);
 
                 if (CurrentZoneType == null)

@@ -116,19 +116,19 @@ namespace DwarfCorp
             }
         }
 
-        public override bool IsComplete(Faction faction)
+        public override bool IsComplete(WorldManager World)
         {
             return EntityToKill == null || EntityToKill.IsDead;
         }
 
-        public override void OnEnqueued(Faction Faction)
+        public override void OnEnqueued(WorldManager World)
         {
-            Faction.World.PersistentData.Designations.AddEntityDesignation(EntityToKill, DesignationType.Attack, null, this);
+            World.PersistentData.Designations.AddEntityDesignation(EntityToKill, DesignationType.Attack, null, this);
         }
 
-        public override void OnDequeued(Faction Faction)
+        public override void OnDequeued(WorldManager World)
         {
-            Faction.World.PersistentData.Designations.RemoveEntityDesignation(EntityToKill, DesignationType.Attack);
+            World.PersistentData.Designations.RemoveEntityDesignation(EntityToKill, DesignationType.Attack);
         }
     }
 

@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class CraftItemTask : Task
     {
         public CraftDesignation CraftDesignation { get; set; }
@@ -41,12 +40,12 @@ namespace DwarfCorp
             }
         }
 
-        public override void OnEnqueued(Faction Faction)
+        public override void OnEnqueued(WorldManager World)
         {
-            Faction.World.PersistentData.Designations.AddEntityDesignation(CraftDesignation.Entity, DesignationType.Craft, CraftDesignation, this);
+            World.PersistentData.Designations.AddEntityDesignation(CraftDesignation.Entity, DesignationType.Craft, CraftDesignation, this);
         }
 
-        public override void OnDequeued(Faction Faction)
+        public override void OnDequeued(WorldManager World)
         {
             if (!CraftDesignation.Finished)
             {
@@ -54,13 +53,13 @@ namespace DwarfCorp
                 if (CraftDesignation.HasResources)
                     foreach (var resource in CraftDesignation.SelectedResources)
                     {
-                        var resourceEntity = new ResourceEntity(Faction.World.ComponentManager, resource, CraftDesignation.Entity.GlobalTransform.Translation);
-                        Faction.World.ComponentManager.RootComponent.AddChild(resourceEntity);
+                        var resourceEntity = new ResourceEntity(World.ComponentManager, resource, CraftDesignation.Entity.GlobalTransform.Translation);
+                        World.ComponentManager.RootComponent.AddChild(resourceEntity);
                     }
                 CraftDesignation.Entity.GetRoot().Delete();
             }
 
-            Faction.World.PersistentData.Designations.RemoveEntityDesignation(CraftDesignation.Entity, DesignationType.Craft);
+            World.PersistentData.Designations.RemoveEntityDesignation(CraftDesignation.Entity, DesignationType.Craft);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
@@ -75,7 +74,7 @@ namespace DwarfCorp
 
         public override bool ShouldRetry(Creature agent)
         {
-            return !IsComplete(agent.Faction);
+            return !IsComplete(agent.World);
         }
 
 
@@ -84,7 +83,7 @@ namespace DwarfCorp
             return CraftDesignation.Finished;
         }
 
-        public override bool IsComplete(Faction faction)
+        public override bool IsComplete(WorldManager World)
         {
             return CraftDesignation.Finished;
         }
@@ -103,7 +102,7 @@ namespace DwarfCorp
             if (agent.AI.Stats.IsAsleep)
                 return Feasibility.Infeasible;
 
-            return CanBuild(agent) && !IsComplete(agent.Faction) ? Feasibility.Feasible : Feasibility.Infeasible;
+            return CanBuild(agent) && !IsComplete(agent.World) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public bool CanBuild(Creature agent)

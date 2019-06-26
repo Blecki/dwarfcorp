@@ -104,19 +104,19 @@ namespace DwarfCorp
             base.Render(time);
         }
 
-        public override bool IsComplete(Faction faction)
+        public override bool IsComplete(WorldManager World)
         {
             return Voxel.IsValid && Voxel.Type.Name == VoxType;
         }
 
-        public override void OnEnqueued(Faction Faction)
+        public override void OnEnqueued(WorldManager World)
         {
-            Faction.World.PersistentData.Designations.AddVoxelDesignation(Voxel, DesignationType.Put, VoxType, this);
+            World.PersistentData.Designations.AddVoxelDesignation(Voxel, DesignationType.Put, VoxType, this);
         }
 
-        public override void OnDequeued(Faction Faction)
+        public override void OnDequeued(WorldManager World)
         {
-            Faction.World.PersistentData.Designations.RemoveVoxelDesignation(Voxel, DesignationType.Put);
+            World.PersistentData.Designations.RemoveVoxelDesignation(Voxel, DesignationType.Put);
         }
     }
 }

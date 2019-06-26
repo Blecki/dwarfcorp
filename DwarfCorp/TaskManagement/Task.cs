@@ -5,12 +5,6 @@ using System.Collections.Generic;
 
 namespace DwarfCorp
 {
-
-    /// <summary>
-    /// A task is an abstract object which describes a goal for a creature.
-    /// Tasks construct acts (or behaviors) to solve them. Tasks have costs,
-    /// and can either be feasible or infeasible for a crature.
-    /// </summary>
     public abstract class Task
     {
         public enum PriorityType
@@ -51,8 +45,7 @@ namespace DwarfCorp
         public List<CreatureAI> AssignedCreatures = new List<CreatureAI>();
         public bool Hidden = false;
 
-        [JsonIgnore]
-        public object GuiTag = null;
+        [JsonIgnore] public object GuiTag = null;
 
         public enum Feasibility
         {
@@ -127,17 +120,17 @@ namespace DwarfCorp
             AssignedCreatures.Remove(agent);   
         }
 
-        public virtual bool IsComplete(Faction faction)
+        public virtual bool IsComplete(WorldManager World)
         {
             return false;
         }
 
-        public virtual void OnEnqueued(Faction Faction) // Todo: Take world instead of faction?
+        public virtual void OnEnqueued(WorldManager World)
         {
 
         }
 
-        public virtual void OnDequeued(Faction Faction)
+        public virtual void OnDequeued(WorldManager World)
         {
 
         }
@@ -152,59 +145,10 @@ namespace DwarfCorp
 
         }
 
-        public virtual void OnCancelled(TaskManager Manager, Faction Faction)
+        public virtual void OnCancelled(TaskManager Manager, WorldManager World)
         {
 
         }
 
     }
-
-    public class ActWrapperTask : Task
-    {
-        private Act WrappedAct;
-
-        public ActWrapperTask()
-        {
-            
-        }
-
-        public ActWrapperTask(Act act)
-        {
-            ReassignOnDeath = false;
-            WrappedAct = act;
-            Name = WrappedAct.Name;
-        }
-
-        public override Feasibility IsFeasible(Creature agent)
-        {
-            return WrappedAct != null ? Feasibility.Feasible : Feasibility.Infeasible;
-        }
-
-        public override bool ShouldDelete(Creature agent)
-        {
-            if (WrappedAct == null)
-                return true;
-            return base.ShouldDelete(agent);
-        }
-
-        public override Act CreateScript(Creature agent)
-        {
-            if (WrappedAct != null)
-                WrappedAct.Initialize();
-            return WrappedAct;
-        }
-
-        public override bool IsComplete(Faction faction)
-        {
-            if (WrappedAct == null)
-                return true;
-            return base.IsComplete(faction);
-        }
-
-        public override bool ShouldRetry(Creature agent)
-        {
-            return false;
-        }
-    }
-
 }
