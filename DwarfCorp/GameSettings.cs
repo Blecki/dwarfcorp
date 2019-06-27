@@ -229,6 +229,11 @@ namespace DwarfCorp
             [AutoResetFloat(-0.1f)] public float Boredom_Eat = -0.1f;
             [AutoResetFloat(-0.2f)] public float Boredom_Walk = -0.2f;
 
+            [AutoResetFloat(-0.5f)] public float Energy_Arduous = -0.5f;
+            [AutoResetFloat(-0.1f)] public float Energy_Tiring = -0.1f;
+            [AutoResetFloat(0.1f)] public float Energy_Refreshing = 0.1f;
+            [AutoResetFloat(1.0f)] public float Energy_Restful = 1.0f;
+
             [AutoResetFloat(0.1f)] public float TrainChance = 0.1f;
             [AutoResetFloat(0.75f)] public float CreatureMovementAdjust = 0.75f;
             [AutoResetFloat(0.01f)] public float DrownChance = 0.01f;

@@ -16,6 +16,7 @@ namespace DwarfCorp
             Priority = TaskPriority.Medium;
             Category = TaskCategory.Plant;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Default.Energy_Arduous;
         }
 
         public PlantTask(Farm farmToWork)
@@ -26,6 +27,7 @@ namespace DwarfCorp
             AutoRetry = true;
             Category = TaskCategory.Plant;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Default.Energy_Arduous;
         }
 
         public override bool ShouldRetry(Creature agent)

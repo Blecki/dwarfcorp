@@ -7,17 +7,14 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// Tells a creature that it should do something (anything) since there 
-    /// is nothing else to do.
-    /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class LookInterestingTask : Task
     {
         public LookInterestingTask()
         {
             Name = "Look Interesting";
             Priority = TaskPriority.Eventually;
+            BoredomIncrease = GameSettings.Default.Boredom_BoringTask;
+            EnergyDecrease = GameSettings.Default.Energy_Tiring;
         }
 
         public IEnumerable<Act.Status> ConverseFriends(CreatureAI c)

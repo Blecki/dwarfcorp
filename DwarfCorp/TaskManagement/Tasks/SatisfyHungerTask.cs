@@ -15,6 +15,7 @@ namespace DwarfCorp
             Name = "Satisfy Hunger";
             Priority = TaskPriority.Medium;
             BoredomIncrease = GameSettings.Default.Boredom_Eat;
+            EnergyDecrease = GameSettings.Default.Energy_Restful;
         }
 
         public override Act CreateScript(Creature agent)

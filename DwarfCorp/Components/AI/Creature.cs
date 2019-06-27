@@ -152,7 +152,9 @@ namespace DwarfCorp
 
             // Todo: Why is energy just tied to time of day? Lets make them actually recover at night and spend it during the day.
             if (Stats.Species.CanSleep)
-                Stats.Energy.CurrentValue = (float)(100 * Math.Sin(Manager.World.Time.GetTotalHours() * Math.PI / 24.0f));
+            {
+                //Stats.Energy.CurrentValue = (float)(100 * Math.Sin(Manager.World.Time.GetTotalHours() * Math.PI / 24.0f));
+            }
             else
                 Stats.Energy.CurrentValue = 100.0f;
 
@@ -293,7 +295,7 @@ namespace DwarfCorp
             else if (CurrentCharacterMode == CharacterMode.Sleeping)
                 CurrentCharacterMode = CharacterMode.Idle;
 
-            if (World.Time.IsDay() && Stats.IsAsleep && !Stats.Energy.IsDissatisfied() && !Stats.Health.IsCritical())
+            if (/*World.Time.IsDay() && */Stats.IsAsleep && !Stats.Energy.IsDissatisfied() && !Stats.Health.IsCritical())
                 Stats.IsAsleep = false;
         }
 

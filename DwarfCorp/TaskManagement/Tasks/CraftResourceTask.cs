@@ -21,6 +21,7 @@ namespace DwarfCorp
         {
             Category = TaskCategory.CraftItem;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Default.Energy_Tiring;
         }
 
         public CraftResourceTask(CraftItem selectedResource, int CurrentRepeat, int NumRepeats, List<ResourceAmount> SelectedResources, int id = -1)
@@ -54,6 +55,7 @@ namespace DwarfCorp
 
             AutoRetry = true;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Default.Energy_Tiring;
         }
 
         public override bool IsComplete(WorldManager World)

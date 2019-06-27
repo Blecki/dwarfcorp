@@ -19,6 +19,7 @@ namespace DwarfCorp
             Priority = TaskPriority.Medium;
             Category = TaskCategory.Gather;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Default.Energy_Tiring;
         }
 
         public GatherItemTask(GameComponent entity)
@@ -28,6 +29,7 @@ namespace DwarfCorp
             Priority = TaskPriority.Medium;
             Category = TaskCategory.Gather;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Default.Energy_Tiring;
         }
 
         public override Act CreateScript(Creature creature)

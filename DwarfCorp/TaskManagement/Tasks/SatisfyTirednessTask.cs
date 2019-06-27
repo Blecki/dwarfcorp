@@ -16,6 +16,7 @@ namespace DwarfCorp
             Name = "Go to sleep";
             Priority = TaskPriority.High;
             BoredomIncrease = GameSettings.Default.Boredom_Sleep;
+            EnergyDecrease = GameSettings.Default.Energy_Restful;
         }
 
         public override Act CreateScript(Creature agent)

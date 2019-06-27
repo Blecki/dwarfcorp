@@ -51,6 +51,7 @@ namespace DwarfCorp
             Category = TaskCategory.Gather;
             Priority = TaskPriority.Medium;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Default.Energy_Tiring;
         }
 
         public StockResourceTask(ResourceAmount entity)
@@ -61,6 +62,7 @@ namespace DwarfCorp
             Priority = TaskPriority.Medium;
             ReassignOnDeath = false;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Default.Energy_Tiring;
         }
 
         public override Act CreateScript(Creature creature)

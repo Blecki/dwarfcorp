@@ -21,6 +21,7 @@ namespace DwarfCorp
         {
             MaxAssignable = 3;
             BoredomIncrease = GameSettings.Default.Boredom_ExcitingTask;
+            EnergyDecrease = GameSettings.Default.Energy_Arduous;
         }
 
         public KillEntityTask(GameComponent entity, KillType type)
@@ -33,10 +34,10 @@ namespace DwarfCorp
             AutoRetry = true;
             Category = TaskCategory.Attack;
             BoredomIncrease = GameSettings.Default.Boredom_ExcitingTask;
+            EnergyDecrease = GameSettings.Default.Energy_Arduous;
+
             if (type == KillType.Auto)
-            {
                 ReassignOnDeath = false;
-            }
         }
 
         public override Act CreateScript(Creature creature)

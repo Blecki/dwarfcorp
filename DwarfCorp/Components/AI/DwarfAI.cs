@@ -57,22 +57,58 @@ namespace DwarfCorp
                     {
                         Name = "Go on a walk.",
                         Priority = TaskPriority.High,
-                        BoredomIncrease = GameSettings.Default.Boredom_Walk
+                        BoredomIncrease = GameSettings.Default.Boredom_Walk,
+                        EnergyDecrease = GameSettings.Default.Energy_Refreshing,
                     };
                 }
                 case 1:
                 {
                     if (World.ListResourcesWithTag(Resource.ResourceTags.Alcohol).Count > 0)
-                        return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(this, true) { FoodTag = Resource.ResourceTags.Alcohol, FallbackTag = Resource.ResourceTags.Alcohol}, 3, false) { Name = "Binge drink." }) { Name = "Binge drink.", Priority = TaskPriority.High, BoredomIncrease = GameSettings.Default.Boredom_Eat };
+                        return new ActWrapperTask(
+                            new Repeat(
+                                new FindAndEatFoodAct(this, true)
+                                {
+                                    FoodTag = Resource.ResourceTags.Alcohol,
+                                    FallbackTag = Resource.ResourceTags.Alcohol
+                                }, 
+                                3, false)
+                            {
+                                Name = "Binge drink."
+                            })
+                        {
+                            Name = "Binge drink.",
+                            Priority = TaskPriority.High,
+                            BoredomIncrease = GameSettings.Default.Boredom_Eat,
+                            EnergyDecrease = GameSettings.Default.Energy_Refreshing,
+                    };
 
                     if (!Stats.Hunger.IsSatisfied())
-                        return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(this, true), 3, false) { Name = "Binge eat." }) { Name = "Binge eat.", Priority = TaskPriority.High, BoredomIncrease = GameSettings.Default.Boredom_Eat };
+                        return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(this, true), 3, false)
+                            {
+                                Name = "Binge eat."
+                            })
+                        {
+                            Name = "Binge eat.",
+                            Priority = TaskPriority.High,
+                            BoredomIncrease = GameSettings.Default.Boredom_Eat,
+                            EnergyDecrease = GameSettings.Default.Energy_Refreshing
+                    };
 
                     return ActOnIdle();
                 }
                 case 2:
                 {
-                    return new ActWrapperTask(new GoToChairAndSitAct(this) { SitTime = 60, Name = "Relax." }) { Name = "Relax.", Priority = TaskPriority.High, BoredomIncrease = GameSettings.Default.Boredom_Sleep };
+                    return new ActWrapperTask(new GoToChairAndSitAct(this)
+                        {
+                            SitTime = 60,
+                            Name = "Relax."
+                        })
+                    {
+                        Name = "Relax.",
+                        Priority = TaskPriority.High,
+                        BoredomIncrease = GameSettings.Default.Boredom_Sleep,
+                        EnergyDecrease = GameSettings.Default.Energy_Restful
+                    };
                 }
                 case 3:
                 {
@@ -120,6 +156,8 @@ namespace DwarfCorp
                 Stats.Boredom.CurrentValue -= (float)(CurrentTask.BoredomIncrease * gameTime.ElapsedGameTime.TotalSeconds);
                 if (Stats.Boredom.IsCritical())
                     Creature.AddThought("I have been overworked recently.", new TimeSpan(0, 4, 0, 0), -2.0f);
+
+                Stats.Energy.CurrentValue += (float)(CurrentTask.EnergyDecrease * gameTime.ElapsedGameTime.TotalSeconds);
             }
 
             // Heal thyself
@@ -131,7 +169,7 @@ namespace DwarfCorp
             }
 
             // Try to go to sleep if we are low on energy and it is night time.
-            if (!Stats.Energy.IsSatisfied() && Manager.World.Time.IsNight())
+            if (Stats.Energy.IsCritical())
             {
                 Task toReturn = new SatisfyTirednessTask();
                 if (!Tasks.Contains(toReturn) && CurrentTask != toReturn)

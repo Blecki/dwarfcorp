@@ -16,6 +16,7 @@ namespace DwarfCorp
             Priority = TaskPriority.Medium;
             MaxAssignable = 3;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Default.Energy_Tiring;
         }
 
         public BuildZoneTask(BuildZoneOrder zone)
@@ -26,6 +27,7 @@ namespace DwarfCorp
             Zone = zone;
             Priority = TaskPriority.Medium;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Default.Energy_Tiring;
         }
 
         private bool IsZoneBuildOrder(WorldManager World, BuildZoneOrder buildRooom)

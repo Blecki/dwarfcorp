@@ -63,7 +63,7 @@ namespace DwarfCorp
             PreTeleport = Creature.AI.Position;
             if (Type == SleepType.Sleep)
             {
-                while (!Creature.Stats.Energy.IsSatisfied() && Creature.Manager.World.Time.IsNight())
+                while (!Creature.Stats.Energy.IsSatisfied())
                 {
                     if (Creature.Physics.IsInLiquid)
                     {

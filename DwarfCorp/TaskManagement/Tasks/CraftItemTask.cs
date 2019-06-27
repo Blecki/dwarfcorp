@@ -17,6 +17,7 @@ namespace DwarfCorp
             Priority = TaskPriority.Medium;
             AutoRetry = true;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Default.Energy_Tiring;
         }
 
         public CraftItemTask(CraftDesignation CraftDesignation)
@@ -30,7 +31,10 @@ namespace DwarfCorp
 
             foreach (var tinter in CraftDesignation.Entity.EnumerateAll().OfType<Tinter>())
                 tinter.Stipple = true;
+
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Default.Energy_Tiring;
+
             if (CraftDesignation.ItemType.IsMagical)
                 Category = TaskCategory.Research;
 

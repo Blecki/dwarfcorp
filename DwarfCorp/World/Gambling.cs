@@ -5,13 +5,14 @@ using System.Text;
 
 namespace DwarfCorp.Scripting
 {
-    public class GambleTask : Task
+    public class GambleTask : Task // Todo: Split file
     {
         public GambleTask()
         {
             Name = "Gamble";
             ReassignOnDeath = false;
             BoredomIncrease = GameSettings.Default.Boredom_Gamble;
+            EnergyDecrease = GameSettings.Default.Energy_Arduous;
         }
 
         public override Feasibility IsFeasible(Creature agent)

@@ -15,6 +15,7 @@ namespace DwarfCorp
         {
             MaxAssignable = 3;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Default.Energy_Tiring;
         }
 
         public ChopEntityTask(GameComponent entity)
@@ -26,6 +27,7 @@ namespace DwarfCorp
             AutoRetry = true;
             Category = TaskCategory.Chop;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Default.Energy_Tiring;
         }
 
         public override Act CreateScript(Creature creature)

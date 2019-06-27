@@ -57,6 +57,7 @@ namespace DwarfCorp
                 Category = TaskCategory.Other;
             this.Distance = Distance;
             BoredomIncrease = GameSettings.Default.Boredom_ExcitingTask;
+            EnergyDecrease = GameSettings.Default.Energy_Arduous;
         }
 
         public override Act CreateScript(Creature creature)
