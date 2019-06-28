@@ -11,7 +11,7 @@ namespace DwarfCorp.Gui.Widgets
     {
         public class Tray : Widget
         {
-            public Point ItemSize = new Point(90, 20);
+            public Point ItemSize = new Point(110, 20);
             public Point SizeToGrid = new Point(1, 1);
             public int Columns = 1;
             public bool AutoSizeColumns = false;
@@ -106,8 +106,9 @@ namespace DwarfCorp.Gui.Widgets
                 Background = new TileReference("basic", 0);
                 ChangeColorOnHover = true;
                 TextColor = Color.Black.ToVector4();
-                TextHorizontalAlign = HorizontalAlign.Center;
+                TextHorizontalAlign = HorizontalAlign.Left;
                 TextVerticalAlign = VerticalAlign.Center;
+                Border = "border-thin";
 
                 OnMouseEnter = (sender, args) =>
                 {

@@ -26,11 +26,6 @@ namespace DwarfCorp.Gui.Widgets
             {
                 new HorizontalMenuTray.MenuItem
                 {
-                    Text = "CHEAT MODE",
-                },
-
-                new HorizontalMenuTray.MenuItem
-                {
                     Text = "DEBUG",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
@@ -64,16 +59,16 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "SPAWN",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
-                        Columns = 6,
+                        Columns = 8,
                         AutoSizeColumns = false,
-                        ItemSource = EntityFactory.EnumerateEntityTypes().Where(s => !s.Contains("Resource") || 
-                        !ResourceLibrary.GetResourceByName(s.Substring(0, s.Length - " Resource".Length)).Generated).OrderBy(s => s).Select(s =>
+                        ItemSize = new Point(110, 28),
+                        ItemSource = EntityFactory.EnumerateEntityTypes()
+                            .Where(s => !s.Contains("Resource") || !ResourceLibrary.GetResourceByName(s.Substring(0, s.Length - " Resource".Length)).Generated)
+                            .OrderBy(s => s).Select(s =>
                             new HorizontalMenuTray.MenuItem
                             {
                                 Text = s,
                                 OnClick = (sender, args) => ActivateGodTool("Spawn/" + s),
-                                TextHorizontalAlign = HorizontalAlign.Left,
-                                TextVerticalAlign = VerticalAlign.Top
                             })
                     }
                 },
