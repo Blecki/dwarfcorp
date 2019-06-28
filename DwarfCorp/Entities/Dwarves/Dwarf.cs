@@ -42,7 +42,6 @@ namespace DwarfCorp
             Stats.FullName = TextGenerator.GenerateRandom("$firstname", " ", "$lastname");
             Stats.FindAdjustment("base stats").Size = 5;
             Stats.CanEat = true;
-            Stats.CanGetBored = true;
             AI.Movement.CanClimbWalls = true; // Why isn't this a flag like the below?
             AI.Movement.SetCan(MoveType.Teleport, true);
             AI.Movement.SetCost(MoveType.Teleport, 1.0f);

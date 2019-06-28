@@ -135,7 +135,8 @@ namespace DwarfCorp
             CheckNeighborhood(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
             UpdateAnimation(gameTime, chunks, camera);
 
-            #region Update Status Stat Effects
+            #region Update Status Stat Effects 
+            // Todo: Move to dwarf
 
             var statAdjustments = Stats.FindAdjustment("status");
             Stats.RemoveStatAdjustment("status");
@@ -149,15 +150,7 @@ namespace DwarfCorp
                 Hp += (float)gameTime.ElapsedGameTime.TotalSeconds * 0.1f;
 
             Stats.Health.CurrentValue = (Hp - MinHealth) / (MaxHealth - MinHealth); // Todo: MinHealth always 0?
-
-            // Todo: Why is energy just tied to time of day? Lets make them actually recover at night and spend it during the day.
-            if (Stats.Species.CanSleep)
-            {
-                //Stats.Energy.CurrentValue = (float)(100 * Math.Sin(Manager.World.Time.GetTotalHours() * Math.PI / 24.0f));
-            }
-            else
-                Stats.Energy.CurrentValue = 100.0f;
-
+                        
             if (Stats.Energy.IsDissatisfied())
             {
                 DrawIndicator(IndicatorManager.StandardIndicators.Sleepy);

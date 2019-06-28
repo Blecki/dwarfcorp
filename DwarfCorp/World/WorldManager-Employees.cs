@@ -126,7 +126,7 @@ namespace DwarfCorp
 
         public bool AreAllEmployeesAsleep()
         {
-            return (PlayerFaction.Minions.Count > 0) && PlayerFaction.Minions.All(minion => !minion.Active || ((!minion.Stats.Species.CanSleep || minion.Creature.Stats.IsAsleep) && !minion.IsDead));
+            return (PlayerFaction.Minions.Count > 0) && PlayerFaction.Minions.All(minion => !minion.Active || minion.Creature.Stats.IsAsleep || minion.IsDead);
         }
     }
 }

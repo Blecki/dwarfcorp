@@ -299,7 +299,11 @@ namespace DwarfCorp
 
             if (!Active)
                 return;
+
             Creature.NoiseMaker.BasePitch = Stats.VoicePitch;
+
+            // Non-dwarves are always at full energy.
+            Stats.Energy.CurrentValue = 100.0f;
 
             AutoGatherTimer.Update(gameTime);
 
@@ -339,7 +343,7 @@ namespace DwarfCorp
             PreEmptTasks();
             HandleReproduction();
 
-            // Try to find food if we are hungry.
+            // Try to find food if we are hungry. Wait - doesn't this rob the player?
             if (Stats.Hunger.IsDissatisfied() && World.CountResourcesWithTag(Resource.ResourceTags.Edible) > 0)
             {
                 Task toReturn = new SatisfyHungerTask();

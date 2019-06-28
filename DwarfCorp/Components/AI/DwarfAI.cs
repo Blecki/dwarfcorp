@@ -161,7 +161,7 @@ namespace DwarfCorp
             }
 
             // Heal thyself
-            if (Stats.Health.IsDissatisfied() && Stats.Species.CanSleep)
+            if (Stats.Health.IsDissatisfied())
             {
                 Task toReturn = new GetHealedTask();
                 if (!Tasks.Contains(toReturn) && CurrentTask != toReturn)
@@ -186,7 +186,7 @@ namespace DwarfCorp
                     AssignTask(toReturn);
             }
 
-            if (Stats.CanGetBored && Stats.Boredom.IsDissatisfied())
+            if (Stats.Boredom.IsDissatisfied())
             {
                 if (!Tasks.Any(task => task.BoredomIncrease < 0))
                 {
