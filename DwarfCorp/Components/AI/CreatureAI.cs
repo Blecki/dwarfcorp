@@ -151,7 +151,7 @@ namespace DwarfCorp
             Task bestTask = null;
             var bestPriority = TaskPriority.Eventually;
 
-            foreach (Task task in tasks)
+            foreach (var task in tasks)
             {
                 float cost = task.ComputeCost(Creature);
 

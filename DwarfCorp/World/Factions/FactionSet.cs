@@ -62,8 +62,13 @@ namespace DwarfCorp
                 Race = "Evil"
             });
 
+            Factions["Dwarves"] = new Faction(world, new OverworldFaction
+            {
+                Name = "Dwarves",
+                Race = "Dwarf"
+            });
 
-            Factions["Goblins"] = new Faction(world, new OverworldFaction
+            Factions["Goblins"] = new Faction(world, new OverworldFaction // Todo: Normalize race name
             {
                 Name = "Goblins",
                 Race = "Goblins"

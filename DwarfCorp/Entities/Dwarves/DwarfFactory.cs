@@ -59,7 +59,7 @@ namespace DwarfCorp
             return toReturn.Physics;
         }
 
-        private static float GetRandomVoicePitch(Gender gender)
+        public static float GetRandomVoicePitch(Gender gender)
         {
             switch (gender)
             {

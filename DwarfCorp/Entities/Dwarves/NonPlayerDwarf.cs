@@ -5,30 +5,64 @@ using System.Linq;
 
 namespace DwarfCorp
 {
-    public class Dwarf : Creature
+    public class NonPlayerDwarf : Creature
     {
-        private DateTime LastHungerDamageTime = DateTime.Now;
+        [EntityFactory("Non-Player Dwarf Miner")]
+        private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new NonPlayerDwarf(
+                Manager,
+                new CreatureStats("Dwarf", "Miner", 0)
+                {
+                    RandomSeed = MathFunctions.Random.Next(),
+                },
+                Manager.World.Factions.Factions["Dwarves"], "Dwarf", Position).Physics;
+        }
 
-        public Dwarf()
+        [EntityFactory("Non-Player Dwarf Soldier")]
+        private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new NonPlayerDwarf(
+                Manager,
+                new CreatureStats("Dwarf", "Soldier", 0)
+                {
+                    RandomSeed = MathFunctions.Random.Next(),
+                },
+                Manager.World.Factions.Factions["Dwarves"], "Dwarf", Position).Physics;
+        }
+
+        [EntityFactory("Non-Player Dwarf Crafter")]
+        private static GameComponent __factory2(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new NonPlayerDwarf(
+                Manager,
+                new CreatureStats("Dwarf", "Crafter", 0)
+                {
+                    RandomSeed = MathFunctions.Random.Next(),
+                },
+                Manager.World.Factions.Factions["Dwarves"], "Dwarf", Position).Physics;
+        }
+
+        public NonPlayerDwarf()
         {
             
         }
 
-        public Dwarf(ComponentManager manager, CreatureStats stats, Faction faction,  string name, Vector3 position) :
+        public NonPlayerDwarf(ComponentManager manager, CreatureStats stats, Faction faction,  string name, Vector3 position) :
             base(manager, stats, faction, name)
         {
             Physics = new Physics(manager, "Dwarf", Matrix.CreateTranslation(position),
                         new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
-
             Physics.AddChild(this);
 
             Stats.Gender = Mating.RandomGender();
+            Stats.VoicePitch = DwarfFactory.GetRandomVoicePitch(Stats.Gender);
             Physics.Orientation = Physics.OrientMode.RotateY;
 
             CreateCosmeticChildren(Manager);
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
-            Physics.AddChild(new DwarfAI(Manager, "Dwarf AI", Sensor));         
+            Physics.AddChild(new CreatureAI(Manager, "Non Player Dwarf AI", Sensor));         
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
             Physics.Tags.Add("Dwarf");
@@ -37,45 +71,13 @@ namespace DwarfCorp
 
             Stats.FullName = TextGenerator.GenerateRandom("$firstname", " ", "$lastname");
             Stats.FindAdjustment("base stats").Size = 5;
-            Stats.CanEat = true;
+
             AI.Movement.CanClimbWalls = true; // Why isn't this a flag like the below?
-            AI.Movement.SetCan(MoveType.Teleport, true);
-            AI.Movement.SetCost(MoveType.Teleport, 1.0f);
-            AI.Movement.SetSpeed(MoveType.Teleport, 10.0f);
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
-            AI.Movement.SetCan(MoveType.EnterVehicle, true);
-            AI.Movement.SetCan(MoveType.ExitVehicle, true);
-            AI.Movement.SetCan(MoveType.RideVehicle, true);
-            AI.Movement.SetCost(MoveType.EnterVehicle, 0.01f);
-            AI.Movement.SetCost(MoveType.ExitVehicle, 0.01f);
-            AI.Movement.SetCost(MoveType.RideVehicle, 0.01f);
-            AI.Movement.SetSpeed(MoveType.RideVehicle, 3.0f);
-            AI.Movement.SetSpeed(MoveType.EnterVehicle, 1.0f);
-            AI.Movement.SetSpeed(MoveType.ExitVehicle, 1.0f);
-            if (AI.Stats.IsTaskAllowed(TaskCategory.Dig))
-                AI.Movement.SetCan(MoveType.Dig, true);
+
             AI.Biography = Applicant.GenerateBiography(AI.Stats.FullName, Stats.Gender);
             Stats.Money = (decimal)MathFunctions.Rand(0, 150);
-
-            Physics.AddChild(new DwarfThoughts(Manager, "Thoughts"));
-        }
-
-        public override void Die()
-        {
-            String type = AI.Stats.FullName + "'s " + "Corpse";
-
-            if (!ResourceLibrary.Exists(type))
-            {
-                var r = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName("Corpse"));
-                r.Name = type;
-                r.ShortName = type;
-                ResourceLibrary.Add(r);
-            }
-
-            Inventory.AddResource(new ResourceAmount(type, 1));
-
-            base.Die();
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
@@ -184,55 +186,6 @@ namespace DwarfCorp
                 if (defaultLayer != null)
                     Sprite.AddLayer(defaultLayer, Palette);
             }
-        }
-
-        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
-        {
-            base.Update(gameTime, chunks, camera);
-
-            if (!Active) return;
-
-            #region Update Status Stat Effects 
-
-            var statAdjustments = Stats.FindAdjustment("status");
-            Stats.RemoveStatAdjustment("status");
-            if (statAdjustments == null)
-                statAdjustments = new StatAdjustment() { Name = "status" };
-            statAdjustments.Reset();
-
-            if (!Stats.IsAsleep)
-                Stats.Hunger.CurrentValue -= (float)gameTime.ElapsedGameTime.TotalSeconds * Stats.HungerGrowth;
-            else
-                Hp += (float)gameTime.ElapsedGameTime.TotalSeconds * 0.1f;
-
-            Stats.Health.CurrentValue = (Hp - MinHealth) / (MaxHealth - MinHealth); // Todo: MinHealth always 0?
-
-            if (Stats.Energy.IsDissatisfied())
-            {
-                DrawIndicator(IndicatorManager.StandardIndicators.Sleepy);
-                statAdjustments.Strength += -2.0f;
-                statAdjustments.Intelligence += -2.0f;
-                statAdjustments.Dexterity += -2.0f;
-            }
-
-            if (Stats.CanEat && Stats.Hunger.IsDissatisfied() && !Stats.IsAsleep)
-            {
-                DrawIndicator(IndicatorManager.StandardIndicators.Hungry);
-
-                statAdjustments.Intelligence += -1.0f;
-                statAdjustments.Dexterity += -1.0f;
-
-                if (Stats.Hunger.CurrentValue <= 1e-12 && (DateTime.Now - LastHungerDamageTime).TotalSeconds > Stats.HungerDamageRate)
-                {
-                    Damage(1.0f / (Stats.HungerResistance) * Stats.HungerDamageRate);
-                    LastHungerDamageTime = DateTime.Now;
-                }
-            }
-
-            if (!statAdjustments.IsAllZero)
-                Stats.AddStatAdjustment(statAdjustments);
-
-            #endregion
         }
     }
 }

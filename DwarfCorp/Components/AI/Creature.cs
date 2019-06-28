@@ -10,7 +10,6 @@ namespace DwarfCorp
 {
     public partial class Creature : Health
     {
-        private DateTime LastHungerDamageTime = DateTime.Now;
         private CharacterMode _currentCharacterMode = CharacterMode.Idle;
         private bool _lastIsCloaked = false;
         public bool IsCloaked = false;
@@ -107,8 +106,6 @@ namespace DwarfCorp
             }
         }
 
-
-                /// <summary> Updates the creature </summary>
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
@@ -134,49 +131,6 @@ namespace DwarfCorp
             UpdateHealthBar(gameTime);
             CheckNeighborhood(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
             UpdateAnimation(gameTime, chunks, camera);
-
-            #region Update Status Stat Effects 
-            // Todo: Move to dwarf
-
-            var statAdjustments = Stats.FindAdjustment("status");
-            Stats.RemoveStatAdjustment("status");
-            if (statAdjustments == null)
-                statAdjustments = new StatAdjustment() { Name = "status" };
-            statAdjustments.Reset();
-
-            if (!Stats.IsAsleep)
-                Stats.Hunger.CurrentValue -= (float)gameTime.ElapsedGameTime.TotalSeconds * Stats.HungerGrowth;
-            else
-                Hp += (float)gameTime.ElapsedGameTime.TotalSeconds * 0.1f;
-
-            Stats.Health.CurrentValue = (Hp - MinHealth) / (MaxHealth - MinHealth); // Todo: MinHealth always 0?
-                        
-            if (Stats.Energy.IsDissatisfied())
-            {
-                DrawIndicator(IndicatorManager.StandardIndicators.Sleepy);
-                statAdjustments.Strength += -2.0f;
-                statAdjustments.Intelligence += -2.0f;
-                statAdjustments.Dexterity += -2.0f;
-            }
-
-            if (Stats.CanEat && Stats.Hunger.IsDissatisfied() && !Stats.IsAsleep)
-            {
-                DrawIndicator(IndicatorManager.StandardIndicators.Hungry);
-
-                statAdjustments.Intelligence += -1.0f;
-                statAdjustments.Dexterity += -1.0f;
-
-                if (Stats.Hunger.CurrentValue <= 1e-12 && (DateTime.Now - LastHungerDamageTime).TotalSeconds > Stats.HungerDamageRate)
-                {
-                    Damage(1.0f / (Stats.HungerResistance) * Stats.HungerDamageRate);
-                    LastHungerDamageTime = DateTime.Now;
-                }
-            }
-
-            if (!statAdjustments.IsAllZero)
-                Stats.AddStatAdjustment(statAdjustments);
-
-            #endregion
             
             Stats.HandleBuffs(this, gameTime);
             UpdateMigration(gameTime);

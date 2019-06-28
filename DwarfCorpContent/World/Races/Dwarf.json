@@ -4,8 +4,9 @@
   "Posessive": "Dwarvish",
   "DiplomacyConversation": "World/dwarf.conv",
   "CreatureTypes": [
-    "Dwarf Crafter",
-    "Dwarf Soldier"
+    "Non-Player Dwarf Crafter",
+    "Non-Player Dwarf Soldier",
+    "Non-Player Dwarf Miner"
   ],
   "IsIntelligent": true,
   "IsNative": true,
