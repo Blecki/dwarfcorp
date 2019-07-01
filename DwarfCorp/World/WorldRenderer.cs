@@ -237,7 +237,7 @@ namespace DwarfCorp
 
         public void FillClosestLights(DwarfTime time)
         {
-            List<Vector3> positions = (from light in DynamicLight.Lights select light.Position).ToList();
+            var positions = (from light in DynamicLight.Lights select light.Position).ToList();
             positions.AddRange((from light in DynamicLight.TempLights select light.Position));
             positions.Sort((a, b) =>
             {
@@ -247,31 +247,22 @@ namespace DwarfCorp
             });
 
             if (!GameSettings.Default.CursorLightEnabled)
-            {
                 LightPositions[0] = new Vector3(-99999, -99999, -99999);
-            }
             else
-            {
                 LightPositions[0] = CursorLightPos;
-            }
 
             int numLights = GameSettings.Default.CursorLightEnabled ? Math.Min(16, positions.Count + 1) : Math.Min(16, positions.Count);
             for (int i = GameSettings.Default.CursorLightEnabled ? 1 : 0; i < numLights; i++)
             {
                 if (i > positions.Count)
-                {
                     LightPositions[i] = new Vector3(-99999, -99999, -99999);
-                }
                 else
-                {
                     LightPositions[i] = GameSettings.Default.CursorLightEnabled ? positions[i - 1] : positions[i];
-                }
             }
 
             for (int j = numLights; j < 16; j++)
-            {
                 LightPositions[j] = new Vector3(0, 0, 0);
-            }
+
             DefaultShader.CurrentNumLights = Math.Max(Math.Min(GameSettings.Default.CursorLightEnabled ? numLights - 1 : numLights, 15), 0);
             DynamicLight.TempLights.Clear();
         }

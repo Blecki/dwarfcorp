@@ -197,7 +197,6 @@ namespace DwarfCorp
             }
         }
 
-        // Todo: Eliminate members that aren't straight pass throughs to the underlying data.
         [JsonIgnore]
         public VoxelType Type
         {
