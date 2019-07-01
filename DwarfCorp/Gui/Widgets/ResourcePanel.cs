@@ -93,9 +93,9 @@ namespace DwarfCorp.Gui.Widgets
             List<AggregatedResource> aggregated = new List<AggregatedResource>();
             foreach (var pair in resources)
             {
-                var resource = ResourceLibrary.GetResourceByName(pair.Value.First.Type);
+                var resource = Library.GetResourceType(pair.Value.First.Type);
                 var existing = aggregated.FirstOrDefault(existingResource => 
-                AreListsEqual(ResourceLibrary.GetResourceByName(existingResource.Amount.First.Type).Tags, resource.Tags));
+                AreListsEqual(Library.GetResourceType(existingResource.Amount.First.Type).Tags, resource.Tags));
 
                 if (existing != null)
                 {
@@ -127,7 +127,7 @@ namespace DwarfCorp.Gui.Widgets
                         World.ListResourcesInStockpilesPlusMinions().Where(p => p.Value.First.Count > 0 || p.Value.Second.Count > 0));
                 foreach (var resource in aggregated)
                 {
-                    var resourceTemplate = ResourceLibrary.GetResourceByName(resource.Amount.First.Type);
+                    var resourceTemplate = Library.GetResourceType(resource.Amount.First.Type);
 
                     // Don't display resources with no value (a hack, yes!). This is to prevent "special" resources from getting traded.
                     if (resourceTemplate.MoneyValue == 0.0m)

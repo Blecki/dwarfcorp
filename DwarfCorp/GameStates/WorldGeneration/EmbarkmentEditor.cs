@@ -256,7 +256,7 @@ namespace DwarfCorp.GameStates
             {
                 ComputeValue = (resourceType) =>
                 {
-                    var r = ResourceLibrary.GetResourceByName(resourceType);
+                    var r = Library.GetResourceType(resourceType);
                     return r.MoneyValue;
                 },
                 SourceResources = Settings.PlayerCorporationResources.Enumerate().ToList(),

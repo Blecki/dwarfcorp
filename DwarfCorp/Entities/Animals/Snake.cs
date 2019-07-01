@@ -108,12 +108,12 @@ namespace DwarfCorp
                 {
                     String type = Stats.CurrentClass.Name + " " + "Meat";
 
-                    if (!ResourceLibrary.Exists(type))
+                    if (!Library.DoesResourceTypeExist(type))
                     {
-                        var r = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName("Meat"));
+                        var r = Library.CreateResourceType(Library.GetResourceType("Meat"));
                         r.Name = type;
                         r.ShortName = type;
-                        ResourceLibrary.Add(r);
+                        Library.AddResourceType(r);
                     }
 
                     inventory.AddResource(new ResourceAmount(type, 1));
@@ -122,12 +122,12 @@ namespace DwarfCorp
                 {
                     String type = Stats.CurrentClass.Name + " Bone";
 
-                    if (!ResourceLibrary.Exists(type))
+                    if (!Library.DoesResourceTypeExist(type))
                     {
-                        var r = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName("Bone"));
+                        var r = Library.CreateResourceType(Library.GetResourceType("Bone"));
                         r.Name = type;
                         r.ShortName = type;
-                        ResourceLibrary.Add(r);
+                        Library.AddResourceType(r);
                     }
 
                     inventory.AddResource(new ResourceAmount(type, 1));

@@ -1,28 +1,21 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Runtime.Serialization;
-using DwarfCorp.GameStates;
 using DwarfCorp.Gui;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
-using System.Text;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DwarfCorp
 {
-    // Todo: Lock down.
-    public static class ResourceLibrary
+    public static partial class Library
     {
         private static Dictionary<String, Resource> Resources = null;
-        private static bool IsInitialized = false;
+        private static bool ResourcesInitialized = false;
 
-        private static void Initialize()
+        private static void InitializeResources()
         {
-            if (IsInitialized)
+            if (ResourcesInitialized)
                 return;
-            IsInitialized = true;
+            ResourcesInitialized = true;
 
             Resources = new Dictionary<String, Resource>();
 
@@ -31,48 +24,48 @@ namespace DwarfCorp
             foreach (var resource in resourceList)
             {
                 resource.Generated = false;
-                Add(resource);
+                AddResourceType(resource);
             }
 
             Console.WriteLine("Loaded Resource Library.");
         }
 
-        public static IEnumerable<Resource> FindResourcesWithTag(Resource.ResourceTags tag)
+        public static IEnumerable<Resource> EnumerateResourceTypesWithTag(Resource.ResourceTags tag)
         {
-            Initialize();
+            InitializeResources();
             return Resources.Values.Where(resource => resource.Tags.Contains(tag));
         }
 
-        public static Resource FindMedianWithTag(Resource.ResourceTags tag)
+        public static Resource FindMedianResourceTypeWithTag(Resource.ResourceTags tag)
         {
-            Initialize();
+            InitializeResources();
             var applicable = Resources.Values.Where(resource => resource.Tags.Contains(tag)).ToList();
             if (applicable.Count == 0) return null;
             applicable.Sort((a, b) => (int)a.MoneyValue.Value - (int)b.MoneyValue.Value);
             return applicable[applicable.Count / 2];
         }
 
-        public static Resource GetResourceByName(string name)
+        public static Resource GetResourceType(string name)
         {
-            Initialize();
+            InitializeResources();
             return Resources.ContainsKey((String) name) ? Resources[name] : null;
         }
 
-        public static bool Exists(String Name)
+        public static bool DoesResourceTypeExist(String Name)
         {
-            Initialize();
+            InitializeResources();
             return Resources.ContainsKey(Name);
         }
 
-        public static IEnumerable<Resource> Enumerate()
+        public static IEnumerable<Resource> EnumerateResourceTypes()
         {
-            Initialize();
+            InitializeResources();
             return Resources.Values;
         }
 
-        public static void Add(Resource resource)
+        public static void AddResourceType(Resource resource)
         {
-            Initialize();
+            InitializeResources();
 
             Resources[resource.Name] = resource;
 
@@ -85,17 +78,17 @@ namespace DwarfCorp
                 EntityFactory.RegisterEntity(resource.Name + " Resource", (position, data) => new ResourceEntity(EntityFactory.World.ComponentManager, new ResourceAmount(resource, data.GetData<int>("num", 1)), position));   
         }
 
-        public static void AddIfNew(Resource Resource)
+        public static void AddResourceTypeIfNew(Resource Resource)
         {
-            Initialize();
+            InitializeResources();
 
-            if (!Exists(Resource.Name))
-                Add(Resource);
+            if (!DoesResourceTypeExist(Resource.Name))
+                AddResourceType(Resource);
         }
 
-        public static Resource GenerateResource(Resource From)
+        public static Resource CreateResourceType(Resource From)
         {
-            var r = GenerateResource();
+            var r = CreateResourceType();
 
             r.Generated = true;
 
@@ -120,7 +113,7 @@ namespace DwarfCorp
             return r;
         }
 
-        public static Resource GenerateResource()
+        public static Resource CreateResourceType()
         {
             return new Resource()
             {
@@ -128,52 +121,52 @@ namespace DwarfCorp
             };
         }
         
-        public static Resource CreateAle(String type)
+        public static Resource CreateAleResourceType(String type)
         {
-            Initialize();
+            InitializeResources();
 
-            var baseResource = GetResourceByName(type);
+            var baseResource = GetResourceType(type);
             var aleName = String.IsNullOrEmpty(baseResource.AleName) ? type + " Ale" : baseResource.AleName;
 
-            if (!Exists(aleName))
+            if (!DoesResourceTypeExist(aleName))
             {
-                var r = GenerateResource(GetResourceByName("Ale"));
+                var r = CreateResourceType(GetResourceType("Ale"));
                 r.Name = aleName;
                 r.ShortName = aleName;
-                Add(r);
+                AddResourceType(r);
             }
 
-            return GetResourceByName(aleName);
+            return GetResourceType(aleName);
         }
 
-        public static Resource CreateMeal(String typeA, String typeB)
+        public static Resource CreateMealResourceType(String typeA, String typeB)
         {
-            Initialize();
+            InitializeResources();
 
-            var componentA = GetResourceByName(typeA);
-            var componentB = GetResourceByName(typeB);
-            var r = GenerateResource(GetResourceByName("Meal"));
+            var componentA = GetResourceType(typeA);
+            var componentB = GetResourceType(typeB);
+            var r = CreateResourceType(GetResourceType("Meal"));
             r.FoodContent = componentA.FoodContent + componentB.FoodContent;
             r.Name = TextGenerator.GenerateRandom(new List<String>() { componentA.Name, componentB.Name }, TextGenerator.GetAtoms(ContentPaths.Text.Templates.food));
             r.MoneyValue = 2m * (componentA.MoneyValue + componentB.MoneyValue);
             r.ShortName = r.Name;
 
-            AddIfNew(r);
-            return GetResourceByName(r.Name);
+            AddResourceTypeIfNew(r);
+            return GetResourceType(r.Name);
         }
 
-        public static Resource EncrustTrinket(String resourcetype, String gemType)
+        public static Resource CreateEncrustedTrinketResourceType(String resourcetype, String gemType)
         {
-            Initialize();
+            InitializeResources();
 
             var resultName = gemType + "-encrusted " + resourcetype;
-            if (Exists(resultName))
-                return GetResourceByName(resultName);
+            if (DoesResourceTypeExist(resultName))
+                return GetResourceType(resultName);
 
-            var baseResource = GetResourceByName(resourcetype);
-            var gemResource = GetResourceByName(gemType);
+            var baseResource = GetResourceType(resourcetype);
+            var gemResource = GetResourceType(gemType);
 
-            var toReturn = GenerateResource(baseResource);
+            var toReturn = CreateResourceType(baseResource);
             toReturn.Name = resultName;
             toReturn.MoneyValue += gemResource.MoneyValue * 2m;
             toReturn.Tags = new List<Resource.ResourceTags>() { Resource.ResourceTags.Craft, Resource.ResourceTags.Precious };
@@ -193,13 +186,13 @@ namespace DwarfCorp
             toReturn.GuiLayers.AddRange(baseResource.GuiLayers);
             toReturn.GuiLayers.Add(new TileReference(baseResource.TrinketData.EncrustingAsset, gemResource.TrinketData.SpriteRow * 7 + baseResource.TrinketData.SpriteColumn));
 
-            Add(toReturn);
+            AddResourceType(toReturn);
             return toReturn;
         }
 
-        public static Resource GenerateTrinket(String baseMaterial, float quality)
+        public static Resource CreateTrinketResourceType(String baseMaterial, float quality)
         {
-            Initialize();
+            InitializeResources();
 
             string[] names =
             {
@@ -253,12 +246,12 @@ namespace DwarfCorp
             var item = MathFunctions.Random.Next(names.Count());
             var name = baseMaterial + " " + names[item] + " (" + qualityType + ")";
 
-            if (Exists(name))
-                return GetResourceByName(name);
+            if (DoesResourceTypeExist(name))
+                return GetResourceType(name);
 
-            var material = GetResourceByName(baseMaterial);
+            var material = GetResourceType(baseMaterial);
 
-            var toReturn = GenerateResource(Resources["Trinket"]);
+            var toReturn = CreateResourceType(Resources["Trinket"]);
             toReturn.Name = name;
             toReturn.ShortName = baseMaterial + " " + names[item];
             toReturn.MoneyValue = values[item] * material.MoneyValue * 3m * quality;
@@ -281,20 +274,20 @@ namespace DwarfCorp
             toReturn.TrinketData = trinketInfo;
             toReturn.GuiLayers = new List<TileReference>() {new TileReference(material.TrinketData.BaseAsset, tile.Y*7 + tile.X)};
 
-            Add(toReturn);
+            AddResourceType(toReturn);
             return toReturn;
         }
         
-        public static Resource CreateBread(String component)
+        public static Resource CreateBreadResourceType(String component)
         {
-            Initialize();
+            InitializeResources();
 
-            if (Exists(component + " Bread"))
-                return GetResourceByName(component + " Bread");
+            if (DoesResourceTypeExist(component + " Bread"))
+                return GetResourceType(component + " Bread");
 
-            var toReturn = GenerateResource(GetResourceByName("Bread"));
+            var toReturn = CreateResourceType(GetResourceType("Bread"));
             toReturn.Name = component + " Bread";
-            Add(toReturn);
+            AddResourceType(toReturn);
             return toReturn;
         }
     }

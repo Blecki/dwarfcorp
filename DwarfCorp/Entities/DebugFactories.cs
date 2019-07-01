@@ -46,10 +46,10 @@ namespace DwarfCorp
         [EntityFactory("RandTrinket")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            var randResource = ResourceLibrary.GenerateTrinket(Datastructures.SelectRandom(ResourceLibrary.Enumerate().Where(r => r.Tags.Contains(Resource.ResourceTags.Material))).Name, MathFunctions.Rand(0.1f, 3.5f));
+            var randResource = Library.CreateTrinketResourceType(Datastructures.SelectRandom(Library.EnumerateResourceTypes().Where(r => r.Tags.Contains(Resource.ResourceTags.Material))).Name, MathFunctions.Rand(0.1f, 3.5f));
 
             if (MathFunctions.RandEvent(0.5f))
-                randResource = ResourceLibrary.EncrustTrinket(randResource.Name, Datastructures.SelectRandom(ResourceLibrary.Enumerate().Where(r => r.Tags.Contains(Resource.ResourceTags.Gem))).Name);
+                randResource = Library.CreateEncrustedTrinketResourceType(randResource.Name, Datastructures.SelectRandom(Library.EnumerateResourceTypes().Where(r => r.Tags.Contains(Resource.ResourceTags.Gem))).Name);
 
             return new ResourceEntity(Manager, new ResourceAmount(randResource.Name), Position);
         }
@@ -57,8 +57,8 @@ namespace DwarfCorp
         [EntityFactory("RandFood")]
         private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            IEnumerable<Resource> foods = ResourceLibrary.FindResourcesWithTag(Resource.ResourceTags.RawFood);
-            Resource randresource = ResourceLibrary.CreateMeal(Datastructures.SelectRandom(foods).Name, Datastructures.SelectRandom(foods).Name);
+            IEnumerable<Resource> foods = Library.EnumerateResourceTypesWithTag(Resource.ResourceTags.RawFood);
+            Resource randresource = Library.CreateMealResourceType(Datastructures.SelectRandom(foods).Name, Datastructures.SelectRandom(foods).Name);
             return new ResourceEntity(Manager, new ResourceAmount(randresource.Name), Position);
         }
     }

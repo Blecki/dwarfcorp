@@ -178,10 +178,10 @@ namespace DwarfCorp
             if (_preEmptTimer.HasTriggered)
             {
                 var inventory = Creature.Inventory;
-                if (inventory != null && inventory.Resources.Any(resource => ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(Resource.ResourceTags.Potion)))
+                if (inventory != null && inventory.Resources.Any(resource => Library.GetResourceType(resource.Resource).Tags.Contains(Resource.ResourceTags.Potion)))
                 {
                     var applicablePotions = inventory.Resources.Where(resource => !resource.MarkedForRestock).
-                        Select(resource => ResourceLibrary.GetResourceByName(resource.Resource)).
+                        Select(resource => Library.GetResourceType(resource.Resource)).
                         Where(resource => resource.Tags.Contains(Resource.ResourceTags.Potion) 
                         && resource.PotionType != null
                         && resource.PotionType.ShouldDrink(Creature));
@@ -324,7 +324,7 @@ namespace DwarfCorp
 
                 foreach (var body in World.EnumerateIntersectingObjects(Physics.BoundingBox.Expand(3.0f)).OfType<ResourceEntity>().Where(r => r.Active && r.AnimationQueue.Count == 0))
                 {
-                    var resource = ResourceLibrary.GetResourceByName(body.Resource.Type);
+                    var resource = Library.GetResourceType(body.Resource.Type);
                     if (resource.Tags.Contains(Resource.ResourceTags.Edible))
                     {
                         if ((Faction.Race.EatsMeat && resource.Tags.Contains(Resource.ResourceTags.AnimalProduct)) ||

@@ -35,7 +35,7 @@ namespace DwarfCorp.Gui.Widgets
                 int k = 0;
                 foreach(var ingredient in Data.RequiredResources)
                 {
-                    var resource = ResourceLibrary.FindMedianWithTag(ingredient.Type);
+                    var resource = Library.FindMedianResourceTypeWithTag(ingredient.Type);
                     titleBar.AddChild(new Gui.Widget
                     {
                         MinimumSize = new Point(32, 32),
@@ -212,7 +212,7 @@ namespace DwarfCorp.Gui.Widgets
                         if (Data.Type == CraftItem.CraftType.Object && PlaceAction != null)
                         {
                             var resources = World.ListResources();
-                            if (resources.Any(resource => ResourceLibrary.GetResourceByName(resource.Key).CraftInfo.CraftItemType == Data.Name))
+                            if (resources.Any(resource => Library.GetResourceType(resource.Key).CraftInfo.CraftItemType == Data.Name))
                             {
                                 bottomBar.AddChild(new Button()
                                 {

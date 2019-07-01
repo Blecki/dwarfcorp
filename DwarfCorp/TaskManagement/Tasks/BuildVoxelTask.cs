@@ -82,7 +82,7 @@ namespace DwarfCorp
         public override Act CreateScript(Creature creature)
         {
             var voxtype = Library.GetVoxelType(VoxType);
-            var resource = creature.World.ListResources().Where(r => voxtype.CanBuildWith(ResourceLibrary.GetResourceByName(r.Key))).FirstOrDefault();
+            var resource = creature.World.ListResources().Where(r => voxtype.CanBuildWith(Library.GetResourceType(r.Key))).FirstOrDefault();
             
             if (resource.Key == null)
             {

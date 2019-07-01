@@ -53,7 +53,7 @@ namespace DwarfCorp
                 var craftItem = Library.GetCraftable(craftType);
                 foreach(var resource in craftItem.RequiredResources)
                 {
-                    var genericResource = ResourceLibrary.FindResourcesWithTag(resource.Type).FirstOrDefault();
+                    var genericResource = Library.EnumerateResourceTypesWithTag(resource.Type).FirstOrDefault();
                     resources.Add(new ResourceAmount(genericResource, resource.Count));
                 }
             }
@@ -114,7 +114,7 @@ namespace DwarfCorp
 
         protected static float GetHealth(String type)
         {
-            var resource = ResourceLibrary.GetResourceByName(type);
+            var resource = Library.GetResourceType(type);
             foreach(var tag in resource.Tags)
             {
                 if (Healths.ContainsKey(tag))

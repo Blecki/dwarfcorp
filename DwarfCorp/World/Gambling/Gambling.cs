@@ -5,96 +5,6 @@ using System.Text;
 
 namespace DwarfCorp.Scripting
 {
-    public class GambleTask : Task // Todo: Split file
-    {
-        public GambleTask()
-        {
-            Name = "Gamble";
-            ReassignOnDeath = false;
-            BoredomIncrease = GameSettings.Default.Boredom_Gamble;
-            EnergyDecrease = GameSettings.Default.Energy_Arduous;
-        }
-
-        public override Feasibility IsFeasible(Creature agent)
-        {
-            if (agent.Stats.IsAsleep || agent.IsDead || agent.Stats.Money < 10.0m || agent.World.GamblingState.Participants.Count > 4 || agent.Stats.Boredom.IsSatisfied())
-            {
-                return Feasibility.Infeasible;
-            }
-            return Feasibility.Feasible;
-        }
-
-        public override bool IsComplete(WorldManager World)
-        {
-            return World.GamblingState.State == Gambling.Status.Ended;
-        }
-
-        public override bool ShouldRetry(Creature agent)
-        {
-            return false;
-        }
-
-        public override Act CreateScript(Creature agent)
-        {
-            return new GambleAct() { Agent = agent.AI, Game = agent.World.GamblingState };
-        }
-    }
-
-    public class GambleAct : CompoundCreatureAct
-    {
-        public Gambling Game { get; set; }
-
-        public IEnumerable<Act.Status> Gamble()
-        {
-            while (Game.State != Gambling.Status.Ended && Game.Participants.Contains(Agent.Creature))
-            {
-                Agent.Physics.Face(Game.Location);
-                Agent.Physics.Velocity *= 0.9f;
-                Agent.Creature.CurrentCharacterMode = CharacterMode.Sitting;
-                yield return Act.Status.Running;
-            }
-            yield return Act.Status.Success;
-        }
-
-        public override void Initialize()
-        {
-            Name = "Gamble";
-            Game.Join(Agent.Creature);
-
-            VoxelHandle voxel = new VoxelHandle(Agent.World.ChunkManager, GlobalVoxelCoordinate.FromVector3(Game.Location));
-
-            if (voxel.IsValid)
-            {
-                Tree = new Sequence(new GoToVoxelAct(voxel, PlanAct.PlanType.Radius, Agent) { Name = "Go to gambling site.", Radius = 3.0f },
-                                    new Wrap(Gamble)) | new Wrap(Cleanup);
-                                    
-            }
-            else
-            {
-                Tree = new Always(Status.Fail);
-            }
-            base.Initialize();
-        }
-
-        public IEnumerable<Act.Status> Cleanup()
-        {
-            if (Game != null && Game.Participants.Contains(Agent.Creature))
-            {
-                Game.Participants.Remove(Agent.Creature);
-            }
-            yield return Act.Status.Success;
-        }
-
-        public override void OnCanceled()
-        {
-            foreach(var status in Cleanup())
-            {
-                //
-            }
-            base.OnCanceled();
-        }
-    }
-
     public class Gambling
     {
         public Microsoft.Xna.Framework.Vector3 Location = new Microsoft.Xna.Framework.Vector3();
@@ -111,6 +21,9 @@ namespace DwarfCorp.Scripting
         public Status State;
         public int CurrentRound = 1;
         public int MaxRounds = 3;
+        public Timer RoundTimer = new Timer(5.0f, false);
+        public Timer WaitTimer = new Timer(20.0f, true);
+        public CoinPileFixture PotFixture = null;
 
         public void Join(Creature creature)
         {
@@ -120,30 +33,24 @@ namespace DwarfCorp.Scripting
                 {
                     var zone = creature.World.FindNearestZone(creature.AI.Position);
                     var obj = creature.Faction.OwnedObjects.Where(b => b.Tags.Contains("Table")).OrderBy(b => (b.Position - creature.AI.Position).LengthSquared()).FirstOrDefault();
+
                     if (obj == null && zone == null)
-                    {
                         Location = creature.AI.Position;
-                    }
                     else if (obj != null)
                     {
                         var box = obj.GetBoundingBox();
                         Location = box.Center() + (box.Max.Y - box.Min.Y) * 0.5f * Microsoft.Xna.Framework.Vector3.Up;
                     }
                     else
-                    {
                         Location = zone.GetBoundingBox().Center() + Microsoft.Xna.Framework.Vector3.Up;
-                    }
                 }
                 Participants.Add(creature);
             }
+
             State = Status.WaitingForPlayers;
         }
 
-        public Timer RoundTimer = new Timer(5.0f, false);
-        public Timer WaitTimer = new Timer(20.0f, true);
-        public CoinPileFixture PotFixture = null;
-
-        public void PushParticipants()
+        private void PushParticipants()
         {
             var time = DwarfTime.LastTime;
             List<Creature> removals = new List<Creature>();
@@ -267,7 +174,7 @@ namespace DwarfCorp.Scripting
             
         }
 
-        public void EndGame()
+        private void EndGame()
         {
             State = Status.Ended;
 
@@ -293,7 +200,7 @@ namespace DwarfCorp.Scripting
             }
         }
 
-        public void NextRound()
+        private void NextRound()
         {
 
             RoundTimer.Reset();

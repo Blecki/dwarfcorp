@@ -181,7 +181,7 @@ namespace DwarfCorp
             LogStat("Resources", resources.Values.Select(r => r.First.Count + r.Second.Count).Sum());
             LogStat("Resource Value", (float)resources.Values.Select(r =>
             {
-                var value = ResourceLibrary.GetResourceByName(r.First.Type).MoneyValue.Value;
+                var value = Library.GetResourceType(r.First.Type).MoneyValue.Value;
                 return (r.First.Count * value) + (r.Second.Count * value);
             }).Sum());
             LogStat("Employees", PlayerFaction.Minions.Count);

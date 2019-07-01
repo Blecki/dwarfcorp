@@ -18,11 +18,11 @@ namespace DwarfCorp
             NoiseMaker.MakeNoise("Lay Egg", AI.Position, true, 1.0f);
 
             // Todo: Egg resource type and the baby made need to be in the species.
-            if (!ResourceLibrary.Exists(Stats.CurrentClass.Name + " Egg") || !EntityFactory.EnumerateEntityTypes().Contains(Stats.CurrentClass.Name + " Egg Resource"))
+            if (!Library.DoesResourceTypeExist(Stats.CurrentClass.Name + " Egg") || !EntityFactory.EnumerateEntityTypes().Contains(Stats.CurrentClass.Name + " Egg Resource"))
             {
-                var newEggResource = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName("Egg"));
+                var newEggResource = Library.CreateResourceType(Library.GetResourceType("Egg"));
                 newEggResource.Name = Stats.CurrentClass.Name + " Egg";
-                ResourceLibrary.Add(newEggResource);
+                Library.AddResourceType(newEggResource);
             }
 
             var parent = EntityFactory.CreateEntity<GameComponent>(Stats.CurrentClass.Name + " Egg Resource", Physics.Position);

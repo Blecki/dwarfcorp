@@ -62,7 +62,7 @@ namespace DwarfCorp
                         else if (type == RestockType.RestockResource && !Resources[k].MarkedForRestock)
                             continue;
 
-                        if (!ResourceLibrary.GetResourceByName(Resources[k].Resource).Tags.Contains(quantity.Type)) continue;
+                        if (!Library.GetResourceType(Resources[k].Resource).Tags.Contains(quantity.Type)) continue;
                         kRemove = k;
                         break;
                     }
@@ -263,7 +263,7 @@ namespace DwarfCorp
             Dictionary<String, int> resourceCounts = new Dictionary<String, int>();
             foreach (var resource in Resources)
             {
-                if (ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(itemToStock.Type))
+                if (Library.GetResourceType(resource.Resource).Tags.Contains(itemToStock.Type))
                 {
                     if (!resourceCounts.ContainsKey(resource.Resource))
                     {
@@ -279,7 +279,7 @@ namespace DwarfCorp
         public List<ResourceAmount> GetResources(Quantitiy<Resource.ResourceTags> quantitiy, RestockType type = RestockType.RestockResource)
         {
             return (from resource in Resources where
-                    ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(quantitiy.Type) && ((type == RestockType.RestockResource 
+                    Library.GetResourceType(resource.Resource).Tags.Contains(quantitiy.Type) && ((type == RestockType.RestockResource 
                     && resource.MarkedForRestock) || (type == RestockType.None && !resource.MarkedForRestock) || (type == RestockType.Any))
                     select new ResourceAmount(resource.Resource)).ToList();
         }

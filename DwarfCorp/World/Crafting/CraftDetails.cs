@@ -41,7 +41,7 @@ namespace DwarfCorp
                 var libraryType = Library.GetCraftable(craftType);
 
                 if (libraryType != null)
-                    Resources.AddRange(libraryType.RequiredResources.Select(requirement => new ResourceAmount(ResourceLibrary.FindResourcesWithTag(requirement.Type).OrderBy(r => r.MoneyValue.Value).FirstOrDefault(), requirement.Count)));
+                    Resources.AddRange(libraryType.RequiredResources.Select(requirement => new ResourceAmount(Library.EnumerateResourceTypesWithTag(requirement.Type).OrderBy(r => r.MoneyValue.Value).FirstOrDefault(), requirement.Count)));
             }
         }
 

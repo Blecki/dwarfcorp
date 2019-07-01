@@ -102,7 +102,7 @@ namespace DwarfCorp
                 {
                     if (numGot >= tag.Count)
                         break;
-                    foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => ResourceLibrary.GetResourceByName(sResource.Type).Tags.Contains(tag.Type)))
+                    foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => Library.GetResourceType(sResource.Type).Tags.Contains(tag.Type)))
                     {
                         int amountToRemove = global::System.Math.Min(resource.Count, tag.Count - numGot);
                         if (amountToRemove <= 0) continue;

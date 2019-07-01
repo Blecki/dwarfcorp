@@ -100,8 +100,8 @@ namespace DwarfCorp
             var objectName = String.IsNullOrEmpty(ObjectName) ? Name : ObjectName;
             string resourceName = prefix + objectName + " (" + TextGenerator.GetListString(MergeResources(selectedResources).Select(r => (string)r.Type)) + ")";
 
-            if (ResourceLibrary.Exists(resourceName))
-                return ResourceLibrary.GetResourceByName(resourceName);
+            if (Library.DoesResourceTypeExist(resourceName))
+                return Library.GetResourceType(resourceName);
 
             var sheet = world.UserInterface.Gui.RenderData.SourceSheets[Icon.Sheet];
 
@@ -109,14 +109,14 @@ namespace DwarfCorp
             var numTilesX = tex.Width / sheet.TileWidth;
             var numTilesY = tex.Height / sheet.TileHeight;
             var point = new Point(Icon.Tile % numTilesX, Icon.Tile / numTilesX);
-            var toReturn = ResourceLibrary.GenerateResource();
+            var toReturn = Library.CreateResourceType();
             toReturn.Name = resourceName;
             toReturn.Tags = new List<Resource.ResourceTags>()
                     {
                         Resource.ResourceTags.CraftItem,
                         Resource.ResourceTags.Craft
                     };
-            toReturn.MoneyValue = selectedResources.Sum(r => ResourceLibrary.GetResourceByName(r.Type).MoneyValue) * 2.0m;
+            toReturn.MoneyValue = selectedResources.Sum(r => Library.GetResourceType(r.Type).MoneyValue) * 2.0m;
             toReturn.CraftInfo = new Resource.CraftItemInfo
             {
                 Resources = selectedResources,
@@ -127,7 +127,7 @@ namespace DwarfCorp
             toReturn.GuiLayers = new List<Gui.TileReference>() { Icon };
             toReturn.CompositeLayers = new List<Resource.CompositeLayer>() { new Resource.CompositeLayer() { Asset = sheet.Texture, Frame = point, FrameSize = new Point(sheet.TileWidth, sheet.TileHeight) } };
             toReturn.Tint = Color.White;
-            ResourceLibrary.Add(toReturn);
+            Library.AddResourceType(toReturn);
 
             return toReturn;
         }

@@ -824,7 +824,7 @@ namespace DwarfCorp.GameStates
             }
 
             var resourceCount = World.ListResourcesInStockpilesPlusMinions()
-                .Where(r => data.CanBuildWith(ResourceLibrary.GetResourceByName(r.Key))).Sum(r => r.Value.First.Count + r.Value.Second.Count);
+                .Where(r => data.CanBuildWith(Library.GetResourceType(r.Key))).Sum(r => r.Value.First.Count + r.Value.Second.Count);
 
             int newNum = Math.Max(resourceCount -
                 World.PersistentData.Designations.EnumerateDesignations(DesignationType.Put).Count(d =>
@@ -1602,7 +1602,7 @@ namespace DwarfCorp.GameStates
                     (widget as FlatToolTray.Tray).ItemSource =
                         (new Widget[] { icon_menu_WallTypes_Return }).Concat(
                         Library.EnumerateVoxelTypes()
-                        .Where(voxel => voxel.IsBuildable && World.ListResources().Any(r => voxel.CanBuildWith(ResourceLibrary.GetResourceByName(r.Value.Type))))
+                        .Where(voxel => voxel.IsBuildable && World.ListResources().Any(r => voxel.CanBuildWith(Library.GetResourceType(r.Value.Type))))
                         .Select(data => new FlatToolTray.Icon
                         {
                             Tooltip = "Build " + data.Name,
@@ -1651,7 +1651,7 @@ namespace DwarfCorp.GameStates
                     (widget as FlatToolTray.Tray).ItemSource =
                         (new Widget[] { icon_menu_WallTypes_Return }).Concat(
                         Library.EnumerateVoxelTypes()
-                        .Where(voxel => voxel.IsBuildable && World.ListResources().Any(r => voxel.CanBuildWith(ResourceLibrary.GetResourceByName(r.Value.Type))))
+                        .Where(voxel => voxel.IsBuildable && World.ListResources().Any(r => voxel.CanBuildWith(Library.GetResourceType(r.Value.Type))))
                         .Select(data => new FlatToolTray.Icon
                         {
                             Tooltip = "Build " + data.Name,
@@ -1952,8 +1952,8 @@ namespace DwarfCorp.GameStates
                 ItemSource = (new Widget[] { icon_menu_Strings_Return }).Concat(
                     Library.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
                     && item.AllowUserCrafting
-                    && ResourceLibrary.Exists(item.ResourceCreated) &&
-                    !ResourceLibrary.GetResourceByName(item.ResourceCreated).Tags.Contains(Resource.ResourceTags.Edible) &&
+                    && Library.DoesResourceTypeExist(item.ResourceCreated) &&
+                    !Library.GetResourceType(item.ResourceCreated).Tags.Contains(Resource.ResourceTags.Edible) &&
                     item.CraftLocation != "Apothecary")
                     .Select(data => new FlatToolTray.Icon
                     {
@@ -2164,8 +2164,8 @@ namespace DwarfCorp.GameStates
                 ItemSource = (new Widget[] { icon_menu_Edibles_Return }).Concat(
                     Library.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
                     && item.AllowUserCrafting
-                    && ResourceLibrary.Exists(item.ResourceCreated)
-                    && ResourceLibrary.GetResourceByName(item.ResourceCreated).Tags.Contains(Resource.ResourceTags.Edible))
+                    && Library.DoesResourceTypeExist(item.ResourceCreated)
+                    && Library.GetResourceType(item.ResourceCreated).Tags.Contains(Resource.ResourceTags.Edible))
                     .Select(data => new FlatToolTray.Icon
                     {
                         Icon = data.Icon,
@@ -2239,7 +2239,7 @@ namespace DwarfCorp.GameStates
                 ItemSource = (new Widget[] { icon_menu_Edibles_Return }).Concat(
                     Library.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
                     && item.AllowUserCrafting
-                    && ResourceLibrary.Exists(item.ResourceCreated)
+                    && Library.DoesResourceTypeExist(item.ResourceCreated)
                     && item.CraftLocation == "Apothecary")
                     .Select(data => new FlatToolTray.Icon
                     {
@@ -2427,7 +2427,7 @@ namespace DwarfCorp.GameStates
                          World.ListResourcesWithTag(Resource.ResourceTags.Plantable)
                         .Select(resource => new FlatToolTray.Icon
                         {
-                            Icon = ResourceLibrary.GetResourceByName(resource.Type)?.GuiLayers[0],
+                            Icon = Library.GetResourceType(resource.Type)?.GuiLayers[0],
                             Tooltip = "Plant " + resource.Type,
                             Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
                             Text = resource.Type,

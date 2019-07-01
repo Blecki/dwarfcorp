@@ -66,7 +66,7 @@ namespace DwarfCorp
             {
                 int num = MathFunctions.RandInt(tags.Value - 5, tags.Value + 5);
 
-                var resources = ResourceLibrary.FindResourcesWithTag(tags.Key);
+                var resources = Library.EnumerateResourceTypesWithTag(tags.Key);
 
                 if (resources.Count() <= 0) continue;
 
@@ -80,11 +80,11 @@ namespace DwarfCorp
                     if (tags.Key == Resource.ResourceTags.Craft)
                     {
                         var craftTag = Datastructures.SelectRandom(Crafts);
-                        var availableCrafts = ResourceLibrary.FindResourcesWithTag(craftTag);
-                        var trinket = ResourceLibrary.GenerateTrinket(Datastructures.SelectRandom(availableCrafts).Name, MathFunctions.Rand(0.1f, 3.0f));
+                        var availableCrafts = Library.EnumerateResourceTypesWithTag(craftTag);
+                        var trinket = Library.CreateTrinketResourceType(Datastructures.SelectRandom(availableCrafts).Name, MathFunctions.Rand(0.1f, 3.0f));
 
                         if (MathFunctions.RandEvent(0.3f) && Encrustings.Count > 0)
-                            randResource = ResourceLibrary.EncrustTrinket(trinket.Name, Datastructures.SelectRandom(ResourceLibrary.FindResourcesWithTag(Datastructures.SelectRandom(Encrustings))).Name);
+                            randResource = Library.CreateEncrustedTrinketResourceType(trinket.Name, Datastructures.SelectRandom(Library.EnumerateResourceTypesWithTag(Datastructures.SelectRandom(Encrustings))).Name);
                         else
                             randResource = trinket;
                     }
@@ -105,7 +105,7 @@ namespace DwarfCorp
 
                 var selectedResources = new List<ResourceAmount>();
                 foreach (var requirement in randomObject.RequiredResources)
-                    selectedResources.Add(new ResourceAmount(Datastructures.SelectRandom(ResourceLibrary.FindResourcesWithTag(requirement.Type)), requirement.Count));
+                    selectedResources.Add(new ResourceAmount(Datastructures.SelectRandom(Library.EnumerateResourceTypesWithTag(requirement.Type)), requirement.Count));
 
                 var randResource = randomObject.ToResource(world, selectedResources, Posessive + " ");
                 if (!toReturn.ContainsKey(randResource.Name))

@@ -42,7 +42,7 @@ namespace DwarfCorp
             Name = String.Format("{4} order {0}: {1}/{2} {3}", TaskID, CurrentRepeat, NumRepeats, selectedResource.PluralDisplayName, verb);
             Priority = TaskPriority.Medium;
 
-            if (ResourceLibrary.GetResourceByName(Item.ItemType.ResourceCreated).Tags.Contains(Resource.ResourceTags.Edible))
+            if (Library.GetResourceType(Item.ItemType.ResourceCreated).Tags.Contains(Resource.ResourceTags.Edible))
             {
                 noise = "Cook";
                 Category = TaskCategory.Cook;

@@ -240,7 +240,7 @@ namespace DwarfCorp.Gui.Widgets
                 Background = new TileReference("basic", 0)
             });
 
-            var resourceInfo = ResourceLibrary.GetResourceByName(Resource.Type);
+            var resourceInfo = Library.GetResourceType(Resource.Type);
 
             var icon = r.AddChild(new ResourceIcon()
             {
@@ -290,7 +290,7 @@ namespace DwarfCorp.Gui.Widgets
 
         private void UpdateLineItemText(Widget LineItem, ResourceAmount Resource)
         {
-            var resourceInfo = ResourceLibrary.GetResourceByName(Resource.Type);
+            var resourceInfo = Library.GetResourceType(Resource.Type);
             var font = LineItem.Root.GetTileSheet("font10");
             var label = resourceInfo.ShortName ?? resourceInfo.Name; 
             if (font != null)

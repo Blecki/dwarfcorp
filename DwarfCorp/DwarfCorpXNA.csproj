@@ -432,7 +432,9 @@
     <Compile Include="World\Designations\DesignationLibrary.cs" />
     <Compile Include="World\Factions\TradeTask.cs" />
     <Compile Include="World\Factions\Trading\CorporateTradeEntity.cs" />
-    <Compile Include="World\Gambling.cs" />
+    <Compile Include="World\Gambling\GambleAct.cs" />
+    <Compile Include="World\Gambling\GambleTask.cs" />
+    <Compile Include="World\Gambling\Gambling.cs" />
     <Compile Include="World\Overworld\BiomeData.cs" />
     <Compile Include="World\Overworld\BiomeLibrary.cs" />
     <Compile Include="World\Overworld\ColonyCell.cs" />

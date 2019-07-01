@@ -61,7 +61,7 @@ namespace DwarfCorp.Gui.Widgets
             int k = 0;
             foreach (var resource in left)
             {
-                var resourceType = ResourceLibrary.GetResourceByName(resource.Type);
+                var resourceType = Library.GetResourceType(resource.Type);
                 LeftItems.AddChild(new ResourceIcon()
                 {
                     Layers = resourceType.GuiLayers,
@@ -88,7 +88,7 @@ namespace DwarfCorp.Gui.Widgets
             k = 0;
             foreach (var resource in GetTopResources(rightResources))
             {
-                var resourceType = ResourceLibrary.GetResourceByName(resource.Type);
+                var resourceType = Library.GetResourceType(resource.Type);
                 RightItems.AddChild(new ResourceIcon()
                 {
                     Layers = resourceType.GuiLayers,
@@ -231,7 +231,7 @@ namespace DwarfCorp.Gui.Widgets
         {
             foreach (var amount in source)
             {
-                Resource r = ResourceLibrary.GetResourceByName(amount.Type);
+                Resource r = Library.GetResourceType(amount.Type);
                 if (trader.TraderRace.HatedResources.Any(tag => r.Tags.Contains(tag)))
                 {
                     continue;

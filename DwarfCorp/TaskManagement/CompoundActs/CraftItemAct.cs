@@ -153,7 +153,7 @@ namespace DwarfCorp
                     break;
                 case CraftItem.CraftActBehaviors.Trinket:
                     {
-                        Resource craft = ResourceLibrary.GenerateTrinket(stashed.ElementAt(0).Type,
+                        Resource craft = Library.CreateTrinketResourceType(stashed.ElementAt(0).Type,
                             (Agent.Stats.Dexterity + Agent.Stats.Intelligence) / 15.0f * MathFunctions.Rand(0.5f, 1.75f));
                         ResourceCreated = craft.Name;
                     }
@@ -166,19 +166,19 @@ namespace DwarfCorp
                             yield return Act.Status.Fail;
                             yield break;
                         }
-                        Resource craft = ResourceLibrary.CreateMeal(stashed.ElementAt(0).Type, stashed.ElementAt(1).Type);
+                        Resource craft = Library.CreateMealResourceType(stashed.ElementAt(0).Type, stashed.ElementAt(1).Type);
                         ResourceCreated = craft.Name;
                     }
                     break;
                 case CraftItem.CraftActBehaviors.Ale:
                     {
-                        Resource craft = ResourceLibrary.CreateAle(stashed.ElementAt(0).Type);
+                        Resource craft = Library.CreateAleResourceType(stashed.ElementAt(0).Type);
                         ResourceCreated = craft.Name;
                     }
                     break;
                 case CraftItem.CraftActBehaviors.Bread:
                     {
-                        Resource craft = ResourceLibrary.CreateBread(stashed.ElementAt(0).Type);
+                        Resource craft = Library.CreateBreadResourceType(stashed.ElementAt(0).Type);
                         ResourceCreated = craft.Name;
                     }
                     break;
@@ -188,11 +188,11 @@ namespace DwarfCorp
                         Resource trinket = null;
                         foreach (ResourceAmount stashedResource in stashed)
                         {
-                            if (ResourceLibrary.GetResourceByName(stashedResource.Type).Tags.Contains(Resource.ResourceTags.Craft))
-                                trinket = ResourceLibrary.GetResourceByName(stashedResource.Type);
+                            if (Library.GetResourceType(stashedResource.Type).Tags.Contains(Resource.ResourceTags.Craft))
+                                trinket = Library.GetResourceType(stashedResource.Type);
 
-                            if (ResourceLibrary.GetResourceByName(stashedResource.Type).Tags.Contains(Resource.ResourceTags.Gem))
-                                gem = ResourceLibrary.GetResourceByName(stashedResource.Type);
+                            if (Library.GetResourceType(stashedResource.Type).Tags.Contains(Resource.ResourceTags.Gem))
+                                gem = Library.GetResourceType(stashedResource.Type);
                         }
 
 
@@ -203,7 +203,7 @@ namespace DwarfCorp
                             yield break;
                         }
 
-                        Resource craft = ResourceLibrary.EncrustTrinket(trinket.Name, gem.Name);
+                        Resource craft = Library.CreateEncrustedTrinketResourceType(trinket.Name, gem.Name);
                         ResourceCreated = craft.Name;
                     }
                     break;
@@ -212,7 +212,7 @@ namespace DwarfCorp
                     break;
             }
 
-            Resource resource = ResourceLibrary.GetResourceByName(ResourceCreated);
+            Resource resource = Library.GetResourceType(ResourceCreated);
             Item.PreviewResource = EntityFactory.CreateEntity<ResourceEntity>(resource.Name + " Resource", Agent.Position);
             Item.PreviewResource.SetFlagRecursive(GameComponent.Flag.Active, false);
             Item.PreviewResource.SetVertexColorRecursive(new Color(200, 200, 255, 200));

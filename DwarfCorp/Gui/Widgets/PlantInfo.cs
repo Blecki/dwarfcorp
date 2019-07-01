@@ -17,7 +17,7 @@ namespace DwarfCorp.Gui.Widgets
 
             var builder = new StringBuilder();
             builder.AppendLine("Plant " + Type);
-            var res = ResourceLibrary.GetResourceByName(Type);
+            var res = Library.GetResourceType(Type);
             builder.AppendLine(res.Description);
             if (res.Tags.Contains(Resource.ResourceTags.AboveGroundPlant))
                 builder.AppendLine("* Grows above ground");

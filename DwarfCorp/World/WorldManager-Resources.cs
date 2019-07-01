@@ -41,7 +41,7 @@ namespace DwarfCorp
             var stock = Zone as Stockpile;
 
             // Todo: Stockpile deals with it's own boxes.
-            var resourceType = ResourceLibrary.GetResourceByName(resources.Type);
+            var resourceType = Library.GetResourceType(resources.Type);
             var num = stock.Resources.RemoveMaxResources(resources, resources.Count);
 
             stock.HandleBoxes();
@@ -90,7 +90,7 @@ namespace DwarfCorp
             foreach (var resource in resources)
             {
                 int count = 0;
-                var resourceType = ResourceLibrary.GetResourceByName(resource.Type);
+                var resourceType = Library.GetResourceType(resource.Type);
                 foreach (var stock in EnumerateZones().Where(s => resources.All(r => s is Stockpile && (s as Stockpile).IsAllowed(r.Type))))
                 {
                     int num = stock.Resources.RemoveMaxResources(resource, resource.Count - count);
@@ -137,7 +137,7 @@ namespace DwarfCorp
 
                         if (requirement.Value <= got) continue;
 
-                        if (!ResourceLibrary.GetResourceByName(resource.Type).Tags.Contains(requirement.Key)) continue;
+                        if (!Library.GetResourceType(resource.Type).Tags.Contains(requirement.Key)) continue;
 
                         int amountToRemove = global::System.Math.Min(resource.Count, requirement.Value - got);
 
@@ -162,7 +162,7 @@ namespace DwarfCorp
                 ResourceAmount maxAmount = null;
                 foreach (var pair in amounts)
                 {
-                    if (!ResourceLibrary.GetResourceByName(pair.Key).Tags.Contains(requirement.Key)) continue;
+                    if (!Library.GetResourceType(pair.Key).Tags.Contains(requirement.Key)) continue;
                     if (maxAmount == null || pair.Value.Count > maxAmount.Count)
                     {
                         maxAmount = pair.Value;
@@ -227,14 +227,14 @@ namespace DwarfCorp
             if (allowHeterogenous)
             {
                 return (from pair in resources
-                        where ResourceLibrary.GetResourceByName(pair.Value.Type).Tags.Contains(tag)
+                        where Library.GetResourceType(pair.Value.Type).Tags.Contains(tag)
                         select pair.Value).ToList();
             }
 
             ResourceAmount maxAmount = null;
             foreach (var pair in resources)
             {
-                var resource = ResourceLibrary.GetResourceByName(pair.Value.Type);
+                var resource = Library.GetResourceType(pair.Value.Type);
                 if (!resource.Tags.Contains(tag)) continue;
                 if (maxAmount == null || pair.Value.Count > maxAmount.Count)
                 {
@@ -268,7 +268,7 @@ namespace DwarfCorp
         public bool AddResources(ResourceAmount resources)
         {
             var amount = new ResourceAmount(resources.Type, resources.Count);
-            var resource = ResourceLibrary.GetResourceByName(amount.Type);
+            var resource = Library.GetResourceType(amount.Type);
 
             foreach (Stockpile stockpile in EnumerateZones().Where(s => s is Stockpile && (s as Stockpile).IsAllowed(resources.Type)))
             {
@@ -364,7 +364,7 @@ namespace DwarfCorp
             PersistentData.CachedResourceTagCounts.Clear();
             foreach (var resource in ListResources())
             {
-                var type = ResourceLibrary.GetResourceByName(resource.Key);
+                var type = Library.GetResourceType(resource.Key);
 
                 foreach (var tag in type.Tags)
                 {

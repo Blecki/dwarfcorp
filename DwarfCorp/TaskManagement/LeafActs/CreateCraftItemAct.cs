@@ -79,7 +79,7 @@ namespace DwarfCorp
             
             if (details == null)
             {
-                float strength = Item.SelectedResources.Average(r => ResourceLibrary.GetResourceByName(r.Type).MaterialStrength);
+                float strength = Item.SelectedResources.Average(r => Library.GetResourceType(r.Type).MaterialStrength);
                 var health = item.GetRoot().GetComponent<Health>();
                 if (health != null)
                 {

@@ -31,7 +31,7 @@ namespace DwarfCorp
             }
             Restitution = 0.1f;
             Friction = 0.1f;
-            Resource type = ResourceLibrary.GetResourceByName(resourceType.Type);
+            Resource type = Library.GetResourceType(resourceType.Type);
             
             Tags.Add(type.Name);
             Tags.Add("Resource");
@@ -57,19 +57,19 @@ namespace DwarfCorp
             {
                 Die();
             }
-            var tint = ResourceLibrary.GetResourceByName(this.Resource.Type).Tint;
+            var tint = Library.GetResourceType(this.Resource.Type).Tint;
             if (tint != Color.White)
-                this.SetVertexColorRecursive(ResourceLibrary.GetResourceByName(this.Resource.Type).Tint);
+                this.SetVertexColorRecursive(Library.GetResourceType(this.Resource.Type).Tint);
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             base.CreateCosmeticChildren(manager);
 
-            var type = ResourceLibrary.GetResourceByName(Resource.Type);
+            var type = Library.GetResourceType(Resource.Type);
 
             if (type == null)
-                type = ResourceLibrary.GetResourceByName("Invalid");
+                type = Library.GetResourceType("Invalid");
 
             Tinter sprite = null;
 

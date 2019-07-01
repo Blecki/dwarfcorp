@@ -65,7 +65,7 @@ namespace DwarfCorp
 
         public bool IsAllowed(String type)
         {
-            var resource = ResourceLibrary.GetResourceByName(type);
+            var resource = Library.GetResourceType(type);
             if (WhitelistResources.Count == 0)
             {
                 if (BlacklistResources.Count == 0)
@@ -186,7 +186,7 @@ namespace DwarfCorp
 
             foreach (var resource in Resources.Enumerate())
             {
-                var resourceType = ResourceLibrary.GetResourceByName(resource.Type);
+                var resourceType = Library.GetResourceType(resource.Type);
 
                 foreach (var tag in resourceType.Tags)
                 {
@@ -220,7 +220,7 @@ namespace DwarfCorp
                         if (resourcePair.Value.Count == 0)
                             continue;
 
-                        var resourceType = ResourceLibrary.GetResourceByName(resourcePair.Key);
+                        var resourceType = Library.GetResourceType(resourcePair.Key);
 
                         if (resourceType.Tags.Any(tag => tag == blacklist))
                         {

@@ -63,7 +63,7 @@ namespace DwarfCorp.Gui.Widgets
                         AutoSizeColumns = false,
                         ItemSize = new Point(110, 28),
                         ItemSource = EntityFactory.EnumerateEntityTypes()
-                            .Where(s => !s.Contains("Resource") || !ResourceLibrary.GetResourceByName(s.Substring(0, s.Length - " Resource".Length)).Generated)
+                            .Where(s => !s.Contains("Resource") || !Library.GetResourceType(s.Substring(0, s.Length - " Resource".Length)).Generated)
                             .OrderBy(s => s).Select(s =>
                             new HorizontalMenuTray.MenuItem
                             {
@@ -459,7 +459,7 @@ namespace DwarfCorp.Gui.Widgets
                                         {
 
                                             var blackboard = new Blackboard();
-                                            List<ResourceAmount> resources = item.RequiredResources.Select(r => new ResourceAmount(ResourceLibrary.FindResourcesWithTag(r.Type).First(), r.Count)).ToList();
+                                            List<ResourceAmount> resources = item.RequiredResources.Select(r => new ResourceAmount(Library.EnumerateResourceTypesWithTag(r.Type).First(), r.Count)).ToList();
                                             blackboard.SetData<List<ResourceAmount>>("Resources", resources);
                                             blackboard.SetData<string>("CraftType", item.Name);
 

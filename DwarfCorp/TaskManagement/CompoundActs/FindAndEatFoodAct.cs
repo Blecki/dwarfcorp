@@ -87,7 +87,7 @@ namespace DwarfCorp
                 {
                     List<GameComponent> bodies = Agent.Creature.Inventory.RemoveAndCreate(new ResourceAmount(resourceAmount.Type, 1), 
                         Inventory.RestockType.Any);
-                    var resource = ResourceLibrary.GetResourceByName(resourceAmount.Type);
+                    var resource = Library.GetResourceType(resourceAmount.Type);
                     Agent.Creature.NoiseMaker.MakeNoise("Chew", Agent.Creature.AI.Position);
                     if (bodies.Count == 0)
                     {

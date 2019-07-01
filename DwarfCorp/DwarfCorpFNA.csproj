@@ -611,7 +611,9 @@
     <Compile Include="World\Factions\PoliticalEvent.cs" />
     <Compile Include="World\Factions\Politics.cs" />
     <Compile Include="World\Factions\Trading\CorporateTradeEntity.cs" />
-    <Compile Include="World\Gambling.cs" />
+    <Compile Include="World\Gambling\GambleTask.cs" />
+    <Compile Include="World\Gambling\GambleAct.cs" />
+    <Compile Include="World\Gambling\Gambling.cs" />
     <Compile Include="TaskManagement\LeafActs\ClearBlackboardData.cs" />
     <Compile Include="TaskManagement\LeafActs\ConsumeItemAct.cs" />
     <Compile Include="TaskManagement\LeafActs\CreateCraftItemAct.cs" />

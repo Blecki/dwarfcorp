@@ -52,7 +52,7 @@ namespace DwarfCorp
                 var craftItem = Library.GetCraftable(craftType);
                 foreach (var resource in craftItem.RequiredResources)
                 {
-                    var genericResource = ResourceLibrary.FindResourcesWithTag(resource.Type).FirstOrDefault();
+                    var genericResource = Library.EnumerateResourceTypesWithTag(resource.Type).FirstOrDefault();
                     resources.Add(new ResourceAmount(genericResource, resource.Count));
                 }
             }
