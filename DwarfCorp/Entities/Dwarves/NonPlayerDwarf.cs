@@ -40,7 +40,7 @@ namespace DwarfCorp
                 {
                     RandomSeed = MathFunctions.Random.Next(),
                 },
-                Manager.World.Factions.Factions["Dwarves"], "Dwarf", Position).Physics;
+                Manager.World.Factions.Factions["Dwarves"], "Dwarf", Position).Physics; // Todo: Why are we adding them to a faction? Don't they just immediately get added to a different one?
         }
 
         public NonPlayerDwarf()

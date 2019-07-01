@@ -97,16 +97,11 @@ namespace DwarfCorp.Generation
                             var ladderVox = chunkManager.CreateVoxelHandle(GlobalVoxelCoordinate.FromVector3(ladderPos));
                             if (ladderVox.IsValid && ladderVox.IsEmpty)
                             {
-                                // Todo: WTF why is this static?????
-                                WorldManager.DoLazy(new Action(() =>
-                                {
-                                    var ladder = EntityFactory.CreateEntity<Ladder>("Ladder", ladderPos);
-                                    Settings.World.PlayerFaction.OwnedObjects.Add(ladder);
-                                    ladder.Tags.Add("Moveable");
-                                    ladder.Tags.Add("Deconstructable");
-                                }));
+                                var ladder = EntityFactory.CreateEntity<Ladder>("Ladder", ladderPos);
+                                Settings.World.PlayerFaction.OwnedObjects.Add(ladder);
+                                ladder.Tags.Add("Moveable");
+                                ladder.Tags.Add("Deconstructable");
                             }
-
                         }
                     }
 

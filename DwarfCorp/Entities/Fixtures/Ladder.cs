@@ -59,7 +59,7 @@ namespace DwarfCorp
             else if (resources == null && craftType == null)
             {
                 craftType = "Wooden Ladder";
-                resources = new List<ResourceAmount>() { new ResourceAmount(ResourceType.Wood) };
+                resources = new List<ResourceAmount>() { new ResourceAmount("Wood") };
             }
             else if (craftType == null)
             {

@@ -129,17 +129,13 @@ namespace DwarfCorp.Generation
                 if (Settings.NoiseGenerator.Noise(CaveFloor.Coordinate.X / floraType.ClumpSize, floraType.NoiseOffset, CaveFloor.Coordinate.Z / floraType.ClumpSize) < floraType.ClumpThreshold)
                     continue;
 
-                CaveFloor.RawSetGrass(0); // I preferred when grass existed under trees.
-
                 var plantSize = MathFunctions.Rand() * floraType.SizeVariance + floraType.MeanSize;
                 var lambdaFloraType = floraType;
 
-                WorldManager.DoLazy(() =>
-                {
                     if (!GameSettings.Default.FogofWar)
                         EntityFactory.CreateEntity<GameComponent>(
                             lambdaFloraType.Name,
-                            CaveFloor.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f), // Todo: Is this the correct offset?
+                            CaveFloor.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
                             Blackboard.Create("Scale", plantSize));
                     else
                         Settings.World.ComponentManager.RootComponent.AddChild(new SpawnOnExploredTrigger(Settings.World.ComponentManager, CaveFloor)
@@ -148,7 +144,6 @@ namespace DwarfCorp.Generation
                             SpawnLocation = CaveFloor.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
                             BlackboardData = Blackboard.Create("Scale", plantSize)
                         });
-                });
 
                 break; // Don't risk spawning multiple plants in the same spot.
             }
@@ -165,8 +160,6 @@ namespace DwarfCorp.Generation
 
                 var lambdaAnimalType = animalType;
 
-                WorldManager.DoLazy(() =>
-                {
                     if (!GameSettings.Default.FogofWar)
                         EntityFactory.CreateEntity<GameComponent>(lambdaAnimalType.Name, CaveFloor.WorldPosition + new Vector3(0.5f, 1.5f, 0.5f));
                     else
@@ -175,7 +168,6 @@ namespace DwarfCorp.Generation
                             EntityToSpawn = lambdaAnimalType.Name,
                             SpawnLocation = CaveFloor.WorldPosition + new Vector3(0.5f, 1.5f, 0.5f)
                         });
-                });
 
                 break; // Prevent spawning multiple animals in same spot.
             }

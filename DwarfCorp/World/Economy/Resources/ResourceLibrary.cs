@@ -137,7 +137,7 @@ namespace DwarfCorp
 
             if (!Exists(aleName))
             {
-                var r = GenerateResource(GetResourceByName(ResourceType.Ale));
+                var r = GenerateResource(GetResourceByName("Ale"));
                 r.Name = aleName;
                 r.ShortName = aleName;
                 Add(r);
@@ -152,7 +152,7 @@ namespace DwarfCorp
 
             var componentA = GetResourceByName(typeA);
             var componentB = GetResourceByName(typeB);
-            var r = GenerateResource(GetResourceByName(ResourceType.Meal));
+            var r = GenerateResource(GetResourceByName("Meal"));
             r.FoodContent = componentA.FoodContent + componentB.FoodContent;
             r.Name = TextGenerator.GenerateRandom(new List<String>() { componentA.Name, componentB.Name }, TextGenerator.GetAtoms(ContentPaths.Text.Templates.food));
             r.MoneyValue = 2m * (componentA.MoneyValue + componentB.MoneyValue);
@@ -258,7 +258,7 @@ namespace DwarfCorp
 
             var material = GetResourceByName(baseMaterial);
 
-            var toReturn = GenerateResource(Resources[ResourceType.Trinket]);
+            var toReturn = GenerateResource(Resources["Trinket"]);
             toReturn.Name = name;
             toReturn.ShortName = baseMaterial + " " + names[item];
             toReturn.MoneyValue = values[item] * material.MoneyValue * 3m * quality;
@@ -292,7 +292,7 @@ namespace DwarfCorp
             if (Exists(component + " Bread"))
                 return GetResourceByName(component + " Bread");
 
-            var toReturn = GenerateResource(GetResourceByName(ResourceType.Bread));
+            var toReturn = GenerateResource(GetResourceByName("Bread"));
             toReturn.Name = component + " Bread";
             Add(toReturn);
             return toReturn;

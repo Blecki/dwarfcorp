@@ -31,7 +31,7 @@ namespace DwarfCorp
         [JsonIgnore] public Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords> TransitionTextures = null;
         
         public bool ReleasesResource = false;
-        public string ResourceToRelease = ResourceType.Stone;
+        public string ResourceToRelease = "Stone";
         public float StartingHealth = 0.0f;
         public float ProbabilityOfRelease = 0.0f;
         public bool CanRamp = false;
@@ -44,10 +44,7 @@ namespace DwarfCorp
         public float MaxSpawnHeight = 999;
         public float SpawnProbability = 1.0f;
         public float Rarity = 1.0f;
-        public bool SpawnVeins = false;
         public bool SpawnClusters = false;
-        public float ClusterSize = 0.0f;
-        public float VeinLength = 0.0f;
         public bool IsSoil = false;
         public bool IsSurface = false;
         public bool IsInvincible = false;

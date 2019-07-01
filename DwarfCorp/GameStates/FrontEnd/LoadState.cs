@@ -31,6 +31,7 @@ namespace DwarfCorp.GameStates
         public Tutorial.TutorialManager TutorialManager;
         private LoadTypes LoadType;
         private Embarkment InitialEmbarkment;
+        private ColonyCell InitialCell;
 
         private Timer TipTimer = new Timer(1, false, Timer.TimerMode.Real);
         public Overworld Settings { get; set; }
@@ -42,6 +43,7 @@ namespace DwarfCorp.GameStates
             Settings = settings;
             EnableScreensaver = true;
             InitialEmbarkment = settings.InstanceSettings.InitalEmbarkment;
+            InitialCell = settings.InstanceSettings.Cell;
 
             Runner = new DwarfRunner(game);
         }
@@ -95,8 +97,11 @@ namespace DwarfCorp.GameStates
 
         private void CreateWorld()
         {
-            if (LoadType == LoadTypes.GenerateOverworld)
+            if (LoadType == LoadTypes.GenerateOverworld) // Generating the world erases some settings.
+            {
+                Settings.InstanceSettings.Cell = InitialCell;
                 Settings.InstanceSettings.InitalEmbarkment = InitialEmbarkment;
+            }
 
             World = new WorldManager(Game)
             {

@@ -8,7 +8,7 @@ namespace DwarfCorp
         [EntityFactory("Haunted Tree")]
         private static GameComponent __factory00(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Tree("Haunted Tree", Manager, Position, "Entities\\Plants\\eviltree", ResourceType.EvilSeed, Data.GetData("Scale", 1.0f));
+            return new Tree("Haunted Tree", Manager, Position, "Entities\\Plants\\eviltree", "Seed of Evil", Data.GetData("Scale", 1.0f));
         }
 
         [EntityFactory("Haunted Tree Sprout")]
@@ -28,7 +28,7 @@ namespace DwarfCorp
         [EntityFactory("Pine Tree")]
         private static GameComponent __factory02(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Tree("Pine Tree", Manager, Position, "Entities\\Plants\\pinetree", ResourceType.PineCone, Data.GetData("Scale", 1.0f));
+            return new Tree("Pine Tree", Manager, Position, "Entities\\Plants\\pinetree", "Pine Cone", Data.GetData("Scale", 1.0f));
         }
 
         [EntityFactory("Pine Tree Sprout")]
@@ -48,7 +48,7 @@ namespace DwarfCorp
         [EntityFactory("Snow Pine Tree")]
         private static GameComponent __factory04(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Tree("Pine Tree", Manager, Position, "Entities\\Plants\\snowpine", ResourceType.PineCone, Data.GetData("Scale", 1.0f));
+            return new Tree("Pine Tree", Manager, Position, "Entities\\Plants\\snowpine", "Pine Cone", Data.GetData("Scale", 1.0f));
         }
 
         [EntityFactory("Snow Pine Tree Sprout")]
@@ -68,13 +68,13 @@ namespace DwarfCorp
         [EntityFactory("Candycane")]
         private static GameComponent __factory06(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Tree("Candycane", Manager, Position, "Entities\\Plants\\candycane", ResourceType.Peppermint, Data.GetData("Scale", 1.0f));
+            return new Tree("Candycane", Manager, Position, "Entities\\Plants\\candycane", "Peppermint", Data.GetData("Scale", 1.0f));
         }
 
         [EntityFactory("Snow Candycane")]
         private static GameComponent __factory06b(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Tree("Candycane", Manager, Position, "Entities\\Plants\\candycane-snow", ResourceType.Peppermint, Data.GetData("Scale", 1.0f));
+            return new Tree("Candycane", Manager, Position, "Entities\\Plants\\candycane-snow", "Peppermint", Data.GetData("Scale", 1.0f));
         }
 
         [EntityFactory("Candycane Sprout")]
@@ -94,7 +94,7 @@ namespace DwarfCorp
         [EntityFactory("Palm Tree")]
         private static GameComponent __factory08(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Tree("Palm Tree", Manager, Position, "Entities\\Plants\\palmtree", ResourceType.Coconut, Data.GetData("Scale", 1.0f));
+            return new Tree("Palm Tree", Manager, Position, "Entities\\Plants\\palmtree", "Coconut", Data.GetData("Scale", 1.0f));
         }
 
         [EntityFactory("Palm Tree Sprout")]
@@ -114,7 +114,7 @@ namespace DwarfCorp
         [EntityFactory("Apple Tree")]
         private static GameComponent __factory0A(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Tree("Apple Tree", Manager, Position, "Entities\\Plants\\appletree", ResourceType.Apple, Data.GetData("Scale", 1.0f));
+            return new Tree("Apple Tree", Manager, Position, "Entities\\Plants\\appletree", "Apple", Data.GetData("Scale", 1.0f));
         }
 
         [EntityFactory("Apple Tree Sprout")]
@@ -194,7 +194,7 @@ namespace DwarfCorp
         [EntityFactory("Mushroom")]
         private static GameComponent __factory12(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Mushroom(Manager, Position, "Entities\\Plants\\mushroom", ResourceType.Mushroom, 2, false);
+            return new Mushroom(Manager, Position, "Entities\\Plants\\mushroom", "Mushroom", 2, false);
         }
 
         [EntityFactory("Mushroom Sprout")]
@@ -212,7 +212,7 @@ namespace DwarfCorp
         [EntityFactory("Cave Mushroom")]
         private static GameComponent __factory14(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Mushroom(Manager, Position, "Entities\\Plants\\caveshroom", ResourceType.CaveMushroom, 4, true);
+            return new Mushroom(Manager, Position, "Entities\\Plants\\caveshroom", "Cave Mushroom", 4, true);
         }
 
         [EntityFactory("Cave Mushroom Sprout")]

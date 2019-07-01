@@ -106,11 +106,11 @@ namespace DwarfCorp
                 inventory.SetFlag(Flag.ShouldSerialize, false);
 
                 {
-                    String type = Stats.CurrentClass.Name + " " + ResourceType.Meat;
+                    String type = Stats.CurrentClass.Name + " " + "Meat";
 
                     if (!ResourceLibrary.Exists(type))
                     {
-                        var r = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName(ResourceType.Meat));
+                        var r = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName("Meat"));
                         r.Name = type;
                         r.ShortName = type;
                         ResourceLibrary.Add(r);

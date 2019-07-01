@@ -418,7 +418,6 @@
     <Compile Include="World\Economy\Resources\ResourceSet.cs" />
     <Compile Include="World\Economy\Resources\ResourceContainer.cs" />
     <Compile Include="World\Economy\Resources\ResourceLibrary.cs" />
-    <Compile Include="World\Economy\Resources\ResourceType.cs" />
     <Compile Include="World\Events\Library.cs" />
     <Compile Include="GameStates\Play\WorldPopup.cs" />
     <Compile Include="GameStates\Screensaver\DwarfRunner.cs" />

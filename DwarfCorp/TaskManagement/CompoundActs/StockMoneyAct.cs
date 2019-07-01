@@ -30,7 +30,7 @@ namespace DwarfCorp
         public override IEnumerable<Status> Run()
         {
             if (Tree != null) return base.Run();
-            ResourceAmount coins = new ResourceAmount(ResourceType.Coins, 1);
+            var coins = new ResourceAmount("Coins", 1);
             Tree = new DepositMoney(Agent, Money);
             Tree.Initialize();
             return base.Run();

@@ -14,7 +14,6 @@ namespace DwarfCorp
         public bool Hidden = false;
         public bool AutoRetry = false;
         public string Name;
-        // Todo: Need to add energy cost per task. Apply it to their energy status the same way as boredom.
         public float BoredomIncrease = 0.0f;
         public float EnergyDecrease = 0.0f;
 

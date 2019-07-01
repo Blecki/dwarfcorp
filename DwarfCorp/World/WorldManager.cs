@@ -133,14 +133,6 @@ namespace DwarfCorp
         public delegate void OnLoaded();
         public event OnLoaded OnLoadedEvent;
 
-        // Lazy actions - needed occasionally to spawn entities from threads among other things.
-        private static List<Action> LazyActions = new List<Action>();
-
-        public static void DoLazy(Action action)
-        {
-            LazyActions.Add(action);
-        }
-        
         private Splasher Splasher;
         #endregion
 
@@ -207,15 +199,6 @@ namespace DwarfCorp
         /// <param name="gameTime">The current time</param>
         public void Update(DwarfTime gameTime)
         {
-            #region Perform Lazy Actions
-            int MAX_LAZY_ACTIONS = 32;
-            var actionsPerformed = 0;
-            for (; actionsPerformed < LazyActions.Count && actionsPerformed < MAX_LAZY_ACTIONS; ++actionsPerformed)
-                LazyActions[actionsPerformed]?.Invoke();
-            if (actionsPerformed > 0)
-                LazyActions.RemoveRange(0, actionsPerformed);
-            #endregion
-
             #region Fast Forward To Day
             if (FastForwardToDay)
             {

@@ -17,7 +17,7 @@ namespace DwarfCorp.Elevators
             var resources = Data.GetData<List<ResourceAmount>>("Resources", null);
 
             if (resources == null)
-                resources = new List<ResourceAmount>() { new ResourceAmount(ResourceType.Wood) };
+                resources = new List<ResourceAmount>() { new ResourceAmount("Wood") };
 
             return new ElevatorShaft(Manager, Position, resources);
         }

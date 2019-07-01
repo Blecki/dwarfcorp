@@ -25,8 +25,6 @@ namespace DwarfCorp
 
             var portBox = port.GetBoundingBox();
 
-            DoLazy(new Action(() =>
-            {
                 ComponentManager.RootComponent.AddChild(Balloon.CreateBalloon(
                     portBox.Center() + new Vector3(0, 100, 0),
                     portBox.Center() + new Vector3(0, 10, 0), ComponentManager,
@@ -37,7 +35,6 @@ namespace DwarfCorp
                     Settings.Overworld.PlayerCorporationFunds -= applicant.SigningBonus;
                     HireImmediately(applicant);
                 }
-            }));
 
             Renderer.Camera.Target = portBox.Center();
             Renderer.Camera.Position = Renderer.Camera.Target + new Vector3(0, 15, -15);
@@ -52,13 +49,10 @@ namespace DwarfCorp
             Settings.World.AddZone(toBuild);
             toBuild.CompleteRoomImmediately(roomVoxels.StockpileVoxels);
 
-            DoLazy(() =>
-            {
                 var box = toBuild.GetBoundingBox();
                 var at = new Vector3((box.Min.X + box.Max.X - 1) / 2, box.Max.Y, (box.Min.Z + box.Max.Z - 1) / 2);
                 var flag = EntityFactory.CreateEntity<Flag>("Flag", at + new Vector3(0.5f, 0.5f, 0.5f));
                 Settings.World.PlayerFaction.OwnedObjects.Add(flag);
-            });
 
             return toBuild;
         }

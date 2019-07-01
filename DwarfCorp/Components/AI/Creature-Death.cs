@@ -19,7 +19,7 @@ namespace DwarfCorp
 
             if (Stats.Species.HasMeat)
             {
-                String type = Stats.CurrentClass.Name + " " + ResourceType.Meat;
+                String type = Stats.CurrentClass.Name + " " + "Meat";
 
                 if (!ResourceLibrary.Exists(type))
                 {
