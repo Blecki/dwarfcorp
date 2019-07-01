@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp.GameStates
 {
-    public class Overworld // Todo: Rename Overworld Settings?
+    public class Overworld
     {
         public CompanyInformation Company;
         public ResourceSet PlayerCorporationResources;

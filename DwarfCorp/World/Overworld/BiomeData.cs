@@ -9,67 +9,39 @@ namespace DwarfCorp
     public class BiomeData
     {
         public byte Biome { get; set; }
-
-
         public string Name;
 
         public struct Layer
         {
-            public string VoxelType { get; set; }
-            public int Depth { get; set; }
+            public string VoxelType;
+            public int Depth;
         }
 
-        public List<VegetationData> Vegetation { get; set; }
-        public List<DetailMoteData> Motes { get; set; }
-        public List<FaunaData> Fauna { get; set; }
+        public List<VegetationData> Vegetation = new List<VegetationData>();
+        public List<DetailMoteData> Motes = new List<DetailMoteData>();
+        public List<FaunaData> Fauna = new List<FaunaData>();
         public string GrassDecal = "";
-        public Layer SoilLayer { get; set; }
-        public List<Layer> SubsurfaceLayers { get; set; }
-        public string ShoreVoxel { get; set; }
-        public bool ClumpGrass { get; set; }
-        public float ClumpSize { get; set; }
-        public float ClumpTreshold { get; set; }
-        public Color MapColor { get; set; }
-        public bool Underground { get; set; }
-        public float Height { get; set; }
-        public float Temp { get; set; }
-        public float Rain { get; set; }
-        public Point Icon { get; set; }
-        //public Color GrassTint = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-        public string DayAmbience { get; set; }
-        public string NightAmbience { get; set; }
-        public bool WaterSurfaceIce { get; set; }
-        public bool WaterIsLava { get; set; }
-        public string RuinFloorType { get; set; }
-        public string RuinWallType { get; set; }
+        public Layer SoilLayer = new Layer();
+        public List<Layer> SubsurfaceLayers = new List<Layer>();
+        public string ShoreVoxel = "Sand";
+        public bool ClumpGrass = false;
+        public float ClumpSize = 30.0f;
+        public float ClumpTreshold = 0.75f;
+        public Color MapColor = Color.White;
+        public bool Underground = false;
+        public float Height = 0.0f;
+        public float Temp = 0.0f;
+        public float Rain = 0.0f;
+        public Point Icon = Point.Zero;
+        public string DayAmbience = "";
+        public string NightAmbience = "";
+        public bool WaterSurfaceIce = false;
+        public bool WaterIsLava = false;
+        public string RuinFloorType = "Cobble";
+        public string RuinWallType = "Shale";
 
         public BiomeData()
         {
-            ShoreVoxel = "Sand";
-            WaterIsLava = false;
-            RuinFloorType = "Cobble";
-            RuinWallType = "Shale";
-        }
-
-        // Todo: Move defaults to above and remove this.
-        public BiomeData(byte biome)
-        {
-            WaterIsLava = false;
-            Biome = biome;
-            Vegetation = new List<VegetationData>();
-            Motes = new List<DetailMoteData>();
-            Fauna = new List<FaunaData>();
-            SubsurfaceLayers = new List<Layer>();
-            ClumpGrass = false;
-            ClumpSize = 30.0f;
-            ClumpTreshold = 0.75f;
-            MapColor = Color.White;
-            Underground = false;
-            ShoreVoxel = "Sand";
-            DayAmbience = "";
-            NightAmbience = "";
-            WaterSurfaceIce = false;
         }
     }
-
 }

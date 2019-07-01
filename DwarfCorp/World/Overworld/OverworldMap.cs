@@ -1,26 +1,12 @@
-using System;
-using System.Collections.Generic;
-using DwarfCorp.GameStates;
 using LibNoise;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System.Threading;
-using Newtonsoft.Json.Schema;
+using System.Collections.Generic;
 using Math = System.Math;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     public class OverworldMap
     {
-        // Todo: Kill
-        private static Dictionary<string, Color> HeightColors = new Dictionary<string, Color>
-        {
-            {"Sea", new Color(30, 30, 150)},
-            {"Water", new Color(50, 50, 255)},
-        };
-
         public static LibNoise.Perlin heightNoise = new LibNoise.Perlin()
         {
             Frequency = 0.7f,
@@ -163,9 +149,9 @@ namespace DwarfCorp
                     var cellColor = Color.DarkBlue;
 
                     if (h1 < 0.1f)
-                        cellColor = HeightColors["Sea"];
+                        cellColor = new Color(30, 30, 150);
                     else if (h1 >= 0.1f && h1 <= sealevel)
-                        cellColor = HeightColors["Water"];
+                        cellColor = new Color(50, 50, 255);
                     else
                     {
                         var _biome = Library.GetBiome(Map[x, y].Biome);

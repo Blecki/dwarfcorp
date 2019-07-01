@@ -1,23 +1,8 @@
-using System;
-using System.Collections.Generic;
-using DwarfCorp.GameStates;
-using LibNoise;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System.Threading;
-using Newtonsoft.Json.Schema;
 using Math = System.Math;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    // Todo: Why is this static?
-    /// <summary>
-    /// The overworld is a 2D map specifying biomes,
-    /// temperature, terrain height, etc.  Chunks are generated
-    /// from the overworld.
-    /// </summary>
     public static partial class OverworldImageOperations
     {
         public static Vector2 GetMinNeighbor(float[,] heightMap, Vector2 pos)
@@ -181,15 +166,10 @@ namespace DwarfCorp
 
 
             for (int x = 0; x < width; x++)
-            {
                 for (int y = 0; y < height; y++)
-                {
                     b[x, y] = array[x, y].GetValue(type);
-                }
-            }
 
             for(int x = kernelSizeX; x < width - kernelSizeX; x++)
-            {
                 for(int y =kernelSizeY; y < height - kernelSizeY; y++)
                 {
                     b[x, y] = 0.0f;
@@ -206,16 +186,10 @@ namespace DwarfCorp
                         }
                     }
                 }
-            }
-
 
             for(int x = 0; x < width; x++)
-            {
                 for(int y = 0; y < height; y++)
-                {
                     array[x, y].SetValue(type, (float)(b[x, y]));
-                }
-            }
         }
 
         private static Vector2[] deltas2d =
@@ -228,17 +202,15 @@ namespace DwarfCorp
 
         public static float ComputeMaxSlope(float[,] heightMap, Vector2 pos)
         {
-            float h = GetHeight(heightMap, pos);
+            var h = GetHeight(heightMap, pos);
+            var max = 0.0f;
 
-            float max = 0;
             for(int i = 0; i < 4; i++)
             {
-                float s = Math.Abs(h - GetHeight(heightMap, pos + deltas2d[i]));
+                var s = Math.Abs(h - GetHeight(heightMap, pos + deltas2d[i]));
 
                 if(s > max)
-                {
                     max = s;
-                }
             }
 
             return max;
@@ -252,21 +224,13 @@ namespace DwarfCorp
             float[,] buffer = new float[width, height];
 
             for(int x = 0; x < width; x++)
-            {
                 for(int y = 0; y < height; y++)
-                {
                     buffer[x, y] = GetValue(Map, new Vector2(x, y) + new Vector2((XDistort.Noise(x * distortScale, y * distortScale, 0) * 2.0f - 1.0f) * distortAmount,
                         (YDistort.Noise(x * distortScale, y * distortScale, 0) * 2.0f - 1.0f) * distortAmount), fieldType);
-                }
-            }
 
             for(int x = 0; x < width; x++)
-            {
                 for(int y = 0; y < height; y++)
-                {
                     Map[x, y].SetValue(fieldType, buffer[x, y]);
-                }
-            }
         }
     }
 }

@@ -70,8 +70,6 @@ namespace DwarfCorp
             return result;
         }
 
-        public Point3 WorldSize { get; set; } // Todo: Redundant?
-
         private List<VoxelChangeEvent> ChangedVoxels = new List<VoxelChangeEvent>();
 
         public void NotifyChangedVoxel(VoxelChangeEvent Change)
@@ -110,16 +108,14 @@ namespace DwarfCorp
             return new VoxelHandle(this, Coordinate);
         }
 
-        public ChunkManager(ContentManager content, 
-            WorldManager world, Point3 WorldSizeInChunks)
+        public ChunkManager(ContentManager Content, WorldManager World)
         {
-            this.WorldSize = WorldSizeInChunks;
+            this.Content = Content;
+            this.World = World;
 
-            World = world;
             ExitThreads = false;
-            Content = content;
 
-            InitializeChunkMap(Point3.Zero, WorldSize);             
+            InitializeChunkMap(Point3.Zero, World.WorldSizeInChunks);             
 
             RebuildThread = new Thread(RebuildVoxelsThread) { IsBackground = true };
             RebuildThread.Name = "RebuildVoxels";
@@ -134,12 +130,11 @@ namespace DwarfCorp
             PauseThreads = false;
 
             Vector3 maxBounds = new Vector3(
-                WorldSize.X * VoxelConstants.ChunkSizeX / 2.0f,
-                WorldSize.Y * VoxelConstants.ChunkSizeY / 2.0f, 
-                WorldSize.Z * VoxelConstants.ChunkSizeZ / 2.0f);
+                World.WorldSizeInChunks.X * VoxelConstants.ChunkSizeX / 2.0f,
+                World.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY / 2.0f,
+                World.WorldSizeInChunks.Z * VoxelConstants.ChunkSizeZ / 2.0f);
             Vector3 minBounds = -maxBounds; // Todo: Can this just be 0,0,0?
             Bounds = new BoundingBox(minBounds, maxBounds);
-
         }
 
         public void StartThreads()

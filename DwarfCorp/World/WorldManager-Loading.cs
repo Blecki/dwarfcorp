@@ -163,7 +163,7 @@ namespace DwarfCorp
             foreach (var updateSystemFactory in AssetManager.EnumerateModHooks(typeof(UpdateSystemFactoryAttribute), typeof(EngineModule), new Type[] { typeof(WorldManager) }))
                 UpdateSystems.Add(updateSystemFactory.Invoke(null, new Object[] { this }) as EngineModule);
 
-            ChunkManager = new ChunkManager(Content, this, WorldSizeInChunks);
+            ChunkManager = new ChunkManager(Content, this);
             Splasher = new Splasher(ChunkManager);
 
             Renderer.ChunkRenderer = new ChunkRenderer(ChunkManager);
@@ -317,7 +317,7 @@ namespace DwarfCorp
                 GameSettings.Default.VertexCullDistance);
 
             PersistentData = new PersistentWorldData();
-            ChunkManager = new ChunkManager(Content, this, WorldSizeInChunks);
+            ChunkManager = new ChunkManager(Content, this);
             Splasher = new Splasher(ChunkManager);
 
             Renderer.ChunkRenderer = new ChunkRenderer(ChunkManager);
