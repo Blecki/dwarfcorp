@@ -113,9 +113,12 @@ namespace DwarfCorp
             if (World.Overworld.Difficulty == 0) return; // Disable enemy sensors on peaceful difficulty.
 
             SenseTimer.Update(gameTime);
-            
+
             if (SenseTimer.HasTriggered)
+            {
+                Enemies.Clear();
                 Sense();
+            }
 
             Enemies.RemoveAll(ai => ai.IsDead);
         }

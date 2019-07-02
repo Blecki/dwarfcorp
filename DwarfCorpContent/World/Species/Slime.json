@@ -1,5 +1,6 @@
 {
   "Name": "Slime",
   "BaseMeatResource": null,
-  "HasMeat": false
+  "HasMeat": false,
+  "FeelsFear": false
 }

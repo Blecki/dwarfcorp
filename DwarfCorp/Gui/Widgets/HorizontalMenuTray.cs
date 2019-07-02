@@ -104,7 +104,7 @@ namespace DwarfCorp.Gui.Widgets
             public MenuItem()
             {
                 Background = new TileReference("basic", 0);
-                //ChangeColorOnHover = true;
+                ChangeColorOnHover = true;
                 TextColor = Color.Black.ToVector4();
                 TextHorizontalAlign = HorizontalAlign.Left;
                 TextVerticalAlign = VerticalAlign.Center;

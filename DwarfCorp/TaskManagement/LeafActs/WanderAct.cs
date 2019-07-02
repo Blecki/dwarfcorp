@@ -186,19 +186,20 @@ namespace DwarfCorp
             VoxelHandle curr = Creature.Physics.CurrentVoxel;
             var bodies = Agent.World.PlayerFaction.OwnedObjects.Where(o => o.Tags.Contains("Teleporter")).ToList();
             var storage = new MoveActionTempStorage();
+            MoveState previousMoveState = new MoveState { Voxel = curr };
 
             for (int i = 0; i < PathLength; i++)
             {
-                var actions = Creature.AI.Movement.GetMoveActions(new MoveState() { Voxel = curr }, bodies, storage);
+                var actions = Creature.AI.Movement.GetMoveActions(previousMoveState, bodies, storage);
 
                 MoveAction? bestAction = null;
                 float bestDist = float.MaxValue;
+
                 foreach (MoveAction action in actions)
                 {
                     if (Is2D && (action.MoveType == MoveType.Climb || action.MoveType == MoveType.ClimbWalls))
-                    {
                         continue;
-                    }
+
                     float dist = (action.DestinationVoxel.WorldPosition - target).LengthSquared() * Creature.AI.Movement.Cost(action.MoveType);
 
                     if (dist < bestDist && ! path.Any(a => a.DestinationVoxel == action.DestinationVoxel))
@@ -208,14 +209,13 @@ namespace DwarfCorp
                     }
                 }
 
-                if (bestAction.HasValue && 
+                if (bestAction.HasValue &&
                     !path.Any(p => p.DestinationVoxel.Equals(bestAction.Value.DestinationVoxel) && p.MoveType == bestAction.Value.MoveType &&
                     Creature.AI.PositionConstraint.Contains(bestAction.Value.DestinationVoxel.WorldPosition + Vector3.One * 0.5f) == ContainmentType.Contains))
                 {
                     MoveAction action = bestAction.Value;
-                    action.DestinationVoxel = curr;
                     path.Add(action);
-                    curr = bestAction.Value.DestinationVoxel;
+                    previousMoveState = action.DestinationState;
                 }
                 else
                 {

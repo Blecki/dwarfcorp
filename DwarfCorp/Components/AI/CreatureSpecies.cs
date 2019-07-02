@@ -20,5 +20,6 @@ namespace DwarfCorp
         public bool HasMeat = true;
         public bool HasBones = true;
         public bool IsMigratory = false;
+        public bool FeelsFear = true;
     }
 }

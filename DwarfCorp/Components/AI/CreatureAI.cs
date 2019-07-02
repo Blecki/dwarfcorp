@@ -594,6 +594,9 @@ namespace DwarfCorp
             if (IsDead || creature == null || creature.IsDead)
                 return FightOrFlightResponse.Fight;
 
+            if (!Stats.Species.FeelsFear)
+                return FightOrFlightResponse.Fight;
+
             var fear = 0.0f;
 
             // If our health is low, we're a little afraid.
