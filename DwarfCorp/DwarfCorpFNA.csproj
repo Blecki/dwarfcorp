@@ -146,6 +146,7 @@
     <Compile Include="TaskManagement\Enums.cs" />
     <Compile Include="TaskManagement\Tasks\BuildZoneTask.cs" />
     <Compile Include="TaskManagement\Tasks\GoToZoneTask.cs" />
+    <Compile Include="TaskManagement\Tasks\GetHealedTask.cs" />
     <Compile Include="TaskManagement\TestBehaviors.cs" />
     <Compile Include="World\AutoScaleThread.cs" />
     <Compile Include="World\Crafting\CraftDetails.cs" />

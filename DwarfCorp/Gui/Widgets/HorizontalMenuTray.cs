@@ -104,7 +104,7 @@ namespace DwarfCorp.Gui.Widgets
             public MenuItem()
             {
                 Background = new TileReference("basic", 0);
-                ChangeColorOnHover = true;
+                //ChangeColorOnHover = true;
                 TextColor = Color.Black.ToVector4();
                 TextHorizontalAlign = HorizontalAlign.Left;
                 TextVerticalAlign = VerticalAlign.Center;
@@ -112,8 +112,7 @@ namespace DwarfCorp.Gui.Widgets
 
                 OnMouseEnter = (sender, args) =>
                 {
-                    foreach (var child in sender.Parent.EnumerateChildren().Where(c => c is MenuItem)
-                    .SelectMany(c => c.EnumerateChildren()))
+                    foreach (var child in sender.Parent.EnumerateChildren().Where(c => c is MenuItem).SelectMany(c => c.EnumerateChildren()))
                     {
                         if (!Object.ReferenceEquals(child, ExpansionChild))
                         {
@@ -202,6 +201,8 @@ namespace DwarfCorp.Gui.Widgets
             public override void Construct()
             {
                 base.Construct();
+
+                OnMouseEnter = null;
 
                 AddChild(new CheckBox
                 {

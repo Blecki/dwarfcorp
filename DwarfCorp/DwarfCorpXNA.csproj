@@ -368,6 +368,7 @@
     <Compile Include="TaskManagement\ActWrapperTask.cs" />
     <Compile Include="TaskManagement\Task.cs" />
     <Compile Include="TaskManagement\TaskManager.cs" />
+    <Compile Include="TaskManagement\Tasks\GetHealedTask.cs" />
     <Compile Include="TaskManagement\Tasks\GoToZoneTask.cs" />
     <Compile Include="TaskManagement\Tasks\BuildZoneTask.cs" />
     <Compile Include="TaskManagement\Tasks\BuildVoxelTask.cs" />
