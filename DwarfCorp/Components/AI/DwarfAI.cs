@@ -253,6 +253,8 @@ namespace DwarfCorp
                 if (!Stats.IsOnStrike) // We aren't on strike, so find a new task.
                 {
                     var goal = GetEasiestTask(Tasks);
+                    if (goal == null)
+                        goal = World.TaskManager.GetBestTask(this);
 
                     if (goal != null)
                     {

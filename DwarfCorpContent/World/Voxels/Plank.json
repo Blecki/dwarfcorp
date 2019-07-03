@@ -17,7 +17,7 @@
   "BuildRequirements": [ "Wood" ],
   "StartingHealth": 40.0,
   "ProbabilityOfRelease": 1.0,
-  "CanRamp": true,
+  "CanRamp": false,
   "RampSize": 0.5,
   "IsBuildable": true,
   "ParticleType": "stone_particle",

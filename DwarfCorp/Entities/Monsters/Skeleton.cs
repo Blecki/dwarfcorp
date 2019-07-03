@@ -36,7 +36,7 @@ namespace DwarfCorp
 
             Physics.Orientation = Physics.OrientMode.RotateY;
 
-            Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
+            Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(5, 5, 5), Vector3.Zero));
             Physics.AddChild(new CreatureAI(Manager, "Skeleton AI", Sensor));
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));

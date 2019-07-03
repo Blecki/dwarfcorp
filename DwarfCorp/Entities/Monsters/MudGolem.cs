@@ -38,7 +38,7 @@ namespace DwarfCorp
             Physics.Orientation = Physics.OrientMode.RotateY;
             CreateCosmeticChildren(Manager);
 
-            Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
+            Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(5, 5, 5), Vector3.Zero));
 
             Physics.AddChild(new GolemAI(Manager, Sensor) { Movement = { IsSessile = true, CanFly = false, CanSwim = false, CanWalk = false, CanClimb = false, CanClimbWalls = false } });
 

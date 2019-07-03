@@ -114,6 +114,8 @@ namespace DwarfCorp
                     return;
                 }
 
+                Tasks[j].CleanupInactiveWorkers();
+
                 if (Tasks[j].IsComplete(World))
                 {
                     Tasks[j].OnDequeued(World);

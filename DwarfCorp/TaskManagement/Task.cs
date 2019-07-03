@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DwarfCorp
 {
@@ -22,6 +23,11 @@ namespace DwarfCorp
         public override int GetHashCode() { return Name != null ? Name.GetHashCode() : 0; }
         protected bool Equals(Task other) { return other == null ? false : Name == other.Name; }
         public override bool Equals(object obj) { return !Object.ReferenceEquals(obj, null) && obj is Task && string.Equals(Name, ((Task)(obj)).Name); }
+
+        public void CleanupInactiveWorkers()
+        {
+            AssignedCreatures.RemoveAll(c => !c.Active || c.IsDead);
+        }
 
         public void OnAssign(CreatureAI agent) { AssignedCreatures.Add(agent); }
         public void OnUnAssign(CreatureAI agent) { AssignedCreatures.Remove(agent); }

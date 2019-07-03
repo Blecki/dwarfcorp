@@ -11,7 +11,7 @@
   "ResourceToRelease": "Dirt",
   "StartingHealth": 30.0,
   "ProbabilityOfRelease": 0.0,
-  "CanRamp": false,
+  "CanRamp": true,
   "RampSize": 0.0,
   "IsBuildable": false,
   "ParticleType": "dirt_particle",

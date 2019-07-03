@@ -62,7 +62,7 @@ namespace DwarfCorp
             CreateCosmeticChildren(Manager);
 
             // Used to sense hostile creatures
-            Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
+            Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(5, 5, 5), Vector3.Zero));
 
             // Controls the behavior of the creature
             Physics.AddChild(new PacingCreatureAI(Manager, "Scorpion AI", Sensor));

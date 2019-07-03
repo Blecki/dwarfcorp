@@ -50,7 +50,7 @@ namespace DwarfCorp
             CreateCosmeticChildren(Manager);
 
             // Add sensor
-            Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
+            Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(10, 5, 10), Vector3.Zero));
 
             // Add AI
             Physics.AddChild(new PacingCreatureAI(Manager, "Deer AI", Sensor));
