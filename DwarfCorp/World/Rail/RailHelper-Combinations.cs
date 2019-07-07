@@ -74,8 +74,11 @@ namespace DwarfCorp.Rail
                     continue;
 
                 if (Object.ReferenceEquals(entity, PreviewEntity)) continue;
+                if (Object.ReferenceEquals(entity.GetRoot(), PreviewEntity.GetRoot())) continue;
                 if (entity is GenericVoxelListener) continue;
                 if (entity is WorkPile) continue;
+                if (entity is Health) continue;
+                if (entity is CraftDetails) continue;
 
                 var possibleCombination = FindPossibleCombination(junctionPiece, entity);
                 if (possibleCombination != null)
