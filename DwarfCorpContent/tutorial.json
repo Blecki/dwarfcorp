@@ -98,11 +98,6 @@
     "Text": "Left click and drag to build a balloon port. Balloon ports are necessary for trade. They must be built above ground. They also act as stockpiles. The larger the balloon port, the more it can store in its stockpile."
   },
   {
-    "Name": "build Treasury",
-    "Title": "Treasury",
-    "Text": "Our money is stored in a treasury. Each tile can hold some number of Dwarfbux ($). When the treasury gets full, we will have to build a larger one. Beware of evil creatures stealing money from the treasury."
-  },
-  {
     "Name": "build Animal Pen",
     "Title": "Animal Pen",
     "Text": "Build an animal pen to wrangle animals. Animals breed and produce meat/bones/eggs. Only one animal type per pen."

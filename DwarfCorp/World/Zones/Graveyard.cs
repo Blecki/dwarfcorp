@@ -34,9 +34,10 @@ namespace DwarfCorp
             {
                 Resource.ResourceTags.Corpse
             };
+
             BlacklistResources = new List<Resource.ResourceTags>();
             BoxType = "Grave";
-            BoxOffset = new Vector3(0.5f, 0.6f, 0.5f);
+            BoxOffset = new Vector3(0.5f, 0.4f, 0.5f);
             ResourcesPerVoxel = 1;
         }
 

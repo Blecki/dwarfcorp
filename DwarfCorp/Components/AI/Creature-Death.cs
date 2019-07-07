@@ -11,7 +11,10 @@ namespace DwarfCorp
     {
         public override void Die()
         {
-            World.RemoveFromSpeciesTracking(Stats.CurrentClass);
+            if (World == null) return; // WUT
+            if (Stats != null)
+                World.RemoveFromSpeciesTracking(Stats.CurrentClass);
+
             NoiseMaker.MakeNoise("Die", Physics.Position, true);
 
             if (AI.Stats.Money > 0)

@@ -96,7 +96,7 @@ namespace DwarfCorp
 
         public override void OnMouseOver(IEnumerable<GameComponent> bodies)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public override void Update(DwarfGame game, DwarfTime time)

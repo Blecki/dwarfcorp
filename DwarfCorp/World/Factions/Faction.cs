@@ -205,7 +205,8 @@ namespace DwarfCorp
             if (money == 0.0m)
                 return;
 
-            Economy.Funds += money;
+            if (Economy != null)
+                Economy.Funds += money;
         }
 
         public TradeEnvoy SendTradeEnvoy()
