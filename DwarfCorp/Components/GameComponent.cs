@@ -256,7 +256,7 @@ namespace DwarfCorp
 
             var localList = new List<GameComponent>(Children);
             foreach (var child in localList)
-                child.Die();
+                if (child != null) child.Die();
 
             if (Parent != null) Parent.RemoveChild(this);
 

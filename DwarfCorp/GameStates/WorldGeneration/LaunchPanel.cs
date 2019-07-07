@@ -34,13 +34,18 @@ namespace DwarfCorp.GameStates
 
         private void LaunchNewGame()
         {
+            if (Settings.InstanceSettings == null || Settings.InstanceSettings.Cell == null)
+                return; // Someone crashed here.
+
             var playerFaction = Settings.Natives.FirstOrDefault(f => f.Name == "Player");
             var politics = Settings.GetPolitics(Settings.InstanceSettings.Cell.Faction, playerFaction);
-            politics.AddEvent(new PoliticalEvent
-            {
-                Change = -2.0f,
-                Description = "You stole our land."
-            });
+
+            if (politics != null)
+                politics.AddEvent(new PoliticalEvent
+                {
+                    Change = -2.0f,
+                    Description = "You stole our land."
+                });
 
             Settings.InstanceSettings.Cell.Faction = playerFaction;
 

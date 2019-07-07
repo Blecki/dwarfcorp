@@ -47,14 +47,27 @@ namespace DwarfCorp
 
         public override void Die()
         {
-            var body = Parent.GetRoot().GetComponent<GameComponent>();
-            if (body != null)
+            try
             {
-                var bounds = body.GetBoundingBox();
-                Resource resource = Library.GetCraftable(this.CraftType).ToResource(World, Resources);
-                Vector3 pos = MathFunctions.RandVector3Box(bounds);
-                EntityFactory.CreateEntity<GameComponent>(resource.Name + " Resource", pos);
+                if (Parent != null)
+                {
+                    var body = Parent.GetRoot();
+
+                    if (body != null)
+                    {
+                        var bounds = body.GetBoundingBox();
+                        Resource resource = Library.GetCraftable(this.CraftType).ToResource(World, Resources);
+                        Vector3 pos = MathFunctions.RandVector3Box(bounds);
+                        EntityFactory.CreateEntity<GameComponent>(resource.Name + " Resource", pos);
+                    }
+                }
             }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error while destroying crafted item - " + e.Message);
+                Program.WriteExceptionLog(e);
+            }
+
             base.Die();
         }
     }

@@ -12,7 +12,8 @@ namespace DwarfCorp
         public override void Die()
         {
             if (World == null) return; // WUT
-            if (Stats != null)
+            if (Stats == null) return; // SERIOUSLY WTF??
+
                 World.RemoveFromSpeciesTracking(Stats.CurrentClass);
 
             NoiseMaker.MakeNoise("Die", Physics.Position, true);
