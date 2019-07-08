@@ -1,4 +1,6 @@
 {
+  "Disable": true,
+
   "Name": "Elevator Shaft",
   "EntityName": "Elevator Shaft",
   "DisplayName": "Elevator Shaft",

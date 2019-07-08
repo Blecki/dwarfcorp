@@ -696,6 +696,7 @@ namespace DwarfCorp.GameStates
             if (DwarfGame.IsConsoleVisible)
             {
                 PerformanceMonitor.SetMetric("MEMORY", BytesToString(System.GC.GetTotalMemory(false)));
+                PerformanceMonitor.SetMetric("Birds", World.GetSpeciesPopulation(Library.GetSpecies("Bird")));
 
                 var statsDisplay = DwarfGame.GetConsoleTile("STATS");
 

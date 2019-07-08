@@ -1,6 +1,7 @@
 ﻿Mod Hook: A function called by the engine which can be defined in a mod.
 Call AssetManager.EnumerateModHooks to find all hooks of a specific type. This function is expensive, so the results must be cached if they are needed later.
 
+
 Entity creation -
 	Attribute type: EntityFactoryAttribute
 	Signature: GameComponent *(ComponentManager, Vector3 position, Blackboard spawndata)
@@ -22,9 +23,36 @@ Console Commands -
 	Implements console commands. Any arguments given to the command are passed in unchanged.
 
 
-Yarn commands -
+Yarn Commands -
 	Attribute type: YarnCommandAttribute
 	Signature void *(YarnState, List<Ancora.AstNode>, Yarn.MemoryVariableStore)
 
 	Implements Yarn conversation system commands.
 
+
+Player Tools -
+	Attribute type: ToolFactoryAttribute
+	Signature PlayerTool *(WorldManager)
+
+	Creates player tools. Dig tool, build tool, etc.
+
+
+Context Commands -
+	Attribute type: ContextCommandAttribute
+	Signature ContextCommands.ContextCommand * ()
+
+	Creates context commands. The commands available when a player right clicks an entity.
+
+
+Updateable System -
+	Attribute type: UpdateSystemFactoryAttribute
+	Signature EngineModule *(WorldManager)
+
+	Creates a sub-system. This sub-system will receive events from the game and update each frame.
+
+
+Zone Factory -
+	Attribute type: ZoneFactoryAttribute
+	Signature Zone * (ZoneType, WorldManager)
+
+	Creates zones. Stockpiles, graveyards, etc.

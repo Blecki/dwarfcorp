@@ -16,9 +16,12 @@ namespace DwarfCorp
         public DateTime Birthday { get; set; }
         public GameComponent ParentBody { get; set; }
         public BoundingBox PositionConstrain { get; set; }
+        public bool Hatched = false;
         public Egg()
         {
         }
+
+        private static int shit = 0;
 
         public Egg(GameComponent body, string adult, ComponentManager manager, Vector3 position, BoundingBox positionConstraint) :
             base(manager)
@@ -27,24 +30,31 @@ namespace DwarfCorp
             Adult = adult;
             Birthday = Manager.World.Time.CurrentDate + new TimeSpan(0, 12, 0, 0);
             ParentBody = body;
+
+            if (adult == "Bird")
+            {
+                shit += 1;
+                PerformanceMonitor.SetMetric("SHIT", shit);
+            }
         }
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if (Manager.World.Time.CurrentDate > Birthday)
+            if (!Hatched && Manager.World.Time.CurrentDate > Birthday)
             {
-                Hatch();
-            }
-        }
+                Hatched = true;
 
-        public void Hatch()
-        {
-            var adult = EntityFactory.CreateEntity<GameComponent>(Adult, ParentBody.Position);
-            if (adult != null)
-            {
-                adult.GetRoot().GetComponent<CreatureAI>().PositionConstraint = PositionConstrain;
+                var adult = EntityFactory.CreateEntity<GameComponent>(Adult, ParentBody.Position);
+                if (adult != null)
+                {
+                    var creatureAI = adult.GetRoot().GetComponent<CreatureAI>();
+                    if (creatureAI != null && World.GetSpeciesPopulation(creatureAI.Stats.Species) < creatureAI.Stats.Species.SpeciesLimit)
+                        creatureAI.PositionConstraint = PositionConstrain;
+                    else
+                        adult.GetRoot().Delete();
+                }
+                GetRoot().Die();
             }
-            GetRoot().Die();
         }
     }
 }

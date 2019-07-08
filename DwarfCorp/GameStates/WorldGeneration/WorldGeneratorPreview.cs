@@ -239,43 +239,50 @@ namespace DwarfCorp.GameStates
                 Device.RasterizerState = RasterizerState.CullNone;
                 Device.Clear(ClearOptions.Target, Color.Black, 1024.0f, 0);
 
-                PreviewEffect.Parameters["World"].SetValue(Matrix.Identity);
-                PreviewEffect.Parameters["View"].SetValue(Camera.ViewMatrix);
-                PreviewEffect.Parameters["Projection"].SetValue(Camera.ProjectionMatrix);
-                PreviewEffect.Parameters["Texture"].SetValue(PreviewTexture);
-                PreviewEffect.CurrentTechnique = PreviewEffect.Techniques[0];
+                if (PreviewEffect == null)
+                    PreviewEffect = GameState.Game.Content.Load<Effect>("Content\\Shaders\\OverworldShader");
 
-
-                foreach (EffectPass pass in PreviewEffect.CurrentTechnique.Passes)
+                if (PreviewEffect != null)
                 {
-                    pass.Apply();
-                    Device.SetVertexBuffer(Mesh.LandMesh);
-                    Device.Indices = Mesh.LandIndex;
-                    Device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, Mesh.LandMesh.VertexCount, 0, Mesh.LandIndex.IndexCount / 3);
-                }
 
-                if (Mesh.TreePrimitive != null)
-                {
-                    PreviewEffect.Parameters["Texture"].SetValue(Mesh.IconTexture);
+                    PreviewEffect.Parameters["World"].SetValue(Matrix.Identity);
+                    PreviewEffect.Parameters["View"].SetValue(Camera.ViewMatrix);
+                    PreviewEffect.Parameters["Projection"].SetValue(Camera.ProjectionMatrix);
+                    PreviewEffect.Parameters["Texture"].SetValue(PreviewTexture);
+                    PreviewEffect.CurrentTechnique = PreviewEffect.Techniques[0];
+
 
                     foreach (EffectPass pass in PreviewEffect.CurrentTechnique.Passes)
                     {
                         pass.Apply();
-                        Mesh.TreePrimitive.Render(Device);
+                        Device.SetVertexBuffer(Mesh.LandMesh);
+                        Device.Indices = Mesh.LandIndex;
+                        Device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, Mesh.LandMesh.VertexCount, 0, Mesh.LandIndex.IndexCount / 3);
                     }
-                }
 
-                if (Mesh.BalloonPrimitive == null)
-                    Mesh.CreatBalloonMesh(Overworld);
+                    if (Mesh.TreePrimitive != null)
+                    {
+                        PreviewEffect.Parameters["Texture"].SetValue(Mesh.IconTexture);
 
-                var balloonPos = Overworld.InstanceSettings.Cell.Bounds.Center;
+                        foreach (EffectPass pass in PreviewEffect.CurrentTechnique.Passes)
+                        {
+                            pass.Apply();
+                            Mesh.TreePrimitive.Render(Device);
+                        }
+                    }
 
-                PreviewEffect.Parameters["Texture"].SetValue(Mesh.IconTexture);
-                PreviewEffect.Parameters["World"].SetValue(Matrix.CreateTranslation((float)balloonPos.X / Overworld.Width, 0.1f, (float)balloonPos.Y / Overworld.Height));
-                foreach (EffectPass pass in PreviewEffect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                    Mesh.BalloonPrimitive.Render(Device);
+                    if (Mesh.BalloonPrimitive == null)
+                        Mesh.CreatBalloonMesh(Overworld);
+
+                    var balloonPos = Overworld.InstanceSettings.Cell.Bounds.Center;
+
+                    PreviewEffect.Parameters["Texture"].SetValue(Mesh.IconTexture);
+                    PreviewEffect.Parameters["World"].SetValue(Matrix.CreateTranslation((float)balloonPos.X / Overworld.Width, 0.1f, (float)balloonPos.Y / Overworld.Height));
+                    foreach (EffectPass pass in PreviewEffect.CurrentTechnique.Passes)
+                    {
+                        pass.Apply();
+                        Mesh.BalloonPrimitive.Render(Device);
+                    }
                 }
 
                 Device.SetRenderTarget(null);

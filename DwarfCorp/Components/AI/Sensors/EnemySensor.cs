@@ -102,7 +102,7 @@ namespace DwarfCorp
                     sensed.Add(minion);
             }
 
-            if (sensed.Count > 0)
+            if (sensed.Count > 0 && OnEnemySensed != null)
                 OnEnemySensed.Invoke(sensed);
         }
 

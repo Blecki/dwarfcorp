@@ -73,7 +73,7 @@ namespace DwarfCorp
                 }
 
                 var randomFauna = Datastructures.SelectRandom(biome.Fauna);
-                var testCreature = EntityFactory.CreateEntity<GameComponent>(randomFauna.Name, Vector3.Zero);
+                var testCreature = EntityFactory.CreateEntity<GameComponent>(randomFauna.Name, Vector3.Zero); // We're seriously creating this just to check the fucking species??
 
                 if (testCreature == null)
                 {
@@ -89,11 +89,15 @@ namespace DwarfCorp
                     continue;
                 }
 
-                var count = World.GetSpeciesPopulation(testCreatureAI.Stats.CurrentClass);
+                var count = World.GetSpeciesPopulation(testCreatureAI.Stats.Species);
 
                 testCreature.GetRoot().Delete();
+                if (testCreatureAI.Stats.SpeciesName == "Bird")
+                {
+                    var i = 5;
+                }
 
-                if (count < 30)
+                if (count < testCreatureAI.Stats.Species.SpeciesLimit)
                 {
                     var randomNum = Math.Min(MathFunctions.RandInt(1, 3), 30 - count);
                     for (int i = 0; i < randomNum; i++)

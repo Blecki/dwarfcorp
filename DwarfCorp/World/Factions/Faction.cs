@@ -55,7 +55,7 @@ namespace DwarfCorp
 
         public void Update(DwarfTime time)
         {
-            Minions.RemoveAll(m => m.IsDead);
+            Minions.RemoveAll(m => m == null || m.IsDead);
 
 
             if (HandleThreatsTimer == null)

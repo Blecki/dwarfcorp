@@ -1,4 +1,6 @@
 {
+  "Disable": true,
+
   "Name": "Check Valve",
   "EntityName": "Check Valve",
   "DisplayName": "Check Valve",

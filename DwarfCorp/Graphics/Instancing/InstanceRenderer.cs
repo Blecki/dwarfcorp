@@ -19,19 +19,25 @@ namespace DwarfCorp
         public void AddInstanceGroup(InstanceGroup Group)
         {
             Group.Initialize();
-            InstanceTypes[Group.Name] = Group;
+            lock (InstanceTypes)
+            {
+                InstanceTypes[Group.Name] = Group;
+            }
         }
 
         public void RenderInstance(
             NewInstanceData Instance,
             GraphicsDevice Device, Shader Effect, Camera Camera, InstanceRenderMode Mode)
         {
-            if (Instance.Type == null || !InstanceTypes.ContainsKey(Instance.Type))
-                return;
+            lock (InstanceTypes)
+            {
+                if (Instance.Type == null || !InstanceTypes.ContainsKey(Instance.Type))
+                    return;
 
-            InstanceTypes[Instance.Type].RenderInstance(Instance, Device, Effect, Camera, Mode);
+                InstanceTypes[Instance.Type].RenderInstance(Instance, Device, Effect, Camera, Mode);
 
-            _instanceCounter += 1;
+                _instanceCounter += 1;
+            }
         }
 
         public void Flush(
@@ -40,33 +46,39 @@ namespace DwarfCorp
             Camera Camera,
             InstanceRenderMode Mode)
         {
-            foreach (var group in InstanceTypes)
-                group.Value.Flush(Device, Effect, Camera, Mode);
+            lock (InstanceTypes)
+            {
+                foreach (var group in InstanceTypes)
+                    group.Value.Flush(Device, Effect, Camera, Mode);
 
-            PerformanceMonitor.SetMetric("INSTANCES DRAWN", _instanceCounter);
-            _instanceCounter = 0;
+                PerformanceMonitor.SetMetric("INSTANCES DRAWN", _instanceCounter);
+                _instanceCounter = 0;
+            }
         }
 
         internal String PrepareCombinedTiledInstance()
         {
-            if (!DoesGroupExist("combined-tiled-instance"))
-                AddInstanceGroup(new TiledInstanceGroup
-                {
-                    RenderData = new InstanceRenderData
+            lock (InstanceTypes)
+            {
+                if (!DoesGroupExist("combined-tiled-instance"))
+                    AddInstanceGroup(new TiledInstanceGroup
                     {
-                        EnableWind = false,
-                        RenderInSelectionBuffer = true,
-                        EnableGhostClipping = true,
-                        Model = new BatchBillboardPrimitive(new NamedImageFrame("newgui\\error"), 32, 32,
-                        new Point(0, 0), 1.0f, 1.0f, false,
-                        new List<Matrix> { Matrix.Identity },
-                        new List<Color> { Color.White },
-                        new List<Color> { Color.White })
-                    },
-                    Name = "combined-tiled-instance"
-                });
+                        RenderData = new InstanceRenderData
+                        {
+                            EnableWind = false,
+                            RenderInSelectionBuffer = true,
+                            EnableGhostClipping = true,
+                            Model = new BatchBillboardPrimitive(new NamedImageFrame("newgui\\error"), 32, 32,
+                            new Point(0, 0), 1.0f, 1.0f, false,
+                            new List<Matrix> { Matrix.Identity },
+                            new List<Color> { Color.White },
+                            new List<Color> { Color.White })
+                        },
+                        Name = "combined-tiled-instance"
+                    });
 
-            return "combined-tiled-instance";
+                return "combined-tiled-instance";
+            }
         }
     }
 }

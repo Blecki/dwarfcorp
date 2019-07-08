@@ -22,34 +22,35 @@ using DwarfCorp.Events;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// This is the main game state for actually playing the game.
-    /// </summary>
+    public partial class PersistentWorldData
+    {
+        public Dictionary<string, int> SpeciesCounts = new Dictionary<string, int>();
+    }
+
     public partial class WorldManager : IDisposable
     {
-        [JsonProperty] private Dictionary<string, int> SpeciesCounts = new Dictionary<string, int>();
 
-        public void AddToSpeciesTracking(CreatureClass Class)
+        public void AddToSpeciesTracking(CreatureSpecies Species)
         {
-            if (!SpeciesCounts.ContainsKey(Class.Name))
-                SpeciesCounts.Add(Class.Name, 0);
+            if (!PersistentData.SpeciesCounts.ContainsKey(Species.Name))
+                PersistentData.SpeciesCounts.Add(Species.Name, 0);
 
-            SpeciesCounts[Class.Name] += 1;
+            PersistentData.SpeciesCounts[Species.Name] += 1;
         }
 
-        public void RemoveFromSpeciesTracking(CreatureClass Class)
+        public void RemoveFromSpeciesTracking(CreatureSpecies Species)
         {
-            if (!SpeciesCounts.ContainsKey(Class.Name))
-                SpeciesCounts.Add(Class.Name, 0);
+            if (!PersistentData.SpeciesCounts.ContainsKey(Species.Name))
+                PersistentData.SpeciesCounts.Add(Species.Name, 0);
             else
-                SpeciesCounts[Class.Name] += 1;
+                PersistentData.SpeciesCounts[Species.Name] += 1;
         }
 
-        public int GetSpeciesPopulation(CreatureClass Class)
+        public int GetSpeciesPopulation(CreatureSpecies Species)
         {
-            if (!SpeciesCounts.ContainsKey(Class.Name))
+            if (!PersistentData.SpeciesCounts.ContainsKey(Species.Name))
                 return 0;
-            return SpeciesCounts[Class.Name];
+            return PersistentData.SpeciesCounts[Species.Name];
         }
     }
 }

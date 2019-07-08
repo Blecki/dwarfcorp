@@ -30,6 +30,8 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature creature)
         {
+            if (ScaryEntity == null || creature == null || creature.AI == null) return null; // Todo: How is this possible?
+
             Name = "Flee Entity: " + ScaryEntity.Name + " " + ScaryEntity.GlobalID;
             IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.Exclaim, creature.AI.Position, 1.0f, 1.0f, Vector2.UnitY * -32);
             return new FleeEntityAct(creature.AI) { Entity = ScaryEntity, PathLength = Distance };

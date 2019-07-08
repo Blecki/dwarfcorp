@@ -34,7 +34,7 @@ namespace DwarfCorp
             if (IsPregnant && World.Time.CurrentDate > CurrentPregnancy.EndDate)
             {
                 // Todo: This check really belongs before the creature becomes pregnant.
-                if (World.GetSpeciesPopulation(Stats.CurrentClass) < Stats.Species.SpeciesLimit)
+                if (World.GetSpeciesPopulation(Stats.Species) < Stats.Species.SpeciesLimit)
                 {
                     if (EntityFactory.HasEntity(Stats.Species.BabyType))
                     {
@@ -51,15 +51,15 @@ namespace DwarfCorp
             if (Stats.Species.LaysEggs)
             {
                 if (EggTimer == null)
-                    EggTimer = new Timer(3600f + MathFunctions.Rand(-120, 120), false);
+                    EggTimer = new Timer(120f + MathFunctions.Rand(-120, 120), false);
                 EggTimer.Update(gameTime);
 
                 if (EggTimer.HasTriggered)
                 {
-                    if (World.GetSpeciesPopulation(Stats.CurrentClass) < Stats.Species.SpeciesLimit)
+                    if (World.GetSpeciesPopulation(Stats.Species) < Stats.Species.SpeciesLimit)
                     {
                         LayEgg(); // Todo: Egg rate in species
-                        EggTimer = new Timer(3600f + MathFunctions.Rand(-120, 120), false);
+                        EggTimer = new Timer(120f + MathFunctions.Rand(-120, 120), false);
                     }
                 }
             }

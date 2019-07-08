@@ -115,7 +115,7 @@ namespace DwarfCorp
                 FirstUpdate = false;
                 Faction.Minions.Add(AI);
                 Physics.AllowPhysicsSleep = false;
-                World.AddToSpeciesTracking(Stats.CurrentClass);
+                World.AddToSpeciesTracking(Stats.Species);
             }
 
             if (AI == null)
@@ -249,7 +249,7 @@ namespace DwarfCorp
 
         public override void Delete()
         {
-            World.RemoveFromSpeciesTracking(Stats.CurrentClass);
+            World.RemoveFromSpeciesTracking(Stats.Species);
 
             base.Delete();
         }

@@ -181,9 +181,12 @@ namespace DwarfCorp
             Name = "uninitialized";
 
             Flags = Flag.Active | Flag.Visible | Flag.ShouldSerialize;
-            World = Manager.World;
             Parent = null;
 
+            if (Manager == null)
+                throw new InvalidProgramException("Null manager given to game component.");
+
+            World = Manager.World;
             Manager.AddComponent(this);
         }
 

@@ -14,7 +14,7 @@ namespace DwarfCorp
             if (World == null) return; // WUT
             if (Stats == null) return; // SERIOUSLY WTF??
 
-                World.RemoveFromSpeciesTracking(Stats.CurrentClass);
+                World.RemoveFromSpeciesTracking(Stats.Species);
 
             NoiseMaker.MakeNoise("Die", Physics.Position, true);
 
