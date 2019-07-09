@@ -6,6 +6,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
+using SharpRaven.Data;
+
+//Todo: Why can't I use SharpRaven on FNA?
 
 namespace DwarfCorpCore
 {
@@ -136,6 +139,20 @@ namespace DwarfCorp
             return true;
         }
 
+        public static void CaptureException(Exception exception)
+        {
+            Console.Error.WriteLine(exception.Message);
+        }
+
+        public static void LogSentryBreadcrumb(string category, string message, BreadcrumbLevel level = BreadcrumbLevel.Info)
+        {
+            Console.Out.WriteLine(String.Format("{0} : {1}", category, message));
+        }
+
+        public static bool ShowErrorDialog(String Message)
+        {
+            return true;
+        }
     }
 #endif
 }

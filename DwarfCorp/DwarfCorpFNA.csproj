@@ -148,6 +148,8 @@
     <Compile Include="TaskManagement\Tasks\GoToZoneTask.cs" />
     <Compile Include="TaskManagement\Tasks\GetHealedTask.cs" />
     <Compile Include="TaskManagement\TestBehaviors.cs" />
+    <Compile Include="Tools\NeverNull.cs" />
+    <Compile Include="Tools\NullableReference.cs" />
     <Compile Include="World\AutoScaleThread.cs" />
     <Compile Include="World\Crafting\CraftDetails.cs" />
     <Compile Include=".\Components\AI\Creature.cs" />
@@ -565,7 +567,6 @@
     <Compile Include="Graphics\ParticleEffects\ParticleEmitter.cs" />
     <Compile Include="Graphics\ParticleEffects\ParticleManager.cs" />
     <Compile Include="Graphics\ParticleEffects\ParticleTrigger.cs" />
-    <Compile Include=".\Program.cs" />
     <Compile Include=".\ProgramData.cs" />
     <Compile Include=".\Properties\AssemblyInfo.cs" />
     <Compile Include="GameStates\Screensaver\DwarfRunner.cs" />

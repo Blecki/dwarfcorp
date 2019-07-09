@@ -17,6 +17,12 @@ using System.Collections.Generic;
 
 namespace DwarfCorp
 {
+    public class HandledException: Exception
+    {
+        public HandledException(Exception e) : base("Exception handled, user aborting", e)
+        { }
+    }
+
     public class DwarfGame : Game
     {
         public GraphicsDeviceManager Graphics;
@@ -48,10 +54,6 @@ namespace DwarfCorp
 
         private List<LazyAction> _lazyActions = new List<LazyAction>();
         private object _actionMutex = new object();
-                
-#if SHARP_RAVEN && !DEBUG
-        private static RavenClient ravenClient;
-#endif
 
         public DwarfGame()
         {
@@ -61,30 +63,6 @@ namespace DwarfCorp
             Window.AllowUserResizing = false;
             MainThreadID = Thread.CurrentThread.ManagedThreadId;
             GameSettings.Load();
-
-            try
-            {
-#if SHARP_RAVEN && !DEBUG
-                if (GameSettings.Default.AllowReporting)
-                {
-                    ravenClient = new RavenClient("https://af78a676a448474dacee4c72a9197dd2:0dd0a01a9d4e4fa4abc6e89ac7538346@sentry.io/192119");
-                    ravenClient.Tags["Version"] = Program.Version;
-                    ravenClient.Tags["Commit"] = Program.Commit;
-
-#if XNA_BUILD
-                    ravenClient.Tags["Platform"] = "XNA";
-                    ravenClient.Tags["OS"] = "Windows";
-#else
-                    ravenClient.Tags["Platform"] = "FNA";
-                    ravenClient.Tags["OS"] = SDL.SDL_GetPlatform();
-#endif
-                }
-#endif
-            }
-            catch (Exception exception)
-            {
-                Console.Error.WriteLine(exception.ToString());
-            }
 
             // Check GUI scale - if the settings are bad, fix.
             if (GameSettings.Default.GuiScale * 480 > GameSettings.Default.ResolutionY)
@@ -98,18 +76,7 @@ namespace DwarfCorp
             MathFunctions.Random = new ThreadSafeRandom(new Random().Next());
             Graphics.PreparingDeviceSettings += WorldRenderer.GraphicsPreparingDeviceSettings;
             Graphics.PreferMultiSampling = false;
-            try
-            {
-                Graphics.ApplyChanges();
-            }
-            catch (NoSuitableGraphicsDeviceException exception)
-            {
-                Console.Error.WriteLine(exception.Message);
-#if SHARP_RAVEN && !DEBUG
-                if (ravenClient != null)
-                    ravenClient.Capture(new SentryEvent(exception));
-#endif
-            }
+            Graphics.ApplyChanges();
 
             if (AssetManagement.Steam.Steam.InitializeSteam() == AssetManagement.Steam.Steam.SteamInitializationResult.QuitImmediately)
                 Exit();
@@ -177,12 +144,12 @@ namespace DwarfCorp
 
         public void DoLazyAction(Action action, Func<bool> callback = null)
         {
-            lock(_actionMutex)
+            lock (_actionMutex)
             {
                 _lazyActions.Add(new LazyAction() { Action = action, Result = callback });
             }
         }
-     
+
         public static void InitializeLogger()
         {
 #if DEBUG
@@ -201,7 +168,7 @@ namespace DwarfCorp
                 {
                     File.Create(path).Close();
                 }
-                
+
                 var logFile = new FileInfo(path);
                 if (logFile.Length > 5e7)
                 {
@@ -222,61 +189,27 @@ namespace DwarfCorp
             }
         }
 
-        public static void TriggerRavenEvent(string message, string details)
-        {
-#if SHARP_RAVEN && !DEBUG
-            if (ravenClient == null)
-                return;
-            var exception = new Exception(message);
-            exception.Data["Details"] = details;
-            ravenClient.Capture(new SentryEvent(exception));
-#endif
-        }
-
+        // Todo: Kill passthrough
         public static void LogSentryBreadcrumb(string category, string message, BreadcrumbLevel level = BreadcrumbLevel.Info)
         {
-            Console.Out.WriteLine(String.Format("{0} : {1}", category, message));
-#if SHARP_RAVEN && !DEBUG
-            if (ravenClient != null)
-            {
-                ravenClient.AddTrail(new Breadcrumb(category) { Message = message, Type = BreadcrumbType.Navigation });
-            }
-#endif
+            Program.LogSentryBreadcrumb(category, message, level);
         }
 
         protected override void Initialize()
         {
-#if SHARP_RAVEN && !DEBUG
-            try
-            {
-#endif
-                var dir = GetGameDirectory();
-                if (!Directory.Exists(dir))
-                    Directory.CreateDirectory(dir);
+            var dir = GetGameDirectory();
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
 
-                InitializeLogger();
-                Thread.CurrentThread.Name = "Main";
-                // Goes before anything else so we can track from the very start.
+            InitializeLogger();
+            Thread.CurrentThread.Name = "Main";
+            SpriteBatch = new SpriteBatch(GraphicsDevice);
 
-                SpriteBatch = new SpriteBatch(GraphicsDevice);
-                base.Initialize();
-#if SHARP_RAVEN && !DEBUG
-            }
-            catch (Exception exception)
-            {
-                if (ravenClient != null)
-                    ravenClient.Capture(new SentryEvent(exception));
-                throw;
-            }
-#endif
-            }
+            base.Initialize();
+        }
 
         protected override void LoadContent()
         {
-#if SHARP_RAVEN && !DEBUG
-            try
-            {
-#endif
             LogSentryBreadcrumb("Loading", "LoadContent was called.", BreadcrumbLevel.Info);
             AssetManager.Initialize(Content, GraphicsDevice, GameSettings.Default);
 
@@ -324,29 +257,11 @@ namespace DwarfCorp
             ScreenSaver = new Terrain2D(this);
 
             base.LoadContent();
-
-#if SHARP_RAVEN && !DEBUG
-            }
-            catch (Exception exception)
-            {
-                if (ravenClient != null)
-                    ravenClient.Capture(new SentryEvent(exception));
-                throw;
-            }
-#endif
         }
 
         public static void RebuildConsole()
         {
             ConsoleGui.RootItem.Layout();
-        }
-
-        public void CaptureException(Exception exception)
-        {
-#if SHARP_RAVEN && !DEBUG
-            if (ravenClient != null)
-                ravenClient.Capture(new SentryEvent(exception));
-#endif
         }
 
         protected override void Update(GameTime time)
@@ -356,55 +271,59 @@ namespace DwarfCorp
                 base.Update(time);
                 return;
             }
-           
-#if SHARP_RAVEN && !DEBUG
+
+#if !DEBUG
             try
             {
 #endif
-            if (GumInputMapper.WasConsoleTogglePressed())
-            {
-                ConsoleVisible = !ConsoleVisible;
+                if (GumInputMapper.WasConsoleTogglePressed())
+                {
+                    ConsoleVisible = !ConsoleVisible;
+
+                    if (ConsoleVisible)
+                    {
+                        var commandPanel = GetConsoleTile("COMMAND");
+                        commandPanel.AddCommandEntry();
+                        ConsoleGui.SetFocus(commandPanel.Children[0]);
+                    }
+                }
 
                 if (ConsoleVisible)
                 {
-                    var commandPanel = GetConsoleTile("COMMAND");
-                    commandPanel.AddCommandEntry();
-                    ConsoleGui.SetFocus(commandPanel.Children[0]);
+                    ConsoleGui.Update(time);
+                    if (ConsoleGui.FocusItem != null)
+                        DwarfGame.GumInput.FireKeyboardActionsOnly(ConsoleGui);
                 }
-            }
 
-            if (ConsoleVisible)
-            {
-                ConsoleGui.Update(time);
-                if (ConsoleGui.FocusItem != null)
-                    DwarfGame.GumInput.FireKeyboardActionsOnly(ConsoleGui);
-            }
-
-            PerformanceMonitor.BeginFrame();
-            PerformanceMonitor.PushFrame("Update");
-            AssetManagement.Steam.Steam.Update();
-            DwarfTime.LastTime.Update(time);
+                PerformanceMonitor.BeginFrame();
+                PerformanceMonitor.PushFrame("Update");
+                AssetManagement.Steam.Steam.Update();
+                DwarfTime.LastTime.Update(time);
                 GameStateManager.Update(DwarfTime.LastTime);
 
-            lock (_actionMutex)
-            {
-                foreach (var action in _lazyActions)
+                lock (_actionMutex)
                 {
-                    action.Action();
-                    action.Result?.Invoke();
+                    foreach (var action in _lazyActions)
+                    {
+                        action.Action();
+                        action.Result?.Invoke();
+                    }
+                    _lazyActions.Clear();
                 }
-                _lazyActions.Clear();
-            }
 
-            base.Update(time);
-            PerformanceMonitor.PopFrame();
-#if SHARP_RAVEN && !DEBUG
+                base.Update(time);
+                PerformanceMonitor.PopFrame();
+#if !DEBUG
+            }
+            catch (HandledException)
+            {
+                throw;
             }
             catch (Exception exception)
             {
-                if (ravenClient != null)
-                    ravenClient.Capture(new SentryEvent(exception));
-                throw;
+                Program.CaptureException(exception);
+                if (Program.ShowErrorDialog(exception.Message))
+                    throw new HandledException(exception);
             }
 #endif
             HasRendered = false;
@@ -412,38 +331,38 @@ namespace DwarfCorp
 
         protected override void Draw(GameTime time)
         {
-
             if (GraphicsDevice.IsDisposed) return;
 
             HasRendered = true;
-#if SHARP_RAVEN && !DEBUG
+
+#if !DEBUG
             try
             {
 #endif
-            PerformanceMonitor.PushFrame("Render");
+                PerformanceMonitor.PushFrame("Render");
 
-            GraphicsDevice.Clear(Color.Black);
+                GraphicsDevice.Clear(Color.Black);
 
-            if (GameStateManager.DrawScreensaver)
-                ScreenSaver.Render(GraphicsDevice, DwarfTime.LastTime);
+                if (GameStateManager.DrawScreensaver)
+                    ScreenSaver.Render(GraphicsDevice, DwarfTime.LastTime);
 
                 GameStateManager.Render(DwarfTime.LastTime);
 
-            GraphicsDevice.SetRenderTarget(null);
+                GraphicsDevice.SetRenderTarget(null);
                 base.Draw(time);
-            PerformanceMonitor.PopFrame();
-            PerformanceMonitor.Render();
+                PerformanceMonitor.PopFrame();
+                PerformanceMonitor.Render();
 
-            if (ConsoleVisible)
-                ConsoleGui.Draw();
+                if (ConsoleVisible)
+                    ConsoleGui.Draw();
 
-#if SHARP_RAVEN && !DEBUG
+#if !DEBUG
             }
             catch (Exception exception)
             {
-                if (ravenClient != null)
-                    ravenClient.Capture(new SentryEvent(exception));
-                throw;
+                Program.CaptureException(exception);
+                if (Program.ShowErrorDialog(exception.Message))
+                    throw new HandledException(exception);
             }
 #endif
         }

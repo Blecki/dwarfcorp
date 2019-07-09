@@ -389,6 +389,8 @@
     <Compile Include="TaskManagement\Tasks\StockResourceTask.cs" />
     <Compile Include="TaskManagement\Tasks\WrangleAnimalTask.cs" />
     <Compile Include="TaskManagement\TestBehaviors.cs" />
+    <Compile Include="Tools\NullableReference.cs" />
+    <Compile Include="Tools\NeverNull.cs" />
     <Compile Include="World\ChunkGeneration\CastSunlight.cs" />
     <Compile Include="World\ChunkGeneration\ChunkGeneratorSettings.cs" />
     <Compile Include="World\ChunkGeneration\FaunaData.cs" />

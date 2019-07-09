@@ -39,6 +39,12 @@ namespace DwarfCorp.Gui.Widgets
                         })
                     }
                 },
+
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "CRASH",
+                    OnClick = (sender, args) => throw new InvalidProgramException()
+                },
             
                 new HorizontalMenuTray.MenuItem
                 {

@@ -337,7 +337,7 @@ namespace DwarfCorp
                 bool allAsleep = AreAllEmployeesAsleep();
 
 #if !UPTIME_TEST
-                if (SleepPrompt == null && allAsleep && !FastForwardToDay && Time.IsNight())
+                if (SleepPrompt == null && allAsleep && !FastForwardToDay && Time.IsNight()) // Todo: Kill?
                 {
                     SleepPrompt = new QueuedAnnouncement()
                     {

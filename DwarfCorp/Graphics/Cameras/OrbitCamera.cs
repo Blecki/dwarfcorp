@@ -110,15 +110,15 @@ namespace DwarfCorp
         public ControlType Control = ControlType.Overhead;
         private Point mouseOnRotate = new Point(0, 0);
         public List<Vector3> ZoomTargets { get; set; }
-        
 
-        public bool EnableControl { get; set; }
+
+        public bool EnableControl = true;
         public Vector3 AutoTarget { get; set; }
         public bool FollowAutoTarget { get; set; }
 
         public OrbitCamera() : base()
         {
-            
+     
         }
 
         public OrbitCamera(WorldManager world, Vector3 target, Vector3 position, float fov, float aspectRatio, float nearPlane, float farPlane) :
@@ -329,7 +329,7 @@ namespace DwarfCorp
 
             Vector3 velocityToSet = Vector3.Zero;
 
-            if (EnableControl)
+            //if (EnableControl)
             {
                 if (keys.IsKeyDown(ControlSettings.Mappings.Forward) || keys.IsKeyDown(Keys.Up))
                 {

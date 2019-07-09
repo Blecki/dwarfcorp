@@ -340,385 +340,400 @@ namespace DwarfCorp.GameStates
                 return;
             }
 
-            #region Input for GUI
-
-            DwarfGame.GumInput.FireActions(Gui, (@event, args) =>
+            try
             {
+
+                #region Input for GUI
+
+                DwarfGame.GumInput.FireActions(Gui, (@event, args) =>
+                {
                 // Let old input handle mouse interaction for now. Will eventually need to be replaced.
 
                 // Mouse down but not handled by GUI? Collapse menu.
                 if (@event == DwarfCorp.Gui.InputEvents.MouseClick)
-                {
-                    GodMenu.CollapseTrays();
-                    if (ContextMenu != null)
                     {
-                        ContextMenu.Close();
-                        ContextMenu = null;
-                    }
+                        GodMenu.CollapseTrays();
+                        if (ContextMenu != null)
+                        {
+                            ContextMenu.Close();
+                            ContextMenu = null;
+                        }
 
                     // double click logic.
                     if (args.MouseButton == 0)
-                    {
-                        float now = (float)gameTime.TotalRealTime.TotalSeconds;
-                        if (now - timeOnLastClick < doubleClickThreshold)
                         {
-                            World.Renderer.Camera.ZoomTo(World.Renderer.CursorLightPos);
-                            Renderer.Camera.ZoomTo(Renderer.CursorLightPos);
-                        }
-                        timeOnLastClick = now;
-                    }
-
-                    if (args.MouseButton == 1) // Right mouse click.
-                    {
-                        var bodiesClicked = World.ComponentManager.SelectRootBodiesOnScreen(
-                            new Rectangle(args.X, args.Y, 1, 1), Renderer.Camera);
-
-                        if (bodiesClicked.Count > 0)
-                        {
-                            var contextBody = bodiesClicked[0];
-                            var availableCommands = ContextCommands.Where(c => c.CanBeAppliedTo(contextBody, World));
-
-                            if (availableCommands.Count() > 0)
+                            float now = (float)gameTime.TotalRealTime.TotalSeconds;
+                            if (now - timeOnLastClick < doubleClickThreshold)
                             {
+                                World.Renderer.Camera.ZoomTo(World.Renderer.CursorLightPos);
+                                Renderer.Camera.ZoomTo(Renderer.CursorLightPos);
+                            }
+                            timeOnLastClick = now;
+                        }
+
+                        if (args.MouseButton == 1) // Right mouse click.
+                    {
+                            var bodiesClicked = World.ComponentManager.SelectRootBodiesOnScreen(
+                                new Rectangle(args.X, args.Y, 1, 1), Renderer.Camera);
+
+                            if (bodiesClicked.Count > 0)
+                            {
+                                var contextBody = bodiesClicked[0];
+                                var availableCommands = ContextCommands.Where(c => c.CanBeAppliedTo(contextBody, World));
+
+                                if (availableCommands.Count() > 0)
+                                {
                                 // Show context menu.
                                 ContextMenu = Gui.ConstructWidget(new ContextMenu
-                                {
-                                    Commands = availableCommands.ToList(),
-                                    Body = contextBody,
-                                    World = World
-                                });
+                                    {
+                                        Commands = availableCommands.ToList(),
+                                        Body = contextBody,
+                                        World = World
+                                    });
 
-                                Gui.ShowDialog(ContextMenu);
+                                    Gui.ShowDialog(ContextMenu);
+                                    args.Handled = true;
+                                }
+                            }
+                        }
+                    }
+
+                    else if (@event == DwarfCorp.Gui.InputEvents.KeyUp)
+                    {
+                        if (FlatToolTray.Tray.Hotkeys.Contains((Keys)args.KeyValue))
+                        {
+                            if (PausePanel == null || PausePanel.Hidden)
+                            {
+                                (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray)
+                                   .Hotkey((Keys)args.KeyValue);
+                            }
+                        }
+                        else if ((Keys)args.KeyValue == Keys.Escape)
+                        {
+                            if (PausePanel == null || PausePanel.Hidden)
+                            {
+                                BrushTray.Select(0);
+                                World.TutorialManager.HideTutorial();
+                            }
+                            else
+                            {
+                                World.TutorialManager.ShowTutorial();
+                            }
+
+                            CameraTray.Select(0);
+
+
+                            if (MainMenu.Hidden && PausePanel == null)
+                                (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(FlatToolTray.Tray.Hotkeys[0]);
+                            else if (CurrentToolMode != "SelectUnits" && PausePanel == null)
+                                ChangeTool("SelectUnits");
+                            else if (PausePanel != null)
+                            {
+                                PausePanel.Close();
+                            }
+                            else
+                                OpenPauseMenu();
+                        }
+                        else if ((Keys)args.KeyValue == ControlSettings.Mappings.SelectAllDwarves)
+                        {
+                            if (PausePanel == null || PausePanel.Hidden)
+                            {
+                                World.PersistentData.SelectedMinions.AddRange(World.PlayerFaction.Minions);
+                                World.Tutorial("dwarf selected");
+                            }
+                        }
+                        else if ((Keys)args.KeyValue == ControlSettings.Mappings.Pause)
+                        {
+                            if (PausePanel == null || PausePanel.Hidden)
+                            {
+                                Paused = !Paused;
+                                if (Paused) GameSpeedControls.Pause();
+                                else GameSpeedControls.Resume();
+                            }
+                        }
+                        else if ((Keys)args.KeyValue == ControlSettings.Mappings.TimeForward)
+                        {
+                            if (PausePanel == null || PausePanel.Hidden)
+                            {
+                                GameSpeedControls.CurrentSpeed += 1;
+                            }
+                        }
+                        else if ((Keys)args.KeyValue == ControlSettings.Mappings.TimeBackward)
+                        {
+                            if (PausePanel == null || PausePanel.Hidden)
+                            {
+                                GameSpeedControls.CurrentSpeed -= 1;
+                            }
+                        }
+                        else if ((Keys)args.KeyValue == ControlSettings.Mappings.ToggleGUI)
+                        {
+                            Gui.RootItem.Hidden = !Gui.RootItem.Hidden;
+                            Gui.RootItem.Invalidate();
+                        }
+                        else if ((Keys)args.KeyValue == ControlSettings.Mappings.Map)
+                        {
+                            if (PausePanel == null || PausePanel.Hidden)
+                            {
+                                Gui.SafeCall(MinimapIcon.OnClick, MinimapIcon, new InputEventArgs
+                                {
+                                });
+                            }
+                        }
+                        else if ((Keys)args.KeyValue == ControlSettings.Mappings.Xray)
+                        {
+                            Xray.CheckState = !Xray.CheckState;
+                        }
+                        else if ((Keys)args.KeyValue == ControlSettings.Mappings.GodMode)
+                        {
+                            if (PausePanel == null || PausePanel.Hidden)
+                            {
+                                if (!GodMenu.Hidden)
+                                {
+                                    ChangeTool("SelectUnits");
+                                }
+                                GodMenu.Hidden = !GodMenu.Hidden;
+                                GodMenu.Invalidate();
+                            }
+                        }
+                        else if ((Keys)args.KeyValue == ControlSettings.Mappings.SliceUp)
+                        {
+                            sliceUpheld = false;
+                            args.Handled = true;
+                        }
+                        else if ((Keys)args.KeyValue == ControlSettings.Mappings.SliceDown)
+                        {
+                            sliceDownheld = false;
+                            args.Handled = true;
+                        }
+                        else if ((Keys)args.KeyValue == ControlSettings.Mappings.SliceSelected)
+                        {
+                            if (args.Control)
+                            {
+                                World.Renderer.SetMaxViewingLevel(rememberedViewValue);
+                                args.Handled = true;
+                            }
+                            else if (VoxSelector.VoxelUnderMouse.IsValid)
+                            {
+                                World.Tutorial("unslice");
+                                World.Renderer.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y + 1);
+                                Drawer3D.DrawBox(VoxSelector.VoxelUnderMouse.GetBoundingBox(), Color.White, 0.15f, true);
+                                args.Handled = true;
+                            }
+                        }
+                        else if ((Keys)args.KeyValue == ControlSettings.Mappings.Unslice)
+                        {
+                            rememberedViewValue = World.Renderer.PersistentSettings.MaxViewingLevel;
+                            World.Renderer.SetMaxViewingLevel(World.WorldSizeInVoxels.Y);
+                            args.Handled = true;
+                        }
+                    }
+                    else if (@event == DwarfCorp.Gui.InputEvents.KeyDown)
+                    {
+                        if ((Keys)args.KeyValue == ControlSettings.Mappings.SliceUp)
+                        {
+                            if (!sliceUpheld)
+                            {
+                                sliceUpheld = true;
+                                World.Tutorial("unslice");
+                                sliceUpTimer.Reset(0.5f);
+                                World.Renderer.SetMaxViewingLevel(World.Renderer.PersistentSettings.MaxViewingLevel + 1);
+                                args.Handled = true;
+                            }
+                        }
+                        else if ((Keys)args.KeyValue == ControlSettings.Mappings.SliceDown)
+                        {
+                            if (!sliceDownheld)
+                            {
+                                World.Tutorial("unslice");
+                                sliceDownheld = true;
+                                sliceDownTimer.Reset(0.5f);
+                                World.Renderer.SetMaxViewingLevel(World.Renderer.PersistentSettings.MaxViewingLevel - 1);
                                 args.Handled = true;
                             }
                         }
                     }
-                }
+                });
 
-                else if (@event == DwarfCorp.Gui.InputEvents.KeyUp)
+                #endregion
+
+                #region Slice hotkeys
+
+                if (sliceDownheld)
                 {
-                    if (FlatToolTray.Tray.Hotkeys.Contains((Keys)args.KeyValue))
+                    sliceDownTimer.Update(gameTime);
+                    if (sliceDownTimer.HasTriggered)
                     {
-                        if (PausePanel == null || PausePanel.Hidden)
-                        {
-                            (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray)
-                               .Hotkey((Keys)args.KeyValue);
-                        }
-                    }
-                    else if ((Keys)args.KeyValue == Keys.Escape)
-                    {
-                        if (PausePanel == null || PausePanel.Hidden)
-                        {
-                            BrushTray.Select(0);
-                            World.TutorialManager.HideTutorial();
-                        }
-                        else
-                        {
-                            World.TutorialManager.ShowTutorial();
-                        }
-
-                        CameraTray.Select(0);
-
-
-                        if (MainMenu.Hidden && PausePanel == null)
-                            (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(FlatToolTray.Tray.Hotkeys[0]);
-                        else if (CurrentToolMode != "SelectUnits" && PausePanel == null)
-                            ChangeTool("SelectUnits");
-                        else if (PausePanel != null)
-                        {
-                            PausePanel.Close();
-                        }
-                        else
-                            OpenPauseMenu();
-                    }
-                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.SelectAllDwarves)
-                    {
-                        if (PausePanel == null || PausePanel.Hidden)
-                        {
-                            World.PersistentData.SelectedMinions.AddRange(World.PlayerFaction.Minions);
-                            World.Tutorial("dwarf selected");
-                        }
-                    }
-                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.Pause)
-                    {
-                        if (PausePanel == null || PausePanel.Hidden)
-                        {
-                            Paused = !Paused;
-                            if (Paused) GameSpeedControls.Pause();
-                            else GameSpeedControls.Resume();
-                        }
-                    }
-                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.TimeForward)
-                    {
-                        if (PausePanel == null || PausePanel.Hidden)
-                        {
-                            GameSpeedControls.CurrentSpeed += 1;
-                        }
-                    }
-                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.TimeBackward)
-                    {
-                        if (PausePanel == null || PausePanel.Hidden)
-                        {
-                            GameSpeedControls.CurrentSpeed -= 1;
-                        }
-                    }
-                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.ToggleGUI)
-                    {
-                        Gui.RootItem.Hidden = !Gui.RootItem.Hidden;
-                        Gui.RootItem.Invalidate();
-                    }
-                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.Map)
-                    {
-                        if (PausePanel == null || PausePanel.Hidden)
-                        {
-                            Gui.SafeCall(MinimapIcon.OnClick, MinimapIcon, new InputEventArgs
-                            {
-                            });
-                        }
-                    }
-                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.Xray)
-                    {
-                        Xray.CheckState = !Xray.CheckState;
-                    }
-                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.GodMode)
-                    {
-                        if (PausePanel == null || PausePanel.Hidden)
-                        {
-                            if (!GodMenu.Hidden)
-                            {
-                                ChangeTool("SelectUnits");
-                            }
-                            GodMenu.Hidden = !GodMenu.Hidden;
-                            GodMenu.Invalidate();
-                        }
-                    }
-                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.SliceUp)
-                    {
-                        sliceUpheld = false;
-                        args.Handled = true;
-                    }
-                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.SliceDown)
-                    {
-                        sliceDownheld = false;
-                        args.Handled = true;
-                    }
-                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.SliceSelected)
-                    {
-                        if (args.Control)
-                        {
-                            World.Renderer.SetMaxViewingLevel(rememberedViewValue);
-                            args.Handled = true;
-                        }
-                        else if (VoxSelector.VoxelUnderMouse.IsValid)
-                        {
-                            World.Tutorial("unslice");
-                            World.Renderer.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y + 1);
-                            Drawer3D.DrawBox(VoxSelector.VoxelUnderMouse.GetBoundingBox(), Color.White, 0.15f, true);
-                            args.Handled = true;
-                        }
-                    }
-                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.Unslice)
-                    {
-                        rememberedViewValue = World.Renderer.PersistentSettings.MaxViewingLevel;
-                        World.Renderer.SetMaxViewingLevel(World.WorldSizeInVoxels.Y);
-                        args.Handled = true;
+                        World.Renderer.SetMaxViewingLevel(World.Renderer.PersistentSettings.MaxViewingLevel - 1);
+                        sliceDownTimer.Reset(sliceDownTimer.TargetTimeSeconds * 0.6f);
                     }
                 }
-                else if (@event == DwarfCorp.Gui.InputEvents.KeyDown)
+                else if (sliceUpheld)
                 {
-                    if ((Keys)args.KeyValue == ControlSettings.Mappings.SliceUp)
+                    sliceUpTimer.Update(gameTime);
+                    if (sliceUpTimer.HasTriggered)
                     {
-                        if (!sliceUpheld)
-                        {
-                            sliceUpheld = true;
-                            World.Tutorial("unslice");
-                            sliceUpTimer.Reset(0.5f);
-                            World.Renderer.SetMaxViewingLevel(World.Renderer.PersistentSettings.MaxViewingLevel + 1);
-                            args.Handled = true;
-                        }
-                    }
-                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.SliceDown)
-                    {
-                        if (!sliceDownheld)
-                        {
-                            World.Tutorial("unslice");
-                            sliceDownheld = true;
-                            sliceDownTimer.Reset(0.5f);
-                            World.Renderer.SetMaxViewingLevel(World.Renderer.PersistentSettings.MaxViewingLevel - 1);
-                            args.Handled = true;
-                        }
+                        World.Renderer.SetMaxViewingLevel(World.Renderer.PersistentSettings.MaxViewingLevel + 1);
+                        sliceUpTimer.Reset(sliceUpTimer.TargetTimeSeconds * 0.6f);
                     }
                 }
-            });
 
-            #endregion
+                #endregion
 
-            #region Slice hotkeys
+                World.Update(gameTime);
 
-            if (sliceDownheld)
-            {
-                sliceDownTimer.Update(gameTime);
-                if (sliceDownTimer.HasTriggered)
+                #region Vox and Body selectors
+                if (!IsMouseOverGui)
                 {
-                    World.Renderer.SetMaxViewingLevel(World.Renderer.PersistentSettings.MaxViewingLevel - 1);
-                    sliceDownTimer.Reset(sliceDownTimer.TargetTimeSeconds * 0.6f);
+                    if (KeyManager.RotationEnabled(World.Renderer.Camera))
+                        SetMouse(null);
+                    VoxSelector.Update();
+                    BodySelector.Update();
                 }
-            }
-            else if (sliceUpheld)
-            {
-                sliceUpTimer.Update(gameTime);
-                if (sliceUpTimer.HasTriggered)
+                #endregion
+
+                Renderer.Update(gameTime);
+                Input.Update();
+                CurrentTool.Update(Game, gameTime);
+
+                #region World Popups
+
+                if (LastWorldPopup != null)
                 {
-                    World.Renderer.SetMaxViewingLevel(World.Renderer.PersistentSettings.MaxViewingLevel + 1);
-                    sliceUpTimer.Reset(sliceUpTimer.TargetTimeSeconds * 0.6f);
-                }
-            }
+                    var removals = new List<uint>();
+                    foreach (var popup in LastWorldPopup)
+                    {
+                        popup.Value.Update(gameTime, Renderer.Camera, Game.GraphicsDevice.Viewport);
+                        if (popup.Value.Widget == null || !Gui.RootItem.Children.Contains(popup.Value.Widget) || popup.Value.BodyToTrack == null || popup.Value.BodyToTrack.IsDead)
+                            removals.Add(popup.Key);
+                    }
 
-            #endregion
-
-            World.Update(gameTime);
-
-            #region Vox and Body selectors
-            if (!IsMouseOverGui)
-            {
-                if (KeyManager.RotationEnabled(World.Renderer.Camera))
-                    SetMouse(null);
-                VoxSelector.Update();
-                BodySelector.Update();
-            }
-            #endregion
-
-            Renderer.Update(gameTime);
-            Input.Update();
-            CurrentTool.Update(Game, gameTime);
-
-            #region World Popups
-
-            if (LastWorldPopup != null)
-            {
-                var removals = new List<uint>();
-                foreach (var popup in LastWorldPopup)
-                {
-                    popup.Value.Update(gameTime, Renderer.Camera, Game.GraphicsDevice.Viewport);
-                    if (popup.Value.Widget == null || !Gui.RootItem.Children.Contains(popup.Value.Widget) || popup.Value.BodyToTrack == null || popup.Value.BodyToTrack.IsDead)
-                        removals.Add(popup.Key);
+                    foreach (var removal in removals)
+                    {
+                        if (LastWorldPopup[removal].Widget != null && Gui.RootItem.Children.Contains(LastWorldPopup[removal].Widget))
+                            Gui.DestroyWidget(LastWorldPopup[removal].Widget);
+                        LastWorldPopup.Remove(removal);
+                    }
                 }
 
-                foreach (var removal in removals)
+                #endregion
+
+                #region Update time label
+                TimeLabel.Text = String.Format("{0} {1}",
+                    World.Time.CurrentDate.ToShortDateString(),
+                    World.Time.CurrentDate.ToShortTimeString());
+                TimeLabel.Invalidate();
+                #endregion
+
+
+                #region Update top left panel
+                var pulse = 0.25f * (float)Math.Sin(gameTime.TotalRealTime.TotalSeconds * 4) + 0.25f;
+                MoneyLabel.Text = World.PlayerFaction.Economy.Funds.ToString();
+                MoneyLabel.TextColor = World.PlayerFaction.Economy.Funds > 1.0m ? Color.White.ToVector4() : new Vector4(1.0f, pulse, pulse, 1.0f);
+                MoneyLabel.Invalidate();
+                int availableSpace = World.ComputeRemainingStockpileSpace();
+                int totalSpace = World.ComputeTotalStockpileSpace();
+                StocksLabel.Text = String.Format("    Stocks: {0}/{1}", totalSpace - availableSpace, totalSpace);
+                StocksLabel.TextColor = availableSpace > 0 ? Color.White.ToVector4() : new Vector4(1.0f, pulse, pulse, 1.0f);
+                StocksLabel.Invalidate();
+                LevelLabel.Text = String.Format("{0}/{1}", Renderer.PersistentSettings.MaxViewingLevel, World.WorldSizeInVoxels.Y);
+                LevelLabel.Invalidate();
+                SupervisionLabel.Text = String.Format("{0}/{1}", World.PlayerFaction.Minions.Count, World.CalculateSupervisionCap());
+                SupervisionLabel.Invalidate();
+                #endregion
+
+                #region Update toolbar tray
+
+                foreach (var tool in ToolbarItems)
+                    tool.Icon.Enabled = tool.Available();
+
+                #endregion
+
+                BottomBar.Layout();
+
+                if (GameSpeedControls.CurrentSpeed != (int)DwarfTime.LastTime.Speed)
+                    World.Tutorial("time");
+
+                GameSpeedControls.CurrentSpeed = (int)DwarfTime.LastTime.Speed;
+
+                if (PausedWidget.Hidden == Paused)
                 {
-                    if (LastWorldPopup[removal].Widget != null && Gui.RootItem.Children.Contains(LastWorldPopup[removal].Widget))
-                        Gui.DestroyWidget(LastWorldPopup[removal].Widget);
-                    LastWorldPopup.Remove(removal);
+                    PausedWidget.Hidden = !Paused;
+                    PausedWidget.Invalidate();
                 }
-            }
 
-            #endregion
+                // Really just handles mouse pointer animation.
+                Gui.Update(gameTime.ToRealTime());
 
-            #region Update time label
-            TimeLabel.Text = String.Format("{0} {1}",
-                World.Time.CurrentDate.ToShortDateString(),
-                World.Time.CurrentDate.ToShortTimeString());
-            TimeLabel.Invalidate();
-            #endregion
+                AutoSaveTimer.Update(gameTime);
 
-
-            #region Update top left panel
-            var pulse = 0.25f * (float)Math.Sin(gameTime.TotalRealTime.TotalSeconds * 4) + 0.25f;
-            MoneyLabel.Text = World.PlayerFaction.Economy.Funds.ToString();
-            MoneyLabel.TextColor = World.PlayerFaction.Economy.Funds > 1.0m ? Color.White.ToVector4() : new Vector4(1.0f, pulse, pulse, 1.0f);
-            MoneyLabel.Invalidate();
-            int availableSpace = World.ComputeRemainingStockpileSpace();
-            int totalSpace = World.ComputeTotalStockpileSpace();
-            StocksLabel.Text = String.Format("    Stocks: {0}/{1}", totalSpace - availableSpace, totalSpace);
-            StocksLabel.TextColor = availableSpace > 0 ? Color.White.ToVector4() : new Vector4(1.0f, pulse, pulse, 1.0f);
-            StocksLabel.Invalidate();
-            LevelLabel.Text = String.Format("{0}/{1}", Renderer.PersistentSettings.MaxViewingLevel, World.WorldSizeInVoxels.Y);
-            LevelLabel.Invalidate();
-            SupervisionLabel.Text = String.Format("{0}/{1}", World.PlayerFaction.Minions.Count, World.CalculateSupervisionCap());
-            SupervisionLabel.Invalidate();
-            #endregion
-
-            #region Update toolbar tray
-
-            foreach (var tool in ToolbarItems)
-                tool.Icon.Enabled = tool.Available();
-
-            #endregion
-
-            BottomBar.Layout();
-
-            if (GameSpeedControls.CurrentSpeed != (int)DwarfTime.LastTime.Speed)
-                World.Tutorial("time");
-
-            GameSpeedControls.CurrentSpeed = (int)DwarfTime.LastTime.Speed;
-
-            if (PausedWidget.Hidden == Paused)
-            {
-                PausedWidget.Hidden = !Paused;
-                PausedWidget.Invalidate();
-            }
-
-            // Really just handles mouse pointer animation.
-            Gui.Update(gameTime.ToRealTime());
-
-            AutoSaveTimer.Update(gameTime);
-
-            if (GameSettings.Default.AutoSave && AutoSaveTimer.HasTriggered)
-            {
-                AutoSave();
-            }
-
-            #region select employee
-
-            World.PersistentData.SelectedMinions.RemoveAll(minion => minion.IsDead);
-            if (World.PersistentData.SelectedMinions.Count == 1)
-            {
-                // Lol this is evil just trying to reduce the update rate for speed
-                if (MathFunctions.RandEvent(0.1f))
-                    SelectedEmployeeInfo.Employee = World.PersistentData.SelectedMinions[0];
-            }
-            else
-            {
-                bool update = MathFunctions.RandEvent(0.1f);
-                if ((SelectedEmployeeInfo.Employee == null || SelectedEmployeeInfo.Employee.IsDead || !SelectedEmployeeInfo.Employee.Active) &&
-                    World.PlayerFaction.Minions.Count > 0)
+                if (GameSettings.Default.AutoSave && AutoSaveTimer.HasTriggered)
                 {
-                    SelectedEmployeeInfo.Employee = World.PlayerFaction.Minions[0];
+                    AutoSave();
                 }
-                else if (update)
+
+                #region select employee
+
+                World.PersistentData.SelectedMinions.RemoveAll(minion => minion.IsDead);
+                if (World.PersistentData.SelectedMinions.Count == 1)
                 {
-                    SelectedEmployeeInfo.Employee = SelectedEmployeeInfo.Employee;
+                    // Lol this is evil just trying to reduce the update rate for speed
+                    if (MathFunctions.RandEvent(0.1f))
+                        SelectedEmployeeInfo.Employee = World.PersistentData.SelectedMinions[0];
                 }
-            }
-            #endregion
+                else
+                {
+                    bool update = MathFunctions.RandEvent(0.1f);
+                    if ((SelectedEmployeeInfo.Employee == null || SelectedEmployeeInfo.Employee.IsDead || !SelectedEmployeeInfo.Employee.Active) &&
+                        World.PlayerFaction.Minions.Count > 0)
+                    {
+                        SelectedEmployeeInfo.Employee = World.PlayerFaction.Minions[0];
+                    }
+                    else if (update)
+                    {
+                        SelectedEmployeeInfo.Employee = SelectedEmployeeInfo.Employee;
+                    }
+                }
+                #endregion
 
-            #region Console
-            if (DwarfGame.IsConsoleVisible)
+                #region Console
+                if (DwarfGame.IsConsoleVisible)
+                {
+                    PerformanceMonitor.SetMetric("MEMORY", BytesToString(System.GC.GetTotalMemory(false)));
+                    PerformanceMonitor.SetMetric("Birds", World.GetSpeciesPopulation(Library.GetSpecies("Bird")));
+
+                    var statsDisplay = DwarfGame.GetConsoleTile("STATS");
+
+                    statsDisplay.Lines.Clear();
+                    statsDisplay.Lines.Add("** STATISTICS **");
+                    foreach (var metric in PerformanceMonitor.EnumerateMetrics())
+                        statsDisplay.Lines.Add(String.Format("{0} {1}", metric.Value.ToString(), metric.Key));
+                    statsDisplay.Invalidate();
+
+                    // Todo: Employee AI debug display
+
+                    var scheduleDisplay = DwarfGame.GetConsoleTile("SCHEDULE");
+                    scheduleDisplay.TextSize = 1;
+                    scheduleDisplay.Lines.Clear();
+                    foreach (var scheduledEvent in World.EventScheduler.Forecast)
+                        scheduleDisplay.Lines.Add(String.Format("{0} : {1}, {2}", scheduledEvent.Event.Name, (scheduledEvent.Date - World.Time.CurrentDate).ToString(@"hh\:mm"), scheduledEvent.Event.Difficulty));
+
+                    scheduleDisplay.Lines.Add(String.Format("Difficulty: {0} Forecast {1}", World.EventScheduler.CurrentDifficulty, World.EventScheduler.ForecastDifficulty(World.Time.CurrentDate)));
+
+                    scheduleDisplay.Invalidate();
+                }
+                #endregion
+
+            }
+            catch (Exception e)
             {
-                PerformanceMonitor.SetMetric("MEMORY", BytesToString(System.GC.GetTotalMemory(false)));
-                PerformanceMonitor.SetMetric("Birds", World.GetSpeciesPopulation(Library.GetSpecies("Bird")));
-
-                var statsDisplay = DwarfGame.GetConsoleTile("STATS");
-
-                statsDisplay.Lines.Clear();
-                statsDisplay.Lines.Add("** STATISTICS **");
-                foreach (var metric in PerformanceMonitor.EnumerateMetrics())
-                    statsDisplay.Lines.Add(String.Format("{0} {1}", metric.Value.ToString(), metric.Key));
-                statsDisplay.Invalidate();
-
-                // Todo: Employee AI debug display
-
-                var scheduleDisplay = DwarfGame.GetConsoleTile("SCHEDULE");
-                scheduleDisplay.TextSize = 1;
-                scheduleDisplay.Lines.Clear();
-                foreach (var scheduledEvent in World.EventScheduler.Forecast)
-                    scheduleDisplay.Lines.Add(String.Format("{0} : {1}, {2}", scheduledEvent.Event.Name, (scheduledEvent.Date - World.Time.CurrentDate).ToString(@"hh\:mm"), scheduledEvent.Event.Difficulty));
-
-                scheduleDisplay.Lines.Add(String.Format("Difficulty: {0} Forecast {1}", World.EventScheduler.CurrentDifficulty, World.EventScheduler.ForecastDifficulty(World.Time.CurrentDate)));
-
-                scheduleDisplay.Invalidate();
+#if DEBUG
+                throw;
+#else
+                Program.CaptureException(e);
+                if (Program.ShowErrorDialog(e.Message))
+                    throw new HandledException(e);
+#endif
             }
-            #endregion
         }
 
         public static String BytesToString(long byteCount)
@@ -871,7 +886,7 @@ namespace DwarfCorp.GameStates
                 Padding = new Margin(0, 0, 2, 2)
             });
 
-            #region Setup company information section
+#region Setup company information section
             BottomBar.AddChild(new CompanyLogo
             {
                 Tag = "company info",
@@ -968,7 +983,7 @@ namespace DwarfCorp.GameStates
                 TextColor = new Vector4(1, 1, 1, 1),
                 Tooltip = "You need supervisors to manage more dwarves."
             });
-            #endregion
+#endregion
 
             Gui.RootItem.AddChild(new Gui.Widgets.ResourcePanel
             {
@@ -977,7 +992,7 @@ namespace DwarfCorp.GameStates
                 Transparent = true,
             });
 
-            #region Setup time display
+#region Setup time display
             TimeLabel = BottomBar.AddChild(new Gui.Widget
             {
                 AutoLayout = DwarfCorp.Gui.AutoLayout.DockRightCentered,
@@ -988,9 +1003,9 @@ namespace DwarfCorp.GameStates
                 TextColor = new Vector4(1, 1, 1, 1),
                 Tooltip = Library.GetString("time-tooltip")
             });
-            #endregion
+#endregion
 
-            #region Toggle panel buttons
+#region Toggle panel buttons
 
             MinimapRenderer = new Gui.Widgets.Minimap.MinimapRenderer(192, 192, World);
 
@@ -1174,9 +1189,9 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(8, 0)
             });
 
-            #endregion
+#endregion
 
-            #region Setup right tray
+#region Setup right tray
 
             EconomyIcon = new Gui.Widgets.FramedIcon
             {
@@ -1240,9 +1255,9 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(8, 0)
             });
 
-            #endregion
+#endregion
 
-            #region Setup game speed controls
+#region Setup game speed controls
 
             GameSpeedControls = BottomBar.AddChild(new GameSpeedControls
             {
@@ -1295,9 +1310,9 @@ namespace DwarfCorp.GameStates
                 Hidden = true,
             });
 
-            #endregion
+#endregion
 
-            #region Announcer and info tray
+#region Announcer and info tray
 
             Announcer = Gui.RootItem.AddChild(new AnnouncementPopup
             {
@@ -1322,9 +1337,9 @@ namespace DwarfCorp.GameStates
                 Transparent = true
             }) as InfoTray;
 
-            #endregion
+#endregion
 
-            #region Setup brush
+#region Setup brush
 
             BrushTray = BottomBar.AddChild(new Gui.Widgets.ToggleTray
             {
@@ -1446,11 +1461,11 @@ namespace DwarfCorp.GameStates
                 CameraTray.Select(1);
             }
 
-            #endregion
+#endregion
 
-            #region Setup tool tray
+#region Setup tool tray
 
-            #region icon_SelectTool
+#region icon_SelectTool
 
             var icon_SelectTool = new FlatToolTray.Icon
             {
@@ -1470,9 +1485,9 @@ namespace DwarfCorp.GameStates
                 }
             };
 
-            #endregion
+#endregion
 
-            #region icon_BuildRoom
+#region icon_BuildRoom
 
             var icon_menu_RoomTypes_Return = new FlatToolTray.Icon
             {
@@ -1577,9 +1592,9 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
-            #endregion
+#endregion
 
-            #region icon_BuildWall
+#region icon_BuildWall
 
             var icon_menu_WallTypes_Return = new FlatToolTray.Icon
             {
@@ -1718,9 +1733,9 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
-            #endregion
+#endregion
 
-            #region icon_BuildCraft
+#region icon_BuildCraft
 
             var icon_menu_CraftTypes_Return = new FlatToolTray.Icon
             {
@@ -1935,9 +1950,9 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
-            #endregion
+#endregion
 
-            #region icon_BuildResource
+#region icon_BuildResource
 
             var icon_menu_Strings_Return = new FlatToolTray.Icon
             {
@@ -2006,9 +2021,9 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
-            #endregion
+#endregion
 
-            #region icon_Rail
+#region icon_Rail
 
             var icon_menu_Rail_Return = new FlatToolTray.Icon
             {
@@ -2090,9 +2105,9 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
-            #endregion
+#endregion
 
-            #region icon_BuildTool
+#region icon_BuildTool
 
             var icon_menu_BuildTools_Return = new FlatToolTray.Icon
             {
@@ -2145,9 +2160,9 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
-            #endregion
+#endregion
 
-            #region icon_CookTool
+#region icon_CookTool
 
             var icon_menu_Edibles_Return = new FlatToolTray.Icon
             {
@@ -2221,9 +2236,9 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
-            #endregion
+#endregion
 
-            #region icon_PotionTool
+#region icon_PotionTool
             var icon_menu_potions_return = new FlatToolTray.Icon
             {
                 Icon = new TileReference("tool-icons", 11),
@@ -2299,9 +2314,9 @@ namespace DwarfCorp.GameStates
                 ReplacementMenu = menu_potions,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
-            #endregion
+#endregion
 
-            #region icon_DigTool
+#region icon_DigTool
 
             var icon_DigTool = new FlatToolTray.Icon
             {
@@ -2321,9 +2336,9 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
 
-            #endregion
+#endregion
 
-            #region icon_GatherTool
+#region icon_GatherTool
 
             var icon_GatherTool = new FlatToolTray.Icon
             {
@@ -2343,9 +2358,9 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
 
-            #endregion
+#endregion
 
-            #region icon_ChopTool
+#region icon_ChopTool
 
             var icon_ChopTool = new FlatToolTray.Icon
             {
@@ -2365,9 +2380,9 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
 
-            #endregion
+#endregion
 
-            #region icon_AttackTool
+#region icon_AttackTool
 
             var icon_AttackTool = new FlatToolTray.Icon
             {
@@ -2387,9 +2402,9 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
 
-            #endregion
+#endregion
 
-            #region icon_FarmTool
+#region icon_FarmTool
 
             var icon_menu_Farm_Return = new FlatToolTray.Icon
             {
@@ -2402,9 +2417,9 @@ namespace DwarfCorp.GameStates
                 }
             };
 
-            #region icon_Plant
+#region icon_Plant
 
-            #region menu_Plant
+#region menu_Plant
             var icon_menu_Plant_Return = new FlatToolTray.Icon
             {
                 Icon = new TileReference("tool-icons", 11),
@@ -2458,7 +2473,7 @@ namespace DwarfCorp.GameStates
                     widget.Layout();
                 }
             };
-            #endregion
+#endregion
 
             var icon_Plant = new FlatToolTray.Icon
             {
@@ -2473,9 +2488,9 @@ namespace DwarfCorp.GameStates
                 ReplacementMenu = menu_Plant,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
-            #endregion
+#endregion
 
-            #region icon_Wrangle
+#region icon_Wrangle
             var icon_Wrangle = new FlatToolTray.Icon
             {
                 Tag = "wrangle",
@@ -2508,11 +2523,11 @@ namespace DwarfCorp.GameStates
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
-            #endregion
+#endregion
 
-            #endregion
+#endregion
 
-            #region icon_CancelTasks
+#region icon_CancelTasks
 
             var icon_CancelTasks = new FlatToolTray.Icon()
             {
@@ -2535,7 +2550,7 @@ namespace DwarfCorp.GameStates
                 }
             };
 
-            #endregion
+#endregion
 
             MainMenu = new FlatToolTray.Tray
             {
@@ -2593,9 +2608,9 @@ namespace DwarfCorp.GameStates
             BottomToolBar.SwitchTray(MainMenu);
             ChangeTool("SelectUnits");
 
-            #endregion
+#endregion
 
-            #region GOD MODE
+#region GOD MODE
 
             GodMenu = Gui.RootItem.AddChild(new Gui.Widgets.GodMenu
             {
@@ -2605,7 +2620,7 @@ namespace DwarfCorp.GameStates
 
             GodMenu.Hidden = true;
 
-            #endregion
+#endregion
 
             Gui.RootItem.Layout();
 

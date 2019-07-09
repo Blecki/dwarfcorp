@@ -85,7 +85,7 @@ namespace DwarfCorp
             }
             catch (Exception exception)
             {
-                Game.CaptureException(exception);
+                Program.CaptureException(exception);
                 LoadingException = exception;
                 LoadStatus = LoadingStatus.Failure;
                 ProgramData.WriteExceptionLog(exception);
