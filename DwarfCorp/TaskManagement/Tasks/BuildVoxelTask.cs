@@ -41,12 +41,12 @@ namespace DwarfCorp
                 return Feasibility.Infeasible;
 
             if (!agent.World.PersistentData.Designations.IsVoxelDesignation(Voxel, DesignationType.Put))
-            {
                 return Feasibility.Infeasible;
-            }
 
-            var voxtype = Library.GetVoxelType(VoxType);
-            return agent.World.CanBuildVoxel(voxtype) ? Feasibility.Feasible : Feasibility.Infeasible;
+            if (Library.GetVoxelType(VoxType).HasValue(out VoxelType voxtype))
+                return agent.World.CanBuildVoxel(voxtype) ? Feasibility.Feasible : Feasibility.Infeasible;
+            else
+                return Feasibility.Infeasible;
         }
 
         public override bool ShouldDelete(Creature agent)
@@ -81,24 +81,28 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature creature)
         {
-            var voxtype = Library.GetVoxelType(VoxType);
-            var resource = creature.World.ListResources().Where(r => voxtype.CanBuildWith(Library.GetResourceType(r.Key))).FirstOrDefault();
-            
-            if (resource.Key == null)
+            if (Library.GetVoxelType(VoxType).HasValue(out VoxelType voxtype))
             {
-                return null;
+                var resource = creature.World.ListResources().Where(r => voxtype.CanBuildWith(Library.GetResourceType(r.Key))).FirstOrDefault();
+
+                if (resource.Key == null)
+                {
+                    return null;
+                }
+
+                var resources = new ResourceAmount(resource.Value.Type, 1);
+
+                return new Select(
+                    new Sequence(
+                        new GetResourcesAct(creature.AI, new List<ResourceAmount>() { resources }),
+                        new Domain(() => Validate(creature.AI, Voxel, resources),
+                            new GoToVoxelAct(Voxel, PlanAct.PlanType.Radius, creature.AI, 4.0f)),
+                        new PlaceVoxelAct(Voxel, creature.AI, resources, VoxType)),
+                    new Wrap(creature.RestockAll))
+                { Name = "Build Voxel" };
             }
-
-            var resources = new ResourceAmount(resource.Value.Type, 1);
-
-            return new Select(
-                new Sequence(
-                    new GetResourcesAct(creature.AI, new List<ResourceAmount>() { resources }),
-                    new Domain(() => Validate(creature.AI, Voxel, resources),
-                        new GoToVoxelAct(Voxel, PlanAct.PlanType.Radius, creature.AI, 4.0f)),
-                    new PlaceVoxelAct(Voxel, creature.AI, resources, VoxType)), 
-                new Wrap(creature.RestockAll))
-            { Name = "Build Voxel" };
+            else
+                return null;
         }
 
         public override void Render(DwarfTime time)

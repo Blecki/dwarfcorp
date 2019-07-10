@@ -143,7 +143,8 @@ namespace DwarfCorp
                     {
                         string type = Command.Substring(6);
                         var v = vox;
-                        v.Type = Library.GetVoxelType(type);
+                        if (Library.GetVoxelType(type).HasValue(out VoxelType vType))
+                            v.Type = vType;
                         v.QuickSetLiquid(LiquidType.None, 0);
 
                         if (type == "Magic")

@@ -17,7 +17,7 @@ namespace DwarfCorp
 
         private static Dictionary<string, VoxelType> VoxelTypes = new Dictionary<string, VoxelType>();
         private static List<VoxelType> VoxelTypeList = null;
-        private static Dictionary<String, BoxPrimitive> VoxelPimitives = new Dictionary<String, BoxPrimitive>();
+        private static Dictionary<String, BoxPrimitive> VoxelPrimitives = new Dictionary<String, BoxPrimitive>();
 
         private static bool VoxelsInitialized = false;
 
@@ -88,7 +88,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    VoxelPimitives[type.Name] = CreateVoxelPrimitive(cubeTexture, 32, 32, type.Top, type.Bottom, type.Sides);
+                    VoxelPrimitives[type.Name] = CreateVoxelPrimitive(cubeTexture, 32, 32, type.Top, type.Bottom, type.Sides);
                     if (type.Name == "_designation")
                     {
                         _DesignationVoxelType = type;
@@ -116,36 +116,25 @@ namespace DwarfCorp
             Console.WriteLine("Loaded Voxel Library.");
         }
 
-        public static VoxelType GetVoxelType(short id)
+        public static MaybeNull<VoxelType> GetVoxelType(short id)
         {
             InitializeVoxels();
             return VoxelTypeList[id];
         }
 
-        public static VoxelType GetVoxelType(string name)
+        public static MaybeNull<VoxelType> GetVoxelType(string name)
         {
             InitializeVoxels();
             return VoxelTypes[name];
         }
 
-        public static BoxPrimitive GetVoxelPrimitive(string name)
+        public static MaybeNull<BoxPrimitive> GetVoxelPrimitive(VoxelType type)
         {
             InitializeVoxels();
-            if (VoxelPimitives.ContainsKey(name))
-                return VoxelPimitives[name];
+
+            if (VoxelPrimitives.ContainsKey(type.Name))
+                return VoxelPrimitives[type.Name];
             return null;
-        }
-
-        public static BoxPrimitive GetVoxelPrimitive(VoxelType type)
-        {
-            InitializeVoxels();
-            return GetVoxelPrimitive(type.Name);
-        }
-
-        public static BoxPrimitive GetVoxelPrimitive(short id)
-        {
-            InitializeVoxels();
-            return GetVoxelPrimitive(GetVoxelType(id));
         }
 
         public static IEnumerable<VoxelType> EnumerateVoxelTypes()
@@ -171,7 +160,7 @@ namespace DwarfCorp
 
             var shader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
 
-            var sqrt = (int)(Math.Ceiling(Math.Sqrt(VoxelPimitives.Count)));
+            var sqrt = (int)(Math.Ceiling(Math.Sqrt(VoxelPrimitives.Count)));
             var width = MathFunctions.NearestPowerOf2(sqrt * Sheet.TileWidth);
             var height = MathFunctions.NearestPowerOf2(sqrt * Sheet.TileWidth);
 
@@ -211,22 +200,23 @@ namespace DwarfCorp
                 {
                     int row = type.ID/cols;
                     int col = type.ID%cols;
-                    BoxPrimitive primitive = GetVoxelPrimitive(type);
-                    if (primitive == null)
-                        continue;
 
-                    if (type.HasTransitionTextures)
-                        primitive = new BoxPrimitive(1, 1, 1, type.TransitionTextures[new BoxTransition()]);
+                    var maybePrimitive = GetVoxelPrimitive(type);
+                    if (maybePrimitive.HasValue(out BoxPrimitive primitive))
+                    {
+                        if (type.HasTransitionTextures)
+                            primitive = new BoxPrimitive(1, 1, 1, type.TransitionTextures[new BoxTransition()]);
 
-                    device.Viewport = new Viewport(col * Sheet.TileWidth, row * Sheet.TileWidth, Sheet.TileWidth, Sheet.TileWidth);
-                    Matrix viewMatrix = Matrix.CreateLookAt(new Vector3(-1.2f, 1.0f, -1.5f), Vector3.Zero, Vector3.Up);
-                    Matrix projectionMatrix = Matrix.CreateOrthographic(1.5f, 1.5f, 0, 5);
-                    shader.View = viewMatrix;
-                    shader.Projection = projectionMatrix;
-                    shader.World = Matrix.CreateTranslation(-half);
-                    shader.VertexColorTint = type.Tint;
-                    pass.Apply();
-                    primitive.Render(device);
+                        device.Viewport = new Viewport(col * Sheet.TileWidth, row * Sheet.TileWidth, Sheet.TileWidth, Sheet.TileWidth);
+                        Matrix viewMatrix = Matrix.CreateLookAt(new Vector3(-1.2f, 1.0f, -1.5f), Vector3.Zero, Vector3.Up);
+                        Matrix projectionMatrix = Matrix.CreateOrthographic(1.5f, 1.5f, 0, 5);
+                        shader.View = viewMatrix;
+                        shader.Projection = projectionMatrix;
+                        shader.World = Matrix.CreateTranslation(-half);
+                        shader.VertexColorTint = type.Tint;
+                        pass.Apply();
+                        primitive.Render(device);
+                    }
                 }
             }
             device.Viewport = oldview;

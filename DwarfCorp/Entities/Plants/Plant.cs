@@ -64,10 +64,13 @@ namespace DwarfCorp
                 new Vector3(0.0f, -0.30f, 0.0f),
                 (v) =>
                 {
-                    if (v.Type == VoxelChangeEventType.VoxelTypeChanged
-                        && (v.NewVoxelType == 0 || !Library.GetVoxelType(v.NewVoxelType).IsSoil))
+                    if (v.Type == VoxelChangeEventType.VoxelTypeChanged)
                     {
-                        Die();
+                        if (v.NewVoxelType == 0)
+                            Die();
+                        if (Library.GetVoxelType(v.NewVoxelType).HasValue(out VoxelType soilType))
+                            if (!soilType.IsSoil)
+                                Die();
                     }
                     else if (v.Type == VoxelChangeEventType.RampsChanged)
                     {

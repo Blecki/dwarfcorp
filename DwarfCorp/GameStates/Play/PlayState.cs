@@ -824,9 +824,11 @@ namespace DwarfCorp.GameStates
             base.RenderUnitialized(gameTime);
         }
 
-        private bool BuildRequirementsEqual(VoxelType voxA, VoxelType voxB)
+        private bool BuildRequirementsEqual(MaybeNull<VoxelType> _voxA, VoxelType voxB)
         {
-            return voxA == voxB || !(voxA.BuildRequirements.Count != voxB.BuildRequirements.Count || voxA.BuildRequirements.Any(r => !voxB.BuildRequirements.Contains(r)));
+            if (_voxA.HasValue(out VoxelType voxA))
+                return voxA == voxB || !(voxA.BuildRequirements.Count != voxB.BuildRequirements.Count || voxA.BuildRequirements.Any(r => !voxB.BuildRequirements.Contains(r)));
+            return false;
         }
 
         void UpdateBlockWidget(Gui.Widget sender, VoxelType data)

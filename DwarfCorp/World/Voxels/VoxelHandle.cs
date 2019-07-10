@@ -198,11 +198,13 @@ namespace DwarfCorp
         }
 
         [JsonIgnore]
-        public VoxelType Type
+        public VoxelType Type // Todo: Return a NeverNull?
         {
             get
             {
-                return Library.GetVoxelType(_cache_Chunk.Data.Types[_cache_Index]);
+                if (Library.GetVoxelType(_cache_Chunk.Data.Types[_cache_Index]).HasValue(out VoxelType vType))
+                    return vType;
+                throw new InvalidOperationException("Voxel had unknown voxel type");
             }
             set
             {
@@ -339,21 +341,26 @@ namespace DwarfCorp
         /// Should only be used by ChunkGenerator as it can break geometry building.
         /// </summary>
         /// <param name="NewType"></param>
-        public void RawSetType(VoxelType NewType)
+        public void RawSetType(MaybeNull<VoxelType> MaybeNewType)
         {
-            var previous = _cache_Chunk.Data.Types[_cache_Index];
+            if (MaybeNewType.HasValue(out VoxelType NewType))
+            {
+                var previous = _cache_Chunk.Data.Types[_cache_Index];
 
-            // Change actual data
-            _cache_Chunk.Data.Types[_cache_Index] = (byte)NewType.ID;
+                // Change actual data
+                _cache_Chunk.Data.Types[_cache_Index] = (byte)NewType.ID;
 
-            // Changing the voxel type clears grass.
-            _cache_Chunk.Data.Grass[_cache_Index] = 0;
+                // Changing the voxel type clears grass.
+                _cache_Chunk.Data.Grass[_cache_Index] = 0;
 
-            // Did we go from empty to filled or vice versa? Update filled counter.
-            if (previous == 0 && NewType.ID != 0)
-                _cache_Chunk.Data.VoxelsPresentInSlice[_cache_Local_Y] += 1;
-            else if (previous != 0 && NewType.ID == 0)
-                _cache_Chunk.Data.VoxelsPresentInSlice[_cache_Local_Y] -= 1;
+                // Did we go from empty to filled or vice versa? Update filled counter.
+                if (previous == 0 && NewType.ID != 0)
+                    _cache_Chunk.Data.VoxelsPresentInSlice[_cache_Local_Y] += 1;
+                else if (previous != 0 && NewType.ID == 0)
+                    _cache_Chunk.Data.VoxelsPresentInSlice[_cache_Local_Y] -= 1;
+            }
+            else
+                throw new InvalidOperationException("Tried to set voxel to null type");
         }
 
         /// <summary>
@@ -366,67 +373,72 @@ namespace DwarfCorp
             _cache_Chunk.Data.Grass[_cache_Index] = (byte)((Type << VoxelConstants.GrassTypeShift) + (Library.GetGrassType(Type).InitialDecayValue & VoxelConstants.GrassDecayMask));
         }
 
-        private void OnTypeSet(VoxelType NewType)
+        private void OnTypeSet(MaybeNull<VoxelType> MaybeNewType)
         {
-            // Changing a voxel is actually a relatively rare event, so we can afford to do a bit of 
-            // bookkeeping here.
-
-            var previous = _cache_Chunk.Data.Types[_cache_Index];
-            var blockDestroyed = false;
-
-            // Change actual data
-            _cache_Chunk.Data.Types[_cache_Index] = (byte)NewType.ID;
-
-            // Changing the voxel type clears grass.
-            _cache_Chunk.Data.Grass[_cache_Index] = 0;
-
-            // Did we go from empty to filled or vice versa? Update filled counter.
-            if (previous == 0 && NewType.ID != 0)
-                _cache_Chunk.Data.VoxelsPresentInSlice[_cache_Local_Y] += 1;
-            else if (previous != 0 && NewType.ID == 0)
+            if (MaybeNewType.HasValue(out VoxelType NewType))
             {
-                blockDestroyed = true;
-                _cache_Chunk.Data.VoxelsPresentInSlice[_cache_Local_Y] -= 1;
+                // Changing a voxel is actually a relatively rare event, so we can afford to do a bit of 
+                // bookkeeping here.
+
+                var previous = _cache_Chunk.Data.Types[_cache_Index];
+                var blockDestroyed = false;
+
+                // Change actual data
+                _cache_Chunk.Data.Types[_cache_Index] = (byte)NewType.ID;
+
+                // Changing the voxel type clears grass.
+                _cache_Chunk.Data.Grass[_cache_Index] = 0;
+
+                // Did we go from empty to filled or vice versa? Update filled counter.
+                if (previous == 0 && NewType.ID != 0)
+                    _cache_Chunk.Data.VoxelsPresentInSlice[_cache_Local_Y] += 1;
+                else if (previous != 0 && NewType.ID == 0)
+                {
+                    blockDestroyed = true;
+                    _cache_Chunk.Data.VoxelsPresentInSlice[_cache_Local_Y] -= 1;
+                }
+
+                var voxelAbove = VoxelHelpers.GetVoxelAbove(this);
+                if (voxelAbove.IsValid)
+                    InvalidateVoxel(voxelAbove);
+                InvalidateVoxel(this);
+
+                // Propogate sunlight (or lack thereof) downwards.
+                var sunlight = (NewType.ID == 0 || NewType.IsTransparent) ? this.Sunlight : false;
+                var below = this;
+
+                while (true)
+                {
+                    below = VoxelHelpers.GetVoxelBelow(below);
+                    if (!below.IsValid)
+                        break;
+                    below.Sunlight = sunlight;
+                    if (!below.IsEmpty)
+                        InvalidateVoxel(below);
+                    if (!below.IsEmpty && !below.Type.IsTransparent)
+                        break;
+                }
+
+                if (blockDestroyed)
+                {
+                    // Reveal!
+                    VoxelHelpers.RadiusReveal(_cache_Chunk.Manager, this, 10);
+
+                    // Clear player built flag!
+                    IsPlayerBuilt = false;
+                }
+
+                // Invoke new voxel listener.
+                _cache_Chunk.Manager.NotifyChangedVoxel(new VoxelChangeEvent
+                {
+                    Type = VoxelChangeEventType.VoxelTypeChanged,
+                    Voxel = this,
+                    OriginalVoxelType = previous,
+                    NewVoxelType = NewType.ID
+                });
             }
-
-            var voxelAbove = VoxelHelpers.GetVoxelAbove(this);
-            if (voxelAbove.IsValid)
-                InvalidateVoxel(voxelAbove);
-            InvalidateVoxel(this);
-
-            // Propogate sunlight (or lack thereof) downwards.
-            var sunlight = (NewType.ID == 0 || NewType.IsTransparent) ? this.Sunlight : false;
-            var below = this;
-
-            while (true)
-            {
-                below = VoxelHelpers.GetVoxelBelow(below);
-                if (!below.IsValid)
-                    break;
-                below.Sunlight = sunlight;
-                if (!below.IsEmpty)
-                    InvalidateVoxel(below);
-                if (!below.IsEmpty && !below.Type.IsTransparent)
-                    break;
-            }
-
-            if (blockDestroyed)
-            {
-                // Reveal!
-                VoxelHelpers.RadiusReveal(_cache_Chunk.Manager, this, 10);
-
-                // Clear player built flag!
-                IsPlayerBuilt = false;
-            }
-
-            // Invoke new voxel listener.
-            _cache_Chunk.Manager.NotifyChangedVoxel(new VoxelChangeEvent
-            {
-                Type = VoxelChangeEventType.VoxelTypeChanged,
-                Voxel = this,
-                OriginalVoxelType = previous,
-                NewVoxelType = NewType.ID
-            });
+            else
+                throw new InvalidOperationException("Tried to set voxel to null voxel type");
         }
 
         public void Invalidate()

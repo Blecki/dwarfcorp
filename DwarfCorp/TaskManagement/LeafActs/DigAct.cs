@@ -87,20 +87,20 @@ namespace DwarfCorp
                 // If the voxel has been destroyed by you, gather it.
                 if (OwnerTask.VoxelHealth <= 0.0f)
                 {
-                    var voxelType = Library.GetVoxelType(vox.Type.Name);
-                    if (MathFunctions.RandEvent(0.5f))
+                    if (Library.GetVoxelType(vox.Type.Name).HasValue(out VoxelType voxelType))
                     {
-                        Creature.AI.AddXP(Math.Max((int)(voxelType.StartingHealth / 4), 1));
+                        if (MathFunctions.RandEvent(0.5f))
+                            Creature.AI.AddXP(Math.Max((int)(voxelType.StartingHealth / 4), 1));
+                        Creature.Stats.NumBlocksDestroyed++;
+
+                        var items = VoxelHelpers.KillVoxel(Creature.World, vox);
+
+                        if (items != null)
+                            foreach (GameComponent item in items)
+                                Creature.Gather(item);
+
+                        yield return Act.Status.Success;
                     }
-                    Creature.Stats.NumBlocksDestroyed++;
-
-                    var items = VoxelHelpers.KillVoxel(Creature.World, vox);
-
-                    if (items != null)
-                        foreach (GameComponent item in items)
-                            Creature.Gather(item);
-
-                    yield return Act.Status.Success;
                 }
 
                 // Wait until the animation is done playing before continuing.

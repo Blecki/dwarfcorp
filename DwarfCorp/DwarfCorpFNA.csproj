@@ -149,7 +149,7 @@
     <Compile Include="TaskManagement\Tasks\GetHealedTask.cs" />
     <Compile Include="TaskManagement\TestBehaviors.cs" />
     <Compile Include="Tools\NeverNull.cs" />
-    <Compile Include="Tools\NullableReference.cs" />
+    <Compile Include="Tools\MaybeNull.cs" />
     <Compile Include="World\AutoScaleThread.cs" />
     <Compile Include="World\Crafting\CraftDetails.cs" />
     <Compile Include=".\Components\AI\Creature.cs" />
@@ -679,7 +679,7 @@
     <Compile Include="World\Events\TimedIndicatorWidget.cs" />
     <Compile Include="World\Economy\Applicant.cs" />
     <Compile Include="World\Overworld\Embarkment.cs" />
-    <Compile Include="World\Overworld\DifficultyLibrary.cs" />
+    <Compile Include="Library\DifficultyLibrary.cs" />
     <Compile Include="World\Factions\Expedition.cs" />
     <Compile Include="World\Factions\Faction.cs" />
     <Compile Include="World\Factions\FactionSet.cs" />
@@ -795,10 +795,10 @@
     <Compile Include="World\Rail\RailEntity.cs" />
     <Compile Include="World\Rail\RailHelper-Combinations.cs" />
     <Compile Include="World\Rail\RailHelper.cs" />
-    <Compile Include="World\Rail\RailLibrary.cs" />
+    <Compile Include="Library\RailLibrary.cs" />
     <Compile Include="World\Rail\RailPiece.cs" />
     <Compile Include="World\Overworld\BiomeData.cs" />
-    <Compile Include="World\Overworld\BiomeLibrary.cs" />
+    <Compile Include="Library\BiomeLibrary.cs" />
     <Compile Include=".\World\CollisionType.cs" />
     <Compile Include=".\World\CompanyInformation.cs" />
     <Compile Include=".\World\DetailMoteData.cs" />
@@ -854,7 +854,7 @@
     <Compile Include="World\Voxels\VoxelHelpers\Neighbors.cs" />
     <Compile Include="World\Voxels\VoxelHelpers\Reveal.cs" />
     <Compile Include="World\Voxels\VoxelHelpers\VoxelIsCompletelySurrounded.cs" />
-    <Compile Include="World\Voxels\VoxelLibrary.cs" />
+    <Compile Include="Library\VoxelLibrary.cs" />
     <Compile Include="World\Voxels\VoxelListPrimitive.cs" />
     <Compile Include="World\Voxels\VoxelType.cs" />
     <Compile Include="World\Water\LiquidAsset.cs" />

@@ -35,7 +35,7 @@ namespace DwarfCorp.Generation
                     for (int y = averageHeight; y < h && y < chunkManager.World.WorldSizeInVoxels.Y; y++)
                     {
                         var v = chunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(baseVoxel.Coordinate.X, y, baseVoxel.Coordinate.Z));
-                        v.RawSetType(Library.GetVoxelType(0));
+                        v.RawSetType(Library.EmptyVoxelType);
                         v.RawSetIsExplored();
                         v.QuickSetLiquid(LiquidType.None, 0);
                     }
@@ -74,22 +74,23 @@ namespace DwarfCorp.Generation
                     }
 
                     // Fill from the top height down to the bottom.
+
                     for (int y = Math.Max(0, h - 1); y < averageHeight && y < chunkManager.World.WorldSizeInVoxels.Y; y++)
                     {
                         var v = chunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(baseVoxel.Coordinate.X, y, baseVoxel.Coordinate.Z));
                         if (!v.IsValid) throw new InvalidProgramException("Voxel was invalid while creating a new game's initial zones. This should not happen.");
 
-                        v.RawSetType(Library.GetVoxelType("Scaffold"));
-                        v.IsPlayerBuilt = true;
-                        v.QuickSetLiquid(LiquidType.None, 0);
-                        v.Sunlight = false;
+                            v.RawSetType(Library.GetVoxelType("Scaffold"));
+                            v.IsPlayerBuilt = true;
+                            v.QuickSetLiquid(LiquidType.None, 0);
+                            v.Sunlight = false;
 
-                        if (y == averageHeight - 1)
-                        {
-                            v.RawSetIsExplored();
+                            if (y == averageHeight - 1)
+                            {
+                                v.RawSetIsExplored();
 
-                            balloonPortDesignations.Add(v);
-                        }
+                                balloonPortDesignations.Add(v);
+                            }
 
                         if (isSide)
                         {
