@@ -364,7 +364,9 @@ namespace DwarfCorp
 
         public bool CanBuildVoxel(VoxelType type)
         {
-            return PersistentData.CachedCanBuildVoxel[type.Name];
+            if (PersistentData.CachedCanBuildVoxel.ContainsKey(type.Name))
+                return PersistentData.CachedCanBuildVoxel[type.Name];
+            return false;
         }
     }
 }

@@ -76,36 +76,6 @@ namespace DwarfCorp.GameStates
         private Dictionary<uint, WorldPopup> LastWorldPopup = new Dictionary<uint, WorldPopup>();
 
 
-        private class ToolbarItem
-        {
-            public Gui.Widgets.FramedIcon Icon;
-            public Func<bool> Available;
-
-            public ToolbarItem(Gui.Widget Icon, Func<bool> Available)
-            {
-                global::System.Diagnostics.Debug.Assert(Icon is Gui.Widgets.FramedIcon);
-                this.Icon = Icon as Gui.Widgets.FramedIcon;
-                this.Available = Available;
-            }
-        }
-
-        // These get enabled or disabled based on dwarf selection each frame.
-        private List<ToolbarItem> ToolbarItems = new List<ToolbarItem>();
-
-        private void AddToolbarIcon(Widget Icon, Func<bool> Available)
-        {
-            ToolbarItems.Add(new ToolbarItem(Icon, Available));
-        }
-
-        // These widgets get hilited when the associated tool is active.
-        private Dictionary<String, Gui.Widgets.FramedIcon> ToolHiliteItems = new Dictionary<String, Gui.Widgets.FramedIcon>();
-
-        private void AddToolSelectIcon(String Mode, Gui.Widget Icon)
-        {
-            if (!ToolHiliteItems.ContainsKey(Mode))
-                ToolHiliteItems.Add(Mode, Icon as Gui.Widgets.FramedIcon);
-        }
-
         public void ChangeTool(String Mode)
         {
             if (MultiContextMenu != null)
@@ -122,9 +92,6 @@ namespace DwarfCorp.GameStates
             if (CurrentToolMode != Mode)
                 CurrentTool.OnEnd();
             CurrentToolMode = Mode;
-
-            foreach (var icon in ToolHiliteItems)
-                icon.Value.Hilite = icon.Key == Mode;
         }
 
         // Provides event-based keyboard and mouse input.
@@ -642,13 +609,6 @@ namespace DwarfCorp.GameStates
                 SupervisionLabel.Invalidate();
                 #endregion
 
-                #region Update toolbar tray
-
-                foreach (var tool in ToolbarItems)
-                    tool.Icon.Enabled = tool.Available();
-
-                #endregion
-
                 BottomBar.Layout();
 
                 if (GameSpeedControls.CurrentSpeed != (int)DwarfTime.LastTime.Speed)
@@ -833,7 +793,6 @@ namespace DwarfCorp.GameStates
 
         void UpdateBlockWidget(Gui.Widget sender, VoxelType data)
         {
-
             int numResources;
             if (!int.TryParse(sender.Text, out numResources))
             {
@@ -1479,13 +1438,6 @@ namespace DwarfCorp.GameStates
                 OnClick = (sender, args) => ChangeTool("SelectUnits"),
                 Tooltip = "Select dwarves",
                 Behavior = FlatToolTray.IconBehavior.LeafIcon,
-                OnConstruct = (sender) =>
-                {
-                    // This could just be done after declaring icon_SelectTool, but is here for
-                    // consistency with other icons where this is not possible.
-                    AddToolbarIcon(sender, () => true);
-                    AddToolSelectIcon("SelectUnits", sender);
-                }
             };
 
 #endregion
@@ -1546,10 +1498,6 @@ namespace DwarfCorp.GameStates
                             World.Tutorial("build rooms");
                         },
                         Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
-                        OnConstruct = (sender) =>
-                        {
-                            AddToolbarIcon(sender, () => { return true; });
-                        }
                     }))
             };
 
@@ -1613,15 +1561,9 @@ namespace DwarfCorp.GameStates
             var menu_WallTypes = new FlatToolTray.Tray
             {
                 Tag = "build wall",
-                ItemSource = new List<Widget>(),
-                OnShown = (widget) =>
-                {
-                    // Dynamically rebuild the tray
-                    widget.Clear();
-                    (widget as FlatToolTray.Tray).ItemSource =
-                        (new Widget[] { icon_menu_WallTypes_Return }).Concat(
+                ItemSource = (new Widget[] { icon_menu_WallTypes_Return }).Concat(
                         Library.EnumerateVoxelTypes()
-                        .Where(voxel => voxel.IsBuildable && World.ListResources().Any(r => voxel.CanBuildWith(Library.GetResourceType(r.Value.Type))))
+                        .Where(voxel => voxel.IsBuildable)
                         .Select(data => new FlatToolTray.Icon
                         {
                             Tooltip = "Build " + data.Name,
@@ -1650,27 +1592,16 @@ namespace DwarfCorp.GameStates
                             OnUpdate = (sender, args) => UpdateBlockWidget(sender, data),
                             Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
                             Hidden = false
-                        }));
-
-                    widget.Construct();
-                    widget.Hidden = false;
-                    widget.Layout();
-                }
+                        }))
             };
 
 
             var menu_Floortypes = new FlatToolTray.Tray
             {
                 Tag = "build floor",
-                ItemSource = new List<Widget>(),
-                OnShown = (widget) =>
-                {
-                    // Dynamically rebuild the tray
-                    widget.Clear();
-                    (widget as FlatToolTray.Tray).ItemSource =
-                        (new Widget[] { icon_menu_WallTypes_Return }).Concat(
+                ItemSource = (new Widget[] { icon_menu_WallTypes_Return }).Concat(
                         Library.EnumerateVoxelTypes()
-                        .Where(voxel => voxel.IsBuildable && World.ListResources().Any(r => voxel.CanBuildWith(Library.GetResourceType(r.Value.Type))))
+                        .Where(voxel => voxel.IsBuildable)
                         .Select(data => new FlatToolTray.Icon
                         {
                             Tooltip = "Build " + data.Name,
@@ -1699,11 +1630,7 @@ namespace DwarfCorp.GameStates
                             OnUpdate = (sender, args) => UpdateBlockWidget(sender, data),
                             Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
                             Hidden = false
-                        }));
-                    widget.Construct();
-                    widget.Hidden = false;
-                    widget.Layout();
-                }
+                        }))
             };
 
             var icon_BuildWall = new FlatToolTray.Icon
@@ -1865,11 +1792,7 @@ namespace DwarfCorp.GameStates
                                 },
                             })
                     }
-                },
-                OnConstruct = (sender) =>
-                {
-                    AddToolbarIcon(sender, () => true);
-                },
+                }
             };
 
             Dictionary<string, bool> categoryExists = new Dictionary<string, bool>();
@@ -2002,11 +1925,6 @@ namespace DwarfCorp.GameStates
                                 ShowToolPopup(data.CurrentVerb + " " + buildInfo.GetNumRepeats() + " " + data.Name);
                                 World.Tutorial("build crafts");
                             },
-                        },
-                        OnConstruct = (sender) =>
-                        {
-                            AddToolbarIcon(sender, () =>
-                                ((sender as FlatToolTray.Icon).PopupChild as BuildCraftInfo).CanBuild());
                         }
                     }))
             };
@@ -2152,12 +2070,6 @@ namespace DwarfCorp.GameStates
                 TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 2),
                 KeepChildVisible = true,
-                OnConstruct = (sender) =>
-                {
-                    AddToolbarIcon(sender, () => World.PlayerFaction.Minions.Any(minion => // Todo: Remove the toolbar icon enable/disable stuff.
-                        minion.Stats.IsTaskAllowed(TaskCategory.BuildZone)));
-                    AddToolSelectIcon("BuildZone", sender);
-                },
                 Tooltip = "Build",
                 ReplacementMenu = menu_BuildTools,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
@@ -2213,10 +2125,6 @@ namespace DwarfCorp.GameStates
                                 ShowToolPopup(data.CurrentVerb + " " + numRepeats.ToString() + " " + (numRepeats == 1 ? data.DisplayName : data.PluralDisplayName));
                                 World.Tutorial("cook");
                             },
-                        },
-                        OnConstruct = (sender) =>
-                        {
-                            AddToolbarIcon(sender, () => ((sender as FlatToolTray.Icon).PopupChild as BuildCraftInfo).CanBuild());
                         }
                     }))
             };
@@ -2229,12 +2137,6 @@ namespace DwarfCorp.GameStates
                 Icon = new TileReference("tool-icons", 27),
                 KeepChildVisible = true,
                 Tooltip = "Cook food",
-                OnConstruct = (sender) =>
-                {
-                    AddToolbarIcon(sender, () =>
-                    World.PlayerFaction.Minions.Any(minion =>
-                        minion.Stats.IsTaskAllowed(TaskCategory.Cook)));
-                },
                 ReplacementMenu = menu_Edibles,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
@@ -2292,10 +2194,6 @@ namespace DwarfCorp.GameStates
                                 ShowToolPopup(data.CurrentVerb + " " + data.Name);
                                 World.Tutorial("potions");
                             },
-                        },
-                        OnConstruct = (sender) =>
-                        {
-                            AddToolbarIcon(sender, () => ((sender as FlatToolTray.Icon).PopupChild as BuildCraftInfo).CanBuild());
                         }
                     }))
             };
@@ -2308,12 +2206,6 @@ namespace DwarfCorp.GameStates
                 Icon = new TileReference("resources", 44),
                 KeepChildVisible = true,
                 Tooltip = "Brew potions",
-                OnConstruct = (sender) =>
-                {
-                    AddToolbarIcon(sender, () =>
-                    World.PlayerFaction.Minions.Any(minion =>
-                        minion.Stats.IsTaskAllowed(TaskCategory.Research)) && World.PlayerFaction.OwnedObjects.Any(obj => obj.Tags.Contains("Apothecary")));
-                },
                 ReplacementMenu = menu_potions,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
@@ -2329,13 +2221,6 @@ namespace DwarfCorp.GameStates
                 Icon = new TileReference("tool-icons", 0),
                 Tooltip = "Dig",
                 OnClick = (sender, args) => ChangeTool("Dig"),
-                OnConstruct = (sender) =>
-                {
-                    AddToolbarIcon(sender, () =>
-                    World.PlayerFaction.Minions.Any(minion =>
-                        minion.Stats.IsTaskAllowed(TaskCategory.Dig)));
-                    AddToolSelectIcon("Dig", sender);
-                },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
 
@@ -2351,13 +2236,6 @@ namespace DwarfCorp.GameStates
                 Icon = new TileReference("tool-icons", 6),
                 Tooltip = "Gather",
                 OnClick = (sender, args) => { ChangeTool("Gather"); World.Tutorial("gather"); },
-                OnConstruct = (sender) =>
-                {
-                    AddToolbarIcon(sender, () =>
-                    World.PlayerFaction.Minions.Any(minion =>
-                        minion.Stats.IsTaskAllowed(TaskCategory.Gather)));
-                    AddToolSelectIcon("Gather", sender);
-                },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
 
@@ -2373,13 +2251,6 @@ namespace DwarfCorp.GameStates
                 Icon = new TileReference("tool-icons", 1),
                 Tooltip = "Chop trees",
                 OnClick = (sender, args) => { ChangeTool("Chop"); World.Tutorial("chop"); },
-                OnConstruct = (sender) =>
-                {
-                    AddToolbarIcon(sender, () =>
-                    World.PlayerFaction.Minions.Any(minion =>
-                        minion.Stats.IsTaskAllowed(TaskCategory.Chop)));
-                    AddToolSelectIcon("Chop", sender);
-                },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
 
@@ -2395,13 +2266,6 @@ namespace DwarfCorp.GameStates
                 Icon = new TileReference("tool-icons", 3),
                 Tooltip = "Attack",
                 OnClick = (sender, args) => { ChangeTool("Attack"); World.Tutorial("attack"); },
-                OnConstruct = (sender) =>
-                {
-                    AddToolbarIcon(sender, () =>
-                    World.PlayerFaction.Minions.Any(minion =>
-                        minion.Stats.IsTaskAllowed(TaskCategory.Attack)));
-                    AddToolSelectIcon("Attack", sender);
-                },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
 
@@ -2516,13 +2380,6 @@ namespace DwarfCorp.GameStates
                     ChangeTool("Wrangle");
                     World.Tutorial("wrangle");
                     ShowToolPopup("Left click to tell dwarves to catch animals.\nRight click to cancel catching.\nRequires animal pen.");
-                },
-                OnConstruct = (sender) =>
-                {
-                    AddToolbarIcon(sender, () =>
-                    World.PlayerFaction.Minions.Any(minion =>
-                        minion.Stats.IsTaskAllowed(TaskCategory.Wrangle)));
-                    AddToolSelectIcon("Wrangle", sender);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
