@@ -33,7 +33,7 @@ namespace DwarfCorp
             return base.ShouldDelete(agent);
         }
 
-        public override Act CreateScript(Creature agent)
+        public override MaybeNull<Act> CreateScript(Creature agent)
         {
             if (WrappedAct != null)
                 WrappedAct.Initialize();

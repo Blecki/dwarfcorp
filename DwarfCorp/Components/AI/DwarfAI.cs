@@ -273,26 +273,27 @@ namespace DwarfCorp
             }
             else
             {
-                if (CurrentAct == null) // Should be impossible to have a current task and no current act.
+                if (!CurrentAct.HasValue()) // Should be impossible to have a current task and no current act.
                 {
                     // Try and recover the correct act.
                     // <blecki> I always run with a breakpoint set here... just in case.
                     ChangeAct(CurrentTask.CreateScript(Creature));
 
                     // This is a bad situation!
-                    if (CurrentAct == null)
+                    if (!CurrentAct.HasValue())
                         ChangeTask(null);
                 }
 
-                if (CurrentAct != null)
+                if (CurrentAct.HasValue(out Act currentAct))
                 {
-                    var status = CurrentAct.Tick();
+                    var status = currentAct.Tick();
                     bool retried = false;
-                    if (CurrentAct != null && CurrentTask != null)
+
+                    if (CurrentAct.HasValue(out Act newCurrentAct) && CurrentTask != null)
                     {
                         if (status == Act.Status.Fail)
                         {
-                            LastFailedAct = CurrentAct.Name;
+                            LastFailedAct = newCurrentAct.Name;
 
                             if (!FailedTasks.Any(task => task.TaskFailure.Equals(CurrentTask)))
                                 FailedTasks.Add(new FailedTask() { TaskFailure = CurrentTask, FailedTime = World.Time.CurrentDate });

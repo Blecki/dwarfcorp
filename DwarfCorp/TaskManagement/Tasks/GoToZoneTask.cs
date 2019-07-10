@@ -25,7 +25,7 @@ namespace DwarfCorp
             Name = "Go to " + Zone.ID;
         }
 
-        public override Act CreateScript(Creature agent)
+        public override MaybeNull<Act> CreateScript(Creature agent)
         {
             if (!Wait)
                 return new GoToZoneAct(agent.AI, Zone);

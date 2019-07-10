@@ -104,7 +104,7 @@ namespace DwarfCorp
             return closestPen;
         }
 
-        public override Act CreateScript(Creature agent)
+        public override MaybeNull<Act> CreateScript(Creature agent)
         {
             var closestPen = GetClosestPen(agent);
             if (closestPen == null)

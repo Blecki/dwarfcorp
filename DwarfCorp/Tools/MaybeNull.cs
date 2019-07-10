@@ -22,5 +22,10 @@ namespace DwarfCorp
             Value = _Value;
             return _Value != null;
         }
+
+        public bool HasValue()
+        {
+            return _Value != null;
+        }
     }
 }

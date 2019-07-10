@@ -189,7 +189,7 @@ namespace DwarfCorp
             return Ally.IsDead || Ally.Stats.Health.IsSatisfied();
         }
 
-        public override Act CreateScript(Creature agent)
+        public override MaybeNull<Act> CreateScript(Creature agent)
         {
             return new MagicHealAllyAct(agent.AI, Ally);
         }
@@ -222,7 +222,7 @@ namespace DwarfCorp
             return Ally.IsDead || !Ally.Stats.Health.IsDissatisfied();
         }
 
-        public override Act CreateScript(Creature agent)
+        public override MaybeNull<Act> CreateScript(Creature agent)
         {
             return new HealOtherDwarfAct(agent.AI, Ally);
         }

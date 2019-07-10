@@ -30,7 +30,7 @@ namespace DwarfCorp
             EnergyDecrease = GameSettings.Default.Energy_Tiring;
         }
 
-        public override Act CreateScript(Creature creature)
+        public override MaybeNull<Act> CreateScript(Creature creature)
         {
             if (creature.IsDead || creature.AI.IsDead)
                 return null;

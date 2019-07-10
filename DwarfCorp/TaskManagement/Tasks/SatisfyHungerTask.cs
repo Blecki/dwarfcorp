@@ -18,7 +18,7 @@ namespace DwarfCorp
             EnergyDecrease = GameSettings.Default.Energy_Restful;
         }
 
-        public override Act CreateScript(Creature agent)
+        public override MaybeNull<Act> CreateScript(Creature agent)
         {
             return new FindAndEatFoodAct(agent.AI, MustPay);
         }

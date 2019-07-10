@@ -40,7 +40,7 @@ namespace DwarfCorp
                 ReassignOnDeath = false;
         }
 
-        public override Act CreateScript(Creature creature)
+        public override MaybeNull<Act> CreateScript(Creature creature)
         {
             if (creature.IsDead || creature.AI.IsDead)
                 return null;

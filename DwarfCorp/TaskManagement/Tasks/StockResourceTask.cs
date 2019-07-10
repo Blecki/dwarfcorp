@@ -65,7 +65,7 @@ namespace DwarfCorp
             EnergyDecrease = GameSettings.Default.Energy_Tiring;
         }
 
-        public override Act CreateScript(Creature creature)
+        public override MaybeNull<Act> CreateScript(Creature creature)
         {
             return new StockResourceAct(creature.AI, EntityToGather);
         }

@@ -103,7 +103,7 @@ namespace DwarfCorp
             yield return Act.Status.Fail;
         }
 
-        public override Act CreateScript(Creature creature)
+        public override MaybeNull<Act> CreateScript(Creature creature)
         {
             var above = VoxelHelpers.GetVoxelAbove(creature.Physics.CurrentVoxel);
             if ((above.IsValid && above.LiquidLevel > 0 ) || creature.AI.Movement.CanFly)

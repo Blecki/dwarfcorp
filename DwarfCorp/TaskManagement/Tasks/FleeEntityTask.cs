@@ -28,7 +28,7 @@ namespace DwarfCorp
             EnergyDecrease = GameSettings.Default.Energy_Arduous;
         }
 
-        public override Act CreateScript(Creature creature)
+        public override MaybeNull<Act> CreateScript(Creature creature)
         {
             if (ScaryEntity == null || creature == null || creature.AI == null) return null; // Todo: How is this possible?
 

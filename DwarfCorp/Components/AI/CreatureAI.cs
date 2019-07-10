@@ -13,7 +13,7 @@ namespace DwarfCorp
     {
         public Task CurrentTask = null;
         public List<Task> Tasks = new List<Task>();
-        [JsonIgnore] protected Act CurrentAct = null;
+        [JsonIgnore] protected MaybeNull<Act> CurrentAct = null;
         public BoundingBox PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue), new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
         public EnemySensor Sensor { get; set; } // Todo: Don't serialize this.
         public CreatureMovement Movement { get; set; }
@@ -268,10 +268,11 @@ namespace DwarfCorp
                 Tasks.Add(new MateTask(closestMate));
         }
 
-        protected void ChangeAct(Act NewAct)
+        protected void ChangeAct(MaybeNull<Act> NewAct)
         {
-            if (CurrentAct != null)
-                CurrentAct.OnCanceled();
+            if (CurrentAct.HasValue(out Act currentAct))
+                currentAct.OnCanceled();
+                        
             CurrentAct = NewAct;
         }
 
@@ -368,26 +369,27 @@ namespace DwarfCorp
             }
             else
             {
-                if (CurrentAct == null) // Should be impossible to have a current task and no current act.
+                if (!CurrentAct.HasValue()) // Should be impossible to have a current task and no current act.
                 {
                     // Try and recover the correct act.
                     // <blecki> I always run with a breakpoint set here... just in case.
                     ChangeAct(CurrentTask.CreateScript(Creature));
 
                     // This is a bad situation!
-                    if (CurrentAct == null)
+                    if (!CurrentAct.HasValue())
                         ChangeTask(null);
                 }
 
-                if (CurrentAct != null)
+                if (CurrentAct.HasValue(out Act currentAct))
                 {
-                    var status = CurrentAct.Tick();
+                    var status = currentAct.Tick();
                     bool retried = false;
-                    if (CurrentAct != null && CurrentTask != null)
+
+                    if (CurrentAct.HasValue(out Act newCurrentAct) && CurrentTask != null)
                     {
                         if (status == Act.Status.Fail)
                         {
-                            LastFailedAct = CurrentAct.Name;
+                            LastFailedAct = newCurrentAct.Name;
 
                             if (!FailedTasks.Any(task => task.TaskFailure.Equals(CurrentTask)))
                                 FailedTasks.Add(new FailedTask() { TaskFailure = CurrentTask, FailedTime = World.Time.CurrentDate });
@@ -536,10 +538,11 @@ namespace DwarfCorp
             if (CurrentTask != null)
                 desc += "    Task: " + CurrentTask.Name;
 
-            if (CurrentAct != null)
+            if (CurrentAct.HasValue(out Act currentAct))
             {
                 desc += "\n   Action: ";
-                Act act = CurrentAct;
+
+                var act = currentAct;
                 while (act != null && act.LastTickedChild != null)
                 {
                     Act prevAct = act;

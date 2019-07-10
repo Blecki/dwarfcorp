@@ -79,7 +79,7 @@ namespace DwarfCorp
             return creature.Creature.Inventory.HasResource(resources);
         }
 
-        public override Act CreateScript(Creature creature)
+        public override MaybeNull<Act> CreateScript(Creature creature)
         {
             if (Library.GetVoxelType(VoxType).HasValue(out VoxelType voxtype))
             {

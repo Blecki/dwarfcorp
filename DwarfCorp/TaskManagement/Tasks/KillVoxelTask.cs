@@ -71,7 +71,7 @@ namespace DwarfCorp
             EnergyDecrease = GameSettings.Default.Energy_Arduous;
         }
 
-        public override Act CreateScript(Creature creature)
+        public override MaybeNull<Act> CreateScript(Creature creature)
         {
             return new KillVoxelAct(creature.AI, this);
         }

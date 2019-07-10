@@ -51,7 +51,7 @@ namespace DwarfCorp
             return !agent.Stats.IsAsleep ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
-        public override Act CreateScript(Creature creature)
+        public override MaybeNull<Act> CreateScript(Creature creature)
         {
             if (creature.Stats.IsAsleep)
                 return null;

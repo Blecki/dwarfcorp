@@ -71,7 +71,7 @@ namespace DwarfCorp
             return !CraftDesignation.Location.IsValid || !CanBuild(agent) ? 1000 : (agent.AI.Position - CraftDesignation.Location.WorldPosition).LengthSquared();
         }
 
-        public override Act CreateScript(Creature creature)
+        public override MaybeNull<Act> CreateScript(Creature creature)
         {
             return new CraftItemAct(creature.AI, CraftDesignation);
         }

@@ -34,7 +34,7 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
-        public override Act CreateScript(Creature agent)
+        public override MaybeNull<Act> CreateScript(Creature agent)
         {
             return new GoToZoneAct(agent.AI, TradePort) | new Wrap(() => RecallEnvoyOnFail());
         }
