@@ -40,7 +40,7 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public static BiomeData GetBiome(String Name)
+        public static MaybeNull<BiomeData> GetBiome(String Name)
         {
             InitializeBiomes();
             return Biomes.FirstOrDefault(b => b.Name == Name);

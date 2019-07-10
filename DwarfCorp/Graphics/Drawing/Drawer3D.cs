@@ -356,7 +356,7 @@ namespace DwarfCorp
             {
                 if ((entity.Type & World.Renderer.PersistentSettings.VisibleTypes) == entity.Type)
                 {
-                    var props = Library.GetDesignationTypeProperties(entity.Type);
+                    var props = Library.GetDesignationTypeProperties(entity.Type).Value;
 
                     // Todo: More consistent drawing?
                     if (entity.Type == DesignationType.Craft)

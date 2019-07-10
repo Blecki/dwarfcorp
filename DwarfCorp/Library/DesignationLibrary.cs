@@ -33,7 +33,7 @@ namespace DwarfCorp
             }
         }
 
-        public static DesignationTypeProperties GetDesignationTypeProperties(DesignationType Of)
+        public static NeverNull<DesignationTypeProperties> GetDesignationTypeProperties(DesignationType Of)
         {
             InitializeDesignations();
 

@@ -46,7 +46,7 @@ namespace DwarfCorp.Gui.Widgets.Minimap
                     {
                         if ((designation.Type & World.Renderer.PersistentSettings.VisibleTypes) == designation.Type)
                         {
-                            Color = Library.GetDesignationTypeProperties(designation.Type).Color;
+                            Color = Library.GetDesignationTypeProperties(designation.Type).Value.Color;
                             return;
                         }
                     }

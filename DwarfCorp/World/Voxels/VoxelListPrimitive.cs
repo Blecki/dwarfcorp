@@ -298,7 +298,7 @@ namespace DwarfCorp
             {
                 if ((designation.Type & World.Renderer.PersistentSettings.VisibleTypes) == designation.Type)
                 {
-                    var props = Library.GetDesignationTypeProperties(designation.Type);
+                    var props = Library.GetDesignationTypeProperties(designation.Type).Value;
                     var designationVisible = false;
 
                     if (designation.Type == DesignationType.Put)

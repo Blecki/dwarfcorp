@@ -42,81 +42,75 @@ namespace DwarfCorp.Generation
 
         public static void GenerateCaves(VoxelChunk Chunk, ChunkGeneratorSettings Settings)
         {
-            var caveBiome = Library.GetBiome("Cave");
-            var hellBiome = Library.GetBiome("Hell");
-
-            for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
-            {
-                for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
-                {
-                    for (int i = 0; i < Settings.CaveLevels.Count; i++)
-                    {
-                        // Does layer intersect this voxel?
-                        int y = Settings.CaveLevels[i];
-                        if (y + Settings.MaxCaveHeight < Chunk.Origin.Y) continue;
-                        if (y >= Chunk.Origin.Y + VoxelConstants.ChunkSizeY) continue;
-
-                        var coordinate = new GlobalVoxelCoordinate(Chunk.Origin.X + x, y, Chunk.Origin.Z + z);
-
-                        var data = GetCaveGenerationData(coordinate, i, Settings);
-
-                        var biome = (y <= Settings.HellLevel) ? hellBiome : caveBiome;
-
-                        if (!data.CaveHere) continue;
-
-                        for (int dy = 0; dy < data.Height; dy++)
+            if (Library.GetBiome("Cave").HasValue(out BiomeData caveBiome) && Library.GetBiome("Hell").HasValue(out BiomeData hellBiome))
+                for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
+                    for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
+                        for (int i = 0; i < Settings.CaveLevels.Count; i++)
                         {
-                            var globalY = y + dy;
+                            // Does layer intersect this voxel?
+                            int y = Settings.CaveLevels[i];
+                            if (y + Settings.MaxCaveHeight < Chunk.Origin.Y) continue;
+                            if (y >= Chunk.Origin.Y + VoxelConstants.ChunkSizeY) continue;
 
-                            // Prevent caves punching holes in bedrock.
-                            if (globalY <= 0) continue;
+                            var coordinate = new GlobalVoxelCoordinate(Chunk.Origin.X + x, y, Chunk.Origin.Z + z);
 
-                            // Check if voxel is inside chunk.
-                            if (globalY <= 0 || globalY < Chunk.Origin.Y || globalY >= Chunk.Origin.Y + VoxelConstants.ChunkSizeY) continue;
+                            var data = GetCaveGenerationData(coordinate, i, Settings);
 
-                            var voxel = VoxelHandle.UnsafeCreateLocalHandle(Chunk, new LocalVoxelCoordinate(x, globalY - Chunk.Origin.Y, z));
+                            var biome = (y <= Settings.HellLevel) ? hellBiome : caveBiome;
 
-                            // Prevent caves from breaking surface.
-                            bool caveBreaksSurface = false;
+                            if (!data.CaveHere) continue;
 
-                            foreach (var neighborCoordinate in VoxelHelpers.EnumerateAllNeighbors(voxel.Coordinate))
+                            for (int dy = 0; dy < data.Height; dy++)
                             {
-                                var v = Chunk.Manager.CreateVoxelHandle(neighborCoordinate);
-                                if (!v.IsValid || (v.Sunlight))
+                                var globalY = y + dy;
+
+                                // Prevent caves punching holes in bedrock.
+                                if (globalY <= 0) continue;
+
+                                // Check if voxel is inside chunk.
+                                if (globalY <= 0 || globalY < Chunk.Origin.Y || globalY >= Chunk.Origin.Y + VoxelConstants.ChunkSizeY) continue;
+
+                                var voxel = VoxelHandle.UnsafeCreateLocalHandle(Chunk, new LocalVoxelCoordinate(x, globalY - Chunk.Origin.Y, z));
+
+                                // Prevent caves from breaking surface.
+                                bool caveBreaksSurface = false;
+
+                                foreach (var neighborCoordinate in VoxelHelpers.EnumerateAllNeighbors(voxel.Coordinate))
                                 {
-                                    caveBreaksSurface = true;
+                                    var v = Chunk.Manager.CreateVoxelHandle(neighborCoordinate);
+                                    if (!v.IsValid || (v.Sunlight))
+                                    {
+                                        caveBreaksSurface = true;
+                                        break;
+                                    }
+                                }
+
+                                if (caveBreaksSurface)
                                     break;
-                                }
-                            }
 
-                            if (caveBreaksSurface)
-                                break;
+                                voxel.RawSetType(Library.EmptyVoxelType);
 
-                            voxel.RawSetType(Library.EmptyVoxelType);
-
-                            if (dy == 0)
-                            {
-                                // Place soil voxel and grass below cave.
-                                var below = VoxelHelpers.GetVoxelBelow(voxel);
-                                if (below.IsValid)
+                                if (dy == 0)
                                 {
-                                    below.RawSetType(Library.GetVoxelType(biome.SoilLayer.VoxelType));
-                                    var grassType = Library.GetGrassType(biome.GrassDecal);
-                                    if (grassType != null)
-                                        below.RawSetGrass(grassType.ID);
-                                }
+                                    // Place soil voxel and grass below cave.
+                                    var below = VoxelHelpers.GetVoxelBelow(voxel);
+                                    if (below.IsValid)
+                                    {
+                                        below.RawSetType(Library.GetVoxelType(biome.SoilLayer.VoxelType));
+                                        var grassType = Library.GetGrassType(biome.GrassDecal);
+                                        if (grassType != null)
+                                            below.RawSetGrass(grassType.ID);
+                                    }
 
-                                // Spawn flora and fauna.
-                                if (data.Noise > Settings.CaveSize * 1.8f && globalY > Settings.LavaLevel)
-                                {
-                                    GenerateCaveFlora(below, biome, Settings);
-                                    GenerateCaveFauna(below, biome, Settings);
+                                    // Spawn flora and fauna.
+                                    if (data.Noise > Settings.CaveSize * 1.8f && globalY > Settings.LavaLevel)
+                                    {
+                                        GenerateCaveFlora(below, biome, Settings);
+                                        GenerateCaveFauna(below, biome, Settings);
+                                    }
                                 }
                             }
                         }
-                    }
-                }
-            }
         }
 
         private static void GenerateCaveFlora(VoxelHandle CaveFloor, BiomeData Biome, ChunkGeneratorSettings Settings)

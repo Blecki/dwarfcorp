@@ -18,5 +18,10 @@ namespace DwarfCorp
         {
             return new NeverNull<T>(_Value);
         }
+
+        public static implicit operator T(NeverNull<T> _Value)
+        {
+            return _Value.Value;
+        }
     }
 }

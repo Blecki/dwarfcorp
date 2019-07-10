@@ -113,42 +113,45 @@ namespace DwarfCorp.GameStates
             int volcanoSamples = 4;
             float volcanoSize = 11;
 
-            for(int i = 0; i < (int) Overworld.GenerationSettings.NumVolcanoes; i++) // Todo: Need to move the random used for world generation into settings.
+            if (Library.GetBiome("Waste").HasValue(out BiomeData waste))
             {
-                Vector2 randomPos = new Vector2((float) (Random.NextDouble() * width), (float) (Random.NextDouble() * height));
-                float maxFaults = Overworld.Map.Map[(int) randomPos.X, (int) randomPos.Y].Height;
-                for(int j = 0; j < volcanoSamples; j++)
+                for (int i = 0; i < (int)Overworld.GenerationSettings.NumVolcanoes; i++) // Todo: Need to move the random used for world generation into settings.
                 {
-                    Vector2 randomPos2 = new Vector2((float) (Random.NextDouble() * width), (float) (Random.NextDouble() * height));
-                    float faults = Overworld.Map.Map[(int) randomPos2.X, (int) randomPos2.Y].Height;
-
-                    if(faults > maxFaults)
+                    Vector2 randomPos = new Vector2((float)(Random.NextDouble() * width), (float)(Random.NextDouble() * height));
+                    float maxFaults = Overworld.Map.Map[(int)randomPos.X, (int)randomPos.Y].Height;
+                    for (int j = 0; j < volcanoSamples; j++)
                     {
-                        randomPos = randomPos2;
-                        maxFaults = faults;
-                    }
-                }
+                        Vector2 randomPos2 = new Vector2((float)(Random.NextDouble() * width), (float)(Random.NextDouble() * height));
+                        float faults = Overworld.Map.Map[(int)randomPos2.X, (int)randomPos2.Y].Height;
 
-                for(int dx = -(int) volcanoSize; dx <= (int) volcanoSize; dx++)
-                {
-                    for(int dy = -(int) volcanoSize; dy <= (int) volcanoSize; dy++)
-                    {
-                        int x = (int) MathFunctions.Clamp(randomPos.X + dx, 0, width - 1);
-                        int y = (int) MathFunctions.Clamp(randomPos.Y + dy, 0, height - 1);
-
-                        float dist = (float) Math.Sqrt(dx * dx + dy * dy);
-                        float fDist = (float) Math.Sqrt((dx / 3.0f) * (dx / 3.0f) + (dy / 3.0f) * (dy / 3.0f));
-
-                        float f = (float) (Math.Pow(Math.Sin(fDist), 3.0f) + 1.0f) * 0.2f;
-                        Overworld.Map.Map[x, y].Height += f;
-
-                        if(dist <= 2)
+                        if (faults > maxFaults)
                         {
-                            Overworld.Map.Map[x, y].Height = 0.1f;
+                            randomPos = randomPos2;
+                            maxFaults = faults;
                         }
+                    }
 
-                        if(dist < volcanoSize)
-                            Overworld.Map.Map[x, y].Biome = Library.GetBiome("Waste").Biome;
+                    for (int dx = -(int)volcanoSize; dx <= (int)volcanoSize; dx++)
+                    {
+                        for (int dy = -(int)volcanoSize; dy <= (int)volcanoSize; dy++)
+                        {
+                            int x = (int)MathFunctions.Clamp(randomPos.X + dx, 0, width - 1);
+                            int y = (int)MathFunctions.Clamp(randomPos.Y + dy, 0, height - 1);
+
+                            float dist = (float)Math.Sqrt(dx * dx + dy * dy);
+                            float fDist = (float)Math.Sqrt((dx / 3.0f) * (dx / 3.0f) + (dy / 3.0f) * (dy / 3.0f));
+
+                            float f = (float)(Math.Pow(Math.Sin(fDist), 3.0f) + 1.0f) * 0.2f;
+                            Overworld.Map.Map[x, y].Height += f;
+
+                            if (dist <= 2)
+                            {
+                                Overworld.Map.Map[x, y].Height = 0.1f;
+                            }
+
+                            if (dist < volcanoSize)
+                                Overworld.Map.Map[x, y].Biome = waste.Biome;
+                        }
                     }
                 }
             }
