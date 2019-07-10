@@ -44,17 +44,17 @@ namespace DwarfCorp.GameStates
         private Timer sliceUpTimer = new Timer(0.5f, true, Timer.TimerMode.Real);
         private int rememberedViewValue = 0;
 
-        private Gui.Widget MoneyLabel;
-        private Gui.Widget LevelLabel;
+        private Widget MoneyLabel;
+        private Widget LevelLabel;
         private Widget SupervisionLabel;
-        private Gui.Widget StocksLabel;
-        private Gui.Widgets.FlatToolTray.RootTray BottomToolBar;
-        private Gui.Widgets.FlatToolTray.Tray MainMenu;
-        private Gui.Widget TimeLabel;
-        private Gui.Widget PausePanel;
+        private Widget StocksLabel;
+        private FlatToolTray.RootTray BottomToolBar;
+        private FlatToolTray.Tray MainMenu;
+        private Widget TimeLabel;
+        private Widget PausePanel;
         private Gui.Widgets.Minimap.MinimapFrame MinimapFrame;
         private Gui.Widgets.Minimap.MinimapRenderer MinimapRenderer;
-        private Gui.Widgets.GameSpeedControls GameSpeedControls;
+        private GameSpeedControls GameSpeedControls;
         private Widget PausedWidget;
         private Gui.Widgets.InfoTray InfoTray;
         private Gui.Widgets.ToggleTray BrushTray;
@@ -342,6 +342,8 @@ namespace DwarfCorp.GameStates
 
             try
             {
+                if (IsMouseOverGui)
+                    ShowInfo("MOUSE OVER GUI");
 
                 #region Input for GUI
 
@@ -624,8 +626,7 @@ namespace DwarfCorp.GameStates
                 TimeLabel.Invalidate();
                 #endregion
 
-
-                #region Update top left panel
+                #region Update money, stock, and supervisor labels
                 var pulse = 0.25f * (float)Math.Sin(gameTime.TotalRealTime.TotalSeconds * 4) + 0.25f;
                 MoneyLabel.Text = World.PlayerFaction.Economy.Funds.ToString();
                 MoneyLabel.TextColor = World.PlayerFaction.Economy.Funds > 1.0m ? Color.White.ToVector4() : new Vector4(1.0f, pulse, pulse, 1.0f);

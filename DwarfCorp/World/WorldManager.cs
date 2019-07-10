@@ -220,8 +220,8 @@ namespace DwarfCorp
 
             TaskManager.Update(PlayerFaction.Minions);
 
-            if (Paused)
-                Renderer.Camera.LastWheel = Mouse.GetState().ScrollWheelValue;
+            //if (Paused)
+            //    Renderer.Camera.LastWheel = Mouse.GetState().ScrollWheelValue;
            
             // Should we display the out of food message?
             checkFoodTimer.Update(gameTime);

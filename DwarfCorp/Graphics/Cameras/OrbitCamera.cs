@@ -483,6 +483,7 @@ namespace DwarfCorp
         }
 
         private float _zoomTime = 0;
+
         public void OverheadUpdate(DwarfTime time, ChunkManager chunks)
         {
             // Don't attempt any camera control if the user is trying to type into a focus item.
