@@ -10,21 +10,22 @@ namespace DwarfCorp.Events
     public static class Library
     {
         private static List<ScheduledEvent> Events;
-        private static bool Initialized = false;
+        private static bool EventsInitialized = false;
 
-        private static void Initialize()
+        private static void InitializeEvents()
         {
-            if (Initialized)
+            if (EventsInitialized)
                 return;
-            Initialized = true;
+            EventsInitialized = true;
 
             Events = FileUtils.LoadJsonListFromDirectory<ScheduledEvent>(ContentPaths.events, null, p => p.Name);
+
             Console.WriteLine("Loaded Event Library.");
         }
 
-        public static IEnumerable<ScheduledEvent> Enumerate()
+        public static IEnumerable<ScheduledEvent> EnumerateEvents()
         {
-            Initialize();
+            InitializeEvents();
             return Events;
         }
     }

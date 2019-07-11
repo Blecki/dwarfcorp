@@ -51,7 +51,7 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(0, 3 * GuiRoot.RenderData.VirtualScreen.Height / 4)
             }) as WidgetListView;
 
-            var factions = Overworld.Natives.Where(f => f.InteractiveFaction && Library.GetRace(f.Race).IsIntelligent);
+            var factions = Overworld.Natives.Where(f => f.InteractiveFaction && Library.GetRace(f.Race).HasValue(out var race) && race.IsIntelligent);
 
             foreach (var faction in factions)
             {
@@ -80,7 +80,7 @@ namespace DwarfCorp.GameStates
                 });
                 titlebar.AddChild(new Widget()
                 {
-                    Background = new TileReference("map-icons", Library.GetRace(faction.Race).Icon),
+                    Background = new TileReference("map-icons", Library.GetRace(faction.Race).HasValue(out var race) ? race.Icon : 0),
                     MaximumSize = new Point(32, 32),
                     MinimumSize = new Point(32, 32),
                     AutoLayout = AutoLayout.DockLeft,

@@ -292,7 +292,7 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "EVENT",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
-                            ItemSource = Events.Library.Enumerate().Select(e =>
+                            ItemSource = Events.Library.EnumerateEvents().Select(e =>
                             {
                                 return new HorizontalMenuTray.MenuItem
                                 {

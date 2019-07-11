@@ -96,52 +96,44 @@ namespace DwarfCorp
 
                         }
 
-                        var thisFactionRace = Library.GetRace(thisFaction.Race);
-                        var otherRace = Library.GetRace(otherFaction.Race);
-                        if (thisFactionRace.NaturalEnemies.Any(name => name == otherRace.Name))
+                        if (Library.GetRace(thisFaction.Race).HasValue(out var thisFactionRace) && Library.GetRace(otherFaction.Race).HasValue(out var otherRace))
                         {
-                            if (!politics.HasEvent("we are taught to hate your kind"))
-                            {
-                                politics.AddEvent(new PoliticalEvent()
-                                {
-                                    Change = -10.0f, // Make this negative and we get an instant war party rush.
-                                    Description = "we are taught to hate your kind",
-                                });
-                            }
-                        }
-
-                        if (thisFactionRace.IsIntelligent && otherRace.IsIntelligent)
-                        {
-                            float trustingness = thisFaction.GoodWill;
-
-                            if (trustingness < -0.8f)
-                            {
-                                if (!politics.HasEvent("we just don't trust you"))
-                                {
+                            if (thisFactionRace.NaturalEnemies.Any(name => name == otherRace.Name))
+                                if (!politics.HasEvent("we are taught to hate your kind"))
                                     politics.AddEvent(new PoliticalEvent()
                                     {
                                         Change = -10.0f, // Make this negative and we get an instant war party rush.
-                                        Description = "we just don't trust you",
+                                        Description = "we are taught to hate your kind",
                                     });
-                                    politics.IsAtWar = true;
-                                }
-                            }
-                            else if (trustingness > 0.8f)
+
+                            if (thisFactionRace.IsIntelligent && otherRace.IsIntelligent)
                             {
-                                if (!politics.HasEvent("we just trust you"))
+                                float trustingness = thisFaction.GoodWill;
+
+                                if (trustingness < -0.8f)
                                 {
-                                    politics.AddEvent(new PoliticalEvent()
+                                    if (!politics.HasEvent("we just don't trust you"))
                                     {
-                                        Change = 10.0f,
-                                        Description = "we just trust you",
-                                    });
+                                        politics.AddEvent(new PoliticalEvent()
+                                        {
+                                            Change = -10.0f, // Make this negative and we get an instant war party rush.
+                                            Description = "we just don't trust you",
+                                        });
+                                        politics.IsAtWar = true;
+                                    }
                                 }
+                                else if (trustingness > 0.8f)
+                                    if (!politics.HasEvent("we just trust you"))
+                                        politics.AddEvent(new PoliticalEvent()
+                                        {
+                                            Change = 10.0f,
+                                            Description = "we just trust you",
+                                        });
                             }
                         }
 
                         thisFaction.Politics[otherFaction.Name] = politics;
                     }
-
                 }
         }
     }

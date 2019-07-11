@@ -247,7 +247,8 @@ namespace DwarfCorp.GameStates
                 foreach (var fact in library.Factions)
                     Overworld.Natives.Add(fact.Value.ParentFaction); // Todo: Don't create a whole faction just to grab the overworldfactions from them.
                 for (int i = 0; i < Overworld.GenerationSettings.NumCivilizations; i++)
-                    Overworld.Natives.Add(library.GenerateOverworldFaction(Overworld, i, Overworld.GenerationSettings.NumCivilizations));
+                    if (library.GenerateOverworldFaction(Overworld, i, Overworld.GenerationSettings.NumCivilizations).HasValue(out var civ))
+                        Overworld.Natives.Add(civ);
                 Politics.Initialize(Overworld);
 
                 Overworld.ColonyCells = new CellSet("World\\colonies");

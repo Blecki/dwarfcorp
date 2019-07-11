@@ -77,7 +77,7 @@ namespace DwarfCorp.Events
             bool foundEvent = false;
             var randomEvent = new ScheduledEvent();
             int iters = 0;
-            var filteredEvents = Forecast.Count == 0 ? Library.Enumerate() : Library.Enumerate().Where(e => e.Name != Forecast.Last().Event.Name).ToList();
+            var filteredEvents = Forecast.Count == 0 ? Library.EnumerateEvents() : Library.EnumerateEvents().Where(e => e.Name != Forecast.Last().Event.Name).ToList();
 
             if (World.Overworld.Difficulty == 0)
                 filteredEvents = filteredEvents.Where(e => e.SpawnOnTranquil).ToList();

@@ -12,20 +12,23 @@ namespace DwarfCorp
     {
         public Dictionary<string, Faction> Factions = new Dictionary<string, Faction>();
         
-        public OverworldFaction GenerateOverworldFaction(Overworld Settings, int idx, int n)
+        public MaybeNull<OverworldFaction> GenerateOverworldFaction(Overworld Settings, int idx, int n)
         {
-            var race = Library.GetRandomIntelligentRace();
-
-            var fact = new OverworldFaction()
+            if (Library.GetRandomIntelligentRace().HasValue(out var race))
             {
-                Race = race.Name,
-                Name = TextGenerator.ToTitleCase(TextGenerator.GenerateRandom(Datastructures.SelectRandom(race.FactionNameTemplates).ToArray())),
-                PrimaryColor = new HSLColor(idx * (255.0f / n), 255.0, MathFunctions.Rand(100.0f, 200.0f)),
-                GoodWill = MathFunctions.Rand(-1, 1),
-                InteractiveFaction = true
-            };
+                var fact = new OverworldFaction()
+                {
+                    Race = race.Name,
+                    Name = TextGenerator.ToTitleCase(TextGenerator.GenerateRandom(Datastructures.SelectRandom(race.FactionNameTemplates).ToArray())),
+                    PrimaryColor = new HSLColor(idx * (255.0f / n), 255.0, MathFunctions.Rand(100.0f, 200.0f)),
+                    GoodWill = MathFunctions.Rand(-1, 1),
+                    InteractiveFaction = true
+                };
 
-            return fact;
+                return fact;
+            }
+            else
+                return null;
         }
 
         public void Initialize(WorldManager world, CompanyInformation CompanyInformation)
