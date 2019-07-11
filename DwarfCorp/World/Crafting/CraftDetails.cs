@@ -38,9 +38,7 @@ namespace DwarfCorp
             else
             {
                 Resources = new List<ResourceAmount>();
-                var libraryType = Library.GetCraftable(craftType);
-
-                if (libraryType != null)
+                if (Library.GetCraftable(craftType).HasValue(out var libraryType))
                     Resources.AddRange(libraryType.RequiredResources.Select(requirement => new ResourceAmount(Library.EnumerateResourceTypesWithTag(requirement.Type).OrderBy(r => r.MoneyValue.Value).FirstOrDefault(), requirement.Count)));
             }
         }
@@ -55,10 +53,13 @@ namespace DwarfCorp
 
                     if (body != null)
                     {
-                        var bounds = body.GetBoundingBox();
-                        Resource resource = Library.GetCraftable(this.CraftType).ToResource(World, Resources);
-                        Vector3 pos = MathFunctions.RandVector3Box(bounds);
-                        EntityFactory.CreateEntity<GameComponent>(resource.Name + " Resource", pos);
+                        if (Library.GetCraftable(this.CraftType).HasValue(out var craftable))
+                        {
+                            var bounds = body.GetBoundingBox();
+                            var resource = craftable.ToResource(World, Resources);
+                            var pos = MathFunctions.RandVector3Box(bounds);
+                            EntityFactory.CreateEntity<GameComponent>(resource.Name + " Resource", pos);
+                        }
                     }
                 }
             }

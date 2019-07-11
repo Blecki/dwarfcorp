@@ -77,27 +77,29 @@ namespace DwarfCorp
                 {
                     if (vox.IsEmpty)
                     {
-                        var craftItem = Library.GetCraftable(type);
-                        var offset = Vector3.Zero;
-
-                        if (craftItem != null)
-                            offset = craftItem.SpawnOffset;
-
-                        var body = EntityFactory.CreateEntity<GameComponent>(type, vox.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + offset);
-                        if (body != null)
+                        if (Library.GetCraftable(type).HasValue(out var craftItem))
                         {
-                            body.PropogateTransforms();
+                            var offset = Vector3.Zero;
 
                             if (craftItem != null)
+                                offset = craftItem.SpawnOffset;
+
+                            var body = EntityFactory.CreateEntity<GameComponent>(type, vox.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + offset);
+                            if (body != null)
                             {
-                                if (craftItem.AddToOwnedPool)
-                                    World.PlayerFaction.OwnedObjects.Add(body);
+                                body.PropogateTransforms();
 
-                                if (craftItem.Moveable)
-                                    body.Tags.Add("Moveable");
+                                if (craftItem != null)
+                                {
+                                    if (craftItem.AddToOwnedPool)
+                                        World.PlayerFaction.OwnedObjects.Add(body);
 
-                                if (craftItem.Deconstructable)
-                                    body.Tags.Add("Deconstructable");
+                                    if (craftItem.Moveable)
+                                        body.Tags.Add("Moveable");
+
+                                    if (craftItem.Deconstructable)
+                                        body.Tags.Add("Deconstructable");
+                                }
                             }
                         }
                     }

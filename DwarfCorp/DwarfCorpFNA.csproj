@@ -124,7 +124,11 @@
     <Compile Include="GameStates\WorldGeneration\OverworldPreviewMesh.cs" />
     <Compile Include="Gui\Widgets\StatsTracker.cs" />
     <Compile Include="Gui\Widgets\MarketPanel.cs" />
+    <Compile Include="Library\CraftLibrary.cs" />
     <Compile Include="Library\DesignationLibrary.cs" />
+    <Compile Include="Library\EventLibrary.cs" />
+    <Compile Include="Library\RaceLibrary.cs" />
+    <Compile Include="Library\ZoneLibrary.cs" />
     <Compile Include="LogWriter.cs" />
     <Compile Include="EventLog.cs" />
     <Compile Include="EventLogState.cs" />
@@ -608,7 +612,6 @@
     <Compile Include="TaskManagement\ControlFlow\WhileLoop.cs" />
     <Compile Include="TaskManagement\ControlFlow\Wrap.cs" />
     <Compile Include="World\Crafting\CraftItem.cs" />
-    <Compile Include="World\Crafting\CraftLibrary.cs" />
     <Compile Include="World\Factions\TradeTask.cs" />
     <Compile Include="World\Factions\PoliticalEvent.cs" />
     <Compile Include="World\Factions\Politics.cs" />
@@ -669,7 +672,6 @@
     <Compile Include="Player\Tools\WrangleTool.cs" />
     <Compile Include="Player\VoxelSelectionType.cs" />
     <Compile Include="Player\VoxelSelector.cs" />
-    <Compile Include="World\Events\Library.cs" />
     <Compile Include="World\Events\PlagueEvent.cs" />
     <Compile Include="World\Events\ScheduledEvent.cs" />
     <Compile Include="World\Events\Scheduler.cs" />
@@ -684,7 +686,6 @@
     <Compile Include="World\Factions\Faction.cs" />
     <Compile Include="World\Factions\FactionSet.cs" />
     <Compile Include="World\Factions\Race.cs" />
-    <Compile Include="World\Factions\RaceLibrary.cs" />
     <Compile Include="World\Factions\TradeEnvoy.cs" />
     <Compile Include="World\Factions\Trading\DeclareWarYarnCommand.cs" />
     <Compile Include="World\Factions\Trading\EnvoyTradeEntity.cs" />
@@ -708,7 +709,6 @@
     <Compile Include="World\Potions\GatherPotionsTask.cs" />
     <Compile Include="World\Potions\Potion.cs" />
     <Compile Include="World\Zones\ZoneFactoryAttribute.cs" />
-    <Compile Include="World\Zones\ZoneLibrary.cs" />
     <Compile Include="World\Zones\AnimalPen.cs" />
     <Compile Include="World\Zones\BalloonPort.cs" />
     <Compile Include="World\Zones\Graveyard.cs" />

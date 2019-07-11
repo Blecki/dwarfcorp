@@ -31,9 +31,9 @@ namespace DwarfCorp.Rail
         private SpriteSheet Sheet;
         private Point Frame;
         private RawPrimitive Primitive;
-
         private Color VertexColor = Color.White;
         private Color LightRamp = Color.White;
+        private string previousEffect = null;
 
         public void SetVertexColor(Color Tint)
         {
@@ -154,74 +154,79 @@ namespace DwarfCorp.Rail
 
         public Vector3 InterpolateSpline(float t, Vector3 origin, Vector3 destination)
         {
-            var piece = Library.GetRailPiece(Piece.RailPiece);
-            List<Vector3> selectedSpline = null;
-            bool isReversed = false;
-            var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation) * GlobalTransform;
-            double closestEndpoint = double.MaxValue;
-
-            if (piece.AutoSlope)
+            if (Library.GetRailPiece(Piece.RailPiece).HasValue(out var piece))
             {
-                var transformedConnections = GetTransformedConnections();
-                var matchingNeighbor1 = NeighborRails.FirstOrDefault(n => (n.Position - transformedConnections[0].Item1 - new Vector3(0.0f, 1.0f, 0.0f)).LengthSquared() < 0.001f);
-                var matchingNeighbor2 = NeighborRails.FirstOrDefault(n => (n.Position - transformedConnections[1].Item1 - new Vector3(0.0f, 1.0f, 0.0f)).LengthSquared() < 0.001f);
+                List<Vector3> selectedSpline = null;
+                bool isReversed = false;
+                var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation) * GlobalTransform;
+                double closestEndpoint = double.MaxValue;
 
-                selectedSpline = new List<Vector3>();
-                if (matchingNeighbor1 != null && matchingNeighbor1.Raised)
-                    selectedSpline.Add(piece.SplinePoints[0][0] + Vector3.UnitY);
-                else
-                    selectedSpline.Add(piece.SplinePoints[0][0]);
-
-                if (matchingNeighbor2 != null && matchingNeighbor2.Raised)
-                    selectedSpline.Add(piece.SplinePoints[0][1] + Vector3.UnitY);
-                else
-                    selectedSpline.Add(piece.SplinePoints[0][1]);
-
-                var distStart = (Vector3.Transform(selectedSpline.First(), transform) - destination).LengthSquared();
-                var distEnd = (Vector3.Transform(selectedSpline.Last(), transform) - destination).LengthSquared();
-                if (distEnd > distStart)
-                    isReversed = true;
-            }
-            else
-            {
-                foreach (var spline in piece.SplinePoints)
+                if (piece.AutoSlope)
                 {
-                    var startPoint = Vector3.Transform(spline.First(), transform);
-                    var distStart = (startPoint - destination).LengthSquared();
-                    if (distStart < closestEndpoint)
-                    {
-                        isReversed = true;
-                        selectedSpline = spline;
-                        closestEndpoint = distStart;
-                    }
+                    var transformedConnections = GetTransformedConnections();
+                    var matchingNeighbor1 = NeighborRails.FirstOrDefault(n => (n.Position - transformedConnections[0].Item1 - new Vector3(0.0f, 1.0f, 0.0f)).LengthSquared() < 0.001f);
+                    var matchingNeighbor2 = NeighborRails.FirstOrDefault(n => (n.Position - transformedConnections[1].Item1 - new Vector3(0.0f, 1.0f, 0.0f)).LengthSquared() < 0.001f);
 
-                    var endPoint = Vector3.Transform(spline.Last(), transform);
-                    var distEnd = (endPoint - destination).LengthSquared();
-                    if (distEnd < closestEndpoint)
+                    selectedSpline = new List<Vector3>();
+                    if (matchingNeighbor1 != null && matchingNeighbor1.Raised)
+                        selectedSpline.Add(piece.SplinePoints[0][0] + Vector3.UnitY);
+                    else
+                        selectedSpline.Add(piece.SplinePoints[0][0]);
+
+                    if (matchingNeighbor2 != null && matchingNeighbor2.Raised)
+                        selectedSpline.Add(piece.SplinePoints[0][1] + Vector3.UnitY);
+                    else
+                        selectedSpline.Add(piece.SplinePoints[0][1]);
+
+                    var distStart = (Vector3.Transform(selectedSpline.First(), transform) - destination).LengthSquared();
+                    var distEnd = (Vector3.Transform(selectedSpline.Last(), transform) - destination).LengthSquared();
+                    if (distEnd > distStart)
+                        isReversed = true;
+                }
+                else
+                {
+                    foreach (var spline in piece.SplinePoints)
                     {
-                        isReversed = false;
-                        selectedSpline = spline;
-                        closestEndpoint = distEnd;
+                        var startPoint = Vector3.Transform(spline.First(), transform);
+                        var distStart = (startPoint - destination).LengthSquared();
+                        if (distStart < closestEndpoint)
+                        {
+                            isReversed = true;
+                            selectedSpline = spline;
+                            closestEndpoint = distStart;
+                        }
+
+                        var endPoint = Vector3.Transform(spline.Last(), transform);
+                        var distEnd = (endPoint - destination).LengthSquared();
+                        if (distEnd < closestEndpoint)
+                        {
+                            isReversed = false;
+                            selectedSpline = spline;
+                            closestEndpoint = distEnd;
+                        }
                     }
                 }
-            }
-            
-            if (selectedSpline == null)
-            {
-                return origin + t * (destination - origin);
-            }
 
-            if (isReversed)
-            {
-                t = 1.0f - t;
-            }
+                if (selectedSpline == null)
+                {
+                    return origin + t * (destination - origin);
+                }
 
-            float idx = (selectedSpline.Count - 1) * t;
-            int k = MathFunctions.Clamp((int)idx, 0, selectedSpline.Count - 1);
-            float remainder = idx - k;
-            //Drawer3D.DrawLine(Vector3.Transform(selectedSpline[k], transform), Vector3.Transform(selectedSpline[k + 1], transform), isReversed ? Color.Red : Color.Blue, 0.1f);
-            var next = ((int)k + 1) >= selectedSpline.Count ? (int)k : ((int)k + 1);
-            return Vector3.Transform(selectedSpline[k] * (1.0f - remainder) + selectedSpline[next] * remainder, transform);
+                if (isReversed)
+                {
+                    t = 1.0f - t;
+                }
+
+                float idx = (selectedSpline.Count - 1) * t;
+                int k = MathFunctions.Clamp((int)idx, 0, selectedSpline.Count - 1);
+                float remainder = idx - k;
+                //Drawer3D.DrawLine(Vector3.Transform(selectedSpline[k], transform), Vector3.Transform(selectedSpline[k + 1], transform), isReversed ? Color.Red : Color.Blue, 0.1f);
+                var next = ((int)k + 1) >= selectedSpline.Count ? (int)k : ((int)k + 1);
+                return Vector3.Transform(selectedSpline[k] * (1.0f - remainder) + selectedSpline[next] * remainder, transform);
+
+            }
+            else
+                return this.Position;
         }
 
         public override void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
@@ -243,27 +248,29 @@ namespace DwarfCorp.Rail
                 //Drawer3D.DrawBox(GetContainingVoxel().GetBoundingBox(), Color.White, 0.01f, true);
                 //Drawer3D.DrawLine(GetContainingVoxel().GetBoundingBox().Center(), GlobalTransform.Translation, Color.White, 0.01f);
                 var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation) * GlobalTransform;
-                var piece = Library.GetRailPiece(Piece.RailPiece);
+                if (Library.GetRailPiece(Piece.RailPiece).HasValue(out var piece))
+                {
 
-                foreach (var spline in piece.SplinePoints)
-                    for (var i = 1; i < spline.Count; ++i)
-                        Drawer3D.DrawLine(Vector3.Transform(spline[i - 1], transform),
-                            Vector3.Transform(spline[i], transform), Color.Purple, 0.1f);
+                    foreach (var spline in piece.SplinePoints)
+                        for (var i = 1; i < spline.Count; ++i)
+                            Drawer3D.DrawLine(Vector3.Transform(spline[i - 1], transform),
+                                Vector3.Transform(spline[i], transform), Color.Purple, 0.1f);
 
-                foreach (var connection in piece.EnumerateConnections())
-                    Drawer3D.DrawLine(Vector3.Transform(connection.Item1, transform) + new Vector3(0.0f, 0.2f, 0.0f),
-                        Vector3.Transform(connection.Item2, transform) + new Vector3(0.0f, 0.2f, 0.0f),
-                        Color.Brown, 0.1f);
+                    foreach (var connection in piece.EnumerateConnections())
+                        Drawer3D.DrawLine(Vector3.Transform(connection.Item1, transform) + new Vector3(0.0f, 0.2f, 0.0f),
+                            Vector3.Transform(connection.Item2, transform) + new Vector3(0.0f, 0.2f, 0.0f),
+                            Color.Brown, 0.1f);
 
 
-                //foreach (var neighborConnection in NeighborRails)
-                //{
-                //    var neighbor = Manager.FindComponent(neighborConnection.NeighborID);
-                //    if (neighbor == null)
-                //        Drawer3D.DrawLine(Position, Position + Vector3.UnitY, Color.CornflowerBlue, 0.1f);
-                //    else
-                //        Drawer3D.DrawLine(Position + new Vector3(0.0f, 0.5f, 0.0f), (neighbor as Body).Position + new Vector3(0.0f, 0.5f, 0.0f), Color.Teal, 0.1f);
-                //}
+                    //foreach (var neighborConnection in NeighborRails)
+                    //{
+                    //    var neighbor = Manager.FindComponent(neighborConnection.NeighborID);
+                    //    if (neighbor == null)
+                    //        Drawer3D.DrawLine(Position, Position + Vector3.UnitY, Color.CornflowerBlue, 0.1f);
+                    //    else
+                    //        Drawer3D.DrawLine(Position + new Vector3(0.0f, 0.5f, 0.0f), (neighbor as Body).Position + new Vector3(0.0f, 0.5f, 0.0f), Color.Teal, 0.1f);
+                    //}
+                }
 
                 
             }
@@ -275,8 +282,8 @@ namespace DwarfCorp.Rail
             {
                 var bounds = Vector4.Zero;
                 var uvs = Sheet.GenerateTileUVs(Frame, out bounds);
-                var rawPiece = Library.GetRailPiece(Piece.RailPiece);
-
+                if (Library.GetRailPiece(Piece.RailPiece).HasValue(out var rawPiece))
+                { 
                 var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation);
 
                 var realShape = 0;
@@ -331,68 +338,69 @@ namespace DwarfCorp.Rail
                 var bumperSideBounds = Vector4.Zero;
                 var bumperSideUvs = Sheet.GenerateTileUVs(new Point(2, 5), out bumperSideBounds);
 
-                foreach (var connection in GetTransformedConnections())
-                {
-                    var matchingNeighbor = NeighborRails.FirstOrDefault(n => (n.Position - connection.Item1).LengthSquared() < 0.001f);
-                    if (matchingNeighbor == null && rawPiece.AutoSlope)
-                        matchingNeighbor = NeighborRails.FirstOrDefault(n => (n.Position - connection.Item1 - new Vector3(0.0f, 1.0f, 0.0f)).LengthSquared() < 0.001f);
-
-                    if (matchingNeighbor == null)
+                    foreach (var connection in GetTransformedConnections())
                     {
-                        var bumperOffset = connection.Item1 - GlobalTransform.Translation;
-                        var bumperGap = Vector3.Normalize(bumperOffset) * 0.1f;
-                        var bumperAngle = AngleBetweenVectors(new Vector2(bumperOffset.X, bumperOffset.Z), new Vector2(0, 0.5f));
+                        var matchingNeighbor = NeighborRails.FirstOrDefault(n => (n.Position - connection.Item1).LengthSquared() < 0.001f);
+                        if (matchingNeighbor == null && rawPiece.AutoSlope)
+                            matchingNeighbor = NeighborRails.FirstOrDefault(n => (n.Position - connection.Item1 - new Vector3(0.0f, 1.0f, 0.0f)).LengthSquared() < 0.001f);
 
-                        var xDiag = bumperOffset.X < -0.001f || bumperOffset.X > 0.001f;
-                        var zDiag = bumperOffset.Z < -0.001f || bumperOffset.Z > 0.001f;
-
-                        if (xDiag && zDiag)
+                        if (matchingNeighbor == null)
                         {
-                            var y = bumperOffset.Y;
-                            bumperOffset *= sqrt2;
-                            bumperOffset.Y = y;
+                            var bumperOffset = connection.Item1 - GlobalTransform.Translation;
+                            var bumperGap = Vector3.Normalize(bumperOffset) * 0.1f;
+                            var bumperAngle = AngleBetweenVectors(new Vector2(bumperOffset.X, bumperOffset.Z), new Vector2(0, 0.5f));
 
-                            var endBounds = Vector4.Zero;
-                            var endUvs = Sheet.GenerateTileUVs(new Point(6, 2), out endBounds);
-                            Primitive.AddQuad(
-                                Matrix.CreateRotationY((float)Math.PI * 1.25f)
-                                * Matrix.CreateRotationY(bumperAngle)
-                                // This offset would not be correct if diagonals could slope.
-                                * Matrix.CreateTranslation(new Vector3(Sign(bumperOffset.X), 0.0f, Sign(bumperOffset.Z))),
-                                Color.White, Color.White, endUvs, endBounds);
-                        }
+                            var xDiag = bumperOffset.X < -0.001f || bumperOffset.X > 0.001f;
+                            var zDiag = bumperOffset.Z < -0.001f || bumperOffset.Z > 0.001f;
 
-                        Primitive.AddQuad(
-                            Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
-                            * Matrix.CreateTranslation(0.0f, 0.3f, -0.2f)
-                            * Matrix.CreateRotationY(bumperAngle)
-                            * Matrix.CreateTranslation(bumperOffset + bumperGap),
-                            Color.White, Color.White, bumperBackUvs, bumperBackBounds);
+                            if (xDiag && zDiag)
+                            {
+                                var y = bumperOffset.Y;
+                                bumperOffset *= sqrt2;
+                                bumperOffset.Y = y;
 
-                        Primitive.AddQuad(
-                            Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
-                            * Matrix.CreateTranslation(0.0f, 0.3f, -0.2f)
-                            * Matrix.CreateRotationY(bumperAngle)
-                            * Matrix.CreateTranslation(bumperOffset),
-                            Color.White, Color.White, bumperFrontUvs, bumperFrontBounds);
-
-                        if (VoxelHelpers.FindFirstVoxelBelow(GetContainingVoxel()).RampType == RampType.None)
-                        {
-                            Primitive.AddQuad(
-                                Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
-                                * Matrix.CreateRotationY(-(float)Math.PI * 0.5f)
-                                * Matrix.CreateTranslation(0.3f, 0.3f, 0.18f)
-                                * Matrix.CreateRotationY(bumperAngle)
-                                * Matrix.CreateTranslation(bumperOffset),
-                                Color.White, Color.White, bumperSideUvs, bumperSideBounds);
+                                var endBounds = Vector4.Zero;
+                                var endUvs = Sheet.GenerateTileUVs(new Point(6, 2), out endBounds);
+                                Primitive.AddQuad(
+                                    Matrix.CreateRotationY((float)Math.PI * 1.25f)
+                                    * Matrix.CreateRotationY(bumperAngle)
+                                    // This offset would not be correct if diagonals could slope.
+                                    * Matrix.CreateTranslation(new Vector3(Sign(bumperOffset.X), 0.0f, Sign(bumperOffset.Z))),
+                                    Color.White, Color.White, endUvs, endBounds);
+                            }
 
                             Primitive.AddQuad(
                                 Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
-                                * Matrix.CreateRotationY(-(float)Math.PI * 0.5f)
-                                * Matrix.CreateTranslation(-0.3f, 0.3f, 0.18f)
+                                * Matrix.CreateTranslation(0.0f, 0.3f, -0.2f)
+                                * Matrix.CreateRotationY(bumperAngle)
+                                * Matrix.CreateTranslation(bumperOffset + bumperGap),
+                                Color.White, Color.White, bumperBackUvs, bumperBackBounds);
+
+                            Primitive.AddQuad(
+                                Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
+                                * Matrix.CreateTranslation(0.0f, 0.3f, -0.2f)
                                 * Matrix.CreateRotationY(bumperAngle)
                                 * Matrix.CreateTranslation(bumperOffset),
-                                Color.White, Color.White, bumperSideUvs, bumperSideBounds);
+                                Color.White, Color.White, bumperFrontUvs, bumperFrontBounds);
+
+                            if (VoxelHelpers.FindFirstVoxelBelow(GetContainingVoxel()).RampType == RampType.None)
+                            {
+                                Primitive.AddQuad(
+                                    Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
+                                    * Matrix.CreateRotationY(-(float)Math.PI * 0.5f)
+                                    * Matrix.CreateTranslation(0.3f, 0.3f, 0.18f)
+                                    * Matrix.CreateRotationY(bumperAngle)
+                                    * Matrix.CreateTranslation(bumperOffset),
+                                    Color.White, Color.White, bumperSideUvs, bumperSideBounds);
+
+                                Primitive.AddQuad(
+                                    Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
+                                    * Matrix.CreateRotationY(-(float)Math.PI * 0.5f)
+                                    * Matrix.CreateTranslation(-0.3f, 0.3f, 0.18f)
+                                    * Matrix.CreateRotationY(bumperAngle)
+                                    * Matrix.CreateTranslation(bumperOffset),
+                                    Color.White, Color.White, bumperSideUvs, bumperSideBounds);
+                            }
                         }
                     }
                 }
@@ -436,7 +444,6 @@ namespace DwarfCorp.Rail
                 EndDraw(effect);
             }
         }
-        private string previousEffect = null;
 
         public void DoStipple(Shader effect)
         {
@@ -470,44 +477,49 @@ namespace DwarfCorp.Rail
         {
             var uvDelta = sideUvs[1].X - sideUvs[0].X;
 
-            foreach (var railSpline in Library.GetRailPiece(Piece.RailPiece).RailSplines)
-            {
-                var uvStep = 1.0f / (railSpline.Count - 1);
-
-                for (var i = 1; i < railSpline.Count; ++i)
+            if (Library.GetRailPiece(Piece.RailPiece).HasValue(out var rawPiece))
+                foreach (var railSpline in rawPiece.RailSplines)
                 {
-                    var baseIndex = Primitive.VertexCount;
+                    var uvStep = 1.0f / (railSpline.Count - 1);
 
-                    Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i - 1].X, HeightOffset + 1.0f, railSpline[i - 1].Y), transform), Color.White, Color.White,
-                        FlipTexture ? new Vector2(sideUvs[0].X + uvDelta - uvDelta * (uvStep * (i - 1)), sideUvs[0].Y) :
-                        new Vector2(sideUvs[0].X + uvDelta * (uvStep * (i - 1)), sideUvs[0].Y), 
-                        sideBounds));
+                    for (var i = 1; i < railSpline.Count; ++i)
+                    {
+                        var baseIndex = Primitive.VertexCount;
 
-                    Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i].X, HeightOffset + 1.0f, railSpline[i].Y), transform), Color.White, Color.White,
-                        FlipTexture ? new Vector2(sideUvs[0].X + uvDelta - uvDelta * (uvStep * i), sideUvs[0].Y) :
-                        new Vector2(sideUvs[0].X + uvDelta * (uvStep * i), sideUvs[0].Y), 
-                        sideBounds));
+                        Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i - 1].X, HeightOffset + 1.0f, railSpline[i - 1].Y), transform), Color.White, Color.White,
+                            FlipTexture ? new Vector2(sideUvs[0].X + uvDelta - uvDelta * (uvStep * (i - 1)), sideUvs[0].Y) :
+                            new Vector2(sideUvs[0].X + uvDelta * (uvStep * (i - 1)), sideUvs[0].Y),
+                            sideBounds));
 
-                    Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i].X, HeightOffset, railSpline[i].Y), transform), Color.White, Color.White,
-                        FlipTexture ? new Vector2(sideUvs[0].X + uvDelta - uvDelta * (uvStep * i), sideUvs[2].Y) :
-                        new Vector2(sideUvs[0].X + uvDelta * (uvStep * i), sideUvs[2].Y), 
-                        sideBounds));
+                        Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i].X, HeightOffset + 1.0f, railSpline[i].Y), transform), Color.White, Color.White,
+                            FlipTexture ? new Vector2(sideUvs[0].X + uvDelta - uvDelta * (uvStep * i), sideUvs[0].Y) :
+                            new Vector2(sideUvs[0].X + uvDelta * (uvStep * i), sideUvs[0].Y),
+                            sideBounds));
 
-                    Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i - 1].X, HeightOffset, railSpline[i - 1].Y), transform), Color.White, Color.White,
-                        FlipTexture ? new Vector2(sideUvs[0].X + uvDelta - uvDelta * (uvStep * (i - 1)), sideUvs[2].Y) :
-                        new Vector2(sideUvs[0].X + uvDelta * (uvStep * (i - 1)), sideUvs[2].Y),
-                        sideBounds));
+                        Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i].X, HeightOffset, railSpline[i].Y), transform), Color.White, Color.White,
+                            FlipTexture ? new Vector2(sideUvs[0].X + uvDelta - uvDelta * (uvStep * i), sideUvs[2].Y) :
+                            new Vector2(sideUvs[0].X + uvDelta * (uvStep * i), sideUvs[2].Y),
+                            sideBounds));
 
-                    Primitive.AddOffsetIndicies(new short[] { 0, 1, 3, 1, 2, 3 }, baseIndex);
+                        Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i - 1].X, HeightOffset, railSpline[i - 1].Y), transform), Color.White, Color.White,
+                            FlipTexture ? new Vector2(sideUvs[0].X + uvDelta - uvDelta * (uvStep * (i - 1)), sideUvs[2].Y) :
+                            new Vector2(sideUvs[0].X + uvDelta * (uvStep * (i - 1)), sideUvs[2].Y),
+                            sideBounds));
+
+                        Primitive.AddOffsetIndicies(new short[] { 0, 1, 3, 1, 2, 3 }, baseIndex);
+                    }
                 }
-            }
         }
 
         public List<Tuple<Vector3, Vector3>> GetTransformedConnections()
         {
-            var piece = Library.GetRailPiece(Piece.RailPiece);
-            var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation) * GlobalTransform;
-            return piece.EnumerateConnections().Select(l => Tuple.Create(Vector3.Transform(l.Item1, transform), Vector3.Transform(l.Item2, transform))).ToList();
+            if (Library.GetRailPiece(Piece.RailPiece).HasValue(out var piece))
+            {
+                var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation) * GlobalTransform;
+                return piece.EnumerateConnections().Select(l => Tuple.Create(Vector3.Transform(l.Item1, transform), Vector3.Transform(l.Item2, transform))).ToList();
+            }
+            else
+                return new List<Tuple<Vector3, Vector3>>();
         }
 
         private void DetachFromNeighbors()
@@ -531,51 +543,52 @@ namespace DwarfCorp.Rail
         {
             global::System.Diagnostics.Debug.Assert(NeighborRails.Count == 0);
 
-            var myPiece = Library.GetRailPiece(Piece.RailPiece);
-
-            var myEndPoints = GetTransformedConnections().SelectMany(l => new Vector3[] { l.Item1, l.Item2 });
-            foreach (var entity in Manager.World.EnumerateIntersectingObjects(this.BoundingBox.Expand(0.5f), CollisionType.Static))
+            if (Library.GetRailPiece(Piece.RailPiece).HasValue(out var myPiece))
             {
-                if (Object.ReferenceEquals(entity, this)) continue;
-                var neighborRail = entity as RailEntity;
-                if (neighborRail == null) continue;
-                var neighborEndPoints = neighborRail.GetTransformedConnections().SelectMany(l => new Vector3[] { l.Item1, l.Item2 });
-                foreach (var point in myEndPoints)
+                var myEndPoints = GetTransformedConnections().SelectMany(l => new Vector3[] { l.Item1, l.Item2 });
+                foreach (var entity in Manager.World.EnumerateIntersectingObjects(this.BoundingBox.Expand(0.5f), CollisionType.Static))
                 {
-                    foreach (var nPoint in neighborEndPoints)
-                        if ((nPoint - point).LengthSquared() < 0.01f)
-                        {
-                            AttachNeighbor(neighborRail.GlobalID, point, false);
-                            neighborRail.AttachNeighbor(this.GlobalID, point, false);
-                            goto __CONTINUE;
-                        }
-
-                    if (myPiece.AutoSlope)
+                    if (Object.ReferenceEquals(entity, this)) continue;
+                    var neighborRail = entity as RailEntity;
+                    if (neighborRail == null) continue;
+                    var neighborEndPoints = neighborRail.GetTransformedConnections().SelectMany(l => new Vector3[] { l.Item1, l.Item2 });
+                    foreach (var point in myEndPoints)
                     {
-                        var raisedPoint = point + new Vector3(0.0f, 1.0f, 0.0f);
                         foreach (var nPoint in neighborEndPoints)
-                            if ((nPoint - raisedPoint).LengthSquared() < 0.01f)
-                            {
-                                AttachNeighbor(neighborRail.GlobalID, raisedPoint, true);
-                                neighborRail.AttachNeighbor(this.GlobalID, raisedPoint, false);
-                                goto __CONTINUE;
-                            }
-                    }
-
-                    var neighborPiece = Library.GetRailPiece(neighborRail.Piece.RailPiece);
-                    if (neighborPiece.AutoSlope)
-                    {
-                        var loweredPoint = point - new Vector3(0.0f, 1.0f, 0.0f);
-                        foreach (var nPoint in neighborEndPoints)
-                            if ((nPoint - loweredPoint).LengthSquared() < 0.01f)
+                            if ((nPoint - point).LengthSquared() < 0.01f)
                             {
                                 AttachNeighbor(neighborRail.GlobalID, point, false);
-                                neighborRail.AttachNeighbor(this.GlobalID, point, true);
+                                neighborRail.AttachNeighbor(this.GlobalID, point, false);
                                 goto __CONTINUE;
                             }
+
+                        if (myPiece.AutoSlope)
+                        {
+                            var raisedPoint = point + new Vector3(0.0f, 1.0f, 0.0f);
+                            foreach (var nPoint in neighborEndPoints)
+                                if ((nPoint - raisedPoint).LengthSquared() < 0.01f)
+                                {
+                                    AttachNeighbor(neighborRail.GlobalID, raisedPoint, true);
+                                    neighborRail.AttachNeighbor(this.GlobalID, raisedPoint, false);
+                                    goto __CONTINUE;
+                                }
+                        }
+
+                        if (Library.GetRailPiece(neighborRail.Piece.RailPiece).HasValue(out var neighborPiece))
+                            if (neighborPiece.AutoSlope)
+                            {
+                                var loweredPoint = point - new Vector3(0.0f, 1.0f, 0.0f);
+                                foreach (var nPoint in neighborEndPoints)
+                                    if ((nPoint - loweredPoint).LengthSquared() < 0.01f)
+                                    {
+                                        AttachNeighbor(neighborRail.GlobalID, point, false);
+                                        neighborRail.AttachNeighbor(this.GlobalID, point, true);
+                                        goto __CONTINUE;
+                                    }
+                            }
                     }
+                    __CONTINUE:;
                 }
-                __CONTINUE: ;
             }
         }
 
@@ -613,8 +626,9 @@ namespace DwarfCorp.Rail
 
             LocalTransform = Matrix.CreateTranslation(Location.WorldPosition + new Vector3(Piece.Offset.X, 0, Piece.Offset.Y) + new Vector3(0.5f, 0.2f, 0.5f));
 
-            var piece = Library.GetRailPiece(Piece.RailPiece);
-            Frame = piece.Tile;
+            if (Library.GetRailPiece(Piece.RailPiece).HasValue(out var piece))
+                Frame = piece.Tile;
+
             ResetPrimitive();
 
             // Hack to make the listener update it's damn bounding box

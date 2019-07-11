@@ -50,12 +50,12 @@ namespace DwarfCorp
             if (resources == null && craftType != null)
             {
                 resources = new List<ResourceAmount>();
-                var craftItem = Library.GetCraftable(craftType);
-                foreach(var resource in craftItem.RequiredResources)
-                {
-                    var genericResource = Library.EnumerateResourceTypesWithTag(resource.Type).FirstOrDefault();
-                    resources.Add(new ResourceAmount(genericResource, resource.Count));
-                }
+                if (Library.GetCraftable(craftType).HasValue(out var craftItem))
+                    foreach (var resource in craftItem.RequiredResources)
+                    {
+                        var genericResource = Library.EnumerateResourceTypesWithTag(resource.Type).FirstOrDefault();
+                        resources.Add(new ResourceAmount(genericResource, resource.Count));
+                    }
             }
             else if (resources == null && craftType == null)
             {

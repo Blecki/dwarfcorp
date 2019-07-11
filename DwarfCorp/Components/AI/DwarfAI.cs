@@ -433,9 +433,7 @@ namespace DwarfCorp
                 // Craft random items for fun.
                 if (Stats.IsTaskAllowed(TaskCategory.CraftItem) && MathFunctions.RandEvent(0.0005f)) // Todo: These chances need to be configurable.
                 {
-                    var item = Library.GetRandomApplicableCraftItem(Faction, World);
-
-                    if (item != null)
+                    if (Library.GetRandomApplicableCraftable(Faction, World).HasValue(out var item))
                     {
                         var resources = new List<ResourceAmount>();
                         foreach (var resource in item.RequiredResources)

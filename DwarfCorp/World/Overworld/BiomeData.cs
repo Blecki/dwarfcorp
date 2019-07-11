@@ -8,7 +8,7 @@ namespace DwarfCorp
 {
     public class BiomeData
     {
-        public byte Biome { get; set; }
+        public byte Biome { get; set; } // Todo: Rename to ID. Breaks saves?
         public string Name;
 
         public struct Layer

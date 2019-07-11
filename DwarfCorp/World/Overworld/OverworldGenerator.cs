@@ -64,17 +64,14 @@ namespace DwarfCorp.GameStates
             
             yield return new KeyValuePair<string, Color>("Biomes: ", Color.White);
             foreach (var biome in biomes)
-            {
-                var _biome = Library.GetBiome(biome);
-                if (_biome == null)
-                    continue;
-
-                var biomeColor = _biome.MapColor;
-                biomeColor.R = (byte)Math.Min(255, biomeColor.R + 80);
-                biomeColor.G = (byte)Math.Min(255, biomeColor.G + 80);
-                biomeColor.B = (byte)Math.Min(255, biomeColor.B + 80);
-                yield return new KeyValuePair<string, Color>("    " + _biome.Name, biomeColor);
-            }
+                if (Library.GetBiome(biome).HasValue(out var _biome))
+                {
+                    var biomeColor = _biome.MapColor;
+                    biomeColor.R = (byte)Math.Min(255, biomeColor.R + 80);
+                    biomeColor.G = (byte)Math.Min(255, biomeColor.G + 80);
+                    biomeColor.B = (byte)Math.Min(255, biomeColor.B + 80);
+                    yield return new KeyValuePair<string, Color>("    " + _biome.Name, biomeColor);
+                }
         }
               
         public void Generate()
@@ -91,6 +88,7 @@ namespace DwarfCorp.GameStates
                     Name = "GenerateWorld",
                     IsBackground = true
                 };
+
                 genThread.Start();
             }
         }
@@ -235,7 +233,8 @@ namespace DwarfCorp.GameStates
                 LoadingMessage = "Biome";
                 for (int x = 0; x < Overworld.Width; x++)
                     for (int y = 0; y < Overworld.Height; y++)
-                        Overworld.Map.Map[x, y].Biome = Library.GetBiomeForConditions(Overworld.Map.Map[x, y].Temperature, Overworld.Map.Map[x, y].Rainfall, Overworld.Map.Map[x, y].Height).Biome;
+                        if (Library.GetBiomeForConditions(Overworld.Map.Map[x, y].Temperature, Overworld.Map.Map[x, y].Rainfall, Overworld.Map.Map[x, y].Height).HasValue(out var biome))
+                            Overworld.Map.Map[x, y].Biome = biome.Biome;
 
                 LoadingMessage = "Volcanoes";
                 GenerateVolcanoes(Overworld.Width, Overworld.Height);

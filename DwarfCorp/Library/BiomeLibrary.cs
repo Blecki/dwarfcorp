@@ -46,7 +46,7 @@ namespace DwarfCorp
             return Biomes.FirstOrDefault(b => b.Name == Name);
         }
 
-        public static BiomeData GetBiome(int Index)
+        public static MaybeNull<BiomeData> GetBiome(int Index)
         {
             InitializeBiomes();
             if (Index < 0 || Index >= Biomes.Count)
@@ -54,7 +54,7 @@ namespace DwarfCorp
             return Biomes[Index];
         }
 
-        public static BiomeData GetBiomeForConditions(float Temperature, float Rainfall, float Elevation)
+        public static MaybeNull<BiomeData> GetBiomeForConditions(float Temperature, float Rainfall, float Elevation)
         {
             InitializeBiomes();
 

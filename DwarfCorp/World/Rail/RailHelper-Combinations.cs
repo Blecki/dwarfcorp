@@ -80,8 +80,7 @@ namespace DwarfCorp.Rail
                 if (entity is Health) continue;
                 if (entity is CraftDetails) continue;
 
-                var possibleCombination = FindPossibleCombination(junctionPiece, entity);
-                if (possibleCombination != null)
+                if (FindPossibleCombination(junctionPiece, entity).HasValue(out var possibleCombination))
                 {
                     var combinedPiece = new Rail.JunctionPiece
                     {
@@ -103,23 +102,25 @@ namespace DwarfCorp.Rail
             return true;
         }
 
-        public static CombinationTable.Combination FindPossibleCombination(Rail.JunctionPiece Piece, GameComponent Entity)
+        public static MaybeNull<CombinationTable.Combination> FindPossibleCombination(Rail.JunctionPiece Piece, GameComponent Entity)
         {
             if (Entity is RailEntity)
             {
                 var baseJunction = (Entity as RailEntity).GetPiece();
-                var basePiece = Library.GetRailPiece(baseJunction.RailPiece);
-                var relativeOrientation = Rail.OrientationHelper.Relative(baseJunction.Orientation, Piece.Orientation);
+                if (Library.GetRailPiece(baseJunction.RailPiece).HasValue(out var basePiece))
+                {
+                    var relativeOrientation = Rail.OrientationHelper.Relative(baseJunction.Orientation, Piece.Orientation);
 
-                if (basePiece.Name == Piece.RailPiece && relativeOrientation == PieceOrientation.North)
-                    return new CombinationTable.Combination
-                    {
-                        Result = basePiece.Name,
-                        ResultRelativeOrientation = PieceOrientation.North
-                    };
+                    if (basePiece.Name == Piece.RailPiece && relativeOrientation == PieceOrientation.North)
+                        return new CombinationTable.Combination
+                        {
+                            Result = basePiece.Name,
+                            ResultRelativeOrientation = PieceOrientation.North
+                        };
 
-                var matchingCombination = Library.FindRailCombination(basePiece.Name, Piece.RailPiece, relativeOrientation);
-                return matchingCombination;
+                    var matchingCombination = Library.FindRailCombination(basePiece.Name, Piece.RailPiece, relativeOrientation);
+                    return matchingCombination;
+                }
             }
 
             return null;

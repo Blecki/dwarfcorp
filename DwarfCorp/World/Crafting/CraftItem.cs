@@ -135,20 +135,20 @@ namespace DwarfCorp
         public CraftItem ObjectAsCraftableResource()
         {
             string resourceName = Name + "...";
-            var toReturn = Library.GetCraftable(resourceName);
-            if (toReturn == null)
-            {
-                toReturn = this.MemberwiseClone() as CraftItem;
-                toReturn.Name = resourceName;
-                toReturn.Type = CraftType.Resource;
-                toReturn.CraftActBehavior = CraftActBehaviors.Object;
-                toReturn.ResourceCreated = "Object";
-                toReturn.CraftLocation = String.IsNullOrEmpty(CraftLocation) ? "Anvil" : CraftLocation;
-                toReturn.ObjectName = Name;
-                toReturn.AllowUserCrafting = false;
-                Library.AddCraftable(toReturn);
-            }
-            return toReturn;
+            if (Library.GetCraftable(resourceName).HasValue(out var _r))
+                return _r;
+
+            var r = this.MemberwiseClone() as CraftItem;
+            r.Name = resourceName;
+            r.Type = CraftType.Resource;
+            r.CraftActBehavior = CraftActBehaviors.Object;
+            r.ResourceCreated = "Object";
+            r.CraftLocation = String.IsNullOrEmpty(CraftLocation) ? "Anvil" : CraftLocation;
+            r.ObjectName = Name;
+            r.AllowUserCrafting = false;
+            Library.AddCraftable(r);
+
+            return r;
         }
     }
 }

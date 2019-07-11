@@ -24,66 +24,68 @@ namespace DwarfCorp.Generation
                 for (var z = TopChunk.Origin.Z; z < TopChunk.Origin.Z + VoxelConstants.ChunkSizeZ; z++)
                 {
                     var overworldPosition = OverworldMap.WorldToOverworld(new Vector2(x, z), Settings.Overworld.InstanceSettings.Origin);
-                    var biome = Settings.Overworld.Map.GetBiomeAt(new Vector3(x, 0, z), Settings.Overworld.InstanceSettings.Origin);
 
-                    var normalizedHeight = NormalizeHeight(Settings.Overworld.Map.LinearInterpolate(overworldPosition, OverworldField.Height));
-                    var height = (int)MathFunctions.Clamp(normalizedHeight * worldDepth, 0.0f, worldDepth - 2);
-
-                    var voxel = Settings.World.ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(x, height, z));
-
-                    if (!voxel.IsValid
-                        || voxel.Coordinate.Y == 0
-                        || voxel.Coordinate.Y >= worldDepth - Settings.TreeLine)
-                        continue;
-
-                    if (voxel.LiquidLevel != 0)
-                        continue;
-
-                    var above = VoxelHelpers.GetVoxelAbove(voxel);
-                    if (above.IsValid && (above.LiquidLevel != 0 || !above.IsEmpty))
-                        continue;
-
-                    foreach (var animal in biome.Fauna)
+                    if (Settings.Overworld.Map.GetBiomeAt(new Vector3(x, 0, z), Settings.Overworld.InstanceSettings.Origin).HasValue(out var biome))
                     {
-                        if (MathFunctions.RandEvent(animal.SpawnProbability))
-                        {
-                            if (!creatureCounts.ContainsKey(biome.Name))
-                            {
-                                creatureCounts[biome.Name] = new Dictionary<string, int>();
-                            }
-                            var dict = creatureCounts[biome.Name];
-                            if (!dict.ContainsKey(animal.Name))
-                            {
-                                dict[animal.Name] = 0;
-                            }
-                            if (dict[animal.Name] < animal.MaxPopulation)
-                            {
-                                EntityFactory.CreateEntity<GameComponent>(animal.Name,
-                                    voxel.WorldPosition + Vector3.Up * 1.5f);
-                            }
-                            break;
-                        }
-                    }
+                        var normalizedHeight = NormalizeHeight(Settings.Overworld.Map.LinearInterpolate(overworldPosition, OverworldField.Height));
+                        var height = (int)MathFunctions.Clamp(normalizedHeight * worldDepth, 0.0f, worldDepth - 2);
 
-                    if (voxel.Type.Name != biome.SoilLayer.VoxelType)
-                        continue;
+                        var voxel = Settings.World.ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(x, height, z));
 
-                    foreach (VegetationData veg in biome.Vegetation)
-                    {
-                        if (voxel.GrassType == 0)
+                        if (!voxel.IsValid
+                            || voxel.Coordinate.Y == 0
+                            || voxel.Coordinate.Y >= worldDepth - Settings.TreeLine)
                             continue;
 
-                        if (MathFunctions.RandEvent(veg.SpawnProbability) &&
-                            Settings.NoiseGenerator.Noise(voxel.Coordinate.X / veg.ClumpSize,
-                            veg.NoiseOffset, voxel.Coordinate.Z / veg.ClumpSize) >= veg.ClumpThreshold)
+                        if (voxel.LiquidLevel != 0)
+                            continue;
+
+                        var above = VoxelHelpers.GetVoxelAbove(voxel);
+                        if (above.IsValid && (above.LiquidLevel != 0 || !above.IsEmpty))
+                            continue;
+
+                        foreach (var animal in biome.Fauna)
                         {
-                            var treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
+                            if (MathFunctions.RandEvent(animal.SpawnProbability))
+                            {
+                                if (!creatureCounts.ContainsKey(biome.Name))
+                                {
+                                    creatureCounts[biome.Name] = new Dictionary<string, int>();
+                                }
+                                var dict = creatureCounts[biome.Name];
+                                if (!dict.ContainsKey(animal.Name))
+                                {
+                                    dict[animal.Name] = 0;
+                                }
+                                if (dict[animal.Name] < animal.MaxPopulation)
+                                {
+                                    EntityFactory.CreateEntity<GameComponent>(animal.Name,
+                                        voxel.WorldPosition + Vector3.Up * 1.5f);
+                                }
+                                break;
+                            }
+                        }
 
-                            EntityFactory.CreateEntity<Plant>(veg.Name,
-                                voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
-                                Blackboard.Create("Scale", treeSize));
+                        if (voxel.Type.Name != biome.SoilLayer.VoxelType)
+                            continue;
 
-                            break;
+                        foreach (VegetationData veg in biome.Vegetation)
+                        {
+                            if (voxel.GrassType == 0)
+                                continue;
+
+                            if (MathFunctions.RandEvent(veg.SpawnProbability) &&
+                                Settings.NoiseGenerator.Noise(voxel.Coordinate.X / veg.ClumpSize,
+                                veg.NoiseOffset, voxel.Coordinate.Z / veg.ClumpSize) >= veg.ClumpThreshold)
+                            {
+                                var treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
+
+                                EntityFactory.CreateEntity<Plant>(veg.Name,
+                                    voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
+                                    Blackboard.Create("Scale", treeSize));
+
+                                break;
+                            }
                         }
                     }
                 }

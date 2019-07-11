@@ -130,8 +130,12 @@ namespace DwarfCorp
                     var color = worldData[(y * width) + x];
                     map[x, y].Height_ = color.R;
                     map[x, y].Biome = color.B;
-                    map[x, y].Rainfall_ = (byte)(Library.GetBiome(map[x, y].Biome).Rain * 255);
-                    map[x, y].Temperature = (float)(Library.GetBiome(map[x, y].Biome).Temp);
+
+                    if (Library.GetBiome(color.B).HasValue(out var biome))
+                    {
+                        map[x, y].Rainfall_ = (byte)(biome.Rain * 255);
+                        map[x, y].Temperature = (float)(biome.Temp);
+                    }
                 }
         }
 
@@ -152,12 +156,8 @@ namespace DwarfCorp
                         cellColor = new Color(30, 30, 150);
                     else if (h1 >= 0.1f && h1 <= sealevel)
                         cellColor = new Color(50, 50, 255);
-                    else
-                    {
-                        var _biome = Library.GetBiome(Map[x, y].Biome);
-                        if (_biome != null)
+                    else if (Library.GetBiome(Map[x, y].Biome).HasValue(out var _biome))
                             cellColor = _biome.MapColor;
-                    }
 
                     for (var tx = 0; tx < scale; ++tx)
                         for (var ty = 0; ty < scale; ++ty)
@@ -271,7 +271,7 @@ namespace DwarfCorp
             return WorldToOverworld(new Vector2(worldXYZ.X, worldXYZ.Z), origin);
         }
 
-        public BiomeData GetBiomeAt(Vector3 worldPos, Vector2 origin)
+        public MaybeNull<BiomeData> GetBiomeAt(Vector3 worldPos, Vector2 origin)
         {
             var v = WorldToOverworld(worldPos, origin);
             var r = WorldToOverworldRemainder(new Vector2(worldPos.X, worldPos.Z));

@@ -11,7 +11,7 @@ namespace DwarfCorp
 {
     public class CreatureAI : GameComponent
     {
-        public Task CurrentTask = null;
+        public Task CurrentTask = null; // Todo: MaybeNull
         public List<Task> Tasks = new List<Task>();
         [JsonIgnore] protected MaybeNull<Act> CurrentAct = null;
         public BoundingBox PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue), new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));

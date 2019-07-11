@@ -71,18 +71,24 @@ namespace DwarfCorp
                                 CollisionType.Static).Any();
                             if (entityPresent) continue;
 
-                            var biome = chunk.Manager.World.Overworld.Map.GetBiomeAt(voxel.Coordinate.ToVector3(), chunk.Manager.World.Overworld.InstanceSettings.Origin);
+                            if (chunk.Manager.World.Overworld.Map.GetBiomeAt(voxel.Coordinate.ToVector3(), chunk.Manager.World.Overworld.InstanceSettings.Origin).HasValue(out var biome))
+                            {
+                                var grassyNeighbors = VoxelHelpers.EnumerateManhattanNeighbors2D(voxel.Coordinate)
+                                    .Select(c => new VoxelHandle(voxel.Chunk.Manager, c))
+                                    .Where(v => v.IsValid && v.GrassType != 0)
+                                    .Where(v => Library.GetGrassType(v.GrassType).Spreads)
+                                    .Where(v =>
+                                    {
+                                        if (chunk.Manager.World.Overworld.Map.GetBiomeAt(v.Coordinate.ToVector3(), chunk.Manager.World.Overworld.InstanceSettings.Origin).HasValue(out var otherBiome))
+                                            return biome == otherBiome;
+                                        return false;
+                                    })
+                                    .ToList();
 
-                            var grassyNeighbors = VoxelHelpers.EnumerateManhattanNeighbors2D(voxel.Coordinate)
-                                .Select(c => new VoxelHandle(voxel.Chunk.Manager, c))
-                                .Where(v => v.IsValid && v.GrassType != 0)
-                                .Where(v => Library.GetGrassType(v.GrassType).Spreads)
-                                .Where(v => biome == chunk.Manager.World.Overworld.Map.GetBiomeAt(v.Coordinate.ToVector3(), chunk.Manager.World.Overworld.InstanceSettings.Origin))
-                                .ToList();
-
-                            if (grassyNeighbors.Count > 0)
-                                if (MathFunctions.RandEvent(0.1f))
-                                    addGrassToThese.Add(Tuple.Create(voxel, grassyNeighbors[MathFunctions.RandInt(0, grassyNeighbors.Count)].GrassType));
+                                if (grassyNeighbors.Count > 0)
+                                    if (MathFunctions.RandEvent(0.1f))
+                                        addGrassToThese.Add(Tuple.Create(voxel, grassyNeighbors[MathFunctions.RandInt(0, grassyNeighbors.Count)].GrassType));
+                            }
                         }
 //#endif
                     }
