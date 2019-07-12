@@ -39,7 +39,7 @@ namespace DwarfCorp
             for (int i = 0; i < num; i++)
             {
                 // Make a toss from the last crate to the agent.
-                var startPosition = stock.Voxels.First().Center + new Vector3(0.0f, 1.0f, 0.0f);
+                var startPosition = stock.Voxels.Count > 0 ? stock.Voxels.First().Center + new Vector3(0.0f, 1.0f, 0.0f) : Vector3.Zero;
                 if (stock.Boxes.Count > 0)
                     startPosition = stock.Boxes.Last().Position + MathFunctions.RandVector3Cube() * 0.5f;
 

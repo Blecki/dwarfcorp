@@ -102,7 +102,7 @@ namespace DwarfCorp
                     sensed.Add(minion);
             }
 
-            if (sensed.Count > 0 && OnEnemySensed != null)
+            if (sensed != null && sensed.Count > 0 && OnEnemySensed != null)
                 OnEnemySensed.Invoke(sensed);
         }
 
@@ -117,7 +117,14 @@ namespace DwarfCorp
             if (SenseTimer.HasTriggered)
             {
                 Enemies.Clear();
-                Sense();
+                try
+                {
+                    Sense();
+                }
+                catch (Exception e)
+                {
+                    Program.CaptureException(e);
+                }
             }
 
             Enemies.RemoveAll(ai => ai.IsDead);

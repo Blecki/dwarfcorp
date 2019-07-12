@@ -1474,7 +1474,7 @@ namespace DwarfCorp.GameStates
                 ItemSource = (new Widget[] {
                     icon_menu_RoomTypes_Return,
                     icon_destroy_room
-                }).Concat(Library.EnumerateZoneTypeNames().Select(Library.GetZoneType)
+                }).Concat(Library.EnumerateZoneTypes()
                     .Select(data => new FlatToolTray.Icon
                     {
                         Icon = data.NewIcon,
