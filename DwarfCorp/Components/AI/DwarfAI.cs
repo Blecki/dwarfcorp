@@ -213,23 +213,32 @@ namespace DwarfCorp
                     UnhappinessTime += gameTime.ElapsedGameTime.TotalMinutes;
                     if (UnhappinessTime > GameSettings.Default.HoursUnhappyBeforeQuitting) // If we've been unhappy long enough, quit.
                     {
-                        var thoughts = GetRoot().GetComponent<DwarfThoughts>();
-                        Manager.World.MakeAnnouncement( // Can't use a popup because the dwarf will soon not exist. Also - this is a serious event!
-                            Message: String.Format("{0} has quit!{1}",
-                                Stats.FullName,
-                                (thoughts == null ? "" : (" The last straw: " + thoughts.Thoughts.Last(t => t.HappinessModifier < 0.0f).Description))),
-                            ClickAction: null,
-                            logEvent: true,
-                            eventDetails: (thoughts == null ? "So sick of this place!" : String.Join("\n", thoughts.Thoughts.Where(t => t.HappinessModifier < 0.0f).Select(t => t.Description)))
-                            );
+                        if (GetRoot().GetComponent<DwarfThoughts>().HasValue(out var thoughts))
+                        {
+                            Manager.World.MakeAnnouncement( // Can't use a popup because the dwarf will soon not exist. Also - this is a serious event!
+                                Message: String.Format("{0} has quit! The last straw: {1}",
+                                    Stats.FullName,
+                                    thoughts.Thoughts.Last(t => t.HappinessModifier < 0.0f).Description),
+                                ClickAction: null,
+                                logEvent: true,
+                                eventDetails: String.Join("\n", thoughts.Thoughts.Where(t => t.HappinessModifier < 0.0f).Select(t => t.Description)));
+
+                            thoughts.Thoughts.Clear();
+                        }
+                        else
+                            Manager.World.MakeAnnouncement( // Can't use a popup because the dwarf will soon not exist. Also - this is a serious event!
+                           Message: String.Format("{0} has quit!", Stats.FullName),
+                           ClickAction: null,
+                           logEvent: true,
+                           eventDetails: "So sick of this place!");
 
                         LeaveWorld();
 
-                        GetRoot().GetComponent<Inventory>().Die();
-                        GetRoot().GetComponent<SelectionCircle>().Die();
+                        if (GetRoot().GetComponent<Inventory>().HasValue(out var inv))
+                            inv.Die();
 
-                        if (thoughts != null)
-                            thoughts.Thoughts.Clear();
+                        if (GetRoot().GetComponent<SelectionCircle>().HasValue(out var sel))
+                            sel.Die();
 
                         Faction.Minions.Remove(this);
                         World.PersistentData.SelectedMinions.Remove(this);
@@ -382,17 +391,16 @@ namespace DwarfCorp
         {
             if (Creature.Physics.IsInLiquid)
                 return new FindLandTask();
-            var flames = GetRoot().GetComponent<Flammable>();
-            if (flames != null && flames.IsOnFire)
+            if (GetRoot().GetComponent<Flammable>().HasValue(out var flames) && flames.IsOnFire)
                 return new LongWanderAct(this) { Name = "Freak out!", PathLength = 2, Radius = 5 }.AsTask();
 
-                if (World.GamblingState.State == Scripting.Gambling.Status.Gaming ||
-                    World.GamblingState.State == Scripting.Gambling.Status.WaitingForPlayers && World.GamblingState.Participants.Count > 0)
-                {
-                    var task = new Scripting.GambleTask() { Priority = TaskPriority.High };
-                    if (task.IsFeasible(Creature) == Feasibility.Feasible)
-                        return task;
-                }
+            if (World.GamblingState.State == Scripting.Gambling.Status.Gaming ||
+                World.GamblingState.State == Scripting.Gambling.Status.WaitingForPlayers && World.GamblingState.Participants.Count > 0)
+            {
+                var task = new Scripting.GambleTask() { Priority = TaskPriority.High };
+                if (task.IsFeasible(Creature) == Feasibility.Feasible)
+                    return task;
+            }
 
             if (!Stats.IsOnStrike)
             {

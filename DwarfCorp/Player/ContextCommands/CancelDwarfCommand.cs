@@ -1,12 +1,4 @@
-﻿using DwarfCorp.Gui;
-using DwarfCorp.Gui.Widgets;
-using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace DwarfCorp.ContextCommands
+﻿namespace DwarfCorp.ContextCommands
 {
     public class CancelDwarfCommand : ContextCommand
     {
@@ -22,19 +14,16 @@ namespace DwarfCorp.ContextCommands
 
         public override bool CanBeAppliedTo(GameComponent Entity, WorldManager World)
         {
-            var creature = Entity.GetComponent<CreatureAI>();
-            if (creature == null)
+            if (Entity.GetComponent<CreatureAI>().HasValue(out var creature))
+                return World.PlayerFaction.Minions.Contains(creature) && creature.CurrentTask != null;
+            else
                 return false;
-            return World.PlayerFaction.Minions.Contains(creature) && creature.CurrentTask != null;
         }
 
         public override void Apply(GameComponent Entity, WorldManager World)
         {
-            var creature = Entity.GetComponent<CreatureAI>();
-            if (creature == null)
-                return;
-
-            creature.CancelCurrentTask();
+            if (Entity.GetComponent<CreatureAI>().HasValue(out var creature))
+                creature.CancelCurrentTask();
         }
     }
 }

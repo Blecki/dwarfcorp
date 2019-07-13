@@ -95,9 +95,7 @@ namespace DwarfCorp
                 if (creature.Stats.IsOverQualified)
                     creature.Creature.AddThought("I am overqualified for this job.", new TimeSpan(1, 0, 0, 0), -10.0f);
 
-                var thoughts = creature.Physics.GetComponent<DwarfThoughts>();
-
-                if (thoughts != null)
+                if (creature.Physics.GetComponent<DwarfThoughts>().HasValue(out var thoughts))
                     thoughts.Thoughts.RemoveAll(thought => thought.Description.Contains("paid"));
 
                 DwarfBux pay = creature.Stats.CurrentLevel.Pay;

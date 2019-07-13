@@ -46,7 +46,8 @@ namespace DwarfCorp
                 GameComponent newEntity = EntityFactory.CreateEntity<GameComponent>(resources.Type + " Resource", startPosition);
 
                 TossMotion toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f), 2.5f + MathFunctions.Rand(-0.5f, 0.5f), newEntity.LocalTransform, position);
-                newEntity.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
+                if (newEntity.GetRoot().GetComponent<Physics>().HasValue(out var newPhysics))
+                    newPhysics.CollideMode = Physics.CollisionMode.None;
                 newEntity.AnimationQueue.Add(toss);
                 toss.OnComplete += () => newEntity.Die();
             }

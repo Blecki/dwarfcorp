@@ -82,33 +82,30 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    var testCreatureAI = testCreature.GetRoot().GetComponent<CreatureAI>();
-                    if (testCreatureAI == null || testCreatureAI.Movement.IsSessile)
+                    if (testCreature.GetRoot().GetComponent<CreatureAI>().HasValue(out var testCreatureAI) && !testCreatureAI.Movement.IsSessile)
+                    {
+                        var count = World.GetSpeciesPopulation(testCreatureAI.Stats.Species);
+
+                        testCreature.GetRoot().Delete();
+
+                        if (count < testCreatureAI.Stats.Species.SpeciesLimit)
+                        {
+                            var randomNum = Math.Min(MathFunctions.RandInt(1, 3), 30 - count);
+                            for (int i = 0; i < randomNum; i++)
+                            {
+                                var randompos = MathFunctions.Clamp(pos + MathFunctions.RandVector3Cube() * 2, World.ChunkManager.Bounds);
+                                var vox = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(pos)));
+                                if (!vox.IsValid)
+                                    continue;
+                                EntityFactory.CreateEntity<GameComponent>(randomFauna.Name, vox.GetBoundingBox().Center() + Vector3.Up * 1.5f);
+                            }
+                        }
+                    }
+                    else
                     {
                         testCreature.GetRoot().Delete();
                         tries++;
                         continue;
-                    }
-
-                    var count = World.GetSpeciesPopulation(testCreatureAI.Stats.Species);
-
-                    testCreature.GetRoot().Delete();
-                    if (testCreatureAI.Stats.SpeciesName == "Bird")
-                    {
-                        var i = 5;
-                    }
-
-                    if (count < testCreatureAI.Stats.Species.SpeciesLimit)
-                    {
-                        var randomNum = Math.Min(MathFunctions.RandInt(1, 3), 30 - count);
-                        for (int i = 0; i < randomNum; i++)
-                        {
-                            var randompos = MathFunctions.Clamp(pos + MathFunctions.RandVector3Cube() * 2, World.ChunkManager.Bounds);
-                            var vox = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(pos)));
-                            if (!vox.IsValid)
-                                continue;
-                            EntityFactory.CreateEntity<GameComponent>(randomFauna.Name, vox.GetBoundingBox().Center() + Vector3.Up * 1.5f);
-                        }
                     }
                 }
 

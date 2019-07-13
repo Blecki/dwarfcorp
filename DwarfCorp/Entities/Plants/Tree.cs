@@ -87,11 +87,8 @@ namespace DwarfCorp
                 HurtTimer.Update(DwarfTime.LastTime);
 
                 if (HurtTimer.HasTriggered)
-                {
-                    var particles = GetComponent<ParticleTrigger>();
-                    if (particles != null)
+                    if (GetComponent<ParticleTrigger>().HasValue(out var particles))
                         particles.Trigger(1);
-                }
             }
 
             base.ReceiveMessageRecursive(messageToReceive);

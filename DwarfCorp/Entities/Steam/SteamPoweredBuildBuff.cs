@@ -19,10 +19,13 @@ namespace DwarfCorp.SteamPipes
         public override float GetBuffMultiplier()
         {
             if (CachedSteamObject == null)
-                CachedSteamObject = Parent.GetComponent<SteamPoweredObject>();
+                if (Parent.GetComponent<SteamPoweredObject>().HasValue(out var steamObject))
+                    CachedSteamObject = steamObject;
+
             if (CachedSteamObject != null && CachedSteamObject.SteamPressure >= SteamThreshold)
                 return BuffMultiplier;
-            return 1.0f;
+            else
+                return 1.0f;
         }
     }
 }

@@ -36,9 +36,8 @@ namespace DwarfCorp
         [OnDeserialized]
         public void OnDeserialize(StreamingContext ctx)
         {
-            if (Sensor == null)
-                Sensor = GetRoot().GetComponent<EnemySensor>();
-            Sensor.OnEnemySensed += Sensor_OnEnemySensed;
+            if (GetRoot().GetComponent<EnemySensor>().HasValue(out var Sensor))
+                Sensor.OnEnemySensed += Sensor_OnEnemySensed;
 
             PlanSubscriber = new PlanSubscriber((ctx.Context as WorldManager).PlanService);
         }
@@ -443,8 +442,8 @@ namespace DwarfCorp
         {
             if (Creature.Physics.IsInLiquid)
                 return new FindLandTask();
-            var flames = GetRoot().GetComponent<Flammable>();
-            if (flames != null && flames.IsOnFire)
+
+            if (GetRoot().GetComponent<Flammable>().HasValue(out var flames) && flames.IsOnFire)
                 return new LongWanderAct(this) { Name = "Freak out!", PathLength = 2, Radius = 5 }.AsTask();
 
             return new LookInterestingTask();
@@ -741,10 +740,19 @@ namespace DwarfCorp
             cMem.SetValue("$time_of_day", new Yarn.Value(timeOfDay));
             cMem.SetValue("$is_asleep", new Yarn.Value(Employee.Stats.IsAsleep));
             cMem.SetValue("$is_on_strike", new Yarn.Value(Employee.Stats.IsOnStrike));
-            string grievences = TextGenerator.GetListString(Employee.Creature.Physics.GetComponent<DwarfThoughts>().Thoughts.Where(thought => thought.HappinessModifier < 0).Select(thought => thought.Description));
-            string goodThings = TextGenerator.GetListString(Employee.Creature.Physics.GetComponent<DwarfThoughts>().Thoughts.Where(thought => thought.HappinessModifier >= 0).Select(thought => thought.Description));
-            cMem.SetValue("$grievences", new Yarn.Value(grievences));
-            cMem.SetValue("$good_things", new Yarn.Value(goodThings));
+
+            if (Employee.Creature.Physics.GetComponent<DwarfThoughts>().HasValue(out var thoughts))
+            {
+                cMem.SetValue("$grievences", new Yarn.Value(TextGenerator.GetListString(thoughts.Thoughts.Where(thought => thought.HappinessModifier < 0).Select(thought => thought.Description))));
+                cMem.SetValue("$good_things", new Yarn.Value(TextGenerator.GetListString(thoughts.Thoughts.Where(thought => thought.HappinessModifier >= 0).Select(thought => thought.Description))));
+            }
+            else
+            {
+                cMem.SetValue("$grievences", new Yarn.Value(""));
+                cMem.SetValue("$good_things", new Yarn.Value(""));
+
+            }
+
             String[] personalities = { "happy", "grumpy", "anxious" };
             var myRandom = new Random(Employee.Stats.RandomSeed);
             cMem.SetValue("$personality", new Yarn.Value(personalities[myRandom.Next(0, personalities.Length)]));
@@ -761,7 +769,11 @@ namespace DwarfCorp
             cMem.SetValue("$employee_pay", new Yarn.Value((float)(decimal)Employee.Stats.CurrentLevel.Pay));
             cMem.SetValue("$employee_bonus", new Yarn.Value(4 * (float)(decimal)Employee.Stats.CurrentLevel.Pay));
             cMem.SetValue("$company_money", new Yarn.Value((float)(decimal)Employee.Faction.Economy.Funds));
-            cMem.SetValue("$is_on_fire", new Yarn.Value(Employee.Physics.GetComponent<Flammable>().IsOnFire));
+
+            if (Employee.Physics.GetComponent<Flammable>().HasValue(out var flames))
+                cMem.SetValue("$is_on_fire", new Yarn.Value(flames.IsOnFire));
+            else
+                cMem.SetValue("$is_on_fire", new Yarn.Value(false));
 
             var state = new YarnState(World, ContentPaths.employee_conversation, "Start", cMem);
             state.AddEmployeePortrait(Employee);

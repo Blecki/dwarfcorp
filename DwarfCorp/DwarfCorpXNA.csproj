@@ -200,9 +200,11 @@
     <Compile Include="Components\AI\StatusEffects\RadiusBuffer.cs" />
     <Compile Include="Components\AI\Sensors\RadiusSensor.cs" />
     <Compile Include="Components\AI\Thought.cs" />
+    <Compile Include="Components\Graphics\MeshComponent.cs" />
     <Compile Include="Components\Graphics\PrimitiveComponent.cs" />
     <Compile Include="Components\Physics\Fire.cs" />
     <Compile Include="Entities\Dwarves\NonPlayerDwarf.cs" />
+    <Compile Include="Entities\Fixtures\Cart.cs" />
     <Compile Include="EventLog.cs" />
     <Compile Include="EventLogViewer.cs" />
     <Compile Include="EventLogState.cs" />

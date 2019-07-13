@@ -62,48 +62,47 @@ namespace DwarfCorp
             var sensed = new List<CreatureAI>();
 
             var myRoot = GetRoot();
-            var myAI = GetRoot().GetComponent<CreatureAI>();
-            if (myAI == null) return;
-
-            foreach (var body in Manager.World.EnumerateIntersectingObjects(BoundingBox, b => !Object.ReferenceEquals(b, myRoot) && b.IsRoot()))
+            if (GetRoot().GetComponent<CreatureAI>().HasValue(out var myAI))
             {
-                var flames = body.GetComponent<Flammable>();
-
-                if (flames != null && flames.IsOnFire)
+                foreach (var body in Manager.World.EnumerateIntersectingObjects(BoundingBox, b => !Object.ReferenceEquals(b, myRoot) && b.IsRoot()))
                 {
-                    var task = new FleeEntityTask(body, 5)
+                    if (body.GetComponent<Flammable>().HasValue(out var flames) && flames.IsOnFire)
                     {
-                        Priority = TaskPriority.Urgent,
-                        AutoRetry = false,
-                        ReassignOnDeath = false
-                    };
+                        var task = new FleeEntityTask(body, 5)
+                        {
+                            Priority = TaskPriority.Urgent,
+                            AutoRetry = false,
+                            ReassignOnDeath = false
+                        };
 
-                    if (!myAI.HasTaskWithName(task))
-                        myAI.AssignTask(task);
+                        if (!myAI.HasTaskWithName(task))
+                            myAI.AssignTask(task);
 
-                    continue;
+                        continue;
+                    }
+
+                    if (body.GetComponent<CreatureAI>().HasValue(out var minion))
+                    {
+                        if (!minion.Active)
+                            continue;
+
+                        if (!DetectCloaked && minion.Creature.IsCloaked)
+                            continue;
+
+                        else if (DetectCloaked && minion.Creature.IsCloaked)
+                            minion.Creature.IsCloaked = false;
+
+                        if (World.Overworld.GetPolitics(Allies.ParentFaction, minion.Faction.ParentFaction).GetCurrentRelationship() != Relationship.Hateful)
+                            continue;
+
+                        if (!VoxelHelpers.DoesRayHitSolidVoxel(Manager.World.ChunkManager, Position, minion.Position))
+                            sensed.Add(minion);
+                    }
                 }
 
-                var minion = body.GetComponent<CreatureAI>();
-                if (minion == null || !minion.Active)
-                    continue;
-
-                if (!DetectCloaked && minion.Creature.IsCloaked)
-                    continue;
-                else if (DetectCloaked && minion.Creature.IsCloaked)
-                    minion.Creature.IsCloaked = false;
-
-                if (World.Overworld.GetPolitics(Allies.ParentFaction, minion.Faction.ParentFaction).GetCurrentRelationship() != Relationship.Hateful)
-                    continue;
-
-                float dist = (minion.Position - GlobalTransform.Translation).LengthSquared();
-
-                if (!VoxelHelpers.DoesRayHitSolidVoxel(Manager.World.ChunkManager, Position, minion.Position))
-                    sensed.Add(minion);
+                if (sensed != null && sensed.Count > 0 && OnEnemySensed != null)
+                    OnEnemySensed.Invoke(sensed);
             }
-
-            if (sensed != null && sensed.Count > 0 && OnEnemySensed != null)
-                OnEnemySensed.Invoke(sensed);
         }
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)

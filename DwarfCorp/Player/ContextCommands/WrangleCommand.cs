@@ -1,12 +1,4 @@
-﻿using DwarfCorp.Gui;
-using DwarfCorp.Gui.Widgets;
-using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace DwarfCorp.ContextCommands
+﻿namespace DwarfCorp.ContextCommands
 {
     public class WrangleCommand : ContextCommand
     {
@@ -27,9 +19,9 @@ namespace DwarfCorp.ContextCommands
 
         public override void Apply(GameComponent Entity, WorldManager World)
         {
-            var minions = Faction.FilterMinionsWithCapability(World.PlayerFaction.Minions, TaskCategory.Wrangle);
-            if (minions.Count > 0)
-                World.TaskManager.AddTask(new WrangleAnimalTask(Entity.GetRoot().GetComponent<Creature>()) { Priority = TaskPriority.Medium });
+            if (Entity.GetRoot().GetComponent<Creature>().HasValue(out var creature))
+                if (Faction.FilterMinionsWithCapability(World.PlayerFaction.Minions, TaskCategory.Wrangle).Count > 0)
+                    World.TaskManager.AddTask(new WrangleAnimalTask(creature) { Priority = TaskPriority.Medium });
         }
     }
 }

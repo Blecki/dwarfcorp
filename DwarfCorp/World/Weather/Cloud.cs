@@ -192,27 +192,20 @@ namespace DwarfCorp
                 foreach (var body in hitBodies)
                 {
                     if (body.Parent != Manager.RootComponent)
-                    {
                         continue;
-                    }
 
-                    var flames = body.GetRoot().GetComponent<Flammable>();
-                    if (flames != null)
-                    {
+                    if (body.GetRoot().GetComponent<Flammable>().HasValue(out var flames))
                         flames.Heat *= 0.25f;
-                    }
 
-                    var seeds = body.GetRoot().GetComponent<Seedling>();
-                    if (seeds != null)
+                    if (body.GetRoot().GetComponent<Seedling>().HasValue(out var seeds))
                     {
                         if (TypeofStorm == StormType.RainStorm)
                             seeds.GrowthTime += MathFunctions.Rand(1.0f, 12.0f);
                         else if (MathFunctions.RandEvent(0.01f))
-                        {
                             seeds.GetRoot().Die();
-                        }
                     }
                 }
+
                 hitEmitter.Trigger(1, RainDrops[i].Pos + Vector3.UnitY * 0.5f, Color.White);
 
                 //if (!MathFunctions.RandEvent(0.1f)) continue;

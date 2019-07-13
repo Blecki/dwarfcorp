@@ -162,7 +162,10 @@ namespace DwarfCorp
             {
                 TossMotion toss = new TossMotion(1.0f, 2.5f, component.LocalTransform,
                     Boxes[Boxes.Count - 1].LocalTransform.Translation + new Vector3(0.5f, 0.5f, 0.5f));
-                component.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
+
+                if (component.GetRoot().GetComponent<Physics>().HasValue(out var physics))
+                    physics.CollideMode = Physics.CollisionMode.None;
+
                 component.AnimationQueue.Add(toss);
                 toss.OnComplete += component.Die;
             }

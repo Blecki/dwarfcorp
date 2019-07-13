@@ -142,9 +142,11 @@ namespace DwarfCorp
         {
             if (Physics == null)
             {
-                Physics = GetRoot().GetComponent<Physics>();
-                if (Physics == null) return;
-            }
+                if (GetRoot().GetComponent<Physics>().HasValue(out var physics))
+                    Physics = physics;
+                else
+                    return;
+            }            
 
             var sprite = Physics.AddChild(new LayeredSprites.LayeredCharacterSprite(manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)))) as LayeredSprites.LayeredCharacterSprite;
 

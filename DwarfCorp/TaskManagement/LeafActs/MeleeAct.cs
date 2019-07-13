@@ -157,8 +157,7 @@ namespace DwarfCorp
 
             if (Agent.Faction.Race.IsIntelligent)
             {
-                var targetInventory = Target.GetRoot().GetComponent<Inventory>();
-                if (targetInventory != null)
+                if (Target.GetRoot().GetComponent<Inventory>().HasValue(out var targetInventory))
                     targetInventory.SetLastAttacker(Agent);
             }
 
@@ -236,12 +235,13 @@ namespace DwarfCorp
                     {
                         float damage = LastHp - Creature.Hp;
                         Creature.Heal(Math.Min(5.0f, damage));
-                        var health = DefensiveStructure.GetRoot().GetComponent<Health>();
-                        if (health != null)
+
+                        if (DefensiveStructure.GetRoot().GetComponent<Health>().HasValue(out var health))
                         {
                             health.Damage(damage);
                             Drawer2D.DrawLoadBar(health.World.Renderer.Camera, DefensiveStructure.Position, Color.White, Color.Black, 32, 1, health.Hp / health.MaxHealth, 0.1f);
                         }
+
                         LastHp = Creature.Hp;
                     }
 
@@ -345,12 +345,12 @@ namespace DwarfCorp
                         yield return Status.Running;
                     }
 
-                    var targetCreature = Target.GetRoot().GetComponent<CreatureAI>();
-                    if (targetCreature != null && Creature.AI.FightOrFlight(targetCreature) == CreatureAI.FightOrFlightResponse.Flee)
+                    if (Target.GetRoot().GetComponent<CreatureAI>().HasValue(out var targetCreature) && Creature.AI.FightOrFlight(targetCreature) == CreatureAI.FightOrFlightResponse.Flee)
                     {
                         yield return Act.Status.Fail;
                         yield break;
                     }
+
                     Creature.CurrentCharacterMode = CharacterMode.Attacking;
 
                     Vector3 dogfightTarget = Vector3.Zero;

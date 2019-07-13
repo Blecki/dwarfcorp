@@ -114,8 +114,10 @@
     <Compile Include="AssetManagement\JsonConverters\RectangleConverter.cs" />
     <Compile Include="AssetManagement\JsonConverters\TextureContentConverter.cs" />
     <Compile Include="Components\AI\DwarfAI.cs" />
+    <Compile Include="Components\Graphics\MeshComponent.cs" />
     <Compile Include="Components\Physics\Fire.cs" />
     <Compile Include="Entities\Dwarves\NonPlayerDwarf.cs" />
+    <Compile Include="Entities\Fixtures\Cart.cs" />
     <Compile Include="GameStates\WorldGeneration\EmbarkmentEditor.cs" />
     <Compile Include="GameStates\WorldGeneration\ChooseEmployeeTypeDialog.cs" />
     <Compile Include="GameStates\WorldGeneration\EmbarkmentResourceColumns.cs" />

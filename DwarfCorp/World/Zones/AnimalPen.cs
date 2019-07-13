@@ -59,10 +59,17 @@ namespace DwarfCorp
             animalBounds = animalBounds.Expand(-0.25f);
             animalBounds.Max.Y += 2;
             animalBounds.Min.Y -= 0.25f;
-            animal.GetComponent<Physics>().ReservedFor = null; ;
-            animal.GetComponent<CreatureAI>().PositionConstraint = animalBounds;
-            World.PersistentData.Designations.RemoveEntityDesignation(animal.GetComponent<Physics>(), DesignationType.Wrangle);
-           yield return Act.Status.Success;
+
+            if (animal.GetComponent<Physics>().HasValue(out var animalPhysics))
+            {
+                World.PersistentData.Designations.RemoveEntityDesignation(animalPhysics, DesignationType.Wrangle);
+                animalPhysics.ReservedFor = null;
+            }
+
+            if (animal.GetComponent<CreatureAI>().HasValue(out var animalAI))
+                animalAI.PositionConstraint = animalBounds;
+
+            yield return Act.Status.Success;
         }
 
         public IEnumerable<Act.Status> RemoveAnimal(GameComponent animal)
@@ -72,9 +79,15 @@ namespace DwarfCorp
                 yield return Act.Status.Fail;
                 yield break;
             }
+
             Animals.Remove(animal);
-            animal.GetComponent<CreatureAI>().ResetPositionConstraint();
-            Species = animal.GetComponent<Creature>().Stats.CurrentClass.Name;
+
+            if (animal.GetComponent<CreatureAI>().HasValue(out var animalAI))
+                animalAI.ResetPositionConstraint();
+
+            if (animal.GetComponent<Creature>().HasValue(out var creature))
+                Species = creature.Stats.CurrentClass.Name;
+
             yield return Act.Status.Success;
         }
 
@@ -98,11 +111,8 @@ namespace DwarfCorp
                 if (minDist < float.MaxValue)
                 {
                     body.LocalPosition = body.LocalPosition * 0.5f + (minVoxel.WorldPosition + Vector3.Up + Vector3.One) * 0.5f;
-                    var creature = body.GetRoot().GetComponent<CreatureAI>();
-                    if (creature != null)
-                    {
+                    if (body.GetRoot().GetComponent<CreatureAI>().HasValue(out var creature))
                         creature.CancelCurrentTask();
-                    }
                 }
             }
         }
@@ -125,11 +135,9 @@ namespace DwarfCorp
         public override void Destroy()
         {
             foreach(var animal in Animals)
-            {
-                var creature = animal.GetRoot().GetComponent<CreatureAI>();
-                if (creature != null)
+                if (animal.GetRoot().GetComponent<CreatureAI>().HasValue(out var creature))
                     creature.ResetPositionConstraint();
-            }
+
             base.Destroy();
         }
     }

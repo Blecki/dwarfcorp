@@ -40,7 +40,8 @@ namespace DwarfCorp
         public override void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect)
         {
             effect.SelectionBufferColor = this.GetGlobalIDColor().ToVector4();
-            GetComponent<PrimitiveComponent>().Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
+            if (GetComponent<PrimitiveComponent>().HasValue(out var prim)) // Todo: Won't the prim component handle rendering...???
+                prim.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
         }
 
         override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,

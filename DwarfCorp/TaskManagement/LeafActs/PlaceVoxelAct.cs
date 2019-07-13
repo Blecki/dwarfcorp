@@ -1,9 +1,7 @@
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using DwarfCorp.GameStates;
-using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -84,7 +82,8 @@ namespace DwarfCorp
 
                 // Todo: Shitbox - what happens if the player saves while this animation is in progress?? How is the OnComplete restored?
                 TossMotion motion = new TossMotion(1.0f, 2.0f, grabbed.LocalTransform, Location.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f));
-                grabbed.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
+                if (grabbed.GetRoot().GetComponent<Physics>().HasValue(out var grabbedPhysics))
+                    grabbedPhysics.CollideMode = Physics.CollisionMode.None;
                 grabbed.AnimationQueue.Add(motion);
 
                 var putType = Library.GetVoxelType(VoxelType);

@@ -51,9 +51,10 @@ namespace DwarfCorp
 
         public IEnumerable<Act.Status> ReleaseAnimal(CreatureAI animal, CreatureAI creature)
         {
-            if (creature.Blackboard.GetData<bool>("NoPath", false))
+            if (creature.Blackboard.GetData<bool>("NoPath", false) && animal.GetRoot().GetComponent<Physics>().HasValue(out var animalPhysics))
             {
-                var designation = creature.World.PersistentData.Designations.GetEntityDesignation(animal.GetRoot().GetComponent<Physics>(), DesignationType.Wrangle);
+                var designation = creature.World.PersistentData.Designations.GetEntityDesignation(animalPhysics, DesignationType.Wrangle);
+
                 if (designation != null)
                 {
                     if (creature.Faction == creature.World.PlayerFaction)

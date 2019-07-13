@@ -46,9 +46,7 @@ namespace DwarfCorp.Gui.Widgets
                     Background = new TileReference("basic", 0)
                 });
 
-                var employeeSprite = employee.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>();
-               
-                if (employeeSprite != null)
+                if (employee.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>().HasValue(out var employeeSprite))
                     bar.AddChild(new EmployeePortrait
                     {
                         AutoLayout = AutoLayout.DockLeft,

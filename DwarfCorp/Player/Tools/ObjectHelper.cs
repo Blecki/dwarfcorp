@@ -72,9 +72,11 @@ namespace DwarfCorp
 
                 var previewBox = PreviewBody.GetRotatedBoundingBox();
                 var sensorBox = previewBox;
-                var sensor = PreviewBody.GetComponent<GenericVoxelListener>();
-                if (sensor != null)
+
+                GenericVoxelListener sensor;
+                if (PreviewBody.GetComponent<GenericVoxelListener>().HasValue(out sensor))
                     sensorBox = sensor.GetRotatedBoundingBox();
+
                 if (Debugger.Switches.DrawToolDebugInfo)
                     Drawer3D.DrawBox(sensorBox, Color.Yellow, 0.1f, false);
 

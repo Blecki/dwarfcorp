@@ -45,28 +45,29 @@ namespace DwarfCorp
             if (creature.IsDead || creature.AI.IsDead)
                 return null;
 
-            var otherCreature = EntityToKill.GetRoot().GetComponent<Creature>();
-
-            if (otherCreature != null && (!otherCreature.IsDead && otherCreature.AI != null))
+            if (EntityToKill.GetRoot().GetComponent<Creature>().HasValue(out var otherCreature))
             {
-                // Flee if the other creature is too scary.
-                if (otherCreature != null && creature.AI.FightOrFlight(otherCreature.AI) == CreatureAI.FightOrFlightResponse.Flee)
+                if (!otherCreature.IsDead && otherCreature.AI != null)
                 {
-                    Name = "Flee Entity: " + EntityToKill.Name + " " + EntityToKill.GlobalID;
-                    ReassignOnDeath = false;
-                    IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.Exclaim, creature.AI.Position, 1.0f, 1.0f, Vector2.UnitY * -32);
-                    return new FleeEntityAct(creature.AI) { Entity = EntityToKill, PathLength = 20 };
+                    // Flee if the other creature is too scary.
+                    if (otherCreature != null && creature.AI.FightOrFlight(otherCreature.AI) == CreatureAI.FightOrFlightResponse.Flee)
+                    {
+                        Name = "Flee Entity: " + EntityToKill.Name + " " + EntityToKill.GlobalID;
+                        ReassignOnDeath = false;
+                        IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.Exclaim, creature.AI.Position, 1.0f, 1.0f, Vector2.UnitY * -32);
+                        return new FleeEntityAct(creature.AI) { Entity = EntityToKill, PathLength = 20 };
+                    }
+
+                    // Make the other creature defend itself.
+                    var otherKill = new KillEntityTask(creature.Physics, KillType.Auto)
+                    {
+                        AutoRetry = true,
+                        ReassignOnDeath = false
+                    };
+
+                    if (!otherCreature.AI.HasTaskWithName(otherKill))
+                        otherCreature.AI.AssignTask(otherKill);
                 }
-
-                // Make the other creature defend itself.
-                var otherKill = new KillEntityTask(creature.Physics, KillType.Auto)
-                {
-                    AutoRetry = true,
-                    ReassignOnDeath = false
-                };
-
-                if (!otherCreature.AI.HasTaskWithName(otherKill))
-                    otherCreature.AI.AssignTask(otherKill);                
             }
 
             float radius = this.Mode == KillType.Auto ? 20.0f : 0.0f;

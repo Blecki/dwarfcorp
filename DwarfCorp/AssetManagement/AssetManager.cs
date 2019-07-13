@@ -350,6 +350,61 @@ namespace DwarfCorp
                 return null;
             }
         }
+
+        public static ModelMesh GetContentMesh(string _asset)
+        {
+            string asset = FileUtils.NormalizePath(_asset);
+            if (asset == null)
+            {
+                DwarfGame.LogSentryBreadcrumb("AssetManager", string.Format("Asset {0} was null.", _asset), SharpRaven.Data.BreadcrumbLevel.Warning);
+                return null;
+            }
+
+            //if (TextureCache.ContainsKey(asset))
+            //{
+            //    var existing = TextureCache[asset];
+            //    if (existing != null && !existing.IsDisposed && existing.GraphicsDevice != null && !existing.GraphicsDevice.IsDisposed)
+            //        return existing;
+            //    else
+            //    {
+            //        DwarfGame.LogSentryBreadcrumb("AssetManager", string.Format("Asset {0} was invalid.", asset), SharpRaven.Data.BreadcrumbLevel.Warning);
+            //        TextureCache.Remove(asset);
+            //    }
+            //}
+
+            try
+            {
+                var filename = ResolveContentPath(asset);
+                if (Path.GetExtension(filename) == ".xnb")
+                {
+                    var toReturn = Content.Load<ModelMesh>(filename.Substring(0, filename.Length - 4));
+                    //TextureCache[asset] = toReturn;
+                    return toReturn;
+                }
+                else
+                {
+                    //var toReturn = LoadUnbuiltTextureFromAbsolutePath(filename);
+                    //TextureCache[asset] = toReturn;
+                    //return toReturn;
+                    return null;
+                }
+            }
+            catch (Exception exception)
+            {
+                Console.Error.WriteLine(exception.ToString());
+                try
+                {
+                    DwarfGame.LogSentryBreadcrumb("AssetManager", string.Format("Failed to load asset {0} : {1}", asset, exception.ToString()), SharpRaven.Data.BreadcrumbLevel.Warning);
+                    return null;
+                }
+                catch (Exception innerException)
+                {
+                    DwarfGame.LogSentryBreadcrumb("AssetManager", string.Format("Everything is broken! {0}", innerException.ToString()), SharpRaven.Data.BreadcrumbLevel.Error);
+                    return null;
+                }
+            }
+        }
+
     }
 
 }

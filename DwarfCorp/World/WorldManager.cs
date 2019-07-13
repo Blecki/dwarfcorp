@@ -303,19 +303,26 @@ namespace DwarfCorp
 
                 foreach (var m in PlayerFaction.Minions)
                 {
-                    var selectionCircle = m.GetRoot().GetComponent<SelectionCircle>();
-                    if (selectionCircle != null)
+                    if (m.GetRoot().GetComponent<SelectionCircle>().HasValue(out var selectionCircle))
                         selectionCircle.SetFlagRecursive(GameComponent.Flag.Visible, false);
+
                     m.Creature.Sprite.DrawSilhouette = false;
                 };
 
                 foreach (var creature in PersistentData.SelectedMinions)
                 {
-                    var selectionCircle = creature.GetRoot().GetComponent<SelectionCircle>();
-                    if (selectionCircle == null)
+                    if (creature.GetRoot().GetComponent<SelectionCircle>().HasValue(out var selectionCircle))
+                    {
+                        selectionCircle.SetFlag(GameComponent.Flag.ShouldSerialize, false);
+                        selectionCircle.SetFlagRecursive(GameComponent.Flag.Visible, true);
+                    }
+                    else
+                    {
                         selectionCircle = creature.GetRoot().AddChild(new SelectionCircle(creature.Manager)) as SelectionCircle;
-                    selectionCircle.SetFlag(GameComponent.Flag.ShouldSerialize, false);
-                    selectionCircle.SetFlagRecursive(GameComponent.Flag.Visible, true);
+                        selectionCircle.SetFlag(GameComponent.Flag.ShouldSerialize, false);
+                        selectionCircle.SetFlagRecursive(GameComponent.Flag.Visible, true);
+                    }
+
                     creature.Creature.Sprite.DrawSilhouette = true;
                 }
                 #endregion

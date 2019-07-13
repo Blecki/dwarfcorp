@@ -300,7 +300,7 @@ namespace DwarfCorp
         /// </summary>
         /// <typeparam name="T">The type</typeparam>
         /// <returns>The first component of type T.</returns>
-        public T GetComponent<T>() where T : GameComponent
+        public MaybeNull<T> GetComponent<T>() where T : GameComponent
         {
             return EnumerateAll().OfType<T>().FirstOrDefault();
         }

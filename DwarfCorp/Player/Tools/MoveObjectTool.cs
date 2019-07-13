@@ -155,65 +155,69 @@ namespace DwarfCorp
             {
                 if (SelectedBody == null) throw new InvalidProgramException();
 
-                var craftDetails = SelectedBody.GetRoot().GetComponent<CraftDetails>();
-                if (craftDetails != null && Library.GetCraftable(craftDetails.CraftType).HasValue(out var craftable) && craftable.AllowRotation)
+                if (SelectedBody.GetRoot().GetComponent<CraftDetails>().HasValue(out var craftDetails))
                 {
-                    HandleOrientation();
-                    World.UserInterface.ShowTooltip(String.Format("Press {0}/{1} to rotate.", ControlSettings.Mappings.RotateObjectLeft, ControlSettings.Mappings.RotateObjectRight));
-                }
-
-                var voxelUnderMouse = World.UserInterface.VoxSelector.VoxelUnderMouse;
-                if (voxelUnderMouse.IsValid && voxelUnderMouse.IsEmpty)
-                {
-                    var spawnOffset = Vector3.Zero;
-
-                    if (craftDetails != null && Library.GetCraftable(craftDetails.CraftType).HasValue(out var craftItem))
+                    if (Library.GetCraftable(craftDetails.CraftType).HasValue(out var craftable) && craftable.AllowRotation)
                     {
-                        spawnOffset = craftItem.SpawnOffset;
+                        HandleOrientation();
+                        World.UserInterface.ShowTooltip(String.Format("Press {0}/{1} to rotate.", ControlSettings.Mappings.RotateObjectLeft, ControlSettings.Mappings.RotateObjectRight));
+                    }
 
-                        SelectedBody.LocalPosition = voxelUnderMouse.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + spawnOffset;
-                        SelectedBody.UpdateTransform();
+                    var voxelUnderMouse = World.UserInterface.VoxSelector.VoxelUnderMouse;
+                    if (voxelUnderMouse.IsValid && voxelUnderMouse.IsEmpty)
+                    {
+                        var spawnOffset = Vector3.Zero;
 
-                        if (OverrideOrientation)
-                            SelectedBody.Orient(CurrentOrientation);
-                        else
-                            SelectedBody.OrientToWalls();
-
-                        SelectedBody.PropogateTransforms();
-
-                        var validPlacement = ObjectHelper.IsValidPlacement(voxelUnderMouse, craftItem, World, SelectedBody, "move", "moved");
-
-                        foreach (var tinter in SelectedBody.GetRoot().EnumerateAll().OfType<Tinter>())
+                        if (Library.GetCraftable(craftDetails.CraftType).HasValue(out var craftItem))
                         {
-                            tinter.VertexColorTint = validPlacement ? Color.Green : Color.Red;
-                            tinter.Stipple = true;
-                        }
+                            spawnOffset = craftItem.SpawnOffset;
 
-                        if (mouse.LeftButton == ButtonState.Released)
-                        {
-                            if (validPlacement)
-                            {
+                            SelectedBody.LocalPosition = voxelUnderMouse.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + spawnOffset;
+                            SelectedBody.UpdateTransform();
 
-                            }
+                            if (OverrideOrientation)
+                                SelectedBody.Orient(CurrentOrientation);
                             else
-                            {
-                                SelectedBody.LocalTransform = OrigTransform;
-                                SelectedBody.PropogateTransforms();
-                            }
+                                SelectedBody.OrientToWalls();
+
+                            SelectedBody.PropogateTransforms();
+
+                            var validPlacement = ObjectHelper.IsValidPlacement(voxelUnderMouse, craftItem, World, SelectedBody, "move", "moved");
 
                             foreach (var tinter in SelectedBody.GetRoot().EnumerateAll().OfType<Tinter>())
                             {
-                                tinter.VertexColorTint = Color.White;
-                                tinter.Stipple = false;
+                                tinter.VertexColorTint = validPlacement ? Color.Green : Color.Red;
+                                tinter.Stipple = true;
                             }
 
-                            State = ToolState.Selecting;
-                        }
-                    }
-                    else
-                        Console.Error.WriteLine("{0} had no craft item.", craftDetails.CraftType);
+                            if (mouse.LeftButton == ButtonState.Released)
+                            {
+                                if (validPlacement)
+                                {
 
+                                }
+                                else
+                                {
+                                    SelectedBody.LocalTransform = OrigTransform;
+                                    SelectedBody.PropogateTransforms();
+                                }
+
+                                foreach (var tinter in SelectedBody.GetRoot().EnumerateAll().OfType<Tinter>())
+                                {
+                                    tinter.VertexColorTint = Color.White;
+                                    tinter.Stipple = false;
+                                }
+
+                                State = ToolState.Selecting;
+                            }
+                        }
+                        else
+                            Console.Error.WriteLine("{0} had no craft item.", craftDetails.CraftType);
+
+                    }
                 }
+                else
+                    Console.Error.WriteLine("Entity had no craft details.");
             }
         }
 

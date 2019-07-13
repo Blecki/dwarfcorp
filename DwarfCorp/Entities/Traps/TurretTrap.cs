@@ -153,7 +153,9 @@ namespace DwarfCorp
                     TheAttack.LaunchProjectile(Position + Vector3.Up * 0.5f, closestCreature.Position, closestCreature.Physics);
                     TheAttack.PlayNoise(Position);
                     TheAttack.RechargeTimer.Reset();
-                    GetComponent<MagicalObject>().CurrentCharges--;
+
+                    if (GetComponent<MagicalObject>().HasValue(out var magicalObject))
+                        magicalObject.CurrentCharges--;
                 }
             }
             if (Math.Abs(_currentAngle - _targetAngle) > 0.001f)

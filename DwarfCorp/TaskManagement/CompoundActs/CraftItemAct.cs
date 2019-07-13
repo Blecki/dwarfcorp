@@ -403,8 +403,7 @@ namespace DwarfCorp
                                             Creature.Physics.Face(location.Position);
                                             if (Item.PreviewResource != null)
                                                 Item.PreviewResource.LocalPosition = location.Position + Vector3.Up * 0.25f;
-                                            var buff = location.GetComponent<SteamPipes.BuildBuff>();
-                                            if (buff != null)
+                                            if (location.GetComponent<SteamPipes.BuildBuff>().HasValue(out var buff))
                                                 workstationBuff = buff.GetBuffMultiplier();
                                         }
 
