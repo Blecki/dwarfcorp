@@ -17,7 +17,7 @@ namespace DwarfCorp
             return new Cart(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
         }
 
-        private static ModelMesh SharedMesh = null;
+        private static RawPrimitive SharedMesh = null;
         
         public Cart()
         {
@@ -64,7 +64,7 @@ namespace DwarfCorp
                 new Vector3(1.0f, 1.0f, 2.0f),
                 new Vector3(0.0f, 0.0f, 0.0f),
                 SharedMesh,
-                "Entities/Rail/tx_minecart"))
+                "Entities/Rail/minecart_tx"))
                 .SetFlag(Flag.ShouldSerialize, false)
                 .SetFlag(Flag.RotateBoundingBox, true);
         }

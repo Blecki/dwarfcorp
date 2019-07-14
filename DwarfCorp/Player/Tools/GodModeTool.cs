@@ -78,29 +78,26 @@ namespace DwarfCorp
                 {
                     if (vox.IsEmpty)
                     {
+                        var offset = Vector3.Zero;
+
                         if (Library.GetCraftable(type).HasValue(out var craftItem))
+                            offset = craftItem.SpawnOffset;
+
+                        var body = EntityFactory.CreateEntity<GameComponent>(type, vox.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + offset);
+                        if (body != null)
                         {
-                            var offset = Vector3.Zero;
+                            body.PropogateTransforms();
 
                             if (craftItem != null)
-                                offset = craftItem.SpawnOffset;
-
-                            var body = EntityFactory.CreateEntity<GameComponent>(type, vox.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + offset);
-                            if (body != null)
                             {
-                                body.PropogateTransforms();
+                                if (craftItem.AddToOwnedPool)
+                                    World.PlayerFaction.OwnedObjects.Add(body);
 
-                                if (craftItem != null)
-                                {
-                                    if (craftItem.AddToOwnedPool)
-                                        World.PlayerFaction.OwnedObjects.Add(body);
+                                if (craftItem.Moveable)
+                                    body.Tags.Add("Moveable");
 
-                                    if (craftItem.Moveable)
-                                        body.Tags.Add("Moveable");
-
-                                    if (craftItem.Deconstructable)
-                                        body.Tags.Add("Deconstructable");
-                                }
+                                if (craftItem.Deconstructable)
+                                    body.Tags.Add("Deconstructable");
                             }
                         }
                     }

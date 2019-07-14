@@ -181,6 +181,7 @@
     <Compile Include="AssetManagement\IndexedTexture.cs" />
     <Compile Include="AssetManagement\IndexedDecomposition.cs" />
     <Compile Include="AssetManagement\ModMetaData.cs" />
+    <Compile Include="AssetManagement\ObjLoader.cs" />
     <Compile Include="AssetManagement\StringLibrary.cs" />
     <Compile Include="Components\AI\Creature-Death.cs" />
     <Compile Include="Components\AI\DwarfAI.cs" />

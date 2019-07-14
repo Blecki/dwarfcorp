@@ -351,7 +351,7 @@ namespace DwarfCorp
             }
         }
 
-        public static ModelMesh GetContentMesh(string _asset)
+        public static RawPrimitive GetContentMesh(string _asset)
         {
             string asset = FileUtils.NormalizePath(_asset);
             if (asset == null)
@@ -360,34 +360,23 @@ namespace DwarfCorp
                 return null;
             }
 
-            //if (TextureCache.ContainsKey(asset))
-            //{
-            //    var existing = TextureCache[asset];
-            //    if (existing != null && !existing.IsDisposed && existing.GraphicsDevice != null && !existing.GraphicsDevice.IsDisposed)
-            //        return existing;
-            //    else
-            //    {
-            //        DwarfGame.LogSentryBreadcrumb("AssetManager", string.Format("Asset {0} was invalid.", asset), SharpRaven.Data.BreadcrumbLevel.Warning);
-            //        TextureCache.Remove(asset);
-            //    }
-            //}
-
             try
             {
-                var filename = ResolveContentPath(asset);
+                var filename = ResolveContentPath(asset, ".obj");
                 if (Path.GetExtension(filename) == ".xnb")
                 {
-                    var toReturn = Content.Load<ModelMesh>(filename.Substring(0, filename.Length - 4));
-                    //TextureCache[asset] = toReturn;
-                    return toReturn;
-                }
-                else
-                {
-                    //var toReturn = LoadUnbuiltTextureFromAbsolutePath(filename);
+                    //var toReturn = Content.Load<ModelMesh>(filename.Substring(0, filename.Length - 4));
                     //TextureCache[asset] = toReturn;
                     //return toReturn;
+                    // Todo: Convert model mesh to raw prim?
                     return null;
                 }
+                else if (Path.GetExtension(filename) == ".obj")
+                {
+                    return ObjLoader.LoadObject(File.ReadAllLines(FileUtils.NormalizePath(filename)));
+                }
+                else
+                    return null;
             }
             catch (Exception exception)
             {

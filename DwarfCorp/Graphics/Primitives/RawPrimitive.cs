@@ -49,6 +49,17 @@ namespace DwarfCorp
             IndexCount += 1;
         }
 
+        public void AddTriangle(ExtendedVertex A, ExtendedVertex B, ExtendedVertex C)
+        {
+            var index = (short)VertexCount;
+            AddVertex(A);
+            AddVertex(B);
+            AddVertex(C);
+            AddIndex(index);
+            AddIndex((short)(index + 1));
+            AddIndex((short)(index + 2));
+        }
+
         public void AddIndicies(short[] Indicies)
         {
             EnsureSpace(ref Indexes, IndexCount + Indicies.Length);

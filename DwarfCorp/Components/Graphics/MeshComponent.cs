@@ -9,7 +9,7 @@ namespace DwarfCorp
 {
     public class MeshComponent : Tinter
     {
-        private ModelMesh Mesh;
+        private RawPrimitive Mesh;
         private string Asset;
         private Texture2D Texture;
 
@@ -18,7 +18,7 @@ namespace DwarfCorp
             Matrix localTransform, 
             Vector3 boundingBoxExtents, 
             Vector3 boundingBoxPos, 
-            ModelMesh Mesh, 
+            RawPrimitive Mesh, 
             String Asset) :
             base(Manager, "primitive", localTransform, boundingBoxExtents, boundingBoxPos)
         {
@@ -38,7 +38,7 @@ namespace DwarfCorp
             foreach(EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                Mesh.Draw();
+                Mesh.Render(graphicsDevice);
             }
 
             EndDraw(effect);
