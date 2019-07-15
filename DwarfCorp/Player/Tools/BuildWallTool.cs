@@ -54,16 +54,13 @@ namespace DwarfCorp
                             if (World.UserInterface.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty && !r.IsEmpty) continue;
                             if (World.UserInterface.VoxSelector.SelectionType == VoxelSelectionType.SelectFilled && r.IsEmpty) continue;
 
-                            var existingDesignation = World.PersistentData.Designations.GetVoxelDesignation(r, DesignationType.Put);
-                            if (existingDesignation != null)
+                            if (World.PersistentData.Designations.GetVoxelDesignation(r, DesignationType.Put).HasValue(out var existingDesignation))
                                 World.TaskManager.CancelTask(existingDesignation.Task);
 
                             var above = VoxelHelpers.GetVoxelAbove(r);
 
                             if (above.IsValid && above.LiquidType != LiquidType.None)
-                            {
                                 continue;
-                            }
 
                             if (Library.GetVoxelType(CurrentVoxelType).HasValue(out VoxelType vType))
                                 assignments.Add(new BuildVoxelTask(r, vType.Name));
@@ -75,11 +72,9 @@ namespace DwarfCorp
                 case (InputManager.MouseButton.Right):
                     {
                         foreach (var r in voxels)
-                        {
-                            var designation = World.PersistentData.Designations.GetVoxelDesignation(r, DesignationType.Put);
-                            if (designation != null)
+                            if (World.PersistentData.Designations.GetVoxelDesignation(r, DesignationType.Put).HasValue(out var designation))
                                 World.TaskManager.CancelTask(designation.Task);
-                        }
+
                         break;
                     }
             }
