@@ -25,15 +25,13 @@ namespace DwarfCorp
         {
             if (creature.Blackboard.GetData<bool>("NoPath", false))
             {
-                var designation = creature.World.PersistentData.Designations.GetEntityDesignation(Entity, DesignationType.Attack);
-                if (designation != null)
+                if (creature.World.PersistentData.Designations.GetEntityDesignation(Entity, DesignationType.Attack).HasValue(out var designation)
+                    && creature.Faction == creature.World.PlayerFaction)
                 {
-                    if (creature.Faction == creature.World.PlayerFaction)
-                    {
-                        creature.World.MakeAnnouncement(String.Format("{0} stopped trying to kill {1} because it is unreachable.", creature.Stats.FullName, Entity.Name));
-                        creature.World.TaskManager.CancelTask(designation.Task);
-                    }
+                    creature.World.MakeAnnouncement(String.Format("{0} stopped trying to kill {1} because it is unreachable.", creature.Stats.FullName, Entity.Name));
+                    creature.World.TaskManager.CancelTask(designation.Task);
                 }
+
                 return false;
             }
 

@@ -19,13 +19,13 @@ namespace DwarfCorp
         {
             if (creature.Blackboard.GetData<bool>("NoPath", false))
             {
-                var designation = creature.World.PersistentData.Designations.GetEntityDesignation(Entity, DesignationType.Chop);
-                if (designation != null)
+                if (creature.World.PersistentData.Designations.GetEntityDesignation(Entity, DesignationType.Chop).HasValue(out var designation))
                 {
                     creature.World.MakeAnnouncement(String.Format("{0} cancelled harvest task because it is unreachable", creature.Stats.FullName));
                     if (creature.Faction == creature.World.PlayerFaction)
                         creature.World.TaskManager.CancelTask(designation.Task);
                 }
+
                 return false;
             }
 

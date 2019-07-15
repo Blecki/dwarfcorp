@@ -114,8 +114,7 @@ namespace DwarfCorp
                         var designation = World.PersistentData.Designations.EnumerateEntityDesignations(DesignationType.Craft).Select(d => d.Tag as CraftDesignation).FirstOrDefault(d => d.Location == World.UserInterface.VoxSelector.VoxelUnderMouse);
                         if (designation != null)
                         {
-                            var realDesignation = World.PersistentData.Designations.GetEntityDesignation(designation.Entity, DesignationType.Craft);
-                            if (realDesignation != null)
+                            if (World.PersistentData.Designations.GetEntityDesignation(designation.Entity, DesignationType.Craft).HasValue(out var realDesignation))
                                 World.TaskManager.CancelTask(realDesignation.Task);
                         }
                         break;

@@ -58,24 +58,21 @@ namespace DwarfCorp
 
         public override void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)
         {
-            List<Task> tasks = new List<Task>();
+            var tasks = new List<Task>();
+
             foreach (GameComponent animal in bodies.Where(c => c.Tags.Contains("DomesticAnimal")))
             {
                 Drawer3D.DrawBox(animal.BoundingBox, Color.Tomato, 0.1f, false);
+
                 switch (button)
                 {
                     case InputManager.MouseButton.Left:
-                        {
-                            if (CanCatch(animal, true) && animal.GetRoot().GetComponent<Creature>().HasValue(out var creature))
-                                tasks.Add(new WrangleAnimalTask(creature) { Priority = TaskPriority.Medium });
-                        }
+                        if (CanCatch(animal, true) && animal.GetRoot().GetComponent<Creature>().HasValue(out var creature))
+                            tasks.Add(new WrangleAnimalTask(creature) { Priority = TaskPriority.Medium });
                         break;
                     case InputManager.MouseButton.Right:
-                        {
-                            var existingOrder = World.PersistentData.Designations.GetEntityDesignation(animal, DesignationType.Wrangle);
-                            if (existingOrder != null)
-                                World.TaskManager.CancelTask(existingOrder.Task);
-                        }
+                        if (World.PersistentData.Designations.GetEntityDesignation(animal, DesignationType.Wrangle).HasValue(out var existingOrder))
+                            World.TaskManager.CancelTask(existingOrder.Task);
                         break;
                 }
             }
