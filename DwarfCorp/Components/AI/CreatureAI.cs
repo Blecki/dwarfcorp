@@ -603,24 +603,23 @@ namespace DwarfCorp
 
             // If our health is low, we're a little afraid.
             if (Creature.Hp < Creature.MaxHealth * 0.25f)
-                fear += 0.25f;
+                fear += 0.125f;
 
             // If there are a lot of nearby threats vs allies, we are even more afraid.
             if (Faction.Threats.Where(threat => threat != null &&  threat.AI != null && !threat.IsDead).Sum(threat => (threat.AI.Position - Position).Length() < 6.0f ? 1 : 0) - 
                 Faction.Minions.Where(minion => minion != null && !minion.IsDead).Sum(minion => (minion.Position - Position).Length() < 6.0f ? 1 : 0) > Creature.Stats.Constitution)
-                fear += 0.5f;
+                fear += 0.125f;
 
             // In this case, we have a very very weak weapon in comparison to our enemy.
             if (Creature.Attacks[0].Weapon.DamageAmount * 20 < creature.Creature.Hp)
-                fear += 0.25f;
+                fear += 0.125f;
 
             // If the creature has formidible weapons, we're in trouble.
             if (creature.Creature.Attacks[0].Weapon.DamageAmount * 4 > Creature.Hp)
-                fear += 0.25f;
+                fear += 0.125f;
 
             fear = Math.Min(fear, 0.99f);
 
-            var fighting = MathFunctions.RandEvent(1.0f - fear);
             if (MathFunctions.RandEvent(1.0f - fear))
                 return FightOrFlightResponse.Fight;
             else

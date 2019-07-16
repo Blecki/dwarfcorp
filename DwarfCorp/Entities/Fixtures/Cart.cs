@@ -26,8 +26,8 @@ namespace DwarfCorp
 
         public Cart(ComponentManager manager, Vector3 position, List<ResourceAmount> resources) :
             base(manager, "Cart", Matrix.CreateTranslation(position), 
-                new Vector3(1.9f, 0.4f, 0.9f),
-                new Vector3(0.5f, 0.25f, 0.0f), 
+                new Vector3(0.9f, 0.9f, 0.9f),
+                new Vector3(0.25f, 0.25f, 0.0f), 
                 new DwarfCorp.CraftDetails(manager, "Cart", resources))
         {
             Tags.Add("Cart");
@@ -60,8 +60,8 @@ namespace DwarfCorp
                 SharedMesh = AssetManager.GetContentMesh("Entities/Rail/sm_minecart");
 
             AddChild(new MeshComponent(Manager,
-                Matrix.CreateTranslation(-0.40f, 0.00f, -0.45f) * Matrix.CreateRotationY((float)Math.PI * 0.5f),
-                new Vector3(1.0f, 1.0f, 2.0f),
+                Matrix.Identity,
+                new Vector3(1.0f, 1.0f, 1.0f),
                 new Vector3(0.0f, 0.0f, 0.0f),
                 SharedMesh,
                 "Entities/Rail/minecart_tx"))

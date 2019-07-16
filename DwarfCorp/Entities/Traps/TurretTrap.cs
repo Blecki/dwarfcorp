@@ -63,7 +63,7 @@ namespace DwarfCorp
 
             AddChild(new Health(Manager, "health", 50.0f, 0.0f, 50.0f));
 
-            Sensor = AddChild(new EnemySensor(Manager, "sensor", Matrix.Identity, new Vector3(8, 8, 8),
+            Sensor = AddChild(new EnemySensor(Manager, "turret-sensor", Matrix.Identity, new Vector3(8, 8, 8),
                 Vector3.Zero)
             {
                 Allies = faction,

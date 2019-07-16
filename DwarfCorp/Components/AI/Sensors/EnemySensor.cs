@@ -49,6 +49,11 @@ namespace DwarfCorp
 
         public void Sense()
         {
+            if (Name == "turret-sensor")
+            {
+                var x = 5;
+            }
+
             if (!Active) return;
 
             if (Creature != null)
@@ -62,11 +67,12 @@ namespace DwarfCorp
             var sensed = new List<CreatureAI>();
 
             var myRoot = GetRoot();
-            if (GetRoot().GetComponent<CreatureAI>().HasValue(out var myAI))
+
+            foreach (var body in Manager.World.EnumerateIntersectingObjects(BoundingBox, b => !Object.ReferenceEquals(b, myRoot) && b.IsRoot()))
             {
-                foreach (var body in Manager.World.EnumerateIntersectingObjects(BoundingBox, b => !Object.ReferenceEquals(b, myRoot) && b.IsRoot()))
+                if (body.GetComponent<Flammable>().HasValue(out var flames) && flames.IsOnFire)
                 {
-                    if (body.GetComponent<Flammable>().HasValue(out var flames) && flames.IsOnFire)
+                    if (GetRoot().GetComponent<CreatureAI>().HasValue(out var myAI))
                     {
                         var task = new FleeEntityTask(body, 5)
                         {
@@ -80,29 +86,29 @@ namespace DwarfCorp
 
                         continue;
                     }
-
-                    if (body.GetComponent<CreatureAI>().HasValue(out var minion))
-                    {
-                        if (!minion.Active)
-                            continue;
-
-                        if (!DetectCloaked && minion.Creature.IsCloaked)
-                            continue;
-
-                        else if (DetectCloaked && minion.Creature.IsCloaked)
-                            minion.Creature.IsCloaked = false;
-
-                        if (World.Overworld.GetPolitics(Allies.ParentFaction, minion.Faction.ParentFaction).GetCurrentRelationship() != Relationship.Hateful)
-                            continue;
-
-                        if (!VoxelHelpers.DoesRayHitSolidVoxel(Manager.World.ChunkManager, Position, minion.Position))
-                            sensed.Add(minion);
-                    }
                 }
 
-                if (sensed != null && sensed.Count > 0 && OnEnemySensed != null)
-                    OnEnemySensed.Invoke(sensed);
+                if (body.GetComponent<CreatureAI>().HasValue(out var minion))
+                {
+                    if (!minion.Active)
+                        continue;
+
+                    if (!DetectCloaked && minion.Creature.IsCloaked)
+                        continue;
+
+                    else if (DetectCloaked && minion.Creature.IsCloaked)
+                        minion.Creature.IsCloaked = false;
+
+                    if (World.Overworld.GetPolitics(Allies.ParentFaction, minion.Faction.ParentFaction).GetCurrentRelationship() != Relationship.Hateful)
+                        continue;
+
+                    if (!VoxelHelpers.DoesRayHitSolidVoxel(Manager.World.ChunkManager, Position, minion.Position))
+                        sensed.Add(minion);
+                }
             }
+
+            if (sensed != null && sensed.Count > 0 && OnEnemySensed != null)
+                OnEnemySensed.Invoke(sensed);
         }
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
