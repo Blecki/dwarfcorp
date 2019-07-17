@@ -48,26 +48,23 @@ namespace DwarfCorp
             {
             
             }
+
             if (Item.ResourcesReservedFor == Agent)
                 Item.ResourcesReservedFor = null;
+
             Agent.Physics.Active = true;
             Agent.Physics.IsSleeping = false;
 
-            if (Agent.Blackboard.GetData<bool>("NoPath", false))
+            if (Agent.Blackboard.GetData<bool>("NoPath", false)
+                && Item.Entity != null
+                && !Item.Entity.IsDead
+                && Agent.World.PersistentData.Designations.GetEntityDesignation(Item.Entity, DesignationType.Craft).HasValue(out var designation)
+                && Agent.Faction == Agent.World.PlayerFaction)
             {
-                if (Item.Entity != null && !Item.Entity.IsDead)
-                {
-                    var designation = Agent.World.PersistentData.Designations.GetEntityDesignation(Item.Entity, DesignationType.Craft);
-                    if (designation != null)
-                    {
-                        if (Agent.Faction == Agent.World.PlayerFaction)
-                        {
-                            Agent.World.MakeAnnouncement(String.Format("{0} cancelled crafting {1} because it is unreachable", Agent.Stats.FullName, Item.Entity.Name));
-                            Agent.World.TaskManager.CancelTask(designation.Task);
-                        }
-                    }
-                }
+                Agent.World.MakeAnnouncement(String.Format("{0} cancelled crafting {1} because it is unreachable", Agent.Stats.FullName, Item.Entity.Name));
+                Agent.World.TaskManager.CancelTask(designation.Task);
             }
+                    
 
             yield return Act.Status.Success;
         }
@@ -403,8 +400,7 @@ namespace DwarfCorp
                                             Creature.Physics.Face(location.Position);
                                             if (Item.PreviewResource != null)
                                                 Item.PreviewResource.LocalPosition = location.Position + Vector3.Up * 0.25f;
-                                            var buff = location.GetComponent<SteamPipes.BuildBuff>();
-                                            if (buff != null)
+                                            if (location.GetComponent<SteamPipes.BuildBuff>().HasValue(out var buff))
                                                 workstationBuff = buff.GetBuffMultiplier();
                                         }
 

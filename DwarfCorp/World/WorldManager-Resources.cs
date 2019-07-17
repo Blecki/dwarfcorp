@@ -39,14 +39,15 @@ namespace DwarfCorp
             for (int i = 0; i < num; i++)
             {
                 // Make a toss from the last crate to the agent.
-                var startPosition = stock.Voxels.First().Center + new Vector3(0.0f, 1.0f, 0.0f);
+                var startPosition = stock.Voxels.Count > 0 ? stock.Voxels.First().Center + new Vector3(0.0f, 1.0f, 0.0f) : Vector3.Zero;
                 if (stock.Boxes.Count > 0)
                     startPosition = stock.Boxes.Last().Position + MathFunctions.RandVector3Cube() * 0.5f;
 
                 GameComponent newEntity = EntityFactory.CreateEntity<GameComponent>(resources.Type + " Resource", startPosition);
 
                 TossMotion toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f), 2.5f + MathFunctions.Rand(-0.5f, 0.5f), newEntity.LocalTransform, position);
-                newEntity.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
+                if (newEntity.GetRoot().GetComponent<Physics>().HasValue(out var newPhysics))
+                    newPhysics.CollideMode = Physics.CollisionMode.None;
                 newEntity.AnimationQueue.Add(toss);
                 toss.OnComplete += () => newEntity.Die();
             }
@@ -364,7 +365,9 @@ namespace DwarfCorp
 
         public bool CanBuildVoxel(VoxelType type)
         {
-            return PersistentData.CachedCanBuildVoxel[type.Name];
+            if (PersistentData.CachedCanBuildVoxel.ContainsKey(type.Name))
+                return PersistentData.CachedCanBuildVoxel[type.Name];
+            return false;
         }
     }
 }

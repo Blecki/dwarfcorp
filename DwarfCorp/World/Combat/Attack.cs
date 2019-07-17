@@ -126,8 +126,7 @@ namespace DwarfCorp
 
             if (!String.IsNullOrEmpty(Weapon.DiseaseToSpread))
             {
-                var otherCreature = other.GetRoot().GetComponent<Creature>();
-                if (otherCreature != null)
+                if (other.GetRoot().GetComponent<Creature>().HasValue(out var otherCreature))
                 {
                     var disease = DiseaseLibrary.GetDisease(Weapon.DiseaseToSpread);
                     if (disease != null)
@@ -144,8 +143,7 @@ namespace DwarfCorp
 
                 if (MathFunctions.RandEvent(injury.LikelihoodOfSpread))
                 {
-                    var creature = other.GetRoot().GetComponent<Creature>();
-                    if (creature != null)
+                    if (other.GetRoot().GetComponent<Creature>().HasValue(out var creature))
                         creature.Stats.AcquireDisease(injury);
                 }
 
@@ -223,26 +221,27 @@ namespace DwarfCorp
                 }
                 case Weapon.AttackMode.Area:
                 {
-                        BoundingBox box = new BoundingBox(performer.AI.Position - Vector3.One * Weapon.Range, performer.AI.Position + Vector3.One * Weapon.Range);
+                        var box = new BoundingBox(performer.AI.Position - Vector3.One * Weapon.Range, performer.AI.Position + Vector3.One * Weapon.Range);
+
                         foreach(var body in performer.World.EnumerateIntersectingObjects(box, CollisionType.Both).Where(b => b.IsRoot()))
                         {
-                            var creature = body.GetRoot().GetComponent<CreatureAI>();
-
-                            if (creature == null)
+                            if (body.GetRoot().GetComponent<CreatureAI>().HasValue(out var creature))
                             {
-                                var health = body.GetRoot().GetComponent<Health>();
-                                if (health != null)
-                                    DoDamage(performer, body, bonus);
-                                continue;
+                                if (creature.Faction == performer.Faction)
+                                    continue;
+
+                                if (performer.World.Overworld.GetPolitics(creature.Faction.ParentFaction, performer.Faction.ParentFaction).GetCurrentRelationship() != Relationship.Hateful)
+                                    continue;
+
+                                DoDamage(performer, body, bonus);
                             }
+                            else
+                            {
+                                if (body.GetRoot().GetComponent<Health>().HasValue(out var health))
+                                    DoDamage(performer, body, bonus);
 
-                            if (creature.Faction == performer.Faction)
                                 continue;
-                            var alliance = performer.World.Overworld.GetPolitics(creature.Faction.ParentFaction, performer.Faction.ParentFaction).GetCurrentRelationship() != Relationship.Hateful;
-                            if (alliance)
-                                continue;
-
-                            DoDamage(performer, body, bonus);
+                            }                            
                         }
                         break;
                 }
@@ -254,11 +253,8 @@ namespace DwarfCorp
                     var injury = DiseaseLibrary.GetRandomInjury();
 
                     if (MathFunctions.RandEvent(injury.LikelihoodOfSpread))
-                    {
-                        var creature = other.GetRoot().GetComponent<Creature>();
-                        if (creature != null)
+                        if (other.GetRoot().GetComponent<Creature>().HasValue(out var creature))
                             creature.Stats.AcquireDisease(injury);
-                    }
                     break;
                 }
             }

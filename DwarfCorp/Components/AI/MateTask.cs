@@ -101,7 +101,7 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
-        public override Act CreateScript(Creature agent)
+        public override MaybeNull<Act> CreateScript(Creature agent)
         {
             return new Sequence(new GoToEntityAct(Them.Physics, agent.AI),
                                 new Wrap(() => Mate(agent)));

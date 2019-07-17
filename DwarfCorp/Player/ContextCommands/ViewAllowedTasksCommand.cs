@@ -22,30 +22,29 @@ namespace DwarfCorp.ContextCommands
 
         public override void Apply(GameComponent Entity, WorldManager World)
         {
-            var creature = Entity.GetComponent<CreatureAI>();
-            if (creature == null)
-                return;
-
-            var screen = World.UserInterface.Gui.RenderData.VirtualScreen;
-            World.UserInterface.Gui.ShowMinorPopup(new AllowedTaskFilter
+            if (Entity.GetComponent<CreatureAI>().HasValue(out var creature))
             {
-                Employee = creature,
-                Tag = "selected-employee-allowable-tasks",
-                AutoLayout = AutoLayout.DockFill,
-                MinimumSize = new Point(256, 256),
-                Border = "border-fancy",
-                Rect = new Rectangle(screen.Center.X - 128, screen.Center.Y - 128, 256, 256)
-            });
+                var screen = World.UserInterface.Gui.RenderData.VirtualScreen;
+                World.UserInterface.Gui.ShowMinorPopup(new AllowedTaskFilter
+                {
+                    Employee = creature,
+                    Tag = "selected-employee-allowable-tasks",
+                    AutoLayout = AutoLayout.DockFill,
+                    MinimumSize = new Point(256, 256),
+                    Border = "border-fancy",
+                    Rect = new Rectangle(screen.Center.X - 128, screen.Center.Y - 128, 256, 256)
+                });
+            }
 
             base.Apply(Entity, World);
         }
 
         public override bool CanBeAppliedTo(GameComponent Entity, WorldManager World)
         {
-            var creature = Entity.GetComponent<CreatureAI>();
-            if (creature == null)
+            if (Entity.GetComponent<CreatureAI>().HasValue(out var creature))
+                return World.PlayerFaction.Minions.Contains(creature);
+            else
                 return false;
-            return World.PlayerFaction.Minions.Contains(creature);
         }
     }
 }

@@ -158,7 +158,10 @@ namespace DwarfCorp
                 foreach (var body in things)
                 {
                     TossMotion toss = new TossMotion(1.0f, 2.5f, body.LocalTransform, pos);
-                    body.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
+
+                    if (body.GetRoot().GetComponent<Physics>().HasValue(out var physics))
+                        physics.CollideMode = Physics.CollisionMode.None;
+
                     body.AnimationQueue.Add(toss);
                     toss.OnComplete += body.Delete;
                     createdAny = true;
@@ -238,19 +241,10 @@ namespace DwarfCorp
             //        World.Master.TaskManager.AddTask(new GatherItemTask(item));
             Resources.Clear();
 
-            var flames = GetRoot().GetComponent<Flammable>();
-            if (flames != null && flames.Heat >= flames.Flashpoint)
-            {
+            if (GetRoot().GetComponent<Flammable>().HasValue(out var flames) && flames.Heat >= flames.Flashpoint)
                 foreach (var item in piles)
-                {
-                    var itemFlames = item.GetRoot().GetComponent<Flammable>();
-
-                    if (itemFlames != null)
-                    {
+                    if (item.GetRoot().GetComponent<Flammable>().HasValue(out var itemFlames))
                         itemFlames.Heat = flames.Heat;
-                    }
-                }
-            }
         }
 
         public bool HasResource(ResourceAmount itemToStock)

@@ -10,8 +10,6 @@ namespace DwarfCorp
         {
             // If no file exists, we have to create the balloon and balloon port.
             if (!string.IsNullOrEmpty(Settings.Overworld.InstanceSettings.ExistingFile)) return; // Todo: Don't call in the first place??
-             
-            var port = GenerateInitialBalloonPort(Renderer.Camera.Position.X, Renderer.Camera.Position.Z, 1, Settings);
 
             PlayerFaction.Economy.Funds = Settings.Overworld.InstanceSettings.InitalEmbarkment.Funds;
             Settings.Overworld.PlayerCorporationFunds -= Settings.Overworld.InstanceSettings.InitalEmbarkment.Funds;
@@ -23,38 +21,45 @@ namespace DwarfCorp
                 Settings.Overworld.PlayerCorporationResources.Remove(res);
             }
 
-            var portBox = port.GetBoundingBox();
+            if (GenerateInitialBalloonPort(Renderer.Camera.Position.X, Renderer.Camera.Position.Z, 1, Settings).HasValue(out var port))
+            {
+
+                var portBox = port.GetBoundingBox();
 
                 ComponentManager.RootComponent.AddChild(Balloon.CreateBalloon(
                     portBox.Center() + new Vector3(0, 100, 0),
                     portBox.Center() + new Vector3(0, 10, 0), ComponentManager,
                     PlayerFaction));
 
-                foreach (var applicant in Settings.Overworld.InstanceSettings.InitalEmbarkment.Employees)
-                {
-                    Settings.Overworld.PlayerCorporationFunds -= applicant.SigningBonus;
-                    HireImmediately(applicant);
-                }
+                Renderer.Camera.Target = portBox.Center();
+                Renderer.Camera.Position = Renderer.Camera.Target + new Vector3(0, 15, -15);
+            }
 
-            Renderer.Camera.Target = portBox.Center();
-            Renderer.Camera.Position = Renderer.Camera.Target + new Vector3(0, 15, -15);
+            foreach (var applicant in Settings.Overworld.InstanceSettings.InitalEmbarkment.Employees)
+            {
+                Settings.Overworld.PlayerCorporationFunds -= applicant.SigningBonus;
+                HireImmediately(applicant);
+            }
         }
 
-        public static Zone GenerateInitialBalloonPort(float x, float z, int size, Generation.ChunkGeneratorSettings Settings)
+        public static MaybeNull<Zone> GenerateInitialBalloonPort(float x, float z, int size, Generation.ChunkGeneratorSettings Settings)
         {
             var roomVoxels = Generation.Generator.GenerateBalloonPort(Settings.World.ChunkManager, x, z, size, Settings);
 
-            // Actually create the BuildRoom.
-            var toBuild = Library.CreateZone("Balloon Port", Settings.World);
-            Settings.World.AddZone(toBuild);
-            toBuild.CompleteRoomImmediately(roomVoxels.StockpileVoxels);
+            if (Library.CreateZone("Balloon Port", Settings.World).HasValue(out var zone))
+            {
+                Settings.World.AddZone(zone);
+                zone.CompleteRoomImmediately(roomVoxels.StockpileVoxels);
 
-                var box = toBuild.GetBoundingBox();
+                var box = zone.GetBoundingBox();
                 var at = new Vector3((box.Min.X + box.Max.X - 1) / 2, box.Max.Y, (box.Min.Z + box.Max.Z - 1) / 2);
                 var flag = EntityFactory.CreateEntity<Flag>("Flag", at + new Vector3(0.5f, 0.5f, 0.5f));
                 Settings.World.PlayerFaction.OwnedObjects.Add(flag);
 
-            return toBuild;
+                return zone;
+            }
+            else
+                return null;
         }
 
     }

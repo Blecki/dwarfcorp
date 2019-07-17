@@ -24,7 +24,7 @@ namespace DwarfCorp
         public Dictionary<ulong, VoxelHandle> GuardedVoxels = new Dictionary<ulong, VoxelHandle>();
         public List<Creature> Threats = new List<Creature>();
 
-        [JsonIgnore] public Race Race => Library.GetRace(ParentFaction.Race);
+        [JsonIgnore] public Race Race => Library.GetRace(ParentFaction.Race).HasValue(out var race) ? race : null; // Todo: Make this a MaybeNull.
         [JsonIgnore] public WorldManager World;
 
         [OnDeserialized]

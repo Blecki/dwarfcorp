@@ -31,11 +31,14 @@ namespace DwarfCorp
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             base.CreateCosmeticChildren(manager);
-            var sprite = GetComponent<SimpleSprite>();
-            sprite.OrientationType = SimpleSprite.OrientMode.Fixed;
-            Matrix transform = Matrix.CreateRotationY((float)(0.5f * Math.PI));
-            transform.Translation = Vector3.UnitX * 0.5f;
-            sprite.LocalTransform = transform;
+
+            if (GetComponent<SimpleSprite>().HasValue(out var sprite))
+            {
+                sprite.OrientationType = SimpleSprite.OrientMode.Fixed;
+                var transform = Matrix.CreateRotationY((float)(0.5f * Math.PI));
+                transform.Translation = Vector3.UnitX * 0.5f;
+                sprite.LocalTransform = transform;
+            }
         }
     }
 }

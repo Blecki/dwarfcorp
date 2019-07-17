@@ -127,18 +127,13 @@ namespace DwarfCorp
             int goodsPerCreature = TradeGoods.Count / Creatures.Count;
             int currentGood = 0;
             foreach (CreatureAI creature in Creatures)
-            {
-                ResourcePack pack = creature.GetRoot().GetComponent<ResourcePack>();
-                if (pack != null)
+                if (creature.GetRoot().GetComponent<ResourcePack>().HasValue(out var pack))
                 {
                     pack.Contents.Resources.Clear();
                     for (int i = currentGood; i < global::System.Math.Min(currentGood + goodsPerCreature, TradeGoods.Count); i++)
-                    {
                         pack.Contents.AddResource(TradeGoods[i]);
-                    }
                     currentGood += goodsPerCreature;
                 }
-            }
         }
 
         public void Update(WorldManager World)

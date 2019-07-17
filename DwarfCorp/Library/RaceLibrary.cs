@@ -22,7 +22,7 @@ namespace DwarfCorp
             Console.WriteLine("Loaded Race Library.");
         }
 
-        public static Race GetRace(String Name)
+        public static MaybeNull<Race> GetRace(String Name)
         {
             InitializeRaces();
             Race result = null;
@@ -31,7 +31,7 @@ namespace DwarfCorp
             return null;
         }
 
-        public static Race GetRandomIntelligentRace()
+        public static MaybeNull<Race> GetRandomIntelligentRace()
         {
             InitializeRaces();
             return Datastructures.SelectRandom(Races.Values.Where(r => r.IsIntelligent && r.IsNative));

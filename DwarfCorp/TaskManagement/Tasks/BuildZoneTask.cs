@@ -43,7 +43,7 @@ namespace DwarfCorp
                 agent.World.HasResources(Zone.ListRequiredResources()) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
-        public override Act CreateScript(Creature creature)
+        public override MaybeNull<Act> CreateScript(Creature creature)
         {
             if (Zone == null)
                 return null;

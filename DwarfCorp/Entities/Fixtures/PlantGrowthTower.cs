@@ -37,9 +37,12 @@ namespace DwarfCorp
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             base.CreateCosmeticChildren(manager);
-            var sprite = GetComponent<SimpleSprite>();
-            sprite.OrientationType = SimpleSprite.OrientMode.YAxis;
-            sprite.LightsWithVoxels = false;
+
+            if (GetComponent<SimpleSprite>().HasValue(out var sprite))
+            {
+                sprite.OrientationType = SimpleSprite.OrientMode.YAxis;
+                sprite.LightsWithVoxels = false;
+            }
         }
 
         public override void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
@@ -60,8 +63,8 @@ namespace DwarfCorp
                             World.ParticleManager.TriggerRay("green_flame", Position, obj.Position);
                             SoundManager.PlaySound(ContentPaths.Audio.tinkle, obj.Position, true, 1.0f);
 
-                            var magicalObject = GetComponent<MagicalObject>();
-                            if (magicalObject != null) magicalObject.CurrentCharges -= 1;
+                            if (GetComponent<MagicalObject>().HasValue(out var magicalObject))
+                                magicalObject.CurrentCharges -= 1;
 
                             break;
                         }

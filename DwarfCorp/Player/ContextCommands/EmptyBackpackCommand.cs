@@ -1,10 +1,4 @@
-﻿using DwarfCorp.Gui;
-using DwarfCorp.Gui.Widgets;
-using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 
 namespace DwarfCorp.ContextCommands
 {
@@ -22,19 +16,16 @@ namespace DwarfCorp.ContextCommands
 
         public override bool CanBeAppliedTo(GameComponent Entity, WorldManager World)
         {
-            var creature = Entity.GetComponent<CreatureAI>();
-            if (creature == null)
+            if (Entity.GetComponent<CreatureAI>().HasValue(out var creature))
+                return World.PlayerFaction.Minions.Contains(creature) && creature.Creature.Inventory.Resources.Any();
+            else
                 return false;
-            return World.PlayerFaction.Minions.Contains(creature) && creature.Creature.Inventory.Resources.Any();
         }
 
         public override void Apply(GameComponent Entity, WorldManager World)
         {
-            var creature = Entity.GetComponent<CreatureAI>();
-            if (creature == null)
-                return;
-
-            creature.Creature.RestockAllImmediately(true);
+            if (Entity.GetComponent<CreatureAI>().HasValue(out var creature))
+                creature.Creature.RestockAllImmediately(true);
         }
     }
 }

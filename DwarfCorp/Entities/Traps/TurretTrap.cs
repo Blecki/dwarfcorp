@@ -63,7 +63,7 @@ namespace DwarfCorp
 
             AddChild(new Health(Manager, "health", 50.0f, 0.0f, 50.0f));
 
-            Sensor = AddChild(new EnemySensor(Manager, "sensor", Matrix.Identity, new Vector3(8, 8, 8),
+            Sensor = AddChild(new EnemySensor(Manager, "turret-sensor", Matrix.Identity, new Vector3(8, 8, 8),
                 Vector3.Zero)
             {
                 Allies = faction,
@@ -153,7 +153,9 @@ namespace DwarfCorp
                     TheAttack.LaunchProjectile(Position + Vector3.Up * 0.5f, closestCreature.Position, closestCreature.Physics);
                     TheAttack.PlayNoise(Position);
                     TheAttack.RechargeTimer.Reset();
-                    GetComponent<MagicalObject>().CurrentCharges--;
+
+                    if (GetComponent<MagicalObject>().HasValue(out var magicalObject))
+                        magicalObject.CurrentCharges--;
                 }
             }
             if (Math.Abs(_currentAngle - _targetAngle) > 0.001f)

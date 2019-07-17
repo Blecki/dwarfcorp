@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Newtonsoft.Json;
+using System;
 
 namespace DwarfCorp
 {
@@ -14,7 +10,6 @@ namespace DwarfCorp
         {
             return new CoinPileFixture(Manager, Position);
         }
-
 
         private int _frame = -1;
         public void SetFullness(float value)
@@ -35,8 +30,7 @@ namespace DwarfCorp
                 //foreach (var child in childrenToKill)
                 //    child.Delete();
 
-                var sprite = GetComponent<SimpleSprite>();
-                if (sprite != null)
+                if (GetComponent<SimpleSprite>().HasValue(out var sprite))
                     sprite.SetFrame(Frame);
 
                 _frame = frame;

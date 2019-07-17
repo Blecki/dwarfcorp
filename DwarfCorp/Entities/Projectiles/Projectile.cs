@@ -118,12 +118,10 @@ namespace DwarfCorp
         {
             if (Target != null && (Target.Position - LocalPosition).LengthSquared() < DamageRadius)
             {
-                Health health = Target.GetRoot().GetComponent<Health>();
-
-                if (health != null)
+                if (Target.GetRoot().GetComponent<Health>().HasValue(out var health))
                 {
                     health.Damage(Damage.Amount, Damage.DamageType);
-                    Vector3 knock = (Target.Position - Position);
+                    var knock = (Target.Position - Position);
                     knock.Normalize();
                     knock *= 0.2f;
                     if (Target.AnimationQueue.Count == 0)
@@ -131,12 +129,8 @@ namespace DwarfCorp
                 }
 
                 if (Damage.DamageType == Health.DamageType.Fire)
-                {
-                    Flammable flammabe = Target.GetRoot().GetComponent<Flammable>();
-
-                    if (flammabe != null)
-                        flammabe.Heat += 50.0f;
-                }
+                    if (Target.GetRoot().GetComponent<Flammable>().HasValue(out var flammable))
+                        flammable.Heat += 50.0f;
 
                 Die();
             }

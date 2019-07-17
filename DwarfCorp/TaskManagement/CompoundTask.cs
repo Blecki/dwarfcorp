@@ -30,7 +30,7 @@ namespace DwarfCorp
             SubTasks.AddRange(Tasks);
         }
 
-        public override Act CreateScript(Creature creature)
+        public override MaybeNull<Act> CreateScript(Creature creature)
         {
             throw new InvalidOperationException();
         }

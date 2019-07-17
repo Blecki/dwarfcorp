@@ -136,8 +136,7 @@ namespace DwarfCorp
                 }
                 else if (button == InputManager.MouseButton.Right)
                 {
-                    var designation = World.PersistentData.Designations.GetEntityDesignation(other, DesignationType.Attack);
-                    if (designation != null)
+                    if (World.PersistentData.Designations.GetEntityDesignation(other, DesignationType.Attack).HasValue(out var designation))
                     {
                         World.TaskManager.CancelTask(designation.Task);
                         World.UserInterface.ShowToolPopup("Attack cancelled for " + creature.Stats.CurrentClass.Name);

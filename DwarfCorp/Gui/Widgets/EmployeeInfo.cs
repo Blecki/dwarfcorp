@@ -383,9 +383,13 @@ namespace DwarfCorp.Gui.Widgets
                             if ((confirm as Gui.Widgets.Confirm).DialogResult == DwarfCorp.Gui.Widgets.Confirm.Result.OKAY)
                             {
                                 SoundManager.PlaySound(ContentPaths.Audio.change, 0.25f);
+
                                 if (Employee.IsDead)
                                     return;
-                                Employee.GetRoot().GetComponent<Inventory>().Die();
+
+                                if (Employee.GetRoot().GetComponent<Inventory>().HasValue(out var inv))
+                                    inv.Die();
+
                                 Employee.World.MakeAnnouncement(Library.GetString("was-fired", Employee.Stats.FullName));
                                 Employee.GetRoot().Delete();
 
@@ -419,7 +423,7 @@ namespace DwarfCorp.Gui.Widgets
             });
 
 #if ENABLE_CHAT
-            if (Employee != null && Employee.GetRoot().GetComponent<DwarfThoughts>() != null)
+            if (Employee != null && Employee.GetRoot().GetComponent<DwarfThoughts>().HasValue(out var thoughts))
             {
                 bottomBar.AddChild(new Button()
                 {
@@ -537,12 +541,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 InteriorPanel.Hidden = false;
 
-                //var idx = EmployeePanel.GetIconIndex(Employee.Stats.CurrentClass.Name);
-                //Icon.Background = idx >= 0 ? new TileReference("dwarves", idx) : null;
-                //Icon.Invalidate();
-                //Icon.Sprite = Employee.Creature.Sprite.Animations[0];
-                var sprite = Employee.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>();
-                if (sprite != null)
+                if (Employee.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>().HasValue(out var sprite))
                 {
                     Icon.Sprite = sprite.GetLayers();
                     Icon.AnimationPlayer = sprite.AnimPlayer;
@@ -577,8 +576,7 @@ namespace DwarfCorp.Gui.Widgets
 
                 StringBuilder thoughtsBuilder = new StringBuilder();
                 thoughtsBuilder.Append("Thoughts:\n");
-                var thoughts = Employee.Physics.GetComponent<DwarfThoughts>();
-                if (thoughts != null)
+                if (Employee.Physics.GetComponent<DwarfThoughts>().HasValue(out var thoughts))
                     foreach (var thought in thoughts.Thoughts)
                         thoughtsBuilder.Append(String.Format("{0} ({1})\n", thought.Description, thought.HappinessModifier));
    

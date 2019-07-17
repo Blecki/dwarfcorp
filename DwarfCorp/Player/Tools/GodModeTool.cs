@@ -65,10 +65,11 @@ namespace DwarfCorp
         {
             if(Command.Contains("Build/"))
             {
-                string type = Command.Substring(6);
-                var room = Library.CreateZone(type, World);
-                World.AddZone(room);
-                room.CompleteRoomImmediately(refs);
+                if (Library.CreateZone(Command.Substring(6), World).HasValue(out var zone))
+                {
+                    World.AddZone(zone);
+                    zone.CompleteRoomImmediately(refs);
+                }
             }
             if (Command.Contains("Spawn/"))
             {
@@ -77,10 +78,9 @@ namespace DwarfCorp
                 {
                     if (vox.IsEmpty)
                     {
-                        var craftItem = Library.GetCraftable(type);
                         var offset = Vector3.Zero;
 
-                        if (craftItem != null)
+                        if (Library.GetCraftable(type).HasValue(out var craftItem))
                             offset = craftItem.SpawnOffset;
 
                         var body = EntityFactory.CreateEntity<GameComponent>(type, vox.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + offset);
@@ -143,7 +143,8 @@ namespace DwarfCorp
                     {
                         string type = Command.Substring(6);
                         var v = vox;
-                        v.Type = Library.GetVoxelType(type);
+                        if (Library.GetVoxelType(type).HasValue(out VoxelType vType))
+                            v.Type = vType;
                         v.QuickSetLiquid(LiquidType.None, 0);
 
                         if (type == "Magic")

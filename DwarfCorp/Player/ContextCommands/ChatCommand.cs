@@ -1,12 +1,4 @@
-﻿using DwarfCorp.Gui;
-using DwarfCorp.Gui.Widgets;
-using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace DwarfCorp.ContextCommands
+﻿namespace DwarfCorp.ContextCommands
 {
     public class ChatCommand : ContextCommand
     {
@@ -22,19 +14,16 @@ namespace DwarfCorp.ContextCommands
 
         public override bool CanBeAppliedTo(GameComponent Entity, WorldManager World)
         {
-            var creature = Entity.GetComponent<CreatureAI>();
-            if (creature == null)
+            if (Entity.GetComponent<CreatureAI>().HasValue(out var creature) && Entity.GetComponent<DwarfThoughts>().HasValue(out var thoughts))
+                return World.PlayerFaction.Minions.Contains(creature);
+            else
                 return false;
-            var thoughts = Entity.GetComponent<DwarfThoughts>();
-            if (thoughts == null)
-                return false;
-            return World.PlayerFaction.Minions.Contains(creature);
         }
 
         public override void Apply(GameComponent Entity, WorldManager World)
         {
-            var creature = Entity.GetComponent<CreatureAI>();
-            creature.Chat();
+            if (Entity.GetComponent<CreatureAI>().HasValue(out var creature))
+                creature.Chat();
         }
     }
 }

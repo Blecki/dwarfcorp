@@ -113,9 +113,12 @@
     <Compile Include="AssetManagement\JsonConverters\MatrixConverter.cs" />
     <Compile Include="AssetManagement\JsonConverters\RectangleConverter.cs" />
     <Compile Include="AssetManagement\JsonConverters\TextureContentConverter.cs" />
+    <Compile Include="AssetManagement\ObjLoader.cs" />
     <Compile Include="Components\AI\DwarfAI.cs" />
+    <Compile Include="Components\Graphics\MeshComponent.cs" />
     <Compile Include="Components\Physics\Fire.cs" />
     <Compile Include="Entities\Dwarves\NonPlayerDwarf.cs" />
+    <Compile Include="Entities\Fixtures\Cart.cs" />
     <Compile Include="GameStates\WorldGeneration\EmbarkmentEditor.cs" />
     <Compile Include="GameStates\WorldGeneration\ChooseEmployeeTypeDialog.cs" />
     <Compile Include="GameStates\WorldGeneration\EmbarkmentResourceColumns.cs" />
@@ -124,6 +127,11 @@
     <Compile Include="GameStates\WorldGeneration\OverworldPreviewMesh.cs" />
     <Compile Include="Gui\Widgets\StatsTracker.cs" />
     <Compile Include="Gui\Widgets\MarketPanel.cs" />
+    <Compile Include="Library\CraftLibrary.cs" />
+    <Compile Include="Library\DesignationLibrary.cs" />
+    <Compile Include="Library\EventLibrary.cs" />
+    <Compile Include="Library\RaceLibrary.cs" />
+    <Compile Include="Library\ZoneLibrary.cs" />
     <Compile Include="LogWriter.cs" />
     <Compile Include="EventLog.cs" />
     <Compile Include="EventLogState.cs" />
@@ -149,7 +157,7 @@
     <Compile Include="TaskManagement\Tasks\GetHealedTask.cs" />
     <Compile Include="TaskManagement\TestBehaviors.cs" />
     <Compile Include="Tools\NeverNull.cs" />
-    <Compile Include="Tools\NullableReference.cs" />
+    <Compile Include="Tools\MaybeNull.cs" />
     <Compile Include="World\AutoScaleThread.cs" />
     <Compile Include="World\Crafting\CraftDetails.cs" />
     <Compile Include=".\Components\AI\Creature.cs" />
@@ -305,7 +313,6 @@
     <Compile Include="Components\AI\StatAdjustment.cs" />
     <Compile Include="Components\AI\Status.cs" />
     <Compile Include="Components\Graphics\PrimitiveComponent.cs" />
-    <Compile Include="World\Designations\DesignationLibrary.cs" />
     <Compile Include="World\Designations\DesignationSet.cs" />
     <Compile Include="World\Designations\DesignationType.cs" />
     <Compile Include="World\Designations\DesignationTypeProperties.cs" />
@@ -608,7 +615,6 @@
     <Compile Include="TaskManagement\ControlFlow\WhileLoop.cs" />
     <Compile Include="TaskManagement\ControlFlow\Wrap.cs" />
     <Compile Include="World\Crafting\CraftItem.cs" />
-    <Compile Include="World\Crafting\CraftLibrary.cs" />
     <Compile Include="World\Factions\TradeTask.cs" />
     <Compile Include="World\Factions\PoliticalEvent.cs" />
     <Compile Include="World\Factions\Politics.cs" />
@@ -669,7 +675,6 @@
     <Compile Include="Player\Tools\WrangleTool.cs" />
     <Compile Include="Player\VoxelSelectionType.cs" />
     <Compile Include="Player\VoxelSelector.cs" />
-    <Compile Include="World\Events\Library.cs" />
     <Compile Include="World\Events\PlagueEvent.cs" />
     <Compile Include="World\Events\ScheduledEvent.cs" />
     <Compile Include="World\Events\Scheduler.cs" />
@@ -679,12 +684,11 @@
     <Compile Include="World\Events\TimedIndicatorWidget.cs" />
     <Compile Include="World\Economy\Applicant.cs" />
     <Compile Include="World\Overworld\Embarkment.cs" />
-    <Compile Include="World\Overworld\DifficultyLibrary.cs" />
+    <Compile Include="Library\DifficultyLibrary.cs" />
     <Compile Include="World\Factions\Expedition.cs" />
     <Compile Include="World\Factions\Faction.cs" />
     <Compile Include="World\Factions\FactionSet.cs" />
     <Compile Include="World\Factions\Race.cs" />
-    <Compile Include="World\Factions\RaceLibrary.cs" />
     <Compile Include="World\Factions\TradeEnvoy.cs" />
     <Compile Include="World\Factions\Trading\DeclareWarYarnCommand.cs" />
     <Compile Include="World\Factions\Trading\EnvoyTradeEntity.cs" />
@@ -708,7 +712,6 @@
     <Compile Include="World\Potions\GatherPotionsTask.cs" />
     <Compile Include="World\Potions\Potion.cs" />
     <Compile Include="World\Zones\ZoneFactoryAttribute.cs" />
-    <Compile Include="World\Zones\ZoneLibrary.cs" />
     <Compile Include="World\Zones\AnimalPen.cs" />
     <Compile Include="World\Zones\BalloonPort.cs" />
     <Compile Include="World\Zones\Graveyard.cs" />
@@ -795,10 +798,10 @@
     <Compile Include="World\Rail\RailEntity.cs" />
     <Compile Include="World\Rail\RailHelper-Combinations.cs" />
     <Compile Include="World\Rail\RailHelper.cs" />
-    <Compile Include="World\Rail\RailLibrary.cs" />
+    <Compile Include="Library\RailLibrary.cs" />
     <Compile Include="World\Rail\RailPiece.cs" />
     <Compile Include="World\Overworld\BiomeData.cs" />
-    <Compile Include="World\Overworld\BiomeLibrary.cs" />
+    <Compile Include="Library\BiomeLibrary.cs" />
     <Compile Include=".\World\CollisionType.cs" />
     <Compile Include=".\World\CompanyInformation.cs" />
     <Compile Include=".\World\DetailMoteData.cs" />
@@ -854,7 +857,7 @@
     <Compile Include="World\Voxels\VoxelHelpers\Neighbors.cs" />
     <Compile Include="World\Voxels\VoxelHelpers\Reveal.cs" />
     <Compile Include="World\Voxels\VoxelHelpers\VoxelIsCompletelySurrounded.cs" />
-    <Compile Include="World\Voxels\VoxelLibrary.cs" />
+    <Compile Include="Library\VoxelLibrary.cs" />
     <Compile Include="World\Voxels\VoxelListPrimitive.cs" />
     <Compile Include="World\Voxels\VoxelType.cs" />
     <Compile Include="World\Water\LiquidAsset.cs" />

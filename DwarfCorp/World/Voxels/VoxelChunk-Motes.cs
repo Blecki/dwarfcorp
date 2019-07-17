@@ -103,39 +103,40 @@ namespace DwarfCorp
                             continue;
 
                     // Find biome type.
-                    var biomeData = Manager.World.Overworld.Map.GetBiomeAt(v.WorldPosition, Manager.World.Overworld.InstanceSettings.Origin);  
-
-                    // Don't generate if not on grass type.
-                    if (v.GrassType == 0 || Library.GetGrassType(v.GrassType).Name != biomeData.GrassDecal)
-                        continue;
-
-                    // Biomes can contain multiple types of mote.
-                    foreach (var moteDetail in biomeData.Motes)
+                    if (Manager.World.Overworld.Map.GetBiomeAt(v.WorldPosition, Manager.World.Overworld.InstanceSettings.Origin).HasValue(out var biomeData))
                     {
-                        // Lower mote if voxel is ramped.
-                        float vOffset = 0.0f;
-                        if (v.RampType != RampType.None)
-                            vOffset = -0.5f;
-
-                        var vPos = v.WorldPosition * moteDetail.RegionScale;
-                        float value = MoteNoise.Noise(vPos.X, vPos.Y, vPos.Z);
-
-                        if (!(Math.Abs(value) > moteDetail.SpawnThreshold))
+                        // Don't generate if not on grass type.
+                        if (v.GrassType == 0 || Library.GetGrassType(v.GrassType).Name != biomeData.GrassDecal)
                             continue;
 
-                        float s = MoteScaleNoise.Noise(vPos.X, vPos.Y, vPos.Z) * moteDetail.MoteScale;
+                        // Biomes can contain multiple types of mote.
+                        foreach (var moteDetail in biomeData.Motes)
+                        {
+                            // Lower mote if voxel is ramped.
+                            float vOffset = 0.0f;
+                            if (v.RampType != RampType.None)
+                                vOffset = -0.5f;
 
-                        var smallNoise = ClampVector(VertexNoise.GetRandomNoiseVector(vPos * 20.0f) * 20.0f, 0.4f);
-                        smallNoise.Y = 0.0f;
+                            var vPos = v.WorldPosition * moteDetail.RegionScale;
+                            float value = MoteNoise.Noise(vPos.X, vPos.Y, vPos.Z);
 
-                        var mote = GenerateGrassMote(
-                            Manager.World,
-                            v.WorldPosition + new Vector3(0.5f, 1.0f + s * 0.5f + vOffset, 0.5f) + smallNoise,
-                            new Color(v.Sunlight ? 255 : 0, 128, 0),
-                            s,
-                            moteDetail);
+                            if (!(Math.Abs(value) > moteDetail.SpawnThreshold))
+                                continue;
 
-                        moteList.Add(mote);
+                            float s = MoteScaleNoise.Noise(vPos.X, vPos.Y, vPos.Z) * moteDetail.MoteScale;
+
+                            var smallNoise = ClampVector(VertexNoise.GetRandomNoiseVector(vPos * 20.0f) * 20.0f, 0.4f);
+                            smallNoise.Y = 0.0f;
+
+                            var mote = GenerateGrassMote(
+                                Manager.World,
+                                v.WorldPosition + new Vector3(0.5f, 1.0f + s * 0.5f + vOffset, 0.5f) + smallNoise,
+                                new Color(v.Sunlight ? 255 : 0, 128, 0),
+                                s,
+                                moteDetail);
+
+                            moteList.Add(mote);
+                        }
                     }
                 }
             }

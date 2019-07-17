@@ -350,6 +350,50 @@ namespace DwarfCorp
                 return null;
             }
         }
+
+        public static RawPrimitive GetContentMesh(string _asset)
+        {
+            string asset = FileUtils.NormalizePath(_asset);
+            if (asset == null)
+            {
+                DwarfGame.LogSentryBreadcrumb("AssetManager", string.Format("Asset {0} was null.", _asset), SharpRaven.Data.BreadcrumbLevel.Warning);
+                return null;
+            }
+
+            try
+            {
+                var filename = ResolveContentPath(asset, ".obj");
+                if (Path.GetExtension(filename) == ".xnb")
+                {
+                    //var toReturn = Content.Load<ModelMesh>(filename.Substring(0, filename.Length - 4));
+                    //TextureCache[asset] = toReturn;
+                    //return toReturn;
+                    // Todo: Convert model mesh to raw prim?
+                    return null;
+                }
+                else if (Path.GetExtension(filename) == ".obj")
+                {
+                    return ObjLoader.LoadObject(File.ReadAllLines(FileUtils.NormalizePath(filename)));
+                }
+                else
+                    return null;
+            }
+            catch (Exception exception)
+            {
+                Console.Error.WriteLine(exception.ToString());
+                try
+                {
+                    DwarfGame.LogSentryBreadcrumb("AssetManager", string.Format("Failed to load asset {0} : {1}", asset, exception.ToString()), SharpRaven.Data.BreadcrumbLevel.Warning);
+                    return null;
+                }
+                catch (Exception innerException)
+                {
+                    DwarfGame.LogSentryBreadcrumb("AssetManager", string.Format("Everything is broken! {0}", innerException.ToString()), SharpRaven.Data.BreadcrumbLevel.Error);
+                    return null;
+                }
+            }
+        }
+
     }
 
 }

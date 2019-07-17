@@ -17,11 +17,10 @@ namespace DwarfCorp
         public GameComponent ParentBody { get; set; }
         public BoundingBox PositionConstrain { get; set; }
         public bool Hatched = false;
+
         public Egg()
         {
         }
-
-        private static int shit = 0;
 
         public Egg(GameComponent body, string adult, ComponentManager manager, Vector3 position, BoundingBox positionConstraint) :
             base(manager)
@@ -30,12 +29,6 @@ namespace DwarfCorp
             Adult = adult;
             Birthday = Manager.World.Time.CurrentDate + new TimeSpan(0, 12, 0, 0);
             ParentBody = body;
-
-            if (adult == "Bird")
-            {
-                shit += 1;
-                PerformanceMonitor.SetMetric("SHIT", shit);
-            }
         }
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
@@ -47,12 +40,12 @@ namespace DwarfCorp
                 var adult = EntityFactory.CreateEntity<GameComponent>(Adult, ParentBody.Position);
                 if (adult != null)
                 {
-                    var creatureAI = adult.GetRoot().GetComponent<CreatureAI>();
-                    if (creatureAI != null && World.GetSpeciesPopulation(creatureAI.Stats.Species) < creatureAI.Stats.Species.SpeciesLimit)
+                    if (adult.GetRoot().GetComponent<CreatureAI>().HasValue(out var creatureAI) && World.GetSpeciesPopulation(creatureAI.Stats.Species) < creatureAI.Stats.Species.SpeciesLimit)
                         creatureAI.PositionConstraint = PositionConstrain;
                     else
                         adult.GetRoot().Delete();
                 }
+
                 GetRoot().Die();
             }
         }

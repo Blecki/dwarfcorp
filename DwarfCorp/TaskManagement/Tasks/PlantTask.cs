@@ -85,7 +85,7 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
-        public override Act CreateScript(Creature agent)
+        public override MaybeNull<Act> CreateScript(Creature agent)
         {
             return (new PlantAct(agent.AI) { Resources = RequiredResources, FarmToWork = FarmToWork, Name = "Work " + FarmToWork.Voxel.Coordinate } 
             | new Wrap(() => Cleanup(agent.AI))) & new Wrap(() => Cleanup(agent.AI));

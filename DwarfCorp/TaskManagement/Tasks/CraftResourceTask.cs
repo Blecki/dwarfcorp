@@ -109,7 +109,7 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
-        public override Act CreateScript(Creature creature)
+        public override MaybeNull<Act> CreateScript(Creature creature)
         {
             return new Sequence(new CraftItemAct(creature.AI, Item)
             {

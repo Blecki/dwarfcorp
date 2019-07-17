@@ -148,7 +148,7 @@ namespace DwarfCorp
             DebugHelper.AssertNotNull(DesignationSet);
             DebugHelper.AssertNotNull(World);
 
-            BoxPrimitive bedrockModel = Library.GetVoxelPrimitive("Bedrock");
+            //BoxPrimitive bedrockModel = Library.GetVoxelPrimitive("Bedrock");
             var sliceStack = new List<RawPrimitive>();
             var cache = new Cache();
             int maxViewingLevel = World.Renderer.PersistentSettings.MaxViewingLevel;
@@ -191,7 +191,7 @@ namespace DwarfCorp
                     chunk.RebuildMoteLayer(localY);
 
                 DebugHelper.AssertNotNull(sliceGeometry);
-                BuildSliceGeometry(chunk, bedrockModel, cache, localY, sliceGeometry, DesignationSet, World);
+                BuildSliceGeometry(chunk, cache, localY, sliceGeometry, DesignationSet, World);
 
                 sliceStack.Add(sliceGeometry);
             }
@@ -206,7 +206,7 @@ namespace DwarfCorp
 
         private static void BuildSliceGeometry(
             VoxelChunk chunk, 
-            BoxPrimitive bedrockModel, 
+            //BoxPrimitive bedrockModel, 
             Cache Cache,
             int LocalY, 
             RawPrimitive sliceGeometry,
@@ -216,7 +216,7 @@ namespace DwarfCorp
 
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
-                    BuildVoxelGeometry(sliceGeometry, x, LocalY, z, chunk, bedrockModel, Cache, DesignationSet, World);
+                    BuildVoxelGeometry(sliceGeometry, x, LocalY, z, chunk, Cache, DesignationSet, World);
         }
 
         private static GlobalVoxelCoordinate GetCacheKey(VoxelHandle Handle, VoxelVertex Vertex)
@@ -256,7 +256,7 @@ namespace DwarfCorp
             int Y,
             int Z,
             VoxelChunk Chunk,
-            BoxPrimitive BedrockModel,
+            //BoxPrimitive BedrockModel,
             Cache Cache,
             DesignationSet Designations,
             WorldManager World)
@@ -266,13 +266,17 @@ namespace DwarfCorp
             BuildDesignationGeometry(Into, Chunk, Cache, Designations, World, v);
 
             if ((v.IsExplored && v.IsEmpty)) return;
-
-            var primitive = Library.GetVoxelPrimitive(v.Type);
-            if (v.IsExplored && primitive == null) return;
             if (!v.IsExplored && v.Sunlight) return;
 
-            if (primitive == null) primitive = BedrockModel;
+            if (Library.GetVoxelPrimitive(v.Type).HasValue(out BoxPrimitive primitive))
+            {
+                BuildVoxelGeometryFromPrimitive(Into, Chunk, Cache, v, primitive);
+            }
+            
+        }
 
+        private static void BuildVoxelGeometryFromPrimitive(RawPrimitive Into, VoxelChunk Chunk, Cache Cache, VoxelHandle v, BoxPrimitive primitive)
+        {
             var tint = v.Type.Tint;
 
             var uvs = primitive.UVs;
@@ -294,7 +298,7 @@ namespace DwarfCorp
             {
                 if ((designation.Type & World.Renderer.PersistentSettings.VisibleTypes) == designation.Type)
                 {
-                    var props = Library.GetDesignationTypeProperties(designation.Type);
+                    var props = Library.GetDesignationTypeProperties(designation.Type).Value;
                     var designationVisible = false;
 
                     if (designation.Type == DesignationType.Put)
@@ -304,26 +308,31 @@ namespace DwarfCorp
 
                     if (designationVisible)
                     {
-                        var desPrim = Library.GetVoxelPrimitive(Library.DesignationVoxelType);
-                        switch (props.DrawType)
+                        if (Library.GetVoxelPrimitive(Library.DesignationVoxelType).HasValue(out BoxPrimitive desPrim))
                         {
-                            case DrawBoxType.FullBox:
-                                for (int i = 0; i < 6; i++)
-                                    BuildVoxelFaceGeometry(Into, Chunk, Cache, desPrim, v, props.Color, desPrim.UVs, DesignationTransform, i, false);
-                                break;
-                            case DrawBoxType.TopBox:
-                                BuildVoxelFaceGeometry(Into, Chunk, Cache, desPrim, v, props.Color, desPrim.UVs, DesignationTransform, 0, false);
-                                break;
-                            case DrawBoxType.PreviewVoxel:
-                                {
-                                    var previewPrim = Library.GetVoxelPrimitive(Library.GetVoxelType(designation.Tag.ToString()));
-                                    var offsetMatrix = Matrix.Identity;
-                                    if (!v.IsEmpty)
-                                        offsetMatrix = Matrix.CreateTranslation(0.0f, 0.1f, 0.0f);
+                            switch (props.DrawType)
+                            {
+                                case DrawBoxType.FullBox:
                                     for (int i = 0; i < 6; i++)
-                                        BuildVoxelFaceGeometry(Into, Chunk, Cache, previewPrim, v, props.Color, previewPrim.UVs, offsetMatrix, i, false);
-                                }
-                                break;
+                                        BuildVoxelFaceGeometry(Into, Chunk, Cache, desPrim, v, props.Color, desPrim.UVs, DesignationTransform, i, false);
+                                    break;
+                                case DrawBoxType.TopBox:
+                                    BuildVoxelFaceGeometry(Into, Chunk, Cache, desPrim, v, props.Color, desPrim.UVs, DesignationTransform, 0, false);
+                                    break;
+                                case DrawBoxType.PreviewVoxel:
+                                    {
+                                        if (Library.GetVoxelType(designation.Tag.ToString()).HasValue(out VoxelType vType))
+                                            if (Library.GetVoxelPrimitive(vType).HasValue(out BoxPrimitive previewPrim))
+                                            {
+                                                var offsetMatrix = Matrix.Identity;
+                                                if (!v.IsEmpty)
+                                                    offsetMatrix = Matrix.CreateTranslation(0.0f, 0.1f, 0.0f);
+                                                for (int i = 0; i < 6; i++)
+                                                    BuildVoxelFaceGeometry(Into, Chunk, Cache, previewPrim, v, props.Color, previewPrim.UVs, offsetMatrix, i, false);
+                                            }
+                                    }
+                                    break;
+                            }
                         }
                     }
                 }
@@ -985,17 +994,19 @@ namespace DwarfCorp
         private static BoxPrimitive.BoxTextureCoords ComputeTransitionTexture(VoxelHandle V)
         {
             var type = V.Type;
-            var primitive = Library.GetVoxelPrimitive(type);
 
-            if (!type.HasTransitionTextures && primitive != null)
-                return primitive.UVs;
-            else if (primitive == null)
-                return null;
-            else
+            if (Library.GetVoxelPrimitive(type).HasValue(out BoxPrimitive primitive))
             {
-                var transition = ComputeTransitions(V.Chunk.Manager, V, type);
-                return type.TransitionTextures[transition];
+                if (!type.HasTransitionTextures)
+                    return primitive.UVs;
+                else
+                {
+                    var transition = ComputeTransitions(V.Chunk.Manager, V, type);
+                    return type.TransitionTextures[transition];
+                }
             }
+            else
+                return null;
         }
 
         private static BoxTransition ComputeTransitions(

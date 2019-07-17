@@ -289,7 +289,8 @@ namespace DwarfCorp
                 TimeStamp = Manager.World.Time.CurrentDate
             };
 
-            Physics.GetComponent<DwarfThoughts>()?.AddThought(r);
+            if (Physics.GetComponent<DwarfThoughts>().HasValue(out var thoughts))
+                thoughts.AddThought(r);
 
             return r;
         }

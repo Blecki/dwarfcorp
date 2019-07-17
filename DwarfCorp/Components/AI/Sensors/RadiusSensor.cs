@@ -46,19 +46,18 @@ namespace DwarfCorp
 
                 foreach (var body in Manager.World.EnumerateIntersectingObjects(BoundingBox, b => b.Active && !Object.ReferenceEquals(b, myRoot) && b.IsRoot()))
                 {
-                    var minion = body.GetComponent<Creature>();
-                    if (minion == null)
-                        continue;
+                    if (body.GetComponent<Creature>().HasValue(out var minion))
+                    {
+                        float dist = (body.Position - GlobalTransform.Translation).LengthSquared();
 
-                    float dist = (body.Position - GlobalTransform.Translation).LengthSquared();
+                        if (dist > SenseRadius)
+                            continue;
 
-                    if (dist > SenseRadius)
-                        continue;
+                        if (CheckLineOfSight && VoxelHelpers.DoesRayHitSolidVoxel(Manager.World.ChunkManager, Position, body.Position))
+                            continue;
 
-                    if (CheckLineOfSight && VoxelHelpers.DoesRayHitSolidVoxel(Manager.World.ChunkManager, Position, body.Position))
-                        continue;
-
-                    Creatures.Add(minion);
+                        Creatures.Add(minion);
+                    }
                 }
             }
 

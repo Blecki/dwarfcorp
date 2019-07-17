@@ -12,9 +12,6 @@ namespace DwarfCorp
 {
     public class CraftedFixture : Fixture
     {
-        [JsonIgnore]
-        public FixtureCraftDetails CraftDetails { get { return GetRoot().GetComponent<FixtureCraftDetails>(); } }
-
         public CraftedFixture()
         {
             this.SetFlag(Flag.ShouldSerialize, true);

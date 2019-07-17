@@ -32,26 +32,25 @@ namespace DwarfCorp
 
         public bool CanCatch(GameComponent animal, bool print=false)
         {
-            var creature = animal.GetRoot().GetComponent<Creature>();
-            if (creature == null)
-                return false;
-
-            if (!animal.GetRoot().Tags.Contains("DomesticAnimal"))
-                return false;
-
-            var pens = World.EnumerateZones().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.IsBuilt &&
-                            (pen.Species == "" || pen.Species == creature.Stats.CurrentClass.Name));
-
-            if (pens.Any())
+            if (animal.GetRoot().GetComponent<Creature>().HasValue(out var creature))
             {
-                if (print)
-                    World.UserInterface.ShowTooltip("Will wrangle this " + animal.GetRoot().GetComponent<Creature>().Stats.CurrentClass.Name);
-                return true;
-            }
-            else
-            {
-                if (print)
-                    World.UserInterface.ShowTooltip("Can't wrangle this " + animal.GetRoot().GetComponent<Creature>().Stats.CurrentClass.Name + " : need more animal pens.");
+                if (!animal.GetRoot().Tags.Contains("DomesticAnimal"))
+                    return false;
+
+                var pens = World.EnumerateZones().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.IsBuilt &&
+                                (pen.Species == "" || pen.Species == creature.Stats.CurrentClass.Name));
+
+                if (pens.Any())
+                {
+                    if (print)
+                        World.UserInterface.ShowTooltip("Will wrangle this " + creature.Stats.CurrentClass.Name);
+                    return true;
+                }
+                else
+                {
+                    if (print)
+                        World.UserInterface.ShowTooltip("Can't wrangle this " + creature.Stats.CurrentClass.Name + " : need more animal pens.");
+                }
             }
 
             return false;
@@ -59,27 +58,21 @@ namespace DwarfCorp
 
         public override void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)
         {
-            List<Task> tasks = new List<Task>();
+            var tasks = new List<Task>();
+
             foreach (GameComponent animal in bodies.Where(c => c.Tags.Contains("DomesticAnimal")))
             {
                 Drawer3D.DrawBox(animal.BoundingBox, Color.Tomato, 0.1f, false);
+
                 switch (button)
                 {
                     case InputManager.MouseButton.Left:
-                        {
-                            if (CanCatch(animal, true))
-                            {
-                                var task = new WrangleAnimalTask(animal.GetRoot().GetComponent<Creature>()) { Priority = TaskPriority.Medium };
-                                tasks.Add(task);
-                            }
-                        }
+                        if (CanCatch(animal, true) && animal.GetRoot().GetComponent<Creature>().HasValue(out var creature))
+                            tasks.Add(new WrangleAnimalTask(creature) { Priority = TaskPriority.Medium });
                         break;
                     case InputManager.MouseButton.Right:
-                        {
-                            var existingOrder = World.PersistentData.Designations.GetEntityDesignation(animal, DesignationType.Wrangle);
-                            if (existingOrder != null)
-                                World.TaskManager.CancelTask(existingOrder.Task);
-                        }
+                        if (World.PersistentData.Designations.GetEntityDesignation(animal, DesignationType.Wrangle).HasValue(out var existingOrder))
+                            World.TaskManager.CancelTask(existingOrder.Task);
                         break;
                 }
             }

@@ -34,14 +34,9 @@ namespace DwarfCorp
         {
             base.Update(gameTime, chunks, camera);
 
-            if (CachedBiome == null)
-            {
-                var biome = World.Overworld.Map.GetBiomeAt(LocalPosition, chunks.World.Overworld.InstanceSettings.Origin);
-                if (biome != null)
-                {
+            if (String.IsNullOrEmpty(CachedBiome))
+                if (World.Overworld.Map.GetBiomeAt(LocalPosition, chunks.World.Overworld.InstanceSettings.Origin).HasValue(out var biome))
                     CachedBiome = biome.Name;
-                }
-            }
 
             var factor = 1.0f;
 

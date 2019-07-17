@@ -5,10 +5,6 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// A creature takes an item to an open stockpile and leaves it there.
-    /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GatherItemAct : CompoundCreatureAct
     {
         public GameComponent ItemToGather { get; set; }
@@ -23,8 +19,7 @@ namespace DwarfCorp
         {
             if (creature.Blackboard.GetData<bool>("NoPath", false))
             {
-                var designation = creature.World.PersistentData.Designations.GetEntityDesignation(ItemToGather, DesignationType.Gather);
-                if (designation != null)
+                if (creature.World.PersistentData.Designations.GetEntityDesignation(ItemToGather, DesignationType.Gather).HasValue(out var designation))
                 {
                     creature.World.MakeAnnouncement(String.Format("{0} cancelled gather task because it is unreachable", creature.Stats.FullName));
                     if (creature.Faction == creature.World.PlayerFaction)
@@ -32,6 +27,7 @@ namespace DwarfCorp
                         creature.World.TaskManager.CancelTask(designation.Task);
                     }
                 }
+
                 Agent.SetMessage("Failed to gather. No path.");
                 yield return Act.Status.Fail;
             }

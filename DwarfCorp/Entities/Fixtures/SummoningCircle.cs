@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using DwarfCorp.GameStates;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
 namespace DwarfCorp
 {
@@ -39,10 +36,13 @@ namespace DwarfCorp
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             base.CreateCosmeticChildren(manager);
-            var sprite = GetComponent<SimpleSprite>();
-            sprite.OrientationType = SimpleSprite.OrientMode.Fixed;
-            sprite.LocalTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f) * Matrix.CreateTranslation(Vector3.UnitY * -0.45f);
-            sprite.LightsWithVoxels = false;
+
+            if (GetComponent<SimpleSprite>().HasValue(out var sprite))
+            {
+                sprite.OrientationType = SimpleSprite.OrientMode.Fixed;
+                sprite.LocalTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f) * Matrix.CreateTranslation(Vector3.UnitY * -0.45f);
+                sprite.LightsWithVoxels = false;
+            }
         }
 
         public override void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)

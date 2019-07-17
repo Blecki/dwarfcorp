@@ -64,10 +64,13 @@ namespace DwarfCorp
                 new Vector3(0.0f, -0.30f, 0.0f),
                 (v) =>
                 {
-                    if (v.Type == VoxelChangeEventType.VoxelTypeChanged
-                        && (v.NewVoxelType == 0 || !Library.GetVoxelType(v.NewVoxelType).IsSoil))
+                    if (v.Type == VoxelChangeEventType.VoxelTypeChanged)
                     {
-                        Die();
+                        if (v.NewVoxelType == 0)
+                            Die();
+                        if (Library.GetVoxelType(v.NewVoxelType).HasValue(out VoxelType soilType))
+                            if (!soilType.IsSoil)
+                                Die();
                     }
                     else if (v.Type == VoxelChangeEventType.RampsChanged)
                     {
@@ -115,8 +118,7 @@ namespace DwarfCorp
             LocalBoundingBoxOffset = new Vector3(0.0f, Scale / 2.0f, 0.0f);
             UpdateBoundingBox();
 
-            var mesh = GetComponent<InstanceMesh>();
-            if (mesh != null)
+            if (GetComponent<InstanceMesh>().HasValue(out var mesh))
                 mesh.LocalTransform = Matrix.CreateScale(1.0f, Scale, 1.0f) * Matrix.CreateTranslation(GetBoundingBox().Center() - Position);
         }
 
@@ -131,25 +133,16 @@ namespace DwarfCorp
             if (currentHour != LastGrowthHour)
             {
                 LastGrowthHour = currentHour;
-                var isSeedling = GetRoot().GetComponent<Seedling>() != null;
-               
-                if (!isSeedling && MathFunctions.RandEvent(0.01f))
-                {
-                    var bodies = World.EnumerateIntersectingObjects(GetBoundingBox().Expand(2));
-
-                    int numPlants = bodies.Count(b => b is Plant);
-                    if (numPlants < 10)
+                if (!GetRoot().GetComponent<Seedling>().HasValue(out var seedling) && MathFunctions.RandEvent(0.01f))
+                    if (World.EnumerateIntersectingObjects(GetBoundingBox().Expand(2)).Count(b => b is Plant) < 10)
                     {
                         Vector3 randomPoint = MathFunctions.RandVector3Box(GetBoundingBox().Expand(4));
                         randomPoint.Y = World.WorldSizeInVoxels.Y - 1;
                
                         VoxelHandle under = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(randomPoint)));
                         if (under.IsValid && under.Type.IsSoil)
-                        {
                             EntityFactory.CreateEntity<Seedling>(Name + " Sprout", under.GetBoundingBox().Center() + Vector3.Up);
-                        }
                     }
-                }
             }
            
         }

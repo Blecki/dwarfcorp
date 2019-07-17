@@ -54,27 +54,29 @@ namespace DwarfCorp
 
         public void SummonSkeleton(Vector3 pos)
         {
-            var skeleton = EntityFactory.CreateEntity<Physics>("Skeleton", pos).GetRoot().GetComponent<Skeleton>();
-            if (skeleton.Faction != null)
-                skeleton.Faction.Minions.Remove(skeleton.AI);
-            skeleton.Faction = this.Faction;
-            this.Faction.AddMinion(skeleton.AI);
-            Skeletons.Add(skeleton);
-            Matrix animatePosition = skeleton.Sprite.LocalTransform;
-            animatePosition.Translation = animatePosition.Translation - new Vector3(0, 1, 0);
-            skeleton.Sprite.AnimationQueue.Add(new EaseMotion(1.0f, animatePosition, skeleton.Sprite.LocalTransform.Translation));
-            Manager.World.ParticleManager.Trigger("green_flame", pos, Color.White, 10);
-            Manager.World.ParticleManager.Trigger("dirt_particle", pos, Color.White, 10);
+            if (EntityFactory.CreateEntity<Physics>("Skeleton", pos).GetRoot().GetComponent<Skeleton>().HasValue(out var skeleton))
+            {
+                if (skeleton.Faction != null)
+                    skeleton.Faction.Minions.Remove(skeleton.AI);
+                skeleton.Faction = this.Faction;
+                this.Faction.AddMinion(skeleton.AI);
+                Skeletons.Add(skeleton);
+                Matrix animatePosition = skeleton.Sprite.LocalTransform;
+                animatePosition.Translation = animatePosition.Translation - new Vector3(0, 1, 0);
+                skeleton.Sprite.AnimationQueue.Add(new EaseMotion(1.0f, animatePosition, skeleton.Sprite.LocalTransform.Translation));
+                Manager.World.ParticleManager.Trigger("green_flame", pos, Color.White, 10);
+                Manager.World.ParticleManager.Trigger("dirt_particle", pos, Color.White, 10);
 
-            var myEnvoy = Faction.TradeEnvoys.Where(envoy => envoy.Creatures.Contains(this)).FirstOrDefault();
-            
-            if (myEnvoy != null)
-                myEnvoy.Creatures.Add(skeleton.AI);
+                var myEnvoy = Faction.TradeEnvoys.Where(envoy => envoy.Creatures.Contains(this)).FirstOrDefault();
 
-            var myWarParty = Faction.WarParties.Where(party => party.Creatures.Contains(this)).FirstOrDefault();
-            
-            if (myWarParty != null)
-                myWarParty.Creatures.Add(skeleton.AI);
+                if (myEnvoy != null)
+                    myEnvoy.Creatures.Add(skeleton.AI);
+
+                var myWarParty = Faction.WarParties.Where(party => party.Creatures.Contains(this)).FirstOrDefault();
+
+                if (myWarParty != null)
+                    myWarParty.Creatures.Add(skeleton.AI);
+            }
         }
 
         public IEnumerable<Act.Status> SummonSkeleton(GameComponent grave)

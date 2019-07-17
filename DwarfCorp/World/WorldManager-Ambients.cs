@@ -1,31 +1,9 @@
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using BloomPostprocess;
-using DwarfCorp.Gui;
-using DwarfCorp.Gui.Widgets;
-using DwarfCorp.Tutorial;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Color = Microsoft.Xna.Framework.Color;
-using Point = Microsoft.Xna.Framework.Point;
-using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using DwarfCorp.GameStates;
-using Newtonsoft.Json;
-using DwarfCorp.Events;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace DwarfCorp
 {
-    // Todo: Split into WorldManager and WorldRenderer.
-    /// <summary>
-    /// This is the main game state for actually playing the game.
-    /// </summary>
     public partial class WorldManager : IDisposable
     {
         private string[] prevAmbience = { null, null };
@@ -107,33 +85,35 @@ namespace DwarfCorp
 
             // Now check for biome ambience.
             var pos = vox.WorldPosition;
-            var biome = Overworld.Map.GetBiomeAt(pos, Overworld.InstanceSettings.Origin);
 
-            if (biome != null && !string.IsNullOrEmpty(biome.DayAmbience))
+            if (Overworld.Map.GetBiomeAt(pos, Overworld.InstanceSettings.Origin).HasValue(out var biome))
             {
-                if (prevAmbience[0] != biome.DayAmbience)
+                if (!string.IsNullOrEmpty(biome.DayAmbience))
                 {
-                    if (!string.IsNullOrEmpty(prevAmbience[0]))
+                    if (prevAmbience[0] != biome.DayAmbience)
                     {
-                        SoundManager.StopAmbience(prevAmbience[0]);
-                        prevAmbience[0] = null;
+                        if (!string.IsNullOrEmpty(prevAmbience[0]))
+                        {
+                            SoundManager.StopAmbience(prevAmbience[0]);
+                            prevAmbience[0] = null;
+                        }
+                        if (!string.IsNullOrEmpty(prevAmbience[1]))
+                        {
+                            SoundManager.StopAmbience(prevAmbience[1]);
+                            prevAmbience[1] = null;
+                        }
+                        SoundManager.PlayAmbience(biome.DayAmbience);
                     }
-                    if (!string.IsNullOrEmpty(prevAmbience[1]))
-                    {
-                        SoundManager.StopAmbience(prevAmbience[1]);
-                        prevAmbience[1] = null;
-                    }
-                    SoundManager.PlayAmbience(biome.DayAmbience);
+
+                    prevAmbience[0] = biome.DayAmbience;
                 }
 
-                prevAmbience[0] = biome.DayAmbience;
-            }
+                if (!string.IsNullOrEmpty(biome.NightAmbience) && prevAmbience[1] != biome.NightAmbience)
+                {
+                    prevAmbience[1] = biome.NightAmbience;
 
-            if (!string.IsNullOrEmpty(biome.NightAmbience) && prevAmbience[1] != biome.NightAmbience)
-            {
-                prevAmbience[1] = biome.NightAmbience;
-
-                SoundManager.PlayAmbience(biome.NightAmbience);
+                    SoundManager.PlayAmbience(biome.NightAmbience);
+                }
             }
         }
     }

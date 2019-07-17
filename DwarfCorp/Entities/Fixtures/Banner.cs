@@ -1,35 +1,3 @@
-// Flag.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using DwarfCorp.GameStates;
@@ -138,23 +106,19 @@ namespace DwarfCorp
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
 
             if (!banners.ContainsKey(Logo))
-            {
                 GenerateData(graphicsDevice, 1, 0.5f, 0.25f);
-            }
 
             var banner = banners[Logo];
 
             var oldWind = effect.WindDirection;
             var oldWindForce = effect.WindForce;
             
-            var phys = Parent.GetRoot().GetComponent<Physics>();
-            if (phys != null)
+            if (Parent.GetRoot().GetComponent<Physics>().HasValue(out var phys))
             {
                 Vector3 vel = -phys.Velocity;
                 if (vel.LengthSquared() > 0.001f)
-                {
                     vel.Normalize();
-                }
+
                 Vector3 newWind = vel;
                 float newWindForce = Math.Max(phys.Velocity.LengthSquared() * 0.005f, 0.00001f);
                 effect.WindForce = prevWindForce*0.9f + newWindForce*0.1f;
@@ -162,15 +126,11 @@ namespace DwarfCorp
                 prevWindForce = effect.WindForce;
                 prevWindDirection = effect.WindDirection;
             }
+
             if (banner.Mesh.IsDisposed || banner.Mesh.GraphicsDevice.IsDisposed || banner.Texture.IsDisposed || banner.Texture.IsContentLost)
-            {
                 GenerateData(graphicsDevice, 1, 0.5f, 0.25f);
-            }
             if (banner.Mesh.IsDisposed || banner.Mesh.GraphicsDevice.IsDisposed || banner.Texture.IsDisposed || banner.Texture.IsContentLost)
-            {
-                // Oh well!
                 return;
-            }
 
             graphicsDevice.SetVertexBuffer(banner.Mesh);
             graphicsDevice.Indices = banner.Indices;
@@ -182,11 +142,13 @@ namespace DwarfCorp
             effect.SelfIlluminationTexture = null;
             effect.LightRamp = LightRamp;
             effect.VertexColorTint = Color.White;
+
             foreach (var pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
                 graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, banner.Verts.Length, 0, banner.Idx.Length / 3);
             }
+
             effect.SetTexturedTechnique();
             effect.WindDirection = oldWind;
             effect.WindForce = oldWindForce;

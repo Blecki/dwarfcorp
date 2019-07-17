@@ -37,9 +37,11 @@ namespace DwarfCorp
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             base.CreateCosmeticChildren(manager);
-            var sprite = GetComponent<SimpleSprite>();
-            sprite.OrientationType = SimpleSprite.OrientMode.YAxis;
-            sprite.LightsWithVoxels = false;
+            if (GetComponent<SimpleSprite>().HasValue(out var sprite))
+            {
+                sprite.OrientationType = SimpleSprite.OrientMode.YAxis;
+                sprite.LightsWithVoxels = false;
+            }
         }
 
         public override void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
@@ -48,7 +50,7 @@ namespace DwarfCorp
             {
                 // Prevent towers from healing when they have no charge.
                 var magicalObject = GetComponent<MagicalObject>();
-                if (magicalObject != null && magicalObject.CurrentCharges == 0) return;
+                if (magicalObject.HasValue(out var magObject) && magObject.CurrentCharges == 0) return;
 
                 HealTimer.Update(Time);
                 if (HealTimer.HasTriggered)
@@ -56,25 +58,28 @@ namespace DwarfCorp
                     var objects = World.EnumerateIntersectingObjects(new BoundingBox(-Vector3.One * HealRadius + Position, Vector3.One * HealRadius + Position), CollisionType.Dynamic);
                     foreach (var obj in objects)
                     {
-                        var creature = obj.GetRoot().GetComponent<Creature>();
-                        if (creature == null || creature.AI == null || creature.AI.Faction != creature.World.PlayerFaction || creature.Hp == creature.MaxHealth)
-                            continue;
-                        if (MathFunctions.RandEvent(0.5f))
+                        if (obj.GetRoot().GetComponent<Creature>().HasValue(out var creature))
                         {
-                            creature.Heal(HealIncrease);
-                            IndicatorManager.DrawIndicator((HealIncrease).ToString() + " HP",
-                                creature.Physics.Position, 1.0f,
-                                    GameSettings.Default.Colors.GetColor("Positive", Microsoft.Xna.Framework.Color.Green));
-                            creature.DrawLifeTimer.Reset();
-                            World.ParticleManager.Trigger("star_particle", obj.Position, Color.Red, 10);
-                            World.ParticleManager.TriggerRay("star_particle", Position, obj.Position);
-                            SoundManager.PlaySound(ContentPaths.Audio.tinkle, obj.Position, true, 1.0f);
+                            if (creature.AI == null || creature.AI.Faction != creature.World.PlayerFaction || creature.Hp == creature.MaxHealth)
+                                continue;
 
-                            if (magicalObject != null)
+                            if (MathFunctions.RandEvent(0.5f))
                             {
-                                magicalObject.CurrentCharges -= 1;
-                                if (magicalObject.CurrentCharges == 0)
-                                    return;
+                                creature.Heal(HealIncrease);
+                                IndicatorManager.DrawIndicator((HealIncrease).ToString() + " HP",
+                                    creature.Physics.Position, 1.0f,
+                                        GameSettings.Default.Colors.GetColor("Positive", Microsoft.Xna.Framework.Color.Green));
+                                creature.DrawLifeTimer.Reset();
+                                World.ParticleManager.Trigger("star_particle", obj.Position, Color.Red, 10);
+                                World.ParticleManager.TriggerRay("star_particle", Position, obj.Position);
+                                SoundManager.PlaySound(ContentPaths.Audio.tinkle, obj.Position, true, 1.0f);
+
+                                if (magicalObject.HasValue(out var magObj))
+                                {
+                                    magObj.CurrentCharges -= 1;
+                                    if (magObj.CurrentCharges == 0)
+                                        return;
+                                }
                             }
                         }
                     }

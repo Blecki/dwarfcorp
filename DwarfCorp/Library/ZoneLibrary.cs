@@ -31,24 +31,24 @@ namespace DwarfCorp
             }
         }
 
-        public static ZoneType GetZoneType(string Name)
+        public static MaybeNull<ZoneType> GetZoneType(string Name)
         {
             InitializeZoneTypes();
             return ZoneTypes.Where(r => r.Name == Name).FirstOrDefault();
         }
       
-        public static Zone CreateZone(string name, WorldManager world)
+        public static MaybeNull<Zone> CreateZone(string name, WorldManager world)
         {
             InitializeZoneTypes();
-            if (ZoneFactoryFunctions.ContainsKey(name))
-                return ZoneFactoryFunctions[name](GetZoneType(name), world);
+            if (ZoneFactoryFunctions.ContainsKey(name) && GetZoneType(name).HasValue(out var zoneType))
+                return ZoneFactoryFunctions[name](zoneType, world);
             return null;
         }
 
-        public static IEnumerable<string> EnumerateZoneTypeNames()
+        public static IEnumerable<ZoneType> EnumerateZoneTypes()
         {
             InitializeZoneTypes();
-            return ZoneTypes.Select(r => r.Name);
+            return ZoneTypes;
         }
     }
 }

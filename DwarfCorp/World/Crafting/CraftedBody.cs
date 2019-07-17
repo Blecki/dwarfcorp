@@ -1,20 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using DwarfCorp.GameStates;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
-using System.Linq;
+﻿using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
     public class CraftedBody : GameComponent
     {
-        [JsonIgnore]
-        public FixtureCraftDetails CraftDetails { get { return GetRoot().GetComponent<FixtureCraftDetails>(); } }
-
         public CraftedBody()
         {
             this.SetFlag(Flag.ShouldSerialize, true);

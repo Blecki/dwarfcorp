@@ -104,27 +104,29 @@ namespace DwarfCorp.GameStates
                     if (!MathFunctions.RandEvent(0.05f)) continue;
                     var elevation = Overworld.Map.Height(x, y);
                     if (elevation <= Overworld.GenerationSettings.SeaLevel) continue;
-                    var biome = Library.GetBiome(Overworld.Map.Map[x, y].Biome);
-                    if (biome.Icon.X > 0 || biome.Icon.Y > 0)
+                    if (Library.GetBiome(Overworld.Map.Map[x, y].Biome).HasValue(out var biome))
                     {
-                        var bounds = Vector4.Zero;
-                        var uvs = iconSheet.GenerateTileUVs(biome.Icon, out bounds);
-                        var angle = MathFunctions.Rand() * (float)System.Math.PI;
+                        if (biome.Icon.X > 0 || biome.Icon.Y > 0)
+                        {
+                            var bounds = Vector4.Zero;
+                            var uvs = iconSheet.GenerateTileUVs(biome.Icon, out bounds);
+                            var angle = MathFunctions.Rand() * (float)System.Math.PI;
 
-                        TreePrimitive.AddQuad(
-                            Matrix.CreateRotationX(-(float)System.Math.PI / 2)
-                            * Matrix.CreateRotationY(angle)
-                            * Matrix.CreateScale(2.0f / Overworld.Width)
-                            * Matrix.CreateTranslation((float)x / Overworld.Width, elevation * HeightScale + 1.0f / Overworld.Width, (float)y / Overworld.Height),
-                            Color.White, Color.White, uvs, bounds);
+                            TreePrimitive.AddQuad(
+                                Matrix.CreateRotationX(-(float)System.Math.PI / 2)
+                                * Matrix.CreateRotationY(angle)
+                                * Matrix.CreateScale(2.0f / Overworld.Width)
+                                * Matrix.CreateTranslation((float)x / Overworld.Width, elevation * HeightScale + 1.0f / Overworld.Width, (float)y / Overworld.Height),
+                                Color.White, Color.White, uvs, bounds);
 
-                        TreePrimitive.AddQuad(
-                            Matrix.CreateRotationX(-(float)System.Math.PI / 2)
-                            * Matrix.CreateRotationY((float)System.Math.PI / 2)
-                            * Matrix.CreateRotationY(angle)
-                            * Matrix.CreateScale(2.0f / Overworld.Width)
-                            * Matrix.CreateTranslation((float)x / Overworld.Width, elevation * HeightScale + 1.0f / Overworld.Width, (float)y / Overworld.Height),
-                            Color.White, Color.White, uvs, bounds);
+                            TreePrimitive.AddQuad(
+                                Matrix.CreateRotationX(-(float)System.Math.PI / 2)
+                                * Matrix.CreateRotationY((float)System.Math.PI / 2)
+                                * Matrix.CreateRotationY(angle)
+                                * Matrix.CreateScale(2.0f / Overworld.Width)
+                                * Matrix.CreateTranslation((float)x / Overworld.Width, elevation * HeightScale + 1.0f / Overworld.Width, (float)y / Overworld.Height),
+                                Color.White, Color.White, uvs, bounds);
+                        }
                     }
                 }
         }

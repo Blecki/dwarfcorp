@@ -34,7 +34,7 @@ namespace DwarfCorp.GameStates
 
         private void LaunchNewGame()
         {
-            if (Settings.InstanceSettings == null || Settings.InstanceSettings.Cell == null)
+            if (Settings.InstanceSettings == null || Settings.InstanceSettings.Cell == null || Settings.Natives == null)
                 return; // Someone crashed here.
 
             var playerFaction = Settings.Natives.FirstOrDefault(f => f.Name == "Player");

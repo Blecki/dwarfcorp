@@ -44,22 +44,24 @@ namespace DwarfCorp
                 if (button == InputManager.MouseButton.Left)
                     if (CurrentZoneType.CanBuildHere(voxels, World))
                     {
-                        var toBuild = Library.CreateZone(CurrentZoneType.Name, World);
-                        var order = new BuildZoneOrder(toBuild, World);
-                        World.PersistentData.BuildDesignations.Add(order);
-                        World.PersistentData.Zones.Add(toBuild);
+                        if (Library.CreateZone(CurrentZoneType.Name, World).HasValue(out var toBuild))
+                        {
+                            var order = new BuildZoneOrder(toBuild, World);
+                            World.PersistentData.BuildDesignations.Add(order);
+                            World.PersistentData.Zones.Add(toBuild);
 
-                        foreach (var v in voxels.Where(v => v.IsValid && !v.IsEmpty))
-                            order.VoxelOrders.Add(new BuildVoxelOrder(order, order.ToBuild, v));
+                            foreach (var v in voxels.Where(v => v.IsValid && !v.IsEmpty))
+                                order.VoxelOrders.Add(new BuildVoxelOrder(order, order.ToBuild, v));
 
-                        order.WorkObjects.AddRange(Fence.CreateFences(World.ComponentManager,
-                            ContentPaths.Entities.DwarfObjects.constructiontape,
-                            order.VoxelOrders.Select(o => o.Voxel),
-                            true));
-                        foreach (var obj in order.WorkObjects)
-                            obj.Manager.RootComponent.AddChild(obj);
+                            order.WorkObjects.AddRange(Fence.CreateFences(World.ComponentManager,
+                                ContentPaths.Entities.DwarfObjects.constructiontape,
+                                order.VoxelOrders.Select(o => o.Voxel),
+                                true));
+                            foreach (var obj in order.WorkObjects)
+                                obj.Manager.RootComponent.AddChild(obj);
 
-                        World.TaskManager.AddTask(new BuildZoneTask(order));
+                            World.TaskManager.AddTask(new BuildZoneTask(order));
+                        }
                     }
             }
             else

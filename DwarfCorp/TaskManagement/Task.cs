@@ -33,7 +33,7 @@ namespace DwarfCorp
         public void OnUnAssign(CreatureAI agent) { AssignedCreatures.Remove(agent); }
 
         public virtual void Render(DwarfTime time) {}
-        public virtual Act CreateScript(Creature agent) { return null; }
+        public virtual MaybeNull<Act> CreateScript(Creature agent) { return null; }
         public virtual float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false) { return 1.0f; }
         public virtual Feasibility IsFeasible(Creature agent) { return Feasibility.Feasible; }
         public virtual bool ShouldRetry(Creature agent) { return AutoRetry; }

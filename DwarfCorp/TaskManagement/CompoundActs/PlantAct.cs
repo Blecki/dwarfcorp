@@ -47,10 +47,9 @@ namespace DwarfCorp
                     Drawer2D.DrawLoadBar(Agent.Manager.World.Renderer.Camera, Agent.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4,
                         FarmToWork.Progress / FarmToWork.TargetProgress);
 
-                    if (FarmToWork.Progress >= (FarmToWork.TargetProgress * 0.5f) && FarmToWork.Voxel.Type.Name != "TilledSoil")
-                    {
-                        FarmToWork.Voxel.Type = Library.GetVoxelType("TilledSoil");
-                    }
+                    if (FarmToWork.Progress >= (FarmToWork.TargetProgress * 0.5f) && FarmToWork.Voxel.Type.Name != "TilledSoil"
+                        && Library.GetVoxelType("TilledSoil").HasValue(out VoxelType tilledSoil))
+                        FarmToWork.Voxel.Type = tilledSoil;
 
                     if (FarmToWork.Progress >= FarmToWork.TargetProgress && !FarmToWork.Finished)
                     {

@@ -78,7 +78,7 @@ namespace DwarfCorp
             return Feasibility.Infeasible;
         }
 
-        public override Act CreateScript(Creature agent)
+        public override MaybeNull<Act> CreateScript(Creature agent)
         {
             if (!GetStockpile())
             {

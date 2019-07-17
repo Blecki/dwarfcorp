@@ -65,7 +65,7 @@ namespace DwarfCorp
         }
 
 
-        public override Act CreateScript(Creature creature)
+        public override MaybeNull<Act> CreateScript(Creature creature)
         {
             return new RechargeObjectAct(Entity, creature.AI);
         }

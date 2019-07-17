@@ -11,9 +11,9 @@ namespace DwarfCorp
 {
     public class CreatureAI : GameComponent
     {
-        public Task CurrentTask = null;
+        public Task CurrentTask = null; // Todo: MaybeNull
         public List<Task> Tasks = new List<Task>();
-        [JsonIgnore] protected Act CurrentAct = null;
+        [JsonIgnore] protected MaybeNull<Act> CurrentAct = null;
         public BoundingBox PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue), new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
         public EnemySensor Sensor { get; set; } // Todo: Don't serialize this.
         public CreatureMovement Movement { get; set; }
@@ -36,11 +36,15 @@ namespace DwarfCorp
         [OnDeserialized]
         public void OnDeserialize(StreamingContext ctx)
         {
-            if (Sensor == null)
-                Sensor = GetRoot().GetComponent<EnemySensor>();
-            Sensor.OnEnemySensed += Sensor_OnEnemySensed;
-
             PlanSubscriber = new PlanSubscriber((ctx.Context as WorldManager).PlanService);
+        }
+
+        public override void CreateCosmeticChildren(ComponentManager Manager)
+        {
+            base.CreateCosmeticChildren(Manager);
+
+            if (GetRoot().GetComponent<EnemySensor>().HasValue(out var Sensor))
+                Sensor.OnEnemySensed += Sensor_OnEnemySensed;
         }
 
         public CreatureAI()
@@ -268,10 +272,11 @@ namespace DwarfCorp
                 Tasks.Add(new MateTask(closestMate));
         }
 
-        protected void ChangeAct(Act NewAct)
+        protected void ChangeAct(MaybeNull<Act> NewAct)
         {
-            if (CurrentAct != null)
-                CurrentAct.OnCanceled();
+            if (CurrentAct.HasValue(out Act currentAct))
+                currentAct.OnCanceled();
+                        
             CurrentAct = NewAct;
         }
 
@@ -368,26 +373,27 @@ namespace DwarfCorp
             }
             else
             {
-                if (CurrentAct == null) // Should be impossible to have a current task and no current act.
+                if (!CurrentAct.HasValue()) // Should be impossible to have a current task and no current act.
                 {
                     // Try and recover the correct act.
                     // <blecki> I always run with a breakpoint set here... just in case.
                     ChangeAct(CurrentTask.CreateScript(Creature));
 
                     // This is a bad situation!
-                    if (CurrentAct == null)
+                    if (!CurrentAct.HasValue())
                         ChangeTask(null);
                 }
 
-                if (CurrentAct != null)
+                if (CurrentAct.HasValue(out Act currentAct))
                 {
-                    var status = CurrentAct.Tick();
+                    var status = currentAct.Tick();
                     bool retried = false;
-                    if (CurrentAct != null && CurrentTask != null)
+
+                    if (CurrentAct.HasValue(out Act newCurrentAct) && CurrentTask != null)
                     {
                         if (status == Act.Status.Fail)
                         {
-                            LastFailedAct = CurrentAct.Name;
+                            LastFailedAct = newCurrentAct.Name;
 
                             if (!FailedTasks.Any(task => task.TaskFailure.Equals(CurrentTask)))
                                 FailedTasks.Add(new FailedTask() { TaskFailure = CurrentTask, FailedTime = World.Time.CurrentDate });
@@ -441,8 +447,8 @@ namespace DwarfCorp
         {
             if (Creature.Physics.IsInLiquid)
                 return new FindLandTask();
-            var flames = GetRoot().GetComponent<Flammable>();
-            if (flames != null && flames.IsOnFire)
+
+            if (GetRoot().GetComponent<Flammable>().HasValue(out var flames) && flames.IsOnFire)
                 return new LongWanderAct(this) { Name = "Freak out!", PathLength = 2, Radius = 5 }.AsTask();
 
             return new LookInterestingTask();
@@ -536,10 +542,11 @@ namespace DwarfCorp
             if (CurrentTask != null)
                 desc += "    Task: " + CurrentTask.Name;
 
-            if (CurrentAct != null)
+            if (CurrentAct.HasValue(out Act currentAct))
             {
                 desc += "\n   Action: ";
-                Act act = CurrentAct;
+
+                var act = currentAct;
                 while (act != null && act.LastTickedChild != null)
                 {
                     Act prevAct = act;
@@ -601,24 +608,23 @@ namespace DwarfCorp
 
             // If our health is low, we're a little afraid.
             if (Creature.Hp < Creature.MaxHealth * 0.25f)
-                fear += 0.25f;
+                fear += 0.125f;
 
             // If there are a lot of nearby threats vs allies, we are even more afraid.
             if (Faction.Threats.Where(threat => threat != null &&  threat.AI != null && !threat.IsDead).Sum(threat => (threat.AI.Position - Position).Length() < 6.0f ? 1 : 0) - 
                 Faction.Minions.Where(minion => minion != null && !minion.IsDead).Sum(minion => (minion.Position - Position).Length() < 6.0f ? 1 : 0) > Creature.Stats.Constitution)
-                fear += 0.5f;
+                fear += 0.125f;
 
             // In this case, we have a very very weak weapon in comparison to our enemy.
             if (Creature.Attacks[0].Weapon.DamageAmount * 20 < creature.Creature.Hp)
-                fear += 0.25f;
+                fear += 0.125f;
 
             // If the creature has formidible weapons, we're in trouble.
             if (creature.Creature.Attacks[0].Weapon.DamageAmount * 4 > Creature.Hp)
-                fear += 0.25f;
+                fear += 0.125f;
 
             fear = Math.Min(fear, 0.99f);
 
-            var fighting = MathFunctions.RandEvent(1.0f - fear);
             if (MathFunctions.RandEvent(1.0f - fear))
                 return FightOrFlightResponse.Fight;
             else
@@ -738,10 +744,19 @@ namespace DwarfCorp
             cMem.SetValue("$time_of_day", new Yarn.Value(timeOfDay));
             cMem.SetValue("$is_asleep", new Yarn.Value(Employee.Stats.IsAsleep));
             cMem.SetValue("$is_on_strike", new Yarn.Value(Employee.Stats.IsOnStrike));
-            string grievences = TextGenerator.GetListString(Employee.Creature.Physics.GetComponent<DwarfThoughts>().Thoughts.Where(thought => thought.HappinessModifier < 0).Select(thought => thought.Description));
-            string goodThings = TextGenerator.GetListString(Employee.Creature.Physics.GetComponent<DwarfThoughts>().Thoughts.Where(thought => thought.HappinessModifier >= 0).Select(thought => thought.Description));
-            cMem.SetValue("$grievences", new Yarn.Value(grievences));
-            cMem.SetValue("$good_things", new Yarn.Value(goodThings));
+
+            if (Employee.Creature.Physics.GetComponent<DwarfThoughts>().HasValue(out var thoughts))
+            {
+                cMem.SetValue("$grievences", new Yarn.Value(TextGenerator.GetListString(thoughts.Thoughts.Where(thought => thought.HappinessModifier < 0).Select(thought => thought.Description))));
+                cMem.SetValue("$good_things", new Yarn.Value(TextGenerator.GetListString(thoughts.Thoughts.Where(thought => thought.HappinessModifier >= 0).Select(thought => thought.Description))));
+            }
+            else
+            {
+                cMem.SetValue("$grievences", new Yarn.Value(""));
+                cMem.SetValue("$good_things", new Yarn.Value(""));
+
+            }
+
             String[] personalities = { "happy", "grumpy", "anxious" };
             var myRandom = new Random(Employee.Stats.RandomSeed);
             cMem.SetValue("$personality", new Yarn.Value(personalities[myRandom.Next(0, personalities.Length)]));
@@ -758,7 +773,11 @@ namespace DwarfCorp
             cMem.SetValue("$employee_pay", new Yarn.Value((float)(decimal)Employee.Stats.CurrentLevel.Pay));
             cMem.SetValue("$employee_bonus", new Yarn.Value(4 * (float)(decimal)Employee.Stats.CurrentLevel.Pay));
             cMem.SetValue("$company_money", new Yarn.Value((float)(decimal)Employee.Faction.Economy.Funds));
-            cMem.SetValue("$is_on_fire", new Yarn.Value(Employee.Physics.GetComponent<Flammable>().IsOnFire));
+
+            if (Employee.Physics.GetComponent<Flammable>().HasValue(out var flames))
+                cMem.SetValue("$is_on_fire", new Yarn.Value(flames.IsOnFire));
+            else
+                cMem.SetValue("$is_on_fire", new Yarn.Value(false));
 
             var state = new YarnState(World, ContentPaths.employee_conversation, "Start", cMem);
             state.AddEmployeePortrait(Employee);

@@ -26,7 +26,8 @@ namespace DwarfCorp
 
         public override void OnEnd(Creature creature)
         {
-            creature.Physics.GetComponent<DwarfThoughts>()?.RemoveThought(SavedThought);
+            if (creature.Physics.GetComponent<DwarfThoughts>().HasValue(out var thoughts))
+                thoughts.RemoveThought(SavedThought);
             base.OnApply(creature);
         }
 

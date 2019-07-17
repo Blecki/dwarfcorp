@@ -131,8 +131,11 @@ namespace DwarfCorp
             {
                 if (IsNotSelectedDwarf(body))
                 {
-                    World.PersistentData.SelectedMinions.Add(body.GetRoot().GetComponent<CreatureAI>());
-                    newDwarves.Add(body.GetRoot().GetComponent<CreatureAI>());
+                    if (body.GetRoot().GetComponent<CreatureAI>().HasValue(out var ai))
+                    {
+                        World.PersistentData.SelectedMinions.Add(ai);
+                        newDwarves.Add(ai);
+                    }
 
                     World.Tutorial("dwarf selected");
                 }
@@ -158,8 +161,7 @@ namespace DwarfCorp
             List<GameComponent> bodyList = bodies.ToList();
             for (int i = 0; i < bodyList.Count; i++)
             {
-                Creature dwarf = bodyList[i].GetComponent<Creature>();
-                if (dwarf != null)
+                if (bodyList[i].GetComponent<Creature>().HasValue(out var dwarf))
                 {
                     sb.Append(dwarf.Stats.FullName + " (" + (dwarf.Stats.Title ?? dwarf.Stats.CurrentClass.Name) + ")");
                     if (dwarf.Stats.IsAsleep)

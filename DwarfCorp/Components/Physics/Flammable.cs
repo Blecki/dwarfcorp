@@ -71,13 +71,9 @@ namespace DwarfCorp
                 var insideBodies = World.EnumerateIntersectingObjects(Body.GetBoundingBox());
 
                 foreach (var body in insideBodies.Where(b => b != Parent && b.Active && b.Parent == Manager.RootComponent))
-                {
-                    var flames = body.GetComponent<Flammable>();
-                    if (flames != null)
-                    {
+                    if (body.GetComponent<Flammable>().HasValue(out var flames))
                         flames.Heat += 100;
-                    }
-                }
+
                 SoundManager.PlaySound(ContentPaths.Audio.fire, Body.Position, true);
             }
 
@@ -174,10 +170,10 @@ namespace DwarfCorp
             DamageTimer.Update(gameTime);
             CheckLavaTimer.Update(gameTime);
             SoundTimer.Update(gameTime);
-            if(CheckLavaTimer.HasTriggered)
-            {
+
+            if (CheckLavaTimer.HasTriggered)
                 CheckSurroundings(body, gameTime, chunks);
-            }
+
             Heat *= 0.999f;
 
             if(Heat > Flashpoint)
@@ -187,43 +183,36 @@ namespace DwarfCorp
 
                 if(SoundTimer.HasTriggered)
                     SoundManager.PlaySound(ContentPaths.Audio.fire, body.Position, true, 1.0f);
+
                 double totalSize = (body.BoundingBox.Max - body.BoundingBox.Min).Length();
                 int numFlames = (int) (totalSize / 4.0f) + 1;
+
                 for (int i = FlameSprites.Count; i < numFlames; i++)
-                {
                     CreateFlameSprite(MathFunctions.RandVector3Box(body.BoundingBox));
-                }
 
                 if (MathFunctions.RandEvent(0.06f))
-                {
                     foreach (var sprite in FlameSprites)
                     {
                         Manager.World.ParticleManager.Trigger("smoke", sprite.Position + Vector3.Up * 0.5f, Color.Black, 1);
                         Manager.World.ParticleManager.Trigger("flame", sprite.Position + Vector3.Up * 0.5f, Color.Black, 1);
                     }
-                }
 
                 if (MathFunctions.RandEvent(0.01f))
                 {
                     foreach (var sprite in FlameSprites)
-                    {
                         sprite.Die();
-                    }
+
                     FlameSprites.Clear();
                 }
-                var mesh = Parent.GetComponent<InstanceMesh>();
 
-                if (mesh != null)
-                {
+                if (Parent.GetComponent<InstanceMesh>().HasValue(out var mesh))
                     mesh.VertexColorTint = Color.DarkGray;
-                }
             }
             else
             {
                 foreach (var sprite in FlameSprites)
-                {
                     sprite.Die();
-                }
+
                 FlameSprites.Clear();
             }
         }

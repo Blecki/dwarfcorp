@@ -55,9 +55,7 @@ namespace DwarfCorp
                 }
             }
 
-            var designation = World.PersistentData.Designations.GetVoxelDesignation(voxel, DesignationType.Plant);
-
-            if (designation != null)
+            if (World.PersistentData.Designations.GetVoxelDesignation(voxel, DesignationType.Plant).HasValue(out var designation))
             {
                 World.UserInterface.ShowTooltip("You're already planting here.");
                 return false;
@@ -134,12 +132,8 @@ namespace DwarfCorp
             else if (button == InputManager.MouseButton.Right)
             {
                 foreach (var voxel in voxels)
-                {
-                    var designation = World.PersistentData.Designations.GetVoxelDesignation(voxel, DesignationType.Plant);
-
-                    if (designation != null)
+                    if (World.PersistentData.Designations.GetVoxelDesignation(voxel, DesignationType.Plant).HasValue(out var designation))
                         World.TaskManager.CancelTask(designation.Task);
-                }
             }
         }
 

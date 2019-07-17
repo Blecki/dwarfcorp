@@ -28,87 +28,89 @@ namespace DwarfCorp.Generation
             int wallHeight = MathFunctions.RandInt(2, 6);
             int heightOffset = MathFunctions.RandInt(-4, 2);
 
-            var biome = Settings.Overworld.Map.GetBiomeAt(Chunk.Origin.ToVector3(), Settings.Overworld.InstanceSettings.Origin);
-            var avgHeight = GetAverageHeight(Chunk.Origin.X, Chunk.Origin.Z, structureWidth, structureDepth, Settings);
+            if (Settings.Overworld.Map.GetBiomeAt(Chunk.Origin.ToVector3(), Settings.Overworld.InstanceSettings.Origin).HasValue(out var biome))
+            { 
+                var avgHeight = GetAverageHeight(Chunk.Origin.X, Chunk.Origin.Z, structureWidth, structureDepth, Settings);
 
-            bool[] doors = new bool[4];
+                bool[] doors = new bool[4];
 
-            for (int k = 0; k < 4; k++)
-                doors[k] = MathFunctions.RandEvent(0.5f);
+                for (int k = 0; k < 4; k++)
+                    doors[k] = MathFunctions.RandEvent(0.5f);
 
-            for (int dx = 0; dx < structureWidth; dx++)
-            {
-                for (int dz = 0; dz < structureDepth; dz++)
+                for (int dx = 0; dx < structureWidth; dx++)
                 {
-                    var worldPos = new Vector3(Chunk.Origin.X + dx + xOffset, avgHeight + heightOffset, Chunk.Origin.Z + dz + zOffset);
-
-                    var baseVoxel = Settings.World.ChunkManager.CreateVoxelHandle(GlobalVoxelCoordinate.FromVector3(worldPos));
-                    var underVoxel = VoxelHelpers.FindFirstVoxelBelow(Settings.World.ChunkManager.CreateVoxelHandle(GlobalVoxelCoordinate.FromVector3(worldPos)));
-                    var decay = Settings.NoiseGenerator.Generate(worldPos.X * 0.05f, worldPos.Y * 0.05f, worldPos.Z * 0.05f);
-
-                    if (decay > 0.7f) continue;
-                    if (!baseVoxel.IsValid) continue;
-                    if (baseVoxel.Coordinate.Y == (Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY) - 1)  continue;
-                    if (!underVoxel.IsValid) continue;
-
-                    var edge = (dx == 0 || dx == structureWidth - 1) || (dz == 0 || dz == structureDepth - 1);
-                    if (!edge && !baseVoxel.IsEmpty) continue;
-
-                    if (edge)
-                        baseVoxel.RawSetType(Library.GetVoxelType(biome.RuinWallType));
-                    else
-                        baseVoxel.RawSetType(Library.GetVoxelType(biome.RuinFloorType));
-
-                    bool[] wallState = new bool[4];
-                    wallState[0] = dx == 0;
-                    wallState[1] = dx == structureWidth - 1;
-                    wallState[2] = dz == 0;
-                    wallState[3] = dz == structureDepth - 1;
-
-                    bool[] doorState = new bool[4];
-                    doorState[0] = Math.Abs(dz - structureDepth / 2) < 1;
-                    doorState[1] = doorState[0];
-                    doorState[2] = Math.Abs(dx - structureWidth / 2) < 1;
-                    doorState[3] = doorState[2];
-
-                    for (int dy = 1; dy < (baseVoxel.Coordinate.Y - underVoxel.Coordinate.Y); dy++)
+                    for (int dz = 0; dz < structureDepth; dz++)
                     {
-                        var currVoxel = Settings.World.ChunkManager.CreateVoxelHandle(underVoxel.Coordinate + new GlobalVoxelOffset(0, dy, 0));
+                        var worldPos = new Vector3(Chunk.Origin.X + dx + xOffset, avgHeight + heightOffset, Chunk.Origin.Z + dz + zOffset);
 
-                        if (!currVoxel.IsValid)
-                            continue;
+                        var baseVoxel = Settings.World.ChunkManager.CreateVoxelHandle(GlobalVoxelCoordinate.FromVector3(worldPos));
+                        var underVoxel = VoxelHelpers.FindFirstVoxelBelow(Settings.World.ChunkManager.CreateVoxelHandle(GlobalVoxelCoordinate.FromVector3(worldPos)));
+                        var decay = Settings.NoiseGenerator.Generate(worldPos.X * 0.05f, worldPos.Y * 0.05f, worldPos.Z * 0.05f);
 
-                        currVoxel.RawSetType(underVoxel.Type);
-                    }
+                        if (decay > 0.7f) continue;
+                        if (!baseVoxel.IsValid) continue;
+                        if (baseVoxel.Coordinate.Y == (Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY) - 1) continue;
+                        if (!underVoxel.IsValid) continue;
 
-                    underVoxel.RawSetGrass(0);
+                        var edge = (dx == 0 || dx == structureWidth - 1) || (dz == 0 || dz == structureDepth - 1);
+                        if (!edge && !baseVoxel.IsEmpty) continue;
 
-                    if (edge)
-                    {
-                        for (int dy = 1; dy < wallHeight * (1.0f - decay) && dy < (Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY) - 2; dy++)
+                        if (edge)
+                            baseVoxel.RawSetType(Library.GetVoxelType(biome.RuinWallType));
+                        else
+                            baseVoxel.RawSetType(Library.GetVoxelType(biome.RuinFloorType));
+
+                        bool[] wallState = new bool[4];
+                        wallState[0] = dx == 0;
+                        wallState[1] = dx == structureWidth - 1;
+                        wallState[2] = dz == 0;
+                        wallState[3] = dz == structureDepth - 1;
+
+                        bool[] doorState = new bool[4];
+                        doorState[0] = Math.Abs(dz - structureDepth / 2) < 1;
+                        doorState[1] = doorState[0];
+                        doorState[2] = Math.Abs(dx - structureWidth / 2) < 1;
+                        doorState[3] = doorState[2];
+
+                        for (int dy = 1; dy < (baseVoxel.Coordinate.Y - underVoxel.Coordinate.Y); dy++)
                         {
-                            var currVoxel = Settings.World.ChunkManager.CreateVoxelHandle(baseVoxel.Coordinate + new GlobalVoxelOffset(0, dy, 0));
+                            var currVoxel = Settings.World.ChunkManager.CreateVoxelHandle(underVoxel.Coordinate + new GlobalVoxelOffset(0, dy, 0));
 
                             if (!currVoxel.IsValid)
                                 continue;
 
-                            if (currVoxel.Coordinate.Y == VoxelConstants.ChunkSizeY - 1)
-                                continue;
+                            currVoxel.RawSetType(underVoxel.Type);
+                        }
 
-                            bool door = false;
-                            for (int k = 0; k < 4; k++)
+                        underVoxel.RawSetGrass(0);
+
+                        if (edge)
+                        {
+                            for (int dy = 1; dy < wallHeight * (1.0f - decay) && dy < (Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY) - 2; dy++)
                             {
-                                if (wallState[k] && doors[k] && doorState[k])
+                                var currVoxel = Settings.World.ChunkManager.CreateVoxelHandle(baseVoxel.Coordinate + new GlobalVoxelOffset(0, dy, 0));
+
+                                if (!currVoxel.IsValid)
+                                    continue;
+
+                                if (currVoxel.Coordinate.Y == VoxelConstants.ChunkSizeY - 1)
+                                    continue;
+
+                                bool door = false;
+                                for (int k = 0; k < 4; k++)
                                 {
-                                    door = true;
-                                    break;
+                                    if (wallState[k] && doors[k] && doorState[k])
+                                    {
+                                        door = true;
+                                        break;
+                                    }
                                 }
+
+                                if (door && dy < 3)
+                                    continue;
+
+                                currVoxel.RawSetType(Library.GetVoxelType(biome.RuinWallType));
                             }
-
-                            if (door && dy < 3)
-                                continue;
-
-                            currVoxel.RawSetType(Library.GetVoxelType(biome.RuinWallType));
                         }
                     }
                 }

@@ -111,12 +111,13 @@ namespace DwarfCorp
             return RailPieces;
         }
 
-        public static RailPiece GetRailPiece(String Name)
+        public static MaybeNull<RailPiece> GetRailPiece(String Name)
         {
             InitializeRailLibrary();
             return RailPieces.FirstOrDefault(p => p.Name == Name);
         }
 
+        // Todo: Does this belong here?
         public static CombinationTable.Combination FindRailCombination(String Base, String Overlay, PieceOrientation OverlayRelativeOrientation)
         {
             return RailCombinationTable.FindCombination(Base, Overlay, OverlayRelativeOrientation);
@@ -184,7 +185,7 @@ namespace DwarfCorp
                     {
                         var rawPiece = Library.GetRailPiece(piece.RailPiece);
                         var bounds = Vector4.Zero;
-                        var uvs = tileSheet.GenerateTileUVs(rawPiece.Tile, out bounds);
+                        var uvs = tileSheet.GenerateTileUVs(rawPiece.HasValue(out var raw) ? raw.Tile : Point.Zero, out bounds);
                         primitive.AddQuad(
                             Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)piece.Orientation) 
                             * Matrix.CreateTranslation(new Vector3(piece.Offset.X, 0.0f, piece.Offset.Y)),

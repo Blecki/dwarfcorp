@@ -54,18 +54,16 @@ namespace DwarfCorp
                             if (World.UserInterface.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty && !r.IsEmpty) continue;
                             if (World.UserInterface.VoxSelector.SelectionType == VoxelSelectionType.SelectFilled && r.IsEmpty) continue;
 
-                            var existingDesignation = World.PersistentData.Designations.GetVoxelDesignation(r, DesignationType.Put);
-                            if (existingDesignation != null)
+                            if (World.PersistentData.Designations.GetVoxelDesignation(r, DesignationType.Put).HasValue(out var existingDesignation))
                                 World.TaskManager.CancelTask(existingDesignation.Task);
 
                             var above = VoxelHelpers.GetVoxelAbove(r);
 
                             if (above.IsValid && above.LiquidType != LiquidType.None)
-                            {
                                 continue;
-                            }
 
-                            assignments.Add(new BuildVoxelTask(r, Library.GetVoxelType(CurrentVoxelType).Name));
+                            if (Library.GetVoxelType(CurrentVoxelType).HasValue(out VoxelType vType))
+                                assignments.Add(new BuildVoxelTask(r, vType.Name));
                         }
 
                         World.TaskManager.AddTasks(assignments);
@@ -74,11 +72,9 @@ namespace DwarfCorp
                 case (InputManager.MouseButton.Right):
                     {
                         foreach (var r in voxels)
-                        {
-                            var designation = World.PersistentData.Designations.GetVoxelDesignation(r, DesignationType.Put);
-                            if (designation != null)
+                            if (World.PersistentData.Designations.GetVoxelDesignation(r, DesignationType.Put).HasValue(out var designation))
                                 World.TaskManager.CancelTask(designation.Task);
-                        }
+
                         break;
                     }
             }
@@ -132,15 +128,19 @@ namespace DwarfCorp
             Effect.VertexColorTint = new Color(0.5f, 1.0f, 0.5f, alpha);
             Vector3 offset = World.UserInterface.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? Vector3.Zero : Vector3.Up * 0.15f;
 
-            foreach (var voxel in selected)
-            {
-                Effect.World = Matrix.CreateTranslation(voxel.WorldPosition + offset);
-                foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
+            if (Library.GetVoxelType(CurrentVoxelType).HasValue(out VoxelType vType))
+                if (Library.GetVoxelPrimitive(vType).HasValue(out BoxPrimitive primitive))
                 {
-                    pass.Apply();
-                    Library.GetVoxelPrimitive(CurrentVoxelType).Render(GameState.Game.GraphicsDevice);
+                    foreach (var voxel in selected)
+                    {
+                        Effect.World = Matrix.CreateTranslation(voxel.WorldPosition + offset);
+                        foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
+                        {
+                            pass.Apply();
+                            primitive.Render(GameState.Game.GraphicsDevice);
+                        }
+                    }
                 }
-            }
         }
 
         private void DrawVoxels(DwarfTime time, IEnumerable<VoxelHandle> selected)

@@ -39,7 +39,9 @@ namespace DwarfCorp
                     if (EntityFactory.HasEntity(Stats.Species.BabyType))
                     {
                         var baby = EntityFactory.CreateEntity<GameComponent>(Stats.Species.BabyType, Physics.Position);
-                        baby.GetRoot().GetComponent<CreatureAI>().PositionConstraint = AI.PositionConstraint;
+
+                        if (baby.GetRoot().GetComponent<CreatureAI>().HasValue(out var ai)) // Set position constraint so baby stays inside pen.
+                            ai.PositionConstraint = AI.PositionConstraint;
                     }
                 }
                 CurrentPregnancy = null;

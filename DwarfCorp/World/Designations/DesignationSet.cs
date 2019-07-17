@@ -105,15 +105,13 @@ namespace DwarfCorp
             }
         }
 
-        public VoxelDesignation GetVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
+        public MaybeNull<VoxelDesignation> GetVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
         {
             lock (designationLock)
             {
                 var key = VoxelHelpers.GetVoxelQuickCompare(Voxel);
                 if (!VoxelDesignations.ContainsKey(key)) return null;
-                var r = VoxelDesignations[key].FirstOrDefault(d => TypeSet(d.Type, Type));
-                if (r != null) return r;
-                return null;
+                return VoxelDesignations[key].FirstOrDefault(d => TypeSet(d.Type, Type));
             }
         }
 
@@ -232,7 +230,8 @@ namespace DwarfCorp
             }
         }
 
-        public EntityDesignation GetEntityDesignation(GameComponent Entity, DesignationType Type)
+        // Todo: Good spot for MaybeNull
+        public MaybeNull<EntityDesignation> GetEntityDesignation(GameComponent Entity, DesignationType Type)
         {
             foreach (var des in EnumerateEntityDesignations(Type))
                 if (Object.ReferenceEquals(des.Body, Entity))

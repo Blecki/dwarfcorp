@@ -51,10 +51,10 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "BUILD",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
-                        ItemSource = Library.EnumerateZoneTypeNames().Select(r =>
+                        ItemSource = Library.EnumerateZoneTypes().Select(r =>
                             new HorizontalMenuTray.MenuItem
                             {
-                                Text = r,
+                                Text = r.Name,
                                 OnClick = (sender, args) => ActivateGodTool("Build/" + r)
                             })
                     }
@@ -292,7 +292,7 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "EVENT",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
-                            ItemSource = Events.Library.Enumerate().Select(e =>
+                            ItemSource = Events.Library.EnumerateEvents().Select(e =>
                             {
                                 return new HorizontalMenuTray.MenuItem
                                 {

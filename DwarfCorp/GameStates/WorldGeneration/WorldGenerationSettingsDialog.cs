@@ -144,7 +144,7 @@ namespace DwarfCorp.Gui.Widgets
             });
 
             AddChild(CreateCombo<int>(Root, "Natives", "Number of native civilizations",
-                new int[] { 0, 2, 4, 8, 16 }, (i) => Settings.GenerationSettings.NumCivilizations = i,
+                new int[] { 1, 2, 4, 8, 16 }, (i) => Settings.GenerationSettings.NumCivilizations = i,
                 () => Settings.GenerationSettings.NumCivilizations));
 
 

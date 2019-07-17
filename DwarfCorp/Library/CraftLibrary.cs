@@ -18,7 +18,7 @@ namespace DwarfCorp
             return CraftItems.Values;
         }
 
-        public static CraftItem GetCraftable(string Name)
+        public static MaybeNull<CraftItem> GetCraftable(string Name)
         {
             InitializeCraftLibrary();
             if (CraftItems.ContainsKey(Name))
@@ -50,7 +50,7 @@ namespace DwarfCorp
             Console.WriteLine("Loaded Craft Library.");
         }
 
-        public static CraftItem GetRandomApplicableCraftItem(Faction faction, WorldManager World)
+        public static MaybeNull<CraftItem> GetRandomApplicableCraftable(Faction faction, WorldManager World)
         {
             InitializeCraftLibrary();
 

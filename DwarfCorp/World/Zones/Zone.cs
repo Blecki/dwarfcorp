@@ -220,8 +220,10 @@ namespace DwarfCorp
                 return;
             Voxel.IsPlayerBuilt = true;
             Voxels.Add(Voxel);
-                OriginalVoxelTypes.Add(Voxel.TypeID);
-                Voxel.Type = Library.GetVoxelType(Type.FloorType);
+            OriginalVoxelTypes.Add(Voxel.TypeID);
+
+            if (Library.GetVoxelType(Type.FloorType).HasValue(out VoxelType floor))
+                Voxel.Type = floor;
 
             RecalculateMaxResources();
           

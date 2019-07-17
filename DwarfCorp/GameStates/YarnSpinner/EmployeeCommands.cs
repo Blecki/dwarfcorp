@@ -38,8 +38,7 @@ namespace DwarfCorp.GameStates.YarnSpinner
                 return;
             creature.Stats.IsOnStrike = false;
 
-            var thoughts = creature.GetRoot().GetComponent<DwarfThoughts>();
-            if (thoughts != null)
+            if (creature.GetRoot().GetComponent<DwarfThoughts>().HasValue(out var thoughts))
             {
                 thoughts.Thoughts.RemoveAll(t => t.Description.Contains("paid"));
                 creature.Creature.AddThought("I got paid recently.", new TimeSpan(1, 0, 0, 0), 10.0f);

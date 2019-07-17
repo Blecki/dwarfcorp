@@ -345,8 +345,7 @@ namespace DwarfCorp
                     if (Step.InteractObject == null || Step.InteractObject.IsDead)
                         yield return Status.Fail;
 
-                    var teleporter = Step.InteractObject.GetComponent<MagicalObject>();
-                    if (teleporter != null)
+                    if (Step.InteractObject.GetComponent<MagicalObject>().HasValue(out var teleporter))
                         teleporter.CurrentCharges--;
 
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_ic_dwarf_magic_research, Agent.Position, true, 1.0f);
@@ -372,15 +371,13 @@ namespace DwarfCorp
 
         private void SetupMinecart()
         {
-            var layers = Agent.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>();
-            if (layers != null && layers.GetLayers().GetLayer("minecart") == null)
-                    layers.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("minecart").FirstOrDefault(), LayeredSprites.LayerLibrary.BaseDwarfPalette);
+            if (Agent.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>().HasValue(out var layers) && layers.GetLayers().GetLayer("minecart") == null)
+                layers.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("minecart").FirstOrDefault(), LayeredSprites.LayerLibrary.BaseDwarfPalette);
         }
 
         private void CleanupMinecart()
         {
-            var layers = Agent.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>();
-            if (layers != null)
+            if (Agent.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>().HasValue(out var layers))
                 layers.RemoveLayer("minecart");
         }
 

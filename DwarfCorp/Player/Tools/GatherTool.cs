@@ -55,15 +55,9 @@ namespace DwarfCorp
                 if (World.ChunkManager.IsAboveCullPlane(resource.BoundingBox)) continue;
 
                 if (button == InputManager.MouseButton.Left)
-                {
                     assignments.Add(new GatherItemTask(resource));
-                }
-                else
-                {
-                    var designation = World.PersistentData.Designations.GetEntityDesignation(resource, DesignationType.Gather);
-                    if (designation != null)
-                        World.TaskManager.CancelTask(designation.Task);
-                }
+                else if (World.PersistentData.Designations.GetEntityDesignation(resource, DesignationType.Gather).HasValue(out var designation))
+                    World.TaskManager.CancelTask(designation.Task);
             }
 
             World.TaskManager.AddTasks(assignments);
