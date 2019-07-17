@@ -36,10 +36,15 @@ namespace DwarfCorp
         [OnDeserialized]
         public void OnDeserialize(StreamingContext ctx)
         {
+            PlanSubscriber = new PlanSubscriber((ctx.Context as WorldManager).PlanService);
+        }
+
+        public override void CreateCosmeticChildren(ComponentManager Manager)
+        {
+            base.CreateCosmeticChildren(Manager);
+
             if (GetRoot().GetComponent<EnemySensor>().HasValue(out var Sensor))
                 Sensor.OnEnemySensed += Sensor_OnEnemySensed;
-
-            PlanSubscriber = new PlanSubscriber((ctx.Context as WorldManager).PlanService);
         }
 
         public CreatureAI()

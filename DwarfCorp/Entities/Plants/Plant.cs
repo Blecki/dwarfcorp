@@ -133,7 +133,7 @@ namespace DwarfCorp
             if (currentHour != LastGrowthHour)
             {
                 LastGrowthHour = currentHour;
-                if (GetRoot().GetComponent<Seedling>().HasValue(out var seedling) && MathFunctions.RandEvent(0.01f))
+                if (!GetRoot().GetComponent<Seedling>().HasValue(out var seedling) && MathFunctions.RandEvent(0.01f))
                     if (World.EnumerateIntersectingObjects(GetBoundingBox().Expand(2)).Count(b => b is Plant) < 10)
                     {
                         Vector3 randomPoint = MathFunctions.RandVector3Box(GetBoundingBox().Expand(4));
