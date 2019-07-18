@@ -18,6 +18,8 @@ namespace DwarfCorp
         private string PathName;
         private float DeltaTime = 0.0f;
         private float LastNoiseTime = 0.0f;
+        private Cart Minecart = null;
+        private Vector3? LastCartPos = null;
 
         private float GetAgentSpeed(MoveType Action)
         {
@@ -177,18 +179,31 @@ namespace DwarfCorp
                     if (rail == null)
                         yield return Status.Fail;
 
-                    while (DeltaTime < 1.0f / actionSpeed)
+                    var rideTime = 1.0f / actionSpeed;
+                    while (DeltaTime < rideTime)
                     {
-                        var pos = rail.InterpolateSpline(DeltaTime, GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel));
+                        var pos = rail.InterpolateSpline(DeltaTime / rideTime, Step.SourceVoxel.WorldPosition, Step.DestinationVoxel.WorldPosition);
+
                         var transform = Agent.Physics.LocalTransform;
                         transform.Translation = pos + Vector3.Up * 0.5f;
                         Agent.Physics.LocalTransform = transform;
                         Agent.Physics.Velocity = GetPathPoint(Step.DestinationVoxel) - GetPathPoint(Step.SourceVoxel);
-
+                        
                         SetCharacterMode(CharacterMode.Minecart);
+
+                        transform.Translation = pos + Vector3.Up * -0.1f;
+
+                        //if (!LastCartPos.HasValue)
+                        //    LastCartPos = transform.Translation;
+                        //else
+                        //    transform = Matrix.Invert(Matrix.CreateLookAt(LastCartPos.Value, transform.Translation, Vector3.Up));
+
+                        Minecart.LocalTransform = transform;
+                        LastCartPos = transform.Translation;
                         yield return Status.Running;
                     }
-                    DeltaTime -= (1.0f / actionSpeed);
+
+                    DeltaTime -= rideTime;
 
                     break;
 
@@ -371,14 +386,22 @@ namespace DwarfCorp
 
         private void SetupMinecart()
         {
-            if (Agent.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>().HasValue(out var layers) && layers.GetLayers().GetLayer("minecart") == null)
-                layers.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("minecart").FirstOrDefault(), LayeredSprites.LayerLibrary.BaseDwarfPalette);
+            if (Minecart == null)
+            {
+                Minecart = EntityFactory.CreateEntity<Cart>("Cart", Agent.Position);
+                LastCartPos = null;
+            }
+
+            //if (Agent.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>().HasValue(out var layers) && layers.GetLayers().GetLayer("minecart") == null)
+            //    layers.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("minecart").FirstOrDefault(), LayeredSprites.LayerLibrary.BaseDwarfPalette);
         }
 
         private void CleanupMinecart()
         {
-            if (Agent.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>().HasValue(out var layers))
-                layers.RemoveLayer("minecart");
+            if (Minecart != null)
+                Minecart.Delete();
+            //if (Agent.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>().HasValue(out var layers))
+            //    layers.RemoveLayer("minecart");
         }
 
         public override IEnumerable<Status> Run()
