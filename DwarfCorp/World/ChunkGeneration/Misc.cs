@@ -17,7 +17,7 @@ namespace DwarfCorp.Generation
     {
         public static float NormalizeHeight(float height)
         {
-            return 0.25f + (height * 0.5f);
+            return 0.15f + (height * 0.8f);
         }
 
         public static IEnumerable<VoxelChunk> EnumerateTopChunks(ChunkGeneratorSettings Settings)
