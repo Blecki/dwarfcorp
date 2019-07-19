@@ -23,6 +23,8 @@ namespace DwarfCorp.Generation
 
             var c = new VoxelChunk(Settings.World.ChunkManager, ID);
 
+            if (GameSettings.Default.NoStone) return c;
+
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {

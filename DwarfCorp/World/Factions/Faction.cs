@@ -326,7 +326,16 @@ namespace DwarfCorp
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
             Politics politics = World.Overworld.GetPolitics(ParentFaction, World.PlayerFaction.ParentFaction);
             politics.IsAtWar = true;
+            var reversePolitics = World.Overworld.GetPolitics(World.PlayerFaction.ParentFaction, ParentFaction);
+            reversePolitics.IsAtWar = true;
+            reversePolitics.AddEvent(new PoliticalEvent
+            {
+                Change = -1.0f,
+                Description = "Sent a warparty against us."
+            });
+
             List<CreatureAI> creatures = World.MonsterSpawner.Spawn(World.MonsterSpawner.GenerateSpawnEvent(this, World.PlayerFaction, MathFunctions.Random.Next(World.Overworld.Difficulty) + 1, false));
+
             var party = new WarParty(World.Time.CurrentDate)
             {
                 Creatures = creatures,

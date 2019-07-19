@@ -262,7 +262,7 @@ namespace DwarfCorp
 
                             statusResult = Status.Success;
                         }
-                        else if (response.Request.ID != lastId && response.Path.Count > 0)
+                        else if (response.Request.ID != lastId && response.Path != null && response.Path.Count > 0)
                         {
                             var goal = GetGoal();
                             

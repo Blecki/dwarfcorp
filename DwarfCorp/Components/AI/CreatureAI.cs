@@ -122,7 +122,7 @@ namespace DwarfCorp
 
         private void UpdateFailedTasks(DateTime now)
         {
-            FailedTasks.RemoveAll(task => (now - task.FailedTime).Hours >= 1);
+            FailedTasks.RemoveAll(task => (now - task.FailedTime).Minutes >= 1);
         }
 
         public void ResetPositionConstraint()

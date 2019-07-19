@@ -8,7 +8,7 @@ namespace DwarfCorp
         public DateTimer PrepareTimer = null;
         public WarParty(DateTime date) : base(date)
         {
-            PrepareTimer = new DateTimer(date, new TimeSpan(0, 4, 0, 0, 0));
+            PrepareTimer = new DateTimer(date, new TimeSpan(0, 1, 0, 0, 0));
             this.ExpiditionState = Expedition.State.Arriving;
         }
 
@@ -45,7 +45,7 @@ namespace DwarfCorp
                     {
                         var enemyMinion = OtherFaction.GetNearestMinion(creature.Position);
                         if (enemyMinion != null)// && !enemyMinion.Stats.IsFleeing)
-                            creature.AssignTask(new KillEntityTask(enemyMinion.Physics, KillEntityTask.KillType.Auto));
+                            creature.AssignTask(new KillEntityTask(enemyMinion.Physics, KillEntityTask.KillType.Attack));
                     }
 
                 if (ExpiditionState == Expedition.State.Arriving)

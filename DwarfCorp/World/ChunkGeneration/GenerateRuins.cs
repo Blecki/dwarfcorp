@@ -17,6 +17,9 @@ namespace DwarfCorp.Generation
     {
         public static void GenerateRuin(VoxelChunk Chunk, ChunkGeneratorSettings Settings)
         {
+            // Randomly select a ruins shape. Possibly from some template textures? And build it.
+            // Support ruins deep underground - empty out their interiors.
+
             var noiseVector = Chunk.Origin.ToVector3() * Settings.CaveNoiseScale;
             var ruinsNoise = Settings.CaveNoise.GetValue(noiseVector.X, noiseVector.Y, noiseVector.Z);
             if (Math.Abs(ruinsNoise) > GameSettings.Default.GenerationRuinsRate) return;

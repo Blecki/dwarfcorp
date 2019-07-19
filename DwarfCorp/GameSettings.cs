@@ -220,6 +220,7 @@ namespace DwarfCorp
             public int MaxLiveChunks = 10; // How many chunks can have geometry saved
             [AutoResetBool(false)] public bool FastGen = false;
             [AutoResetFloat(0.15f)] public float GenerationRuinsRate = 0.15f;
+            [AutoResetBool(false)] public bool NoStone = false;
 
             [AutoResetFloat(-10.0f)] public float Boredom_Gamble = -10.0f;
             [AutoResetFloat(0.1f)] public float Boredom_NormalTask = 0.1f;

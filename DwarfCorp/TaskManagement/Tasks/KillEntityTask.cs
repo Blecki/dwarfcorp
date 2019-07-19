@@ -50,13 +50,13 @@ namespace DwarfCorp
                 if (!otherCreature.IsDead && otherCreature.AI != null)
                 {
                     // Flee if the other creature is too scary.
-                    if (otherCreature != null && creature.AI.FightOrFlight(otherCreature.AI) == CreatureAI.FightOrFlightResponse.Flee)
-                    {
-                        Name = "Flee Entity: " + EntityToKill.Name + " " + EntityToKill.GlobalID;
-                        ReassignOnDeath = false;
-                        IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.Exclaim, creature.AI.Position, 1.0f, 1.0f, Vector2.UnitY * -32);
-                        return new FleeEntityAct(creature.AI) { Entity = EntityToKill, PathLength = 20 };
-                    }
+                    //if (otherCreature != null && creature.AI.FightOrFlight(otherCreature.AI) == CreatureAI.FightOrFlightResponse.Flee)
+                    //{
+                    //    Name = "Flee Entity: " + EntityToKill.Name + " " + EntityToKill.GlobalID;
+                    //    ReassignOnDeath = false;
+                    //    IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.Exclaim, creature.AI.Position, 1.0f, 1.0f, Vector2.UnitY * -32);
+                    //    return new FleeEntityAct(creature.AI) { Entity = EntityToKill, PathLength = 20 };
+                    //}
 
                     // Make the other creature defend itself.
                     var otherKill = new KillEntityTask(creature.Physics, KillType.Auto)
