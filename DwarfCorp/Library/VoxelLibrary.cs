@@ -81,24 +81,21 @@ namespace DwarfCorp
             {
                 VoxelTypes[type.Name] = type;
 
+                    VoxelPrimitives[type.Name] = CreateVoxelPrimitive(cubeTexture, 32, 32, type.Top, type.Bottom, type.Sides);
                 if (type.Name == "_empty")
                 {
                     _EmptyVoxelType = type;
                     type.ID = 0;
                 }
+                else if (type.Name == "_designation")
+                {
+                    _DesignationVoxelType = type;
+                    type.ID = 1;
+                }
                 else
                 {
-                    VoxelPrimitives[type.Name] = CreateVoxelPrimitive(cubeTexture, 32, 32, type.Top, type.Bottom, type.Sides);
-                    if (type.Name == "_designation")
-                    {
-                        _DesignationVoxelType = type;
-                        type.ID = 1;
-                    }
-                    else
-                    {
-                        type.ID = id;
-                        id += 1;
-                    }
+                    type.ID = id;
+                    id += 1;
                 }
 
                 if (type.HasTransitionTextures)

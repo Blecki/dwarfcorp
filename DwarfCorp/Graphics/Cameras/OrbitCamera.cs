@@ -507,7 +507,7 @@ namespace DwarfCorp
             up.Normalize();
             MouseState mouse = Mouse.GetState();
             KeyboardState keys = Keyboard.GetState();
-            var bounds = new BoundingBox(World.ChunkManager.Bounds.Min, World.ChunkManager.Bounds.Max + Vector3.UnitY * 20);
+            var bounds = new BoundingBox(World.ChunkManager.Bounds.Min, World.ChunkManager.Bounds.Max + Vector3.UnitY * 20).Expand(VoxelConstants.ChunkSizeX * 8);
             if (ZoomTargets.Count > 0)
             {
                 Vector3 currTarget = MathFunctions.Clamp(ProjectToSurface(ZoomTargets.First()), bounds);
@@ -544,7 +544,7 @@ namespace DwarfCorp
 
             float diffX, diffY = 0;
             float dt = (float)time.ElapsedRealTime.TotalSeconds;
-            SnapToBounds(new BoundingBox(World.ChunkManager.Bounds.Min, World.ChunkManager.Bounds.Max + Vector3.UnitY * 20));
+            SnapToBounds(bounds);
             if (KeyManager.RotationEnabled(this))
             {
                 World.UserInterface.Gui.MouseVisible = false;

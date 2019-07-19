@@ -197,9 +197,9 @@ namespace DwarfCorp
 #if !DEBUG
             catch (Exception exception)
             {
-                Console.Out.WriteLine("Chunk regeneration thread exited due to an exception.");
+                Console.Out.WriteLine("Chunk regeneration thread encountered an exception.");
                 ProgramData.WriteExceptionLog(exception);
-                throw;
+                //throw;
             }
 #endif       
             Console.Out.WriteLine(String.Format("Chunk regeneration thread exited cleanly Exit Game: {0} Exit Thread: {1}.", DwarfGame.ExitGame, ExitThreads));

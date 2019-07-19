@@ -111,22 +111,60 @@ namespace DwarfCorp
 
         protected static bool IsFaceVisible(VoxelHandle voxel, VoxelHandle neighbor, BoxFace face)
         {
-            if (!voxel.IsValid || !neighbor.IsValid)
-            {
+            if (!voxel.IsValid)
                 return false;
-            }
 
-            return
-                 (neighbor.IsExplored && neighbor.IsEmpty)
-                || (neighbor.Type.IsTransparent && !voxel.Type.IsTransparent)
-                || !neighbor.IsVisible
-                || (
-                    neighbor.Type.CanRamp
-                    && neighbor.RampType != RampType.None
-                    && IsSideFace(face)
-                    && ShouldDrawFace(face, neighbor.RampType, voxel.RampType)
-                    && neighbor.IsExplored
-                );
+            if (!neighbor.IsValid)
+            {
+                if (voxel.IsExplored)
+                    return !voxel.IsEmpty;
+                else
+                    return true;
+            }
+            else
+            {
+                if (!voxel.IsExplored)
+                {
+                    if (!neighbor.IsVisible)
+                        return true;
+
+                    if (!neighbor.Type.CanRamp)
+                        return false;
+
+                    if (neighbor.RampType == RampType.None)
+                        return false;
+
+                    if (!IsSideFace(face))
+                        return false;
+
+                    if (!neighbor.IsExplored)
+                        return false;
+
+                    return true;
+                    return neighbor.Type.CanRamp
+                        && neighbor.RampType != RampType.None
+                        && IsSideFace(face)
+                        && ShouldDrawFace(face, neighbor.RampType, voxel.RampType)
+                        && neighbor.IsExplored;
+                }
+                else
+                {
+                    if (neighbor.IsExplored && neighbor.IsEmpty)
+                        return true;
+
+                    if (neighbor.Type.IsTransparent && !voxel.Type.IsTransparent)
+                        return true;
+
+                    if (neighbor.Type.CanRamp
+                        && neighbor.RampType != RampType.None
+                        && IsSideFace(face)
+                        && ShouldDrawFace(face, neighbor.RampType, voxel.RampType)
+                        && neighbor.IsExplored)
+                        return true;
+
+                    return false;
+                }
+            }
         }
 
         private class Cache
@@ -235,7 +273,7 @@ namespace DwarfCorp
             return coord;
         }
 
-        public override void Render(GraphicsDevice device)
+        public override void Render(GraphicsDevice device) // Todo: Move this somewhere else in file
         {
             device.RasterizerState = new RasterizerState()
             {
@@ -266,19 +304,21 @@ namespace DwarfCorp
             BuildDesignationGeometry(Into, Chunk, Cache, Designations, World, v);
 
             if ((v.IsExplored && v.IsEmpty)) return;
-            if (!v.IsExplored && v.Sunlight) return;
+            if (!v.IsExplored && v.Sunlight)
+                return;
 
-            if (Library.GetVoxelPrimitive(v.Type).HasValue(out BoxPrimitive primitive))
+            if (v.IsEmpty)
             {
-                BuildVoxelGeometryFromPrimitive(Into, Chunk, Cache, v, primitive);
+                var x = 5;
             }
+            if (Library.GetVoxelPrimitive(v.Type).HasValue(out BoxPrimitive primitive))
+                BuildVoxelGeometryFromPrimitive(Into, Chunk, Cache, v, primitive);
             
         }
 
         private static void BuildVoxelGeometryFromPrimitive(RawPrimitive Into, VoxelChunk Chunk, Cache Cache, VoxelHandle v, BoxPrimitive primitive)
         {
             var tint = v.Type.Tint;
-
             var uvs = primitive.UVs;
 
             if (v.Type.HasTransitionTextures && v.IsExplored)
@@ -384,6 +424,9 @@ namespace DwarfCorp
                     }
 
                     Cache.AmbientValues[faceVertex] = vertexColor.AmbientColor;
+
+                    if (!V.IsExplored && !faceVoxel.IsValid)
+                        Tint = new Color(0.0f, 0.0f, 0.0f, 1.0f);
                 }
 
                 var rampOffset = Vector3.Zero;
