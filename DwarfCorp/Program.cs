@@ -106,7 +106,7 @@ namespace DwarfCorp
         public static bool ShowErrorDialog(String Message)
         {
             var report = GameSettings.Default.AllowReporting ? "This was automatically reported to the devs to help us debug!" : "You have opted out of automatic crash reporting.";
-            return System.Windows.Forms.MessageBox.Show(Message + "\n" + report, "ERROR!", System.Windows.Forms.MessageBoxButtons.RetryCancel) == System.Windows.Forms.DialogResult.Cancel;
+            return System.Windows.Forms.MessageBox.Show(Message + "\n" + report, "ERROR!", System.Windows.Forms.MessageBoxButtons.OK) == System.Windows.Forms.DialogResult.Cancel;
         }
 
         public static void WriteExceptionLog(Exception exception)

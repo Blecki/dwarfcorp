@@ -125,13 +125,16 @@ namespace DwarfCorp
             else if (Command.Contains("Grass/"))
             {
                 var type = Library.GetGrassType(Command.Substring(6));
-                foreach (var vox in refs.Where(v => v.IsValid))
+                if (type != null)
                 {
-                    var v = vox;
-                    if (!vox.IsEmpty)
+                    foreach (var vox in refs.Where(v => v.IsValid))
                     {
-                        v.GrassType = type.ID;
-                        v.GrassDecay = type.InitialDecayValue;
+                        var v = vox;
+                        if (!vox.IsEmpty)
+                        {
+                            v.GrassType = type.ID;
+                            v.GrassDecay = type.InitialDecayValue;
+                        }
                     }
                 }
             }

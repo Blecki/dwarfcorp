@@ -23,7 +23,7 @@ namespace DwarfCorp
         {
             GameComponent closestItem = agent.Faction.FindNearestItemWithTags("Bed", agent.AI.Position, true, agent.AI);
 
-            return (closestItem != null && agent.AI.Stats.Health.IsDissatisfied()) || agent.AI.Stats.Health.IsCritical() ? Feasibility.Feasible : Feasibility.Infeasible;
+            return (closestItem != null && !agent.AI.Stats.Health.IsSatisfied()) || agent.AI.Stats.Health.IsCritical() ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

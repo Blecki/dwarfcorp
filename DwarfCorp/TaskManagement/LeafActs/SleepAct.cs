@@ -112,7 +112,7 @@ namespace DwarfCorp
             }
             else
             {
-                while (Creature.Stats.Health.IsDissatisfied() || Creature.Stats.Buffs.Any(buff => buff is Disease))
+                while (!Creature.Stats.Health.IsSatisfied() || Creature.Stats.Buffs.Any(buff => buff is Disease))
                 {
                     if (Creature.Physics.IsInLiquid)
                     {
