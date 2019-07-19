@@ -29,12 +29,7 @@ namespace DwarfCorp
         private Vector3 offset = Vector3.Zero;
         private float _currentAngle = 0.0f;
         private float _targetAngle = 0.0f;
-        [OnDeserialized]
-        public void OnDeserialized(StreamingContext ctx)
-        {
-            Sensor.OnEnemySensed += Sensor_OnEnemySensed;
-        }
-
+        
         public TurretTrap()
         {
             
@@ -45,16 +40,7 @@ namespace DwarfCorp
             new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(manager, "Turret", resources))
         {
             Allies = faction;
-            SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32);
-            Weapon = new Weapon("BowAttack", 5.0f, 1.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_trap_turret_shoot_1, ContentPaths.Audio.Oscar.sfx_trap_turret_shoot_2), ContentPaths.Effects.pierce)
-            {
-                ProjectileType = "Arrow",
-                Mode = Weapon.AttackMode.Ranged,
-                LaunchSpeed = 15
-            };
-
-            TheAttack = new Attack(Weapon);
-
+        
             AddChild(new ParticleTrigger("explode", Manager, "DeathParticles",
             Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
             {
@@ -70,7 +56,7 @@ namespace DwarfCorp
                 DetectCloaked = true
             }) as EnemySensor;
 
-            Sensor.OnEnemySensed += Sensor_OnEnemySensed;
+            
             CreateCosmeticChildren(manager);
             AddChild(new MagicalObject(Manager));
         }
@@ -93,6 +79,18 @@ namespace DwarfCorp
                 if (changeEvent.Type == VoxelChangeEventType.VoxelTypeChanged && changeEvent.NewVoxelType == 0)
                     Die();
             })).SetFlag(Flag.ShouldSerialize, false);
+
+            Weapon = new Weapon("BowAttack", 5.0f, 1.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_trap_turret_shoot_1, ContentPaths.Audio.Oscar.sfx_trap_turret_shoot_2), ContentPaths.Effects.pierce)
+            {
+                ProjectileType = "Arrow",
+                Mode = Weapon.AttackMode.Ranged,
+                LaunchSpeed = 15
+            };
+
+            TheAttack = new Attack(Weapon);
+
+            Sensor.OnEnemySensed += Sensor_OnEnemySensed;
+
             base.CreateCosmeticChildren(manager);
         }
 
@@ -133,7 +131,12 @@ namespace DwarfCorp
         {
             base.Update(gameTime, chunks, camera);
 
-            if (Active && closestCreature != null && !closestCreature.IsDead)
+            if (TheAttack == null)
+            {
+                int x = 5;
+            }
+
+            if (Active && closestCreature != null && !closestCreature.IsDead && TheAttack != null)
             {
                 offset = closestCreature.Position - Position;
 

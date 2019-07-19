@@ -262,9 +262,12 @@ namespace DwarfCorp
 
                             statusResult = Status.Success;
                         }
-                        else if (response.Request.ID != lastId)
+                        else if (response.Request.ID != lastId && response.Path.Count > 0)
                         {
-                            bool obeysGoal = response.Success && (GetGoal().IsInGoalRegion(response.Path.Last().DestinationVoxel));
+                            var goal = GetGoal();
+                            
+                            bool obeysGoal = goal == null ? false : (response.Success && (goal.IsInGoalRegion(response.Path.Last().DestinationVoxel)));
+
                             if (Debugger.Switches.DrawPaths)
                             {
                                 if (obeysGoal)

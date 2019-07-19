@@ -193,13 +193,9 @@ namespace DwarfCorp
 
                         transform.Translation = pos + Vector3.Up * -0.1f;
 
-                        //if (!LastCartPos.HasValue)
-                        //    LastCartPos = transform.Translation;
-                        //else
-                        //    transform = Matrix.Invert(Matrix.CreateLookAt(LastCartPos.Value, transform.Translation, Vector3.Up));
+                        if (Minecart != null)
+                            Minecart.LocalTransform = transform;
 
-                        Minecart.LocalTransform = transform;
-                        LastCartPos = transform.Translation;
                         yield return Status.Running;
                     }
 
@@ -386,22 +382,22 @@ namespace DwarfCorp
 
         private void SetupMinecart()
         {
-            if (Minecart == null)
-            {
-                Minecart = EntityFactory.CreateEntity<Cart>("Cart", Agent.Position);
-                LastCartPos = null;
-            }
+            //if (Minecart == null)
+            //{
+            //    Minecart = EntityFactory.CreateEntity<Cart>("Cart", Agent.Position);
+            //    LastCartPos = null;
+            //}
 
-            //if (Agent.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>().HasValue(out var layers) && layers.GetLayers().GetLayer("minecart") == null)
-            //    layers.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("minecart").FirstOrDefault(), LayeredSprites.LayerLibrary.BaseDwarfPalette);
+            if (Agent.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>().HasValue(out var layers) && layers.GetLayers().GetLayer("minecart") == null)
+                layers.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("minecart").FirstOrDefault(), LayeredSprites.LayerLibrary.BaseDwarfPalette);
         }
 
         private void CleanupMinecart()
         {
             if (Minecart != null)
                 Minecart.Delete();
-            //if (Agent.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>().HasValue(out var layers))
-            //    layers.RemoveLayer("minecart");
+            if (Agent.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>().HasValue(out var layers))
+                layers.RemoveLayer("minecart");
         }
 
         public override IEnumerable<Status> Run()
