@@ -98,7 +98,7 @@ namespace DwarfCorp
 
                         if (Library.GetRace(thisFaction.Race).HasValue(out var thisFactionRace) && Library.GetRace(otherFaction.Race).HasValue(out var otherRace))
                         {
-                            if (thisFactionRace.NaturalEnemies.Any(name => name == otherRace.Name))
+                            if (thisFactionRace.NaturalEnemies.Any(name => name == otherRace.Name) || otherRace.NaturalEnemies.Any(name => name == thisFactionRace.Name))
                                 if (!politics.HasEvent("we are taught to hate your kind"))
                                     politics.AddEvent(new PoliticalEvent()
                                     {
@@ -108,9 +108,7 @@ namespace DwarfCorp
 
                             if (thisFactionRace.IsIntelligent && otherRace.IsIntelligent)
                             {
-                                float trustingness = thisFaction.GoodWill;
-
-                                if (trustingness < -0.8f)
+                                if (thisFaction.GoodWill < -0.8f || otherFaction.GoodWill < 0.8f)
                                 {
                                     if (!politics.HasEvent("we just don't trust you"))
                                     {
@@ -122,7 +120,7 @@ namespace DwarfCorp
                                         politics.IsAtWar = true;
                                     }
                                 }
-                                else if (trustingness > 0.8f)
+                                else if (thisFaction.GoodWill > 0.8f || otherFaction.GoodWill > 0.8f)
                                     if (!politics.HasEvent("we just trust you"))
                                         politics.AddEvent(new PoliticalEvent()
                                         {
@@ -135,6 +133,81 @@ namespace DwarfCorp
                         thisFaction.Politics[otherFaction.Name] = politics;
                     }
                 }
+        }
+
+        public static Politics CreatePolitivs(OverworldFaction thisFaction, OverworldFaction otherFaction)
+        {
+            if (thisFaction.Name == otherFaction.Name)
+            {
+                var politics = new Politics()
+                {
+                    OwnerFaction = thisFaction,
+                    OtherFaction = otherFaction,
+                    HasMet = true
+                };
+
+                politics.AddEvent(new PoliticalEvent()
+                {
+                    Change = 1.0f,
+                    Description = "we are of the same faction",
+                });
+
+                return politics;
+            }
+            else
+            {
+                var politics = new Politics()
+                {
+                    OwnerFaction = thisFaction,
+                    OtherFaction = otherFaction,
+                    HasMet = false,
+                };
+
+                if (thisFaction.Race == otherFaction.Race)
+                {
+                    politics.AddEvent(new PoliticalEvent()
+                    {
+                        Change = 0.5f,
+                        Description = "we are of the same people",
+                    });
+                }
+
+                if (Library.GetRace(thisFaction.Race).HasValue(out var thisFactionRace) && Library.GetRace(otherFaction.Race).HasValue(out var otherRace))
+                {
+                    if (thisFactionRace.NaturalEnemies.Any(name => name == otherRace.Name) || otherRace.NaturalEnemies.Any(name => name == thisFactionRace.Name))
+                        if (!politics.HasEvent("we are taught to hate your kind"))
+                            politics.AddEvent(new PoliticalEvent()
+                            {
+                                Change = -10.0f, // Make this negative and we get an instant war party rush.
+                                Description = "we are taught to hate your kind",
+                            });
+
+                    if (thisFactionRace.IsIntelligent && otherRace.IsIntelligent)
+                    {
+                        if (thisFaction.GoodWill < -0.8f || otherFaction.GoodWill < -0.8f)
+                        {
+                            if (!politics.HasEvent("we just don't trust you"))
+                            {
+                                politics.AddEvent(new PoliticalEvent()
+                                {
+                                    Change = -10.0f, // Make this negative and we get an instant war party rush.
+                                    Description = "we just don't trust you",
+                                });
+                                politics.IsAtWar = true;
+                            }
+                        }
+                        else if (thisFaction.GoodWill > 0.8f || otherFaction.GoodWill > 0.8f)
+                            if (!politics.HasEvent("we just trust you"))
+                                politics.AddEvent(new PoliticalEvent()
+                                {
+                                    Change = 10.0f,
+                                    Description = "we just trust you",
+                                });
+                    }
+                }
+
+                return politics;
+            }
         }
     }
 }

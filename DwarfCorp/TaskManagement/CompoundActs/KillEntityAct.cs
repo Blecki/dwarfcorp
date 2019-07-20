@@ -81,7 +81,7 @@ namespace DwarfCorp
                 float distToStructure = (closestDefensiveStructure.Position - creature.Position).Length();
                 float distToEntity = (Entity.Position - creature.Position).Length();
 
-                if (distToStructure > 1.5f * distToEntity || distToStructure > 20.0f)
+                if (distToStructure > 1.5f * distToEntity || distToStructure > 12.0f)
                 {
                     closestDefensiveStructure = null;
                 }
@@ -107,7 +107,8 @@ namespace DwarfCorp
             }
             else
             {
-                if (closestDefensiveStructure == null || (closestDefensiveStructure.Position - creature.Position).Length() > 20.0f)
+                if (creature.Creature.Attacks[0].Weapon.Mode != Weapon.AttackMode.Ranged || 
+                    closestDefensiveStructure == null || (closestDefensiveStructure.Position - creature.Position).Length() > 20.0f)
                 {
                     Tree =
                         new Domain(() => Verify(creature),

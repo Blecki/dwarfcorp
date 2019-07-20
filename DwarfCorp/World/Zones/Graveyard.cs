@@ -22,7 +22,7 @@ namespace DwarfCorp
 
         public override string GetDescriptionString()
         {
-            return "Graveyard " + ID + " - " + Boxes.Count + " of " + Voxels.Count + " plots filled.";
+            return "Graveyard " + ID + " - " + Resources.CurrentResourceCount + " of " + Voxels.Count + " plots filled.";
         }
 
         private Graveyard(ZoneType Data, WorldManager World) :

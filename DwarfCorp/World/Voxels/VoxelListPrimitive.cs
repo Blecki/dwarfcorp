@@ -152,6 +152,9 @@ namespace DwarfCorp
                     if (neighbor.IsExplored && neighbor.IsEmpty)
                         return true;
 
+                    if (face == BoxFace.Top && !neighbor.IsVisible)
+                        return true;
+
                     if (neighbor.Type.IsTransparent && !voxel.Type.IsTransparent)
                         return true;
 

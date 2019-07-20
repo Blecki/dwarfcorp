@@ -27,8 +27,6 @@ namespace DwarfCorp
             var resourceType = Library.GetResourceType(resources.Type);
             var num = stock.Resources.RemoveMaxResources(resources, resources.Count);
 
-            stock.HandleBoxes();
-
             foreach (var tag in resourceType.Tags)
                 if (PersistentData.CachedResourceTagCounts.ContainsKey(tag)) // Move cache into worldmanager...
                 {
@@ -38,10 +36,7 @@ namespace DwarfCorp
 
             for (int i = 0; i < num; i++)
             {
-                // Make a toss from the last crate to the agent.
-                var startPosition = stock.Voxels.Count > 0 ? stock.Voxels.First().Center + new Vector3(0.0f, 1.0f, 0.0f) : Vector3.Zero;
-                if (stock.Boxes.Count > 0)
-                    startPosition = stock.Boxes.Last().Position + MathFunctions.RandVector3Cube() * 0.5f;
+                var startPosition = stock.GetBoundingBox().Center() + new Vector3(0.0f, 1.0f, 0.0f); 
 
                 GameComponent newEntity = EntityFactory.CreateEntity<GameComponent>(resources.Type + " Resource", startPosition);
 
@@ -78,7 +73,6 @@ namespace DwarfCorp
                 foreach (var stock in EnumerateZones().Where(s => resources.All(r => s is Stockpile && (s as Stockpile).IsAllowed(r.Type))))
                 {
                     int num = stock.Resources.RemoveMaxResources(resource, resource.Count - count);
-                    (stock as Stockpile).HandleBoxes();
                     foreach (var tag in resourceType.Tags)
                     {
                         if (PersistentData.CachedResourceTagCounts.ContainsKey(tag))
@@ -261,7 +255,7 @@ namespace DwarfCorp
                 if (space >= amount.Count)
                 {
                     stockpile.Resources.AddResource(amount);
-                    stockpile.HandleBoxes();
+
                     foreach (var tag in resource.Tags)
                     {
                         if (!PersistentData.CachedResourceTagCounts.ContainsKey(tag))
@@ -278,7 +272,6 @@ namespace DwarfCorp
                     stockpile.Resources.AddResource(new ResourceAmount(resources.Type, amountToMove));
                     amount.Count -= amountToMove;
 
-                    stockpile.HandleBoxes();
                     foreach (var tag in resource.Tags)
                     {
                         if (!PersistentData.CachedResourceTagCounts.ContainsKey(tag))

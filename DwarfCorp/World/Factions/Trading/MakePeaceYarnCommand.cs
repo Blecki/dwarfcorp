@@ -21,6 +21,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
             }
 
             world.Overworld.GetPolitics(playerFaction.ParentFaction, envoy.OwnerFaction.ParentFaction).IsAtWar = false;
+            Memory.SetValue("$faction_was_at_war", new Yarn.Value(false));
         }
     }
 }

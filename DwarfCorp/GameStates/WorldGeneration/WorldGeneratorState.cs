@@ -113,7 +113,8 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockTop,
                 OnClick = (sender, args) =>
                 {
-                    GameStateManager.PopState();
+                    GameStateManager.ClearState();
+                    GameStateManager.PushState(new MainMenuState(Game));
                 }
             });
 

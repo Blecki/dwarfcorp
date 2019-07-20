@@ -32,6 +32,8 @@ namespace DwarfCorp
             bool SelectEmpty,
             Func<VoxelHandle, bool> FilterPredicate)
         {
+            if (Data == null) return VoxelHandle.InvalidHandle;
+
             if (FilterPredicate == null)
             {
                 FilterPredicate = v => v.IsValid && !v.IsEmpty;

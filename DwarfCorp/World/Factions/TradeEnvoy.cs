@@ -152,12 +152,12 @@ namespace DwarfCorp
                 Creatures.ForEach((creature) => creature.GetRoot().Die());
 
             var politics = World.Overworld.GetPolitics(OwnerFaction.ParentFaction, OtherFaction.ParentFaction);
-            if (politics.GetCurrentRelationship() == Relationship.Hateful)
-            {
-                World.MakeAnnouncement(String.Format("The envoy from {0} left: we are at war with them.", OwnerFaction.ParentFaction.Name));
-                RecallEnvoy();
-            }
-            else
+            //if (politics.GetCurrentRelationship() == Relationship.Hateful)
+            //{
+            //    World.MakeAnnouncement(String.Format("The envoy from {0} left: we are at war with them.", OwnerFaction.ParentFaction.Name));
+            //    RecallEnvoy();
+            //}
+            //else
             {
                 if (Creatures.Any(
                     // TODO (mklingen) why do I need this null check?

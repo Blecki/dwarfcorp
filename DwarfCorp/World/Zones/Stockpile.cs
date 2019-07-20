@@ -40,8 +40,9 @@ namespace DwarfCorp
         }
 
         private static uint maxID = 0;
-        public List<GameComponent> Boxes { get; set; }
-        public string BoxType = "Crate";
+
+        [JsonProperty] private List<GameComponent> Boxes { get; set; }
+        protected string BoxType = "Crate";
         public Vector3 BoxOffset = Vector3.Zero;
         private Timer HandleStockpilesTimer = new Timer(5.5f, false, Timer.TimerMode.Real);
 
@@ -105,7 +106,7 @@ namespace DwarfCorp
             //});
         }
 
-        public void HandleBoxes()
+        private void HandleBoxes()
         {
             if (Voxels == null || Boxes == null)
                 return;
@@ -156,7 +157,6 @@ namespace DwarfCorp
                 return false;
 
             bool worked =  base.AddItem(component);
-            HandleBoxes();
 
             if (Boxes.Count > 0)
             {
@@ -208,7 +208,6 @@ namespace DwarfCorp
 
         public override void RecalculateMaxResources()
         {
-            HandleBoxes();
             base.RecalculateMaxResources();
         }
 
@@ -233,6 +232,8 @@ namespace DwarfCorp
                             World.TaskManager.AddTask(transferTask);
                         }
                     }
+
+            HandleBoxes();
 
             base.Update(Time);
         }

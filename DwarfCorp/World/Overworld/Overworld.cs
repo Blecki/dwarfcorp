@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System;
 
 namespace DwarfCorp.GameStates
 {
@@ -20,6 +21,8 @@ namespace DwarfCorp.GameStates
         public int zLevels = 4; // This is actually y levels but genre convention is to call depth Z.
 
         public InstanceSettings InstanceSettings; // These are only saved because it makes the selector default to the last launched branch.
+
+        public Dictionary<String, Politics> Politics = new Dictionary<string, Politics>();
 
         [JsonIgnore] public OverworldMap Map = null;
         [JsonIgnore] public OverworldGenerationSettings GenerationSettings = new OverworldGenerationSettings();
@@ -46,7 +49,16 @@ namespace DwarfCorp.GameStates
 
         public Politics GetPolitics(OverworldFaction ThisFaction, OverworldFaction OtherFaction)
         {
-            return ThisFaction.Politics[OtherFaction.Name];
+            var key = "";
+            if (String.Compare(ThisFaction.Name, OtherFaction.Name, false) < 0)
+                key = ThisFaction.Name + " & " + OtherFaction.Name;
+            else
+                key = OtherFaction.Name + " & " + ThisFaction.Name;
+
+            if (!Politics.ContainsKey(key))
+                Politics.Add(key, DwarfCorp.Politics.CreatePolitivs(ThisFaction, OtherFaction));
+
+            return Politics[key];
         }
     }
 }

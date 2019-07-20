@@ -12,8 +12,8 @@ namespace DwarfCorp
 {
     public class ResourceContainer
     {
-        public int MaxResources { get; set; }
-        public int CurrentResourceCount { get; private set; }
+        public int MaxResources;
+        public int CurrentResourceCount;
 
         [JsonProperty]
         public Dictionary<String, ResourceAmount> Resources = new Dictionary<string, ResourceAmount>();
