@@ -218,14 +218,15 @@ namespace DwarfCorp
             public float FNAONLY_KeyRepeatRate = 0.1f;
             public int DwarfArrivalDelayHours = 4;
             public int MaxLiveChunks = 10; // How many chunks can have geometry saved
+
             [AutoResetBool(false)] public bool FastGen = false;
             [AutoResetFloat(0.15f)] public float GenerationRuinsRate = 0.15f;
             [AutoResetBool(false)] public bool NoStone = false;
 
             [AutoResetFloat(-10.0f)] public float Boredom_Gamble = -10.0f;
-            [AutoResetFloat(0.1f)] public float Boredom_NormalTask = 0.1f;
-            [AutoResetFloat(-0.1f)] public float Boredom_Sleep = -0.1f;
-            [AutoResetFloat(-0.1f)] public float Boredom_ExcitingTask = -0.1f;
+            [AutoResetFloat(0.1f)] public float Boredom_NormalTask = -0.1f;
+            [AutoResetFloat(-0.1f)] public float Boredom_Sleep = 0.1f;
+            [AutoResetFloat(-0.1f)] public float Boredom_ExcitingTask = -0.5f;
             [AutoResetFloat(0.5f)] public float Boredom_BoringTask = 0.5f;
             [AutoResetFloat(-0.1f)] public float Boredom_Eat = -0.1f;
             [AutoResetFloat(-0.2f)] public float Boredom_Walk = -0.2f;
@@ -236,6 +237,7 @@ namespace DwarfCorp
             [AutoResetFloat(1.0f)] public float Energy_Restful = 1.0f;
 
             [AutoResetFloat(0.1f)] public float TrainChance = 0.1f;
+            [AutoResetFloat(0.1f)] public float BingeChance = 0.1f;
             [AutoResetFloat(0.75f)] public float CreatureMovementAdjust = 0.75f;
             [AutoResetFloat(0.01f)] public float DrownChance = 0.01f;
 

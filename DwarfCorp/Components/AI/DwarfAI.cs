@@ -19,6 +19,16 @@ namespace DwarfCorp
         [JsonProperty] private double UnhappinessTime = 0.0f;
         private Timer AutoGatherTimer = new Timer(MathFunctions.Rand() * 5 + 3, false);
 
+        private enum RandomTask
+        {
+            Gamble,
+            Eat,
+            Drink,
+            Walk,
+            Sit,
+            Train
+        }
+
         public DwarfAI()
         {
         }
@@ -31,46 +41,76 @@ namespace DwarfCorp
         {
         }
 
-        private Task SatisfyBoredom()
+        private class IdleTask
         {
-            if (World.GamblingState.State == Scripting.Gambling.Status.Gaming ||
-                World.GamblingState.State == Scripting.Gambling.Status.WaitingForPlayers && World.GamblingState.Participants.Count > 0)
-            {
-                var task = new Scripting.GambleTask() { Priority = TaskPriority.High };
-                if (task.IsFeasible(Creature) == Feasibility.Feasible)
-                {
-                    return task;
-                }
-            }
+            public String Name;
+            public bool PreferWhenBored = false;
+            public Func<float> Chance = () => 1.0f;
+            public Func<DwarfAI, Task> Create = (_ai) => null;
+            public Func<DwarfAI, WorldManager, bool> Available = (_ai, _world) => true;
+        }
 
-            switch (MathFunctions.RandInt(0, 5))
+        private static List<IdleTask> IdleTasks;
+
+        private static void InitializeIdleTasks()
+        {
+            if (IdleTasks == null)
             {
-                case 0:
+                IdleTasks = new List<IdleTask>();
+
+                IdleTasks.Add(new IdleTask // Join dice game - actually should be checked before even looking for an idle task.
                 {
-                    return new ActWrapperTask(new LongWanderAct(this)
+                    Name = "Join Gamble",
+                    PreferWhenBored = true,
+                    Chance = () => 1.0f,
+                    Create = (AI) =>
+                    {
+                        var task = new Scripting.GambleTask() { Priority = TaskPriority.High };
+                        if (task.IsFeasible(AI.Creature) == Feasibility.Feasible)
+                            return task;
+                        return null;
+                    },
+                    Available = (AI, World) => World.GamblingState.State == Scripting.Gambling.Status.Gaming ||
+                        World.GamblingState.State == Scripting.Gambling.Status.WaitingForPlayers && World.GamblingState.Participants.Count > 0
+                });
+
+                IdleTasks.Add(new IdleTask
+                {
+                    Name = "Go on a walk",
+                    PreferWhenBored = true,
+                    Chance = () => 1.0f,
+                    Create = (AI) =>
+                    {
+                        return new ActWrapperTask(new LongWanderAct(AI)
                         {
                             PathLength = 50,
                             Radius = 30,
                             Name = "Go on a walk",
                             Is2D = true
                         })
-                    {
-                        Name = "Go on a walk.",
-                        Priority = TaskPriority.High,
-                        BoredomIncrease = GameSettings.Default.Boredom_Walk,
-                        EnergyDecrease = GameSettings.Default.Energy_Refreshing,
-                    };
-                }
-                case 1:
+                        {
+                            Name = "Go on a walk.",
+                            Priority = TaskPriority.High,
+                            BoredomIncrease = GameSettings.Default.Boredom_Walk,
+                            EnergyDecrease = GameSettings.Default.Energy_Refreshing,
+                        };
+                    }
+                });
+
+                IdleTasks.Add(new IdleTask
                 {
-                    if (World.ListResourcesWithTag(Resource.ResourceTags.Alcohol).Count > 0)
+                    Name = "Binge drink",
+                    PreferWhenBored = true,
+                    Chance = () => GameSettings.Default.BingeChance,
+                    Create = (AI) =>
+                    {
                         return new ActWrapperTask(
                             new Repeat(
-                                new FindAndEatFoodAct(this, true)
+                                new FindAndEatFoodAct(AI, true)
                                 {
                                     FoodTag = Resource.ResourceTags.Alcohol,
                                     FallbackTag = Resource.ResourceTags.Alcohol
-                                }, 
+                                },
                                 3, false)
                             {
                                 Name = "Binge drink."
@@ -79,53 +119,182 @@ namespace DwarfCorp
                             Name = "Binge drink.",
                             Priority = TaskPriority.High,
                             BoredomIncrease = GameSettings.Default.Boredom_Eat,
-                            EnergyDecrease = GameSettings.Default.Energy_Refreshing,
-                    };
+                            EnergyDecrease = GameSettings.Default.Energy_Restful,
+                        };
+                    },
+                    Available = (AI, World) => World.ListResourcesWithTag(Resource.ResourceTags.Alcohol).Count > 0
+                });
 
-                    if (!Stats.Hunger.IsSatisfied())
-                        return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(this, true), 3, false)
-                            {
-                                Name = "Binge eat."
-                            })
+                IdleTasks.Add(new IdleTask
+                {
+                    Name = "Binge eat",
+                    PreferWhenBored = true,
+                    Chance = () => GameSettings.Default.BingeChance,
+                    Create = (AI) =>
+                    {
+                        return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(AI, true), 3, false)
+                        {
+                            Name = "Binge eat."
+                        })
                         {
                             Name = "Binge eat.",
                             Priority = TaskPriority.High,
                             BoredomIncrease = GameSettings.Default.Boredom_Eat,
-                            EnergyDecrease = GameSettings.Default.Energy_Refreshing
-                    };
+                            EnergyDecrease = GameSettings.Default.Energy_Restful,
+                        };
+                    },
+                    Available = (AI, World) => !AI.Stats.Hunger.IsSatisfied()
+                });
 
-                    return ActOnIdle();
-                }
-                case 2:
+                IdleTasks.Add(new IdleTask
                 {
-                    return new ActWrapperTask(new GoToChairAndSitAct(this)
+                    Name = "Relax",
+                    PreferWhenBored = true,
+                    Chance = () => 1.0f,
+                    Create = (AI) =>
+                    {
+                        return new ActWrapperTask(new GoToChairAndSitAct(AI)
                         {
                             SitTime = 60,
                             Name = "Relax."
                         })
+                        {
+                            Name = "Relax.",
+                            Priority = TaskPriority.High,
+                            BoredomIncrease = GameSettings.Default.Boredom_Sleep,
+                            EnergyDecrease = GameSettings.Default.Energy_Restful
+                        };
+                    },
+                    Available = (AI, World) => !AI.Stats.Hunger.IsSatisfied()
+                });
+
+                IdleTasks.Add(new IdleTask
+                {
+                    Name = "Start Dice Game",
+                    PreferWhenBored = true,
+                    Chance = () => 1.0f,
+                    Create = (AI) =>
                     {
-                        Name = "Relax.",
-                        Priority = TaskPriority.High,
-                        BoredomIncrease = GameSettings.Default.Boredom_Sleep,
-                        EnergyDecrease = GameSettings.Default.Energy_Restful
-                    };
-                }
-                case 3:
-                {
-                    var task = new Scripting.GambleTask() { Priority = TaskPriority.High };
-                    if (task.IsFeasible(Creature) == Feasibility.Feasible)
-                       return task;
+                        var task = new Scripting.GambleTask() { Priority = TaskPriority.High };
+                        if (task.IsFeasible(AI.Creature) == Feasibility.Feasible)
+                            return task;
+                        return null;
+                    }
+                });
 
-                    break;
-                }
-                case 4:
+                IdleTasks.Add(new IdleTask
                 {
-                    return ActOnIdle();
-                }
+                    Name = "Craft",
+                    PreferWhenBored = true,
+                    Chance = () => 0.005f,
+                    Create = (AI) =>
+                    {
+                        if (Library.GetRandomApplicableCraftable(AI.Faction, AI.World).HasValue(out var item))
+                        {
+                            var resources = new List<ResourceAmount>();
+                            foreach (var resource in item.RequiredResources)
+                            {
+                                var amount = AI.World.GetResourcesWithTags(new List<Quantitiy<Resource.ResourceTags>>() { resource });
+                                if (amount == null || amount.Count == 0)
+                                    break;
+                                resources.Add(Datastructures.SelectRandom(amount));
+                            }
+
+                            if (resources.Count > 0)
+                                return new CraftResourceTask(item, 1, 1, resources) { IsAutonomous = true, Priority = TaskPriority.Low };
+                        }
+
+                        return null;
+                    },
+                    Available = (AI, World) => AI.Stats.IsTaskAllowed(TaskCategory.CraftItem)
+                });
+
+                IdleTasks.Add(new IdleTask
+                {
+                    Name = "Train",
+                    PreferWhenBored = true,
+                    Chance = () => GameSettings.Default.TrainChance,
+                    Create = (AI) =>
+                    {
+                        if (!AI.Stats.IsTaskAllowed(TaskCategory.Research))
+                        {
+                            var closestTraining = AI.Faction.FindNearestItemWithTags("Train", AI.Position, true, AI);
+                            if (closestTraining != null)
+                                return new ActWrapperTask(new GoTrainAct(AI)) { Name = "train", ReassignOnDeath = false, Priority = TaskPriority.Medium };
+                        }
+                        else
+                        {
+                            var closestTraining = AI.Faction.FindNearestItemWithTags("Research", AI.Position, true, AI);
+                            if (closestTraining != null)
+                                return new ActWrapperTask(new GoTrainAct(AI) { Magical = true }) { Name = "do magic research", ReassignOnDeath = false, Priority = TaskPriority.Medium };
+                        }
+
+                        return null;
+                    },
+                    Available = (AI, World) => AI.Stats.IsTaskAllowed(TaskCategory.Attack)
+                });
+
+                IdleTasks.Add(new IdleTask
+                {
+                    Name = "Mourn",
+                    PreferWhenBored = false,
+                    Chance = () => GameSettings.Default.TrainChance,
+                    Create = (AI) =>
+                    {
+                        return new ActWrapperTask(new MournGraves(AI))
+                        {
+                            Priority = TaskPriority.Medium,
+                            AutoRetry = false
+                        };
+                    }
+                });
+
+                IdleTasks.Add(new IdleTask
+                {
+                    Name = "Gather Potions",
+                    PreferWhenBored = true,
+                    Chance = () => GameSettings.Default.TrainChance,
+                    Create = (AI) =>
+                    {
+                        return new GatherPotionsTask();
+                    },
+                    Available = (AI, World) => World.ListResourcesWithTag(Resource.ResourceTags.Potion).Count > 0
+                });
+
+                IdleTasks.Add(new IdleTask
+                {
+                    Name = "Default",
+                    PreferWhenBored = false,
+                    Chance = () => 2.0f,
+                    Create = (AI) => new LookInterestingTask()
+                });
             }
-            
-            return ActOnIdle();
+        }
 
+        private Task ChooseIdleTask(bool IsBored)
+        {
+            InitializeIdleTasks();
+
+            var availableTasks = IdleTasks.Where(t =>
+            {
+                if (IsBored)
+                    if (t.PreferWhenBored == false)
+                        return false;
+
+                return t.Available(this, World);
+            });
+
+            var totalChance = availableTasks.Sum(t => t.Chance());
+            var random = MathFunctions.Random.NextDouble() * totalChance;
+
+            foreach (var t in availableTasks)
+            {
+                if (random < t.Chance())
+                    return t.Create(this);
+                random -= t.Chance();
+            }
+
+            return new LookInterestingTask();
         }
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera) 
@@ -190,7 +359,7 @@ namespace DwarfCorp
             {
                 if (!Tasks.Any(task => task.BoredomIncrease < 0))
                 {
-                    Task toReturn = SatisfyBoredom();
+                    Task toReturn = ChooseIdleTask(true);
                     if (toReturn != null && !Tasks.Contains(toReturn) && CurrentTask != toReturn)
                         AssignTask(toReturn);
                 }
@@ -391,6 +560,7 @@ namespace DwarfCorp
         {
             if (Creature.Physics.IsInLiquid)
                 return new FindLandTask();
+
             if (GetRoot().GetComponent<Flammable>().HasValue(out var flames) && flames.IsOnFire)
                 return new LongWanderAct(this) { Name = "Freak out!", PathLength = 2, Radius = 5 }.AsTask();
 
@@ -407,14 +577,14 @@ namespace DwarfCorp
                 var candidate = World.TaskManager.GetBestTask(this);
                 if (candidate != null)
                     return candidate;
+            }
 
-                if (Stats.CurrentLevel.HealingPower > 0 && Faction.Minions.Any(minion => !minion.Creature.Stats.Health.IsSatisfied()))
+            if (Stats.CurrentLevel.HealingPower > 0 && Faction.Minions.Any(minion => !minion.Creature.Stats.Health.IsSatisfied()))
+            {
+                var minion = Faction.Minions.FirstOrDefault(m => m != this && !m.Stats.Health.IsSatisfied());
+                if (minion != null)
                 {
-                    var minion = Faction.Minions.FirstOrDefault(m => m != this && !m.Stats.Health.IsSatisfied());
-                    if (minion != null)
-                    {
-                        return new MagicHealAllyTask(minion);
-                    }
+                    return new MagicHealAllyTask(minion);
                 }
             }
 
@@ -437,67 +607,10 @@ namespace DwarfCorp
 
 
             if (Tasks.Count == 0)
-            {
-                // Craft random items for fun.
-                if (Stats.IsTaskAllowed(TaskCategory.CraftItem) && MathFunctions.RandEvent(0.0005f)) // Todo: These chances need to be configurable.
-                {
-                    if (Library.GetRandomApplicableCraftable(Faction, World).HasValue(out var item))
-                    {
-                        var resources = new List<ResourceAmount>();
-                        foreach (var resource in item.RequiredResources)
-                        {
-                            var amount = World.GetResourcesWithTags(new List<Quantitiy<Resource.ResourceTags>>() { resource });
-                            if (amount == null || amount.Count == 0)
-                                break;
-                            resources.Add(Datastructures.SelectRandom(amount));
-                        }
+                return ChooseIdleTask(false);
+            else
+                return Tasks[0];
 
-                        if (resources.Count > 0)
-                            return new CraftResourceTask(item, 1, 1, resources) { IsAutonomous = true, Priority = TaskPriority.Low };
-                    }
-                }
-
-                // Find a room to train in, if applicable.
-                if (Stats.IsTaskAllowed(TaskCategory.Attack) && MathFunctions.RandEvent(GameSettings.Default.TrainChance))
-                {
-                    if (!Stats.IsTaskAllowed(TaskCategory.Research))
-                    {
-                        var closestTraining = Faction.FindNearestItemWithTags("Train", Position, true, this);
-                        if (closestTraining != null)
-                            return new ActWrapperTask(new GoTrainAct(this)) { Name = "train", ReassignOnDeath = false, Priority = TaskPriority.Medium };
-                    }
-                    else
-                    {
-                        var closestTraining = Faction.FindNearestItemWithTags("Research", Position, true, this);
-                        if (closestTraining != null)
-                            return new ActWrapperTask(new GoTrainAct(this) { Magical = true }) { Name = "do magic research", ReassignOnDeath = false, Priority = TaskPriority.Medium };
-                    }
-                }
-
-                if (IdleTimer.HasTriggered && MathFunctions.RandEvent(0.005f))
-                {
-                    return new ActWrapperTask(new MournGraves(this))
-                    {
-                        Priority = TaskPriority.Medium,
-                        AutoRetry = false
-                    };
-                }
-
-                // Otherwise, try to find a chair to sit in
-                if (IdleTimer.HasTriggered && MathFunctions.RandEvent(0.25f) && Faction == World.PlayerFaction)
-                {
-                    return new ActWrapperTask(new GoToChairAndSitAct(this))
-                    {
-                        Priority = TaskPriority.Eventually,
-                        AutoRetry = false
-                    };
-                }
-            }
-
-            if (MathFunctions.RandEvent(0.1f) && World.ListResourcesWithTag(Resource.ResourceTags.Potion).Count > 0)
-                return new GatherPotionsTask();
-            
-            return new LookInterestingTask();
         }
 
         public override void Converse(CreatureAI other)
