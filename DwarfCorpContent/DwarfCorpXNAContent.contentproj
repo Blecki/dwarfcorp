@@ -2091,6 +2091,10 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <None Include="Entities\Furniture\sm_anvil.obj">
+      <Name>sm_anvil</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Entities\Rail\sm_minecart.obj">
       <Name>sm_minecart</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -5070,6 +5074,13 @@
   <ItemGroup>
     <Compile Include="Entities\Rail\minecart_tx.png">
       <Name>minecart_tx</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\Furniture\tx_anvil.png">
+      <Name>tx_anvil</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

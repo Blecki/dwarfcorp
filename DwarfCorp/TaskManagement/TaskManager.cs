@@ -27,8 +27,10 @@ namespace DwarfCorp
 
         public void AddTask(Task task)
         {
-            // TODO(mklingen): do not depend on task name
-            // as ID.
+            if (World.Overworld.GetDefaultTaskPriority(task.Category) != TaskPriority.NotSet)
+                task.Priority = World.Overworld.GetDefaultTaskPriority(task.Category);
+
+            // TODO(mklingen): do not depend on task name as ID.
             if (!Tasks.Any(t => t.Name == task.Name))
             {
                 Tasks.Add(task);

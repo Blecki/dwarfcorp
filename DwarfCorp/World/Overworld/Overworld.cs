@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using System;
 
-namespace DwarfCorp.GameStates
+namespace DwarfCorp.GameStates // Todo: Why in GameStates?
 {
     public class Overworld
     {
@@ -23,6 +23,7 @@ namespace DwarfCorp.GameStates
         public InstanceSettings InstanceSettings; // These are only saved because it makes the selector default to the last launched branch.
 
         public Dictionary<String, Politics> Politics = new Dictionary<string, Politics>();
+        public Dictionary<TaskCategory, TaskPriority> DefaultTaskPriorities = new Dictionary<TaskCategory, TaskPriority>();
 
         [JsonIgnore] public OverworldMap Map = null;
         [JsonIgnore] public OverworldGenerationSettings GenerationSettings = new OverworldGenerationSettings();
@@ -59,6 +60,14 @@ namespace DwarfCorp.GameStates
                 Politics.Add(key, DwarfCorp.Politics.CreatePolitivs(ThisFaction, OtherFaction));
 
             return Politics[key];
+        }
+
+        public TaskPriority GetDefaultTaskPriority(TaskCategory Category)
+        {
+            if (DefaultTaskPriorities.ContainsKey(Category))
+                return DefaultTaskPriorities[Category];
+            else
+                return TaskPriority.NotSet;
         }
     }
 }

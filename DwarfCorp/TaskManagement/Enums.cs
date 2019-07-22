@@ -7,6 +7,7 @@ namespace DwarfCorp
 {
     public enum TaskPriority
     {
+        NotSet = -1,
         Eventually = 0,
         Low = 1,
         Medium = 2,

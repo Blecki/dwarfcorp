@@ -33,6 +33,18 @@ namespace DwarfCorp.Gui.Widgets
 
         public Action<Widget> OnSelectedIndexChanged = null;
 
+        public void SilentSetSelectedIndex(int Index)
+        {
+            _selectedIndex = Index;
+
+            if (_selectedIndex < 0 || _selectedIndex >= Items.Count)
+                Text = "";
+            else
+                Text = Items[_selectedIndex];
+
+            Invalidate();
+        }
+
         public String SelectedItem
         {
             get

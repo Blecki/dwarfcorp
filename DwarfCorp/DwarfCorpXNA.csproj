@@ -256,6 +256,7 @@
     <Compile Include="GameStates\WorldGeneration\EmbarkmentResourceColumns.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldPreviewMesh.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldTextureGenerator.cs" />
+    <Compile Include="Gui\Widgets\DefaultTaskPriority.cs" />
     <Compile Include="Gui\Widgets\MarketPanel.cs" />
     <Compile Include="Library\BiomeLibrary.cs" />
     <Compile Include="Library\DifficultyLibrary.cs" />

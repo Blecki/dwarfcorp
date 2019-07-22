@@ -55,7 +55,7 @@ namespace DwarfCorp.Gui.Widgets
                             new HorizontalMenuTray.MenuItem
                             {
                                 Text = r.Name,
-                                OnClick = (sender, args) => ActivateGodTool("Build/" + r)
+                                OnClick = (sender, args) => ActivateGodTool("Build/" + r.Name)
                             })
                     }
                 },

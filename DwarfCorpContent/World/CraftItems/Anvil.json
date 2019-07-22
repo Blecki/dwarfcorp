@@ -25,7 +25,7 @@
   "PastTeseVerb": "@built",
   "CurrentVerb": "@building",
   "AllowHeterogenous": false,
-  "SpawnOffset": "0, 0.5, 0",
+  "SpawnOffset": "0, 0.0, 0",
   "AddToOwnedPool": true,
   "Moveable": true,
   "CraftActBehavior": "Normal",

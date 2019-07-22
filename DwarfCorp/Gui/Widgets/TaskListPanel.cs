@@ -23,9 +23,35 @@ namespace DwarfCorp.Gui.Widgets
             {
                 sender.Root.RegisterForUpdate(sender);
 
-                FilterBox = AddChild(new EditableTextField
+                var topRow = AddChild(new Widget
                 {
                     AutoLayout = AutoLayout.DockTop,
+                    MinimumSize = new Point(0, 24)
+                });
+
+                topRow.AddChild(new Widget
+                {
+                    AutoLayout = AutoLayout.DockRight,
+                    MinimumSize = new Point(32, 0),
+                    Text = "Default Priorities",
+                    ChangeColorOnHover = true,
+                    Border = "border-button",
+                    OnClick = (btn, args) =>
+                    {
+                        var screen = sender.Root.RenderData.VirtualScreen;
+                        sender.Root.ShowModalPopup(new DefaultTaskPriority
+                        {
+                            Overworld = World.Overworld,
+                            MinimumSize = new Point(256, 512),
+                            Border = "border-fancy",
+                            Rect = new Rectangle(screen.Center.X - 128, screen.Center.Y - 256, 256, 512)
+                        });
+                    }
+                });
+
+                FilterBox = topRow.AddChild(new EditableTextField
+                {
+                    AutoLayout = AutoLayout.DockFill,
                     MinimumSize = new Point(0, 24),
                     Text = ""
                 }) as EditableTextField;
