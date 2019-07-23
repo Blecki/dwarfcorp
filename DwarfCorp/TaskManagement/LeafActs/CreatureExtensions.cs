@@ -75,17 +75,17 @@ namespace DwarfCorp
 
         public static IEnumerable<Act.Status> RestockAll(this Creature agent)
         {
-            AssignRestockAllTasks(agent, TaskPriority.Medium);
+            AssignRestockAllTasks(agent, TaskPriority.Medium, false);
             yield return Act.Status.Success;
         }
 
-        public static void AssignRestockAllTasks(this Creature agent, TaskPriority Priority)
+        public static void AssignRestockAllTasks(this Creature agent, TaskPriority Priority, bool IgnoreMarks)
         {
             var aggregatedResources = new Dictionary<string, ResourceAmount>();
 
             foreach (var resource in agent.Inventory.Resources)
             {
-                if (resource.MarkedForUse)
+                if (!IgnoreMarks && resource.MarkedForUse)
                     continue;
 
                 resource.MarkedForRestock = true;

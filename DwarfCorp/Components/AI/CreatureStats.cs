@@ -109,9 +109,11 @@ namespace DwarfCorp
 
         public CreatureStats()
         {
-            Age = (int)Math.Max(MathFunctions.RandNormalDist(30, 15), 10);
+            Age = (int)Math.Max(MathFunctions.RandNormalDist(35, 15), 15);
             RandomSeed = MathFunctions.RandInt(int.MinValue, int.MaxValue);
-            AddStatAdjustment(new StatAdjustment { Name = "base stats" });
+
+            if (FindAdjustment("base stats") == null)
+                AddStatAdjustment(new StatAdjustment { Name = "base stats" });
         }
 
         [OnDeserialized]
@@ -142,7 +144,7 @@ namespace DwarfCorp
 
             Title = CurrentLevel.Name;
         }
-        
+
         public void LevelUp(Creature Creature)
         {
             LevelIndex = Math.Min(LevelIndex + 1, CurrentClass.Levels.Count - 1);

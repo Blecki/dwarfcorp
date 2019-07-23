@@ -25,7 +25,7 @@ namespace DwarfCorp.ContextCommands
         public override void Apply(GameComponent Entity, WorldManager World)
         {
             if (Entity.GetComponent<CreatureAI>().HasValue(out var creature))
-                creature.Creature.AssignRestockAllTasks(TaskPriority.Urgent);
+                creature.Creature.AssignRestockAllTasks(TaskPriority.Urgent, true);
         }
     }
 }

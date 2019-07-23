@@ -278,7 +278,7 @@ namespace DwarfCorp
                     Chance = () => GameSettings.Default.IdleBehavior_Restock,
                     Create = (AI) =>
                     {
-                        AI.Creature.AssignRestockAllTasks(TaskPriority.Medium);
+                        AI.Creature.AssignRestockAllTasks(TaskPriority.Medium, true);
                         if (AI.Tasks.Count > 0)
                             return AI.Tasks[0];
                         return null;
@@ -574,16 +574,10 @@ namespace DwarfCorp
 
         public override Task ActOnIdle()
         {
-            if (Tasks.Count == 0)
-            {
-                if (ChooseIdleTask(false).HasValue(out var task))
-                    return task;
-                else
-                    return null;
-            }
+            if (ChooseIdleTask(false).HasValue(out var task))
+                return task;
             else
-                return Tasks[0];
-
+                return null;
         }
 
         public override void Converse(CreatureAI other)
