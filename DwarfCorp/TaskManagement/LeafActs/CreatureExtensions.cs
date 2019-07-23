@@ -73,36 +73,13 @@ namespace DwarfCorp
             yield break;
         }
 
-        public static void RestockAllImmediately(this Creature agent, bool allowMarkedForUse=false)
+        public static IEnumerable<Act.Status> RestockAll(this Creature agent)
         {
-            Dictionary<string, ResourceAmount> aggregatedResources = new Dictionary<string, ResourceAmount>();
-            foreach (var resource in agent.Inventory.Resources)
-            {
-                if (allowMarkedForUse || !resource.MarkedForUse)
-                {
-                    resource.MarkedForRestock = true;
-
-                    if (!aggregatedResources.ContainsKey(resource.Resource))
-                    {
-                        aggregatedResources[resource.Resource] = new ResourceAmount(resource.Resource, 0);
-                    }
-                    aggregatedResources[resource.Resource].Count++;
-                }
-            }
-
-            foreach(var resource in aggregatedResources)
-            {
-                var task = new StockResourceTask(resource.Value.CloneResource())
-                {
-                    Priority = TaskPriority.Medium
-                };
-
-                if (!agent.AI.Tasks.Contains(task))
-                    agent.AI.AssignTask(task);
-            }
+            AssignRestockAllTasks(agent, TaskPriority.Medium);
+            yield return Act.Status.Success;
         }
 
-        public static IEnumerable<Act.Status> RestockAll(this Creature agent)
+        public static void AssignRestockAllTasks(this Creature agent, TaskPriority Priority)
         {
             var aggregatedResources = new Dictionary<string, ResourceAmount>();
 
@@ -110,10 +87,12 @@ namespace DwarfCorp
             {
                 if (resource.MarkedForUse)
                     continue;
+
                 resource.MarkedForRestock = true;
 
                 if (!aggregatedResources.ContainsKey(resource.Resource))
                     aggregatedResources[resource.Resource] = new ResourceAmount(resource.Resource, 0);
+
                 aggregatedResources[resource.Resource].Count++;
             }
 
@@ -121,14 +100,12 @@ namespace DwarfCorp
             {
                 var task = new StockResourceTask(resource.Value.CloneResource())
                 {
-                    Priority = TaskPriority.Medium
+                    Priority = Priority
                 };
 
                 if (task.IsFeasible(agent) == Feasibility.Feasible && !agent.AI.Tasks.Contains(task))
                     agent.AI.AssignTask(task);
             }
-
-            yield return Act.Status.Success;
         }
     }
 }

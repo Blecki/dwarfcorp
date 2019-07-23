@@ -322,7 +322,7 @@ namespace DwarfCorp.Gui.Widgets
                                 {
                                     if (employeeInfo != null && employeeInfo.Employee != null
                                          && employeeInfo.Employee.Creature != null)
-                                        employeeInfo.Employee.Creature.RestockAllImmediately(true);
+                                        employeeInfo.Employee.Creature.AssignRestockAllTasks(TaskPriority.Urgent);
                                 }
                             });
                             popup.Layout();

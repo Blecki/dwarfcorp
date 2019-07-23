@@ -12,22 +12,12 @@ namespace DwarfCorp
     public class DwarfAI : CreatureAI
     {
         [JsonProperty] private int lastXPAnnouncement = -1;
-        private Timer restockTimer = new Timer(10.0f, false);
+        //private Timer restockTimer = new Timer(10.0f, false);
         private Timer SpeakTimer = new Timer(5.0f, true);
         [JsonProperty] private int NumDaysNotPaid = 0;
         private Timer IdleTimer = new Timer(2.0f, true);
         [JsonProperty] private double UnhappinessTime = 0.0f;
         private Timer AutoGatherTimer = new Timer(MathFunctions.Rand() * 5 + 3, false);
-
-        private enum RandomTask
-        {
-            Gamble,
-            Eat,
-            Drink,
-            Walk,
-            Sit,
-            Train
-        }
 
         public DwarfAI()
         {
@@ -62,7 +52,7 @@ namespace DwarfCorp
                 {
                     Name = "Join Gamble",
                     PreferWhenBored = true,
-                    Chance = () => 1.0f,
+                    Chance = () => 100.0f, // This is only available while a game is in progress... so make it highly likely.
                     Create = (AI) =>
                     {
                         var task = new Scripting.GambleTask() { Priority = TaskPriority.High };
@@ -78,13 +68,13 @@ namespace DwarfCorp
                 {
                     Name = "Go on a walk",
                     PreferWhenBored = true,
-                    Chance = () => 1.0f,
+                    Chance = () => GameSettings.Default.IdleBehavior_Walk,
                     Create = (AI) =>
                     {
                         return new ActWrapperTask(new LongWanderAct(AI)
                         {
-                            PathLength = 50,
-                            Radius = 30,
+                            PathLength = 20,
+                            Radius = 10,
                             Name = "Go on a walk",
                             Is2D = true
                         })
@@ -101,7 +91,7 @@ namespace DwarfCorp
                 {
                     Name = "Binge drink",
                     PreferWhenBored = true,
-                    Chance = () => GameSettings.Default.BingeChance,
+                    Chance = () => GameSettings.Default.IdleBehavior_Binge,
                     Create = (AI) =>
                     {
                         return new ActWrapperTask(
@@ -129,7 +119,7 @@ namespace DwarfCorp
                 {
                     Name = "Binge eat",
                     PreferWhenBored = true,
-                    Chance = () => GameSettings.Default.BingeChance,
+                    Chance = () => GameSettings.Default.IdleBehavior_Binge,
                     Create = (AI) =>
                     {
                         return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(AI, true), 3, false)
@@ -150,12 +140,12 @@ namespace DwarfCorp
                 {
                     Name = "Relax",
                     PreferWhenBored = true,
-                    Chance = () => 1.0f,
+                    Chance = () => GameSettings.Default.IdleBehavior_Relax,
                     Create = (AI) =>
                     {
                         return new ActWrapperTask(new GoToChairAndSitAct(AI)
                         {
-                            SitTime = 60,
+                            SitTime = 15,
                             Name = "Relax."
                         })
                         {
@@ -164,29 +154,44 @@ namespace DwarfCorp
                             BoredomIncrease = GameSettings.Default.Boredom_Sleep,
                             EnergyDecrease = GameSettings.Default.Energy_Restful
                         };
-                    },
-                    Available = (AI, World) => !AI.Stats.Hunger.IsSatisfied()
+                    }
                 });
 
                 IdleTasks.Add(new IdleTask
                 {
                     Name = "Start Dice Game",
                     PreferWhenBored = true,
-                    Chance = () => 1.0f,
+                    Chance = () => GameSettings.Default.IdleBehavior_Gamble,
                     Create = (AI) =>
                     {
                         var task = new Scripting.GambleTask() { Priority = TaskPriority.High };
                         if (task.IsFeasible(AI.Creature) == Feasibility.Feasible)
                             return task;
                         return null;
-                    }
+                    },
+                    Available = (AI, world) => AI.Stats.Boredom.IsDissatisfied()
+                });
+
+                IdleTasks.Add(new IdleTask
+                {
+                    Name = "Heal Allies",
+                    PreferWhenBored = true,
+                    Chance = () => GameSettings.Default.IdleBehavior_Heal,
+                    Create = (AI) =>
+                    {
+                        var minion = AI.Faction.Minions.FirstOrDefault(m => m != AI && !m.Stats.Health.IsSatisfied());
+                        if (minion != null)
+                            return new MagicHealAllyTask(minion);
+                        return null;
+                    },
+                    Available = (AI, world) => AI.Stats.CurrentLevel.HealingPower > 0 && AI.Faction.Minions.Any(minion => !minion.Creature.Stats.Health.IsSatisfied())
                 });
 
                 IdleTasks.Add(new IdleTask
                 {
                     Name = "Craft",
                     PreferWhenBored = true,
-                    Chance = () => 0.005f,
+                    Chance = () => GameSettings.Default.IdleBehavior_Craft,
                     Create = (AI) =>
                     {
                         if (Library.GetRandomApplicableCraftable(AI.Faction, AI.World).HasValue(out var item))
@@ -213,22 +218,12 @@ namespace DwarfCorp
                 {
                     Name = "Train",
                     PreferWhenBored = true,
-                    Chance = () => GameSettings.Default.TrainChance,
+                    Chance = () => GameSettings.Default.IdleBehavior_Train,
                     Create = (AI) =>
                     {
-                        if (!AI.Stats.IsTaskAllowed(TaskCategory.Research))
-                        {
-                            var closestTraining = AI.Faction.FindNearestItemWithTags("Train", AI.Position, true, AI);
-                            if (closestTraining != null)
-                                return new ActWrapperTask(new GoTrainAct(AI)) { Name = "train", ReassignOnDeath = false, Priority = TaskPriority.Medium };
-                        }
-                        else
-                        {
-                            var closestTraining = AI.Faction.FindNearestItemWithTags("Research", AI.Position, true, AI);
-                            if (closestTraining != null)
-                                return new ActWrapperTask(new GoTrainAct(AI) { Magical = true }) { Name = "do magic research", ReassignOnDeath = false, Priority = TaskPriority.Medium };
-                        }
-
+                        var closestTraining = AI.Faction.FindNearestItemWithTags("Train", AI.Position, true, AI);
+                        if (closestTraining != null)
+                            return new ActWrapperTask(new GoTrainAct(AI)) { Name = "train", ReassignOnDeath = false, Priority = TaskPriority.Medium };
                         return null;
                     },
                     Available = (AI, World) => AI.Stats.IsTaskAllowed(TaskCategory.Attack)
@@ -236,9 +231,24 @@ namespace DwarfCorp
 
                 IdleTasks.Add(new IdleTask
                 {
+                    Name = "Research",
+                    PreferWhenBored = true,
+                    Chance = () => GameSettings.Default.IdleBehavior_Research,
+                    Create = (AI) =>
+                    {
+                        var closestTraining = AI.Faction.FindNearestItemWithTags("Research", AI.Position, true, AI);
+                        if (closestTraining != null)
+                            return new ActWrapperTask(new GoTrainAct(AI) { Magical = true }) { Name = "do magic research", ReassignOnDeath = false, Priority = TaskPriority.Medium };
+                        return null;
+                    },
+                    Available = (AI, World) => AI.Stats.IsTaskAllowed(TaskCategory.Research)
+                });
+
+                IdleTasks.Add(new IdleTask
+                {
                     Name = "Mourn",
                     PreferWhenBored = false,
-                    Chance = () => GameSettings.Default.TrainChance,
+                    Chance = () => GameSettings.Default.IdleBehavior_Mourn,
                     Create = (AI) =>
                     {
                         return new ActWrapperTask(new MournGraves(AI))
@@ -253,7 +263,7 @@ namespace DwarfCorp
                 {
                     Name = "Gather Potions",
                     PreferWhenBored = true,
-                    Chance = () => GameSettings.Default.TrainChance,
+                    Chance = () => GameSettings.Default.IdleBehavior_Potions,
                     Create = (AI) =>
                     {
                         return new GatherPotionsTask();
@@ -263,15 +273,30 @@ namespace DwarfCorp
 
                 IdleTasks.Add(new IdleTask
                 {
+                    Name = "Restock",
+                    PreferWhenBored = true,
+                    Chance = () => GameSettings.Default.IdleBehavior_Restock,
+                    Create = (AI) =>
+                    {
+                        AI.Creature.AssignRestockAllTasks(TaskPriority.Medium);
+                        if (AI.Tasks.Count > 0)
+                            return AI.Tasks[0];
+                        return null;
+                    },
+                    Available = (AI, World) => AI.Creature.Inventory.Resources.Count > 0
+                });
+
+                IdleTasks.Add(new IdleTask
+                {
                     Name = "Default",
                     PreferWhenBored = false,
-                    Chance = () => 2.0f,
+                    Chance = () => GameSettings.Default.IdleBehavior_Loiter,
                     Create = (AI) => new LookInterestingTask()
                 });
             }
         }
 
-        private Task ChooseIdleTask(bool IsBored)
+        private MaybeNull<Task> ChooseIdleTask(bool IsBored)
         {
             InitializeIdleTasks();
 
@@ -295,6 +320,12 @@ namespace DwarfCorp
             }
 
             return new LookInterestingTask();
+        }
+
+        private void AssignGeneratedTask(Task Task)
+        {
+            if (!Tasks.Contains(Task) && CurrentTask != Task) // Is this redundant?
+                AssignTask(Task);
         }
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera) 
@@ -323,51 +354,50 @@ namespace DwarfCorp
             if (CurrentTask != null)
             {
                 Stats.Boredom.CurrentValue -= (float)(CurrentTask.BoredomIncrease * gameTime.ElapsedGameTime.TotalSeconds);
-                if (Stats.Boredom.IsCritical())
-                    Creature.AddThought("I have been overworked recently.", new TimeSpan(0, 4, 0, 0), -2.0f);
-
                 Stats.Energy.CurrentValue += (float)(CurrentTask.EnergyDecrease * gameTime.ElapsedGameTime.TotalSeconds);
             }
 
+            // Get out of the water!
+            if (Creature.Physics.IsInLiquid)
+                ChangeTask(new FindLandTask());
+
+            // Freak out if on fire!
+            if (GetRoot().GetComponent<Flammable>().HasValue(out var flames) && flames.IsOnFire)
+                ChangeTask(new LongWanderAct(this) { Name = "Freak out!", PathLength = 2, Radius = 5 }.AsTask());
+
             // Heal thyself
             if (!Stats.Health.IsSatisfied())
-            {
-                Task toReturn = new GetHealedTask();
-                if (!Tasks.Contains(toReturn) && CurrentTask != toReturn)
-                    AssignTask(toReturn);
-            }
+                AssignGeneratedTask(new GetHealedTask());
 
             // Try to go to sleep if we are low on energy and it is night time.
             if (Stats.Energy.IsCritical())
-            {
-                Task toReturn = new SatisfyTirednessTask();
-                if (!Tasks.Contains(toReturn) && CurrentTask != toReturn)
-                    AssignTask(toReturn);
-            }
+                AssignGeneratedTask(new SatisfyTirednessTask());
 
             // Try to find food if we are hungry.
             if (Stats.Hunger.IsDissatisfied() && World.CountResourcesWithTag(Resource.ResourceTags.Edible) > 0)
-            {
-                Task toReturn = new SatisfyHungerTask() { MustPay = true };
-                if (Stats.Hunger.IsCritical())
-                    toReturn.Priority = TaskPriority.Urgent;
-                if (!Tasks.Contains(toReturn) && CurrentTask != toReturn)
-                    AssignTask(toReturn);
-            }
-
-            if (Stats.Boredom.IsDissatisfied())
-            {
-                if (!Tasks.Any(task => task.BoredomIncrease < 0))
+                AssignGeneratedTask(new SatisfyHungerTask()
                 {
-                    Task toReturn = ChooseIdleTask(true);
-                    if (toReturn != null && !Tasks.Contains(toReturn) && CurrentTask != toReturn)
-                        AssignTask(toReturn);
-                }
-            }
+                    MustPay = true,
+                    Priority = Stats.Hunger.IsCritical() ? TaskPriority.Urgent : TaskPriority.Medium
+                });
 
-            restockTimer.Update(DwarfTime.LastTime);
-            if (restockTimer.HasTriggered && Creature.Inventory.Resources.Count > 10)
-                Creature.RestockAllImmediately();
+            // If we haven't gotten paid, don't wait for idle to go collect.
+            if (NumDaysNotPaid > 0 && Faction.Economy.Funds >= Stats.CurrentLevel.Pay)
+                AssignGeneratedTask(new ActWrapperTask(new GetMoneyAct(this, Math.Min(Stats.CurrentLevel.Pay * NumDaysNotPaid, Faction.Economy.Funds)) { IncrementDays = false })
+                {
+                    AutoRetry = true,
+                    Name = "Get paid.",
+                    Priority = TaskPriority.High
+                });
+
+            // If we're bored, make sure we queue up a boredom reducing task.
+            if (Stats.Boredom.IsDissatisfied() && !Tasks.Any(task => task.BoredomIncrease < 0) && ChooseIdleTask(true).HasValue(out var idleTask))
+                AssignGeneratedTask(idleTask);
+
+            // Dwarves periodically empty their backpacks. Needs tuned?
+            //restockTimer.Update(DwarfTime.LastTime);
+            //if (restockTimer.HasTriggered && Creature.Inventory.Resources.Count > 10)
+            //    Creature.RestockAllImmediately();
 
             if (CurrentTask == null) // We need something to do.
             {
@@ -385,21 +415,18 @@ namespace DwarfCorp
                         if (GetRoot().GetComponent<DwarfThoughts>().HasValue(out var thoughts))
                         {
                             Manager.World.MakeAnnouncement( // Can't use a popup because the dwarf will soon not exist. Also - this is a serious event!
-                                Message: String.Format("{0} has quit! The last straw: {1}",
-                                    Stats.FullName,
-                                    thoughts.Thoughts.Last(t => t.HappinessModifier < 0.0f).Description),
+                                Message: String.Format("{0} has quit! The last straw: {1}", Stats.FullName, thoughts.Thoughts.Last(t => t.HappinessModifier < 0.0f).Description),
                                 ClickAction: null,
                                 logEvent: true,
                                 eventDetails: String.Join("\n", thoughts.Thoughts.Where(t => t.HappinessModifier < 0.0f).Select(t => t.Description)));
-
                             thoughts.Thoughts.Clear();
                         }
                         else
                             Manager.World.MakeAnnouncement( // Can't use a popup because the dwarf will soon not exist. Also - this is a serious event!
-                           Message: String.Format("{0} has quit!", Stats.FullName),
-                           ClickAction: null,
-                           logEvent: true,
-                           eventDetails: "So sick of this place!");
+                                Message: String.Format("{0} has quit!", Stats.FullName),
+                                ClickAction: null,
+                                logEvent: true,
+                                eventDetails: "So sick of this place!");
 
                         LeaveWorld();
 
@@ -417,7 +444,7 @@ namespace DwarfCorp
                 }
                 else if (Stats.Happiness.IsDissatisfied()) // We aren't on strike, but we hate this place.
                 {
-                    if (MathFunctions.Rand(0, 1) < 0.25f) // We hate it so much that we might just go on strike! This can probably be tweaked. As it stands,
+                    if (MathFunctions.Rand(0, 1) < 0.15f) // We hate it so much that we might just go on strike! This can probably be tweaked. As it stands,
                                                           // dorfs go on strike almost immediately every time.
                     {
                         Manager.World.UserInterface.MakeWorldPopup(String.Format("{0} ({1}) refuses to work!",
@@ -440,11 +467,7 @@ namespace DwarfCorp
                         ChangeTask(goal);
                     }
                     else
-                    {
-                        var newTask = ActOnIdle();
-                        if (newTask != null)
-                            ChangeTask(newTask);
-                    }
+                        ChangeTask(ActOnIdle());
                 }
                 else
                     ChangeTask(ActOnIdle());
@@ -527,16 +550,11 @@ namespace DwarfCorp
             {
                 lastXPAnnouncement = Stats.LevelIndex;
 
-                Manager.World.MakeAnnouncement(
-                    new Gui.Widgets.QueuedAnnouncement
-                    {
-                        Text = String.Format("{0} ({1}) wants a promotion!",
-                            Stats.FullName, Stats.CurrentClass.Name),
-                        ClickAction = (gui, sender) =>
-                        {
-                            GameStateManager.PushState(new EconomyState(Manager.World.Game, Manager.World));
-                        }
-                    });
+                Manager.World.MakeAnnouncement(new Gui.Widgets.QueuedAnnouncement
+                {
+                    Text = String.Format("{0} ({1}) wants a promotion!", Stats.FullName, Stats.CurrentClass.Name),
+                    ClickAction = (gui, sender) => GameStateManager.PushState(new EconomyState(Manager.World.Game, Manager.World))
+                });
 
                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
                 Manager.World.Tutorial("level up");
@@ -545,69 +563,24 @@ namespace DwarfCorp
 
         protected override void MakeBattleAnnouncement(CreatureAI Enemy)
         {
-            Manager.World.MakeAnnouncement(
-                new Gui.Widgets.QueuedAnnouncement
-                {
-                    Text = String.Format("{0} is fighting {1}.", Stats.FullName,
-                                    TextGenerator.IndefiniteArticle(Enemy.Stats.CurrentClass.Name)),
-                    ClickAction = (gui, sender) => ZoomToMe()
-                });
+            Manager.World.MakeAnnouncement(new Gui.Widgets.QueuedAnnouncement
+            {
+                Text = String.Format("{0} is fighting {1}.", Stats.FullName, TextGenerator.IndefiniteArticle(Enemy.Stats.CurrentClass.Name)),
+                ClickAction = (gui, sender) => ZoomToMe()
+            });
 
             Manager.World.Tutorial("combat");
         }
 
         public override Task ActOnIdle()
         {
-            if (Creature.Physics.IsInLiquid)
-                return new FindLandTask();
-
-            if (GetRoot().GetComponent<Flammable>().HasValue(out var flames) && flames.IsOnFire)
-                return new LongWanderAct(this) { Name = "Freak out!", PathLength = 2, Radius = 5 }.AsTask();
-
-            if (World.GamblingState.State == Scripting.Gambling.Status.Gaming ||
-                World.GamblingState.State == Scripting.Gambling.Status.WaitingForPlayers && World.GamblingState.Participants.Count > 0)
-            {
-                var task = new Scripting.GambleTask() { Priority = TaskPriority.High };
-                if (task.IsFeasible(Creature) == Feasibility.Feasible)
-                    return task;
-            }
-
-            if (!Stats.IsOnStrike)
-            {
-                var candidate = World.TaskManager.GetBestTask(this);
-                if (candidate != null)
-                    return candidate;
-            }
-
-            if (Stats.CurrentLevel.HealingPower > 0 && Faction.Minions.Any(minion => !minion.Creature.Stats.Health.IsSatisfied()))
-            {
-                var minion = Faction.Minions.FirstOrDefault(m => m != this && !m.Stats.Health.IsSatisfied());
-                if (minion != null)
-                {
-                    return new MagicHealAllyTask(minion);
-                }
-            }
-
-            if (NumDaysNotPaid > 0)
-            {
-                if (Faction.Economy.Funds >= Stats.CurrentLevel.Pay)
-                {
-                    var task = new ActWrapperTask(new GetMoneyAct(this, Math.Min(Stats.CurrentLevel.Pay * NumDaysNotPaid, Faction.Economy.Funds)) { IncrementDays = false })
-                    { AutoRetry = true, Name = "Get paid.", Priority = TaskPriority.High };
-                    if (!HasTaskWithName(task))
-                        return task;
-                }
-            }
-
-            if (Creature.Inventory.Resources.Count > 0)
-                foreach (var status in Creature.RestockAll())
-                    ; // RestockAll generates tasks for the dwarf.           
-
-            // Todo: Need dwarf to deposit money that's not theirs?
-
-
             if (Tasks.Count == 0)
-                return ChooseIdleTask(false);
+            {
+                if (ChooseIdleTask(false).HasValue(out var task))
+                    return task;
+                else
+                    return null;
+            }
             else
                 return Tasks[0];
 

@@ -236,10 +236,23 @@ namespace DwarfCorp
             [AutoResetFloat(0.1f)] public float Energy_Refreshing = 0.1f;
             [AutoResetFloat(1.0f)] public float Energy_Restful = 1.0f;
 
-            [AutoResetFloat(0.1f)] public float TrainChance = 0.1f;
-            [AutoResetFloat(0.1f)] public float BingeChance = 0.1f;
             [AutoResetFloat(0.75f)] public float CreatureMovementAdjust = 0.75f;
             [AutoResetFloat(0.01f)] public float DrownChance = 0.01f;
+
+            [AutoResetFloat(0.2f)] public float IdleBehavior_Craft = 0.2f;
+            [AutoResetFloat(0.02f)] public float IdleBehavior_Binge = 0.02f;
+            [AutoResetFloat(0.2f)] public float IdleBehavior_Train = 0.2f;
+            [AutoResetFloat(0.4f)] public float IdleBehavior_Walk = 0.4f;
+            [AutoResetFloat(0.8f)] public float IdleBehavior_Relax = 0.8f;
+            [AutoResetFloat(0.8f)] public float IdleBehavior_Gamble = 0.8f;
+            [AutoResetFloat(2.0f)] public float IdleBehavior_Research = 2.0f;
+            [AutoResetFloat(0.1f)] public float IdleBehavior_Mourn = 0.1f;
+            [AutoResetFloat(0.2f)] public float IdleBehavior_Potions = 0.2f;
+            [AutoResetFloat(2.0f)] public float IdleBehavior_Loiter = 2.0f;
+            [AutoResetFloat(2.0f)] public float IdleBehavior_Heal = 2.0f;
+            [AutoResetFloat(4.0f)] public float IdleBehavior_Restock = 4.0f;
+
+
 
             public int MaxVoxelDesignations = 1024;
             public int NumPathingThreads = 2;
