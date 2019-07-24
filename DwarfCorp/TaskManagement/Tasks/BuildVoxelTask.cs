@@ -5,13 +5,14 @@ using System.Runtime.Serialization;
 using System.Security.AccessControl;
 using System.Text;
 using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
     internal class BuildVoxelTask : Task
     {
-        public string VoxType { get; set; }
-        public VoxelHandle Voxel { get; set; }
+        public string VoxType;
+        public VoxelHandle Voxel;
 
         public BuildVoxelTask()
         {
@@ -24,7 +25,7 @@ namespace DwarfCorp
         public BuildVoxelTask(VoxelHandle voxel, string type)
         {
             Category = TaskCategory.BuildBlock;
-            Name = "Put voxel of type: " + type + " on voxel " + voxel.Coordinate;
+            Name = "Place " + type + " at " + voxel.Coordinate;
             Voxel = voxel;
             VoxType = type;
             Priority = TaskPriority.Medium;
@@ -123,6 +124,11 @@ namespace DwarfCorp
         public override void OnDequeued(WorldManager World)
         {
             World.PersistentData.Designations.RemoveVoxelDesignation(Voxel, DesignationType.Put);
+        }
+
+        public override Vector3? GetCameraZoomLocation()
+        {
+            return Voxel.Center;
         }
     }
 }

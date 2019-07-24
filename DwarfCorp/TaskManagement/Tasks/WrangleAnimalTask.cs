@@ -12,8 +12,8 @@ namespace DwarfCorp
 {
     public class WrangleAnimalTask : Task
     {
-        public Creature Animal { get; set; }
-        public AnimalPen LastPen { get; set; }
+        public Creature Animal;
+        public AnimalPen LastPen;
 
         public WrangleAnimalTask()
         {
@@ -148,6 +148,11 @@ namespace DwarfCorp
         public override void OnDequeued(WorldManager World)
         {
             World.PersistentData.Designations.RemoveEntityDesignation(Animal.Physics, DesignationType.Wrangle);
+        }
+
+        public override Vector3? GetCameraZoomLocation()
+        {
+            return Animal?.Position;
         }
     }
 }

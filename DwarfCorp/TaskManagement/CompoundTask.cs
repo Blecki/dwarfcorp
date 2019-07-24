@@ -80,5 +80,12 @@ namespace DwarfCorp
             foreach (var sub in SubTasks)
                 sub.Priority = Priority;
         }
+
+        public override Vector3? GetCameraZoomLocation()
+        {
+            if (SubTasks.Count > 0)
+                return SubTasks[0].GetCameraZoomLocation();
+            return null;
+        }
     }
 }

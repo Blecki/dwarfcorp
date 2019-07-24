@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using DwarfCorp.Gui;
+using System.IO;
 
 namespace DwarfCorp.GameStates
 {
@@ -30,9 +31,17 @@ namespace DwarfCorp.GameStates
 
             this.ItemSource = () =>
             {
-                global::System.IO.DirectoryInfo worldDirectory = global::System.IO.Directory.CreateDirectory(DwarfGame.GetWorldDirectory());
+                System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetWorldDirectory());
                 var dirs = worldDirectory.EnumerateDirectories().ToList();
-                dirs.Sort((a, b) => b.LastWriteTime.CompareTo(a.LastWriteTime));
+                dirs.Sort((a, b) =>
+                {
+                    var aMeta = a.GetFiles("meta.txt");
+                    var bMeta = b.GetFiles("meta.txt");
+                    if (aMeta.Length > 0 && bMeta.Length > 0)
+                        return bMeta[0].LastWriteTime.CompareTo(aMeta[0].LastWriteTime);
+
+                    return b.LastWriteTime.CompareTo(a.LastWriteTime);
+                });
                 return dirs;
             };
 

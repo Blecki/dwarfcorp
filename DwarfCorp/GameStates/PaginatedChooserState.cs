@@ -137,23 +137,28 @@ namespace DwarfCorp.GameStates
         {
             if (ItemSource != null)
                 foreach (var path in ItemSource())
-                    Items.Add(new ChooserItem { Name = GetItemName(path.FullName), Path = path.FullName, Valid = ValidateItem == null ? "" : ValidateItem(path.FullName), Age = DateTime.Now - path.LastWriteTime });
+                {
+                    var meta = path.GetFiles("meta.txt");
+
+                    Items.Add(new ChooserItem
+                    {
+                        Name = GetItemName(path.FullName),
+                        Path = path.FullName,
+                        Valid = ValidateItem == null ? "" : ValidateItem(path.FullName),
+                        Age = meta.Length > 0 ? DateTime.Now - meta[0].LastWriteTime : DateTime.Now - path.LastWriteTime
+                    });
+                }
 
             foreach(var item in Items)
-            {
                 item.Screenshot = ScreenshotSource(item.Path);
-            }
 
-            // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
 
             GuiRoot = new Gui.Root(DwarfGame.GuiSkin);
             GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
             GuiRoot.RootItem.Transparent = false;
-            //GuiRoot.RootItem.Background = new Gui.TileReference("basic", 0);
             GuiRoot.RootItem.InteriorMargin = new Gui.Margin(16, 16, 32, 32);
 
-            // CONSTRUCT GUI HERE...
             BottomBar = GuiRoot.RootItem.AddChild(new Gui.Widget
             {
                 AutoLayout = Gui.AutoLayout.DockBottom,
@@ -286,7 +291,15 @@ namespace DwarfCorp.GameStates
                 ItemSelected = Grid.SelectedIndex;
                 if (Items.Count > 0)
                 {
-                    var directoryTime = global::System.IO.Directory.GetLastWriteTime(Items[ItemSelected].Path);
+                    DateTime directoryTime;
+                    try
+                    {
+                        directoryTime = global::System.IO.File.GetLastWriteTime(Items[ItemSelected].Path + System.IO.Path.DirectorySeparatorChar + "meta.txt");
+                    }
+                    catch (Exception)
+                    {
+                        directoryTime = DateTime.MinValue;
+                    }
 
                     BottomBar.Text = Items[ItemSelected].Path;
 

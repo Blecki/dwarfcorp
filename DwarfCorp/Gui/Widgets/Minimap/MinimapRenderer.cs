@@ -63,8 +63,7 @@ namespace DwarfCorp.Gui.Widgets.Minimap
                 .Coordinate.Y + 1;
             target.Y = Math.Max(height + 15, target.Y);
             target = MathFunctions.Clamp(target, World.ChunkManager.Bounds);
-            World.Renderer.Camera.ZoomTargets.Clear();
-            World.Renderer.Camera.ZoomTargets.Add(target);
+            World.Renderer.Camera.SetZoomTarget(target);
         }
 
         public void Zoom(float f)
@@ -86,8 +85,7 @@ namespace DwarfCorp.Gui.Widgets.Minimap
         public void ZoomHome()
         {
             World.Renderer.Camera.UpdateViewMatrix();
-            World.Renderer.Camera.ZoomTargets.Clear();
-            World.Renderer.Camera.ZoomTargets.Add(HomePosition);
+            World.Renderer.Camera.SetZoomTarget(HomePosition);
             World.Renderer.SetMaxViewingLevel(World.WorldSizeInVoxels.Y);
         }
 

@@ -2,14 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
     public class PlantTask : Task
     {
-        public Farm FarmToWork { get; set; }
-        public string Plant { get; set; }
-        public List<ResourceAmount> RequiredResources { get; set; } 
+        public Farm FarmToWork;
+        public string Plant;
+        public List<ResourceAmount> RequiredResources;
 
         public PlantTask()
         {
@@ -22,7 +23,7 @@ namespace DwarfCorp
         public PlantTask(Farm farmToWork)
         {
             FarmToWork = farmToWork;
-            Name = "Plant " + FarmToWork.Voxel.Coordinate;
+            Name = "Plant " + Plant + " at " + FarmToWork.Voxel.Coordinate;
             Priority = TaskPriority.Medium;
             AutoRetry = true;
             Category = TaskCategory.Plant;
@@ -108,6 +109,11 @@ namespace DwarfCorp
         public override void OnDequeued(WorldManager World)
         {
             World.PersistentData.Designations.RemoveVoxelDesignation(FarmToWork.Voxel, DesignationType.Plant);
+        }
+
+        public override Vector3? GetCameraZoomLocation()
+        {
+            return FarmToWork?.Voxel.Center;
         }
     }
 }

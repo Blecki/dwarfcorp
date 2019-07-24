@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -75,6 +76,11 @@ namespace DwarfCorp
         {
             if (!Zone.IsBuilt)
                 Zone.Destroy();
+        }
+
+        public override Vector3? GetCameraZoomLocation()
+        {
+            return Zone.GetBoundingBox().Center();
         }
     }
 

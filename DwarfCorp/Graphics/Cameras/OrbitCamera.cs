@@ -111,6 +111,11 @@ namespace DwarfCorp
         private Point mouseOnRotate = new Point(0, 0);
         public List<Vector3> ZoomTargets { get; set; }
 
+        public void SetZoomTarget(Vector3 Target)
+        {
+            ZoomTargets.Clear();
+            ZoomTargets.Add(Target);
+        }
 
         public bool EnableControl = true;
         public Vector3 AutoTarget { get; set; }

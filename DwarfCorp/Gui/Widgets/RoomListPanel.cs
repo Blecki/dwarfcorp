@@ -116,8 +116,7 @@ namespace DwarfCorp.Gui.Widgets
                             TextVerticalAlign = VerticalAlign.Center,
                             OnClick = (_sender, args) =>
                             {
-                                World.Renderer.Camera.ZoomTargets.Clear();
-                                World.Renderer.Camera.ZoomTargets.Add(lambdaCopy.GetBoundingBox().Center());
+                                World.Renderer.Camera.SetZoomTarget(lambdaCopy.GetBoundingBox().Center());
                             }
                         });
 

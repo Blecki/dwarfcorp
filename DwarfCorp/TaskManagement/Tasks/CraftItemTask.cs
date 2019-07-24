@@ -9,7 +9,7 @@ namespace DwarfCorp
 {
     internal class CraftItemTask : Task
     {
-        public CraftDesignation CraftDesignation { get; set; }
+        public CraftDesignation CraftDesignation;
 
         public CraftItemTask()
         {
@@ -136,6 +136,5 @@ namespace DwarfCorp
 
             return true;
         }
-
     }
 }

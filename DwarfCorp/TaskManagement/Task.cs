@@ -44,5 +44,12 @@ namespace DwarfCorp
         public virtual void OnVoxelChange(VoxelChangeEvent changeEvent) {}
         public virtual void OnUpdate() {}
         public virtual void OnCancelled(TaskManager Manager, WorldManager World) {}
+
+        public virtual Microsoft.Xna.Framework.Vector3? GetCameraZoomLocation()
+        {
+            if (AssignedCreatures.Count > 0)
+                return AssignedCreatures[0].Position;
+            return null;
+        }
     }
 }

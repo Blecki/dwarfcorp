@@ -71,9 +71,10 @@ namespace DwarfCorp.Gui.Widgets
             {
                 if (sender.Hidden) return;
 
+                var upperFilter = FilterBox.Text.ToUpperInvariant();
                 var tasksToDisplay = World.TaskManager.EnumerateTasks()
                     .Where(t => !t.Hidden)
-                    .Where(t => String.IsNullOrEmpty(FilterBox.Text) ? true : t.Name.Contains(FilterBox.Text));
+                    .Where(t => String.IsNullOrEmpty(FilterBox.Text) ? true : t.Name.ToUpperInvariant().Contains(upperFilter));
 
                 ListView.ClearItems();
                 foreach (var task in tasksToDisplay)
@@ -92,7 +93,15 @@ namespace DwarfCorp.Gui.Widgets
                             Text = task.Name,
                             MinimumSize = new Point(0, 16),
                             Padding = new Margin(0, 0, 4, 4),
-                            TextVerticalAlign = VerticalAlign.Center
+                            TextVerticalAlign = VerticalAlign.Center,
+                            OnClick = (_sender, args) =>
+                            {
+                                var loc = lambdaCopy.GetCameraZoomLocation();
+                                if (loc.HasValue)
+                                {
+                                    World.Renderer.Camera.SetZoomTarget(loc.Value);
+                                }
+                            }
                         });
 
                         tag.AddChild(new Widget

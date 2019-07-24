@@ -63,7 +63,7 @@ namespace DwarfCorp.Rail
 
         public VoxelHandle GetContainingVoxel()
         {
-            return new VoxelHandle(Location.Chunk.Manager, Location.Coordinate + new GlobalVoxelOffset(Piece.Offset.X, 0, Piece.Offset.Y));
+            return Location.Chunk.Manager.CreateVoxelHandle(Location.Coordinate + (Piece == null ? new GlobalVoxelOffset(0, 0, 0) : new GlobalVoxelOffset(Piece.Offset.X, 0, Piece.Offset.Y)));
         }
 
         public JunctionPiece GetPiece()
@@ -282,61 +282,62 @@ namespace DwarfCorp.Rail
             {
                 var bounds = Vector4.Zero;
                 var uvs = Sheet.GenerateTileUVs(Frame, out bounds);
+
                 if (Library.GetRailPiece(Piece.RailPiece).HasValue(out var rawPiece))
-                { 
-                var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation);
-
-                var realShape = 0;
-                if (rawPiece.AutoSlope)
                 {
-                    var transformedConnections = GetTransformedConnections();
-                    var matchingNeighbor1 = NeighborRails.FirstOrDefault(n => (n.Position - transformedConnections[0].Item1 - new Vector3(0.0f, 1.0f, 0.0f)).LengthSquared() < 0.001f);
-                    var matchingNeighbor2 = NeighborRails.FirstOrDefault(n => (n.Position - transformedConnections[1].Item1 - new Vector3(0.0f, 1.0f, 0.0f)).LengthSquared() < 0.001f);
+                    var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation);
+                    var realShape = 0;
 
-                    if (matchingNeighbor1 != null && matchingNeighbor2 != null)
-                        realShape = 3;
-                    else if (matchingNeighbor1 != null)
-                        realShape = 1;
-                    else if (matchingNeighbor2 != null)
-                        realShape = 2;
-                }
+                    if (rawPiece.AutoSlope)
+                    {
+                        var transformedConnections = GetTransformedConnections();
+                        var matchingNeighbor1 = NeighborRails.FirstOrDefault(n => (n.Position - transformedConnections[0].Item1 - new Vector3(0.0f, 1.0f, 0.0f)).LengthSquared() < 0.001f);
+                        var matchingNeighbor2 = NeighborRails.FirstOrDefault(n => (n.Position - transformedConnections[1].Item1 - new Vector3(0.0f, 1.0f, 0.0f)).LengthSquared() < 0.001f);
 
-                Primitive = new RawPrimitive();
-                Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(-0.5f, VertexHeightOffsets[realShape, 0], 0.5f), transform), Color.White, Color.White, uvs[0], bounds));
-                Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(0.5f, VertexHeightOffsets[realShape, 1], 0.5f), transform), Color.White, Color.White, uvs[1], bounds));
-                Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(0.5f, VertexHeightOffsets[realShape, 2], -0.5f), transform), Color.White, Color.White, uvs[2], bounds));
-                Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(-0.5f, VertexHeightOffsets[realShape, 3], -0.5f), transform), Color.White, Color.White, uvs[3], bounds));
-                Primitive.AddIndicies(new short[] { 0, 1, 3, 1, 2, 3 });
+                        if (matchingNeighbor1 != null && matchingNeighbor2 != null)
+                            realShape = 3;
+                        else if (matchingNeighbor1 != null)
+                            realShape = 1;
+                        else if (matchingNeighbor2 != null)
+                            realShape = 2;
+                    }
 
-                var sideBounds = Vector4.Zero;
-                Vector2[] sideUvs = null;
+                    Primitive = new RawPrimitive();
+                    Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(-0.5f, VertexHeightOffsets[realShape, 0], 0.5f), transform), Color.White, Color.White, uvs[0], bounds));
+                    Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(0.5f, VertexHeightOffsets[realShape, 1], 0.5f), transform), Color.White, Color.White, uvs[1], bounds));
+                    Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(0.5f, VertexHeightOffsets[realShape, 2], -0.5f), transform), Color.White, Color.White, uvs[2], bounds));
+                    Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(-0.5f, VertexHeightOffsets[realShape, 3], -0.5f), transform), Color.White, Color.White, uvs[3], bounds));
+                    Primitive.AddIndicies(new short[] { 0, 1, 3, 1, 2, 3 });
 
-                sideUvs = Sheet.GenerateTileUVs(new Point(3, 4), out sideBounds);
+                    var sideBounds = Vector4.Zero;
+                    Vector2[] sideUvs = null;
 
-                AddScaffoldGeometry(transform, sideBounds, sideUvs, -1.0f, false);
+                    sideUvs = Sheet.GenerateTileUVs(new Point(3, 4), out sideBounds);
 
-                if (realShape == 3)
-                {
-                    AddScaffoldGeometry(transform, sideBounds, sideUvs, 0.0f, false);
-                }
-                else if (realShape == 1)
-                {
-                    sideUvs = Sheet.GenerateTileUVs(new Point(0, 4), out sideBounds);
-                    AddScaffoldGeometry(transform, sideBounds, sideUvs, 0.0f, true);
-                }
-                else if (realShape == 2)
-                {
-                    sideUvs = Sheet.GenerateTileUVs(new Point(0, 4), out sideBounds);
-                    AddScaffoldGeometry(transform, sideBounds, sideUvs, 0.0f, false);
-                }
+                    AddScaffoldGeometry(transform, sideBounds, sideUvs, -1.0f, false);
 
-                // Todo: Make these static and avoid recalculating them constantly.
-                var bumperBackBounds = Vector4.Zero;
-                var bumperBackUvs = Sheet.GenerateTileUVs(new Point(0, 5), out bumperBackBounds);
-                var bumperFrontBounds = Vector4.Zero;
-                var bumperFrontUvs = Sheet.GenerateTileUVs(new Point(1, 5), out bumperFrontBounds);
-                var bumperSideBounds = Vector4.Zero;
-                var bumperSideUvs = Sheet.GenerateTileUVs(new Point(2, 5), out bumperSideBounds);
+                    if (realShape == 3)
+                    {
+                        AddScaffoldGeometry(transform, sideBounds, sideUvs, 0.0f, false);
+                    }
+                    else if (realShape == 1)
+                    {
+                        sideUvs = Sheet.GenerateTileUVs(new Point(0, 4), out sideBounds);
+                        AddScaffoldGeometry(transform, sideBounds, sideUvs, 0.0f, true);
+                    }
+                    else if (realShape == 2)
+                    {
+                        sideUvs = Sheet.GenerateTileUVs(new Point(0, 4), out sideBounds);
+                        AddScaffoldGeometry(transform, sideBounds, sideUvs, 0.0f, false);
+                    }
+
+                    // Todo: Make these static and avoid recalculating them constantly.
+                    var bumperBackBounds = Vector4.Zero;
+                    var bumperBackUvs = Sheet.GenerateTileUVs(new Point(0, 5), out bumperBackBounds);
+                    var bumperFrontBounds = Vector4.Zero;
+                    var bumperFrontUvs = Sheet.GenerateTileUVs(new Point(1, 5), out bumperFrontBounds);
+                    var bumperSideBounds = Vector4.Zero;
+                    var bumperSideUvs = Sheet.GenerateTileUVs(new Point(2, 5), out bumperSideBounds);
 
                     foreach (var connection in GetTransformedConnections())
                     {
@@ -383,7 +384,10 @@ namespace DwarfCorp.Rail
                                 * Matrix.CreateTranslation(bumperOffset),
                                 Color.White, Color.White, bumperFrontUvs, bumperFrontBounds);
 
-                            if (VoxelHelpers.FindFirstVoxelBelow(GetContainingVoxel()).RampType == RampType.None)
+                            var firstVoxelBelow = VoxelHelpers.FindFirstVoxelBelow(GetContainingVoxel());
+                            if (firstVoxelBelow.IsValid && firstVoxelBelow.RampType == RampType.None)
+
+                           //     if (VoxelHelpers.FindFirstVoxelBelow(GetContainingVoxel()).RampType == RampType.None)
                             {
                                 Primitive.AddQuad(
                                     Matrix.CreateRotationX(-(float)Math.PI * 0.5f)

@@ -97,6 +97,11 @@ namespace DwarfCorp
         {
             World.PersistentData.Designations.RemoveEntityDesignation(EntityToKill, DesignationType.Chop);
         }
+
+        public override Vector3? GetCameraZoomLocation()
+        {
+            return EntityToKill?.Position;
+        }
     }
 
 }
