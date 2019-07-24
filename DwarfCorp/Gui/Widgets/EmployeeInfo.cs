@@ -464,6 +464,16 @@ namespace DwarfCorp.Gui.Widgets
                 }
             });
 
+            bottomBar.AddChild(new Button()
+            {
+                Text = "Find",
+                Tooltip = "Zoom camera to this employee",
+                AutoLayout = AutoLayout.DockRight,
+                OnClick = (sender, args) =>
+                {
+                    Employee.World.Renderer.Camera.SetZoomTarget(Employee.Position);
+                }
+            });
 
             var topbuttons = top.AddChild(new Widget()
             {
@@ -485,11 +495,13 @@ namespace DwarfCorp.Gui.Widgets
 
                     if (Employee == null)
                         return;
+
                     int idx = Employee.Faction.Minions.IndexOf(Employee);
                     if (idx < 0)
                         idx = 0;
                     else
                         idx--;
+
                     Employee = Employee.Faction.Minions[Math.Abs(idx) % Employee.Faction.Minions.Count];
                     Employee.World.PersistentData.SelectedMinions = new List<CreatureAI>() { Employee };
                 }
@@ -509,11 +521,13 @@ namespace DwarfCorp.Gui.Widgets
 
                     if (Employee == null)
                         return;
+
                     int idx = Employee.Faction.Minions.IndexOf(Employee);
                     if (idx < 0)
                         idx = 0;
                     else
                         idx++;
+
                     Employee = Employee.Faction.Minions[idx % Employee.Faction.Minions.Count];
                     Employee.World.PersistentData.SelectedMinions = new List<CreatureAI>() { Employee };
                 }
@@ -582,19 +596,14 @@ namespace DwarfCorp.Gui.Widgets
    
                 var diseases = Employee.Creature.Stats.Buffs.OfType<Disease>();
                 if (diseases.Any())
-                {
                     thoughtsBuilder.Append("Conditions: ");
-                }
 
                 if (Employee.Stats.IsAsleep)
-                {
                     thoughtsBuilder.AppendLine("Unconscious");
-                }
 
                 foreach (var disease in diseases)
-                {
                     thoughtsBuilder.AppendLine(disease.Name);
-                }
+
                 Thoughts.Text = thoughtsBuilder.ToString();
 
                 if (Employee.Stats.CurrentClass.Levels.Count > Employee.Stats.LevelIndex + 1)
