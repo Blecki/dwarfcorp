@@ -42,7 +42,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 AutoLayout = AutoLayout.DockBottom,
                 MinimumSize = new Point(0, 30),
-                TextSize = 1,
+                TextSize = GameSettings.Default.ConsoleTextSize,
                 Font = "monofont",
                 TextHorizontalAlign = HorizontalAlign.Left
             });
@@ -51,7 +51,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 30),
-                TextSize = 1,
+                TextSize = GameSettings.Default.ConsoleTextSize,
                 Font = "monofont",
                 TextHorizontalAlign = HorizontalAlign.Left
             });

@@ -435,7 +435,7 @@ namespace DwarfCorp
                 display = DwarfGame.ConsolePanel.AddChild(new Gui.Widgets.DwarfConsole
                 {
                     Background = new TileReference("basic", 1),
-                    BackgroundColor = new Vector4(1.0f, 1.0f, 1.0f, 0.25f),
+                    BackgroundColor = new Vector4(1.0f, 1.0f, 1.0f, 1.0f),
                     Tag = Name
                 }) as Gui.Widgets.DwarfConsole;
 

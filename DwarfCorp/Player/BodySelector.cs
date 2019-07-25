@@ -192,7 +192,8 @@ namespace DwarfCorp
             bool first = true;
             foreach (GameComponent body in entities)
             {
-                if (!first) desc += "\n";
+                if (!first)
+                    desc += "\n";
                 desc += body.GetDescription();
                 first = false;
             }

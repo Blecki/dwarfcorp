@@ -156,22 +156,25 @@ namespace DwarfCorp
 
         public static string GetMouseOverText(IEnumerable<GameComponent> bodies)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
+            var bodyList = bodies.ToList();
+            var first = true;
 
-            List<GameComponent> bodyList = bodies.ToList();
             for (int i = 0; i < bodyList.Count; i++)
             {
+                if (!first)
+                    sb.AppendLine();
+                first = false;
+
                 if (bodyList[i].GetComponent<Creature>().HasValue(out var dwarf))
                 {
                     sb.Append(dwarf.Stats.FullName + " (" + (dwarf.Stats.Title ?? dwarf.Stats.CurrentClass.Name) + ")");
+
                     if (dwarf.Stats.IsAsleep)
                         sb.Append(" UNCONSCIOUS ");
 
                     if (dwarf.Stats.IsOnStrike)
                         sb.Append(" ON STRIKE");
-
-                    if (i < bodyList.Count - 1)
-                        sb.Append("\n");
                 }
                 else
                     sb.Append(bodyList[i].GetDescription());

@@ -277,7 +277,16 @@ namespace DwarfCorp
             string toReturn = "";
 
             if (Object.ReferenceEquals(Parent, Manager.RootComponent))
+            {
                 toReturn += Name;
+                if (IsReserved)
+                {
+                    if (ReservedFor.GetRoot().GetComponent<Creature>().HasValue(out var creature))
+                        toReturn += " (Reserved for " + creature.Stats.FullName + ")";
+                    else
+                        toReturn += " (Reserved)";
+                }
+            }
 
             foreach (GameComponent component in Children)
             {

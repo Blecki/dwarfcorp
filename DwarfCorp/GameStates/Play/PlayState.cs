@@ -628,9 +628,7 @@ namespace DwarfCorp.GameStates
                 AutoSaveTimer.Update(gameTime);
 
                 if (GameSettings.Default.AutoSave && AutoSaveTimer.HasTriggered)
-                {
                     AutoSave();
-                }
 
                 #region select employee
 

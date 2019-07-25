@@ -88,7 +88,7 @@ namespace DwarfCorp.Gui.Widgets
             for (; y < Lines.Count; ++y)
             {
                 var x = 0;
-                for (; x < Lines[y].Length; ++x)
+                for (; x < Lines[y].Length && x < TextGrid.TextWidth; ++x)
                 {
                     TextGrid.SetCharacter(i, Lines[y][x]);
                     ++i;
