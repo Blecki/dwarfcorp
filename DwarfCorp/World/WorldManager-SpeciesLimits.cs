@@ -40,10 +40,8 @@ namespace DwarfCorp
 
         public void RemoveFromSpeciesTracking(CreatureSpecies Species)
         {
-            if (!PersistentData.SpeciesCounts.ContainsKey(Species.Name))
-                PersistentData.SpeciesCounts.Add(Species.Name, 0);
-            else
-                PersistentData.SpeciesCounts[Species.Name] += 1;
+            if (PersistentData.SpeciesCounts.ContainsKey(Species.Name))
+                PersistentData.SpeciesCounts[Species.Name] = Math.Max(0, PersistentData.SpeciesCounts[Species.Name] - 1);
         }
 
         public int GetSpeciesPopulation(CreatureSpecies Species)
@@ -51,6 +49,12 @@ namespace DwarfCorp
             if (!PersistentData.SpeciesCounts.ContainsKey(Species.Name))
                 return 0;
             return PersistentData.SpeciesCounts[Species.Name];
+        }
+
+        public void DisplaySpeciesCountsInMetrics()
+        {
+            foreach (var species in PersistentData.SpeciesCounts)
+                PerformanceMonitor.SetMetric(species.Key, species.Value);
         }
     }
 }

@@ -138,6 +138,16 @@ namespace DwarfCorp
                     }
                 }
             }
+            else if (Command.Contains("Kill Things"))
+            { 
+                foreach (var comp in World.EnumerateIntersectingObjects(VoxelHelpers.GetVoxelBoundingBox(refs), CollisionType.Both).Where(c => c.IsRoot()))
+                    comp.Die();
+            }
+            else if (Command.Contains("Disease"))
+            { 
+                foreach (var creature in World.EnumerateIntersectingObjects(VoxelHelpers.GetVoxelBoundingBox(refs), CollisionType.Both).OfType<Creature>())
+                    creature.Stats.AcquireDisease(DiseaseLibrary.GetRandomDisease());
+            }
             else
             {
                 foreach (var vox in refs.Where(vox => vox.IsValid))
@@ -210,21 +220,7 @@ namespace DwarfCorp
                                         flam2.Heat = flam2.Flashpoint + 1;
                                 }
                                 break;
-
-                            case "Kill Things":
-                                {
-                                    foreach (var comp in World.EnumerateIntersectingObjects(vox.GetBoundingBox(), CollisionType.Both))
-                                        comp.Die();
-                                }
-                                break;
-                            case "Disease":
-                                {
-                                    foreach (var creature in World.EnumerateIntersectingObjects(vox.GetBoundingBox(), CollisionType.Both).OfType<Creature>())
-                                    {
-                                        creature.Stats.AcquireDisease(DiseaseLibrary.GetRandomDisease());
-                                    }
-                                    break;
-                                }
+                                                            
                             default:
                                 break;
                         }
