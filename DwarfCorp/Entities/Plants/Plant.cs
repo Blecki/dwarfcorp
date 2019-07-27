@@ -81,6 +81,7 @@ namespace DwarfCorp
                             LocalTransform = Matrix.CreateRotationY(RandomAngle) * Matrix.CreateTranslation(BasePosition);
                         else if (v.OldRamps == RampType.None && v.NewRamps != RampType.None)
                             LocalTransform = Matrix.CreateRotationY(RandomAngle) * Matrix.CreateTranslation(BasePosition - new Vector3(0.0f, 0.5f, 0.0f));
+                        ProcessTransformChange();
                     }
                 }))
                 .SetFlag(Flag.ShouldSerialize, false);
