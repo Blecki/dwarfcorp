@@ -159,6 +159,15 @@ namespace DwarfCorp
             return Name;
         }
 
+        private bool NeedsSpacialStorageUpdate(BoundingBox LastBounds, BoundingBox NewBounds)
+        {
+            var lastMinChunkID = GlobalVoxelCoordinate.FromVector3(LastBounds.Min).GetGlobalChunkCoordinate();
+            var lastMaxChunkID = GlobalVoxelCoordinate.FromVector3(LastBounds.Max).GetGlobalChunkCoordinate();
+            var newMinChunkID = GlobalVoxelCoordinate.FromVector3(NewBounds.Min).GetGlobalChunkCoordinate();
+            var newMaxChunkID = GlobalVoxelCoordinate.FromVector3(NewBounds.Max).GetGlobalChunkCoordinate();
+            return lastMinChunkID != newMinChunkID || lastMaxChunkID != newMaxChunkID;
+        }
+
         public void UpdateTransform()
         {
             HasMoved = false;
@@ -172,14 +181,16 @@ namespace DwarfCorp
 
             UpdateBoundingBox();
 
-            // Todo: Only bother if we are not fully contained in the current voxel chunk OR we've crossed a boundary.
-            Manager.World.RemoveGameObject(this, LastBounds);
-            Manager.World.AddGameObject(this, BoundingBox);
-
-            if (IsRoot() && !IsFlagSet(Flag.DontUpdate))
+            if (NeedsSpacialStorageUpdate(LastBounds, BoundingBox))
             {
-                Manager.World.RemoveRootGameObject(this, LastBounds);
-                Manager.World.AddRootGameObject(this, BoundingBox);
+                Manager.World.RemoveGameObject(this, LastBounds);
+                Manager.World.AddGameObject(this, BoundingBox);
+
+                if (IsRoot() && !IsFlagSet(Flag.DontUpdate))
+                {
+                    Manager.World.RemoveRootGameObject(this, LastBounds);
+                    Manager.World.AddRootGameObject(this, BoundingBox);
+                }
             }
 
             LastBounds = BoundingBox;

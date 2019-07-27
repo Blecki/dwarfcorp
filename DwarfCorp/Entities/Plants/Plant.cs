@@ -136,6 +136,7 @@ namespace DwarfCorp
             if (!Active)
                 return;
 
+            // Todo: Move this to an update system.
             //var currentHour = World.Time.CurrentDate.Hour;
             //if (currentHour != LastGrowthHour)
             //{

@@ -10,7 +10,7 @@ namespace DwarfCorp
     {
         public void RemoveGameObject(GameComponent GameObject, BoundingBox LastBounds)
         {
-            var minChunkID = GlobalVoxelCoordinate.FromVector3(LastBounds.Min).GetGlobalChunkCoordinate();
+            var minChunkID = GlobalVoxelCoordinate.FromVector3(LastBounds.Min).GetGlobalChunkCoordinate(); // Todo: Clamp to actual world size.
             var maxChunkID = GlobalVoxelCoordinate.FromVector3(LastBounds.Max).GetGlobalChunkCoordinate();
 
             for (var x = minChunkID.X; x <= maxChunkID.X; ++x)
