@@ -112,9 +112,8 @@ namespace DwarfCorp
                             SeedString = PlantType
                         };
 
-                        var task = new PlantTask(farmTile)
+                        var task = new PlantTask(farmTile, PlantType)
                         {
-                            Plant = PlantType,
                             RequiredResources = RequiredResources
                         };
 

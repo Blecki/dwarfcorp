@@ -22,7 +22,7 @@ namespace DwarfCorp
                         {
                             var chunk = ChunkManager.GetChunk(coord);
                             lock (chunk)
-                                chunk.Entities.Remove(GameObject);
+                                chunk.Components.Remove(GameObject);
                         }
                     }
         }
@@ -41,7 +41,45 @@ namespace DwarfCorp
                         {
                             var chunk = ChunkManager.GetChunk(coord);
                             lock (chunk)
-                                chunk.Entities.Add(GameObject);
+                                chunk.Components.Add(GameObject);
+                        }
+                    }
+        }
+
+        public void RemoveRootGameObject(GameComponent GameObject, BoundingBox LastBounds)
+        {
+            var minChunkID = GlobalVoxelCoordinate.FromVector3(LastBounds.Min).GetGlobalChunkCoordinate();
+            var maxChunkID = GlobalVoxelCoordinate.FromVector3(LastBounds.Max).GetGlobalChunkCoordinate();
+
+            for (var x = minChunkID.X; x <= maxChunkID.X; ++x)
+                for (var y = minChunkID.Y; y <= maxChunkID.Y; ++y)
+                    for (var z = minChunkID.Z; z <= maxChunkID.Z; ++z)
+                    {
+                        var coord = new GlobalChunkCoordinate(x, y, z);
+                        if (ChunkManager.CheckBounds(coord))
+                        {
+                            var chunk = ChunkManager.GetChunk(coord);
+                            lock (chunk)
+                                chunk.RootEntities.Remove(GameObject);
+                        }
+                    }
+        }
+
+        public void AddRootGameObject(GameComponent GameObject, BoundingBox LastBounds)
+        {
+            var minChunkID = GlobalVoxelCoordinate.FromVector3(LastBounds.Min).GetGlobalChunkCoordinate();
+            var maxChunkID = GlobalVoxelCoordinate.FromVector3(LastBounds.Max).GetGlobalChunkCoordinate();
+
+            for (var x = minChunkID.X; x <= maxChunkID.X; ++x)
+                for (var y = minChunkID.Y; y <= maxChunkID.Y; ++y)
+                    for (var z = minChunkID.Z; z <= maxChunkID.Z; ++z)
+                    {
+                        var coord = new GlobalChunkCoordinate(x, y, z);
+                        if (ChunkManager.CheckBounds(coord))
+                        {
+                            var chunk = ChunkManager.GetChunk(coord);
+                            lock (chunk)
+                                chunk.RootEntities.Add(GameObject);
                         }
                     }
         }
@@ -61,7 +99,7 @@ namespace DwarfCorp
             foreach (var chunk in EnumerateChunksInBounds(Frustum))
                 lock (chunk)
                 {
-                    foreach (var entity in chunk.Entities)
+                    foreach (var entity in chunk.Components)
                         if (Frustum.Contains(entity.BoundingBox) != ContainmentType.Disjoint)
                             if (Filter == null || Filter(entity))
                                 hash.Add(entity);
@@ -83,9 +121,40 @@ namespace DwarfCorp
         {
             PerformanceMonitor.PushFrame("CollisionManager.EnumerateIntersectingObjects w/ Filter");
             var hash = new HashSet<GameComponent>();
-            EnumerateIntersectingObjects(box, hash, Filter);
+            EnumerateIntersectingObjectsLoose(box, hash, Filter);
             PerformanceMonitor.PopFrame();
             return hash;
+        }
+
+        public HashSet<GameComponent> EnumerateIntersectingRootEntitiesLoose(BoundingBox box)
+        {
+            PerformanceMonitor.PushFrame("Enumerate Roots");
+            var hash = new HashSet<GameComponent>();
+            EnumerateIntersectingRootEntitiesLoose(box, hash);
+            PerformanceMonitor.PopFrame();
+            return hash;
+        }
+
+        public void EnumerateIntersectingRootEntitiesLoose(BoundingBox Box, HashSet<GameComponent> Into)
+        {
+            var minChunkID = GlobalVoxelCoordinate.FromVector3(Box.Min).GetGlobalChunkCoordinate();
+            var maxChunkID = GlobalVoxelCoordinate.FromVector3(Box.Max).GetGlobalChunkCoordinate();
+
+            for (var x = minChunkID.X; x <= maxChunkID.X; ++x)
+                for (var y = minChunkID.Y; y <= maxChunkID.Y; ++y)
+                    for (var z = minChunkID.Z; z <= maxChunkID.Z; ++z)
+                    {
+                        var coord = new GlobalChunkCoordinate(x, y, z);
+                        if (ChunkManager.CheckBounds(coord))
+                        {
+                            var chunk = ChunkManager.GetChunk(coord);
+                            lock (chunk)
+                            {
+                                foreach (var entity in chunk.RootEntities)
+                                    Into.Add(entity);
+                            }
+                        }
+                    }
         }
 
         public void EnumerateIntersectingObjects(BoundingBox Box, HashSet<GameComponent> Into, Func<GameComponent, bool> Filter = null)
@@ -103,7 +172,7 @@ namespace DwarfCorp
                             var chunk = ChunkManager.GetChunk(coord);
                             lock (chunk)
                             {
-                                foreach (var entity in chunk.Entities)
+                                foreach (var entity in chunk.Components)
                                     if (Box.Contains(entity.BoundingBox) != ContainmentType.Disjoint)
                                         if (Filter == null || Filter(entity))
                                             Into.Add(entity);
@@ -112,16 +181,28 @@ namespace DwarfCorp
                     }
         }
 
-        public void EnumerateIntersectingObjectsLoose(BoundingBox box, HashSet<GameComponent> Into, Func<GameComponent, bool> Filter = null)
+        public void EnumerateIntersectingObjectsLoose(BoundingBox Box, HashSet<GameComponent> Into, Func<GameComponent, bool> Filter = null)
         {
             PerformanceMonitor.PushFrame("CollisionManager.EnumerateIntersectingObjects w/ Filter");
-            foreach (var chunk in EnumerateChunksInBounds(box))
-                lock (chunk)
-                {
-                    foreach (var entity in chunk.Entities)
-                        if (Filter == null || Filter(entity))
-                            Into.Add(entity);
-                }
+            var minChunkID = GlobalVoxelCoordinate.FromVector3(Box.Min).GetGlobalChunkCoordinate();
+            var maxChunkID = GlobalVoxelCoordinate.FromVector3(Box.Max).GetGlobalChunkCoordinate();
+
+            for (var x = minChunkID.X; x <= maxChunkID.X; ++x)
+                for (var y = minChunkID.Y; y <= maxChunkID.Y; ++y)
+                    for (var z = minChunkID.Z; z <= maxChunkID.Z; ++z)
+                    {
+                        var coord = new GlobalChunkCoordinate(x, y, z);
+                        if (ChunkManager.CheckBounds(coord))
+                        {
+                            var chunk = ChunkManager.GetChunk(coord);
+                            lock (chunk)
+                            {
+                                foreach (var entity in chunk.Components)
+                                    if (Filter == null || Filter(entity))
+                                        Into.Add(entity);
+                            }
+                        }
+                    }
             PerformanceMonitor.PopFrame();
         }
 

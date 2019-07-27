@@ -94,6 +94,7 @@ namespace DwarfCorp
             Dead = 4,
             ShouldSerialize = 8,
             RotateBoundingBox = 64,
+            DontUpdate = 128,
         }
 
         public bool IsFlagSet(Flag F)

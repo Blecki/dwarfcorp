@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using System;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -15,8 +16,11 @@ namespace DwarfCorp
         public String BadBiomes = "";
         private String CachedBiome = null;
 
+        [JsonProperty] private bool HasGrown = false;
+
         public Seedling()
         {
+            SetFlag(Flag.DontUpdate, false);
         }
 
         public Seedling(ComponentManager Manager, String AdultName, Vector3 position, String Asset) :
@@ -28,11 +32,19 @@ namespace DwarfCorp
             AddChild(new Health(Manager, "HP", 1.0f, 0.0f, 1.0f));
             AddChild(new Flammable(Manager, "Flames"));
             CollisionType = CollisionType.Static;
+
+            SetFlag(Flag.DontUpdate, false);
         }
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
+
+            if (HasGrown)
+            {
+                Die();
+                return;
+            }
 
             if (String.IsNullOrEmpty(CachedBiome))
                 if (World.Overworld.Map.GetBiomeAt(LocalPosition, chunks.World.Overworld.InstanceSettings.Origin).HasValue(out var biome))
@@ -54,7 +66,10 @@ namespace DwarfCorp
             ReScale(scale);
 
             if (GrowthTime >= GrowthHours)
+            {
+                HasGrown = true;
                 CreateAdult();
+            }
         }
 
         public override void CreateCosmeticChildren(ComponentManager Manager)
@@ -68,6 +83,7 @@ namespace DwarfCorp
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, Position, true);
             var adult = EntityFactory.CreateEntity<Plant>(AdultName, LocalPosition);
             adult.IsGrown = true;
+
             if (Farm != null)
             {
                 adult.Farm = Farm;
@@ -77,6 +93,7 @@ namespace DwarfCorp
                     World.TaskManager.AddTask(task);
                 }
             }
+
             Die();
         }
     }

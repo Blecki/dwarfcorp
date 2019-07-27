@@ -12,7 +12,7 @@
   "StartingHealth": 30.0,
   "ProbabilityOfRelease": 0.0,
   "CanRamp": true,
-  "RampSize": 0.0,
+  "RampSize": 0.5,
   "IsBuildable": false,
   "ParticleType": "dirt_particle",
   "EmitsLight": false,

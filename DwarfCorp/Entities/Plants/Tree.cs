@@ -14,7 +14,10 @@ namespace DwarfCorp
     {
         public Timer HurtTimer { get; set; }
 
-        public Tree() { }
+        public Tree() {
+            SetFlag(Flag.DontUpdate, true);
+
+        }
 
         public Tree(string name, ComponentManager manager, Vector3 position, string asset, String seed, float treeSize, bool emitWood = true) :
             base(manager, name, position, MathFunctions.Rand(-0.1f, 0.1f),

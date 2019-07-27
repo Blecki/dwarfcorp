@@ -86,7 +86,6 @@ namespace DwarfCorp
         protected Matrix localTransform = Matrix.Identity;
         protected Matrix globalTransform = Matrix.Identity;
 
-        // Todo: Remove unused argument addToCollisionManager
         public GameComponent(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
             this(name, manager)
         {
@@ -136,6 +135,10 @@ namespace DwarfCorp
                 if (anim.IsDone())
                     AnimationQueue.RemoveAt(0);
             }
+
+            for (var i = 0; i < Children.Count; ++i)
+                if (!Children[i].IsFlagSet(Flag.DontUpdate))
+                    Children[i].Update(Time, Chunks, Camera);
         }
 
         public void ProcessTransformChange()
@@ -144,7 +147,10 @@ namespace DwarfCorp
             {
                 UpdateTransform();
                 for (var i = 0; i < Children.Count; ++i)
+                {
                     Children[i].HasMoved = true;
+                    Children[i].ProcessTransformChange();
+                }
             }
         }
 
@@ -169,6 +175,13 @@ namespace DwarfCorp
             // Todo: Only bother if we are not fully contained in the current voxel chunk OR we've crossed a boundary.
             Manager.World.RemoveGameObject(this, LastBounds);
             Manager.World.AddGameObject(this, BoundingBox);
+
+            if (IsRoot() && !IsFlagSet(Flag.DontUpdate))
+            {
+                Manager.World.RemoveRootGameObject(this, LastBounds);
+                Manager.World.AddRootGameObject(this, BoundingBox);
+            }
+
             LastBounds = BoundingBox;
            
             PerformanceMonitor.PopFrame();
@@ -227,7 +240,11 @@ namespace DwarfCorp
         private void RemoveFromOctTree()
         {
             if (Manager != null)
+            {
                 Manager.World.RemoveGameObject(this, LastBounds);
+                if (IsRoot() && !IsFlagSet(Flag.DontUpdate))
+                    Manager.World.RemoveRootGameObject(this, LastBounds);
+            }
         }
     }
 }

@@ -254,14 +254,18 @@ namespace DwarfCorp
             // Todo: Make this a sphere?
             var distanceVec = new Vector3(GameSettings.Default.EntityUpdateDistance, GameSettings.Default.EntityUpdateDistance, GameSettings.Default.EntityUpdateDistance);
             var updateBox = new BoundingBox(playerPoint - distanceVec, playerPoint + distanceVec);
-            var componentsToUpdate = World.EnumerateIntersectingObjectsLoose(updateBox);
-            PerformanceMonitor.SetMetric("COMPONENTS UPDATED", componentsToUpdate.Count);
+            var componentsToUpdate = World.EnumerateIntersectingRootEntitiesLoose(updateBox);
 
+            var i = 0;
             foreach (var body in componentsToUpdate)
             {
+                i += 1;
                 body.Update(gameTime, chunks, camera);
                 body.ProcessTransformChange();
             }
+
+            PerformanceMonitor.SetMetric("ENTITIES UPDATED", i);
+
 
             if (Debugger.Switches.DrawUpdateBox)
                 foreach (var chunk in World.EnumerateChunksInBounds(updateBox))

@@ -219,6 +219,8 @@ namespace DwarfCorp
             public int DwarfArrivalDelayHours = 4;
             public int MaxLiveChunks = 10; // How many chunks can have geometry saved
 
+            public bool DisableWeather = true;
+
             [AutoResetBool(false)] public bool FastGen = false;
             [AutoResetFloat(0.15f)] public float GenerationRuinsRate = 0.15f;
             [AutoResetBool(false)] public bool NoStone = false;

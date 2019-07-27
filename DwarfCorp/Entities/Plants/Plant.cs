@@ -25,6 +25,7 @@ namespace DwarfCorp
 
         public Plant()
         {
+            //SetFlag(Flag.DontUpdate, true);
         }
 
         public Plant(ComponentManager Manager, string name, Vector3 Position, float RandomAngle, Vector3 bboxSize,
@@ -45,6 +46,8 @@ namespace DwarfCorp
                 LocalTransform = Matrix.CreateRotationY(RandomAngle) * Matrix.CreateTranslation(BasePosition);
 
             CreateCosmeticChildren(Manager);
+
+            //SetFlag(Flag.DontUpdate, true);
         }
         
         public override void CreateCosmeticChildren(ComponentManager Manager)
@@ -100,9 +103,8 @@ namespace DwarfCorp
 
                     if (GameSettings.Default.AllowAutoFarming)
                     {
-                        var task = new PlantTask(farmTile)
+                        var task = new PlantTask(farmTile, Farm.SeedString)
                         {
-                            Plant = Farm.SeedString,
                             RequiredResources = Farm.RequiredResources
                         };
                         World.TaskManager.AddTask(task);
@@ -124,26 +126,30 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
         {
+            //SetFlag(Flag.DontUpdate, true);
+            //World.RemoveRootGameObject(this, BoundingBox);
+            //return;
+
             base.Update(Time, Chunks, Camera);
 
             if (!Active)
                 return;
 
-            var currentHour = World.Time.CurrentDate.Hour;
-            if (currentHour != LastGrowthHour)
-            {
-                LastGrowthHour = currentHour;
-                if (!GetRoot().GetComponent<Seedling>().HasValue(out var seedling) && MathFunctions.RandEvent(0.01f))
-                    if (World.EnumerateIntersectingObjects(GetBoundingBox().Expand(2)).Count(b => b is Plant) < 10)
-                    {
-                        Vector3 randomPoint = MathFunctions.RandVector3Box(GetBoundingBox().Expand(4));
-                        randomPoint.Y = World.WorldSizeInVoxels.Y - 1;
+            //var currentHour = World.Time.CurrentDate.Hour;
+            //if (currentHour != LastGrowthHour)
+            //{
+            //    LastGrowthHour = currentHour;
+            //    if (!GetRoot().GetComponent<Seedling>().HasValue(out var seedling) && MathFunctions.RandEvent(0.01f))
+            //        if (World.EnumerateIntersectingObjects(GetBoundingBox().Expand(2)).Count(b => b is Plant) < 10)
+            //        {
+            //            Vector3 randomPoint = MathFunctions.RandVector3Box(GetBoundingBox().Expand(4));
+            //            randomPoint.Y = World.WorldSizeInVoxels.Y - 1;
                
-                        VoxelHandle under = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(randomPoint)));
-                        if (under.IsValid && under.Type.IsSoil)
-                            EntityFactory.CreateEntity<Seedling>(Name + " Sprout", under.GetBoundingBox().Center() + Vector3.Up);
-                    }
-            }
+            //            VoxelHandle under = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(randomPoint)));
+            //            if (under.IsValid && under.Type.IsSoil)
+            //                EntityFactory.CreateEntity<Seedling>(Name + " Sprout", under.GetBoundingBox().Center() + Vector3.Up);
+            //        }
+            //}
            
         }
 

@@ -84,6 +84,12 @@ namespace DwarfCorp
         {
             base.Update(gameTime, chunks, camera);
 
+            if (GameSettings.Default.DisableWeather)
+            {
+                Die();
+                return;
+            }
+
             Storm.InitializeStatics();
             BoundingBox box = chunks.Bounds;
             box.Expand(10.0f);
@@ -94,6 +100,7 @@ namespace DwarfCorp
                 GlobalTransform.Translation.Z > box.Max.Z)
             {
                 Die();
+                return;
             }
 
 

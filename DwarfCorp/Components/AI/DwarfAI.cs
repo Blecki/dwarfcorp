@@ -357,10 +357,6 @@ namespace DwarfCorp
                 Stats.Energy.CurrentValue += (float)(CurrentTask.EnergyDecrease * gameTime.ElapsedGameTime.TotalSeconds);
             }
 
-            // Get out of the water!
-            if (Creature.Physics.IsInLiquid)
-                ChangeTask(new FindLandTask());
-
             // Freak out if on fire!
             if (GetRoot().GetComponent<Flammable>().HasValue(out var flames) && flames.IsOnFire)
                 ChangeTask(new LongWanderAct(this) { Name = "Freak out!", PathLength = 2, Radius = 5 }.AsTask());
@@ -574,6 +570,10 @@ namespace DwarfCorp
 
         public override Task ActOnIdle()
         {
+            // Get out of the water!
+            if (Creature.Physics.IsInLiquid)
+                return new FindLandTask();
+
             if (ChooseIdleTask(false).HasValue(out var task))
                 return task;
             else

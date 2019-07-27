@@ -1911,19 +1911,8 @@ namespace DwarfCorp.GameStates
                         if (buildInfo == null)
                             return;
                         sender.Hidden = true;
-                        var tool = Tools["BuildObject"] as BuildObjectTool;
-                        tool.SelectedResources = null;
-                        VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty; // Todo: Should be the tool setting these things.
+                        var tool = Tools["PlaceObject"] as PlaceObjectTool;
                         tool.CraftType = data;
-                        tool.Mode = BuildObjectTool.PlacementMode.PlaceExisting;
-
-                        // Todo: This should never be true.
-                        if (tool.PreviewBody != null)
-                        {
-                            tool.PreviewBody.GetRoot().Delete();
-                            tool.PreviewBody = null;
-                        }
-
                         ChangeTool("BuildObject");
                         ShowToolPopup(Library.GetString("place", data.DisplayName));
                     }
@@ -2188,7 +2177,9 @@ namespace DwarfCorp.GameStates
                         icon_BuildWall,
                         icon_BuildFloor,
                         icon_BuildCraft,
+#if DEBUG
                         icon_PlaceCraft,
+#endif
                         icon_BuildResource,
                         icon_RailTool,
                     }

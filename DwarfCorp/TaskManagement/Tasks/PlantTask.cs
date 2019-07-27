@@ -20,9 +20,10 @@ namespace DwarfCorp
             EnergyDecrease = GameSettings.Default.Energy_Arduous;
         }
 
-        public PlantTask(Farm farmToWork)
+        public PlantTask(Farm farmToWork, String Plant)
         {
             FarmToWork = farmToWork;
+            this.Plant = Plant;
             Name = "Plant " + Plant + " at " + FarmToWork.Voxel.Coordinate;
             Priority = TaskPriority.Medium;
             AutoRetry = true;

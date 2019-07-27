@@ -303,6 +303,7 @@
     <Compile Include="Player\Tools\GodModeTool.cs" />
     <Compile Include="Player\Tools\MoveObjectTool.cs" />
     <Compile Include="Player\Tools\ObjectHelper.cs" />
+    <Compile Include="Player\Tools\PlaceObjectTool.cs" />
     <Compile Include="Player\Tools\PlantTool.cs" />
     <Compile Include="Player\Tools\PlayerTool.cs" />
     <Compile Include="Player\Tools\WrangleTool.cs" />
