@@ -99,7 +99,10 @@ namespace DwarfCorp
             Mana,
             Potion,
             Seed,
-            Slime
+            Slime,
+            CopperOre,
+            IronOre,
+            Iron
         }
 
         public Resource()

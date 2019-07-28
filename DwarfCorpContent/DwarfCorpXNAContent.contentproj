@@ -2107,6 +2107,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>corporate</Name>
     </None>
+    <None Include="World\CraftItems\Iron.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Iron</Name>
+    </None>
+    <None Include="World\CraftItems\Copper.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Copper</Name>
+    </None>
     <None Include="World\Designations\default.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>default</Name>
@@ -2146,6 +2154,18 @@
     <None Include="World\Races\Corporate.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Corporate</Name>
+    </None>
+    <None Include="World\ResourceItems\IronOre.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>IronOre</Name>
+    </None>
+    <None Include="World\ResourceItems\CopperOre.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>CopperOre</Name>
+    </None>
+    <None Include="World\ResourceItems\Copper.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Copper</Name>
     </None>
     <None Include="World\Species\Bat.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -3427,9 +3447,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>WoodenDoor</Name>
     </None>
-    <None Include="World\CraftItems\MetalDoor.json">
+    <None Include="World\CraftItems\IronDoor.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>MetalDoor</Name>
+      <Name>IronDoor</Name>
     </None>
     <None Include="World\CraftItems\StoneDoor.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -3962,6 +3982,18 @@
     <None Include="World\default.conv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>default</Name>
+    </None>
+    <None Include="World\Voxels\CopperBlock.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>CopperBlock</Name>
+    </None>
+    <None Include="World\Voxels\Copper.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Copper</Name>
+    </None>
+    <None Include="World\Voxels\IronBlock.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>IronBlock</Name>
     </None>
     <None Include="World\Voxels\Sandstone.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

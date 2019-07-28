@@ -41,6 +41,7 @@ namespace DwarfCorp
             // Can these be spawned when the tree dies rather than when it is created?
             if (emitWood)
             {
+                // Todo: Check entity def for resource emitted. Stop auto generating wood types.
                 var wood = Library.CreateResourceType(Library.GetResourceType("Wood"));
                 wood.Name = String.Format("{0} Wood", Name.Split(' ').First());
                 wood.ShortName = wood.Name;

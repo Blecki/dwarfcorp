@@ -1,14 +1,14 @@
 {
   "ID": 0,
-  "Name": "Iron",
-  "Top": "1, 11",
-  "Bottom": "1, 12",
-  "Sides": "1, 12",
+  "Name": "Copper",
+  "Top": "10, 11",
+  "Bottom": "10, 12",
+  "Sides": "10, 12",
   "Transitions": 1,
   "HasTransitionTextures": false,
   "TransitionTiles": null,
   "ReleasesResource": true,
-  "ResourceToRelease": "IronOre",
+  "ResourceToRelease": "CopperOre",
   "StartingHealth": 200.0,
   "ProbabilityOfRelease": 1.0,
   "CanRamp": false,
@@ -33,5 +33,5 @@
     "Audio\\oscar\\sfx_ic_dwarf_pick_stone_2",
     "Audio\\oscar\\sfx_ic_dwarf_pick_stone_3"
   ],
-  "MinimapColor": "202,182,171,255"
+  "MinimapColor": "174,183,109,255"
 }

@@ -1562,7 +1562,7 @@ namespace DwarfCorp.GameStates
                 ItemSource = (new Widget[] { icon_menu_WallTypes_Return }).Concat(
                         Library.EnumerateVoxelTypes()
                         .Where(voxel => voxel.IsBuildable)
-                        .Select(data => new FlatToolTray.Icon
+                        .Select(data => new FlatToolTray.Icon // Todo: Sort blocks we actually have the materials for to the front when menu is shown?
                         {
                             Tooltip = "Build " + data.Name,
                             Icon = new Gui.TileReference("voxels", data.ID),

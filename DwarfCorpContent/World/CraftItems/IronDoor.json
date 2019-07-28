@@ -1,10 +1,10 @@
 {
-  "Name": "Metal Door",
+  "Name": "Iron Door",
   "EntityName": "Door",
   "Category": "Doors",
   "RequiredResources": [
     {
-      "Type": "Metal",
+      "Type": "Iron",
       "Count": 1
     }
   ],

@@ -1,0 +1,29 @@
+{
+  "Name": "Iron",
+  "EntityName": "Iron",
+  "RequiredResources": [
+    {
+      "Type": "IronOre",
+      "Count": 1
+    }
+  ],
+  "Icon": {
+    "Sheet": "resources",
+    "Tile": 54
+  },
+  "BaseCraftTime": 3.0,
+  "Description": "Refined iron.",
+  "Type": "Resource",
+  "Prerequisites": [],
+  "ResourceCreated": "Iron",
+  "CraftLocation": "Forge",
+  "Verb": "Smelt",
+  "PastTeseVerb": "Smelt",
+  "CurrentVerb": "Smelting",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.5, 0",
+  "AddToOwnedPool": false,
+  "Moveable": false,
+  "CraftActBehavior": "Normal",
+  "Tutorial": "Iron Ore needs to be refined into pure iron before it can be used to construct items."
+}

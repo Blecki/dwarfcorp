@@ -1,35 +1,32 @@
 {
-  "Name": "Iron",
-  "MoneyValue": 50.0,
-  "MaterialStrength": 100.0,
+  "Name": "CopperOre",
+  "MoneyValue": 40.0,
+  "MaterialStrength": 80.0,
   "Description": "Needed to build things.",
   "GuiLayers": [
     {
       "Sheet": "resources",
-      "Tile": 7
+      "Tile": 53
     }
   ],
   "Tags": [
-    "Metal",
-    "Material",
-    "HardMaterial",
-    "Iron"
+    "CopperOre"
   ],
   "FoodContent": 0.0,
   "CompositeLayers": [
     {
       "Asset": "newgui\\resources",
       "FrameSize": "32, 32",
-      "Frame": "7, 0"
+      "Frame": "5, 6"
     }
   ],
   "TrinketData": {
-    "BaseAsset": "newgui\\trinkets-cast",
-    "EncrustingAsset": "newgui\\trinkets-cast-insets",
+    "BaseAsset": null,
+    "EncrustingAsset": null,
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Iron",
+  "ShortName": "Copper Ore",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

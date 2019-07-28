@@ -1,0 +1,29 @@
+{
+  "Name": "Copper",
+  "EntityName": "Copper",
+  "RequiredResources": [
+    {
+      "Type": "CopperOre",
+      "Count": 1
+    }
+  ],
+  "Icon": {
+    "Sheet": "resources",
+    "Tile": 54
+  },
+  "BaseCraftTime": 3.0,
+  "Description": "Refined copper.",
+  "Type": "Resource",
+  "Prerequisites": [],
+  "ResourceCreated": "Copper",
+  "CraftLocation": "Forge",
+  "Verb": "Smelt",
+  "PastTeseVerb": "Smelt",
+  "CurrentVerb": "Smelting",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.5, 0",
+  "AddToOwnedPool": false,
+  "Moveable": false,
+  "CraftActBehavior": "Normal",
+  "Tutorial": "Copper Ore needs to be refined into pure copper before it can be used to construct items."
+}
