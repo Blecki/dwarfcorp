@@ -1,6 +1,7 @@
 {
   "Name": "Palisade",
   "EntityName": "Palisade",
+  "Category": "Furniture",
   "RequiredResources": [
     {
       "Type": "HardMaterial",

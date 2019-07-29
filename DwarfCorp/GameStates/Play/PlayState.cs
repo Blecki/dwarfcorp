@@ -1878,7 +1878,8 @@ namespace DwarfCorp.GameStates
 
             #region icon_PlaceObject
 
-            Func<CraftItem, FlatToolTray.Icon> createPlaceIcon = (data) => new FlatToolTray.Icon
+            // Todo: Refresh menu to show only what the player actually has available
+            var menu_PlaceTypes = CreateCategoryMenu(Library.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Object && item.AllowUserCrafting), (data) => new FlatToolTray.Icon
             {
                 Icon = data.Icon,
                 Tooltip = Library.GetString("craft", data.DisplayName),
@@ -1896,19 +1897,16 @@ namespace DwarfCorp.GameStates
                     World = World,
                     PlaceAction = (sender, args) =>
                     {
-                        var buildInfo = sender as PlaceCraftInfo;
-                        if (buildInfo == null)
-                            return;
-                        sender.Hidden = true;
-                        var tool = Tools["PlaceObject"] as PlaceObjectTool;
-                        tool.CraftType = data;
-                        ChangeTool("PlaceObject");
-                        ShowToolPopup(Library.GetString("place", data.DisplayName));
+                        if (sender is PlaceCraftInfo buildInfo)
+                        {
+                            sender.Hidden = true;
+                            (Tools["PlaceObject"] as PlaceObjectTool).CraftType = data; // Todo: Pass arguments to tools through ChangeTool.
+                            ChangeTool("PlaceObject");
+                            ShowToolPopup(Library.GetString("place", data.DisplayName));
+                        }
                     }
                 }
-            };
-
-            var menu_PlaceTypes = CreateCategoryMenu(Library.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Object && item.AllowUserCrafting), createPlaceIcon);
+            });
 
             var icon_PlaceCraft = new FlatToolTray.Icon
             {
@@ -1929,7 +1927,7 @@ namespace DwarfCorp.GameStates
 
             #region icon_BuildResource
 
-            var menu_Strings = CreateCategoryMenu(Library.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
+            var menu_Resources = CreateCategoryMenu(Library.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
             && item.AllowUserCrafting
             && Library.DoesResourceTypeExist(item.ResourceCreated)
             && !Library.GetResourceType(item.ResourceCreated).Tags.Contains(Resource.ResourceTags.Edible)
@@ -1938,7 +1936,7 @@ namespace DwarfCorp.GameStates
             {
                 Icon = data.Icon,
                 Tooltip = data.Verb + " a " + data.Name,
-                KeepChildVisible = true, // So the player can interact with the popup.
+                KeepChildVisible = true,
                 ExpandChildWhenDisabled = true,
                 Text = data.Name,
                 TextVerticalAlign = VerticalAlign.Below,
@@ -1951,23 +1949,22 @@ namespace DwarfCorp.GameStates
                     World = World,
                     BuildAction = (sender, args) =>
                     {
-                        var buildInfo = (sender as Gui.Widgets.BuildCraftInfo);
-                        if (buildInfo == null)
-                            return;
-                        sender.Hidden = true;
-                        var assignments = new List<Task>();
-                        for (int i = 0; i < buildInfo.GetNumRepeats(); i++)
-                            assignments.Add(new CraftResourceTask(data, i + 1, buildInfo.GetNumRepeats(), buildInfo.GetSelectedResources()) { Hidden = true });
-                        //World.TaskManager.AddTasks(assignments);
+                        if (sender is BuildCraftInfo buildInfo)
+                        {
+                            sender.Hidden = true;
 
-                        var compoundTask = new CompoundTask("Craft " + data.DisplayName, TaskCategory.CraftItem, TaskPriority.Medium);
-                        compoundTask.AddSubTasks(assignments);
-                        World.TaskManager.AddTask(compoundTask);
-                        World.TaskManager.AddTasks(assignments);
+                            var assignments = new List<Task>();
+                            for (int i = 0; i < buildInfo.GetNumRepeats(); i++)
+                                assignments.Add(new CraftResourceTask(data, i + 1, buildInfo.GetNumRepeats(), buildInfo.GetSelectedResources()) { Hidden = true });
 
+                            var compoundTask = new CompoundTask("Craft " + data.DisplayName, TaskCategory.CraftItem, TaskPriority.Medium);
+                            compoundTask.AddSubTasks(assignments);
+                            World.TaskManager.AddTask(compoundTask);
+                            World.TaskManager.AddTasks(assignments);
 
-                        ShowToolPopup(data.CurrentVerb + " " + buildInfo.GetNumRepeats() + " " + data.Name);
-                        World.Tutorial("build crafts");
+                            ShowToolPopup(data.CurrentVerb + " " + buildInfo.GetNumRepeats() + " " + data.Name);
+                            World.Tutorial("build crafts");
+                        }
                     },
                 }
             });
@@ -1975,13 +1972,13 @@ namespace DwarfCorp.GameStates
             var icon_BuildResource = new FlatToolTray.Icon
             {
                 Text = "Goods",
-                Tooltip = "Craft tradeable resources.",
+                Tooltip = "Craft resources.",
                 Icon = new TileReference("tool-icons", 38),
                 EnabledTextColor = Vector4.One,
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Below,
                 KeepChildVisible = true,
-                ReplacementMenu = menu_Strings.Menu,
+                ReplacementMenu = menu_Resources.Menu,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
@@ -2241,7 +2238,7 @@ namespace DwarfCorp.GameStates
             };
 
             icon_menu_CraftTypes_Return.ReplacementMenu = menu_BuildTools;
-            menu_Strings.ReturnIcon.ReplacementMenu = menu_BuildTools;
+            menu_Resources.ReturnIcon.ReplacementMenu = menu_BuildTools;
             icon_menu_RoomTypes_Return.ReplacementMenu = menu_BuildTools;
             icon_menu_WallTypes_Return.ReplacementMenu = menu_BuildTools;
             icon_menu_Rail_Return.ReplacementMenu = menu_BuildTools;

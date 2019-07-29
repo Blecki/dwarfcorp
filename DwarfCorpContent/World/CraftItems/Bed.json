@@ -1,6 +1,7 @@
 {
   "Name": "Bed",
   "EntityName": "Bed",
+  "Category": "Furniture",
   "RequiredResources": [
     {
       "Type": "Wood",
@@ -28,5 +29,5 @@
   "AddToOwnedPool": true,
   "Moveable": true,
   "CraftActBehavior": "Normal",
-  "Tutorial" : "Dwarfs sleep in beds. Only one dwarf can sleep in a bed at a time. Sleeping in beds makes dwarfs happier than sleeping on the ground. Dwarfs heal from damage more quickly while sleeping in a bed as well."
+  "Tutorial": "Dwarfs sleep in beds. Only one dwarf can sleep in a bed at a time. Sleeping in beds makes dwarfs happier than sleeping on the ground. Dwarfs heal from damage more quickly while sleeping in a bed as well."
 }

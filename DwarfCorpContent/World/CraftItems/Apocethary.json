@@ -2,7 +2,8 @@
   "Name": "Apothecary",
   "EntityName": "Apothecary",
   "Category": "Magic",
-  "DisplayName" : "Apoth\n-ecary",
+  "DisplayName": "Apoth\n-ecary",
+  "Category": "Furniture",
   "RequiredResources": [
     {
       "Type": "Magical",

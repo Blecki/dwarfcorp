@@ -1,6 +1,7 @@
 {
   "Name": "Lamp",
   "EntityName": "Lamp",
+  "Category": "Furniture",
   "RequiredResources": [
     {
       "Type": "Fuel",

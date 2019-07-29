@@ -1,6 +1,7 @@
 {
   "Name": "Copper",
   "EntityName": "Copper",
+  "Category": "Metal",
   "RequiredResources": [
     {
       "Type": "CopperOre",

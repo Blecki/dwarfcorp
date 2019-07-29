@@ -1,6 +1,7 @@
 {
   "Name": "Barrel",
   "EntityName": "Barrel",
+  "Category": "Furniture",
   "RequiredResources": [
     {
       "Type": "Wood",

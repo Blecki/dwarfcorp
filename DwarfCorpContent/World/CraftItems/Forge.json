@@ -1,9 +1,14 @@
 {
   "Name": "Forge",
   "EntityName": "Forge",
+  "Category": "Furniture",
   "RequiredResources": [
     {
       "Type": "Fuel",
+      "Count": 4
+    },
+    {
+      "Type": "Stone",
       "Count": 4
     }
   ],
