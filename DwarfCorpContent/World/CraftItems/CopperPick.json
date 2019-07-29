@@ -1,0 +1,34 @@
+{
+  "Name": "Copper Pick",
+  "EntityName": "",
+  "Category": "Tools",
+  "RequiredResources": [
+    {
+      "Type": "Wood",
+      "Count": 1
+    },
+    {
+      "Type": "Copper",
+      "Count": 1
+    }
+  ],
+  "Icon": {
+    "Sheet": "pick-resources",
+    "Tile": 3
+  },
+  "BaseCraftTime": 9.0,
+  "Description": "A pick made of copper.",
+  "Type": "Resource",
+  "Prerequisites": [],
+  "ResourceCreated": "Copper Pick",
+  "CraftLocation": "Anvil",
+  "Verb": "Build",
+  "PastTeseVerb": "Built",
+  "CurrentVerb": "Building",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.45, 0",
+  "AddToOwnedPool": true,
+  "Moveable": true,
+  "CraftActBehavior": "Normal",
+  "Tutorial": "Dwarves need picks to dig underground."
+}

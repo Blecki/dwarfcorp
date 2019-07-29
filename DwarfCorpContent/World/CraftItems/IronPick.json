@@ -1,0 +1,34 @@
+{
+  "Name": "Iron Pick",
+  "EntityName": "",
+  "Category": "Tools",
+  "RequiredResources": [
+    {
+      "Type": "Wood",
+      "Count": 1
+    },
+    {
+      "Type": "Iron",
+      "Count": 1
+    }
+  ],
+  "Icon": {
+    "Sheet": "pick-resources",
+    "Tile": 2
+  },
+  "BaseCraftTime": 9.0,
+  "Description": "A pick made of iron.",
+  "Type": "Resource",
+  "Prerequisites": [],
+  "ResourceCreated": "Iron Pick",
+  "CraftLocation": "Anvil",
+  "Verb": "Build",
+  "PastTeseVerb": "Built",
+  "CurrentVerb": "Building",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.45, 0",
+  "AddToOwnedPool": true,
+  "Moveable": true,
+  "CraftActBehavior": "Normal",
+  "Tutorial": "Dwarves need picks to dig underground."
+}

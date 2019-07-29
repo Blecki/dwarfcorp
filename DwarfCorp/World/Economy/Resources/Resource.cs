@@ -101,8 +101,10 @@ namespace DwarfCorp
             Seed,
             Slime,
             CopperOre,
+            Copper,
             IronOre,
-            Iron
+            Iron,
+            Tool
         }
 
         public Resource()

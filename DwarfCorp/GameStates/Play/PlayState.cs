@@ -2359,10 +2359,10 @@ namespace DwarfCorp.GameStates
             var icon_GatherTool = new FlatToolTray.Icon
             {
                 Tag = "gather",
-                Text = "Pick",
+                Text = "Gather",
                 TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 6),
-                Tooltip = "Gather",
+                Tooltip = "Tell dwarves to pick things up.",
                 OnClick = (sender, args) => { ChangeTool("Gather"); World.Tutorial("gather"); },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
@@ -2374,10 +2374,10 @@ namespace DwarfCorp.GameStates
             var icon_ChopTool = new FlatToolTray.Icon
             {
                 Tag = "chop",
-                Text = "Chop",
+                Text = "Harvest",
                 TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 1),
-                Tooltip = "Chop trees",
+                Tooltip = "Chop trees and harvest plants.",
                 OnClick = (sender, args) => { ChangeTool("Chop"); World.Tutorial("chop"); },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };

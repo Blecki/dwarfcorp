@@ -2115,6 +2115,22 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Copper</Name>
     </None>
+    <None Include="World\CraftItems\CopperPick.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>CopperPick</Name>
+    </None>
+    <None Include="World\CraftItems\IronPick.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>IronPick</Name>
+    </None>
+    <None Include="World\CraftItems\StonePick.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>StonePick</Name>
+    </None>
+    <None Include="World\CraftItems\WoodPick.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>WoodPick</Name>
+    </None>
     <None Include="World\Designations\default.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>default</Name>
@@ -2154,6 +2170,22 @@
     <None Include="World\Races\Corporate.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Corporate</Name>
+    </None>
+    <None Include="World\ResourceItems\StonePick.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>StonePick</Name>
+    </None>
+    <None Include="World\ResourceItems\IronPick.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>IronPick</Name>
+    </None>
+    <None Include="World\ResourceItems\CopperPick.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>CopperPick</Name>
+    </None>
+    <None Include="World\ResourceItems\WoodPick.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>WoodPick</Name>
     </None>
     <None Include="World\ResourceItems\IronOre.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -3987,9 +4019,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>CopperBlock</Name>
     </None>
-    <None Include="World\Voxels\Copper.json">
+    <None Include="World\Voxels\CopperOre.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Copper</Name>
+      <Name>CopperOre</Name>
     </None>
     <None Include="World\Voxels\IronBlock.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -5113,6 +5145,13 @@
   <ItemGroup>
     <Compile Include="Entities\Furniture\tx_anvil.png">
       <Name>tx_anvil</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\Dwarf\ToolIcons\pick.png">
+      <Name>pick</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

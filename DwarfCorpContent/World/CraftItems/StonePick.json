@@ -1,0 +1,34 @@
+{
+  "Name": "Stone Pick",
+  "EntityName": "",
+  "Category": "Tools",
+  "RequiredResources": [
+    {
+      "Type": "Wood",
+      "Count": 1
+    },
+    {
+      "Type": "Stone",
+      "Count": 1
+    }
+  ],
+  "Icon": {
+    "Sheet": "pick-resources",
+    "Tile": 1
+  },
+  "BaseCraftTime": 9.0,
+  "Description": "A pick made of stone.",
+  "Type": "Resource",
+  "Prerequisites": [],
+  "ResourceCreated": "Stone Pick",
+  "CraftLocation": "Anvil",
+  "Verb": "Build",
+  "PastTeseVerb": "Built",
+  "CurrentVerb": "Building",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.45, 0",
+  "AddToOwnedPool": true,
+  "Moveable": true,
+  "CraftActBehavior": "Normal",
+  "Tutorial": "Dwarves need picks to dig underground."
+}

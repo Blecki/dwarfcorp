@@ -13,7 +13,7 @@
   "ProbabilityOfRelease": 1.0,
   "CanRamp": false,
   "RampSize": 0.0,
-  "IsBuildable": true,
+  "IsBuildable": false,
   "ParticleType": "stone_particle",
   "EmitsLight": false,
   "MinSpawnHeight": 8.0,

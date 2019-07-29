@@ -1,6 +1,6 @@
 {
   "ID": 0,
-  "Name": "Copper",
+  "Name": "CopperOre",
   "Top": "10, 11",
   "Bottom": "10, 12",
   "Sides": "10, 12",
@@ -13,7 +13,7 @@
   "ProbabilityOfRelease": 1.0,
   "CanRamp": false,
   "RampSize": 0.0,
-  "IsBuildable": true,
+  "IsBuildable": false,
   "ParticleType": "stone_particle",
   "EmitsLight": false,
   "MinSpawnHeight": 8.0,

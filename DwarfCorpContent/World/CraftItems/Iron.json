@@ -9,7 +9,7 @@
   ],
   "Icon": {
     "Sheet": "resources",
-    "Tile": 54
+    "Tile": 7
   },
   "BaseCraftTime": 3.0,
   "Description": "Refined iron.",

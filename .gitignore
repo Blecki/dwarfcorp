@@ -46,7 +46,7 @@ dlldata.c
 *_i.h
 *.ilk
 *.meta
-*.obj
+#*.obj
 *.pch
 *.pdb
 *.pgc
@@ -305,7 +305,7 @@ dlldata.c
 *_i.h
 *.ilk
 *.meta
-*.obj
+#*.obj
 *.pch
 *.pdb
 *.pgc

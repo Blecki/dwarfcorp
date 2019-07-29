@@ -19,7 +19,7 @@ namespace DwarfCorp
 
         }
 
-        public Tree(string name, ComponentManager manager, Vector3 position, string asset, String seed, float treeSize, bool emitWood = true) :
+        public Tree(string name, ComponentManager manager, Vector3 position, string asset, String seed, float treeSize) :
             base(manager, name, position, MathFunctions.Rand(-0.1f, 0.1f),
                 new Vector3(
                     (70.0f / 32.0f) * 0.75f * treeSize, // Ugh, need to load the asset to get it's size so we can apply this calculation.
@@ -33,14 +33,11 @@ namespace DwarfCorp
             AddChild(new Flammable(Manager, "Flames"));
 
             Tags.Add("Vegetation");
-            if (emitWood)
-                Tags.Add("EmitsWood");
+            Tags.Add("EmitsWood");
 
             Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBoxSize, LocalBoundingBoxOffset)) as Inventory;
 
             // Can these be spawned when the tree dies rather than when it is created?
-            if (emitWood)
-            {
                 // Todo: Check entity def for resource emitted. Stop auto generating wood types.
                 var wood = Library.CreateResourceType(Library.GetResourceType("Wood"));
                 wood.Name = String.Format("{0} Wood", Name.Split(' ').First());
@@ -56,7 +53,6 @@ namespace DwarfCorp
                         Resource = wood.Name
                     });
                 }
-            }
 
             for (int i = 0; i < treeSize * 2; i++)
             {
