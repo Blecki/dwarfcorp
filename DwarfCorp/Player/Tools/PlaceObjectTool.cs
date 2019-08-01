@@ -38,9 +38,8 @@ namespace DwarfCorp
         {
             Blackboard blackboard = new Blackboard();
             if (SelectedResources != null && SelectedResources.Count > 0)
-            {
                 blackboard.SetData<List<ResourceAmount>>("Resources", SelectedResources);
-            }
+
             blackboard.SetData<string>("CraftType", CraftType.Name);
 
             var previewBody = EntityFactory.CreateEntity<GameComponent>(
@@ -86,11 +85,13 @@ namespace DwarfCorp
 
                             World.TaskManager.AddTask(new CraftItemTask(newDesignation));
 
+                            PreviewBody = CreatePreviewBody();
 
                             if (!HandlePlaceExistingUpdate())
+                            {
                                 World.UserInterface.ShowToolPopup("Unable to place any more.");
-
-                            PreviewBody = CreatePreviewBody();
+                                World.UserInterface.ChangeTool("SelectUnits");
+                            }
                         }
 
                         break;

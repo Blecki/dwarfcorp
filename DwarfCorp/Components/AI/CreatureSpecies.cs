@@ -11,7 +11,7 @@ namespace DwarfCorp
     public class CreatureSpecies 
     {
         public String Name;
-        public int SpeciesLimit = 50;
+        public int SpeciesLimit = 15;
         public String BabyType = "";
         public int PregnancyLengthHours = 24;
         public bool CanReproduce = false;

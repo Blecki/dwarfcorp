@@ -88,7 +88,7 @@ namespace DwarfCorp
 
                         testCreature.GetRoot().Delete();
 
-                        if (count < testCreatureAI.Stats.Species.SpeciesLimit)
+                        if (count < testCreatureAI.Stats.Species.SpeciesLimit) // Todo: Offload test to world-specieslimit
                         {
                             var randomNum = Math.Min(MathFunctions.RandInt(1, 3), 30 - count);
                             for (int i = 0; i < randomNum; i++)

@@ -44,8 +44,19 @@ namespace DwarfCorp.Gui.Widgets
                         subchild.Invalidate();
                     }
                 }
+
                 NewTray.Hidden = false;
-                Root.SafeCall(NewTray.OnShown, NewTray);
+                RefreshVisibleTray();
+            }
+
+            private Widget CurrentTray => Children.FirstOrDefault(c => c.Hidden == false);
+
+            public void RefreshVisibleTray()
+            {
+                var tray = CurrentTray as IconTray;
+                if (tray != null)
+                    Root.SafeCall(tray.OnRefresh, tray);
+
                 Invalidate();
             }
 

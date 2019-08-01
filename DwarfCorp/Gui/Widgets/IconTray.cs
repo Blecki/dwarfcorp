@@ -12,11 +12,12 @@ namespace DwarfCorp.Gui.Widgets
         public Point ItemSize = new Point(40, 40);
         public Point ItemSpacing = new Point(2, 2);
         public Point SizeToGrid = new Point(1, 1);
-        public int WidthLimit = 512;
+        public int WidthLimit = 1024;
         public int IconOffset = 0;
         private int IconCount { get { return Children.Count - 2; } }
         private Widget GetIcon(int i) { return GetChild(i + 2); }
         public bool HotKeys = false;
+        public Action<Widget> OnRefresh;
 
         public IEnumerable<Widget> ItemSource;
 
@@ -36,9 +37,7 @@ namespace DwarfCorp.Gui.Widgets
         public override void Construct()
         {
             if (ItemSource == null)
-            {
                 ItemSource = new List<Widget>();
-            }
 
             if (Border == "tray-border")
             {
@@ -52,17 +51,26 @@ namespace DwarfCorp.Gui.Widgets
 
             Padding = new Margin(0, 0, 0, 0);
 
-            if (SizeToGrid.X > 1)
+            ResetItemsFromSource();
+        }
+
+        public void ResetItemsFromSource()
+        {
+            Clear();
+
+            var items = ItemSource.ToList();
+
+            //if (SizeToGrid.X > 1)
             {
-                SizeToGrid.X = Math.Min(SizeToGrid.X, WidthLimit/ItemSize.X);
-                int numRows = (int)Math.Ceiling((float)(ItemSource.Count())/(float)(SizeToGrid.X));
+                SizeToGrid.X = Math.Min(items.Count, WidthLimit / ItemSize.X);
+                int numRows = (int)Math.Ceiling((float)(ItemSource.Count()) / (float)(SizeToGrid.X));
                 SizeToGrid.Y = Math.Max(numRows, 1);
             }
             // Calculate perfect size. Margins + item sizes + padding.
-            MaximumSize.X = InteriorMargin.Left + InteriorMargin.Right + (SizeToGrid.X*ItemSize.X) +
-                            ((SizeToGrid.X - 1)*ItemSpacing.X);
-            MaximumSize.Y = InteriorMargin.Top + InteriorMargin.Bottom + (SizeToGrid.Y*ItemSize.Y) +
-                            ((SizeToGrid.Y - 1)*ItemSpacing.Y);
+            MaximumSize.X = InteriorMargin.Left + InteriorMargin.Right + (SizeToGrid.X * ItemSize.X) +
+                            ((SizeToGrid.X - 1) * ItemSpacing.X);
+            MaximumSize.Y = InteriorMargin.Top + InteriorMargin.Bottom + (SizeToGrid.Y * ItemSize.Y) +
+                            ((SizeToGrid.Y - 1) * ItemSpacing.Y);
             MinimumSize = MaximumSize;
 
             Rect.Width = MinimumSize.X;
@@ -98,9 +106,10 @@ namespace DwarfCorp.Gui.Widgets
                 EnabledTextColor = Vector4.One,
             });
 
-            var items = ItemSource.ToList();
             foreach (var item in items)
                 AddChild(item);
+
+            Layout();
         }
 
         public override void Layout()
