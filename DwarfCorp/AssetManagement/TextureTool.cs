@@ -166,6 +166,33 @@ namespace DwarfCorp
             }
         }
 
+        public static void Blit(MemoryTexture From, Rectangle SourceRect, MemoryTexture To, Point DestPoint)
+        {
+            if (From == null || To == null)
+                return;
+
+            for (var y = 0; y < SourceRect.Height; ++y)
+            {
+                if (y + DestPoint.Y < 0 || y + DestPoint.Y >= To.Height) continue; // This is ineffecient as all hell.
+                if (y + SourceRect.Y < 0 || y + SourceRect.Y >= From.Height) continue;
+                for (var x = 0; x < SourceRect.Width; ++x) // Actually can anyone even read this on the stream? All 1 of you lol
+                {
+                    if (x + DestPoint.X < 0 || x + DestPoint.X >= To.Width) continue;
+                    if (x + SourceRect.X < 0 || x + SourceRect.X >= From.Width) continue;
+                    To.Data[To.Index(x + DestPoint.X, y + DestPoint.Y)] = From.Data[From.Index(x + SourceRect.X, y + SourceRect.Y)];
+                }
+            }
+        }
+
+        public static MemoryTexture RotatedCopy(MemoryTexture Of)
+        {
+            var r = new MemoryTexture(Of.Width, Of.Height);
+            for (var x = 0; x < Of.Width; ++x)
+                for (var y = 0; y < Of.Height; ++y)
+                    r.Data[r.Index(y, Of.Width - x - 1)] = Of.Data[Of.Index(x, y)];
+            return r;
+        }
+
         [ConsoleCommandHandler("PALETTE")]
         private static String DumpPalette(String Path)
         {
