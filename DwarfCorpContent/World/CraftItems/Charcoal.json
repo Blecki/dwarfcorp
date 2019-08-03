@@ -1,6 +1,7 @@
 {
   "Name": "Charcoal",
   "EntityName": "Charcoal",
+  "Category": "Material",
   "RequiredResources": [
     {
       "Type": "Wood",
@@ -25,5 +26,5 @@
   "AddToOwnedPool": false,
   "Moveable": false,
   "CraftActBehavior": "Normal",
-  "Tutorial" : "Burn wood in a forge to make charcoal."
+  "Tutorial": "Burn wood in a forge to make charcoal."
 }

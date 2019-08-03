@@ -21,7 +21,7 @@ namespace DwarfCorp
 
         public Gui.Widgets.CancelToolOptions Options;
 
-        public override void OnBegin()
+        public override void OnBegin(Object Arguments)
         {
             World.Tutorial("cancel-tasks");
             World.UserInterface.VoxSelector.SelectionColor = Color.Red;

@@ -143,10 +143,12 @@ namespace DwarfCorp
             r.Type = CraftType.Resource;
             r.CraftActBehavior = CraftActBehaviors.Object;
             r.ResourceCreated = "Object";
-            r.CraftLocation = String.IsNullOrEmpty(CraftLocation) ? "Anvil" : CraftLocation;
+            r.CraftLocation = /*String.IsNullOrEmpty(CraftLocation) ? "Anvil" :*/ CraftLocation;
             r.ObjectName = Name;
             r.AllowUserCrafting = false;
             Library.AddCraftable(r);
+
+            // Todo: Obsolete when new building system is in place.
 
             return r;
         }

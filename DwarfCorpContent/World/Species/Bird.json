@@ -3,5 +3,7 @@
   "BabyType": "Bird",
   "LaysEggs": true,
   "BaseMeatResource": "Bird Meat",
-  "IsMigratory": true
+  "IsMigratory": true,
+  "SpeciesLimit": 10,
+  "EggTime": 240
 }

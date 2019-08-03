@@ -1,6 +1,7 @@
 {
   "Name": "Flag",
   "EntityName": "Flag",
+  "Category": "Furniture",
   "RequiredResources": [
     {
       "Type": "Stone",
@@ -18,7 +19,7 @@
     "OnGround"
   ],
   "ResourceCreated": "",
-  "CraftLocation": "",
+  "CraftLocation": "Craft Table",
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": true,

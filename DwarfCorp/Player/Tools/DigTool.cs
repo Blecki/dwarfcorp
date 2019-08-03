@@ -22,7 +22,7 @@ namespace DwarfCorp
             this.World = World;
         }
 
-        public override void OnBegin()
+        public override void OnBegin(Object Arguments)
         {
             World.UserInterface.VoxSelector.SelectionColor = Color.White;
             World.UserInterface.VoxSelector.DrawBox = true;

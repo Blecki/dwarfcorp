@@ -1,7 +1,7 @@
 {
   "Name": "Punching Bag",
   "EntityName": "Punching Bag",
-  "Category": "Train",
+  "Category": "Furniture",
   "RequiredResources": [
     {
       "Type": "Grain",
@@ -19,7 +19,7 @@
     "OnGround"
   ],
   "ResourceCreated": "",
-  "CraftLocation": "",
+  "CraftLocation": "Craft Table",
   "Verb": "Build",
   "PastTeseVerb": "Built",
   "CurrentVerb": "Building",

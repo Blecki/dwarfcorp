@@ -1,7 +1,7 @@
 {
   "Name": "Metal Table",
   "EntityName": "Metal Table",
-  "Category": "Tables",
+  "Category": "Furniture",
   "RequiredResources": [
     {
       "Type": "Metal",
@@ -19,7 +19,7 @@
     "OnGround"
   ],
   "ResourceCreated": "",
-  "CraftLocation": "",
+  "CraftLocation": "Anvil",
   "Verb": "Build",
   "PastTeseVerb": "Built",
   "CurrentVerb": "Building",

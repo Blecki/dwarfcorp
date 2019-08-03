@@ -53,16 +53,16 @@ namespace DwarfCorp
             if (Stats.Species.LaysEggs)
             {
                 if (EggTimer == null)
-                    EggTimer = new Timer(120f + MathFunctions.Rand(-120, 120), false);
+                    EggTimer = new Timer(Stats.Species.EggTime + MathFunctions.Rand(-120, 120), false);
+
                 EggTimer.Update(gameTime);
 
                 if (EggTimer.HasTriggered)
                 {
                     if (World.GetSpeciesPopulation(Stats.Species) < Stats.Species.SpeciesLimit)
-                    {
                         LayEgg(); // Todo: Egg rate in species
-                        EggTimer = new Timer(120f + MathFunctions.Rand(-120, 120), false);
-                    }
+
+                    EggTimer = new Timer(Stats.Species.EggTime + MathFunctions.Rand(-120, 120), false);
                 }
             }
         }

@@ -1,6 +1,7 @@
 {
   "Name": "Brick",
   "EntityName": "Brick",
+  "Category": "Material",
   "RequiredResources": [
     {
       "Type": "Soil",

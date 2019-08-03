@@ -135,11 +135,12 @@ namespace DwarfCorp
             return true;
         }
 
-        public override void OnBegin()
+        public override void OnBegin(Object Arguments)
         {
             World.UserInterface.VoxSelector.DrawBox = false;
             World.UserInterface.VoxSelector.DrawVoxel = false;
 
+            CraftType = Arguments as CraftItem;
             if (CraftType == null)
                 throw new InvalidOperationException();
 
@@ -149,6 +150,9 @@ namespace DwarfCorp
             PreviewBody = CreatePreviewBody();
             Orientation = 0.0f;
             OverrideOrientation = false;
+
+            World.UserInterface.ShowToolPopup(Library.GetString("place", CraftType.DisplayName));
+
         }
 
         public override void OnEnd()

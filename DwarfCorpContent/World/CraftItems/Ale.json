@@ -3,6 +3,7 @@
   "EntityName": "Ale",
   "DisplayName": "@ale",
   "ShortDisplayName": "@s-ale",
+  "Category": "Food",
   "RequiredResources": [
     {
       "Type": "Brewable",

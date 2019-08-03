@@ -1,7 +1,7 @@
 {
   "Name": "Metal Ladder",
   "EntityName": "Ladder",
-  "Category": "Ladders",
+  "Category": "Furniture",
   "RequiredResources": [
     {
       "Type": "Metal",
@@ -19,7 +19,7 @@
     "NearWall"
   ],
   "ResourceCreated": "",
-  "CraftLocation": "",
+  "CraftLocation": "Anvil",
   "Verb": "Build",
   "PastTeseVerb": "Built",
   "CurrentVerb": "Building",

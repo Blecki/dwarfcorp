@@ -1,7 +1,7 @@
 {
   "Name": "Iron",
   "EntityName": "Iron",
-  "Category": "Metal",
+  "Category": "Material",
   "RequiredResources": [
     {
       "Type": "IronOre",

@@ -1,7 +1,7 @@
 {
   "Name": "Stone Table",
   "EntityName": "Stone Table",
-  "Category": "Tables",
+  "Category": "Furniture",
   "RequiredResources": [
     {
       "Type": "Stone",
@@ -19,7 +19,7 @@
     "OnGround"
   ],
   "ResourceCreated": "",
-  "CraftLocation": "",
+  "CraftLocation": "Craft Table",
   "Verb": "Build",
   "PastTeseVerb": "Built",
   "CurrentVerb": "Building",

@@ -119,6 +119,7 @@
     <Compile Include="Components\Physics\Fire.cs" />
     <Compile Include="Entities\Dwarves\NonPlayerDwarf.cs" />
     <Compile Include="Entities\Fixtures\Cart.cs" />
+    <Compile Include="Entities\Fixtures\CraftTable.cs" />
     <Compile Include="GameStates\WorldGeneration\EmbarkmentEditor.cs" />
     <Compile Include="GameStates\WorldGeneration\ChooseEmployeeTypeDialog.cs" />
     <Compile Include="GameStates\WorldGeneration\EmbarkmentResourceColumns.cs" />
@@ -156,6 +157,7 @@
     <Compile Include="TaskManagement\CompoundActs\TransferResourcesTask.cs" />
     <Compile Include="TaskManagement\Enums.cs" />
     <Compile Include="TaskManagement\Tasks\BuildZoneTask.cs" />
+    <Compile Include="TaskManagement\Tasks\DestroyObjectTask.cs" />
     <Compile Include="TaskManagement\Tasks\GoToZoneTask.cs" />
     <Compile Include="TaskManagement\Tasks\GetHealedTask.cs" />
     <Compile Include="TaskManagement\TestBehaviors.cs" />

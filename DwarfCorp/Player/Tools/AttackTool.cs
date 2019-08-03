@@ -32,7 +32,7 @@ namespace DwarfCorp
 
         }
 
-        public override void OnBegin()
+        public override void OnBegin(Object Arguments)
         {
             
         }

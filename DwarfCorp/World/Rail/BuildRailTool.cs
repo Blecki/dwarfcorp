@@ -61,7 +61,7 @@ namespace DwarfCorp.Rail
                 }
         }
 
-        public override void OnBegin()
+        public override void OnBegin(Object Arguments)
         {
             World.Tutorial("place rail");
             global::System.Diagnostics.Debug.Assert(Pattern != null);

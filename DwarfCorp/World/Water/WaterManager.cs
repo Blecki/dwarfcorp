@@ -141,7 +141,7 @@ namespace DwarfCorp
 
         public void UpdateWater()
         {
-            if(Chunks.World.Paused)
+            if(Chunks.World.Paused || Debugger.Switches.DisableWaterUpdate)
                 return;
             
             foreach(var chunk in Chunks.GetChunkEnumerator())

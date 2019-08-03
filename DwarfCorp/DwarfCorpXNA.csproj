@@ -205,6 +205,7 @@
     <Compile Include="Components\Graphics\PrimitiveComponent.cs" />
     <Compile Include="Components\Physics\Fire.cs" />
     <Compile Include="Entities\Dwarves\NonPlayerDwarf.cs" />
+    <Compile Include="Entities\Fixtures\CraftTable.cs" />
     <Compile Include="Entities\Fixtures\Cart.cs" />
     <Compile Include="EventLog.cs" />
     <Compile Include="EventLogViewer.cs" />
@@ -378,6 +379,7 @@
     <Compile Include="TaskManagement\ActWrapperTask.cs" />
     <Compile Include="TaskManagement\Task.cs" />
     <Compile Include="TaskManagement\TaskManager.cs" />
+    <Compile Include="TaskManagement\Tasks\DestroyObjectTask.cs" />
     <Compile Include="TaskManagement\Tasks\GetHealedTask.cs" />
     <Compile Include="TaskManagement\Tasks\GoToZoneTask.cs" />
     <Compile Include="TaskManagement\Tasks\BuildZoneTask.cs" />

@@ -19,7 +19,7 @@
     "OnGround"
   ],
   "ResourceCreated": "",
-  "CraftLocation": "",
+  "CraftLocation": "Anvil",
   "Verb": "Build",
   "PastTeseVerb": "Built",
   "CurrentVerb": "Building",

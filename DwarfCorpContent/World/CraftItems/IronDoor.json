@@ -1,7 +1,7 @@
 {
   "Name": "Iron Door",
   "EntityName": "Door",
-  "Category": "Doors",
+  "Category": "Furniture",
   "RequiredResources": [
     {
       "Type": "Iron",
@@ -19,7 +19,7 @@
     "NearWall"
   ],
   "ResourceCreated": "",
-  "CraftLocation": "",
+  "CraftLocation": "Anvil",
   "Verb": "Build",
   "PastTeseVerb": "Built",
   "CurrentVerb": "Building",

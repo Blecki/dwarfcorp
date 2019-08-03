@@ -21,7 +21,7 @@ namespace DwarfCorp
         public String Command;
         public ChunkManager Chunks { get; set; }
 
-        public override void OnBegin()
+        public override void OnBegin(Object Arguments)
         {
             World.UserInterface.VoxSelector.SelectionType = GetSelectionTypeBySelectionBoxValue(Command);
         }

@@ -1,6 +1,8 @@
 {
   "Name": "Glass",
   "EntityName": "Glass",
+  "Category": "Material",
+
   "RequiredResources": [
     {
       "Type": "Sand",
@@ -25,5 +27,5 @@
   "AddToOwnedPool": false,
   "Moveable": false,
   "CraftActBehavior": "Normal",
-  "Tutorial" : "Convert sand into glass at a Forge. Use glass to build glass blocks or windows."
+  "Tutorial": "Convert sand into glass at a Forge. Use glass to build glass blocks or windows."
 }

@@ -1,6 +1,8 @@
 {
   "Name": "Rail",
   "EntityName": "Rail",
+  "Category": "Material",
+
   "RequiredResources": [
     {
       "Type": "Metal",

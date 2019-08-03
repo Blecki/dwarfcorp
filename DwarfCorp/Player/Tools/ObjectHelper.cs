@@ -27,12 +27,12 @@ namespace DwarfCorp
                 return false;
             }
 
-            if (!String.IsNullOrEmpty(CraftType.CraftLocation) 
-                && World.PlayerFaction.FindNearestItemWithTags(CraftType.CraftLocation, Location.WorldPosition, false, null) == null)
-            {
-                World.UserInterface.ShowTooltip("Can't " + Verb + ", need " + CraftType.CraftLocation);
-                return false;
-            }
+            //if (!String.IsNullOrEmpty(CraftType.CraftLocation) 
+            //    && World.PlayerFaction.FindNearestItemWithTags(CraftType.CraftLocation, Location.WorldPosition, false, null) == null)
+            //{
+            //    World.UserInterface.ShowTooltip("Can't " + Verb + ", need " + CraftType.CraftLocation);
+            //    return false;
+            //}
 
             foreach (var req in CraftType.Prerequisites)
             {

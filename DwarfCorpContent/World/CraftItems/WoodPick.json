@@ -17,7 +17,7 @@
   "Type": "Resource",
   "Prerequisites": [],
   "ResourceCreated": "Wood Pick",
-  "CraftLocation": "Anvil",
+  "CraftLocation": "Craft Table",
   "Verb": "Build",
   "PastTeseVerb": "Built",
   "CurrentVerb": "Building",

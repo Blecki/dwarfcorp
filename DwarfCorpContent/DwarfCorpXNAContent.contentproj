@@ -2107,6 +2107,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>corporate</Name>
     </None>
+    <None Include="World\CraftItems\CraftTable.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>CraftTable</Name>
+    </None>
     <None Include="World\CraftItems\Iron.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Iron</Name>
@@ -5152,6 +5156,13 @@
   <ItemGroup>
     <Compile Include="Entities\Dwarf\ToolIcons\pick.png">
       <Name>pick</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\Furniture\craft-table.png">
+      <Name>craft-table</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

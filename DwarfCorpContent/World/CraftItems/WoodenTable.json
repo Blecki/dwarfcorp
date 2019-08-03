@@ -1,7 +1,7 @@
 {
   "Name": "Wooden Table",
   "EntityName": "Wooden Table",
-  "Category": "Tables",
+  "Category": "Furniture",
   "RequiredResources": [
     {
       "Type": "Wood",
@@ -19,7 +19,7 @@
     "OnGround"
   ],
   "ResourceCreated": "",
-  "CraftLocation": "",
+  "CraftLocation": "Craft Table",
   "Verb": "Build",
   "PastTeseVerb": "Built",
   "CurrentVerb": "Building",

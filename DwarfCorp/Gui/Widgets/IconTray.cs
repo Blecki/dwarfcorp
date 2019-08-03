@@ -18,6 +18,7 @@ namespace DwarfCorp.Gui.Widgets
         private Widget GetIcon(int i) { return GetChild(i + 2); }
         public bool HotKeys = false;
         public Action<Widget> OnRefresh;
+        public bool AlwaysPerfectSize = false;
 
         public IEnumerable<Widget> ItemSource;
 
@@ -33,6 +34,8 @@ namespace DwarfCorp.Gui.Widgets
             // Don't account for border.
             return Rect.Interior(InteriorMargin);
         }
+
+
 
         public override void Construct()
         {
@@ -56,13 +59,15 @@ namespace DwarfCorp.Gui.Widgets
 
         public void ResetItemsFromSource()
         {
-            Clear();
+            Children.Clear();
 
             var items = ItemSource.ToList();
 
-            //if (SizeToGrid.X > 1)
+            if (AlwaysPerfectSize)
+                SizeToGrid = new Point(items.Count, 1);
+            else
             {
-                SizeToGrid.X = Math.Min(items.Count, WidthLimit / ItemSize.X);
+                SizeToGrid.X = Math.Min(items.Count, Rect.Width / ItemSize.X);
                 int numRows = (int)Math.Ceiling((float)(ItemSource.Count()) / (float)(SizeToGrid.X));
                 SizeToGrid.Y = Math.Max(numRows, 1);
             }

@@ -1,7 +1,8 @@
 {
   "Name": "Stone Chair",
   "EntityName": "Stone Chair",
-  "Category": "Chairs",
+  "Category": "Furniture",
+
   "RequiredResources": [
     {
       "Type": "Stone",
@@ -19,7 +20,7 @@
     "OnGround"
   ],
   "ResourceCreated": "",
-  "CraftLocation": "",
+  "CraftLocation": "Craft Table",
   "Verb": "Build",
   "PastTeseVerb": "Built",
   "CurrentVerb": "Building",

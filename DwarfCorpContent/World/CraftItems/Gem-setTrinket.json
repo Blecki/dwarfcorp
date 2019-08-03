@@ -1,6 +1,8 @@
 {
   "Name": "Gem-set Trinket",
   "EntityName": "Gem-set Trinket",
+  "Category": "Trinkets",
+
   "RequiredResources": [
     {
       "Type": "Encrustable",

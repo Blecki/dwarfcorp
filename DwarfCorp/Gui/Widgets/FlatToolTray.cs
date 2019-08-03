@@ -31,6 +31,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 if (NewTray != null && !Children.Contains(NewTray))
                 {
+                    NewTray.Rect = Rect;
                     AddChild(NewTray);
                     Layout();
                 }

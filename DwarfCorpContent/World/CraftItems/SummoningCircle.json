@@ -2,6 +2,8 @@
   "Name": "Summoning Circle",
   "EntityName": "Summoning Circle",
   "DisplayName": "Summon Circle",
+  "Category": "Magical",
+
   "RequiredResources": [
     {
       "Type": "Magical",
@@ -19,7 +21,7 @@
     "OnGround"
   ],
   "ResourceCreated": "",
-  "CraftLocation": "",
+  "CraftLocation": "Bookshelf",
   "Verb": "Build",
   "PastTeseVerb": "Built",
   "CurrentVerb": "Building",

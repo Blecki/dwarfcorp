@@ -1,7 +1,7 @@
 {
   "Name": "Wooden Chair",
   "EntityName": "Wooden Chair",
-  "Category": "Chairs",
+  "Category": "Furniture",
   "RequiredResources": [
     {
       "Type": "Wood",
@@ -19,7 +19,7 @@
     "OnGround"
   ],
   "ResourceCreated": "",
-  "CraftLocation": "",
+  "CraftLocation": "Craft Table",
   "Verb": "Build",
   "PastTeseVerb": "Built",
   "CurrentVerb": "Building",

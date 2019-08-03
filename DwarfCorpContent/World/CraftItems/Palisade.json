@@ -1,7 +1,7 @@
 {
   "Name": "Palisade",
   "EntityName": "Palisade",
-  "Category": "Furniture",
+  "Category": "Defense",
   "RequiredResources": [
     {
       "Type": "HardMaterial",
@@ -19,7 +19,7 @@
     "OnGround"
   ],
   "ResourceCreated": "",
-  "CraftLocation": "",
+  "CraftLocation": "Anvil",
   "Verb": "Build",
   "PastTeseVerb": "Built",
   "CurrentVerb": "Building",

@@ -1,6 +1,8 @@
 {
   "Name": "Meal",
   "EntityName": "Meal",
+  "Category": "Food",
+
   "RequiredResources": [
     {
       "Type": "RawFood",

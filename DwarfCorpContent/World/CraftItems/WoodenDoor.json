@@ -1,7 +1,7 @@
 {
   "Name": "Wooden Door",
   "EntityName": "Door",
-  "Category": "Doors",
+  "Category": "Furniture",
   "RequiredResources": [
     {
       "Type": "Wood",
@@ -19,7 +19,7 @@
     "NearWall"
   ],
   "ResourceCreated": "",
-  "CraftLocation": "",
+  "CraftLocation": "Craft Table",
   "Verb": "Build",
   "PastTeseVerb": "Built",
   "CurrentVerb": "Building",

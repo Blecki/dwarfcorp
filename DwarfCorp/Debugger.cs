@@ -26,6 +26,7 @@ namespace DwarfCorp
             public static bool HideSliceTop = false;
             public static bool DebugElevators = false;
             public static bool DrawUpdateBox = false;
+            public static bool DisableWaterUpdate = false;
         }
 
         public class Switch

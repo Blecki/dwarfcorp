@@ -22,7 +22,7 @@ namespace DwarfCorp
             this.World = World;
         }
 
-        public override void OnBegin()
+        public override void OnBegin(Object Arguments)
         {
 
         }

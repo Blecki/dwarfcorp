@@ -21,5 +21,6 @@ namespace DwarfCorp
         public bool HasBones = true;
         public bool IsMigratory = false;
         public bool FeelsFear = true;
+        public float EggTime = 240.0f;
     }
 }

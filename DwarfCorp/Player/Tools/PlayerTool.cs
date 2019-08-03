@@ -33,7 +33,7 @@ namespace DwarfCorp
         public abstract void Update(DwarfGame game, DwarfTime time);
         public abstract void Render2D(DwarfGame game, DwarfTime time);
         public abstract void Render3D(DwarfGame game, DwarfTime time);
-        public abstract void OnBegin();
+        public abstract void OnBegin(Object Arguments);
         public abstract void OnEnd();
 
         public virtual void OnConfirm(List<CreatureAI> minions)

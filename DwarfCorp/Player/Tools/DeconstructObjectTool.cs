@@ -25,7 +25,7 @@ namespace DwarfCorp
             this.World = World;
         }
 
-        public override void OnBegin()
+        public override void OnBegin(Object Arguments)
         {
 
         }
@@ -53,7 +53,23 @@ namespace DwarfCorp
                         World.UserInterface.ShowToolPopup(string.Format("Can't destroy this {0}. It is being used.", body.Name));
                         continue;
                     }
-                    body.Die();
+
+                    if (button == InputManager.MouseButton.Left)
+                    {
+                        var task = new DestroyObjectTask(body);
+                        World.TaskManager.AddTask(task);
+                        World.UserInterface.ShowToolPopup("Will destroy this " + body.Name);
+                        OnConfirm(World.PersistentData.SelectedMinions);
+                    }
+                    else if (button == InputManager.MouseButton.Right)
+                    {
+                        if (World.PersistentData.Designations.GetEntityDesignation(body, DesignationType.Gather).HasValue(out var designation))
+                        {
+                            World.TaskManager.CancelTask(designation.Task);
+                            World.UserInterface.ShowToolPopup("Destroy cancelled for " + body.Name);
+                        }
+                    }
+
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, body.Position, 0.5f);
                 }
         }

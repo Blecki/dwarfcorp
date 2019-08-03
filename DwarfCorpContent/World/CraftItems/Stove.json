@@ -1,6 +1,8 @@
 {
   "Name": "Stove",
   "EntityName": "Stove",
+  "Category": "Furniture",
+
   "RequiredResources": [
     {
       "Type": "Fuel",
@@ -18,7 +20,7 @@
     "OnGround"
   ],
   "ResourceCreated": "",
-  "CraftLocation": "",
+  "CraftLocation": "Anvil",
   "Verb": "Build",
   "PastTeseVerb": "Built",
   "CurrentVerb": "Building",

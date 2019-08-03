@@ -1,6 +1,8 @@
 {
   "Name": "Turret",
   "EntityName": "Turret",
+  "Category": "Defense",
+
   "RequiredResources": [
     {
       "Type": "Metal",
@@ -22,7 +24,7 @@
     "OnGround"
   ],
   "ResourceCreated": "",
-  "CraftLocation": "",
+  "CraftLocation": "Craft Table",
   "Verb": "Build",
   "PastTeseVerb": "Built",
   "CurrentVerb": "Building",
@@ -31,7 +33,6 @@
   "AddToOwnedPool": true,
   "Moveable": true,
   "CraftActBehavior": "Normal",
-  "Category": "Magic",
   "IsMagical": true,
   "Turret": "Wizards can build turrets to ward off enemies. Turrets automatically target and kill enemies. They must be recharged by a wizard."
 }

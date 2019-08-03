@@ -1,6 +1,7 @@
 {
   "Name": "Bread",
   "EntityName": "Bread",
+  "Category": "Food",
   "RequiredResources": [
     {
       "Type": "Bakeable",
@@ -25,5 +26,5 @@
   "AddToOwnedPool": false,
   "Moveable": false,
   "CraftActBehavior": "Bread",
-  "Tutorial" : "Bread can be created by baking a bakeable resource (such as grain) in a stove. Bread satifies more hunger than raw foods."
+  "Tutorial": "Bread can be created by baking a bakeable resource (such as grain) in a stove. Bread satifies more hunger than raw foods."
 }

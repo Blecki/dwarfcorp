@@ -5,6 +5,8 @@
   "DisplayName": "Potion Of Glee",
   "ShortDisplayName": null,
   "PluralDisplayName": null,
+  "Category": "Magic",
+
   "RequiredResources": [
     {
       "Type": "Magical",
@@ -36,7 +38,6 @@
   "Deconstructable": true,
   "CraftActBehavior": "Normal",
   "AllowRotation": false,
-  "Category": "Potions",
   "IsMagical": true,
   "Tutorial": "",
   "AllowUserCrafting": true

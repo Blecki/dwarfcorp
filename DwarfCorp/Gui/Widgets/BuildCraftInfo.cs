@@ -19,7 +19,7 @@ namespace DwarfCorp.Gui.Widgets
 
         public override void Construct()
         {
-            Border = "border-one";
+            Border = "border-thin";
             Font = "font10";
             TextColor = new Vector4(0, 0, 0, 1);
             OnShown += (sender) =>
@@ -115,7 +115,7 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     AddChild(new Gui.Widget
                     {
-                        Text = String.Format("Needs {0} to {1}!", Data.IsMagical ? "Wizard" : "CraftsDwarf", Data.Verb),
+                        Text = String.Format("Needs {0} to {1}!", Data.IsMagical ? "Wizard" : "CraftsDwarf", Data.Verb), // Todo: Should be data on craft item.
                         TextColor = new Vector4(1, 0, 0, 1),
                         AutoLayout = Gui.AutoLayout.DockBottom
                     });

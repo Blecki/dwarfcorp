@@ -21,7 +21,7 @@
   "Type": "Resource",
   "Prerequisites": [],
   "ResourceCreated": "Stone Pick",
-  "CraftLocation": "Anvil",
+  "CraftLocation": "Craft Table",
   "Verb": "Build",
   "PastTeseVerb": "Built",
   "CurrentVerb": "Building",

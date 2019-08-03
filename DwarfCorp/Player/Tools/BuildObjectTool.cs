@@ -151,7 +151,7 @@ namespace DwarfCorp
             return true;
         }
 
-        public override void OnBegin()
+        public override void OnBegin(Object Arguments)
         {
             World.UserInterface.VoxSelector.DrawBox = false;
             World.UserInterface.VoxSelector.DrawVoxel = false;

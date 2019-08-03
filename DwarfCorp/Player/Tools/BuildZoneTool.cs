@@ -68,10 +68,19 @@ namespace DwarfCorp
                 DestroyZoneTool.OnVoxelsSelected(voxels, button);
         }
 
-        public override void OnBegin()
+        public override void OnBegin(Object Arguments)
         {
             if (DestroyZoneTool == null)
                 DestroyZoneTool = new DestroyZoneTool(World);
+
+            CurrentZoneType = Arguments as ZoneType;
+            if (CurrentZoneType == null)
+                throw new InvalidOperationException("Invalid zone type passed to BuildZoneTool");
+
+            World.UserInterface.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+            World.UserInterface.ShowToolPopup("Click and drag to build " + CurrentZoneType.Name);
+            World.Tutorial("build rooms");
+
         }
 
         public override void OnEnd()

@@ -1,6 +1,8 @@
 {
   "Name": "Trinket",
   "EntityName": "Trinket",
+  "Category": "Trinkets",
+
   "RequiredResources": [
     {
       "Type": "Material",

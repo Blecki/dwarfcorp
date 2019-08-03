@@ -7,9 +7,6 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Gui.Widgets
 {
-    /// <summary>
-    /// A properly framed Icon for use in an icon tray.
-    /// </summary>
     public class BuildRoomInfo : Widget
     {
         public ZoneType Data;

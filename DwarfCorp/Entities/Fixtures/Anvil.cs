@@ -33,6 +33,7 @@ namespace DwarfCorp
             Tags.Add("Anvil");
             CollisionType = CollisionType.Static;
             SetFlag(Flag.RotateBoundingBox, true);
+            AddChild(new Health(Manager, "Hp", 10, 0, 10));
 
             CreateCosmeticChildren(manager);
         }

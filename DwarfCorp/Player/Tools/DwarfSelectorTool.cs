@@ -33,7 +33,7 @@ namespace DwarfCorp
             InputManager.MouseClickedCallback -= InputManager_MouseClickedCallback;
         }
 
-        public override void OnBegin()
+        public override void OnBegin(Object Arguments)
         {
 
         }

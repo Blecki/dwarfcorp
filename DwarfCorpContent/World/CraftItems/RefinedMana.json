@@ -1,6 +1,8 @@
 {
   "Name": "Refined Mana",
   "EntityName": "Refined Mana",
+  "Category": "Magic",
+
   "RequiredResources": [
     {
       "Type": "Mana",
@@ -27,5 +29,5 @@
   "CraftActBehavior": "Normal",
   "CraftedResultsCount": 8,
   "IsMagical": true,
-  "Tutorial" : "At an Apothecary, dwarfs can turn mana rocks into pure mana, multiplying its magical power by 8. Mana is used to construct magical objects."
+  "Tutorial": "At an Apothecary, dwarfs can turn mana rocks into pure mana, multiplying its magical power by 8. Mana is used to construct magical objects."
 }

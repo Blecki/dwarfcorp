@@ -48,7 +48,7 @@ namespace DwarfCorp
                 World.DestroyZone(room);
         }
 
-        public override void OnBegin()
+        public override void OnBegin(Object Arguments)
         {
         }
 

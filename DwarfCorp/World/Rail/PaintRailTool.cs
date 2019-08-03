@@ -56,7 +56,7 @@ namespace DwarfCorp.Rail
             }
         }
 
-        public override void OnBegin()
+        public override void OnBegin(Object Arguments)
         {
             World.Tutorial("paint rail");
             global::System.Diagnostics.Debug.Assert(SelectedResources != null);

@@ -1,7 +1,7 @@
 {
   "Name": "Copper",
   "EntityName": "Copper",
-  "Category": "Metal",
+  "Category": "Material",
   "RequiredResources": [
     {
       "Type": "CopperOre",
