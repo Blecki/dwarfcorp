@@ -1560,7 +1560,7 @@ namespace DwarfCorp.GameStates
                     (sender as IconTray).ItemSource = (new Widget[] { icon_menu_WallTypes_Return }).Concat(
                         Library.EnumerateVoxelTypes()
                         .Where(voxel => voxel.IsBuildable)
-                        .Where(voxel => //World.CanBuildVoxel(voxel))/*
+                        .Where(voxel => World.CanBuildVoxel(voxel))/*
                         {
                             var resourceCount = World.ListResourcesInStockpilesPlusMinions().Where(r => voxel.CanBuildWith(Library.GetResourceType(r.Key))).Sum(r => r.Value.First.Count + r.Value.Second.Count);
 
@@ -1576,7 +1576,7 @@ namespace DwarfCorp.GameStates
                             Icon = new Gui.TileReference("voxels", data.ID),
                             TextHorizontalAlign = HorizontalAlign.Right,
                             TextVerticalAlign = VerticalAlign.Bottom,
-                            Text = data.Name,
+                            //Text = data.Name,
                             EnabledTextColor = Color.White.ToVector4(),
                             Font = "font10-outline-numsonly",
                             PopupChild = new BuildWallInfo
@@ -1595,7 +1595,7 @@ namespace DwarfCorp.GameStates
                                 ShowToolPopup("Click and drag to build " + data.Name + " wall.");
                                 World.Tutorial("build blocks");
                             },
-                            OnUpdate = (_sender, args) => UpdateBlockWidget(_sender, data),
+                            //OnUpdate = (_sender, args) => UpdateBlockWidget(_sender, data),
                             Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
                             Hidden = false
                         }));
@@ -1607,16 +1607,29 @@ namespace DwarfCorp.GameStates
             var menu_Floortypes = new FlatToolTray.Tray
             {
                 Tag = "build floor",
-                ItemSource = (new Widget[] { icon_menu_WallTypes_Return }).Concat(
+                ItemSource = null,
+                OnRefresh = (sender) =>
+                {
+                    (sender as IconTray).ItemSource = (new Widget[] { icon_menu_WallTypes_Return }).Concat(
                         Library.EnumerateVoxelTypes()
                         .Where(voxel => voxel.IsBuildable)
-                        .Select(data => new FlatToolTray.Icon
+                        .Where(voxel => World.CanBuildVoxel(voxel))/*
+                        {
+                            var resourceCount = World.ListResourcesInStockpilesPlusMinions().Where(r => voxel.CanBuildWith(Library.GetResourceType(r.Key))).Sum(r => r.Value.First.Count + r.Value.Second.Count);
+
+                            int newNum = Math.Max(resourceCount -
+                                World.PersistentData.Designations.EnumerateDesignations(DesignationType.Put).Count(d =>
+                                BuildRequirementsEqual(Library.GetVoxelType(d.Tag.ToString()), voxel)), 0);
+
+                            return newNum > 0;
+                        })//*/
+                        .Select(data => new FlatToolTray.Icon // Todo: Sort blocks we actually have the materials for to the front when menu is shown?
                         {
                             Tooltip = "Build " + data.Name,
                             Icon = new Gui.TileReference("voxels", data.ID),
                             TextHorizontalAlign = HorizontalAlign.Right,
                             TextVerticalAlign = VerticalAlign.Bottom,
-                            Text = data.Name,
+                            //Text = data.Name,
                             EnabledTextColor = Color.White.ToVector4(),
                             Font = "font10-outline-numsonly",
                             PopupChild = new BuildWallInfo
@@ -1625,20 +1638,23 @@ namespace DwarfCorp.GameStates
                                 Rect = new Rectangle(0, 0, 256, 128),
                                 World = World
                             },
-                            OnClick = (sender, args) =>
+                            OnClick = (_sender, args) =>
                             {
-                                VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+                                VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
                                 var tool = Tools["BuildWall"] as BuildWallTool;
                                 tool.BuildFloor = true;
                                 tool.CurrentVoxelType = (byte)data.ID;
-                                ChangeTool("BuildWall"); // Wut
-                                ShowToolPopup("Click and drag to build " + data.Name + " floor.");
+                                ChangeTool("BuildWall");
+                                ShowToolPopup("Click and drag to build " + data.Name + " wall.");
                                 World.Tutorial("build blocks");
                             },
-                            OnUpdate = (sender, args) => UpdateBlockWidget(sender, data),
+                            //OnUpdate = (_sender, args) => UpdateBlockWidget(_sender, data),
                             Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
                             Hidden = false
-                        }))
+                        }));
+
+                    (sender as IconTray).ResetItemsFromSource();
+                }
             };
 
             var icon_BuildWall = new FlatToolTray.Icon

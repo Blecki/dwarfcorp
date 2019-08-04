@@ -157,12 +157,12 @@ namespace DwarfCorp
         }
     }
 
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class LongWanderAct : CompoundCreatureAct
     {
         public int PathLength { get; set; }
         public float Radius { get; set; }
         public bool Is2D { get; set; }
+        public float SpeedAdjust = 1.0f;
 
         public LongWanderAct()
         {
@@ -235,7 +235,7 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-            Tree = new Sequence(new Wrap(FindRandomPath), new FollowPathAct(Creature.AI, "RandomPath"));
+            Tree = new Sequence(new Wrap(FindRandomPath), new FollowPathAct(Creature.AI, "RandomPath", SpeedAdjust));
             base.Initialize();
         }
     }

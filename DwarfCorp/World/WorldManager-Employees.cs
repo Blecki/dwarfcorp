@@ -39,16 +39,22 @@ namespace DwarfCorp
         public void HireImmediately(Applicant currentApplicant)
         {
             var rooms = EnumerateZones().Where(room => room.Type.Name == "Balloon Port").ToList();
+
+            if (rooms.Count == 0) // No balloon port - okay, just... pick a damn room.
+                rooms = EnumerateZones().ToList();
+
             Vector3 spawnLoc = Renderer.Camera.Position;
             if (rooms.Count > 0)
-            {
-                spawnLoc = rooms.First().GetBoundingBox().Center() + Vector3.UnitY * 15;
-            }
+                spawnLoc = rooms.First().GetBoundingBox().Center() + Vector3.UnitY;
+
+            var spawnOffset = MathFunctions.RandVector2Circle();
+            spawnLoc += new Vector3(spawnOffset.X, 0.0f, spawnOffset.Y);
 
             var dwarfPhysics = DwarfFactory.GenerateDwarf(
                     spawnLoc,
                     ComponentManager, currentApplicant.ClassName, currentApplicant.LevelIndex, currentApplicant.Gender, currentApplicant.RandomSeed);
             ComponentManager.RootComponent.AddChild(dwarfPhysics);
+
             var newMinion = dwarfPhysics.EnumerateAll().OfType<Dwarf>().FirstOrDefault();
             Debug.Assert(newMinion != null);
 
@@ -65,6 +71,8 @@ namespace DwarfCorp
                     Text = String.Format("{0} was hired as a {1}.", currentApplicant.Name, currentApplicant.Level.Name),
                     ClickAction = (gui, sender) => newMinion.AI.ZoomToMe()
                 });
+
+            ParticleManager.Trigger("dwarf_puff", spawnLoc, Color.DarkViolet, 90);
 
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
         }

@@ -1,7 +1,7 @@
 {
   "puff": [
     {
-      
+
       "MaxParticles": 200,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -18,7 +18,7 @@
       "AngularDamping": 0.99,
       "LinearDamping": 0.9,
       "Animation": {
-        
+
         "FrameWidth": 32,
         "FrameHeight": 32,
         "Name": "puff",
@@ -44,7 +44,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 32,
           "FrameHeight": 32,
           "Width": 32,
@@ -54,7 +54,7 @@
       },
       "EmissionRadius": 1.0,
       "EmissionSpeed": 2.0,
-      "ParticleDecay": 0.8,
+      "ParticleDecay": 0.0,
       "CollidesWorld": false,
       "Sleeps": false,
       "HasLighting": true,
@@ -64,9 +64,75 @@
       "UseManualControl": false
     }
   ],
- "explode": [
+  "dwarf_puff": [
     {
-      
+
+      "MaxParticles": 800,
+      "ParticlesPerFrame": 0,
+      "ReleaseOnce": true,
+      "EmissionFrequency": 20.0,
+      "ConstantAccel": "0, 3, 0",
+      "MinScale": 0.1,
+      "MaxScale": 1.0,
+      "GrowthSpeed": -0.2,
+      "Damping": 0.5,
+      "MinAngle": 0.0,
+      "MaxAngle": 3.14159,
+      "MinAngular": -5.0,
+      "MaxAngular": 5.0,
+      "AngularDamping": 0.99,
+      "LinearDamping": 0.9,
+      "Animation": {
+
+        "FrameWidth": 32,
+        "FrameHeight": 32,
+        "Name": "puff",
+        "Frames": [
+          "0, 0"
+        ],
+        "CurrentFrame": 0,
+        "LastFrame": 0,
+        "IsPlaying": true,
+        "Loops": true,
+        "Tint": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "FrameHZ": 1.0,
+        "Speeds": [
+          1.07819271
+        ],
+        "WorldWidth": 1.0,
+        "WorldHeight": 1.0,
+        "Flipped": false,
+        "SpeedMultiplier": 1.0,
+        "SpriteSheet": {
+
+          "FrameWidth": 32,
+          "FrameHeight": 32,
+          "Width": 32,
+          "Height": 32,
+          "AssetName": "Particles\\purple_puff"
+        }
+      },
+      "EmissionRadius": 1.0,
+      "EmissionSpeed": 2.0,
+      "ParticleDecay": 0.2,
+      "CollidesWorld": false,
+      "Sleeps": false,
+      "HasLighting": true,
+      "RotatesWithVelocity": false,
+      "Blend": 0,
+      "EmitsLight": false,
+      "UseManualControl": false
+    }
+  ],
+
+  "explode": [
+    {
+
       "MaxParticles": 100,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -112,12 +178,12 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 32,
           "FrameHeight": 32,
           "Width": 192,
           "Height": 32,
-          "AssetName" :  "Effects\\explode"
+          "AssetName": "Effects\\explode"
         }
       },
       "EmissionRadius": 1.0,
@@ -134,7 +200,7 @@
   ],
   "smoke": [
     {
-      
+
       "MaxParticles": 1000,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -151,7 +217,7 @@
       "AngularDamping": 0.99,
       "LinearDamping": 0.9999,
       "Animation": {
-        
+
         "FrameWidth": 32,
         "FrameHeight": 32,
         "Name": "smoke",
@@ -177,7 +243,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 32,
           "FrameHeight": 32,
           "Width": 32,
@@ -199,7 +265,7 @@
   ],
   "splash2": [
     {
-      
+
       "MaxParticles": 1000,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -216,7 +282,7 @@
       "AngularDamping": 0.99,
       "LinearDamping": 0.9,
       "Animation": {
-        
+
         "FrameWidth": 32,
         "FrameHeight": 32,
         "Name": "splash2",
@@ -242,7 +308,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 32,
           "FrameHeight": 32,
           "Width": 32,
@@ -264,7 +330,7 @@
   ],
   "splat": [
     {
-      
+
       "MaxParticles": 500,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -290,7 +356,7 @@
           "2, 0",
           "3, 0",
           "4, 0",
-		  "5, 0"
+          "5, 0"
         ],
         "CurrentFrame": 0,
         "LastFrame": 0,
@@ -332,7 +398,7 @@
   ],
   "heart": [
     {
-      
+
       "MaxParticles": 1000,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -349,7 +415,7 @@
       "AngularDamping": 0.99,
       "LinearDamping": 0.9,
       "Animation": {
-        
+
         "FrameWidth": 32,
         "FrameHeight": 32,
         "Name": "heart",
@@ -375,7 +441,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 32,
           "FrameHeight": 32,
           "Width": 32,
@@ -397,7 +463,7 @@
   ],
   "flame": [
     {
-      
+
       "MaxParticles": 500,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -414,7 +480,7 @@
       "AngularDamping": 0.99,
       "LinearDamping": 0.9,
       "Animation": {
-        
+
         "FrameWidth": 32,
         "FrameHeight": 32,
         "Name": "flame",
@@ -440,7 +506,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 32,
           "FrameHeight": 32,
           "Width": 128,
@@ -460,7 +526,7 @@
       "UseManualControl": false
     },
     {
-      
+
       "MaxParticles": 500,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -477,7 +543,7 @@
       "AngularDamping": 0.99,
       "LinearDamping": 0.9,
       "Animation": {
-        
+
         "FrameWidth": 32,
         "FrameHeight": 32,
         "Name": "Particles\\moreflames",
@@ -503,7 +569,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 128,
           "FrameHeight": 32,
           "Width": 128,
@@ -523,7 +589,7 @@
       "UseManualControl": false
     },
     {
-      
+
       "MaxParticles": 500,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -540,7 +606,7 @@
       "AngularDamping": 0.99,
       "LinearDamping": 0.9,
       "Animation": {
-        
+
         "FrameWidth": 32,
         "FrameHeight": 32,
         "Name": "Particles\\moreflames",
@@ -566,7 +632,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 128,
           "FrameHeight": 32,
           "Width": 128,
@@ -586,7 +652,7 @@
       "UseManualControl": false
     },
     {
-      
+
       "MaxParticles": 500,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -603,7 +669,7 @@
       "AngularDamping": 0.99,
       "LinearDamping": 0.9,
       "Animation": {
-        
+
         "FrameWidth": 32,
         "FrameHeight": 32,
         "Name": "Particles\\moreflames",
@@ -629,7 +695,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 128,
           "FrameHeight": 32,
           "Width": 128,
@@ -651,7 +717,7 @@
   ],
   "green_flame": [
     {
-      
+
       "MaxParticles": 1000,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -668,7 +734,7 @@
       "AngularDamping": 0.99,
       "LinearDamping": 0.9,
       "Animation": {
-        
+
         "FrameWidth": 32,
         "FrameHeight": 32,
         "Name": "green_flame",
@@ -694,7 +760,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 32,
           "FrameHeight": 32,
           "Width": 32,
@@ -716,7 +782,7 @@
   ],
   "Leaves": [
     {
-      
+
       "MaxParticles": 1000,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -733,7 +799,7 @@
       "AngularDamping": 0.99,
       "LinearDamping": 0.95,
       "Animation": {
-        
+
         "FrameWidth": 32,
         "FrameHeight": 32,
         "Name": "leaf",
@@ -759,7 +825,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 32,
           "FrameHeight": 32,
           "Width": 32,
@@ -779,9 +845,9 @@
       "UseManualControl": false
     }
   ],
-   "feather": [
+  "feather": [
     {
-      
+
       "MaxParticles": 1000,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -803,9 +869,9 @@
         "Name": "chickenfeather",
         "Frames": [
           "0, 0",
-		  "1, 0",
-		  "2, 0",
-		  "3, 0"
+          "1, 0",
+          "2, 0",
+          "3, 0"
         ],
         "CurrentFrame": 0,
         "LastFrame": 0,
@@ -842,9 +908,9 @@
       "UseManualControl": false
     }
   ],
-   "dice": [
+  "dice": [
     {
-      
+
       "MaxParticles": 30,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -866,9 +932,9 @@
         "Name": "dice",
         "Frames": [
           "0, 0",
-		  "1, 0",
-		  "2, 0",
-		  "3, 0"
+          "1, 0",
+          "2, 0",
+          "3, 0"
         ],
         "CurrentFrame": 0,
         "LastFrame": 0,
@@ -907,7 +973,7 @@
   ],
   "dirt_particle": [
     {
-      
+
       "MaxParticles": 1000,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -924,7 +990,7 @@
       "AngularDamping": 0.9,
       "LinearDamping": 0.9999,
       "Animation": {
-        
+
         "FrameWidth": 8,
         "FrameHeight": 8,
         "Name": "Particles\\dirt_particle",
@@ -950,7 +1016,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 8,
           "FrameHeight": 8,
           "Width": 8,
@@ -970,7 +1036,7 @@
       "UseManualControl": false
     }
   ],
-    "crumbs": [
+  "crumbs": [
     {
       "MaxParticles": 1000,
       "ParticlesPerFrame": 0,
@@ -988,7 +1054,7 @@
       "AngularDamping": 0.9,
       "LinearDamping": 0.99999,
       "Animation": {
-        
+
         "FrameWidth": 8,
         "FrameHeight": 8,
         "Name": "Particles\\dirt_particle",
@@ -1014,7 +1080,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 8,
           "FrameHeight": 8,
           "Width": 8,
@@ -1036,7 +1102,7 @@
   ],
   "star_particle": [
     {
-      
+
       "MaxParticles": 1000,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -1053,7 +1119,7 @@
       "AngularDamping": 0.99,
       "LinearDamping": 0.999,
       "Animation": {
-        
+
         "FrameWidth": 10,
         "FrameHeight": 10,
         "Name": "star_particle",
@@ -1079,7 +1145,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 10,
           "FrameHeight": 10,
           "Width": 10,
@@ -1101,7 +1167,7 @@
   ],
   "stone_particle": [
     {
-      
+
       "MaxParticles": 1000,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -1118,7 +1184,7 @@
       "AngularDamping": 0.9,
       "LinearDamping": 0.9999,
       "Animation": {
-        
+
         "FrameWidth": 8,
         "FrameHeight": 8,
         "Name": "Particles\\stone_particle",
@@ -1144,7 +1210,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 8,
           "FrameHeight": 8,
           "Width": 8,
@@ -1166,7 +1232,7 @@
   ],
   "sand_particle": [
     {
-      
+
       "MaxParticles": 1000,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -1183,7 +1249,7 @@
       "AngularDamping": 0.9,
       "LinearDamping": 0.9999,
       "Animation": {
-        
+
         "FrameWidth": 8,
         "FrameHeight": 8,
         "Name": "Particles\\sand_particle",
@@ -1209,7 +1275,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 8,
           "FrameHeight": 8,
           "Width": 8,
@@ -1231,7 +1297,7 @@
   ],
   "snow_particle": [
     {
-      
+
       "MaxParticles": 1000,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -1248,7 +1314,7 @@
       "AngularDamping": 0.9,
       "LinearDamping": 0.9999,
       "Animation": {
-        
+
         "FrameWidth": 8,
         "FrameHeight": 8,
         "Name": "Particles\\snow_particle",
@@ -1274,7 +1340,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 8,
           "FrameHeight": 8,
           "Width": 8,
@@ -1296,7 +1362,7 @@
   ],
   "blood_particle": [
     {
-      
+
       "MaxParticles": 1000,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -1312,9 +1378,9 @@
       "MaxAngular": 5.0,
       "AngularDamping": 0.9,
       "LinearDamping": 0.9999,
-	  "SpatterType": "spatter",
+      "SpatterType": "spatter",
       "Animation": {
-        
+
         "FrameWidth": 32,
         "FrameHeight": 32,
         "Name": "blood_particle",
@@ -1340,7 +1406,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 32,
           "FrameHeight": 32,
           "Width": 160,
@@ -1362,7 +1428,7 @@
   ],
   "gibs": [
     {
-      
+
       "MaxParticles": 1000,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -1379,7 +1445,7 @@
       "AngularDamping": 0.9,
       "LinearDamping": 0.9999,
       "Animation": {
-        
+
         "FrameWidth": 32,
         "FrameHeight": 32,
         "Name": "Particles\\gib_particle",
@@ -1405,7 +1471,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 160,
           "FrameHeight": 32,
           "Width": 160,
@@ -1425,7 +1491,7 @@
       "UseManualControl": false
     },
     {
-      
+
       "MaxParticles": 1000,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -1442,7 +1508,7 @@
       "AngularDamping": 0.9,
       "LinearDamping": 0.9999,
       "Animation": {
-        
+
         "FrameWidth": 32,
         "FrameHeight": 32,
         "Name": "Particles\\gib_particle",
@@ -1468,7 +1534,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 160,
           "FrameHeight": 32,
           "Width": 160,
@@ -1488,7 +1554,7 @@
       "UseManualControl": false
     },
     {
-      
+
       "MaxParticles": 1000,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -1505,7 +1571,7 @@
       "AngularDamping": 0.9,
       "LinearDamping": 0.9999,
       "Animation": {
-        
+
         "FrameWidth": 32,
         "FrameHeight": 32,
         "Name": "Particles\\gib_particle",
@@ -1531,7 +1597,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 160,
           "FrameHeight": 32,
           "Width": 160,
@@ -1553,7 +1619,7 @@
   ],
   "spatter": [
     {
-      
+
       "MaxParticles": 100,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": false,
@@ -1569,9 +1635,9 @@
       "MaxAngular": 5.0,
       "AngularDamping": 0.9,
       "LinearDamping": 0.1,
-	  "FixedRotation":true,
+      "FixedRotation": true,
       "Animation": {
-        
+
         "FrameWidth": 32,
         "FrameHeight": 32,
         "Name": "Particles\\blood_spatters",
@@ -1597,7 +1663,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 32,
           "FrameHeight": 32,
           "Width": 128,
@@ -1615,10 +1681,10 @@
       "Blend": 0,
       "EmitsLight": false,
       "UseManualControl": false,
-	  "FixedRotation":true,
+      "FixedRotation": true
     },
     {
-      
+
       "MaxParticles": 100,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -1635,7 +1701,7 @@
       "AngularDamping": 0.9,
       "LinearDamping": 0.9999,
       "Animation": {
-        
+
         "FrameWidth": 32,
         "FrameHeight": 32,
         "Name": "Particles\\blood_spatters",
@@ -1661,7 +1727,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 32,
           "FrameHeight": 32,
           "Width": 128,
@@ -1679,10 +1745,10 @@
       "Blend": 0,
       "EmitsLight": false,
       "UseManualControl": false,
-	  "FixedRotation":true,
+      "FixedRotation": true
     },
     {
-      
+
       "MaxParticles": 100,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -1699,7 +1765,7 @@
       "AngularDamping": 0.9,
       "LinearDamping": 0.9999,
       "Animation": {
-        
+
         "FrameWidth": 32,
         "FrameHeight": 32,
         "Name": "Particles\\blood_spatters",
@@ -1725,7 +1791,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 32,
           "FrameHeight": 32,
           "Width": 128,
@@ -1743,10 +1809,10 @@
       "Blend": 0,
       "EmitsLight": false,
       "UseManualControl": false,
-	  "FixedRotation":true,
+      "FixedRotation": true
     },
     {
-      
+
       "MaxParticles": 100,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
@@ -1763,7 +1829,7 @@
       "AngularDamping": 0.9,
       "LinearDamping": 0.9999,
       "Animation": {
-        
+
         "FrameWidth": 32,
         "FrameHeight": 32,
         "Name": "Particles\\blood_spatters",
@@ -1789,7 +1855,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 32,
           "FrameHeight": 32,
           "Width": 128,
@@ -1807,12 +1873,12 @@
       "Blend": 0,
       "EmitsLight": false,
       "UseManualControl": false,
-	  "FixedRotation":true,
+      "FixedRotation": true
     }
   ],
   "rain": [
     {
-      
+
       "MaxParticles": 500,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": false,
@@ -1829,7 +1895,7 @@
       "AngularDamping": 1.0,
       "LinearDamping": 0.0,
       "Animation": {
-        
+
         "FrameWidth": 16,
         "FrameHeight": 16,
         "Name": "Particles\\raindrop",
@@ -1854,7 +1920,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 16,
           "FrameHeight": 16,
           "Width": 16,
@@ -1876,7 +1942,7 @@
   ],
   "snowflake": [
     {
-      
+
       "MaxParticles": 500,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": false,
@@ -1893,7 +1959,7 @@
       "AngularDamping": 1.0,
       "LinearDamping": 0.0,
       "Animation": {
-        
+
         "FrameWidth": 8,
         "FrameHeight": 8,
         "Name": "Particles\\snow_particle",
@@ -1918,7 +1984,7 @@
         "Flipped": false,
         "SpeedMultiplier": 1.0,
         "SpriteSheet": {
-          
+
           "FrameWidth": 8,
           "FrameHeight": 8,
           "Width": 8,

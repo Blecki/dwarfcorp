@@ -32,8 +32,8 @@ namespace DwarfCorp
             {
                 if (creature.Faction == creature.World.PlayerFaction)
                 {
-                    creature.World.MakeAnnouncement(String.Format("{0} cancelled dig task because it is unreachable", creature.Stats.FullName));
-                    creature.World.TaskManager.CancelTask(OwnerTask);
+                    //creature.World.MakeAnnouncement(String.Format("{0} cancelled dig task because it is unreachable", creature.Stats.FullName));
+                    //creature.World.TaskManager.CancelTask(OwnerTask);
                 }
             }
             yield return Act.Status.Success;

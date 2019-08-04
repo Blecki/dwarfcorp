@@ -19,6 +19,8 @@ namespace DwarfCorp.Gui.Widgets
         public bool HotKeys = false;
         public Action<Widget> OnRefresh;
         public bool AlwaysPerfectSize = false;
+        private int SavedWidth = 0;
+        private bool FirstLayout = false;
 
         public IEnumerable<Widget> ItemSource;
 
@@ -67,10 +69,12 @@ namespace DwarfCorp.Gui.Widgets
                 SizeToGrid = new Point(items.Count, 1);
             else
             {
-                SizeToGrid.X = Math.Min(items.Count, Rect.Width / ItemSize.X);
+                SizeToGrid.X = Math.Min(items.Count, SavedWidth / ItemSize.X);
                 int numRows = (int)Math.Ceiling((float)(ItemSource.Count()) / (float)(SizeToGrid.X));
                 SizeToGrid.Y = Math.Max(numRows, 1);
             }
+            // Todo: Ever not 1 row?
+
             // Calculate perfect size. Margins + item sizes + padding.
             MaximumSize.X = InteriorMargin.Left + InteriorMargin.Right + (SizeToGrid.X * ItemSize.X) +
                             ((SizeToGrid.X - 1) * ItemSpacing.X);
@@ -114,13 +118,14 @@ namespace DwarfCorp.Gui.Widgets
             foreach (var item in items)
                 AddChild(item);
 
-            Layout();
+            LayoutIcons();
         }
 
         public override void Layout()
         {
             Root.SafeCall(OnLayout, this);
             //Rect = MathFunctions.SnapRect(Rect, Root.RenderData.VirtualScreen);
+            SavedWidth = Rect.Width;
 
             LayoutIcons();
         }

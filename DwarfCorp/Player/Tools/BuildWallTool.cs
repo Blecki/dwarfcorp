@@ -89,7 +89,6 @@ namespace DwarfCorp
         {
             if (Selected != null)
                 Selected.Clear();
-            CurrentVoxelType = 0;
             World.UserInterface.VoxSelector.Clear();
         }
 

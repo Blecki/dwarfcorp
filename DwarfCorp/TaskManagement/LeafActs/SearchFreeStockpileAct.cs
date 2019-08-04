@@ -54,9 +54,7 @@ namespace DwarfCorp
         public int CompareStockpiles(Zone A, Zone B)
         {
             if(A == B)
-            {
                 return 0;
-            }
             else
             {
                 BoundingBox boxA = A.GetBoundingBox();
@@ -68,13 +66,9 @@ namespace DwarfCorp
                 float costB = (Creature.Physics.GlobalTransform.Translation - centerB).LengthSquared();
 
                 if(costA < costB)
-                {
                     return -1;
-                }
                 else
-                {
                     return 1;
-                }
             }
         }
 
@@ -82,19 +76,14 @@ namespace DwarfCorp
         {
             bool validTargetFound = false;
 
-            List<Zone> sortedPiles;
+            var sortedPiles = new List<Zone>(Creature.World.EnumerateZones().Where(pile => pile is Stockpile && (pile as Stockpile).IsAllowed(Item.Type)));
+            sortedPiles.Sort(CompareStockpiles);
 
-                sortedPiles =
-                    new List<Zone>(Creature.World.EnumerateZones().Where(pile => pile is Stockpile && (pile as Stockpile).IsAllowed(Item.Type)));
-                sortedPiles.Sort(CompareStockpiles);
-
-            foreach (Zone s in sortedPiles)
+            foreach (var s in sortedPiles)
             {
                 if(s.IsFull())
-                {
                     continue;
-                }
-
+            
                 var v = s.GetNearestVoxel(Creature.Physics.GlobalTransform.Translation);
 
                 if(!v.IsValid || v.IsEmpty)
@@ -108,9 +97,7 @@ namespace DwarfCorp
             }
 
             if(validTargetFound)
-            {
                 yield return Status.Success;
-            }
             else
             {
                 Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);

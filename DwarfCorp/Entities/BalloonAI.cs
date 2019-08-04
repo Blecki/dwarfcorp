@@ -45,7 +45,6 @@ namespace DwarfCorp
     /// <summary>
     /// A simple hacked AI script for the DwarfCorp balloon. Has a state machine which makes it go up and down.
     /// </summary>
-    [JsonObject(IsReference = true)]
     public class BalloonAI : GameComponent
     {
         public PIDController VelocityController { get; set; }

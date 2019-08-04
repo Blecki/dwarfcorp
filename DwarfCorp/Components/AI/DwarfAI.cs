@@ -76,9 +76,11 @@ namespace DwarfCorp
                             PathLength = 20,
                             Radius = 10,
                             Name = "Go on a walk",
-                            Is2D = true
+                            Is2D = true,
+                            SpeedAdjust = 0.5f
                         })
                         {
+                            AutoRetry = false,
                             Name = "Go on a walk.",
                             Priority = TaskPriority.High,
                             BoredomIncrease = GameSettings.Default.Boredom_Walk,

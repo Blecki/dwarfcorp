@@ -81,18 +81,12 @@ namespace DwarfCorp
                 yield break;
             }
 
-            List<GameComponent> createdItems = Creature.Inventory.RemoveAndCreate(Resource, Inventory.RestockType.RestockResource);
-            if(createdItems.Count == 0)
-            {
-                yield return Status.Success;
-            }
+            var createdItems = Creature.Inventory.RemoveAndCreate(Resource, Inventory.RestockType.RestockResource);
 
-            foreach (GameComponent b in createdItems)
+            foreach (var b in createdItems)
             {
                 if (Zone.AddItem(b))
-                {
                     Creature.Stats.NumItemsGathered++;
-                }
                 else
                 {
                     Creature.Inventory.AddResource(new ResourceAmount(Resource.Type, 1), Inventory.RestockType.RestockResource);
@@ -104,6 +98,7 @@ namespace DwarfCorp
             Creature.CurrentCharacterMode = Creature.Stats.CurrentClass.AttackMode;
             Creature.Sprite.ResetAnimations(Creature.Stats.CurrentClass.AttackMode);
             Creature.Sprite.PlayAnimations(Creature.Stats.CurrentClass.AttackMode);
+
             while (!Creature.Sprite.AnimPlayer.IsDone())
                 yield return Status.Running;
 

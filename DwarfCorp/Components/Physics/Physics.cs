@@ -299,7 +299,7 @@ namespace DwarfCorp
 
         public void CheckLiquids(ChunkManager chunks, float dt)
         {
-            var currentVoxel = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(GlobalTransform.Translation + Vector3.Up * 0.5f));
+            var currentVoxel = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(GlobalTransform.Translation));
 
             if (currentVoxel.IsValid && currentVoxel.LiquidLevel > WaterManager.inWaterThreshold)
             {

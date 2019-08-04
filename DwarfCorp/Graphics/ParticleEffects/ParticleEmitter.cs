@@ -21,6 +21,7 @@ namespace DwarfCorp
         public float TimeAlive;
         public int Frame;
         public Vector3 Direction;
+        public Color Tint;
     }
 
     public class EmitterData : ICloneable
@@ -240,7 +241,7 @@ namespace DwarfCorp
                 Angle = Rand(Data.MinAngle, Data.MaxAngle),
                 AngularVelocity = Rand(Data.MinAngular, Data.MaxAngular),
                 LifeRemaining = 1.0f,
-                LightRamp = tint,
+                Tint = tint, // Tint is not actually used!
                 Position = pos,
                 TimeAlive = 0.0f,
                 Direction = direction
@@ -302,7 +303,7 @@ namespace DwarfCorp
                 {
                     p.Angle += (float)(p.AngularVelocity * gameTime.ElapsedGameTime.TotalSeconds);
                 }
-                if (!Data.Sleeps || vel > 0.01f) 
+                if (!Data.Sleeps || vel > 0.01f)
                     p.Velocity += Data.ConstantAccel * (float)gameTime.ElapsedGameTime.TotalSeconds;
                 p.Velocity *= Data.LinearDamping;
                 p.AngularVelocity *= Data.AngularDamping;
@@ -310,7 +311,7 @@ namespace DwarfCorp
 
                 if (!Data.UseManualControl)
                 {
-                    p.LifeRemaining -= Data.ParticleDecay*(float) gameTime.ElapsedGameTime.TotalSeconds;
+                    p.LifeRemaining -= Data.ParticleDecay * (float)gameTime.ElapsedGameTime.TotalSeconds;
                 }
                 else if (p.TimeAlive > 60)
                 {
@@ -333,14 +334,14 @@ namespace DwarfCorp
                     p.LightRamp = new Color(255, 255, 0);
                 }
 
-                if(Data.CollidesWorld && particlePhysics && vel > 0.2f)
+                if (Data.CollidesWorld && particlePhysics && vel > 0.2f)
                 {
-                    if(v.IsValid && !v.IsEmpty)
+                    if (v.IsValid && !v.IsEmpty)
                     {
                         BoundingBox b = new BoundingBox(p.Position - Vector3.One * p.Scale * 0.5f, p.Position + Vector3.One * p.Scale * 0.5f);
                         BoundingBox vBox = v.GetBoundingBox();
                         Physics.Contact contact = new Physics.Contact();
-                        if(Physics.TestStaticAABBAABB(b, vBox, ref contact))
+                        if (Physics.TestStaticAABBAABB(b, vBox, ref contact))
                         {
                             p.Position += contact.NEnter * contact.Penetration;
                             Vector3 newVelocity = Vector3.Reflect(p.Velocity, -contact.NEnter);
@@ -373,9 +374,9 @@ namespace DwarfCorp
                     }
                 }
 
-                if(p.LifeRemaining <= 0)
+                if (p.LifeRemaining <= 0)
                 {
-                    if(p.InstanceData != null)
+                    if (p.InstanceData != null)
                     {
                         p.InstanceData.ShouldDraw = false;
                         p.InstanceData.Transform = Matrix.CreateTranslation(camera.Position + new Vector3(-1000, -1000, -1000));
@@ -385,7 +386,8 @@ namespace DwarfCorp
                     toRemove.Add(p);
                 }
 
-                else if(p.InstanceData != null)
+                else
+                if (p.InstanceData != null)
                 {
                     p.TimeAlive += (float)gameTime.ElapsedGameTime.TotalSeconds + MathFunctions.Rand() * 0.01f;
                     int prevFrame = p.Frame;

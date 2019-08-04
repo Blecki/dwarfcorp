@@ -34,7 +34,7 @@ namespace DwarfCorp
         }
 
         public Balloon(ComponentManager Manager, Vector3 Position, Vector3 Target, Faction Owner) :
-            base(Manager, "Balloon", Matrix.CreateTranslation(Position), new Vector3(0.5f, 1, 0.5f), new Vector3(0, -2, 0))
+            base(Manager, "Balloon", Matrix.CreateTranslation(Position), new Vector3(5.0f, 10, 5.0f), new Vector3(0, 0, 0))
         {
             this.Target = Target;
             this.Owner = Owner;

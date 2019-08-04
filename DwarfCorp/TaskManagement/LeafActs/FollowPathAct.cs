@@ -9,23 +9,24 @@ namespace DwarfCorp
 {
     public class FollowPathAct : CreatureAct
     {
-        public FollowPathAct(CreatureAI agent, string pathName) : base(agent)
+        public FollowPathAct(CreatureAI agent, string pathName, float SpeedAdjust = 1.0f) : base(agent)
         {
             Name = "Follow path";
             PathName = pathName;
+            this.SpeedAdjust = SpeedAdjust;
         }
 
         private string PathName;
         private float DeltaTime = 0.0f;
         private float LastNoiseTime = 0.0f;
         private Cart Minecart = null;
-        private Vector3? LastCartPos = null;
+        private float SpeedAdjust = 1.0f;
 
         private float GetAgentSpeed(MoveType Action)
         {
             var speed = Agent.Movement.Speed(Action);
 
-            return GameSettings.Default.CreatureMovementAdjust * Agent.Stats.Dexterity * speed;
+            return GameSettings.Default.CreatureMovementAdjust * Agent.Stats.Dexterity * speed * SpeedAdjust;
         }
 
         public List<MoveAction> Path
@@ -220,7 +221,7 @@ namespace DwarfCorp
 
                     CleanupMinecart();
 
-                    foreach (var bit in Translate(GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel) + (0.5f * Vector3.Up * Agent.Physics.BoundingBox.Extents().Y), actionSpeed))
+                    foreach (var bit in Translate(Agent.Position, GetPathPoint(Step.DestinationVoxel), actionSpeed))
                     {
                         Creature.NoiseMaker.MakeNoise("Swim", Agent.Position, true);
                         SetCharacterMode(CharacterMode.Swimming);
@@ -382,14 +383,11 @@ namespace DwarfCorp
 
         private void SetupMinecart()
         {
-            //if (Minecart == null)
-            //{
-            //    Minecart = EntityFactory.CreateEntity<Cart>("Cart", Agent.Position);
-            //    LastCartPos = null;
-            //}
+            if (Minecart == null)
+                Minecart = EntityFactory.CreateEntity<Cart>("Cart", Agent.Position);
 
-            if (Agent.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>().HasValue(out var layers) && layers.GetLayers().GetLayer("minecart") == null)
-                layers.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("minecart").FirstOrDefault(), LayeredSprites.LayerLibrary.BaseDwarfPalette);
+            //if (Agent.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>().HasValue(out var layers) && layers.GetLayers().GetLayer("minecart") == null)
+            //    layers.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("minecart").FirstOrDefault(), LayeredSprites.LayerLibrary.BaseDwarfPalette);
         }
 
         private void CleanupMinecart()

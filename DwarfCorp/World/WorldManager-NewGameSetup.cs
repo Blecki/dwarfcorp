@@ -23,11 +23,10 @@ namespace DwarfCorp
 
             if (GenerateInitialBalloonPort(Renderer.Camera.Position.X, Renderer.Camera.Position.Z, 1, Settings).HasValue(out var port))
             {
-
                 var portBox = port.GetBoundingBox();
 
-                ComponentManager.RootComponent.AddChild(Balloon.CreateBalloon(
-                    portBox.Center() + new Vector3(0, 100, 0),
+                ComponentManager.RootComponent.AddChild(Balloon.CreateBalloon( // Bypassing the entity factory because we need to set the target.
+                    portBox.Center() + new Vector3(0, 10, 0),
                     portBox.Center() + new Vector3(0, 10, 0), ComponentManager,
                     PlayerFaction));
 

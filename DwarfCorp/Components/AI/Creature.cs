@@ -217,16 +217,15 @@ namespace DwarfCorp
 
             if (!IsOnGround)
             {
-                if (CurrentCharacterMode != CharacterMode.Flying)
+                if (Physics.IsInLiquid)
+                    CurrentCharacterMode = CharacterMode.Swimming;
+                else if (CurrentCharacterMode != CharacterMode.Flying)
                 {
                     if (Physics.Velocity.Y > 0.05)
                         CurrentCharacterMode = CharacterMode.Jumping;
                     else if (Physics.Velocity.Y < -0.05)
                         CurrentCharacterMode = CharacterMode.Falling;
                 }
-
-                if (Physics.IsInLiquid)
-                    CurrentCharacterMode = CharacterMode.Swimming;
             }
 
             if (CurrentCharacterMode == CharacterMode.Falling && IsOnGround)
