@@ -26,7 +26,6 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": true,
-  "Moveable": true,
   "CraftActBehavior": "Normal",
   "Tutorial": "Musket dwarfs train and earn XP by attacking targets. The target is destroyed by the musket dwarf."
 }

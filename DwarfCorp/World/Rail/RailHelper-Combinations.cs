@@ -25,7 +25,6 @@ namespace DwarfCorp.Rail
             Name = "Rail",
             Type = CraftItem.CraftType.Object,
             AddToOwnedPool = true,
-            Moveable = false
         };
 
         public static RailEntity CreatePreviewBody(ComponentManager Manager, VoxelHandle Location, JunctionPiece Piece)

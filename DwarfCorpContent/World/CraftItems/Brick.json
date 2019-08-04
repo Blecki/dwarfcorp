@@ -24,7 +24,6 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": false,
-  "Moveable": false,
   "CraftActBehavior": "Normal",
   "Tutorial": "Using a forge, dwars can turn dirt into bricks. Bricks can be used to place brick blocks or floors."
 }

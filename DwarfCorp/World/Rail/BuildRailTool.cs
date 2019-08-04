@@ -42,7 +42,6 @@ namespace DwarfCorp.Rail
             ShortDisplayName = Library.GetString("rail"),
             Type = CraftItem.CraftType.Object,
             AddToOwnedPool = true,
-            Moveable = false            
         };
 
         public BuildRailTool(WorldManager World)

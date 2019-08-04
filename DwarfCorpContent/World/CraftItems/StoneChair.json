@@ -27,7 +27,6 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.45, 0",
   "AddToOwnedPool": true,
-  "Moveable": true,
   "CraftActBehavior": "Normal",
   "Tutorial": "Dwarfs sit on chairs while talking with friends, eating or gambling."
 }

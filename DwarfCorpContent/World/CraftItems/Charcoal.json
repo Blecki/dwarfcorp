@@ -24,7 +24,6 @@
   "AllowHeterogenous": true,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": false,
-  "Moveable": false,
   "CraftActBehavior": "Normal",
   "Tutorial": "Burn wood in a forge to make charcoal."
 }

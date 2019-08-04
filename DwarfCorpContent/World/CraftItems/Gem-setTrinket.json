@@ -29,7 +29,6 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": false,
-  "Moveable": false,
   "CraftActBehavior": "GemTrinket",
   "Tutorial": "Combine a trinket with a gem to create a gem-set trinket. These are more valuable than regular trinkets."
 }

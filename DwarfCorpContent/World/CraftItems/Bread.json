@@ -24,7 +24,6 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": false,
-  "Moveable": false,
   "CraftActBehavior": "Bread",
   "Tutorial": "Bread can be created by baking a bakeable resource (such as grain) in a stove. Bread satifies more hunger than raw foods."
 }

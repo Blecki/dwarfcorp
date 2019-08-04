@@ -32,7 +32,7 @@ namespace DwarfCorp
         public string Name;
         public DwarfBux MoneyValue;
         public string Description;
-        public List<TileReference> GuiLayers;
+        public List<TileReference> GuiLayers; // Todo: Would like to combine the different graphics options
         public List<ResourceTags> Tags;
         public float FoodContent;
         public List<CompositeLayer> CompositeLayers;
@@ -41,7 +41,6 @@ namespace DwarfCorp
         public string ShortName;
         public float MaterialStrength = 5;
         public string PlantToGenerate;
-        public bool CanCraft;
         public List<Quantitiy<ResourceTags>> CraftPrerequisites;
         public Color Tint;
         public string AleName = "";

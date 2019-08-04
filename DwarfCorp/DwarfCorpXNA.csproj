@@ -279,7 +279,6 @@
     <Compile Include="Player\ContextCommands\EmptyBackpackCommand.cs" />
     <Compile Include="Player\ContextCommands\FireCommand.cs" />
     <Compile Include="Player\ContextCommands\GatherCommand.cs" />
-    <Compile Include="Player\ContextCommands\MoveCommand.cs" />
     <Compile Include="Player\ContextCommands\PriorityCommand.cs" />
     <Compile Include="Player\ContextCommands\PromoteCommand.cs" />
     <Compile Include="Player\ContextCommands\ViewAllowedTasksCommand.cs" />
@@ -302,7 +301,6 @@
     <Compile Include="Player\Tools\Farm.cs" />
     <Compile Include="Player\Tools\GatherTool.cs" />
     <Compile Include="Player\Tools\GodModeTool.cs" />
-    <Compile Include="Player\Tools\MoveObjectTool.cs" />
     <Compile Include="Player\Tools\ObjectHelper.cs" />
     <Compile Include="Player\Tools\PlaceObjectTool.cs" />
     <Compile Include="Player\Tools\PlantTool.cs" />

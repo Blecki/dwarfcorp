@@ -93,9 +93,6 @@ namespace DwarfCorp
                                 if (craftItem.AddToOwnedPool)
                                     World.PlayerFaction.OwnedObjects.Add(body);
 
-                                if (craftItem.Moveable)
-                                    body.Tags.Add("Moveable");
-
                                 if (craftItem.Deconstructable)
                                     body.Tags.Add("Deconstructable");
                             }

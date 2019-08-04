@@ -24,7 +24,6 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": false,
-  "Moveable": false,
   "CraftActBehavior": "Normal",
   "Tutorial": "Iron Ore needs to be refined into pure iron before it can be used to construct items."
 }

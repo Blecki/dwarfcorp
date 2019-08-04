@@ -474,8 +474,6 @@ namespace DwarfCorp.Gui.Widgets
                                             {
                                                 if (item.AddToOwnedPool)
                                                     World.PlayerFaction.OwnedObjects.Add(entity as GameComponent);
-                                                if (item.Moveable)
-                                                    entity.Tags.Add("Moveable");
                                                 if (item.Deconstructable)
                                                     entity.Tags.Add("Deconstructable");
                                             }

@@ -101,7 +101,6 @@ namespace DwarfCorp
             r.Tags = new List<Resource.ResourceTags>(From.Tags);
             r.FoodContent = From.FoodContent;
             r.PlantToGenerate = From.PlantToGenerate;
-            r.CanCraft = From.CanCraft;
             r.CraftPrerequisites = new List<Quantitiy<Resource.ResourceTags>>(From.CraftPrerequisites);
             r.CraftInfo = From.CraftInfo;
             r.MaterialStrength = From.MaterialStrength;
