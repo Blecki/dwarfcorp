@@ -305,6 +305,8 @@ namespace DwarfCorp.GameStates
                 return;
             }
 
+            InfoTray.ClearMessage();
+
 #if !DEBUG
             try
             {

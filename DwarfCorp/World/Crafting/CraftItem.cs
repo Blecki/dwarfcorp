@@ -133,6 +133,9 @@ namespace DwarfCorp
 
         public CraftItem ObjectAsCraftableResource()
         {
+            //return this; 
+
+
             string resourceName = Name + "...";
             if (Library.GetCraftable(resourceName).HasValue(out var _r))
                 return _r;

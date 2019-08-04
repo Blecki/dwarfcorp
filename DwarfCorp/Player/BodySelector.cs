@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DwarfCorp.GameStates;
@@ -188,6 +189,10 @@ namespace DwarfCorp
         public void OnMouseOver(IEnumerable<GameComponent> entities)
         {
             MouseOver.Invoke(entities);
+
+            if (entities.Count() == 0)
+                return;
+
             string desc = "";
             bool first = true;
             foreach (GameComponent body in entities)
@@ -197,9 +202,10 @@ namespace DwarfCorp
                 desc += body.GetDescription();
                 first = false;
             }
-            // Create a description of the body and display it on the screen.
+
             World.UserInterface.ShowInfo(desc);
         }
+
         private List<GameComponent> SelectedEntities = new List<GameComponent>();
         /// <summary>
         ///     Called every tick.

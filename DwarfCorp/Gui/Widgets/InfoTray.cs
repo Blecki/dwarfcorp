@@ -51,19 +51,27 @@ namespace DwarfCorp.Gui.Widgets
 
         public void AddMessage(String Message)
         {
-            if (ActiveMessage != null && ActiveMessage.RawMessage == Message)
+            if (ActiveMessage != null)
             {
                 ActiveMessage.DeletionTime = DateTime.Now.AddSeconds(MessageLiveSeconds);
-                return;
+                ActiveMessage.Lines.AddRange(Message.Split('\n'));
+            }
+            else
+            {
+                ActiveMessage = new Message
+                {
+                    RawMessage = Message,
+                    DeletionTime = DateTime.Now.AddSeconds(MessageLiveSeconds),
+                    Lines = new List<String>(Message.Split('\n'))
+                };
             }
 
-            ActiveMessage = new Message
-            {
-                RawMessage = Message,
-                DeletionTime = DateTime.Now.AddSeconds(MessageLiveSeconds),
-                Lines = new List<String>(Message.Split('\n'))
-            };
+            Invalidate();
+        }
 
+        public void ClearMessage()
+        {
+            ActiveMessage = null;
             Invalidate();
         }
 
