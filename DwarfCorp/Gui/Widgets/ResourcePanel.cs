@@ -122,18 +122,16 @@ namespace DwarfCorp.Gui.Widgets
             {
                 var existingResourceEntries = new List<Widget>(Children);
                 Children.Clear();
-                var aggregated =
-                    AggregateResources(
-                        World.ListResourcesInStockpilesPlusMinions().Where(p => p.Value.First.Count > 0 || p.Value.Second.Count > 0));
+
+                var aggregated = AggregateResources(World.ListResourcesInStockpilesPlusMinions().Where(p => p.Value.First.Count > 0 || p.Value.Second.Count > 0));
+
                 foreach (var resource in aggregated)
                 {
                     var resourceTemplate = Library.GetResourceType(resource.Amount.First.Type);
 
                     // Don't display resources with no value (a hack, yes!). This is to prevent "special" resources from getting traded.
                     if (resourceTemplate.MoneyValue == 0.0m)
-                    {
                         continue;
-                    }
 
                     var icon = existingResourceEntries.FirstOrDefault(w => w is ResourceIcon && (w as ResourceIcon).EqualsLayers(resourceTemplate.GuiLayers));
 

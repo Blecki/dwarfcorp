@@ -27,6 +27,7 @@ namespace DwarfCorp.Play
             }) as TabPanel;
 
             interiorWidget.AddTab("Allowed Resources", new ResourceFilterPanel { Stockpile = Stockpile });
+            interiorWidget.AddTab("Contents", new StockpileContentsPanel { Stockpile = Stockpile });
                         
             AddChild(new Button()
             {

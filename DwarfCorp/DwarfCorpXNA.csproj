@@ -252,6 +252,7 @@
     <Compile Include="Entities\Steam\PowerAnvil.cs" />
     <Compile Include="Entities\Steam\BuildBuff.cs" />
     <Compile Include="Entities\Steam\SteamPipe.cs" />
+    <Compile Include="GameStates\Play\StockpileContentsPanel.cs" />
     <Compile Include="GameStates\Play\StockpilePropertiesDialog.cs" />
     <Compile Include="GameStates\Play\ResourceFilterPanel.cs" />
     <Compile Include="GameStates\WorldGeneration\ChooseEmployeeTypeDialog.cs" />

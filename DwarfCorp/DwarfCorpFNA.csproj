@@ -122,6 +122,7 @@
     <Compile Include="Entities\Fixtures\CraftTable.cs" />
     <Compile Include="GameStates\Play\ResourceFilterPanel.cs" />
     <Compile Include="GameStates\Play\RoomListPanel.cs" />
+    <Compile Include="GameStates\Play\StockpileContentsPanel.cs" />
     <Compile Include="GameStates\Play\StockpilePropertiesDialog.cs" />
     <Compile Include="GameStates\WorldGeneration\EmbarkmentEditor.cs" />
     <Compile Include="GameStates\WorldGeneration\ChooseEmployeeTypeDialog.cs" />
