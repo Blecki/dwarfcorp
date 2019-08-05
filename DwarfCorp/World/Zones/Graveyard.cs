@@ -18,6 +18,7 @@ namespace DwarfCorp
 
         public Graveyard()
         {
+            SupportsFilters = false;
         }
 
         public override string GetDescriptionString()
@@ -39,12 +40,12 @@ namespace DwarfCorp
             BoxType = "Grave";
             BoxOffset = new Vector3(0.5f, 0.4f, 0.5f);
             ResourcesPerVoxel = 1;
+            SupportsFilters = false;
         }
 
         public override void OnBuilt()
         {
-            foreach (var fence in  Fence.CreateFences(World.ComponentManager,
-                ContentPaths.Entities.DwarfObjects.fence, Voxels, false))
+            foreach (var fence in  Fence.CreateFences(World.ComponentManager, ContentPaths.Entities.DwarfObjects.fence, Voxels, false))
             {
                 AddBody(fence);
                 fence.Manager.RootComponent.AddChild(fence);

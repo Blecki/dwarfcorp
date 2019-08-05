@@ -422,8 +422,7 @@ namespace DwarfCorp
             InstanceRenderer.Flush(GraphicsDevice, DefaultShader, Camera, InstanceRenderMode.Normal);
 
             if (World.UserInterface.CurrentToolMode == "BuildZone" // Todo: ??
-                || World.UserInterface.CurrentToolMode == "BuildWall" ||
-                World.UserInterface.CurrentToolMode == "BuildObject")
+                || World.UserInterface.CurrentToolMode == "BuildWall")
             {
                 DefaultShader.View = Camera.ViewMatrix;
                 DefaultShader.Projection = Camera.ProjectionMatrix;

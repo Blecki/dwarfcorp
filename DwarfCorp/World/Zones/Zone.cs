@@ -23,6 +23,7 @@ namespace DwarfCorp
         [JsonIgnore] public Gui.Widget GuiTag;
         public bool IsBuilt;
         public virtual String GetDescriptionString() { return Library.GetString("generic-room-description"); }
+        public bool SupportsFilters = false;
         
         [JsonProperty]
         protected int ResPerVoxel = 32;

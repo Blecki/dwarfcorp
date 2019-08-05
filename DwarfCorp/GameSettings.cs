@@ -244,15 +244,15 @@ namespace DwarfCorp
             [AutoResetFloat(0.2f)] public float IdleBehavior_Craft = 0.2f;
             [AutoResetFloat(0.02f)] public float IdleBehavior_Binge = 0.02f;
             [AutoResetFloat(0.2f)] public float IdleBehavior_Train = 0.2f;
-            [AutoResetFloat(0.4f)] public float IdleBehavior_Walk = 0.1f;
+            [AutoResetFloat(0.1f)] public float IdleBehavior_Walk = 0.1f;
             [AutoResetFloat(0.8f)] public float IdleBehavior_Relax = 0.8f;
             [AutoResetFloat(0.8f)] public float IdleBehavior_Gamble = 0.8f;
             [AutoResetFloat(2.0f)] public float IdleBehavior_Research = 2.0f;
             [AutoResetFloat(0.1f)] public float IdleBehavior_Mourn = 0.1f;
             [AutoResetFloat(0.2f)] public float IdleBehavior_Potions = 0.2f;
-            [AutoResetFloat(2.0f)] public float IdleBehavior_Loiter = 2.0f;
+            [AutoResetFloat(4.0f)] public float IdleBehavior_Loiter = 4.0f;
             [AutoResetFloat(2.0f)] public float IdleBehavior_Heal = 2.0f;
-            [AutoResetFloat(4.0f)] public float IdleBehavior_Restock = 4.0f;
+            [AutoResetFloat(8.0f)] public float IdleBehavior_Restock = 8.0f;
 
 
 

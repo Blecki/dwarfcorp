@@ -27,7 +27,9 @@ namespace DwarfCorp.ContextCommands
 
         public override void Apply(GameComponent Entity, WorldManager World)
         {
-            Entity.GetRoot().Die();
+            var task = new DestroyObjectTask(Entity);
+            World.TaskManager.AddTask(task);
+            World.UserInterface.ShowToolPopup("Will destroy this " + Entity.Name);
         }
     }
 }

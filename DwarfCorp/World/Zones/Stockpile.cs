@@ -25,7 +25,7 @@ namespace DwarfCorp
 
         public Stockpile()
         {
-
+            SupportsFilters = true;
         }
 
         protected Stockpile(ZoneType Data, WorldManager World) :
@@ -37,6 +37,8 @@ namespace DwarfCorp
                 Resource.ResourceTags.Corpse,
                 Resource.ResourceTags.Money
             };
+
+            SupportsFilters = true;
         }
 
         private static uint maxID = 0;

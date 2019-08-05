@@ -1016,7 +1016,7 @@ namespace DwarfCorp.GameStates
                 World = this.World
             });
 
-            var roomList = Gui.RootItem.AddChild(new RoomListPanel
+            var roomList = Gui.RootItem.AddChild(new Play.RoomListPanel
             {
                 Border = "border-fancy",
                 AutoLayout = AutoLayout.FloatBottomLeft,
@@ -1589,16 +1589,15 @@ namespace DwarfCorp.GameStates
                             },
                             OnClick = (_sender, args) =>
                             {
-                                VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                                var tool = Tools["BuildWall"] as BuildWallTool;
-                                tool.BuildFloor = false;
-                                tool.CurrentVoxelType = (byte)data.ID;
-                                ChangeTool("BuildWall");
-                                ShowToolPopup("Click and drag to build " + data.Name + " wall.");
-                                World.Tutorial("build blocks");
+                                ChangeTool("BuildWall", new BuildWallTool.BuildWallToolArguments
+                                {
+                                    VoxelType = (byte)data.ID,
+                                    Floor = false
+                                });
                             },
                             //OnUpdate = (_sender, args) => UpdateBlockWidget(_sender, data),
                             Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
+                            OnShown = (_sender) => World.Tutorial("build blocks"),
                             Hidden = false
                         }));
 
@@ -1642,16 +1641,15 @@ namespace DwarfCorp.GameStates
                             },
                             OnClick = (_sender, args) =>
                             {
-                                VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                                var tool = Tools["BuildWall"] as BuildWallTool;
-                                tool.BuildFloor = true;
-                                tool.CurrentVoxelType = (byte)data.ID;
-                                ChangeTool("BuildWall");
-                                ShowToolPopup("Click and drag to build " + data.Name + " wall.");
-                                World.Tutorial("build blocks");
+                                ChangeTool("BuildWall", new BuildWallTool.BuildWallToolArguments
+                                {
+                                    VoxelType = (byte)data.ID,
+                                    Floor = true
+                                });
                             },
                             //OnUpdate = (_sender, args) => UpdateBlockWidget(_sender, data),
                             Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
+                            OnShown = (_sender) => World.Tutorial("build blocks"),
                             Hidden = false
                         }));
 

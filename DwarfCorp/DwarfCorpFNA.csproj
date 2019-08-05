@@ -120,6 +120,9 @@
     <Compile Include="Entities\Dwarves\NonPlayerDwarf.cs" />
     <Compile Include="Entities\Fixtures\Cart.cs" />
     <Compile Include="Entities\Fixtures\CraftTable.cs" />
+    <Compile Include="GameStates\Play\ResourceFilterPanel.cs" />
+    <Compile Include="GameStates\Play\RoomListPanel.cs" />
+    <Compile Include="GameStates\Play\StockpilePropertiesDialog.cs" />
     <Compile Include="GameStates\WorldGeneration\EmbarkmentEditor.cs" />
     <Compile Include="GameStates\WorldGeneration\ChooseEmployeeTypeDialog.cs" />
     <Compile Include="GameStates\WorldGeneration\EmbarkmentResourceColumns.cs" />
@@ -560,7 +563,6 @@
     <Compile Include=".\Gui\Widgets\ProgressBar.cs" />
     <Compile Include=".\Gui\Widgets\ResourceColumns.cs" />
     <Compile Include=".\Gui\Widgets\ResourcePanel.cs" />
-    <Compile Include=".\Gui\Widgets\RoomListPanel.cs" />
     <Compile Include=".\Gui\Widgets\TabPanel.cs" />
     <Compile Include=".\Gui\Widgets\TaskListPanel.cs" />
     <Compile Include=".\Gui\Widgets\TextBox.cs" />
@@ -660,7 +662,6 @@
     <Compile Include="Player\ShellBrush.cs" />
     <Compile Include="Player\StairBrush.cs" />
     <Compile Include="Player\Tools\AttackTool.cs" />
-    <Compile Include="Player\Tools\BuildObjectTool.cs" />
     <Compile Include="Player\Tools\BuildWallTool.cs" />
     <Compile Include="Player\Tools\BuildZoneTool.cs" />
     <Compile Include="Player\Tools\CancelTasksTool.cs" />

@@ -19,19 +19,24 @@ namespace DwarfCorp
             return new BuildWallTool(World);
         }
 
+        public class BuildWallToolArguments
+        {
+            public byte VoxelType;
+            public bool Floor;
+        }
+
         public BuildWallTool(WorldManager World)
         {
             this.World = World;
         }
 
         public Shader Effect;
-        public byte CurrentVoxelType { get; set; }
         private List<VoxelHandle> Selected { get; set; }
-        public bool BuildFloor = false;
+        private BuildWallToolArguments Arguments;
 
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            if (CurrentVoxelType == 0)
+            if (Arguments == null)
                 return;
 
             if (Selected == null)
@@ -50,9 +55,8 @@ namespace DwarfCorp
 
                         foreach (var r in voxels)
                         {
-                            // Todo: Mode should be a property of the tool, not grabbed out of the vox selector.
-                            if (World.UserInterface.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty && !r.IsEmpty) continue;
-                            if (World.UserInterface.VoxSelector.SelectionType == VoxelSelectionType.SelectFilled && r.IsEmpty) continue;
+                            if (!Arguments.Floor && !r.IsEmpty) continue;
+                            if (Arguments.Floor && r.IsEmpty) continue;
 
                             if (World.PersistentData.Designations.GetVoxelDesignation(r, DesignationType.Put).HasValue(out var existingDesignation))
                                 World.TaskManager.CancelTask(existingDesignation.Task);
@@ -62,7 +66,7 @@ namespace DwarfCorp
                             if (above.IsValid && above.LiquidType != LiquidType.None)
                                 continue;
 
-                            if (Library.GetVoxelType(CurrentVoxelType).HasValue(out VoxelType vType))
+                            if (Library.GetVoxelType(Arguments.VoxelType).HasValue(out VoxelType vType) && r.Type != vType)                            
                                 assignments.Add(new BuildVoxelTask(r, vType.Name));
                         }
 
@@ -82,7 +86,18 @@ namespace DwarfCorp
 
         public override void OnBegin(Object Arguments)
         {
+            if (Arguments is BuildWallToolArguments arguments)
+                this.Arguments = arguments;
+            else
+                throw new InvalidOperationException();
 
+            if (this.Arguments.Floor)
+                World.UserInterface.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+            else
+                World.UserInterface.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+
+            if (Library.GetVoxelType(this.Arguments.VoxelType).HasValue(out var vType))
+                World.UserInterface.ShowToolPopup("Click and drag to build " + vType.Name + " wall.");
         }
 
         public override void OnEnd()
@@ -90,6 +105,7 @@ namespace DwarfCorp
             if (Selected != null)
                 Selected.Clear();
             World.UserInterface.VoxSelector.Clear();
+            Arguments = null;
         }
 
         public override void OnMouseOver(IEnumerable<GameComponent> bodies)
@@ -103,23 +119,29 @@ namespace DwarfCorp
             {
                 World.UserInterface.VoxSelector.Enabled = false;
                 World.UserInterface.SetMouse(null);
-                return;
             }
-
-            World.UserInterface.VoxSelector.Enabled = true;
-            World.UserInterface.BodySelector.Enabled = false;
-
-            if (World.UserInterface.IsMouseOverGui)
-                World.UserInterface.SetMouse(World.UserInterface.MousePointer);
             else
-                World.UserInterface.SetMouse(new Gui.MousePointer("mouse", 1, 4));
+            {
+                World.UserInterface.VoxSelector.Enabled = true;
+                World.UserInterface.BodySelector.Enabled = false;
 
-            MouseState mouse = Mouse.GetState();
-            if (mouse.RightButton == ButtonState.Pressed)
-                World.UserInterface.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
-            else
-                World.UserInterface.VoxSelector.SelectionType = BuildFloor ? VoxelSelectionType.SelectFilled : VoxelSelectionType.SelectEmpty;
+                if (World.UserInterface.IsMouseOverGui)
+                    World.UserInterface.SetMouse(World.UserInterface.MousePointer);
+                else
+                    World.UserInterface.SetMouse(new Gui.MousePointer("mouse", 1, 4));
 
+                MouseState mouse = Mouse.GetState();
+                if (mouse.RightButton == ButtonState.Pressed)
+                    World.UserInterface.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+                else
+                    World.UserInterface.VoxSelector.SelectionType = Arguments.Floor ? VoxelSelectionType.SelectFilled : VoxelSelectionType.SelectEmpty;
+
+                if (Arguments == null || !Library.GetVoxelType(Arguments.VoxelType).HasValue(out var vType) || !World.CanBuildVoxel(vType))
+                {
+                    World.UserInterface.ShowToolPopup("Not enough resources.");
+                    World.UserInterface.ChangeTool("SelectUnits");
+                }
+            }
         }
 
         private void DrawVoxels(float alpha, IEnumerable<VoxelHandle> selected)
@@ -127,7 +149,7 @@ namespace DwarfCorp
             Effect.VertexColorTint = new Color(0.5f, 1.0f, 0.5f, alpha);
             Vector3 offset = World.UserInterface.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? Vector3.Zero : Vector3.Up * 0.15f;
 
-            if (Library.GetVoxelType(CurrentVoxelType).HasValue(out VoxelType vType))
+            if (Library.GetVoxelType(Arguments.VoxelType).HasValue(out VoxelType vType))
                 if (Library.GetVoxelPrimitive(vType).HasValue(out BoxPrimitive primitive))
                 {
                     foreach (var voxel in selected)
@@ -173,26 +195,18 @@ namespace DwarfCorp
             var mouse = Mouse.GetState();
 
             if (Selected == null)
-            {
                 Selected = new List<VoxelHandle>();
-            }
 
-            if (CurrentVoxelType == 0)
-            {
+            if (Arguments == null)
                 Selected.Clear();
-            }
 
             if (mouse.LeftButton == ButtonState.Pressed)
-            {
                 DrawVoxels(time, Selected);
-            }
             else if (mouse.RightButton != ButtonState.Pressed)
             {
                 var underMouse = World.UserInterface.VoxSelector.VoxelUnderMouse;
                 if (underMouse.IsValid)
-                {
                     DrawVoxels(time, new List<VoxelHandle>() { World.UserInterface.VoxSelector.VoxelUnderMouse });
-                }
             }
         }
 
@@ -203,7 +217,7 @@ namespace DwarfCorp
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            if (CurrentVoxelType == 0)
+            if (Arguments == null)
                 return;
 
             if (Mouse.GetState().LeftButton == ButtonState.Pressed)

@@ -252,6 +252,8 @@
     <Compile Include="Entities\Steam\PowerAnvil.cs" />
     <Compile Include="Entities\Steam\BuildBuff.cs" />
     <Compile Include="Entities\Steam\SteamPipe.cs" />
+    <Compile Include="GameStates\Play\StockpilePropertiesDialog.cs" />
+    <Compile Include="GameStates\Play\ResourceFilterPanel.cs" />
     <Compile Include="GameStates\WorldGeneration\ChooseEmployeeTypeDialog.cs" />
     <Compile Include="GameStates\WorldGeneration\EmbarkmentEditor.cs" />
     <Compile Include="GameStates\WorldGeneration\EmbarkmentResourceColumns.cs" />
@@ -289,7 +291,6 @@
     <Compile Include="Player\ShellBrush.cs" />
     <Compile Include="Player\StairBrush.cs" />
     <Compile Include="Player\Tools\AttackTool.cs" />
-    <Compile Include="Player\Tools\BuildObjectTool.cs" />
     <Compile Include="Player\Tools\BuildWallTool.cs" />
     <Compile Include="Player\Tools\BuildZoneTool.cs" />
     <Compile Include="Player\Tools\CancelTasksTool.cs" />
@@ -598,7 +599,7 @@
     <Compile Include="Gui\Widgets\CommandEntry.cs" />
     <Compile Include="Gui\Widgets\Graph.cs" />
     <Compile Include="Gui\Widgets\ColorOptionsEditor.cs" />
-    <Compile Include="Gui\Widgets\RoomListPanel.cs" />
+    <Compile Include="GameStates\Play\RoomListPanel.cs" />
     <Compile Include="Gui\Widgets\TextBox.cs" />
     <Compile Include="Gui\Widgets\TaskListPanel.cs" />
     <Compile Include="Components\AI\StatAdjustment.cs" />
