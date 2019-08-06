@@ -87,12 +87,12 @@ namespace DwarfCorp
                         continue;
                     }
                     World.UserInterface.ShowTooltip("Left click to destroy this " + body.Name);
-                    body.SetVertexColorRecursive(Color.Red);
+                    //body.SetVertexColorRecursive(Color.Red);
                 }
 
-            foreach (var body in selectedBodies)
-                if (!bodies.Contains(body))
-                    body.SetVertexColorRecursive(Color.White);
+            //foreach (var body in selectedBodies)
+            //    if (!bodies.Contains(body))
+            //        body.SetVertexColorRecursive(Color.White);
 
             selectedBodies = bodies.ToList();
         }

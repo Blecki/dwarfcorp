@@ -2,6 +2,7 @@
   "Name": "Egg",
   "MoneyValue": 5.0,
   "Description": "An egg",
+  "Category": "Meat",
   "GuiLayers": [
     {
       "Sheet": "resources",

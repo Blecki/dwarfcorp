@@ -2,6 +2,7 @@
   "Name": "Grain",
   "MoneyValue": 2.5,
   "Description": "Dwarves can eat this.",
+  "Category": "Seeds",
   "GuiLayers": [
     {
       "Sheet": "resources",

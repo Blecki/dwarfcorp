@@ -1699,7 +1699,7 @@ namespace DwarfCorp.GameStates
             };
 
             var menu_CraftTypes = CreateCategoryMenu(
-                Library.EnumerateCraftables().Where(item => /*item.Type == CraftItem.CraftType.Object &&*/ item.AllowUserCrafting).ToList(),
+                Library.EnumerateCraftables().Where(item => item.AllowUserCrafting).ToList(),
                 (data) => true,
                 (data) => new FlatToolTray.Icon
                 {
@@ -1724,11 +1724,23 @@ namespace DwarfCorp.GameStates
                             if (buildInfo == null)
                                 return;
                             sender.Parent.Hidden = true;
-                            var assignments = new List<Task>();
+
+                            var craftableResource = data.ObjectAsCraftableResource();
+
                             var numRepeats = buildInfo.GetNumRepeats();
-                            for (int i = 0; i < numRepeats; i++)
-                                assignments.Add(new CraftResourceTask(data.ObjectAsCraftableResource(), i + 1, numRepeats, buildInfo.GetSelectedResources()));
-                            World.TaskManager.AddTasks(assignments);
+                            if (numRepeats > 1)
+                            {
+                                var subTasks = new List<Task>();
+                                var compositeTask = new CompoundTask(String.Format("Craft {0} {1}", numRepeats, data.PluralDisplayName), TaskCategory.CraftItem, TaskPriority.Medium);
+                                for (var i = 0; i < numRepeats; ++i)
+                                    subTasks.Add(new CraftResourceTask(craftableResource, i + 1, numRepeats, buildInfo.GetSelectedResources()) { Hidden = true });
+                                compositeTask.AddSubTasks(subTasks);
+                                World.TaskManager.AddTask(compositeTask);
+                                World.TaskManager.AddTasks(subTasks);
+                            }
+                            else
+                                World.TaskManager.AddTask(new CraftResourceTask(craftableResource, 1, 1, buildInfo.GetSelectedResources()));
+
                             ShowToolPopup(data.CurrentVerb + " " + numRepeats.ToString() + " " + (numRepeats == 1 ? data.DisplayName : data.PluralDisplayName));
                             
                         }

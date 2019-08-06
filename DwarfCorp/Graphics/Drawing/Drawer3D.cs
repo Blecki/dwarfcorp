@@ -369,7 +369,7 @@ namespace DwarfCorp
                     {
                         var box = entity.Body.GetBoundingBox();
                         _addBox(box.Min, box.Max - box.Min, props.Color, props.LineWidth, false);
-                        entity.Body.SetVertexColorRecursive(props.Color);
+                        //entity.Body.SetVertexColorRecursive(props.Color);
                     }
                 }
                 else if (entity.Type == DesignationType.Craft) // Make the ghost object invisible if these designations are turned off.

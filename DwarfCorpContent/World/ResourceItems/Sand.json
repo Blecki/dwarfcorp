@@ -2,6 +2,7 @@
   "Name": "Sand",
   "MoneyValue": 2.0,
   "Description": "Can be used to make glass.",
+  "Category": "Ore",
   "GuiLayers": [
     {
       "Sheet": "resources",

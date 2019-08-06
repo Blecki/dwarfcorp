@@ -3,6 +3,7 @@
   "MaterialStrength": 5.0,
   "MoneyValue": 5.0,
   "Description": "Sometimes hard to come by! Comes from trees.",
+  "Category": "Wood",
   "GuiLayers": [
     {
       "Sheet": "resources",

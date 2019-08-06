@@ -2,6 +2,7 @@
   "Name": "Pine Cone",
   "MoneyValue": 2.0,
   "Description": "Grows pine trees.",
+  "Category": "Seeds",
   "GuiLayers": [
     {
       "Sheet": "resources",

@@ -2,6 +2,7 @@
   "Name": "Potion Of Curing",
   "MoneyValue": 100.0,
   "Description": "Dwarfs drink this potion to cure all disease.",
+  "Category": "Potions",
   "GuiLayers": [
     {
       "Sheet": "resources",

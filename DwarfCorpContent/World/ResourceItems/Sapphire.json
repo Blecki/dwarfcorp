@@ -2,6 +2,7 @@
   "Name": "Sapphire",
   "MoneyValue": 350.0,
   "Description": "Shiny!",
+  "Category": "Gems",
   "GuiLayers": [
     {
       "Sheet": "resources",

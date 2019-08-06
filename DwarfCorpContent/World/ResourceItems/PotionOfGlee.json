@@ -2,6 +2,7 @@
   "Name": "Potion Of Glee",
   "MoneyValue": 100.0,
   "Description": "Dwarfs drink this potion when they are feeling down.",
+  "Category": "Potions",
   "GuiLayers": [
     {
       "Sheet": "resources",

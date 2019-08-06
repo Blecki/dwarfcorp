@@ -3,6 +3,7 @@
   "MoneyValue": 4.0,
   "MaterialStrength": 20.0,
   "Description": "Dwarf's favorite material! Comes from the earth.",
+  "Category": "Stone",
   "GuiLayers": [
     {
       "Sheet": "resources",

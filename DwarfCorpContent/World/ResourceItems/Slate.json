@@ -3,6 +3,7 @@
   "MoneyValue": 5.0,
   "MaterialStrength": 15.0,
   "Description": "A sedimentary rock that forms thin layers.",
+  "Category": "Stone",
   "GuiLayers": [
     {
       "Sheet": "resources",

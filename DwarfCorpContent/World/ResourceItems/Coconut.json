@@ -2,6 +2,7 @@
   "Name": "Coconut",
   "MoneyValue": 6.0,
   "Description": "Grows palm trees.",
+  "Category": "Seeds",
   "GuiLayers": [
     {
       "Sheet": "resources",

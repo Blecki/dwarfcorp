@@ -2,6 +2,7 @@
   "Name": "Dirt",
   "MoneyValue": 1.0,
   "Description": "Can be used to make bricks.",
+  "Category": "Stone",
   "GuiLayers": [
     {
       "Sheet": "resources",

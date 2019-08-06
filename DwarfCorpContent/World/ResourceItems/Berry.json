@@ -2,6 +2,7 @@
   "Name": "Berry",
   "MoneyValue": 5.0,
   "Description": "Dwarves can eat these.",
+  "Category": "Seeds",
   "GuiLayers": [
     {
       "Sheet": "resources",

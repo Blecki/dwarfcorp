@@ -66,24 +66,10 @@ namespace DwarfCorp.Gui.Widgets
     {
         public WorldManager World;
         
-        private bool AreListsEqual<T>(List<T> listA, List<T> listB)
-        {
-            if (listA.Any(obj => !listB.Contains(obj)))
-            {
-                return false;
-            }
-
-            if (listB.Any(obj => !listA.Contains(obj)))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
         private class AggregatedResource
         {
-            public Pair<ResourceAmount> Amount;
+            public ResourceAmount InStockpile;
+            public ResourceAmount InBackpacks;
             public List<string> Members = new List<string>(); 
         }
 
@@ -94,19 +80,31 @@ namespace DwarfCorp.Gui.Widgets
             foreach (var pair in resources)
             {
                 var resource = Library.GetResourceType(pair.Value.First.Type);
-                var existing = aggregated.FirstOrDefault(existingResource => 
-                AreListsEqual(Library.GetResourceType(existingResource.Amount.First.Type).Tags, resource.Tags));
 
-                if (existing != null)
-                {
-                    existing.Amount.First.Count += pair.Value.First.Count;
-                    existing.Amount.Second.Count += pair.Value.Second.Count;
-                    existing.Members.Add(String.Format("{0}x {1}", pair.Value.First.Count, pair.Value.First.Type));
-                }
+                if (String.IsNullOrEmpty(resource.Category))
+                    aggregated.Add(new AggregatedResource()
+                    {
+                        InStockpile = pair.Value.First,
+                        InBackpacks = pair.Value.Second,
+                        Members = new List<string>() { String.Format("{0}x {1}", pair.Value.First.Count, pair.Value.First.Type) }
+                    });
                 else
                 {
-                    aggregated.Add(new AggregatedResource(){Amount = pair.Value,
-                        Members = new List<string>(){String.Format("{0}x {1}", pair.Value.First.Count, pair.Value.First.Type)}});
+                    var existing = aggregated.FirstOrDefault(existingResource => Library.GetResourceType(existingResource.InStockpile.Type).Category == resource.Category);
+
+                    if (existing != null)
+                    {
+                        existing.InStockpile.Count += pair.Value.First.Count;
+                        existing.InBackpacks.Count += pair.Value.Second.Count;
+                        existing.Members.Add(String.Format("{0}x {1}", pair.Value.First.Count, pair.Value.First.Type));
+                    }
+                    else
+                        aggregated.Add(new AggregatedResource()
+                        {
+                            InStockpile = pair.Value.First, // Todo: Hijack category name?
+                            InBackpacks = pair.Value.Second,
+                            Members = new List<string>() { String.Format("{0}x {1}", pair.Value.First.Count, pair.Value.First.Type) }
+                        });
                 }
             }
             return aggregated;
@@ -127,48 +125,44 @@ namespace DwarfCorp.Gui.Widgets
 
                 foreach (var resource in aggregated)
                 {
-                    var resourceTemplate = Library.GetResourceType(resource.Amount.First.Type);
+                    var resourceTemplate = Library.GetResourceType(resource.InStockpile.Type);
 
                     // Don't display resources with no value (a hack, yes!). This is to prevent "special" resources from getting traded.
-                    if (resourceTemplate.MoneyValue == 0.0m)
-                        continue;
+                    //if (resourceTemplate.MoneyValue == 0.0m)
+                    //    continue;
 
                     var icon = existingResourceEntries.FirstOrDefault(w => w is ResourceIcon && (w as ResourceIcon).EqualsLayers(resourceTemplate.GuiLayers));
 
-                    StringBuilder label = new StringBuilder();
+                    var label = new StringBuilder();
                     foreach (var aggregates in resource.Members)
                     {
                         label.Append(aggregates);
                         label.Append("\n");
                     }
+
                     label.Append(resourceTemplate.Description);
 
                     if (icon == null)
-                    {
                         icon = AddChild(new ResourceIcon()
                         {
                             Layers = resourceTemplate.GuiLayers,
                             Tooltip = label.ToString(),
                         });
-                    }
                     else
                     {
                         icon.Tooltip = label.ToString();
                         if (!Children.Contains(icon))
-                        {
                             AddChild(icon);
-                        }
                     }
 
-                    string text = "S" + resource.Amount.First.Count.ToString();
-                    text += "\n";
-                    if (resource.Amount.Second.Count > 0)
-                    {
-                        text += "I" + resource.Amount.Second.Count.ToString();
-                    }
+                    var text = "S" + resource.InStockpile.Count.ToString() + "\n";
+                    if (resource.InBackpacks.Count > 0)
+                        text += "I" + resource.InBackpacks.Count.ToString();
+
                     icon.Text = text;
                     icon.Invalidate();
                 }
+
                 var width = Root.RenderData.VirtualScreen.Width - ItemSpacing.X;
                 var itemsThatFit = width / (ItemSize.X + ItemSpacing.X);
                 var sensibleWidth = (Math.Min(Children.Count, itemsThatFit) * (ItemSize.X + ItemSpacing.X)) + ItemSpacing.X;

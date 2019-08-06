@@ -2,6 +2,7 @@
   "Name": "Trinket",
   "MoneyValue": 100.0,
   "Description": "A crafted item.",
+  "Category": "Trinkets",
   "GuiLayers": [
     {
       "Sheet": "crafts",

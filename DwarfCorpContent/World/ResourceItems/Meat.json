@@ -2,6 +2,7 @@
   "Name": "Meat",
   "MoneyValue": 25.0,
   "Description": "Came from an animal.",
+  "Category": "Meat",
   "GuiLayers": [
     {
       "Sheet": "resources",

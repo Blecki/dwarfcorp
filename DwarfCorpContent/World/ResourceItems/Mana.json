@@ -2,6 +2,7 @@
   "Name": "Mana",
   "MoneyValue": 400.0,
   "Description": "Mysterious properties!",
+  "Category": "Ore",
   "GuiLayers": [
     {
       "Sheet": "resources",

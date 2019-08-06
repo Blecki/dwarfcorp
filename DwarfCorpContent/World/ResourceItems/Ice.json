@@ -3,6 +3,7 @@
   "MoneyValue": 1.0,
   "MaterialStrength": 1.0,
   "Description": "A weak building material found in glaciers.",
+  "Category": "Stone",
   "GuiLayers": [
     {
       "Sheet": "resources",

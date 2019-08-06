@@ -2,6 +2,7 @@
   "Name": "Potion Of Learned",
   "MoneyValue": 100.0,
   "Description": "Dwarfs drink this potion to get a cognitive boost.",
+  "Category": "Potions",
   "GuiLayers": [
     {
       "Sheet": "resources",

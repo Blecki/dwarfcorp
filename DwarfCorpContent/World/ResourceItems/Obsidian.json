@@ -3,6 +3,7 @@
   "MaterialStrength": 100.0,
   "MoneyValue": 10.0,
   "Description": "Obsidian forms when lava is cooled very quickly.",
+  "Category": "Stone",
   "GuiLayers": [
     {
       "Sheet": "resources",

@@ -3,6 +3,7 @@
   "MoneyValue": 8.0,
   "MaterialStrength": 30.0,
   "Description": "Marble is created when limestone is compressed deep under ground.",
+  "Category": "Stone",
   "GuiLayers": [
     {
       "Sheet": "resources",

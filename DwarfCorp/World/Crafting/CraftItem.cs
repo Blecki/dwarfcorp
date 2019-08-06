@@ -134,6 +134,8 @@ namespace DwarfCorp
         public CraftItem ObjectAsCraftableResource()
         {
             //return this; 
+            if (Type == CraftType.Resource)
+                return this;
 
 
             string resourceName = Name + "...";
@@ -148,6 +150,7 @@ namespace DwarfCorp
             r.CraftLocation = /*String.IsNullOrEmpty(CraftLocation) ? "Anvil" :*/ CraftLocation;
             r.ObjectName = Name;
             r.AllowUserCrafting = false;
+            r.Category = this.Category;
             Library.AddCraftable(r);
 
             // Todo: Obsolete when new building system is in place.

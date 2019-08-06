@@ -3,6 +3,7 @@
   "MaterialStrength": 15.0,
   "MoneyValue": 500.0,
   "Description": "Shiny!",
+  "Category": "Metal",
   "GuiLayers": [
     {
       "Sheet": "resources",

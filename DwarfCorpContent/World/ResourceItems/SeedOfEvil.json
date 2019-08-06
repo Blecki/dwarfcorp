@@ -2,6 +2,7 @@
   "Name": "Seed of Evil",
   "MoneyValue": 3.0,
   "Description": "Grows haunted trees.",
+  "Category": "Seeds",
   "GuiLayers": [
     {
       "Sheet": "resources",

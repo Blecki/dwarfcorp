@@ -66,6 +66,8 @@ namespace DwarfCorp.Play
     {
         public WorldManager World;
         public Stockpile Stockpile;
+
+        // Todo: What is there are more resources than fit on the screen? Need scrolling!
         
         public override void Construct()
         {

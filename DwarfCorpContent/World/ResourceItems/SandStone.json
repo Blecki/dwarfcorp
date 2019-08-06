@@ -2,6 +2,7 @@
   "Name": "Sandstone",
   "MoneyValue": 3.0,
   "Description": "A sedimentary rock made from concreted sand.",
+  "Category": "Stone",
   "GuiLayers": [
     {
       "Sheet": "resources",

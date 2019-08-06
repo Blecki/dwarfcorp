@@ -2,6 +2,7 @@
   "Name": "Apple",
   "MoneyValue": 3.0,
   "Description": "Grows apple trees.",
+  "Category": "Seeds",
   "GuiLayers": [
     {
       "Sheet": "resources",

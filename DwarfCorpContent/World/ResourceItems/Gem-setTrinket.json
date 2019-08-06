@@ -2,6 +2,7 @@
   "Name": "Gem-set Trinket",
   "MoneyValue": 100.0,
   "Description": "A crafted item.",
+  "Category": "Trinkets",
   "GuiLayers": [
     {
       "Sheet": "resources",

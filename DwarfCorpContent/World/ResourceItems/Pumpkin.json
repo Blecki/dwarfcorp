@@ -2,6 +2,7 @@
   "Name": "Pumpkin",
   "MoneyValue": 6.0,
   "Description": "Grows pumpkins.",
+  "Category": "Seeds",
   "GuiLayers": [
     {
       "Sheet": "resources",

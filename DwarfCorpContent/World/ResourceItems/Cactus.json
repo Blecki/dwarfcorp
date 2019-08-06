@@ -2,6 +2,7 @@
   "Name": "Cactus",
   "MoneyValue": 4.0,
   "Description": "Grows cacti.",
+  "Category": "Seeds",
   "GuiLayers": [
     {
       "Sheet": "resources",

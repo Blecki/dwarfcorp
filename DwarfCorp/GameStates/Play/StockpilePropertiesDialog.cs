@@ -21,6 +21,14 @@ namespace DwarfCorp.Play
             Font = "font10";
             Transparent = true;
 
+            var button = AddChild(new Button()
+            {
+                Text = "OK",
+                AutoLayout = AutoLayout.FloatBottomRight,
+                OnClick = (sender1, args1) => { this.Close(); },
+                MinimumSize = new Point(64, 32)
+            });
+
             var interiorWidget = AddChild(new TabPanel()
             {
                 AutoLayout = AutoLayout.DockFill
@@ -29,14 +37,9 @@ namespace DwarfCorp.Play
             interiorWidget.AddTab("Allowed Resources", new ResourceFilterPanel { Stockpile = Stockpile });
             interiorWidget.AddTab("Contents", new StockpileContentsPanel { Stockpile = Stockpile });
                         
-            AddChild(new Button()
-            {
-                Text = "OK",
-                AutoLayout = AutoLayout.FloatBottomRight,
-                OnClick = (sender1, args1) => { this.Close(); }
-            });
-
             this.Layout();
+
+            button.BringToFront();
             base.Construct();
         }
 

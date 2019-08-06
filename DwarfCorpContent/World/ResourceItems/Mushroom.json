@@ -2,6 +2,7 @@
   "Name": "Mushroom",
   "MoneyValue": 2.5,
   "Description": "Dwarves can eat these.",
+  "Category": "Seeds",
   "GuiLayers": [
     {
       "Sheet": "resources",

@@ -2,6 +2,7 @@
   "Name": "Potion Of Health",
   "MoneyValue": 100.0,
   "Description": "Dwarfs drink this potion when they take damage.",
+  "Category": "Potions",
   "GuiLayers": [
     {
       "Sheet": "resources",

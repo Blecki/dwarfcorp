@@ -2,6 +2,7 @@
   "Name": "Meal",
   "MoneyValue": 10.0,
   "Description": "A nutritious dwarf meal.",
+  "Category": "Food",
   "GuiLayers": [
     {
       "Sheet": "resources",

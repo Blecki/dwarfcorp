@@ -2,6 +2,7 @@
   "Name": "Potion Of Strength",
   "MoneyValue": 100.0,
   "Description": "Dwarfs drink this potion to get strong.",
+  "Category": "Potions",
   "GuiLayers": [
     {
       "Sheet": "resources",

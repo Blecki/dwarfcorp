@@ -3,6 +3,7 @@
   "MaterialStrength": 50.0,
   "MoneyValue": 6.0,
   "Description": "A metamorphic rock, granite is produced when sandstones and shales are compressed deep under ground.",
+  "Category": "Stone",
   "GuiLayers": [
     {
       "Sheet": "resources",

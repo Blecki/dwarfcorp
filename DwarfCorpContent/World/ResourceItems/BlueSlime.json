@@ -3,6 +3,7 @@
   "MaterialStrength": 5.0,
   "MoneyValue": 25.0,
   "Description": "Goop from a blue slime.",
+  "Category": "Meat",
   "GuiLayers": [
     {
       "Sheet": "slime",

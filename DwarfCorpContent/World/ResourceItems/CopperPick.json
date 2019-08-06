@@ -2,6 +2,7 @@
   "Name": "Copper Pick",
   "MoneyValue": 20.0,
   "Description": "A pick made of copper.",
+  "Category": "Tools",
   "GuiLayers": [
     {
       "Sheet": "pick-resources",

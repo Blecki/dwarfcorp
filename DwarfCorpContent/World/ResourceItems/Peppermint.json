@@ -2,6 +2,7 @@
   "Name": "Peppermint",
   "MoneyValue": 3.0,
   "Description": "Edible candy. Grows candycanes.",
+  "Category": "Seeds",
   "GuiLayers": [
     {
       "Sheet": "resources",

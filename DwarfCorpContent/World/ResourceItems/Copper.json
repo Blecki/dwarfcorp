@@ -3,6 +3,7 @@
   "MoneyValue": 40.0,
   "MaterialStrength": 80.0,
   "Description": "Needed to build things.",
+  "Category": "Metal",
   "GuiLayers": [
     {
       "Sheet": "resources",

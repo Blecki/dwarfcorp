@@ -2,6 +2,7 @@
   "Name": "Charcoal",
   "MoneyValue": 15.0,
   "Description": "Used as fuel",
+  "Category": "Fuel",
   "GuiLayers": [
     {
       "Sheet": "resources",
