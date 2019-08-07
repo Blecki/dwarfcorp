@@ -131,7 +131,7 @@ namespace DwarfCorp.Gui.Widgets
                     //if (resourceTemplate.MoneyValue == 0.0m)
                     //    continue;
 
-                    var icon = existingResourceEntries.FirstOrDefault(w => w is ResourceIcon && (w as ResourceIcon).EqualsLayers(resourceTemplate.GuiLayers));
+                    var icon = existingResourceEntries.FirstOrDefault(w => w is ResourceIcon && w.Tag.ToString() == resource.InStockpile.Type);
 
                     var label = new StringBuilder();
                     foreach (var aggregates in resource.Members)
@@ -147,6 +147,7 @@ namespace DwarfCorp.Gui.Widgets
                         {
                             Layers = resourceTemplate.GuiLayers,
                             Tooltip = label.ToString(),
+                            Tag = resource.InStockpile.Type
                         });
                     else
                     {

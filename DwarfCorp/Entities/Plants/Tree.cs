@@ -42,6 +42,7 @@ namespace DwarfCorp
                 var wood = Library.CreateResourceType(Library.GetResourceType("Wood"));
                 wood.Name = String.Format("{0} Wood", Name.Split(' ').First());
                 wood.ShortName = wood.Name;
+               
                 Library.AddResourceTypeIfNew(wood);
 
                 for (int i = 0; i < treeSize * 2; i++)

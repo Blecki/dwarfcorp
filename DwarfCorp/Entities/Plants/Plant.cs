@@ -28,8 +28,7 @@ namespace DwarfCorp
             //SetFlag(Flag.DontUpdate, true);
         }
 
-        public Plant(ComponentManager Manager, string name, Vector3 Position, float RandomAngle, Vector3 bboxSize,
-           string meshAsset, float meshScale) :
+        public Plant(ComponentManager Manager, string name, Vector3 Position, float RandomAngle, Vector3 bboxSize, string meshAsset, float meshScale) :
             base(Manager, name, Matrix.Identity, bboxSize, new Vector3(0.0f, bboxSize.Y / 2, 0.0f))
         {
             MeshAsset = meshAsset;
@@ -56,7 +55,7 @@ namespace DwarfCorp
 
             // Todo: Rather than passing the mesh name, create one in some kind of PrimitiveLibrary on the fly if it doesn't already exist.
             var mesh = AddChild(new InstanceMesh(Manager, "Model",
-                Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(MeshScale, MeshScale, MeshScale) * Matrix.CreateTranslation(GetBoundingBox().Center() - Position), MeshAsset,
+                Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(BoundingBoxSize.X, BoundingBoxSize.Y, BoundingBoxSize.Z) * Matrix.CreateTranslation(GetBoundingBox().Center() - Position), MeshAsset,
                 this.BoundingBoxSize, Vector3.Zero));
 
             mesh.SetFlag(Flag.ShouldSerialize, false);
@@ -177,7 +176,7 @@ namespace DwarfCorp
             int height = spriteSheet.SafeGetImage().Height;
 
             return new BatchBillboardPrimitive(spriteSheet, width, height,
-                new Point(0, 0), width / 32.0f, height / 32.0f, false, treeTransforms, treeTints, treeTints);
+                new Point(0, 0), 1.0f, 1.0f, false, treeTransforms, treeTints, treeTints);
         }
     }
 }

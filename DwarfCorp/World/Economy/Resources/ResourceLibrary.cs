@@ -108,6 +108,7 @@ namespace DwarfCorp
             r.TrinketData = From.TrinketData;
             r.AleName = From.AleName;
             r.PotionType = From.PotionType;
+            r.Category = From.Category;
 
             return r;
         }

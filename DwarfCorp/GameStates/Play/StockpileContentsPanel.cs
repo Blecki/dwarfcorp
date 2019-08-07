@@ -85,17 +85,16 @@ namespace DwarfCorp.Play
                 foreach (var resource in aggregated)
                 {
                     var resourceTemplate = Library.GetResourceType(resource.Type);
-                    var icon = existingResourceEntries.FirstOrDefault(w => w is ResourceIcon && (w as ResourceIcon).EqualsLayers(resourceTemplate.GuiLayers));
+                    var icon = existingResourceEntries.FirstOrDefault(w => w is ResourceIcon && w.Tag.ToString() == resource.Type);
                     var label = resourceTemplate.Name + "\n" + resourceTemplate.Description;
 
                     if (icon == null)
-                    {
                         icon = AddChild(new ResourceIcon()
                         {
                             Layers = resourceTemplate.GuiLayers,
-                            Tooltip = label
+                            Tooltip = label,
+                            Tag = resource.Type
                         });
-                    }
                     else
                     {
                         icon.Tooltip = label;

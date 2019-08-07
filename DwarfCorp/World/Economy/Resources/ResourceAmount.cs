@@ -26,6 +26,7 @@ namespace DwarfCorp
         
         public ResourceAmount(GameComponent component)
         {
+            // Todo: GROSS
             // Assume that the first tag of the body is
             // the name of the resource.
             Type = component.Tags[0];
