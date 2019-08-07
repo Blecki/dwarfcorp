@@ -23,8 +23,9 @@ namespace DwarfCorp.Play
 
             var button = AddChild(new Button()
             {
-                Text = "OK",
+                Text = "Back",
                 AutoLayout = AutoLayout.FloatBottomRight,
+                OnLayout = (sender1) => sender1.Rect = new Rectangle(sender1.Rect.X - 16, sender1.Rect.Y - 16, 64, 32),
                 OnClick = (sender1, args1) => { this.Close(); },
                 MinimumSize = new Point(64, 32)
             });
@@ -41,19 +42,6 @@ namespace DwarfCorp.Play
 
             button.BringToFront();
             base.Construct();
-        }
-
-        private static string SplitCamelCase(string str)
-        {
-            return Regex.Replace(
-                Regex.Replace(
-                    str,
-                    @"(\P{Ll})(\P{Ll}\p{Ll})",
-                    "$1 $2"
-                ),
-                @"(\p{Ll})(\P{Ll})",
-                "$1 $2"
-            );
         }
     }
 }

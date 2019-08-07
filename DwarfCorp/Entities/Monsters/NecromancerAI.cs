@@ -40,10 +40,13 @@ namespace DwarfCorp
         
         public override Task ActOnIdle()
         {
-            return new ActWrapperTask(SummonFromGraves())
-            {
-                Priority = TaskPriority.High
-            };
+            if (Skeletons.Count < MaxSkeletons)
+                return new ActWrapperTask(SummonFromGraves())
+                {
+                    Priority = TaskPriority.High
+                };
+
+            return new LookInterestingTask();
         }
 
         public void SummonSkeleton()

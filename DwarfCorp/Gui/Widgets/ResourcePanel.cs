@@ -96,14 +96,14 @@ namespace DwarfCorp.Gui.Widgets
                     {
                         existing.InStockpile.Count += pair.Value.First.Count;
                         existing.InBackpacks.Count += pair.Value.Second.Count;
-                        existing.Members.Add(String.Format("{0}x {1}", pair.Value.First.Count, pair.Value.First.Type));
+                        existing.Members.Add(String.Format("{0}x {1} - {2}", pair.Value.First.Count, pair.Value.First.Type, resource.Description));
                     }
                     else
                         aggregated.Add(new AggregatedResource()
                         {
                             InStockpile = pair.Value.First, // Todo: Hijack category name?
                             InBackpacks = pair.Value.Second,
-                            Members = new List<string>() { String.Format("{0}x {1}", pair.Value.First.Count, pair.Value.First.Type) }
+                            Members = new List<string>() { String.Format("{0}x {1} - {2}", pair.Value.First.Count, pair.Value.First.Type, resource.Description) }
                         });
                 }
             }
@@ -133,14 +133,7 @@ namespace DwarfCorp.Gui.Widgets
 
                     var icon = existingResourceEntries.FirstOrDefault(w => w is ResourceIcon && w.Tag.ToString() == resource.InStockpile.Type);
 
-                    var label = new StringBuilder();
-                    foreach (var aggregates in resource.Members)
-                    {
-                        label.Append(aggregates);
-                        label.Append("\n");
-                    }
-
-                    label.Append(resourceTemplate.Description);
+                    var label = String.Join("\n", resource.Members);
 
                     if (icon == null)
                         icon = AddChild(new ResourceIcon()
