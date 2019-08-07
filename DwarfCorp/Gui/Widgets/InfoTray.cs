@@ -12,12 +12,14 @@ namespace DwarfCorp.Gui.Widgets
         {
             public DateTime DeletionTime;
             public String RawMessage;
-            public List<String> Lines;
+            public UInt32 EntityID;
         }
 
-        private Message ActiveMessage = null;
+        public const UInt32 TopEntry = 0;
 
-        public float MessageLiveSeconds = 10.0f;
+        private List<Message> Messages = new List<Message>();
+
+        public float MessageLiveSeconds = 0.25f;
         public Vector4 TextBackgroundColor = new Vector4(0.0f, 0.0f, 0.0f, 0.25f);
 
         public override void Construct()
@@ -30,11 +32,8 @@ namespace DwarfCorp.Gui.Widgets
             OnUpdate += (sender, time) =>
                 {
                     var now = DateTime.Now;
-                    if (ActiveMessage != null && ActiveMessage.DeletionTime < now)
-                    {
-                        ActiveMessage = null;
-                        Invalidate();
-                    }
+                    Messages.RemoveAll(m => m.DeletionTime < now);
+                    Messages.Sort((a, b) => (int)a.EntityID - (int)b.EntityID);
                 };
 
             base.Construct();
@@ -49,35 +48,36 @@ namespace DwarfCorp.Gui.Widgets
             }
         }
 
-        public void AddMessage(String Message)
+        public void AddMessage(UInt32 EntityID, String Message)
         {
-            if (ActiveMessage != null)
-            {
-                ActiveMessage.DeletionTime = DateTime.Now.AddSeconds(MessageLiveSeconds);
-                ActiveMessage.Lines.AddRange(Message.Split('\n'));
-            }
+            // Todo: Use entity ID instead of just comparing message
+            var existingMessage = Messages.FirstOrDefault(m => m.EntityID == EntityID);
+            if (existingMessage != null)
+                existingMessage.DeletionTime = DateTime.Now.AddSeconds(MessageLiveSeconds);
             else
-            {
-                ActiveMessage = new Message
+                Messages.Add(new InfoTray.Message
                 {
                     RawMessage = Message,
                     DeletionTime = DateTime.Now.AddSeconds(MessageLiveSeconds),
-                    Lines = new List<String>(Message.Split('\n'))
-                };
-            }
+                    EntityID = EntityID
+                });
 
             Invalidate();
         }
 
-        public void ClearMessage()
+        public void ClearTopMessage()
         {
-            ActiveMessage = null;
+            Messages.RemoveAll(m => m.EntityID == TopEntry);
             Invalidate();
         }
 
         protected override Gui.Mesh Redraw()
         {
-            if (ActiveMessage == null) return Gui.Mesh.EmptyMesh();
+            var lines = new List<String>();
+            foreach (var m in Messages)
+                lines.AddRange(m.RawMessage.Split('\n'));
+
+            //if (ActiveMessage == null) return Gui.Mesh.EmptyMesh();
 
             var meshes = new List<Gui.Mesh>();
             var stringScreenSize = new Rectangle();
@@ -85,7 +85,7 @@ namespace DwarfCorp.Gui.Widgets
             var basic = Root.GetTileSheet("basic");
             var linePos = 0;
 
-            foreach (var line in ActiveMessage.Lines)
+            foreach (var line in lines)//ActiveMessage.Lines)
             {
                 var stringMesh = Gui.Mesh.CreateStringMesh(line, font, new Vector2(TextSize, TextSize), out stringScreenSize)
                    .Translate(Rect.X, linePos)

@@ -207,7 +207,7 @@ namespace DwarfCorp
                         info += " (" + room.ID + ")";
                 }
 
-                World.UserInterface.ShowInfo(info);
+                World.UserInterface.ShowInfo(Gui.Widgets.InfoTray.TopEntry, info);
             }
 
 

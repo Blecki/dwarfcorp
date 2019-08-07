@@ -190,20 +190,8 @@ namespace DwarfCorp
         {
             MouseOver.Invoke(entities);
 
-            if (entities.Count() == 0)
-                return;
-
-            string desc = "";
-            bool first = true;
             foreach (GameComponent body in entities)
-            {
-                if (!first)
-                    desc += "\n";
-                desc += body.GetDescription();
-                first = false;
-            }
-
-            World.UserInterface.ShowInfo(desc);
+                World.UserInterface.ShowInfo(body.GlobalID, body.GetDescription());
         }
 
         private List<GameComponent> SelectedEntities = new List<GameComponent>();

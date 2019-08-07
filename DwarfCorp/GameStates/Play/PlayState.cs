@@ -126,9 +126,9 @@ namespace DwarfCorp.GameStates
             Gui.ShowTooltip(Gui.MousePosition, Text);
         }
 
-        public void ShowInfo(String Text)
+        public void ShowInfo(UInt32 EntityID, String Text)
         {
-            InfoTray.AddMessage(Text);
+            InfoTray.AddMessage(EntityID, Text);
         }
 
         public void ShowToolPopup(String Text)
@@ -305,14 +305,14 @@ namespace DwarfCorp.GameStates
                 return;
             }
 
-            InfoTray.ClearMessage();
+            InfoTray.ClearTopMessage();
 
 #if !DEBUG
             try
             {
 #endif
             if (IsMouseOverGui)
-                ShowInfo("MOUSE OVER GUI");
+                ShowInfo(InfoTray.TopEntry, "MOUSE OVER GUI");
             else
                 BottomToolBar.RefreshVisibleTray();
 
