@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Tools
+namespace TodoList
 {
     [Command(
         Name: "next",
@@ -25,22 +25,18 @@ namespace Tools
                 return;
             }
 
-            if (!System.IO.File.Exists(file))
-                System.IO.File.WriteAllText(file, "");
+            var list = EntryList.LoadFile(file, false);
 
-            var list = Todo.ParseFile(file).Where(e => all ? true : e.Status == "NEW").ToList();
-            
-            if (list.Count == 0)
-            {
-                Console.WriteLine("Todo list is empty.");
-                return;
-            }
+            var iter = all ? list.Root.EnumerateTree() : list.Root.EnumerateTree().Where(e => e.Status == "-");
 
-            list.Sort((a, b) => (int)a.ID - (int)b.ID);
-            list.Sort((a, b) => (int)b.Priority - (int)a.Priority);
+            var maxPriority = iter.Max(e => e.Priority);          
+            var priorityList = iter.Where(e => e.Priority == maxPriority).ToList();
+            var minID = priorityList.Min(e => e.ID);
+            var parentChain = list.Root.FindParentChain(minID);
 
-            Todo.OutputEntry(list.First());
+            Presentation.OutputChain(parentChain);
 
+            // Todo: Skip when parent is complete / abandoned?
         }
     }
 }

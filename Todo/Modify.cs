@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Tools
+namespace TodoList
 {
     [Command(
         Name: "mod",
@@ -33,12 +33,10 @@ namespace Tools
                 return;
             }
 
-            if (!System.IO.File.Exists(file))
-                System.IO.File.WriteAllText(file, "");
+            var list = EntryList.LoadFile(file, true);
 
-            var list = Todo.ParseFile(file);
+            var entry = list.Root.FindChildWithID(id);
 
-            var entry = list.FirstOrDefault(e => e.ID == id);
             if (entry == null)
             {
                 Console.WriteLine("Could not find entry with ID{0}.", id);
@@ -49,8 +47,8 @@ namespace Tools
                 throw new InvalidOperationException("You need to specify what you're changing it to dumbass.");
 
             entry.Description = argument;
-            Todo.SaveFile(file, list);
-            Todo.OutputEntry(entry);
+            EntryList.SaveFile(file, list);
+            Presentation.OutputEntry(entry, null, 0);
         }
     }
 }

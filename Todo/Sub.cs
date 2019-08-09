@@ -7,15 +7,15 @@ using System.Text.RegularExpressions;
 namespace TodoList
 {
     [Command(
-        Name: "set",
+        Name: "sub",
         ShortDescription: "",
         ErrorText: "",
         LongHelpText: ""
     )]
-    internal class Set : ICommand
+    internal class Sub : ICommand
     {
         [DefaultSwitch(0)] public UInt32 id = 0;
-        [DefaultSwitch(1)] public UInt32 priority = 0;
+        [DefaultSwitch(1)] public UInt32 parent = 0;
 
         public string file = "todo.txt";
 
@@ -33,25 +33,39 @@ namespace TodoList
                 return;
             }
 
-            if (priority < 0 || priority > 9999)
+            if (id == parent)
             {
-                Console.WriteLine("Valid range for option priority is [0,9999]");
+                Console.WriteLine("Not going to work.");
                 return;
             }
 
             var list = EntryList.LoadFile(file, true);
 
-            var entry = list.Root.FindChildWithID(id);
-
-            if (entry == null)
+            var entry = list.Root.EnumerateParentChildPairs().FirstOrDefault(e => e.Child.ID == id);
+            if (entry.Parent == null || entry.Child == null)
             {
                 Console.WriteLine("Could not find entry with ID{0}.", id);
                 return;
             }
 
-            entry.Priority = priority;
+            var newParent = list.Root.FindChildWithID(parent);
+            if (newParent == null)
+            {
+                Console.WriteLine("Could not find entry with ID{0}.", id);
+                return;
+            }
+
+            if (entry.Child.FindChildWithID(parent) != null)
+            {
+                Console.WriteLine("That would create a circular reference.");
+                return;
+            }
+
+            entry.Parent.Children.Remove(entry.Child);
+            newParent.Children.Add(entry.Child);
+
             EntryList.SaveFile(file, list);
-            Presentation.OutputEntry(entry, null, 0);
+            Presentation.OutputEntry(newParent, null, 0);
         }
     }
 }

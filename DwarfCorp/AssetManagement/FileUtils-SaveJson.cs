@@ -97,7 +97,7 @@ namespace DwarfCorp
         /// <returns>true if the object could be saved.</returns>
         private static bool Save<T>(JsonSerializer serializer, T obj, string filePath)
         {
-            using (StreamWriter filestream = new StreamWriter(File.Open(filePath, global::System.IO.FileMode.OpenOrCreate)))
+            using (StreamWriter filestream = new StreamWriter(File.Open(filePath, global::System.IO.FileMode.Truncate)))
             using (JsonWriter writer = new JsonTextWriter(filestream))
             {
                 serializer.Serialize(writer, obj);

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,12 +7,12 @@ using System.Text.RegularExpressions;
 namespace TodoList
 {
     [Command(
-        Name: "complete",
+        Name: "det",
         ShortDescription: "",
         ErrorText: "",
         LongHelpText: ""
     )]
-    internal class Complete : ICommand
+    internal class Details : ICommand
     {
         [DefaultSwitch(0)] public UInt32 id = 0;
 
@@ -32,18 +32,19 @@ namespace TodoList
                 return;
             }
 
-            var list = EntryList.LoadFile(file, true);
+            var list = EntryList.LoadFile(file, false);
 
             var entry = list.Root.FindChildWithID(id);
+
             if (entry == null)
             {
                 Console.WriteLine("Could not find entry with ID{0}.", id);
                 return;
             }
 
-            entry.Status = "✓";
-            EntryList.SaveFile(file, list);
             Presentation.OutputEntry(entry, null, 0);
+            Console.WriteLine(entry.Description);
+
         }
     }
 }

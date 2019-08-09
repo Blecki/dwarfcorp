@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Tools
+namespace TodoList
 {
     [Command(
         Name: "reset",
@@ -32,21 +32,19 @@ namespace Tools
                 return;
             }
 
-            if (!System.IO.File.Exists(file))
-                System.IO.File.WriteAllText(file, "");
+            var list = EntryList.LoadFile(file, true);
 
-            var list = Todo.ParseFile(file);
+            var entry = list.Root.FindChildWithID(id);
 
-            var entry = list.FirstOrDefault(e => e.ID == id);
             if (entry == null)
             {
-                Console.WriteLine("Could not find entry with ID{0}.", id);
+                Console.WriteLine("Could not find entry with ID {0}.", id);
                 return;
             }
 
-            entry.Status = "NEW";
-            Todo.SaveFile(file, list);
-            Todo.OutputEntry(entry);
+            entry.Status = "-";
+            EntryList.SaveFile(file, list);
+            Presentation.OutputEntry(entry, null, 0);
         }
     }
 }

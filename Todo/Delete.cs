@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Tools
+namespace TodoList
 {
     [Command(
         Name: "del",
@@ -15,6 +15,7 @@ namespace Tools
     internal class Delete : ICommand
     {
         [DefaultSwitch(0)] public UInt32 id = 0;
+        public bool r = false;
 
         public string file = "todo.txt";
 
@@ -32,13 +33,23 @@ namespace Tools
                 return;
             }
 
-            if (!System.IO.File.Exists(file))
-                System.IO.File.WriteAllText(file, "");
+            var list = EntryList.LoadFile(file, true);
+            var toDelete = list.Root.EnumerateParentChildPairs().FirstOrDefault(e => e.Child.ID == id);
+            
+            if (toDelete.Parent == null || toDelete.Child == null)
+            {
+                Console.WriteLine("No entry with id {0} found.", id);
+                return;
+            }
 
-            var list = Todo.ParseFile(file);
+            if (toDelete.Child.Children.Count > 0 && !r)
+            {
+                Console.WriteLine("Entry {0} has children. To delete anyway, pass -r", id);
+                return;
+            }
 
-            list.RemoveAll(e => e.ID == id);
-            Todo.SaveFile(file, list);
+            toDelete.Parent.Children.Remove(toDelete.Child);
+            EntryList.SaveFile(file, list);
             Console.WriteLine("Deleted {0}.", id);
         }
     }

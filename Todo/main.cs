@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Tools
+namespace TodoList
 {
     public struct CommandLineIterator
     {   
@@ -130,7 +130,6 @@ namespace Tools
                         foreach (var member in commandObject.GetType().GetFields())
                             if (member.Name == memberName)
                             {
-                                Console.WriteLine(memberName);
                                 if (member.FieldType == typeof(bool))
                                     member.SetValue(commandObject, true);
                                 else if (member.FieldType == typeof(String) && member.GetCustomAttributes(true).Any(a => a is GreedyArgumentAttribute))
@@ -211,6 +210,8 @@ namespace Tools
         {
             if (DestinationType == typeof(String))
                 return Argument;
+            else if (DestinationType == typeof(UInt32))
+                return Convert.ToUInt32(Argument, 16);
             else
                 return Convert.ChangeType(Argument, DestinationType);
         }

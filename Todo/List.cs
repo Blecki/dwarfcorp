@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Tools
+namespace TodoList
 {
     [Command(
         Name: "list",
@@ -16,7 +16,6 @@ namespace Tools
     {
         [DefaultSwitch(0), GreedyArgument] public String search = "";
 
-
         public string file = "todo.txt";
 
         public void Invoke()
@@ -27,29 +26,12 @@ namespace Tools
                 return;
             }
 
-            if (!System.IO.File.Exists(file))
-                System.IO.File.WriteAllText(file, "");
-
-            var list = Todo.ParseFile(file);
+            var list = EntryList.LoadFile(file, false);
             
-            var count = 0;
             if (String.IsNullOrEmpty(search))
-                foreach (var e in list)
-                {
-                    Todo.OutputEntry(e);
-                    count += 1;
-                }
+                Presentation.OutputEntry(list.Root, null, -1);
             else
-            {
-                var regex = new Regex(search);
-                foreach (var e in list.Where(e => regex.IsMatch(e.Description)))
-                {
-                    Todo.OutputEntry(e);
-                    count += 1;
-                }
-            }
-
-            Console.WriteLine("{0} entries found", count);
+                Presentation.OutputEntry(list.Root, new Regex(search), -1);
         }
     }
 }

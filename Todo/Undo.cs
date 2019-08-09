@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,15 +7,13 @@ using System.Text.RegularExpressions;
 namespace TodoList
 {
     [Command(
-        Name: "complete",
+        Name: "undo",
         ShortDescription: "",
         ErrorText: "",
         LongHelpText: ""
     )]
-    internal class Complete : ICommand
+    internal class Undo : ICommand
     {
-        [DefaultSwitch(0)] public UInt32 id = 0;
-
         public string file = "todo.txt";
 
         public void Invoke()
@@ -26,24 +24,18 @@ namespace TodoList
                 return;
             }
 
-            if (id == 0)
+            var list = EntryList.LoadFile(file, false);
+            if (list.PreviousVersions.Count > 0)
             {
-                Console.WriteLine("You need to specify the entry you're editing.");
-                return;
+                list.Root = list.PreviousVersions[list.PreviousVersions.Count - 1];
+                list.PreviousVersions.RemoveAt(list.PreviousVersions.Count - 1);
+            }
+            else
+            {
+                Console.WriteLine("Nothing left to undo.");
             }
 
-            var list = EntryList.LoadFile(file, true);
-
-            var entry = list.Root.FindChildWithID(id);
-            if (entry == null)
-            {
-                Console.WriteLine("Could not find entry with ID{0}.", id);
-                return;
-            }
-
-            entry.Status = "✓";
             EntryList.SaveFile(file, list);
-            Presentation.OutputEntry(entry, null, 0);
         }
     }
 }

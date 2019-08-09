@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Tools
+namespace TodoList
 {
     [Command(
-        Name: "add",
+        Name: "add", // Todo: Support synonyms.
         ShortDescription: "",
         ErrorText: "",
         LongHelpText: ""
@@ -26,28 +26,24 @@ namespace Tools
                 return;
             }
 
-            if (!System.IO.File.Exists(file))
-                System.IO.File.WriteAllText(file, "");
-
-            var list = Todo.ParseFile(file);
+            var list = EntryList.LoadFile(file, true);
             
             if (String.IsNullOrEmpty(argument))
                 throw new InvalidOperationException("You need to specify what you're adding dumbass.");
 
-            var highest = list.Count == 0 ? 0 : list.Max(e => e.ID);    
-            
-            var entry = new Todo.Entry
+            var entry = new Entry
             {
-                ID = highest + 1,
-                Status = "NEW",
+                ID = list.NextID,
+                Status = "-",
                 Priority = 0,
                 Description = argument
             };
 
-            list.Add(entry);
+            list.Root.Children.Add(entry);
+            list.NextID += 1;
 
-            Todo.SaveFile(file, list);
-            Todo.OutputEntry(entry);
+            EntryList.SaveFile(file, list);
+            Presentation.OutputEntry(entry, null, 0);
         }
     }
 }
