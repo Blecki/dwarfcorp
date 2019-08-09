@@ -8,14 +8,14 @@ namespace TodoList
 {
     [Command(
         Name: "mod",
-        ShortDescription: "",
+        ShortDescription: "Change the description of a todo task.",
         ErrorText: "",
-        LongHelpText: ""
+        LongHelpText: "Replaces the description of a todo task with the new description provided."
     )]
     internal class Modify : ICommand
     {
         [DefaultSwitch(0)] public UInt32 id = 0;
-        [DefaultSwitch(1), GreedyArgument] public String argument = null;
+        [DefaultSwitch(1), GreedyArgument] public String desc = null;
 
         public string file = "todo.txt";
 
@@ -43,12 +43,12 @@ namespace TodoList
                 return;
             }
             
-            if (String.IsNullOrEmpty(argument))
+            if (String.IsNullOrEmpty(desc))
                 throw new InvalidOperationException("You need to specify what you're changing it to dumbass.");
 
-            entry.Description = argument;
+            entry.Description = desc;
             EntryList.SaveFile(file, list);
-            Presentation.OutputEntry(entry, null, 0);
+            Presentation.OutputEntry(entry, null, 0, false);
         }
     }
 }

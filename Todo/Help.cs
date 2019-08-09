@@ -12,7 +12,7 @@ namespace TodoList
     )]
     internal class Help : ICommand
     {
-        [UnknownSwitch] public string topic = null;
+        [DefaultSwitch(0)] public string topic = null;
 
         public void Invoke()
         {
@@ -28,6 +28,8 @@ namespace TodoList
                             Console.Write(" -" + field.Name);
                             if (field.GetCustomAttributes(true).Any(a => a is DefaultSwitchAttribute))
                                 Console.Write(" [dflt]");
+                            if (field.GetCustomAttributes(true).Any(a => a is GreedyArgumentAttribute))
+                                Console.Write(" [greedy]");
                         }
                         Console.WriteLine(" : " + commandAttribute.ShortDescription);
                     }
@@ -44,6 +46,8 @@ namespace TodoList
                             Console.Write(" -" + field.Name);
                             if (field.GetCustomAttributes(true).Any(a => a is DefaultSwitchAttribute))
                                 Console.Write(" [dflt]");
+                            if (field.GetCustomAttributes(true).Any(a => a is GreedyArgumentAttribute))
+                                Console.Write(" [greedy]");
                         }
                         Console.WriteLine(" : " + commandAttribute.ShortDescription);
                         Console.WriteLine(commandAttribute.LongHelpText);

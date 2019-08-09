@@ -8,9 +8,9 @@ namespace TodoList
 {
     [Command(
         Name: "next",
-        ShortDescription: "",
+        ShortDescription: "Identify and show the next best task.",
         ErrorText: "",
-        LongHelpText: ""
+        LongHelpText: "Identifies the next best task based on priority and ID. All tasks are first sorted by priority, then by ID, such that this will display the highest priority task with the lowest ID."
     )]
     internal class Next : ICommand
     {
@@ -37,6 +37,7 @@ namespace TodoList
             Presentation.OutputChain(parentChain);
 
             // Todo: Skip when parent is complete / abandoned?
+            // Todo: When a parent is high priority, and has incomplete children, display the child instead.
         }
     }
 }

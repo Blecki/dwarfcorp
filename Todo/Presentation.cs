@@ -61,12 +61,12 @@ namespace TodoList
             Console.ResetColor();
         }
 
-        private static List<OutputLine> BuildOutput(Entry Entry, Regex Matcher, int Depth)
+        private static List<OutputLine> BuildOutput(Entry Entry, Regex Matcher, int Depth, bool all)
         {
-            var parentMatch = Matcher == null || Matcher.IsMatch(Entry.Description);
+            var parentMatch = (all || Entry.Status == "-") && (Matcher == null || Matcher.IsMatch(Entry.Description));
             var r = new List<OutputLine>();
             foreach (var child in Entry.Children)
-                r.AddRange(BuildOutput(child, Matcher, Depth + 1));
+                r.AddRange(BuildOutput(child, Matcher, Depth + 1, all));
             if (parentMatch || r.Count > 0)
                 r.Insert(0, new OutputLine
                 {
@@ -77,9 +77,9 @@ namespace TodoList
             return r;
         }
 
-        public static void OutputEntry(Entry Entry, Regex Matcher, int Depth)
+        public static void OutputEntry(Entry Entry, Regex Matcher, int Depth, bool all)
         {
-            foreach (var line in BuildOutput(Entry, Matcher, Depth))
+            foreach (var line in BuildOutput(Entry, Matcher, Depth, all))
                 PrintEntry(line);
         }
 

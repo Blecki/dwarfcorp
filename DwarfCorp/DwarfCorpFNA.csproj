@@ -130,6 +130,7 @@
     <Compile Include="GameStates\WorldGeneration\OverworldTextureGenerator.cs" />
     <Compile Include="GameStates\WorldGeneration\SimpleOrbitCamera.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldPreviewMesh.cs" />
+    <Compile Include="Gui\Widgets\EmployeeBackpackDialog.cs" />
     <Compile Include="Gui\Widgets\PlaceCraftInfo.cs" />
     <Compile Include="Gui\Widgets\DefaultTaskPriority.cs" />
     <Compile Include="Gui\Widgets\StatsTracker.cs" />

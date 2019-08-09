@@ -114,7 +114,7 @@ namespace DwarfCorp
 
             var r = Type.GetType(T, true);
             if (r == null)
-                throw new Exception("Unresolved tupe");
+                throw new Exception("Unresolved type");
             return r;
 
             //throw new AssetException("Tried to load type from mod that is not installed or enabled");
@@ -243,6 +243,12 @@ namespace DwarfCorp
 
         public static Texture2D GetContentTexture(string _asset)
         {
+            if (String.IsNullOrEmpty(_asset))
+            {
+                DwarfGame.LogSentryBreadcrumb("AssetManager", "Attempt to load texture asset from empty string.", SharpRaven.Data.BreadcrumbLevel.Warning);
+                return Content.Load<Texture2D>("Content/newgui/error");
+            }
+
 #if DEBUG
             if (!DwarfGame.IsMainThread)
             {
@@ -353,6 +359,12 @@ namespace DwarfCorp
 
         public static RawPrimitive GetContentMesh(string _asset)
         {
+            if (String.IsNullOrEmpty(_asset))
+            {
+                DwarfGame.LogSentryBreadcrumb("AssetManager", "Attempt to load mesh asset from empty string.", SharpRaven.Data.BreadcrumbLevel.Warning);
+                return null;
+            }
+
             string asset = FileUtils.NormalizePath(_asset);
             if (asset == null)
             {

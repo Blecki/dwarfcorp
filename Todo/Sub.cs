@@ -8,9 +8,9 @@ namespace TodoList
 {
     [Command(
         Name: "sub",
-        ShortDescription: "",
+        ShortDescription: "Make a todo task a child of another task.",
         ErrorText: "",
-        LongHelpText: ""
+        LongHelpText: "Tasks exist in a tree. Use this command to move tasks from one parent to another."
     )]
     internal class Sub : ICommand
     {
@@ -65,7 +65,7 @@ namespace TodoList
             newParent.Children.Add(entry.Child);
 
             EntryList.SaveFile(file, list);
-            Presentation.OutputEntry(newParent, null, 0);
+            Presentation.OutputEntry(newParent, null, 0, false);
         }
     }
 }

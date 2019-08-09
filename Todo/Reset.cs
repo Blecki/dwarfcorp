@@ -8,9 +8,9 @@ namespace TodoList
 {
     [Command(
         Name: "reset",
-        ShortDescription: "",
+        ShortDescription: "Marks a todo task as incomplete.",
         ErrorText: "",
-        LongHelpText: ""
+        LongHelpText: "Change the status of a todo task to incomplete. This restores an task that has been marked as abandoned or complete to its default status."
     )]
     internal class Reset : ICommand
     {
@@ -44,7 +44,7 @@ namespace TodoList
 
             entry.Status = "-";
             EntryList.SaveFile(file, list);
-            Presentation.OutputEntry(entry, null, 0);
+            Presentation.OutputEntry(entry, null, 0, true);
         }
     }
 }

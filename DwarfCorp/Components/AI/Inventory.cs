@@ -29,6 +29,14 @@ namespace DwarfCorp
         public List<InventoryItem> Resources { get; set; } 
         public float DropRate { get; set; }
 
+        public ResourceContainer ContentsAsResourceContainer()
+        {
+            var r = new ResourceContainer { MaxResources = int.MaxValue };
+            foreach (var item in Resources)
+                r.AddResource(new ResourceAmount(item.Resource, 1));
+            return r;
+        }
+
         [JsonIgnore]
         private CreatureAI Attacker = null;
 

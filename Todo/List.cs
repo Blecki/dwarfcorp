@@ -8,13 +8,16 @@ namespace TodoList
 {
     [Command(
         Name: "list",
-        ShortDescription: "",
+        ShortDescription: "Lists todo tasks.",
         ErrorText: "",
-        LongHelpText: ""
+        LongHelpText: "Prints a list of todo tasks. Pass an id with -id to list a specific task and its children. Pass a regex pattern with -search to list only tasks (and their parents) that match the pattern. By default, skips tasks marked complete or abandoned. Pass -all to list all tasks regardless of status."
     )]
     internal class List : ICommand
     {
-        [DefaultSwitch(0), GreedyArgument] public String search = "";
+        public UInt32 id = 0;
+        [GreedyArgument] public String search = "";
+        public bool all = false;
+        
 
         public string file = "todo.txt";
 
@@ -27,11 +30,25 @@ namespace TodoList
             }
 
             var list = EntryList.LoadFile(file, false);
-            
+
+            var entry = list.Root.FindChildWithID(id);
+            if (entry == null)
+            {
+                Console.WriteLine("No entry with id {0} found.", id);
+                return;
+            }
+
+            Console.BackgroundColor = ConsoleColor.DarkGray;
+            Console.Write(new string(' ', Console.WindowWidth));
+
             if (String.IsNullOrEmpty(search))
-                Presentation.OutputEntry(list.Root, null, -1);
+                Presentation.OutputEntry(entry, null, -1, all);
             else
-                Presentation.OutputEntry(list.Root, new Regex(search), -1);
+                Presentation.OutputEntry(entry, new Regex(search), -1, all);
+
+            Console.BackgroundColor = ConsoleColor.DarkGray;
+            Console.Write(new string(' ', Console.WindowWidth));
+            Console.ResetColor();
         }
     }
 }

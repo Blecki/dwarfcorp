@@ -8,9 +8,9 @@ namespace TodoList
 {
     [Command(
         Name: "complete",
-        ShortDescription: "",
+        ShortDescription: "Marks a todo task as complete.",
         ErrorText: "",
-        LongHelpText: ""
+        LongHelpText: "Change the status of a todo task to complete. This will hide the task from the list command unless -all is passed to list. It also causes the task to display in blue."
     )]
     internal class Complete : ICommand
     {
@@ -43,7 +43,7 @@ namespace TodoList
 
             entry.Status = "✓";
             EntryList.SaveFile(file, list);
-            Presentation.OutputEntry(entry, null, 0);
+            Presentation.OutputEntry(entry, null, 0, true);
         }
     }
 }

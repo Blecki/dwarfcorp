@@ -8,13 +8,13 @@ namespace TodoList
 {
     [Command(
         Name: "add", // Todo: Support synonyms.
-        ShortDescription: "",
+        ShortDescription: "Add a new todo task.",
         ErrorText: "",
-        LongHelpText: ""
+        LongHelpText: "Add a new todo task, with the passed description. The description is not optional. The new task will be a child of the root."
     )]
     internal class Add : ICommand
     {
-        [DefaultSwitch(0), GreedyArgument] public String argument = null;
+        [DefaultSwitch(0), GreedyArgument] public String desc = null;
 
         public string file = "todo.txt";
 
@@ -28,7 +28,7 @@ namespace TodoList
 
             var list = EntryList.LoadFile(file, true);
             
-            if (String.IsNullOrEmpty(argument))
+            if (String.IsNullOrEmpty(desc))
                 throw new InvalidOperationException("You need to specify what you're adding dumbass.");
 
             var entry = new Entry
@@ -36,14 +36,14 @@ namespace TodoList
                 ID = list.NextID,
                 Status = "-",
                 Priority = 0,
-                Description = argument
+                Description = desc
             };
 
             list.Root.Children.Add(entry);
             list.NextID += 1;
 
             EntryList.SaveFile(file, list);
-            Presentation.OutputEntry(entry, null, 0);
+            Presentation.OutputEntry(entry, null, 0, false);
         }
     }
 }

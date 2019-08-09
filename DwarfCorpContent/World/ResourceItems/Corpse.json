@@ -2,6 +2,7 @@
   "Name": "Corpse",
   "MoneyValue": 0.0,
   "Description": "Dead carcass. Should be buried.",
+  "Category": "corpse",
   "GuiLayers": [
     {
       "Sheet": "resources",

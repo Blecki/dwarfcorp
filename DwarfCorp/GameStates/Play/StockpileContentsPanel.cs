@@ -65,7 +65,7 @@ namespace DwarfCorp.Play
     public class StockpileContentsPanel : Gui.Widgets.GridPanel
     {
         public WorldManager World;
-        public Stockpile Stockpile;
+        public ResourceContainer Resources;
 
         // Todo: What is there are more resources than fit on the screen? Need scrolling!
         
@@ -80,7 +80,7 @@ namespace DwarfCorp.Play
                 var existingResourceEntries = new List<Widget>(Children);
                 Children.Clear();
 
-                var aggregated = Stockpile.Resources.Enumerate();
+                var aggregated = Resources.Enumerate();
 
                 foreach (var resource in aggregated)
                 {

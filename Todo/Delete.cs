@@ -8,9 +8,9 @@ namespace TodoList
 {
     [Command(
         Name: "del",
-        ShortDescription: "",
+        ShortDescription: "Deletes a todo task.",
         ErrorText: "",
-        LongHelpText: ""
+        LongHelpText: "Deletes a todo task. Will fail if the task has children; to delete an task with children, pass the -r flag. In such a case, all children are also deleted."
     )]
     internal class Delete : ICommand
     {

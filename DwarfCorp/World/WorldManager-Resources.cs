@@ -226,7 +226,7 @@ namespace DwarfCorp
         {
             var toReturn = new Dictionary<string, ResourceAmount>();
 
-            foreach (var stockpile in EnumerateZones())
+            foreach (var stockpile in EnumerateZones().Where(pile => !(pile is Graveyard)))
             {
                 foreach (var resource in stockpile.Resources.Enumerate())
                 {

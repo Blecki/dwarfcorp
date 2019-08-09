@@ -8,9 +8,9 @@ namespace TodoList
 {
     [Command(
         Name: "det",
-        ShortDescription: "",
+        ShortDescription: "Show details of a todo task.",
         ErrorText: "",
-        LongHelpText: ""
+        LongHelpText: "Not all information about a todo task is displayed by list. Use this command to see everything."
     )]
     internal class Details : ICommand
     {
@@ -42,7 +42,7 @@ namespace TodoList
                 return;
             }
 
-            Presentation.OutputEntry(entry, null, 0);
+            Presentation.OutputEntry(entry, null, 0, true);
             Console.WriteLine(entry.Description);
 
         }

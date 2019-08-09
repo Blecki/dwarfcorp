@@ -51,6 +51,8 @@ namespace DwarfCorp.Gui.Widgets
         private Widget CancelTask;
         private Widget AgeLabel;
 
+        private bool HideSprite = false;
+
         public Action<Widget> OnFireClicked;
 
         private String SetLength(String S, int L)
@@ -290,45 +292,14 @@ namespace DwarfCorp.Gui.Widgets
                     var employeeInfo = sender.Parent.Parent.Parent as EmployeeInfo;
                     if (employeeInfo != null && employeeInfo.Employee != null)
                     {
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.Append("Backpack contains:\n");
-                        Dictionary<string, ResourceAmount> aggregateResources = employeeInfo.Employee.Creature.Inventory.Aggregate();
-                        foreach (var resource in aggregateResources)
+                        var backpackDialog = new EmployeeBackpackDialog
                         {
-                            stringBuilder.Append(String.Format("{0}x {1}\n", resource.Value.Count, resource.Key));
-                        }
-                        if (aggregateResources.Count == 0)
-                        {
-                            stringBuilder.Append("Nothing.");
-                        }
-
-                        Confirm popup = new Confirm()
-                        {
-                            CancelText = "",
-                            Text = stringBuilder.ToString()
+                            Employee = employeeInfo.Employee,
+                            OnClose = (_sender) => HideSprite = false
                         };
 
-
-                        sender.Root.ShowMinorPopup(popup);
-
-                        if (aggregateResources.Count > 0)
-                        {
-                            popup.AddChild(new Button()
-                            {
-                                Text = "Empty",
-                                Tooltip = "Click to order this dwarf to empty their backpack.",
-                                AutoLayout = AutoLayout.FloatBottomLeft,
-                                OnClick = (currSender, currArgs) =>
-                                {
-                                    if (employeeInfo != null && employeeInfo.Employee != null
-                                         && employeeInfo.Employee.Creature != null)
-                                        employeeInfo.Employee.Creature.AssignRestockAllTasks(TaskPriority.Urgent, true);
-                                }
-                            });
-                            popup.Layout();
-
-                        }
-                       
+                        sender.Root.ShowMinorPopup(backpackDialog);
+                        HideSprite = true;
                     }
                 }
             });
@@ -565,6 +536,8 @@ namespace DwarfCorp.Gui.Widgets
                     Icon.Sprite = null;
                     Icon.AnimationPlayer = null;
                 }
+
+                Icon.Hidden = HideSprite;
 
                 NameLabel.Text = "\n" + Employee.Stats.FullName;
                 StatDexterity.Text = String.Format("Dex: {0}", Employee.Stats.Dexterity);

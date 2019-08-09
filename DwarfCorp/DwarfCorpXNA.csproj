@@ -263,6 +263,7 @@
     <Compile Include="Gui\Widgets\DefaultTaskPriority.cs" />
     <Compile Include="Gui\Widgets\MarketPanel.cs" />
     <Compile Include="Gui\Widgets\PlaceCraftInfo.cs" />
+    <Compile Include="Gui\Widgets\EmployeeBackpackDialog.cs" />
     <Compile Include="Library\BiomeLibrary.cs" />
     <Compile Include="Library\DifficultyLibrary.cs" />
     <Compile Include="Library\RailLibrary.cs" />

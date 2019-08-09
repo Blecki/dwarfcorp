@@ -8,9 +8,9 @@ namespace TodoList
 {
     [Command(
         Name: "undo",
-        ShortDescription: "",
+        ShortDescription: "Undoes the last operation.",
         ErrorText: "",
-        LongHelpText: ""
+        LongHelpText: "Undoes the last operation. Only applies to operations that modify tasks or the task tree."
     )]
     internal class Undo : ICommand
     {

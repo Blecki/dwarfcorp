@@ -8,9 +8,9 @@ namespace TodoList
 {
     [Command(
         Name: "set",
-        ShortDescription: "",
+        ShortDescription: "Set priority of a todo task.",
         ErrorText: "",
-        LongHelpText: ""
+        LongHelpText: "Sets the priority of a todo task. Priority range is [0,FF]. Higher values mean higher priority."
     )]
     internal class Set : ICommand
     {
@@ -33,9 +33,9 @@ namespace TodoList
                 return;
             }
 
-            if (priority < 0 || priority > 9999)
+            if (priority < 0 || priority > 0xFF)
             {
-                Console.WriteLine("Valid range for option priority is [0,9999]");
+                Console.WriteLine("Valid range for option priority is [0,FF]");
                 return;
             }
 
@@ -51,7 +51,7 @@ namespace TodoList
 
             entry.Priority = priority;
             EntryList.SaveFile(file, list);
-            Presentation.OutputEntry(entry, null, 0);
+            Presentation.OutputEntry(entry, null, 0, false);
         }
     }
 }
