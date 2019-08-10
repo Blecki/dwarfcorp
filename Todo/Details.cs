@@ -42,10 +42,15 @@ namespace TodoList
                 return;
             }
 
+            Presentation.FillBar();
             Presentation.OutputEntry(entry, null, 0, true);
+            Presentation.FillLine();
+            Console.WriteLine(String.Format("Created {0}", entry.CreationTime));
+            Presentation.FillLine();
             Console.WriteLine(entry.Description);
+            Presentation.FillLine();
             Console.WriteLine("Tags: " + String.Join(" ", entry.Tags));
-
+            Presentation.FillBar();
         }
     }
 }

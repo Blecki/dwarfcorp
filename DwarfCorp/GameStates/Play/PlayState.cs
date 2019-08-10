@@ -1311,6 +1311,7 @@ namespace DwarfCorp.GameStates
                 SizeToGrid = new Point(3, 1),
                 ItemSize = new Point(32, 32),
                 InteriorMargin = new Margin(2, 2, 2, 2),
+                AlwaysPerfectSize = true,
                 ItemSource = new Gui.Widget[]
 
                         {
@@ -1361,6 +1362,7 @@ namespace DwarfCorp.GameStates
                 ItemSize = new Point(32, 32),
                 InteriorMargin = new Margin(2, 2, 2, 2),
                 ToggledTint = Color.Yellow.ToVector4(),
+                AlwaysPerfectSize = true,
                 ItemSource = new Gui.Widget[]
 
                   {
