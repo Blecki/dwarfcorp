@@ -199,21 +199,6 @@ namespace DwarfCorp
         /// <param name="gameTime">The current time</param>
         public void Update(DwarfTime gameTime)
         {
-            #region Fast Forward To Day
-            if (FastForwardToDay)
-            {
-                if (Time.IsDay())
-                {
-                    FastForwardToDay = false;
-                    foreach (CreatureAI minion in PlayerFaction.Minions)
-                        minion.Stats.Energy.CurrentValue = minion.Stats.Energy.MaxValue;
-                    Time.Speed = 100;
-                }
-                else
-                    Time.Speed = 1000;
-            }
-            #endregion
-
             IndicatorManager.Update(gameTime);
             HandleAmbientSound();
             UpdateOrphanedTasks();
@@ -341,33 +326,7 @@ namespace DwarfCorp
 
                 ComponentManager.Update(gameTime, ChunkManager, Renderer.Camera);
                 MonsterSpawner.Update(gameTime);
-                bool allAsleep = AreAllEmployeesAsleep();
 
-#if !UPTIME_TEST
-                if (SleepPrompt == null && allAsleep && !FastForwardToDay && Time.IsNight()) // Todo: Kill?
-                {
-                    SleepPrompt = new QueuedAnnouncement()
-                    {
-                        Text = "All your employees are asleep. Click here to skip to day.",
-                        ClickAction = (sender, args) =>
-                        {
-                            FastForwardToDay = true;
-                            SleepPrompt = null;
-                        },
-                        ShouldKeep = () =>
-                        {
-                            return FastForwardToDay == false && Time.IsNight() && AreAllEmployeesAsleep();
-                        }
-                    };
-                    MakeAnnouncement(SleepPrompt);
-                }
-                else if (!allAsleep)
-                {
-                    Time.Speed = 100;
-                    FastForwardToDay = false;
-                    SleepPrompt = null;
-                }
-#endif
             }
 
             // These things are updated even when the game is paused
@@ -397,8 +356,6 @@ namespace DwarfCorp
                 TrackStats();
             _prevHour = Time.CurrentDate.Hour;
         }
-
-        public bool FastForwardToDay { get; set; }
 
         public void Quit()
         {

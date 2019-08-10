@@ -19,9 +19,17 @@ title: Main
 ---
 [[Trade.|Trade]]
 [[Market.|Market]]
+[[Who are you?|Who]]
 [[Goodbye.|Goodbye]]
 ===
 
+title: Who
+---
+$envoy_name: I am your corporate liason.
+$envoy_name: I can take goods and money back to our corporate office for you - or bring you needed supplies.
+$envoy_name: I will also take any goods you wish to sell on the market. You'll get the profit from their sale immediately.
+[[Main]]
+===
 
 title: Market
 ---

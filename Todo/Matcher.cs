@@ -9,6 +9,7 @@ namespace TodoList
     public interface Matcher
     {
         bool Matches(Entry Entry);
+        bool Hilite { get; }
     }
 
     public class MatchAllMatcher : Matcher
@@ -17,6 +18,8 @@ namespace TodoList
         {
             return true;
         }
+
+        public bool Hilite => false;
     }
 
     public class RegexMatcher : Matcher
@@ -27,6 +30,9 @@ namespace TodoList
         {
             return Pattern.IsMatch(Entry.Description);
         }
+
+        public bool Hilite => true;
+
     }
 
     public class TagMatcher : Matcher
@@ -37,6 +43,9 @@ namespace TodoList
         {
             return Entry.Tags.Any(t => t == Tag);
         }
+
+        public bool Hilite => true;
+
     }
 
     public class CompoundMatcher : Matcher
@@ -48,5 +57,8 @@ namespace TodoList
         {
             return A.Matches(Entry) && B.Matches(Entry);
         }
+
+        public bool Hilite => true;
+
     }
 }

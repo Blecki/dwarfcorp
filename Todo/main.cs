@@ -198,6 +198,7 @@ namespace TodoList
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
                 Console.WriteLine("Try 'help -" + Command.Item1.Name + "'");
                 if (!String.IsNullOrEmpty(Command.Item1.ErrorText))
                     Console.WriteLine(Command.Item1.ErrorText);

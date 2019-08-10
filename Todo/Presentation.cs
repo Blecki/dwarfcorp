@@ -92,7 +92,7 @@ namespace TodoList
                 {
                     Depth = Depth,
                     Entry = Entry,
-                    Color = Matcher == null ? GetStandardColors(Entry) : GetSearchColors(Entry, parentMatch)
+                    Color = (Matcher != null && Matcher.Hilite) ? GetSearchColors(Entry, parentMatch) : GetStandardColors(Entry)
                 });
             return r;
         }
