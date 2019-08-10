@@ -120,6 +120,7 @@ namespace DwarfCorp.Tutorial
                         {
                             ShowTutorial(entry.NextTutorial);
                         }
+                        ExistingTutorial = null;
                     },
                     OnLayout = (sender) =>
                     {
@@ -141,11 +142,22 @@ namespace DwarfCorp.Tutorial
                 Gui.SpecialHiliteWidgetName = entry.GuiHilite;
             }
 
-            if ((HighlightWidget != null) && HighlightWidget.IsAnyParentHidden() && TutorialVisible && (ExistingTutorial != null))
-            {
-                Gui.ClearSpecials();
+            //if ((HighlightWidget != null) && (HighlightWidget.IsAnyParentHidden() || HighlightWidget.Hidden) && TutorialVisible && (ExistingTutorial != null))
+            //{
+            //    Gui.ClearSpecials();
+            //    ExistingTutorial.Close();
+            //}
+        }
+
+        public bool HasCurrentTutorial()
+        {
+            return ExistingTutorial != null;
+        }
+
+        public void DismissCurrentTutorial()
+        {
+            if (ExistingTutorial != null)
                 ExistingTutorial.Close();
-            }
         }
 
         public TutorialSaveData GetSaveData()

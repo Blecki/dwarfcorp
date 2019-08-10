@@ -11,10 +11,10 @@
   "AllowRotation": true,
   "Icon": {
     "Sheet": "furniture",
-    "Tile": 3
+    "Tile": 7
   },
   "BaseCraftTime": 30.0,
-  "Description": "Dwarves use the bed to sleep.",
+  "Description": "Dwarves use the craft table as a workspace.",
   "Type": "Object",
   "Prerequisites": [
     "OnGround"
@@ -28,5 +28,5 @@
   "SpawnOffset": "0, 0, 0",
   "AddToOwnedPool": true,
   "CraftActBehavior": "Normal",
-  "Tutorial": "Dwarfs sleep in beds. Only one dwarf can sleep in a bed at a time. Sleeping in beds makes dwarfs happier than sleeping on the ground. Dwarfs heal from damage more quickly while sleeping in a bed as well."
+  "Tutorial": "Dwarves create a variety of items at craft tables."
 }

@@ -744,7 +744,7 @@ namespace DwarfCorp.Gui
             if (!String.IsNullOrEmpty(SpecialHiliteWidgetName))
             {
                 var widget = RootItem.EnumerateTree().FirstOrDefault(w => w.Tag is String && (w.Tag as String) == SpecialHiliteWidgetName);
-                if (widget != null)
+                if (widget != null && !widget.Hidden)
                 {
                     var sheet = GetTileSheet("border-hilite");
                     var area = widget.Rect.Interior(-sheet.TileWidth, -sheet.TileHeight, -sheet.TileWidth, -sheet.TileHeight);

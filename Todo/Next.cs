@@ -27,7 +27,7 @@ namespace TodoList
 
             var list = EntryList.LoadFile(file, false);
 
-            var iter = all ? list.Root.EnumerateTree() : list.Root.EnumerateTree().Where(e => e.Status == "-");
+            var iter = all ? list.Root.EnumerateTree() : list.Root.EnumerateTree().Where(e => e.Status == "-" && e.ID != 0);
 
             var maxPriority = iter.Max(e => e.Priority);          
             var priorityList = iter.Where(e => e.Priority == maxPriority).ToList();

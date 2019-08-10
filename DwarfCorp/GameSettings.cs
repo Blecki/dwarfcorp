@@ -203,7 +203,7 @@ namespace DwarfCorp
             public string SaveLocation = null;
             public bool VSync = true;
             public bool AllowReporting = true;
-            public bool ZoomCameraTowardMouse = true;
+            public bool ZoomCameraTowardMouse = false;
             public bool CameraFollowSurface = true;
             public String LocalModDirectory = "Mods";
             public String SteamModDirectory = "C:/Program Files/Steam/steamapps/workshop/content/252390";

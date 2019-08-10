@@ -307,6 +307,12 @@ namespace DwarfCorp.GameStates
 
             InfoTray.ClearTopMessage();
 
+            // Hide tutorial while menu is up
+            if (PausePanel == null || PausePanel.Hidden)
+                World.TutorialManager.ShowTutorial();
+            else
+                World.TutorialManager.HideTutorial();
+
 #if !DEBUG
             try
             {
@@ -320,10 +326,10 @@ namespace DwarfCorp.GameStates
 
             DwarfGame.GumInput.FireActions(Gui, (@event, args) =>
             {
-                    // Let old input handle mouse interaction for now. Will eventually need to be replaced.
+                // Let old input handle mouse interaction for now. Will eventually need to be replaced.
 
-                    // Mouse down but not handled by GUI? Collapse menu.
-                    if (@event == DwarfCorp.Gui.InputEvents.MouseClick)
+                // Mouse down but not handled by GUI? Collapse menu.
+                if (@event == DwarfCorp.Gui.InputEvents.MouseClick)
                 {
                     GodMenu.CollapseTrays();
                     if (ContextMenu != null)
@@ -383,27 +389,19 @@ namespace DwarfCorp.GameStates
                     }
                     else if ((Keys)args.KeyValue == Keys.Escape)
                     {
-                        if (PausePanel == null || PausePanel.Hidden)
-                        {
-                            BrushTray.Select(0);
-                            World.TutorialManager.HideTutorial();
-                        }
-                        else
-                        {
-                            World.TutorialManager.ShowTutorial();
-                        }
-
+                        BrushTray.Select(0);
                         CameraTray.Select(0);
 
-
-                        if (MainMenu.Hidden && PausePanel == null)
+                        if (World.TutorialManager.HasCurrentTutorial())
+                            World.TutorialManager.DismissCurrentTutorial();
+                        else if (TogglePanels.Any(p => p.Hidden == false))
+                            HideTogglePanels();
+                        else if (MainMenu.Hidden && PausePanel == null)
                             (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(FlatToolTray.Tray.Hotkeys[0]);
                         else if (CurrentToolMode != "SelectUnits" && PausePanel == null)
                             ChangeTool("SelectUnits");
                         else if (PausePanel != null)
-                        {
                             PausePanel.Close();
-                        }
                         else
                             OpenPauseMenu();
                     }
