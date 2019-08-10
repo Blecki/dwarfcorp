@@ -61,13 +61,15 @@ namespace TodoList
         public string ShortDescription = "";
         public string LongHelpText = "Long help not specified for this command.";
         public string ErrorText = "";
+        public List<String> Synonyms = new List<string>();
 
-        public CommandAttribute(String Name, String ShortDescription = "", String LongHelpText = "Long help not specified for this command.", String ErrorText = "")
+        public CommandAttribute(String Name, String ShortDescription = "", String LongHelpText = "Long help not specified for this command.", String ErrorText = "", String Synonyms = "")
         {
             this.Name = Name;
             this.ShortDescription = ShortDescription;
             this.LongHelpText = LongHelpText;
             this.ErrorText = ErrorText;
+            this.Synonyms.AddRange(Synonyms.Split(' '));
         }
     }
 
@@ -80,7 +82,8 @@ namespace TodoList
         Name: "test",
         LongHelpText: "This command exists only for testing purposes. It doesn't do anything.",
         ShortDescription: "test!",
-        ErrorText: "How did you manage to fuck that up?"
+        ErrorText: "How did you manage to fuck that up?",
+        Synonyms: "syn-test ttt"
     )]
     internal class Test : ICommand
     {
@@ -221,7 +224,7 @@ namespace TodoList
         {
             try
             {
-                var commands = new Dictionary<String, Tuple<CommandAttribute, Type>>();
+                var commands = new Dictionary<String, Tuple<CommandAttribute, Type>>(); // Todo: Dictionary might be obsolete.
                 foreach (var type in System.Reflection.Assembly.GetExecutingAssembly().GetTypes())
                 {
                     var commandAttribute = type.GetCustomAttributes(true).FirstOrDefault(a => a is CommandAttribute) as CommandAttribute;
@@ -232,11 +235,18 @@ namespace TodoList
                 var iterator = new CommandLineIterator(args, 0);
                 while (!iterator.AtEnd())
                 {
-                    if (!commands.ContainsKey(iterator.Peek()))
+                    var commandName = iterator.Peek();
+                    var command = commands.Values.FirstOrDefault(c => c.Item1.Name == commandName || c.Item1.Synonyms.Contains(commandName));
+                    if (command == null)
                         throw new InvalidOperationException("Unknown command " + iterator.Peek());
 
-                    iterator = ParseCommand(commands[iterator.Peek()], iterator);
+                    iterator = ParseCommand(command, iterator);
                 }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
             }
             finally
             {

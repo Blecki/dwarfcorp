@@ -10,7 +10,8 @@ namespace TodoList
         Name: "next",
         ShortDescription: "Identify and show the next best task.",
         ErrorText: "",
-        LongHelpText: "Identifies the next best task based on priority and ID. All tasks are first sorted by priority, then by ID, such that this will display the highest priority task with the lowest ID."
+        LongHelpText: "Identifies the next best task based on priority and ID. All tasks are first sorted by priority, then by ID, such that this will display the highest priority task with the lowest ID.",
+        Synonyms: "best"
     )]
     internal class Next : ICommand
     {

@@ -10,7 +10,8 @@ namespace TodoList
         Name: "abandon",
         ShortDescription: "Marks a todo task as abandoned.",
         ErrorText: "",
-        LongHelpText: "Change the status of a todo task to abandoned. This will hide the task from the list command unless -all is passed to list. It also causes the task to display in red."
+        LongHelpText: "Change the status of a todo task to abandoned. This will hide the task from the list command unless -all is passed to list. It also causes the task to display in red.",
+        Synonyms: "aba"
     )]
     internal class Abandon : ICommand
     {

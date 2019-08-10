@@ -10,7 +10,8 @@ namespace TodoList
         Name: "complete",
         ShortDescription: "Marks a todo task as complete.",
         ErrorText: "",
-        LongHelpText: "Change the status of a todo task to complete. This will hide the task from the list command unless -all is passed to list. It also causes the task to display in blue."
+        LongHelpText: "Change the status of a todo task to complete. This will hide the task from the list command unless -all is passed to list. It also causes the task to display in blue.",
+        Synonyms: "done mark"
     )]
     internal class Complete : ICommand
     {

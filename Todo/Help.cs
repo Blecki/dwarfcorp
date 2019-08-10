@@ -50,6 +50,7 @@ namespace TodoList
                                 Console.Write(" [greedy]");
                         }
                         Console.WriteLine(" : " + commandAttribute.ShortDescription);
+                        Console.WriteLine("Synonyms: " + String.Join(" ", commandAttribute.Synonyms));
                         Console.WriteLine(commandAttribute.LongHelpText);
                     }
                 }
