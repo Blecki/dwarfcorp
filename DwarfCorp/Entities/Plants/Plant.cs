@@ -170,6 +170,22 @@ namespace DwarfCorp
                 });
         }
 
+        protected void CreateQuadPrimitive(String Asset)
+        {
+            if (!Manager.World.Renderer.InstanceRenderer.DoesGroupExist(Asset))
+                Manager.World.Renderer.InstanceRenderer.AddInstanceGroup(new PrimitiveInstanceGroup
+                {
+                    RenderData = new InstanceRenderData
+                    {
+                        EnableGhostClipping = true,
+                        EnableWind = true,
+                        RenderInSelectionBuffer = true,
+                        Model = CreateQuadPrimitive(new NamedImageFrame(Asset))
+                    },
+                    Name = Asset
+                });
+        }
+
         private static GeometricPrimitive CreateCrossPrimitive(NamedImageFrame spriteSheet)
         {
             int width = spriteSheet.SafeGetImage().Width;
@@ -177,6 +193,15 @@ namespace DwarfCorp
 
             return new BatchBillboardPrimitive(spriteSheet, width, height,
                 new Point(0, 0), 1.0f, 1.0f, false, treeTransforms, treeTints, treeTints);
+        }
+
+        private static GeometricPrimitive CreateQuadPrimitive(NamedImageFrame spriteSheet)
+        {
+            int width = spriteSheet.SafeGetImage().Width;
+            int height = spriteSheet.SafeGetImage().Height;
+
+            return new BatchBillboardPrimitive(spriteSheet, width, height,
+                new Point(0, 0), 1.0f, 1.0f, false, treeTransforms.Take(1).ToList(), treeTints, treeTints);
         }
     }
 }

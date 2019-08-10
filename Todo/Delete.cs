@@ -50,7 +50,7 @@ namespace TodoList
 
             toDelete.Parent.Children.Remove(toDelete.Child);
             EntryList.SaveFile(file, list);
-            Console.WriteLine("Deleted {0}.", id);
+            Console.WriteLine("Deleted {0:X4}.", id);
         }
     }
 }

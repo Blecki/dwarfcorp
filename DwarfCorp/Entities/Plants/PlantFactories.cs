@@ -64,32 +64,6 @@ namespace DwarfCorp
         }
         #endregion
 
-        #region Candycane
-        [EntityFactory("Candycane")]
-        private static GameComponent __factory06(ComponentManager Manager, Vector3 Position, Blackboard Data)
-        {
-            return new Tree("Candycane", Manager, Position, "Entities\\Plants\\candycane", "Peppermint", Data.GetData("Scale", 1.0f));
-        }
-
-        [EntityFactory("Snow Candycane")]
-        private static GameComponent __factory06b(ComponentManager Manager, Vector3 Position, Blackboard Data)
-        {
-            return new Tree("Candycane", Manager, Position, "Entities\\Plants\\candycane-snow", "Peppermint", Data.GetData("Scale", 1.0f));
-        }
-
-        [EntityFactory("Candycane Sprout")]
-        private static GameComponent __factory07(ComponentManager Manager, Vector3 Position, Blackboard Data)
-        {
-            return new Seedling(Manager, "Candycane", Position, "Entities\\Plants\\candycane-sprout")
-            {
-                GrowthHours = 24.0f,
-                MaxSize = 2.0f,
-                GoodBiomes = "Tiaga Jolly Forest",
-                BadBiomes = "Desert Tundra Waste Haunted Forest"
-            };
-        }
-        #endregion
-
         #region Palm Tree
         [EntityFactory("Palm Tree")]
         private static GameComponent __factory08(ComponentManager Manager, Vector3 Position, Blackboard Data)

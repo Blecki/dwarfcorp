@@ -120,6 +120,7 @@
     <Compile Include="Entities\Dwarves\NonPlayerDwarf.cs" />
     <Compile Include="Entities\Fixtures\Cart.cs" />
     <Compile Include="Entities\Fixtures\CraftTable.cs" />
+    <Compile Include="Entities\Plants\CandyCane.cs" />
     <Compile Include="GameStates\Play\ResourceFilterPanel.cs" />
     <Compile Include="GameStates\Play\RoomListPanel.cs" />
     <Compile Include="GameStates\Play\StockpileContentsPanel.cs" />
