@@ -44,6 +44,7 @@ namespace TodoList
 
             Presentation.OutputEntry(entry, null, 0, true);
             Console.WriteLine(entry.Description);
+            Console.WriteLine("Tags: " + String.Join(" ", entry.Tags));
 
         }
     }

@@ -218,22 +218,29 @@ namespace TodoList
 
         public static void Main(string[] args)
         {
-            var commands = new Dictionary<String, Tuple<CommandAttribute, Type>>();
-            foreach (var type in System.Reflection.Assembly.GetExecutingAssembly().GetTypes())
+            try
             {
-                var commandAttribute = type.GetCustomAttributes(true).FirstOrDefault(a => a is CommandAttribute) as CommandAttribute;
-                if (commandAttribute != null)
-                    commands[commandAttribute.Name] = Tuple.Create(commandAttribute, type);
+                var commands = new Dictionary<String, Tuple<CommandAttribute, Type>>();
+                foreach (var type in System.Reflection.Assembly.GetExecutingAssembly().GetTypes())
+                {
+                    var commandAttribute = type.GetCustomAttributes(true).FirstOrDefault(a => a is CommandAttribute) as CommandAttribute;
+                    if (commandAttribute != null)
+                        commands[commandAttribute.Name] = Tuple.Create(commandAttribute, type);
+                }
+
+                var iterator = new CommandLineIterator(args, 0);
+                while (!iterator.AtEnd())
+                {
+                    if (!commands.ContainsKey(iterator.Peek()))
+                        throw new InvalidOperationException("Unknown command " + iterator.Peek());
+
+                    iterator = ParseCommand(commands[iterator.Peek()], iterator);
+                }
             }
-
-            var iterator = new CommandLineIterator(args, 0);
-            while (!iterator.AtEnd())
+            finally
             {
-                if (!commands.ContainsKey(iterator.Peek()))
-                    throw new InvalidOperationException("Unknown command " + iterator.Peek());
-
-                iterator = ParseCommand(commands[iterator.Peek()], iterator);
-            }  
+                Console.ResetColor();
+            }
         }
     }
 }

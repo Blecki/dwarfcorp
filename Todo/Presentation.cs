@@ -37,33 +37,53 @@ namespace TodoList
                 return GetStandardColors(Entry);
         }
 
+        public static void FillLine()
+        {
+            var consolePos = Console.CursorTop;
+            Console.Write(new string(' ', Console.WindowWidth));
+            Console.SetCursorPosition(0, consolePos);
+        }
+
+        public static void FillBar()
+        {
+            Console.BackgroundColor = ConsoleColor.DarkGray;
+            Console.Write(new string(' ', Console.WindowWidth));
+        }
+
+        public static String Fit(String S, int Length)
+        {
+            if (Length <= 2) return "";
+            if (S.Length > Length)
+                return S.Substring(0, Length - 3) + "..";
+            else
+                return S;
+        }
+
+        public static String FormatEntry(Entry Entry, int Length)
+        {
+            var r = String.Format("{0:X4} {1,1} {2:X2} ", Entry.ID, Entry.Status, Entry.Priority);
+            var tags = String.Join(" ", Entry.Tags);
+            if (tags.Length > 0) r += "[" + Fit(tags, 20) + "] ";
+            r += Fit(Entry.Description, Length - r.Length);
+            return r;
+        }
+
         private static void PrintEntry(OutputLine Line)
         {
             if (Line.Depth < 0) return;
 
             Console.BackgroundColor = Line.Color.Item1;
             Console.ForegroundColor = Line.Color.Item2;
-            var consolePos = Console.CursorTop;
-            Console.Write(new string(' ', Console.WindowWidth));
-            Console.SetCursorPosition(0, consolePos);
+            FillLine();
             for (var i = 0; i < Line.Depth; ++i)
                 Console.Write(" |");
-
-            var lineSpace = Console.WindowWidth - (Line.Depth * 2);
-            var entryString = Line.Entry.ToString();
-            if (entryString.Length >= lineSpace)
-            {
-                entryString = entryString.Substring(0, lineSpace - 4);
-                entryString += "...";
-            }
-
-            Console.WriteLine(entryString);
+            Console.WriteLine(FormatEntry(Line.Entry, Console.WindowWidth - (Line.Depth * 2)));
             Console.ResetColor();
         }
 
-        private static List<OutputLine> BuildOutput(Entry Entry, Regex Matcher, int Depth, bool all)
+        private static List<OutputLine> BuildOutput(Entry Entry, Matcher Matcher, int Depth, bool all)
         {
-            var parentMatch = (all || Entry.Status == "-") && (Matcher == null || Matcher.IsMatch(Entry.Description));
+            var parentMatch = (all || Entry.Status == "-") && (Matcher == null || Matcher.Matches(Entry));
             var r = new List<OutputLine>();
             foreach (var child in Entry.Children)
                 r.AddRange(BuildOutput(child, Matcher, Depth + 1, all));
@@ -77,7 +97,7 @@ namespace TodoList
             return r;
         }
 
-        public static void OutputEntry(Entry Entry, Regex Matcher, int Depth, bool all)
+        public static void OutputEntry(Entry Entry, Matcher Matcher, int Depth, bool all)
         {
             foreach (var line in BuildOutput(Entry, Matcher, Depth, all))
                 PrintEntry(line);

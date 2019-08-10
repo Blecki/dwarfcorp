@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{292212A4-E986-4C40-BD97-71BD3CB79F61}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Todo</RootNamespace>
+    <RootNamespace>TodoList</RootNamespace>
     <AssemblyName>Todo</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -51,10 +51,12 @@
     <Compile Include="Complete.cs" />
     <Compile Include="Delete.cs" />
     <Compile Include="Details.cs" />
+    <Compile Include="Matcher.cs" />
     <Compile Include="Presentation.cs" />
     <Compile Include="Help.cs" />
     <Compile Include="Entry.cs" />
     <Compile Include="EntryList.cs" />
+    <Compile Include="Tag.cs" />
     <Compile Include="Undo.cs" />
     <Compile Include="List.cs" />
     <Compile Include="main.cs" />

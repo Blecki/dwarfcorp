@@ -15,9 +15,9 @@ namespace TodoList
     internal class List : ICommand
     {
         public UInt32 id = 0;
-        [GreedyArgument] public String search = "";
+        [DefaultSwitch(0), GreedyArgument] public String search = "";
         public bool all = false;
-        
+        public String tag = "";        
 
         public string file = "todo.txt";
 
@@ -38,13 +38,21 @@ namespace TodoList
                 return;
             }
 
+            var regexMatch = String.IsNullOrEmpty(search) ? null : new RegexMatcher { Pattern = new Regex(search) };
+            var tagMatch = String.IsNullOrEmpty(tag) ? null : new TagMatcher { Tag = tag };
+
+            Matcher matcher = new MatchAllMatcher();
+            if (regexMatch != null && tagMatch != null)
+                matcher = new CompoundMatcher { A = tagMatch, B = regexMatch };
+            else if (regexMatch != null)
+                matcher = regexMatch;
+            else if (tagMatch != null)
+                matcher = tagMatch;
+
             Console.BackgroundColor = ConsoleColor.DarkGray;
             Console.Write(new string(' ', Console.WindowWidth));
 
-            if (String.IsNullOrEmpty(search))
-                Presentation.OutputEntry(entry, null, -1, all);
-            else
-                Presentation.OutputEntry(entry, new Regex(search), -1, all);
+            Presentation.OutputEntry(entry, matcher, -1, all);
 
             Console.BackgroundColor = ConsoleColor.DarkGray;
             Console.Write(new string(' ', Console.WindowWidth));
