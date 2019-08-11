@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Delay.cs" />
     <Compile Include="Abandon.cs" />
     <Compile Include="Add.cs" />
     <Compile Include="Complete.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="Help.cs" />
     <Compile Include="Entry.cs" />
     <Compile Include="EntryList.cs" />
+    <Compile Include="Status.cs" />
     <Compile Include="Tag.cs" />
     <Compile Include="Undo.cs" />
     <Compile Include="List.cs" />

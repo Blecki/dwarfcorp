@@ -22,9 +22,11 @@ namespace TodoList
         private static Tuple<ConsoleColor, ConsoleColor> GetStandardColors(Entry Entry)
         {
             if (Entry.Status == "X")
-                return Tuple.Create(ConsoleColor.Black, ConsoleColor.Red);
+                return Tuple.Create(ConsoleColor.Black, ConsoleColor.DarkRed);
             else if (Entry.Status == "✓")
                 return Tuple.Create(ConsoleColor.Black, ConsoleColor.Cyan);
+            else if (Entry.Status == "█")
+                return Tuple.Create(ConsoleColor.Black, ConsoleColor.Red);
             else
                 return Tuple.Create(ConsoleColor.Black, ConsoleColor.DarkGreen);
         }
@@ -40,7 +42,7 @@ namespace TodoList
         public static void FillLine()
         {
             var consolePos = Console.CursorTop;
-            Console.Write(new string(' ', Console.WindowWidth));
+            Console.Write(new string(' ', Console.WindowWidth - 1));
             Console.SetCursorPosition(0, consolePos);
         }
 
