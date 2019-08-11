@@ -205,8 +205,10 @@
     <Compile Include="Components\Graphics\PrimitiveComponent.cs" />
     <Compile Include="Components\Physics\Fire.cs" />
     <Compile Include="Entities\Dwarves\NonPlayerDwarf.cs" />
+    <Compile Include="Entities\Fixtures\CandyChair.cs" />
     <Compile Include="Entities\Fixtures\CraftTable.cs" />
     <Compile Include="Entities\Fixtures\Cart.cs" />
+    <Compile Include="Entities\Fixtures\CandyTable.cs" />
     <Compile Include="Entities\Plants\CandyCane.cs" />
     <Compile Include="EventLog.cs" />
     <Compile Include="EventLogViewer.cs" />

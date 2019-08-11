@@ -1,0 +1,30 @@
+{
+  "Name": "Candy Chair",
+  "EntityName": "Candy Chair",
+  "Category": "Furniture",
+  "RequiredResources": [
+    {
+      "Type": "Peppermint",
+      "Count": 1
+    }
+  ],
+  "Icon": {
+    "Sheet": "furniture",
+    "Tile": 38
+  },
+  "BaseCraftTime": 9.0,
+  "Description": "Dwarves sit here and relax. Place next to tables for eating.",
+  "Type": "Object",
+  "Prerequisites": [
+    "OnGround"
+  ],
+  "ResourceCreated": "",
+  "CraftLocation": "Craft Table",
+  "Verb": "Build",
+  "PastTeseVerb": "Built",
+  "CurrentVerb": "Building",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.45, 0",
+  "AddToOwnedPool": true,
+  "CraftActBehavior": "Normal"
+}

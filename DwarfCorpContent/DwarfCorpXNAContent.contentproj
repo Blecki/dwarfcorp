@@ -2131,6 +2131,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>StonePick</Name>
     </None>
+    <None Include="World\CraftItems\CandyChair.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>CandyChair</Name>
+    </None>
+    <None Include="World\CraftItems\CandyTable.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>CandyTable</Name>
+    </None>
     <None Include="World\CraftItems\WoodPick.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>WoodPick</Name>

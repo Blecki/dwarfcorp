@@ -15,7 +15,8 @@
     "AboveGroundPlant",
     "RawFood",
     "Edible",
-    "Jolly"
+    "Jolly",
+    "Peppermint"
   ],
   "FoodContent": 20.0,
   "CompositeLayers": [

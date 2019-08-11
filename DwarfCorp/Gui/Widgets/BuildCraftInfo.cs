@@ -36,19 +36,20 @@ namespace DwarfCorp.Gui.Widgets
                 foreach(var ingredient in Data.RequiredResources)
                 {
                     var resource = Library.FindMedianResourceTypeWithTag(ingredient.Type);
-                    titleBar.AddChild(new Gui.Widget
-                    {
-                        MinimumSize = new Point(32, 32),
-                        MaximumSize = new Point(32, 32),
-                        Background = resource.GuiLayers[0],
-                        AutoLayout = AutoLayout.DockLeft,
-                        Text = ingredient.Count.ToString(),
-                        TextHorizontalAlign = HorizontalAlign.Right,
-                        TextVerticalAlign = VerticalAlign.Bottom,
-                        Font = "font10-outline-numsonly",
-                        TextColor = Color.White.ToVector4(),
-                        Tooltip = ingredient.Type.ToString()
-                    });
+                    if (resource != null)
+                        titleBar.AddChild(new Gui.Widget
+                        {
+                            MinimumSize = new Point(32, 32),
+                            MaximumSize = new Point(32, 32),
+                            Background = resource.GuiLayers[0],
+                            AutoLayout = AutoLayout.DockLeft,
+                            Text = ingredient.Count.ToString(),
+                            TextHorizontalAlign = HorizontalAlign.Right,
+                            TextVerticalAlign = VerticalAlign.Bottom,
+                            Font = "font10-outline-numsonly",
+                            TextColor = Color.White.ToVector4(),
+                            Tooltip = ingredient.Type.ToString()
+                        });
                     if (k < Data.RequiredResources.Count - 1)
                     {
                         titleBar.AddChild(new Gui.Widget

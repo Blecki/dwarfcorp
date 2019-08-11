@@ -104,7 +104,8 @@ namespace DwarfCorp
             Copper,
             IronOre,
             Iron,
-            Tool
+            Tool,
+            Peppermint
         }
 
         public Resource()
