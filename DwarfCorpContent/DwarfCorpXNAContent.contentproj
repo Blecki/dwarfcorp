@@ -2099,6 +2099,10 @@
       <Name>sm_minecart</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="category-icons.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>category-icons</Name>
+    </None>
     <None Include="World\Classes\Manager.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Manager</Name>

@@ -1,0 +1,11 @@
+﻿[
+  {
+    "Category": "Food",
+    "Label": "Cook",
+    "Icon":
+    {
+      "Sheet": "tool-icons",
+      "Tile": 27
+    }
+  }
+]
