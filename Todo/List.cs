@@ -49,14 +49,44 @@ namespace TodoList
             else if (tagMatch != null)
                 matcher = tagMatch;
 
-            Console.BackgroundColor = ConsoleColor.DarkGray;
-            Console.Write(new string(' ', Console.WindowWidth));
+            var completeList = Presentation.BuildOutput(entry, matcher, -1, all).Where(l => l.Depth >= 0).ToList();
+            var screenHeight = Console.WindowHeight - 4;
 
-            Presentation.OutputEntry(entry, matcher, -1, all);
+            for (var row = 0; row < completeList.Count; row += screenHeight)
+            {
+                DisplayPage(completeList, row, screenHeight);
+                if (row + screenHeight < completeList.Count)
+                {
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("q to quit, anything else for more.");
+                    var key = Console.ReadKey();
+                    if (key.KeyChar == 'q')
+                    {
+                        Console.ResetColor();
+                        return;
+                    }
+                }
+            }
 
-            Console.BackgroundColor = ConsoleColor.DarkGray;
-            Console.Write(new string(' ', Console.WindowWidth));
+
             Console.ResetColor();
+        }
+
+        private void DisplayPage(List<Presentation.OutputLine> Lines, int Start, int Count)
+        {
+            Presentation.FillBar();
+            int shown = 0;
+            for (var i = 0; i < Count && i + Start < Lines.Count; ++i)
+            {
+                shown += 1;
+                Presentation.PrintEntry(Lines[i + Start]);
+            }
+            var pos = Console.CursorTop;
+            Presentation.FillBar();
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.SetCursorPosition(0, pos);
+            Console.WriteLine("{0} to {1} of {2}", Start, Start + shown - 1, Lines.Count);
         }
     }
 }

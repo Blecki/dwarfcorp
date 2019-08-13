@@ -1,54 +1,40 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using DwarfCorp.GameStates;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
-using System.Runtime.Serialization;
 
 namespace DwarfCorp
 {
     public class CandyTable : CraftedBody
     {
-        private static Point DefaultTopFrame = new Point(5, 4);
-        private static Point DefaultLegsFrame = new Point(5, 3);
-
         [EntityFactory("Candy Table")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new CandyTable("Wooden Table", Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null), DefaultTopFrame, DefaultLegsFrame);
+            return new CandyTable("Candy Table", Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
         }
 
         public SpriteSheet fixtureAsset;
         public Point fixtureFrame;
-
-        public Point TopFrame = new Point(0, 6);
-        public Point LegsFrame = new Point(1, 6);
 
         public CandyTable()
         {
             
         }
 
-        public CandyTable(string craftType, ComponentManager componentManager, Vector3 position, List<ResourceAmount> resources, Point topFrame, Point legsFrame) :
-            this(craftType, componentManager, position, null, Point.Zero, resources, topFrame, legsFrame)
+        public CandyTable(string craftType, ComponentManager componentManager, Vector3 position, List<ResourceAmount> resources) :
+            this(craftType, componentManager, position, null, Point.Zero, resources)
         {
             
         }
 
-        public CandyTable(string craftType, ComponentManager manager, Vector3 position, string asset, List<ResourceAmount> resources, Point topFrame, Point legsFrame) :
-            this(craftType, manager, position, new SpriteSheet(asset), Point.Zero, resources, topFrame, legsFrame)
+        public CandyTable(string craftType, ComponentManager manager, Vector3 position, string asset, List<ResourceAmount> resources) :
+            this(craftType, manager, position, new SpriteSheet(asset), Point.Zero, resources)
         {
 
         }
 
-        public CandyTable(string craftType, ComponentManager manager, Vector3 position, SpriteSheet fixtureAsset, Point fixtureFrame, List<ResourceAmount> resources, Point topFrame, Point legsFrame) :
+        public CandyTable(string craftType, ComponentManager manager, Vector3 position, SpriteSheet fixtureAsset, Point fixtureFrame, List<ResourceAmount> resources) :
             base(manager, craftType, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new DwarfCorp.CraftDetails(manager, craftType, resources))
         {
-            TopFrame = topFrame;
-            LegsFrame = legsFrame;
             this.fixtureAsset = fixtureAsset;
             this.fixtureFrame = fixtureFrame;
 
@@ -68,21 +54,17 @@ namespace DwarfCorp
 
             var spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32);
 
-            AddChild(new SimpleSprite(Manager, "chair top", Matrix.CreateRotationX((float)Math.PI * 0.5f),
-                spriteSheet, TopFrame)
+            AddChild(new SimpleSprite(Manager, "chair top", Matrix.CreateRotationX((float)Math.PI * 0.5f), spriteSheet, new Point(5, 4))
             {
                 OrientationType = SimpleSprite.OrientMode.Fixed,
             }).SetFlagRecursive(Flag.ShouldSerialize, false);
 
-            AddChild(new SimpleSprite(Manager, "chair legs 1", Matrix.CreateTranslation(0, -0.05f, 0),
-                spriteSheet, LegsFrame)
+            AddChild(new SimpleSprite(Manager, "chair legs 1", Matrix.CreateTranslation(0, -0.05f, 0), spriteSheet, new Point(5, 3))
             {
                 OrientationType = SimpleSprite.OrientMode.Fixed
             }).SetFlagRecursive(Flag.ShouldSerialize, false);
 
-            AddChild(new SimpleSprite(Manager, "chair legs 2",
-                Matrix.CreateTranslation(0, -0.05f, 0) * Matrix.CreateRotationY((float)Math.PI * 0.5f),
-                spriteSheet, LegsFrame)
+            AddChild(new SimpleSprite(Manager, "chair legs 2", Matrix.CreateTranslation(0, -0.05f, 0) * Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, new Point(5, 3))
             {
                 OrientationType = SimpleSprite.OrientMode.Fixed
             }).SetFlagRecursive(Flag.ShouldSerialize, false);

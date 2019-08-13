@@ -30,12 +30,28 @@
   ],
   "SoilLayer": {
     "VoxelType": "Obsidian",
-    "Depth": 5
+    "Depth": 2
   },
   "SubsurfaceLayers": [
     {
+      "VoxelType": "Sandstone",
+      "Depth": 4
+    },
+    {
+      "VoxelType": "Slate",
+      "Depth": 4
+    },
+    {
+      "VoxelType": "Granite",
+      "Depth": 4
+    },
+    {
+      "VoxelType": "Marble",
+      "Depth": 4
+    },
+    {
       "VoxelType": "Obsidian",
-      "Depth": 128
+      "Depth": 4
     }
   ],
   "ShoreVoxel": "Sand",

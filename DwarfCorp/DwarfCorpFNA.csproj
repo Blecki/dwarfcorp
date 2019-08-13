@@ -115,6 +115,7 @@
     <Compile Include="AssetManagement\JsonConverters\TextureContentConverter.cs" />
     <Compile Include="AssetManagement\ObjLoader.cs" />
     <Compile Include="Components\AI\DwarfAI.cs" />
+    <Compile Include="Components\AI\Equipment.cs" />
     <Compile Include="Components\Graphics\MeshComponent.cs" />
     <Compile Include="Components\Physics\Fire.cs" />
     <Compile Include="Entities\Dwarves\NonPlayerDwarf.cs" />
@@ -123,6 +124,11 @@
     <Compile Include="Entities\Fixtures\Cart.cs" />
     <Compile Include="Entities\Fixtures\CraftTable.cs" />
     <Compile Include="Entities\Plants\CandyCane.cs" />
+    <Compile Include="GameStates\Play\EmployeeInfo\EmployeeBackpackDialog.cs" />
+    <Compile Include="GameStates\Play\EmployeeInfo\MainPanel.cs" />
+    <Compile Include="GameStates\Play\EmployeeInfo\OverviewPanel.cs" />
+    <Compile Include="GameStates\Play\EmployeeInfo\EquipmentPanel.cs" />
+    <Compile Include="GameStates\Play\EmployeeInfo\StatsPanel.cs" />
     <Compile Include="GameStates\Play\ResourceFilterPanel.cs" />
     <Compile Include="GameStates\Play\RoomListPanel.cs" />
     <Compile Include="GameStates\Play\StockpileContentsPanel.cs" />
@@ -133,7 +139,6 @@
     <Compile Include="GameStates\WorldGeneration\OverworldTextureGenerator.cs" />
     <Compile Include="GameStates\WorldGeneration\SimpleOrbitCamera.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldPreviewMesh.cs" />
-    <Compile Include="Gui\Widgets\EmployeeBackpackDialog.cs" />
     <Compile Include="Gui\Widgets\PlaceCraftInfo.cs" />
     <Compile Include="Gui\Widgets\DefaultTaskPriority.cs" />
     <Compile Include="Gui\Widgets\StatsTracker.cs" />
@@ -164,6 +169,7 @@
     <Compile Include="TaskManagement\CompoundActs\TransferResourcesAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\TransferResourcesTask.cs" />
     <Compile Include="TaskManagement\Enums.cs" />
+    <Compile Include="TaskManagement\SequentialTask.cs" />
     <Compile Include="TaskManagement\Tasks\BuildZoneTask.cs" />
     <Compile Include="TaskManagement\Tasks\DestroyObjectTask.cs" />
     <Compile Include="TaskManagement\Tasks\GoToZoneTask.cs" />
@@ -542,7 +548,6 @@
     <Compile Include=".\Gui\Widgets\DesignationFilter.cs" />
     <Compile Include=".\Gui\Widgets\DwarfConsole.cs" />
     <Compile Include=".\Gui\Widgets\EditableTextField.cs" />
-    <Compile Include=".\Gui\Widgets\EmployeeInfo.cs" />
     <Compile Include=".\Gui\Widgets\EmployeePanel.cs" />
     <Compile Include=".\Gui\Widgets\EmployeePortrait.cs" />
     <Compile Include=".\Gui\Widgets\FinancePanel.cs" />

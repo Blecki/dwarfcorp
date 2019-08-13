@@ -48,7 +48,7 @@
   },
   "SubsurfaceLayers": [
     {
-      "VoxelType": "Ice",
+      "VoxelType": "Shale",
       "Depth": 4
     },
     {

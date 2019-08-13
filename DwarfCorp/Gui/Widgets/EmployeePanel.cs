@@ -73,13 +73,13 @@ namespace DwarfCorp.Gui.Widgets
         public override void Construct()
         {
             var left = AddChild(new Widget());
-            var right = AddChild(new EmployeeInfo
+            var right = AddChild(new Play.EmployeeInfo.OverviewPanel
             {
                 OnFireClicked = (sender) =>
                 {
                     RebuildEmployeeList();
                 }
-            }) as EmployeeInfo;
+            }) as Play.EmployeeInfo.OverviewPanel;
 
             var bottomBar = left.AddChild(new Widget
             {

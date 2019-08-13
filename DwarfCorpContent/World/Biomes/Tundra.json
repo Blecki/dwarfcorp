@@ -21,8 +21,8 @@
     }
   ],
   "SoilLayer": {
-    "VoxelType": "Ice",
-    "Depth": 5
+    "VoxelType": "Dirt",
+    "Depth": 3
   },
   "SubsurfaceLayers": [
     {

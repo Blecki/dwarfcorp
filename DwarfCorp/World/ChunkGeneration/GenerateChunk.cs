@@ -50,7 +50,7 @@ namespace DwarfCorp.Generation
                             // Below the stone line, use subsurface layers.
                             if (globalY <= stoneHeight && stoneHeight > 1)
                             {
-                                var depth = stoneHeight - globalY;
+                                var depth = stoneHeight - globalY - biomeData.SubsurfaceLayers[0].Depth + 1;
                                 var subsurfaceLayer = 0;
                                 while (depth > 0 && subsurfaceLayer < biomeData.SubsurfaceLayers.Count - 1)
                                 {

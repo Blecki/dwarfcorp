@@ -185,6 +185,7 @@
     <Compile Include="AssetManagement\StringLibrary.cs" />
     <Compile Include="Components\AI\Creature-Death.cs" />
     <Compile Include="Components\AI\DwarfAI.cs" />
+    <Compile Include="Components\AI\Equipment.cs" />
     <Compile Include="Components\AI\SpeciesLibrary.cs" />
     <Compile Include="Components\AI\ClassLibrary.cs" />
     <Compile Include="Components\AI\Creature-Indicators.cs" />
@@ -255,6 +256,9 @@
     <Compile Include="Entities\Steam\PowerAnvil.cs" />
     <Compile Include="Entities\Steam\BuildBuff.cs" />
     <Compile Include="Entities\Steam\SteamPipe.cs" />
+    <Compile Include="GameStates\Play\EmployeeInfo\EquipmentPanel.cs" />
+    <Compile Include="GameStates\Play\EmployeeInfo\MainPanel.cs" />
+    <Compile Include="GameStates\Play\EmployeeInfo\StatsPanel.cs" />
     <Compile Include="GameStates\Play\StockpileContentsPanel.cs" />
     <Compile Include="GameStates\Play\StockpilePropertiesDialog.cs" />
     <Compile Include="GameStates\Play\ResourceFilterPanel.cs" />
@@ -266,7 +270,7 @@
     <Compile Include="Gui\Widgets\DefaultTaskPriority.cs" />
     <Compile Include="Gui\Widgets\MarketPanel.cs" />
     <Compile Include="Gui\Widgets\PlaceCraftInfo.cs" />
-    <Compile Include="Gui\Widgets\EmployeeBackpackDialog.cs" />
+    <Compile Include="GameStates\Play\EmployeeInfo\EmployeeBackpackDialog.cs" />
     <Compile Include="Library\BiomeLibrary.cs" />
     <Compile Include="Library\DifficultyLibrary.cs" />
     <Compile Include="Library\RailLibrary.cs" />
@@ -345,6 +349,7 @@
     <Compile Include="TaskManagement\CompoundActs\StockResourceAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\TransferResourcesAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\TransferResourcesTask.cs" />
+    <Compile Include="TaskManagement\SequentialTask.cs" />
     <Compile Include="TaskManagement\CompoundTask.cs" />
     <Compile Include="TaskManagement\ControlFlow\Condition.cs" />
     <Compile Include="TaskManagement\ControlFlow\Not.cs" />
@@ -865,7 +870,7 @@
     <Compile Include="GameStates\WorldGeneration\WorldGenerationSettingsDialog.cs" />
     <Compile Include="Gui\Widgets\FinancePanel.cs" />
     <Compile Include="Gui\Widgets\EmployeePanel.cs" />
-    <Compile Include="Gui\Widgets\EmployeeInfo.cs" />
+    <Compile Include="GameStates\Play\EmployeeInfo\OverviewPanel.cs" />
     <Compile Include="Gui\Widgets\FramedIcon.cs" />
     <Compile Include="Gui\Widgets\CompanyLogo.cs" />
     <Compile Include="Gui\Widgets\PlantInfo.cs" />

@@ -125,7 +125,7 @@ namespace DwarfCorp
                     k = Math.Max(k - 1, 0);
                 }
                 else
-                    Tasks[j].OnUpdate();
+                    Tasks[j].OnUpdate(World);
             }
 
             updateIdx += workGroupSize;

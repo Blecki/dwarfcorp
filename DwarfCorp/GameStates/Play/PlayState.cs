@@ -64,7 +64,7 @@ namespace DwarfCorp.GameStates
         private AnnouncementPopup Announcer;
         private FramedIcon EconomyIcon;
         private Timer AutoSaveTimer;
-        private EmployeeInfo SelectedEmployeeInfo;
+        private Play.EmployeeInfo.OverviewPanel SelectedEmployeeInfo;
         private Widget ContextMenu;
         private Widget MultiContextMenu;
         private Widget BottomBar;
@@ -984,7 +984,7 @@ namespace DwarfCorp.GameStates
                 OnLayout = (sender) => sender.Rect.Y += 4
             }) as Gui.Widgets.Minimap.MinimapFrame;
 
-            SelectedEmployeeInfo = Gui.RootItem.AddChild(new EmployeeInfo
+            SelectedEmployeeInfo = Gui.RootItem.AddChild(new Play.EmployeeInfo.OverviewPanel
             {
                 Hidden = true,
                 Border = "border-fancy",
@@ -993,7 +993,7 @@ namespace DwarfCorp.GameStates
                 Tag = "selected-employee-info",
                 AutoLayout = AutoLayout.FloatBottomLeft,
                 MinimumSize = new Point(450, 500 - (50 * (GameSettings.Default.GuiScale - 1))),
-            }) as EmployeeInfo;
+            }) as Play.EmployeeInfo.OverviewPanel;
 
             var markerFilter = Gui.RootItem.AddChild(new DesignationFilter
             {

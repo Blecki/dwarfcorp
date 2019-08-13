@@ -42,7 +42,7 @@ namespace DwarfCorp
         public virtual void OnEnqueued(WorldManager World) {}
         public virtual void OnDequeued(WorldManager World) {}
         public virtual void OnVoxelChange(VoxelChangeEvent changeEvent) {}
-        public virtual void OnUpdate() {}
+        public virtual void OnUpdate(WorldManager World) {}
         public virtual void OnCancelled(TaskManager Manager, WorldManager World) {}
 
         public virtual Microsoft.Xna.Framework.Vector3? GetCameraZoomLocation()

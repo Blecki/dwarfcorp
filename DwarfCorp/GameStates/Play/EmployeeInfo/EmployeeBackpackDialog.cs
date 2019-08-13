@@ -7,7 +7,7 @@ using DwarfCorp.Gui.Widgets;
 using Microsoft.Xna.Framework;
 using System.Text.RegularExpressions;
 
-namespace DwarfCorp.Gui.Widgets
+namespace DwarfCorp.Play
 {
     public class EmployeeBackpackDialog : Widget
     {

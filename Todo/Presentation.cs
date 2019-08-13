@@ -12,7 +12,7 @@ namespace TodoList
 {
     public static class Presentation
     {
-        private struct OutputLine
+        public struct OutputLine
         {
             public int Depth;
             public Entry Entry;
@@ -48,6 +48,7 @@ namespace TodoList
 
         public static void FillBar()
         {
+            Console.SetCursorPosition(0, Console.CursorTop);
             Console.BackgroundColor = ConsoleColor.DarkGray;
             Console.Write(new string(' ', Console.WindowWidth));
         }
@@ -70,10 +71,8 @@ namespace TodoList
             return r;
         }
 
-        private static void PrintEntry(OutputLine Line)
+        public static void PrintEntry(OutputLine Line)
         {
-            if (Line.Depth < 0) return;
-
             Console.BackgroundColor = Line.Color.Item1;
             Console.ForegroundColor = Line.Color.Item2;
             FillLine();
@@ -83,7 +82,7 @@ namespace TodoList
             Console.ResetColor();
         }
 
-        private static List<OutputLine> BuildOutput(Entry Entry, Matcher Matcher, int Depth, bool all)
+        public static List<OutputLine> BuildOutput(Entry Entry, Matcher Matcher, int Depth, bool all)
         {
             var parentMatch = (all || Entry.Status == "-") && (Matcher == null || Matcher.Matches(Entry));
             var r = new List<OutputLine>();
@@ -113,6 +112,32 @@ namespace TodoList
                 PrintEntry(new OutputLine { Depth = depth, Entry = item, Color = GetStandardColors(item) });
                 depth += 1;
             }
+        }
+
+        public static void OutputEntryDetails(Entry Entry)
+        {
+            Presentation.FillBar();
+            Presentation.OutputEntry(Entry, null, 0, true);
+            Presentation.FillLine();
+            Console.WriteLine(String.Format("Created {0}", Entry.CreationTime));
+            Presentation.FillLine();
+            Console.WriteLine(Entry.Description);
+
+            if (Entry.Tags.Count > 0)
+            {
+                Presentation.FillLine();
+                Console.WriteLine("Tags: " + String.Join(" ", Entry.Tags));
+            }
+
+            if (!String.IsNullOrEmpty(Entry.Notes))
+            {
+                Presentation.FillLine();
+                Console.WriteLine("Notes:");
+                Presentation.FillLine();
+                Console.WriteLine(Entry.Notes);
+            }
+
+            Presentation.FillBar();
         }
     }
 }

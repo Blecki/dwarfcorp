@@ -2,6 +2,7 @@
   "Name": "Miner",
   "PlayerClass": true,
   "Actions": 112662,
+  "DefaultTool":  "Iron Pick",
   "AttackMode": "Attacking",
   "Weapons": [
     {

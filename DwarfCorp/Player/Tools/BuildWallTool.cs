@@ -48,29 +48,34 @@ namespace DwarfCorp
             {
                 case (InputManager.MouseButton.Left):
                     {
-
-                        List<Task> assignments = new List<Task>();
-                        var validRefs = voxels.Where(r => !World.PersistentData.Designations.IsVoxelDesignation(r, DesignationType.Put)
-                            && World.UserInterface.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? r.IsEmpty : !r.IsEmpty).ToList();
-
-                        foreach (var r in voxels)
+                        if (Library.GetVoxelType(Arguments.VoxelType).HasValue(out VoxelType vType))
                         {
-                            if (!Arguments.Floor && !r.IsEmpty) continue;
-                            if (Arguments.Floor && r.IsEmpty) continue;
+                            foreach (var r in voxels)
+                            {
+                                if (r.Type == vType)
+                                    continue;
 
-                            if (World.PersistentData.Designations.GetVoxelDesignation(r, DesignationType.Put).HasValue(out var existingDesignation))
-                                World.TaskManager.CancelTask(existingDesignation.Task);
+                                var above = VoxelHelpers.GetVoxelAbove(r);
+                                if (above.IsValid && above.LiquidType != LiquidType.None)
+                                    continue;
 
-                            var above = VoxelHelpers.GetVoxelAbove(r);
+                                if (World.PersistentData.Designations.GetVoxelDesignation(r, DesignationType.Put).HasValue(out var existingDesignation))
+                                    World.TaskManager.CancelTask(existingDesignation.Task);
 
-                            if (above.IsValid && above.LiquidType != LiquidType.None)
-                                continue;
+                                if (World.PersistentData.Designations.GetVoxelDesignation(r, DesignationType.Dig).HasValue(out var digDes))
+                                    World.TaskManager.CancelTask(digDes.Task);
 
-                            if (Library.GetVoxelType(Arguments.VoxelType).HasValue(out VoxelType vType) && r.Type != vType)                            
-                                assignments.Add(new BuildVoxelTask(r, vType.Name));
+                                if (r.IsEmpty)
+                                    World.TaskManager.AddTask(new BuildVoxelTask(r, vType.Name));
+                                else
+                                {
+                                    var sequentialTask = new SequentialTask("Put voxel", TaskCategory.Dig, TaskPriority.Medium);
+                                    sequentialTask.AddSubTask(new KillVoxelTask(r) { Hidden = true });
+                                    sequentialTask.AddSubTask(new BuildVoxelTask(r, vType.Name) { Hidden = true });
+                                    World.TaskManager.AddTask(sequentialTask);
+                                }
+                            }
                         }
-
-                        World.TaskManager.AddTasks(assignments);
                         break;
                     }
                 case (InputManager.MouseButton.Right):
@@ -136,7 +141,7 @@ namespace DwarfCorp
                 else
                     World.UserInterface.VoxSelector.SelectionType = Arguments.Floor ? VoxelSelectionType.SelectFilled : VoxelSelectionType.SelectEmpty;
 
-                if (Arguments == null || !Library.GetVoxelType(Arguments.VoxelType).HasValue(out var vType) || !World.CanBuildVoxel(vType))
+                if (Arguments == null || !Library.GetVoxelType(Arguments.VoxelType).HasValue(out var vType))// || !World.CanBuildVoxel(vType))
                 {
                     World.UserInterface.ShowToolPopup("Not enough resources.");
                     World.UserInterface.ChangeTool("SelectUnits");

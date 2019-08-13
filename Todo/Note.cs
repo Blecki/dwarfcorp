@@ -7,14 +7,16 @@ using System.Text.RegularExpressions;
 namespace TodoList
 {
     [Command(
-        Name: "det",
-        ShortDescription: "Show details of a todo task.",
+        Name: "note",
+        ShortDescription: "Manage notes.",
         ErrorText: "",
-        LongHelpText: "Not all information about a todo task is displayed by list. Use this command to see everything."
+        LongHelpText: "Adds notes to a task. Pass -r to remove all notes instead."
     )]
-    internal class Details : ICommand
+    internal class Note : ICommand
     {
         [DefaultSwitch(0)] public UInt32 id = 0;
+        [DefaultSwitch(1), GreedyArgument] public String note = "";
+        public bool r = false;
 
         public string file = "todo.txt";
 
@@ -32,8 +34,7 @@ namespace TodoList
                 return;
             }
 
-            var list = EntryList.LoadFile(file, false);
-
+            var list = EntryList.LoadFile(file, true);
             var entry = list.Root.FindChildWithID(id);
 
             if (entry == null)
@@ -42,6 +43,22 @@ namespace TodoList
                 return;
             }
 
+            if (r)
+                entry.Notes = "";
+            else
+            {
+                if (String.IsNullOrEmpty(note))
+                {
+                    Console.WriteLine("You need to supply a note.");
+                    return;
+                }
+
+                if (!String.IsNullOrEmpty(entry.Notes))
+                    entry.Notes += "\n";
+                entry.Notes += note;
+            }
+
+            EntryList.SaveFile(file, list);
             Presentation.OutputEntryDetails(entry);
         }
     }

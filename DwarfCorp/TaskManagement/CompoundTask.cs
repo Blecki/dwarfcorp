@@ -74,7 +74,7 @@ namespace DwarfCorp
                 Manager.CancelTask(task);
         }
 
-        public override void OnUpdate()
+        public override void OnUpdate(WorldManager World)
         {
             Name = String.Format(NameFormat, SubTasks.Count);
             foreach (var sub in SubTasks)

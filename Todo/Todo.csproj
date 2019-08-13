@@ -58,6 +58,7 @@
     <Compile Include="Entry.cs" />
     <Compile Include="EntryList.cs" />
     <Compile Include="Status.cs" />
+    <Compile Include="Note.cs" />
     <Compile Include="Tag.cs" />
     <Compile Include="Undo.cs" />
     <Compile Include="List.cs" />
