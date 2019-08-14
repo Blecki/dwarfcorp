@@ -25,17 +25,18 @@ namespace DwarfCorp
                 PersistentData.SpeciesCounts[Species.Name] = Math.Max(0, PersistentData.SpeciesCounts[Species.Name] - 1);
         }
 
-        public int GetSpeciesPopulation(CreatureSpecies Species)
-        {
-            if (!PersistentData.SpeciesCounts.ContainsKey(Species.Name))
-                return 0;
-            return PersistentData.SpeciesCounts[Species.Name];
-        }
-
         public void DisplaySpeciesCountsInMetrics()
         {
             foreach (var species in PersistentData.SpeciesCounts)
                 PerformanceMonitor.SetMetric(species.Key, species.Value);
+        }
+
+        public bool CanSpawnWithoutExceedingSpeciesLimit(CreatureSpecies Species)
+        {
+            if (!PersistentData.SpeciesCounts.ContainsKey(Species.Name))
+                return true;
+            var effectiveLimit = Math.Round(Species.SpeciesLimit * GameSettings.Default.SpeciesLimitAdjust);
+            return PersistentData.SpeciesCounts[Species.Name] < effectiveLimit;
         }
     }
 }

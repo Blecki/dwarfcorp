@@ -39,8 +39,8 @@ namespace DwarfCorp.GameStates
         private HorizontalFloatSlider MusicVolume;
         private Gui.Widgets.ComboBox Resolution;
         private CheckBox Fullscreen;
-        private HorizontalFloatSlider ChunkDrawDistance;
-        private HorizontalFloatSlider EntityUpdateDistance;
+        private SliderCombo ChunkDrawDistance;
+        private SliderCombo EntityUpdateDistance;
         //private HorizontalFloatSlider VertexCullDistance;
         private CheckBox Glow;
         private Gui.Widgets.ComboBox Antialiasing;
@@ -66,6 +66,7 @@ namespace DwarfCorp.GameStates
         private CheckBox EnableTutorial;
         private CheckBox DisableTutorialForAllGames;
         private EditableTextField SaveLocation;
+        private SliderCombo SpeciesLimitAdjust;
 
         public OptionsState(DwarfGame Game) :
             base(Game)
@@ -427,15 +428,11 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-            AutoSaveFrequency = rightPanel.AddChild(LabelAndDockWidget("Autosave Frequency        ", new HorizontalSlider
+            AutoSaveFrequency = rightPanel.AddChild(LabelAndDockWidget("Autosave Frequency        ", new SliderCombo
             {
-                ScrollArea = 115,
-                OnSliderChanged = (widget) =>
-                {
-                    AutoSaveFrequency.GetChild(0).Text = String.Format("Autosave Frequency ({0})",
-                        (widget as HorizontalSlider).ScrollPosition + 5);
-                    this.OnItemChanged(widget);
-                },
+                ScrollMin = 5,
+                ScrollMax = 120,
+                OnSliderChanged = (widget) => this.OnItemChanged(widget),
                 Tooltip = "Minutes between auto saves"
             }));
 
@@ -470,6 +467,14 @@ namespace DwarfCorp.GameStates
                     });
                 }
             }));
+
+            SpeciesLimitAdjust = leftPanel.AddChild(LabelAndDockWidget("Species Limit % ", new SliderCombo
+            {
+                ScrollMin = 5,
+                ScrollMax = 500,
+                OnSliderChanged = (widget) => this.OnItemChanged(widget),
+                Tooltip = "Percentage of overall species limit to use. Turn it down to spawn less critters, up to spawn more."
+            })).GetChild(1) as SliderCombo;
         }
 
         private void CreateAudioTab()
@@ -587,19 +592,21 @@ namespace DwarfCorp.GameStates
                     Tooltip = "When checked, game will take up the whole screen."
                 }) as CheckBox;
 
-            ChunkDrawDistance = leftPanel.AddChild(LabelAndDockWidget("Terrain Draw Distance", new HorizontalFloatSlider
+            ChunkDrawDistance = leftPanel.AddChild(LabelAndDockWidget("Terrain Draw Distance", new SliderCombo
             {
-                ScrollArea = 1000f,
+                ScrollMin = 16,
+                ScrollMax = 1000,
                 OnSliderChanged = OnItemChanged,
                 Tooltip = "Higher values allow you to see more terrain. Lower values will make the game run faster."
-            })).GetChild(1) as HorizontalFloatSlider;
+            })).GetChild(1) as SliderCombo;
 
-            EntityUpdateDistance = leftPanel.AddChild(LabelAndDockWidget("Entity Update Distance", new HorizontalFloatSlider
+            EntityUpdateDistance = leftPanel.AddChild(LabelAndDockWidget("Entity Update Distance", new SliderCombo
             {
-                ScrollArea = 1000f,
+                ScrollMin = 16,
+                ScrollMax = 1000,
                 OnSliderChanged = OnItemChanged,
                 Tooltip = "Controls the distance beyond which entities will not be updated."
-            })).GetChild(1) as HorizontalFloatSlider;
+            })).GetChild(1) as SliderCombo;
 
             /*
             VertexCullDistance = leftPanel.AddChild(LabelAndDockWidget("Geometry Draw Distance",
@@ -894,8 +901,7 @@ namespace DwarfCorp.GameStates
             toReturn.AllowReporting = this.AllowReporting.CheckState;
             toReturn.MaxSaves = int.Parse(this.MaxSaves.SelectedItem);
             toReturn.AutoSave = this.Autosave.CheckState;
-            toReturn.AutoSaveTimeMinutes =
-                (this.AutoSaveFrequency.GetChild(1) as HorizontalSlider).ScrollPosition + 5.0f;
+            toReturn.AutoSaveTimeMinutes = (this.AutoSaveFrequency.GetChild(1) as SliderCombo).ScrollPosition;
             toReturn.SaveLocation = this.SaveLocation.Text;
 
             // Audio settings
@@ -908,8 +914,8 @@ namespace DwarfCorp.GameStates
             toReturn.ResolutionY = newDisplayMode.Height;
 
             toReturn.Fullscreen = this.Fullscreen.CheckState;
-            toReturn.ChunkDrawDistance = this.ChunkDrawDistance.ScrollPosition + 1.0f;
-            toReturn.EntityUpdateDistance = this.EntityUpdateDistance.ScrollPosition + 1.0f;
+            toReturn.ChunkDrawDistance = this.ChunkDrawDistance.ScrollPosition;
+            toReturn.EntityUpdateDistance = this.EntityUpdateDistance.ScrollPosition;
             //toReturn.VertexCullDistance = this.VertexCullDistance.ScrollPosition + 0.1f;
             //toReturn.ChunkGenerateDistance = this.GenerateDistance.ScrollPosition + 1.0f;
             toReturn.EnableGlow = this.Glow.CheckState;
@@ -926,6 +932,8 @@ namespace DwarfCorp.GameStates
 
             toReturn.GuiScale = GuiScale.SelectedIndex + 1;
             toReturn.GuiAutoScale = this.GuiAutoScale.CheckState;
+
+            toReturn.SpeciesLimitAdjust = (float)SpeciesLimitAdjust.ScrollPosition / 100.0f;
             return toReturn;
         }
 
@@ -961,8 +969,8 @@ namespace DwarfCorp.GameStates
             GameSettings.Default.ResolutionY = settings.ResolutionY;
 
             GameSettings.Default.Fullscreen = this.Fullscreen.CheckState;
-            GameSettings.Default.ChunkDrawDistance = this.ChunkDrawDistance.ScrollPosition + 1.0f;
-            GameSettings.Default.EntityUpdateDistance = this.EntityUpdateDistance.ScrollPosition + 1.0f;
+            GameSettings.Default.ChunkDrawDistance = this.ChunkDrawDistance.ScrollPosition;
+            GameSettings.Default.EntityUpdateDistance = this.EntityUpdateDistance.ScrollPosition;
             //GameSettings.Default.VertexCullDistance = this.VertexCullDistance.ScrollPosition + 0.1f;
             //GameSettings.Default.ChunkGenerateDistance = this.GenerateDistance.ScrollPosition + 1.0f;
             GameSettings.Default.EnableGlow = this.Glow.CheckState;
@@ -985,6 +993,7 @@ namespace DwarfCorp.GameStates
             GameSettings.Default.SaveLocation = settings.SaveLocation;
 
             GameSettings.Default.GuiScale = GuiScale.SelectedIndex + 1;
+            GameSettings.Default.SpeciesLimitAdjust = (float)SpeciesLimitAdjust.ScrollPosition / 100.0f;
             
             if (preResolutionX != GameSettings.Default.ResolutionX || 
                 preResolutionY != GameSettings.Default.ResolutionY ||
@@ -1052,8 +1061,7 @@ namespace DwarfCorp.GameStates
             this.PlayIntro.CheckState = GameSettings.Default.DisplayIntro;
             this.AllowReporting.CheckState = GameSettings.Default.AllowReporting;
             this.Autosave.CheckState = GameSettings.Default.AutoSave;
-            (this.AutoSaveFrequency.GetChild(1) as HorizontalSlider).ScrollPosition =
-                (int)(GameSettings.Default.AutoSaveTimeMinutes - 5);
+            (this.AutoSaveFrequency.GetChild(1) as SliderCombo).ScrollPosition = GameSettings.Default.AutoSaveTimeMinutes;
             this.MaxSaves.SelectedIndex = this.MaxSaves.Items.IndexOf(GameSettings.Default.MaxSaves.ToString());
             this.DisableTutorialForAllGames.CheckState = GameSettings.Default.TutorialDisabledGlobally;
             this.SaveLocation.Text = String.IsNullOrEmpty(GameSettings.Default.SaveLocation) ? "" : GameSettings.Default.SaveLocation;
@@ -1067,8 +1075,8 @@ namespace DwarfCorp.GameStates
             this.EasyGraphicsSetting.SelectedIndex = 5;
             SetBestResolution();
             this.Fullscreen.CheckState = GameSettings.Default.Fullscreen;
-            this.ChunkDrawDistance.ScrollPosition = GameSettings.Default.ChunkDrawDistance - 1.0f;
-            this.EntityUpdateDistance.ScrollPosition = GameSettings.Default.EntityUpdateDistance - 1.0f;
+            this.ChunkDrawDistance.ScrollPosition = GameSettings.Default.ChunkDrawDistance;
+            this.EntityUpdateDistance.ScrollPosition = GameSettings.Default.EntityUpdateDistance;
             //this.VertexCullDistance.ScrollPosition = GameSettings.Default.VertexCullDistance - 0.1f;
             //this.GenerateDistance.ScrollPosition = GameSettings.Default.ChunkGenerateDistance - 1.0f;
             this.Glow.CheckState = GameSettings.Default.EnableGlow;
@@ -1096,6 +1104,8 @@ namespace DwarfCorp.GameStates
             GuiScale.SelectedIndex = GameSettings.Default.GuiScale - 1;
             GuiAutoScale.CheckState = GameSettings.Default.GuiAutoScale;
             VSync.CheckState = GameSettings.Default.VSync;
+
+            SpeciesLimitAdjust.ScrollPosition = (int)(GameSettings.Default.SpeciesLimitAdjust * 100.0f);
 
             if (World != null && EnableTutorial != null)
                 EnableTutorial.CheckState = World.TutorialManager.TutorialEnabled;

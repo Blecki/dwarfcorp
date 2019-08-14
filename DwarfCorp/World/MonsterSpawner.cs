@@ -65,6 +65,8 @@ namespace DwarfCorp
                         break;
                 }
 
+                pos = MathFunctions.Clamp(pos, World.ChunkManager.Bounds);
+
                 if (World.Overworld.Map.GetBiomeAt(pos, World.Overworld.InstanceSettings.Origin).HasValue(out var biome))
                 {
                     if (biome.Fauna.Count == 0)
@@ -74,7 +76,7 @@ namespace DwarfCorp
                     }
 
                     var randomFauna = Datastructures.SelectRandom(biome.Fauna);
-                    var testCreature = EntityFactory.CreateEntity<GameComponent>(randomFauna.Name, Vector3.Zero); // We're seriously creating this just to check the fucking species??
+                    var testCreature = EntityFactory.CreateEntity<GameComponent>(randomFauna.Name, Vector3.Zero); 
 
                     if (testCreature == null)
                     {
@@ -82,24 +84,21 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    if (testCreature.GetRoot().GetComponent<CreatureAI>().HasValue(out var testCreatureAI) && !testCreatureAI.Movement.IsSessile)
+                    if (testCreature.GetRoot().GetComponent<CreatureAI>().HasValue(out var testCreatureAI)
+                        && !testCreatureAI.Movement.IsSessile
+                        && World.CanSpawnWithoutExceedingSpeciesLimit(testCreatureAI.Stats.Species))
                     {
-                        var count = World.GetSpeciesPopulation(testCreatureAI.Stats.Species);
+                        var vox = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(pos)));
 
-                        testCreature.GetRoot().Delete();
-
-                        if (count < testCreatureAI.Stats.Species.SpeciesLimit) // Todo: Offload test to world-specieslimit
+                        if (!vox.IsValid)
                         {
-                            var randomNum = Math.Min(MathFunctions.RandInt(1, 3), 30 - count);
-                            for (int i = 0; i < randomNum; i++)
-                            {
-                                var randompos = MathFunctions.Clamp(pos + MathFunctions.RandVector3Cube() * 2, World.ChunkManager.Bounds);
-                                var vox = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(pos)));
-                                if (!vox.IsValid)
-                                    continue;
-                                EntityFactory.CreateEntity<GameComponent>(randomFauna.Name, vox.GetBoundingBox().Center() + Vector3.Up * 1.5f);
-                            }
+                            testCreature.GetRoot().Delete();
+                            tries++;
+                            continue;
                         }
+
+                        if (testCreature.GetRoot().GetComponent<Physics>().HasValue(out var physics))
+                            physics.LocalTransform = Matrix.CreateTranslation(vox.GetBoundingBox().Center() + Vector3.Up * 1.5f);
                     }
                     else
                     {

@@ -40,7 +40,7 @@ namespace DwarfCorp
                 var adult = EntityFactory.CreateEntity<GameComponent>(Adult, ParentBody.Position);
                 if (adult != null)
                 {
-                    if (adult.GetRoot().GetComponent<CreatureAI>().HasValue(out var creatureAI) && World.GetSpeciesPopulation(creatureAI.Stats.Species) < creatureAI.Stats.Species.SpeciesLimit)
+                    if (adult.GetRoot().GetComponent<CreatureAI>().HasValue(out var creatureAI) && World.CanSpawnWithoutExceedingSpeciesLimit(creatureAI.Stats.Species))
                         creatureAI.PositionConstraint = PositionConstrain;
                     else
                         adult.GetRoot().Delete();

@@ -170,9 +170,9 @@ namespace DwarfCorp
             public int ResolutionY = 720;
             public int GuiScale = 1;
             public bool GuiAutoScale = true;
-            public float ChunkDrawDistance = 100;
+            public int ChunkDrawDistance = 100;
             public float VertexCullDistance = 1000;
-            public float EntityUpdateDistance = 128;
+            public int EntityUpdateDistance = 128;
             public int AntiAliasing = 0;
             public bool Fullscreen = false;
             public bool EnableGlow = true;
@@ -199,7 +199,7 @@ namespace DwarfCorp
             public float VisibilityUpdateTime = 0.1f;
             public bool FogofWar = true;
             public bool AutoSave = true;
-            public float AutoSaveTimeMinutes = 20.0f;
+            public int AutoSaveTimeMinutes = 20;
             public string SaveLocation = null;
             public bool VSync = true;
             public bool AllowReporting = true;
@@ -218,6 +218,7 @@ namespace DwarfCorp
             public float FNAONLY_KeyRepeatRate = 0.1f;
             public int DwarfArrivalDelayHours = 4;
             public int MaxLiveChunks = 10; // How many chunks can have geometry saved
+            public float SpeciesLimitAdjust = 1.0f;
 
             public bool DisableWeather = true;
 

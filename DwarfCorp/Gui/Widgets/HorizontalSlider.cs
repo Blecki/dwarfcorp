@@ -8,12 +8,21 @@ namespace DwarfCorp.Gui.Widgets
 {
     public class HorizontalSlider : Widget
     {
-        private int _scrollArea;
-        public int ScrollArea
+        private int _scrollMin = 1;
+        public int ScrollMin
         {
-            get { return _scrollArea; }
-            set { _scrollArea = value; AfterScroll(); }
+            get { return _scrollMin; }
+            set { _scrollMin = value; AfterScroll(); }
         }
+
+        private int _scrollMax = 100;
+        public int ScrollMax
+        {
+            get { return _scrollMax; }
+            set { _scrollMax = value; AfterScroll(); }
+        }
+
+        private int _scrollSize => _scrollMax - _scrollMin + 1;
 
         private int _scrollPosition;
         public int ScrollPosition
@@ -24,8 +33,8 @@ namespace DwarfCorp.Gui.Widgets
 
         public float ScrollPercentage
         {
-            get { return _scrollArea == 0 ? 0.0f : ((float)_scrollPosition / (float)_scrollArea); }
-            set { _scrollPosition = (int)(_scrollArea * value); AfterScroll(); }
+            get { return _scrollSize <= 0 ? 0.0f : ((float)(_scrollPosition - _scrollMin) / (float)_scrollSize); }
+            set { _scrollPosition = _scrollMin + (int)(_scrollSize * value); AfterScroll(); }
         }
 
         public int EndBufferSize = 12;
@@ -34,8 +43,8 @@ namespace DwarfCorp.Gui.Widgets
 
         private void AfterScroll()
         {
-            if (_scrollPosition < 0) _scrollPosition = 0;
-            if (_scrollPosition > _scrollArea) _scrollPosition = _scrollArea;
+            if (_scrollPosition < _scrollMin) _scrollPosition = _scrollMin;
+            if (_scrollPosition > _scrollMax) _scrollPosition = _scrollMax;
 
             Invalidate();
 
