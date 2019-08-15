@@ -213,7 +213,7 @@ namespace DwarfCorp.Gui.Widgets
                         if (Data.Type == CraftItem.CraftType.Object && PlaceAction != null)
                         {
                             var resources = World.ListResources();
-                            if (resources.Any(resource => Library.GetResourceType(resource.Key).CraftInfo.CraftItemType == Data.Name))
+                            if (resources.Any(resource => Library.GetResourceType(resource.Key).HasValue(out var res) && res.CraftInfo.CraftItemType == Data.Name))
                             {
                                 bottomBar.AddChild(new Button()
                                 {

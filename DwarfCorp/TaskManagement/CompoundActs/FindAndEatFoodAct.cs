@@ -85,10 +85,9 @@ namespace DwarfCorp
             {
                 if (resourceAmount.Count > 0)
                 {
-                    List<GameComponent> bodies = Agent.Creature.Inventory.RemoveAndCreate(new ResourceAmount(resourceAmount.Type, 1), 
-                        Inventory.RestockType.Any);
-                    var resource = Library.GetResourceType(resourceAmount.Type);
+                    var bodies = Agent.Creature.Inventory.RemoveAndCreate(new ResourceAmount(resourceAmount.Type, 1), Inventory.RestockType.Any);
                     Agent.Creature.NoiseMaker.MakeNoise("Chew", Agent.Creature.AI.Position);
+
                     if (bodies.Count == 0)
                     {
                         Agent.SetMessage("Failed to eat. No food in inventory.");
@@ -111,27 +110,28 @@ namespace DwarfCorp
                             Agent.Creature.Physics.Velocity = Vector3.Zero;
                             Agent.Creature.CurrentCharacterMode = CharacterMode.Sitting;
                             if (MathFunctions.RandEvent(0.05f))
-                            {
                                 Agent.Creature.World.ParticleManager.Trigger("crumbs", foodPosition, Color.White, 3);
-                            }
                             yield return Act.Status.Running;
                         }
 
-                        Agent.Creature.Stats.Hunger.CurrentValue += resource.FoodContent;
-
-                        if (resource.Tags.Contains(Resource.ResourceTags.Alcohol))
-                            Agent.Creature.AddThought("I had good ale recently.", new TimeSpan(0, 8, 0, 0), 10.0f);
-                        else
-                            Agent.Creature.AddThought("I ate good food recently.", new TimeSpan(0, 8, 0, 0), 5.0f);
-
-                        FoodBody.GetRoot().Delete();
-
-                        if (MustPay)
+                        if (Library.GetResourceType(resourceAmount.Type).HasValue(out var resource))
                         {
-                            var depositAct = new DepositMoney(Agent, resource.MoneyValue);
-                            foreach (var result in depositAct.Run())
-                                if (result == Status.Running)
-                                    yield return result;
+                            Agent.Creature.Stats.Hunger.CurrentValue += resource.FoodContent;
+
+                            if (resource.Tags.Contains(Resource.ResourceTags.Alcohol))
+                                Agent.Creature.AddThought("I had good ale recently.", new TimeSpan(0, 8, 0, 0), 10.0f);
+                            else
+                                Agent.Creature.AddThought("I ate good food recently.", new TimeSpan(0, 8, 0, 0), 5.0f);
+
+                            FoodBody.GetRoot().Delete();
+
+                            if (MustPay)
+                            {
+                                var depositAct = new DepositMoney(Agent, resource.MoneyValue);
+                                foreach (var result in depositAct.Run())
+                                    if (result == Status.Running)
+                                        yield return result;
+                            }
                         }
 
                         yield return Act.Status.Success;

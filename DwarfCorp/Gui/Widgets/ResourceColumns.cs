@@ -240,19 +240,21 @@ namespace DwarfCorp.Gui.Widgets
                 Background = new TileReference("basic", 0)
             });
 
-            var resourceInfo = Library.GetResourceType(Resource.Type);
+            if (Library.GetResourceType(Resource.Type).HasValue(out var res))
+                r.AddChild(new ResourceIcon()
+                {
+                    MinimumSize = new Point(32 + 16, 32 + 16),
+                    MaximumSize = new Point(32 + 16, 32 + 16),
+                    Layers = res.GuiLayers,
+                    AutoLayout = AutoLayout.DockLeft,
+                    BackgroundColor = Resource.Count > 0 ? res.Tint.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
+                    TextColor = Color.White.ToVector4(),
+                    TextHorizontalAlign = HorizontalAlign.Right,
+                    TextVerticalAlign = VerticalAlign.Bottom
+                });
+            else
+                r.AddChild(new Widget());
 
-            var icon = r.AddChild(new ResourceIcon()
-            {
-                MinimumSize = new Point(32 + 16, 32 + 16),
-                MaximumSize = new Point(32 + 16, 32 + 16),
-                Layers = resourceInfo.GuiLayers,
-                AutoLayout = AutoLayout.DockLeft,
-                BackgroundColor = Resource.Count > 0 ? resourceInfo.Tint.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
-                TextColor = Color.White.ToVector4(),
-                TextHorizontalAlign = HorizontalAlign.Right,
-                TextVerticalAlign = VerticalAlign.Bottom
-            });
 
             r.AddChild(new Gui.Widget
             {
@@ -290,40 +292,42 @@ namespace DwarfCorp.Gui.Widgets
 
         private void UpdateLineItemText(Widget LineItem, ResourceAmount Resource)
         {
-            var resourceInfo = Library.GetResourceType(Resource.Type);
-            var font = LineItem.Root.GetTileSheet("font10");
-            var label = resourceInfo.ShortName ?? resourceInfo.Name; 
-            if (font != null)
+            if (Library.GetResourceType(Resource.Type).HasValue(out var resourceInfo))
             {
-                Point measurements = font.MeasureString(resourceInfo.ShortName ?? resourceInfo.Name);
-                label = font.WordWrapString(label, 1.0f, 128 / GameSettings.Default.GuiScale, LineItem.WrapWithinWords);
-                if (128 / GameSettings.Default.GuiScale < measurements.X)
+                var font = LineItem.Root.GetTileSheet("font10");
+                var label = resourceInfo.ShortName ?? resourceInfo.Name;
+                if (font != null)
                 {
-                    LineItem.MinimumSize.Y = font.TileHeight * label.Split('\n').Length;
+                    Point measurements = font.MeasureString(resourceInfo.ShortName ?? resourceInfo.Name);
+                    label = font.WordWrapString(label, 1.0f, 128 / GameSettings.Default.GuiScale, LineItem.WrapWithinWords);
+                    if (128 / GameSettings.Default.GuiScale < measurements.X)
+                    {
+                        LineItem.MinimumSize.Y = font.TileHeight * label.Split('\n').Length;
+                    }
                 }
-            }
-            LineItem.GetChild(1).Text = label;
-            LineItem.GetChild(1).Invalidate();
-            LineItem.GetChild(2).Text = String.Format("{0}",
-                ValueSourceEntity.ComputeValue(Resource.Type));
-            var counter = LineItem.GetChild(0).Children.Last();
-            counter.Text = Resource.Count.ToString();
-            counter.Invalidate();
-            LineItem.GetChild(0).Invalidate();
-            LineItem.Tooltip = resourceInfo.Name + "\n" + resourceInfo.Description;
-            for (int i = 0; i < 3; i++)
-            {
-                if (i > 0)
+                LineItem.GetChild(1).Text = label;
+                LineItem.GetChild(1).Invalidate();
+                LineItem.GetChild(2).Text = String.Format("{0}",
+                    ValueSourceEntity.ComputeValue(Resource.Type));
+                var counter = LineItem.GetChild(0).Children.Last();
+                counter.Text = Resource.Count.ToString();
+                counter.Invalidate();
+                LineItem.GetChild(0).Invalidate();
+                LineItem.Tooltip = resourceInfo.Name + "\n" + resourceInfo.Description;
+                for (int i = 0; i < 3; i++)
                 {
-                    LineItem.GetChild(i).TextColor = Resource.Count > 0
-                        ? Color.Black.ToVector4()
+                    if (i > 0)
+                    {
+                        LineItem.GetChild(i).TextColor = Resource.Count > 0
+                            ? Color.Black.ToVector4()
+                            : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
+                    }
+                    LineItem.GetChild(i).BackgroundColor = Resource.Count > 0
+                        ? resourceInfo.Tint.ToVector4()
                         : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
+                    LineItem.GetChild(i).Tooltip = resourceInfo.Name + "\n" + resourceInfo.Description;
+                    LineItem.GetChild(i).Invalidate();
                 }
-                LineItem.GetChild(i).BackgroundColor = Resource.Count > 0
-                    ? resourceInfo.Tint.ToVector4()
-                    : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
-                LineItem.GetChild(i).Tooltip = resourceInfo.Name + "\n" + resourceInfo.Description;
-                LineItem.GetChild(i).Invalidate();
             }
         }
     }

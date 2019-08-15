@@ -23,20 +23,19 @@ namespace DwarfCorp
 
             var stock = Zone as Stockpile;
 
-            // Todo: Stockpile deals with it's own boxes.
-            var resourceType = Library.GetResourceType(resources.Type);
-            var num = stock.Resources.RemoveMaxResources(resources, resources.Count);
+                var num = stock.Resources.RemoveMaxResources(resources, resources.Count);
 
-            foreach (var tag in resourceType.Tags)
-                if (PersistentData.CachedResourceTagCounts.ContainsKey(tag)) // Move cache into worldmanager...
-                {
-                    PersistentData.CachedResourceTagCounts[tag] -= num;
-                    Trace.Assert(PersistentData.CachedResourceTagCounts[tag] >= 0);
-                }
+            if (Library.GetResourceType(resources.Type).HasValue(out var resourceType))
+                foreach (var tag in resourceType.Tags)
+                    if (PersistentData.CachedResourceTagCounts.ContainsKey(tag))
+                    {
+                        PersistentData.CachedResourceTagCounts[tag] -= num;
+                        Trace.Assert(PersistentData.CachedResourceTagCounts[tag] >= 0);
+                    }
 
             for (int i = 0; i < num; i++)
             {
-                var startPosition = stock.GetBoundingBox().Center() + new Vector3(0.0f, 1.0f, 0.0f); 
+                var startPosition = stock.GetBoundingBox().Center() + new Vector3(0.0f, 1.0f, 0.0f);
 
                 GameComponent newEntity = EntityFactory.CreateEntity<GameComponent>(resources.Type + " Resource", startPosition);
 
@@ -73,14 +72,16 @@ namespace DwarfCorp
                 foreach (var stock in EnumerateZones().Where(s => resources.All(r => s is Stockpile && (s as Stockpile).IsAllowed(r.Type))))
                 {
                     int num = stock.Resources.RemoveMaxResources(resource, resource.Count - count);
-                    foreach (var tag in resourceType.Tags)
-                    {
-                        if (PersistentData.CachedResourceTagCounts.ContainsKey(tag))
+
+                    if (resourceType.HasValue(out var type))
+                        foreach (var tag in type.Tags)
                         {
-                            PersistentData.CachedResourceTagCounts[tag] -= num;
-                            Trace.Assert(PersistentData.CachedResourceTagCounts[tag] >= 0);
+                            if (PersistentData.CachedResourceTagCounts.ContainsKey(tag))
+                            {
+                                PersistentData.CachedResourceTagCounts[tag] -= num;
+                                Trace.Assert(PersistentData.CachedResourceTagCounts[tag] >= 0);
+                            }
                         }
-                    }
 
                     count += num;
 
@@ -115,22 +116,18 @@ namespace DwarfCorp
 
                         if (requirement.Value <= got) continue;
 
-                        if (!Library.GetResourceType(resource.Type).Tags.Contains(requirement.Key)) continue;
+                        if (!Library.GetResourceType(resource.Type).HasValue(out var type) || !type.Tags.Contains(requirement.Key)) continue;
 
-                        int amountToRemove = global::System.Math.Min(resource.Count, requirement.Value - got);
+                        int amountToRemove = Math.Min(resource.Count, requirement.Value - got);
 
                         if (amountToRemove <= 0) continue;
 
                         tagsGot[requirement.Key] += amountToRemove;
 
                         if (amounts.ContainsKey(resource.Type))
-                        {
                             amounts[resource.Type].Count += amountToRemove;
-                        }
                         else
-                        {
                             amounts[resource.Type] = new ResourceAmount(resource.Type, amountToRemove);
-                        }
                     }
 
             var toReturn = new List<ResourceAmount>();
@@ -138,18 +135,16 @@ namespace DwarfCorp
             foreach (var requirement in tagsRequired)
             {
                 ResourceAmount maxAmount = null;
+
                 foreach (var pair in amounts)
                 {
-                    if (!Library.GetResourceType(pair.Key).Tags.Contains(requirement.Key)) continue;
+                    if (!Library.GetResourceType(pair.Key).HasValue(out var type) || !type.Tags.Contains(requirement.Key)) continue;
                     if (maxAmount == null || pair.Value.Count > maxAmount.Count)
-                    {
                         maxAmount = pair.Value;
-                    }
                 }
+
                 if (maxAmount != null)
-                {
                     toReturn.Add(maxAmount);
-                }
             }
             return toReturn;
         }
@@ -200,25 +195,21 @@ namespace DwarfCorp
 
         public List<ResourceAmount> ListResourcesWithTag(Resource.ResourceTags tag, bool allowHeterogenous = true)
         {
-            var resources = ListResources();
-
             if (allowHeterogenous)
-            {
-                return (from pair in resources
-                        where Library.GetResourceType(pair.Value.Type).Tags.Contains(tag)
-                        select pair.Value).ToList();
-            }
+                return ListResources()
+                    .Where(r => Library.GetResourceType(r.Key).HasValue(out var res) && res.Tags.Contains(tag))
+                    .Select(r => r.Value)
+                    .ToList();
 
             ResourceAmount maxAmount = null;
-            foreach (var pair in resources)
+            foreach (var pair in ListResources())
             {
-                var resource = Library.GetResourceType(pair.Value.Type);
-                if (!resource.Tags.Contains(tag)) continue;
+                if (!Library.GetResourceType(pair.Value.Type).HasValue(out var type) || !type.Tags.Contains(tag)) continue;
+
                 if (maxAmount == null || pair.Value.Count > maxAmount.Count)
-                {
                     maxAmount = pair.Value;
-                }
             }
+
             return maxAmount != null ? new List<ResourceAmount>() { maxAmount } : new List<ResourceAmount>();
         }
 
@@ -256,12 +247,13 @@ namespace DwarfCorp
                 {
                     stockpile.Resources.AddResource(amount);
 
-                    foreach (var tag in resource.Tags)
-                    {
-                        if (!PersistentData.CachedResourceTagCounts.ContainsKey(tag))
-                            PersistentData.CachedResourceTagCounts[tag] = 0;
-                        PersistentData.CachedResourceTagCounts[tag] += amount.Count;
-                    }
+                    if (resource.HasValue(out var res))
+                        foreach (var tag in res.Tags)
+                        {
+                            if (!PersistentData.CachedResourceTagCounts.ContainsKey(tag))
+                                PersistentData.CachedResourceTagCounts[tag] = 0;
+                            PersistentData.CachedResourceTagCounts[tag] += amount.Count;
+                        }
 
                     RecomputeCachedVoxelstate();
                     return true;
@@ -272,12 +264,13 @@ namespace DwarfCorp
                     stockpile.Resources.AddResource(new ResourceAmount(resources.Type, amountToMove));
                     amount.Count -= amountToMove;
 
-                    foreach (var tag in resource.Tags)
-                    {
-                        if (!PersistentData.CachedResourceTagCounts.ContainsKey(tag))
-                            PersistentData.CachedResourceTagCounts[tag] = 0;
-                        PersistentData.CachedResourceTagCounts[tag] += amountToMove;
-                    }
+                    if (resource.HasValue(out var res))
+                        foreach (var tag in res.Tags)
+                        {
+                            if (!PersistentData.CachedResourceTagCounts.ContainsKey(tag))
+                                PersistentData.CachedResourceTagCounts[tag] = 0;
+                            PersistentData.CachedResourceTagCounts[tag] += amountToMove;
+                        }
 
                     RecomputeCachedVoxelstate();
 
@@ -339,19 +332,17 @@ namespace DwarfCorp
         public void RecomputeCachedResourceState()
         {
             PersistentData.CachedResourceTagCounts.Clear();
-            foreach (var resource in ListResources())
-            {
-                var type = Library.GetResourceType(resource.Key);
 
-                foreach (var tag in type.Tags)
-                {
-                    Trace.Assert(type.Tags.Count(t => t == tag) == 1);
-                    if (!PersistentData.CachedResourceTagCounts.ContainsKey(tag))
-                        PersistentData.CachedResourceTagCounts[tag] = resource.Value.Count;
-                    else
-                        PersistentData.CachedResourceTagCounts[tag] += resource.Value.Count;
-                }
-            }
+            foreach (var resource in ListResources())
+                if (Library.GetResourceType(resource.Key).HasValue(out var type))
+                    foreach (var tag in type.Tags)
+                    {
+                        Trace.Assert(type.Tags.Count(t => t == tag) == 1);
+                        if (!PersistentData.CachedResourceTagCounts.ContainsKey(tag))
+                            PersistentData.CachedResourceTagCounts[tag] = resource.Value.Count;
+                        else
+                            PersistentData.CachedResourceTagCounts[tag] += resource.Value.Count;
+                    }
 
             RecomputeCachedVoxelstate();
         }

@@ -78,7 +78,9 @@ namespace DwarfCorp
             Physics.AddChild(new PacingCreatureAI(Manager, "Slime AI", Sensor));
             
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
-            Inventory.AddResource(new ResourceAmount(Library.GetResourceType(SlimeType), MathFunctions.RandInt(1, 3)));
+
+            if (Library.GetResourceType(SlimeType).HasValue(out var slime))
+                Inventory.AddResource(new ResourceAmount(slime, MathFunctions.RandInt(1, 3)));
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
 

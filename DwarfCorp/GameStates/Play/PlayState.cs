@@ -799,30 +799,6 @@ namespace DwarfCorp.GameStates
             return false;
         }
 
-        void UpdateBlockWidget(Gui.Widget sender, VoxelType data)
-        {
-            int numResources;
-            if (!int.TryParse(sender.Text, out numResources))
-            {
-                sender.Text = "";
-                sender.Invalidate();
-                numResources = 0;
-            }
-
-            var resourceCount = World.ListResourcesInStockpilesPlusMinions()
-                .Where(r => data.CanBuildWith(Library.GetResourceType(r.Key))).Sum(r => r.Value.First.Count + r.Value.Second.Count);
-
-            int newNum = Math.Max(resourceCount -
-                World.PersistentData.Designations.EnumerateDesignations(DesignationType.Put).Count(d =>
-                    BuildRequirementsEqual(Library.GetVoxelType(d.Tag.ToString()), data)), 0);
-
-            if (newNum != numResources)
-            {
-                sender.Text = newNum.ToString();
-                sender.Invalidate();
-            }
-        }
-
         private void HideTogglePanels()
         {
             foreach (var panel in TogglePanels)
@@ -1779,9 +1755,10 @@ namespace DwarfCorp.GameStates
                 Library.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Object && item.AllowUserCrafting),
                 (data) =>
                 {
-                    if (World.ListResources().Any(r => Library.GetResourceType(r.Key).CraftInfo.CraftItemType == data.Name))
-                        return true;
-                    return false;
+                    return World.ListResources()
+                        .Select(r => Library.GetResourceType(r.Key))
+                        .Where(r => r.HasValue())
+                        .Any(r => r.HasValue(out var res) ? res.CraftInfo.CraftItemType == data.Name : false);
                 },
                 (data) => new FlatToolTray.Icon
                 {
@@ -2047,7 +2024,7 @@ namespace DwarfCorp.GameStates
                          World.ListResourcesWithTag(Resource.ResourceTags.Plantable)
                         .Select(resource => new FlatToolTray.Icon
                         {
-                            Icon = Library.GetResourceType(resource.Type)?.GuiLayers[0],
+                            Icon = Library.GetResourceType(resource.Type).HasValue(out var res) ? res.GuiLayers[0] : null,
                             Tooltip = "Plant " + resource.Type,
                             Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
                             Text = resource.Type,

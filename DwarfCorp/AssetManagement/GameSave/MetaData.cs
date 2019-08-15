@@ -35,8 +35,10 @@ namespace DwarfCorp
                     World.PlayerFaction.Economy.Funds.ToString(),
                     (new DwarfBux(World.ListResourcesInStockpilesPlusMinions().Values.Select(r =>
                     {
-                        var value = Library.GetResourceType(r.First.Type).MoneyValue.Value;
-                        return (r.First.Count * value) + (r.Second.Count * value);
+                        if (Library.GetResourceType(r.First.Type).HasValue(out var res))
+                            return (r.First.Count * res.MoneyValue.Value) + (r.Second.Count * res.MoneyValue.Value);
+                        else
+                            return 0;
                     }).Sum())).ToString())
             };
         }

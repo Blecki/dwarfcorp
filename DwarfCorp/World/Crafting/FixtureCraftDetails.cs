@@ -22,14 +22,10 @@ namespace DwarfCorp
 
         public Point GetSpritesheetFrame(String resourceType)
         {
-            var resource = Library.GetResourceType(resourceType);
-            foreach (var tag in resource.Tags)
-            {
-                if (Sprites.ContainsKey(tag))
-                {
-                    return Sprites[tag];
-                }
-            }
+            if (Library.GetResourceType(resourceType).HasValue(out var resource))
+                foreach (var tag in resource.Tags)
+                    if (Sprites.ContainsKey(tag))
+                        return Sprites[tag];
 
             return DefaultSpriteFrame;
         }

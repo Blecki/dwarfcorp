@@ -99,8 +99,8 @@ namespace DwarfCorp
             var objectName = String.IsNullOrEmpty(ObjectName) ? Name : ObjectName;
             string resourceName = prefix + objectName + " (" + TextGenerator.GetListString(MergeResources(selectedResources).Select(r => (string)r.Type)) + ")";
 
-            if (Library.DoesResourceTypeExist(resourceName))
-                return Library.GetResourceType(resourceName);
+            if (Library.GetResourceType(resourceName).HasValue(out var existing))
+                return existing;
 
             var sheet = world.UserInterface.Gui.RenderData.SourceSheets[Icon.Sheet];
 
@@ -115,7 +115,7 @@ namespace DwarfCorp
                         Resource.ResourceTags.CraftItem,
                         Resource.ResourceTags.Craft
                     };
-            toReturn.MoneyValue = selectedResources.Sum(r => Library.GetResourceType(r.Type).MoneyValue) * 2.0m;
+            toReturn.MoneyValue = selectedResources.Sum(r => Library.GetResourceType(r.Type).HasValue(out var res) ? res.MoneyValue : 0) * 2.0m;
             toReturn.CraftInfo = new Resource.CraftItemInfo
             {
                 Resources = selectedResources,

@@ -38,20 +38,23 @@ namespace DwarfCorp
                 return false;
             }
 
-            if (Library.GetResourceType(PlantType).Tags.Contains(Resource.ResourceTags.AboveGroundPlant))
+            if (Library.GetResourceType(PlantType).HasValue(out var plantRes))
             {
-                if (voxel.Sunlight == false)
+                if (plantRes.Tags.Contains(Resource.ResourceTags.AboveGroundPlant))
                 {
-                    World.UserInterface.ShowTooltip("Can only plant " + PlantType + " above ground.");
-                    return false;
+                    if (voxel.Sunlight == false)
+                    {
+                        World.UserInterface.ShowTooltip("Can only plant " + PlantType + " above ground.");
+                        return false;
+                    }
                 }
-            }
-            else if (Library.GetResourceType(PlantType).Tags.Contains(Resource.ResourceTags.BelowGroundPlant))
-            {
-                if (voxel.Sunlight)
+                else if (plantRes.Tags.Contains(Resource.ResourceTags.BelowGroundPlant))
                 {
-                    World.UserInterface.ShowTooltip("Can only plant " + PlantType + " below ground.");
-                    return false;
+                    if (voxel.Sunlight)
+                    {
+                        World.UserInterface.ShowTooltip("Can only plant " + PlantType + " below ground.");
+                        return false;
+                    }
                 }
             }
 

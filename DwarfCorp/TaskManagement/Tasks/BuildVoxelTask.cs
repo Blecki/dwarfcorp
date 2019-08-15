@@ -84,7 +84,7 @@ namespace DwarfCorp
         {
             if (Library.GetVoxelType(VoxType).HasValue(out VoxelType voxtype))
             {
-                var resource = creature.World.ListResources().Where(r => voxtype.CanBuildWith(Library.GetResourceType(r.Key))).FirstOrDefault();
+                var resource = creature.World.ListResources().Where(r => Library.GetResourceType(r.Key).HasValue(out var res) && voxtype.CanBuildWith(res)).FirstOrDefault();
 
                 if (resource.Key == null)
                 {

@@ -31,7 +31,7 @@ namespace DwarfCorp.Gui.Widgets
 
         public bool CanBuild()
         {
-            foreach (var resource in World.ListResourcesInStockpilesPlusMinions().Where(r => Data.CanBuildWith(Library.GetResourceType(r.Key))))
+            foreach (var resource in World.ListResourcesInStockpilesPlusMinions().Where(r => Library.GetResourceType(r.Key).HasValue(out var res) && Data.CanBuildWith(res)))
                 if (resource.Value.First.Count > 0 || resource.Value.Second.Count > 0)
                     return true;
             return false;

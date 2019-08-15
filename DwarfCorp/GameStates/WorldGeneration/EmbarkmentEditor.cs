@@ -256,8 +256,10 @@ namespace DwarfCorp.GameStates
             {
                 ComputeValue = (resourceType) =>
                 {
-                    var r = Library.GetResourceType(resourceType);
-                    return r.MoneyValue;
+                    if (Library.GetResourceType(resourceType).HasValue(out var r))
+                        return r.MoneyValue;
+                    else
+                        return 0;
                 },
                 SourceResources = Settings.PlayerCorporationResources.Enumerate().ToList(),
                 SelectedResources = Settings.InstanceSettings.InitalEmbarkment.Resources.Enumerate().ToList(),

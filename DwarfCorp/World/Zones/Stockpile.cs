@@ -68,17 +68,21 @@ namespace DwarfCorp
 
         public bool IsAllowed(String type)
         {
-            var resource = Library.GetResourceType(type);
-            if (WhitelistResources.Count == 0)
+            if (Library.GetResourceType(type).HasValue(out var resource))
             {
-                if (BlacklistResources.Count == 0)
-                    return true;
+                if (WhitelistResources.Count == 0)
+                {
+                    if (BlacklistResources.Count == 0)
+                        return true;
 
-                return !BlacklistResources.Any(tag => resource.Tags.Any(otherTag => otherTag == tag));
+                    return !BlacklistResources.Any(tag => resource.Tags.Any(otherTag => otherTag == tag));
+                }
+
+                if (BlacklistResources.Count != 0) return true;
+                return WhitelistResources.Count == 0 || WhitelistResources.Any(tag => resource.Tags.Any(otherTag => otherTag == tag));
             }
 
-            if (BlacklistResources.Count != 0) return true;
-            return WhitelistResources.Count == 0 || WhitelistResources.Any(tag => resource.Tags.Any(otherTag => otherTag == tag));
+            return false;
         }
 
         public void KillBox(GameComponent component)
@@ -190,18 +194,13 @@ namespace DwarfCorp
             }
 
             foreach (var resource in Resources.Enumerate())
-            {
-                var resourceType = Library.GetResourceType(resource.Type);
-
-                foreach (var tag in resourceType.Tags)
-                {
-                    if (World.PersistentData.CachedResourceTagCounts.ContainsKey(tag)) // Todo: Move to World Manager.
-                    {
-                        World.PersistentData.CachedResourceTagCounts[tag] -= resource.Count;
-                        System.Diagnostics.Trace.Assert(World.PersistentData.CachedResourceTagCounts[tag] >= 0);
-                    }
-                }
-            }
+                if (Library.GetResourceType(resource.Type).HasValue(out var resourceType))
+                    foreach (var tag in resourceType.Tags)
+                        if (World.PersistentData.CachedResourceTagCounts.ContainsKey(tag)) // Todo: Move to World Manager.
+                        {
+                            World.PersistentData.CachedResourceTagCounts[tag] -= resource.Count;
+                            System.Diagnostics.Trace.Assert(World.PersistentData.CachedResourceTagCounts[tag] >= 0);
+                        }
 
             World.RecomputeCachedVoxelstate();
 
@@ -224,15 +223,14 @@ namespace DwarfCorp
                         if (resourcePair.Value.Count == 0)
                             continue;
 
-                        var resourceType = Library.GetResourceType(resourcePair.Key);
-
-                        if (resourceType.Tags.Any(tag => tag == blacklist))
-                        {
-                            var transferTask = new TransferResourcesTask(World, ID, resourcePair.Value.CloneResource());
-                            if (World.TaskManager.HasTask(transferTask))
-                                continue;
-                            World.TaskManager.AddTask(transferTask);
-                        }
+                        if (Library.GetResourceType(resourcePair.Key).HasValue(out var resourceType))
+                            if (resourceType.Tags.Any(tag => tag == blacklist))
+                            {
+                                var transferTask = new TransferResourcesTask(World, ID, resourcePair.Value.CloneResource());
+                                if (World.TaskManager.HasTask(transferTask))
+                                    continue;
+                                World.TaskManager.AddTask(transferTask);
+                            }
                     }
 
             HandleBoxes();

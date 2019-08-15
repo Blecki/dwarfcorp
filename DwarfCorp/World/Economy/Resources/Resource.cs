@@ -39,7 +39,6 @@ namespace DwarfCorp
         public TrinketInfo TrinketData;
         public bool Generated = true;
         public string ShortName;
-        public float MaterialStrength = 5;
         public string PlantToGenerate;
         public List<Quantitiy<ResourceTags>> CraftPrerequisites;
         public Color Tint;

@@ -69,7 +69,7 @@ namespace DwarfCorp.Gui.Widgets
                         AutoSizeColumns = false,
                         ItemSize = new Point(110, 28),
                         ItemSource = EntityFactory.EnumerateEntityTypes()
-                            .Where(s => !s.Contains("Resource") || !Library.GetResourceType(s.Substring(0, s.Length - " Resource".Length)).Generated)
+                            .Where(s => !s.Contains("Resource") || !(Library.GetResourceType(s.Substring(0, s.Length - " Resource".Length)).HasValue(out var res) && res.Generated))
                             .OrderBy(s => s).Select(s =>
                             new HorizontalMenuTray.MenuItem
                             {

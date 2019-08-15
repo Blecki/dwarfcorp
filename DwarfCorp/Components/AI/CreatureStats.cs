@@ -146,7 +146,7 @@ namespace DwarfCorp
 
             Title = CurrentLevel.Name;
 
-            if (!String.IsNullOrEmpty(CurrentClass.DefaultTool) && Library.GetResourceType(CurrentClass.DefaultTool) != null)
+            if (!String.IsNullOrEmpty(CurrentClass.DefaultTool) && Library.GetResourceType(CurrentClass.DefaultTool).HasValue())
                 Equipment.EquipItem("tool", new EquippedItem { Resource = CurrentClass.DefaultTool });
         }
 

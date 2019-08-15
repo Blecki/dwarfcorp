@@ -85,26 +85,33 @@ namespace DwarfCorp.Play
                 foreach (var resource in aggregated)
                 {
                     var resourceTemplate = Library.GetResourceType(resource.Type);
-                    var icon = existingResourceEntries.FirstOrDefault(w => w is ResourceIcon && w.Tag.ToString() == resource.Type);
-                    var label = resourceTemplate.Name + "\n" + resourceTemplate.Description;
+                    if (!resourceTemplate.HasValue())
+                        resourceTemplate = Library.GetResourceType("Invalid");
 
-                    if (icon == null)
-                        icon = AddChild(new ResourceIcon()
-                        {
-                            Layers = resourceTemplate.GuiLayers,
-                            Tooltip = label,
-                            Tag = resource.Type
-                        });
-                    else
+                    if (resourceTemplate.HasValue(out var template))
                     {
-                        icon.Tooltip = label;
-                        if (!Children.Contains(icon))
-                            AddChild(icon);
-                    }
+                        var icon = existingResourceEntries.FirstOrDefault(w => w is ResourceIcon && w.Tag.ToString() == resource.Type);
 
-                    string text = resource.Count.ToString();
-                    icon.Text = text;
-                    icon.Invalidate();
+                        var label = template.Name + "\n" + template.Description;
+
+                        if (icon == null)
+                            icon = AddChild(new ResourceIcon()
+                            {
+                                Layers = template.GuiLayers,
+                                Tooltip = label,
+                                Tag = resource.Type
+                            });
+                        else
+                        {
+                            icon.Tooltip = label;
+                            if (!Children.Contains(icon))
+                                AddChild(icon);
+                        }
+
+                        string text = resource.Count.ToString();
+                        icon.Text = text;
+                        icon.Invalidate();
+                    }
                 }
 
                 Layout();

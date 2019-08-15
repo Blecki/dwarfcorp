@@ -72,27 +72,32 @@ namespace DwarfCorp
 
                 for (int i = 0; i < num; i++)
                 {
-                    var randResource = Datastructures.SelectRandom(resources);
+                    MaybeNull<Resource> randResource = Datastructures.SelectRandom(resources);
 
-                    if (randResource.Tags.Any(blacklistTags.Contains))
+                    if (!randResource.HasValue(out var res) || !res.Tags.Any(blacklistTags.Contains))
                         continue;
 
                     if (tags.Key == Resource.ResourceTags.Craft)
                     {
                         var craftTag = Datastructures.SelectRandom(Crafts);
                         var availableCrafts = Library.EnumerateResourceTypesWithTag(craftTag);
-                        var trinket = Library.CreateTrinketResourceType(Datastructures.SelectRandom(availableCrafts).Name, MathFunctions.Rand(0.1f, 3.0f));
+                        if (Library.CreateTrinketResourceType(Datastructures.SelectRandom(availableCrafts).Name, MathFunctions.Rand(0.1f, 3.0f)).HasValue(out var trinket))
+                        {
 
-                        if (MathFunctions.RandEvent(0.3f) && Encrustings.Count > 0)
-                            randResource = Library.CreateEncrustedTrinketResourceType(trinket.Name, Datastructures.SelectRandom(Library.EnumerateResourceTypesWithTag(Datastructures.SelectRandom(Encrustings))).Name);
-                        else
-                            randResource = trinket;
+                            if (MathFunctions.RandEvent(0.3f) && Encrustings.Count > 0)
+                                randResource = Library.CreateEncrustedTrinketResourceType(trinket.Name, Datastructures.SelectRandom(Library.EnumerateResourceTypesWithTag(Datastructures.SelectRandom(Encrustings))).Name);
+                            else
+                                randResource = trinket;
+                        }
                     }
 
-                    if (!toReturn.ContainsKey(randResource.Name))
-                        toReturn[randResource.Name] = new ResourceAmount(randResource.Name, 1);
-                    else
-                        toReturn[randResource.Name].Count += 1;
+                    if (randResource.HasValue(out res))
+                    {
+                        if (!toReturn.ContainsKey(res.Name))
+                            toReturn[res.Name] = new ResourceAmount(res.Name, 1);
+                        else
+                            toReturn[res.Name].Count += 1;
+                    }
                 }
             }
 

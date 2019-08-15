@@ -106,31 +106,33 @@ namespace DwarfCorp
                 inventory.SetFlag(Flag.ShouldSerialize, false);
 
                 {
-                    String type = Stats.CurrentClass.Name + " " + "Meat";
+                    var type = Stats.CurrentClass.Name + " " + "Meat";
 
                     if (!Library.DoesResourceTypeExist(type))
-                    {
-                        var r = Library.CreateResourceType(Library.GetResourceType("Meat"));
-                        r.Name = type;
-                        r.ShortName = type;
-                        Library.AddResourceType(r);
-                    }
+                        if (Library.CreateResourceType(Library.GetResourceType("Meat")).HasValue(out var r))
+                        {
+                            r.Name = type;
+                            r.ShortName = type;
+                            Library.AddResourceType(r);
+                        }
 
-                    inventory.AddResource(new ResourceAmount(type, 1));
+                    if (Library.DoesResourceTypeExist(type))
+                        inventory.AddResource(new ResourceAmount(type, 1));
                 }
 
                 {
-                    String type = Stats.CurrentClass.Name + " Bone";
+                    var type = Stats.CurrentClass.Name + " Bone";
 
                     if (!Library.DoesResourceTypeExist(type))
-                    {
-                        var r = Library.CreateResourceType(Library.GetResourceType("Bone"));
-                        r.Name = type;
-                        r.ShortName = type;
-                        Library.AddResourceType(r);
-                    }
+                        if (Library.CreateResourceType(Library.GetResourceType("Bone")).HasValue(out var r))
+                        {
+                            r.Name = type;
+                            r.ShortName = type;
+                            Library.AddResourceType(r);
+                        }
 
-                    inventory.AddResource(new ResourceAmount(type, 1));
+                    if (Library.DoesResourceTypeExist(type))
+                        inventory.AddResource(new ResourceAmount(type, 1));
                 }
             }
 

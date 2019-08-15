@@ -182,15 +182,15 @@ namespace DwarfCorp
             if (_preEmptTimer.HasTriggered)
             {
                 var inventory = Creature.Inventory;
-                if (inventory != null && inventory.Resources.Any(resource => Library.GetResourceType(resource.Resource).Tags.Contains(Resource.ResourceTags.Potion)))
+                if (inventory != null)
                 {
                     var applicablePotions = inventory.Resources.Where(resource => !resource.MarkedForRestock).
                         Select(resource => Library.GetResourceType(resource.Resource)).
-                        Where(resource => resource.Tags.Contains(Resource.ResourceTags.Potion) 
-                        && resource.PotionType != null
-                        && resource.PotionType.ShouldDrink(Creature));
-                    var potion = applicablePotions.FirstOrDefault();
-                    if (potion != null)
+                        Where(resource => resource.HasValue(out var res) 
+                            && res.Tags.Contains(Resource.ResourceTags.Potion) 
+                            && res.PotionType != null
+                            && res.PotionType.ShouldDrink(Creature));
+                    if (applicablePotions.FirstOrDefault().HasValue(out var potion))
                     {
                         potion.PotionType.Drink(Creature);
                         inventory.Remove(new ResourceAmount(potion), Inventory.RestockType.Any);
@@ -329,8 +329,7 @@ namespace DwarfCorp
 
                 foreach (var body in World.EnumerateIntersectingObjects(Physics.BoundingBox.Expand(3.0f)).OfType<ResourceEntity>().Where(r => r.Active && r.AnimationQueue.Count == 0))
                 {
-                    var resource = Library.GetResourceType(body.Resource.Type);
-                    if (resource.Tags.Contains(Resource.ResourceTags.Edible))
+                    if (Library.GetResourceType(body.Resource.Type).HasValue(out var resource) && resource.Tags.Contains(Resource.ResourceTags.Edible))
                     {
                         if ((Faction.Race.EatsMeat && resource.Tags.Contains(Resource.ResourceTags.AnimalProduct)) ||
                             (Faction.Race.EatsPlants && !resource.Tags.Contains(Resource.ResourceTags.AnimalProduct)))

@@ -1,35 +1,3 @@
-// EntityFactory.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,20 +14,26 @@ namespace DwarfCorp
         [EntityFactory("RandTrinket")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            var randResource = Library.CreateTrinketResourceType(Datastructures.SelectRandom(Library.EnumerateResourceTypes().Where(r => r.Tags.Contains(Resource.ResourceTags.Material))).Name, MathFunctions.Rand(0.1f, 3.5f));
+            if (Library.CreateTrinketResourceType(Datastructures.SelectRandom(Library.EnumerateResourceTypes().Where(r => r.Tags.Contains(Resource.ResourceTags.Material))).Name, MathFunctions.Rand(0.1f, 3.5f)).HasValue(out var randResource))
+            {
 
-            if (MathFunctions.RandEvent(0.5f))
-                randResource = Library.CreateEncrustedTrinketResourceType(randResource.Name, Datastructures.SelectRandom(Library.EnumerateResourceTypes().Where(r => r.Tags.Contains(Resource.ResourceTags.Gem))).Name);
+                if (MathFunctions.RandEvent(0.5f))
+                    if (Library.CreateEncrustedTrinketResourceType(randResource.Name, Datastructures.SelectRandom(Library.EnumerateResourceTypes().Where(r => r.Tags.Contains(Resource.ResourceTags.Gem))).Name).HasValue(out var _rr))
+                        randResource = _rr;
 
-            return new ResourceEntity(Manager, new ResourceAmount(randResource.Name), Position);
+                return new ResourceEntity(Manager, new ResourceAmount(randResource.Name), Position);
+            }
+
+            return null;
         }
 
         [EntityFactory("RandFood")]
         private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            IEnumerable<Resource> foods = Library.EnumerateResourceTypesWithTag(Resource.ResourceTags.RawFood);
-            Resource randresource = Library.CreateMealResourceType(Datastructures.SelectRandom(foods).Name, Datastructures.SelectRandom(foods).Name);
-            return new ResourceEntity(Manager, new ResourceAmount(randresource.Name), Position);
+            var foods = Library.EnumerateResourceTypesWithTag(Resource.ResourceTags.RawFood);
+            if (Library.CreateMealResourceType(Datastructures.SelectRandom(foods).Name, Datastructures.SelectRandom(foods).Name).HasValue(out var randResource))
+                return new ResourceEntity(Manager, new ResourceAmount(randResource.Name), Position);
+            return null;
         }
     }
 }

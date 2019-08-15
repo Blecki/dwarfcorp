@@ -38,11 +38,12 @@ namespace DwarfCorp
             Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBoxSize, LocalBoundingBoxOffset)) as Inventory;
 
             // Can these be spawned when the tree dies rather than when it is created?
-                // Todo: Check entity def for resource emitted. Stop auto generating wood types.
-                var wood = Library.CreateResourceType(Library.GetResourceType("Wood"));
+            // Todo: Check entity def for resource emitted. Stop auto generating wood types.
+            if (Library.CreateResourceType(Library.GetResourceType("Wood")).HasValue(out var wood))
+            {
                 wood.Name = String.Format("{0} Wood", Name.Split(' ').First());
                 wood.ShortName = wood.Name;
-               
+
                 Library.AddResourceTypeIfNew(wood);
 
                 for (int i = 0; i < treeSize * 2; i++)
@@ -54,6 +55,7 @@ namespace DwarfCorp
                         Resource = wood.Name
                     });
                 }
+            }
 
             for (int i = 0; i < treeSize * 2; i++)
             {

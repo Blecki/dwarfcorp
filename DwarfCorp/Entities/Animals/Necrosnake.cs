@@ -103,19 +103,18 @@ namespace DwarfCorp
                 var inventory = tailPiece.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset)) as Inventory;
                 inventory.SetFlag(Flag.ShouldSerialize, false);
 
-                {
-                    String type = Stats.CurrentClass.Name + " Bone";
+                String type = Stats.CurrentClass.Name + " Bone";
 
-                    if (!Library.DoesResourceTypeExist(type))
+                if (!Library.DoesResourceTypeExist(type))
+                    if (Library.CreateResourceType(Library.GetResourceType("Bone")).HasValue(out var r))
                     {
-                        var r = Library.CreateResourceType(Library.GetResourceType("Bone"));
                         r.Name = type;
                         r.ShortName = type;
                         Library.AddResourceType(r);
                     }
 
+                if (Library.DoesResourceTypeExist(type))
                     inventory.AddResource(new ResourceAmount(type, 1));
-                }
             }
 
             #endregion

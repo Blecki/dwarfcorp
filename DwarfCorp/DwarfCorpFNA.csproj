@@ -148,6 +148,7 @@
     <Compile Include="Library\DesignationLibrary.cs" />
     <Compile Include="Library\EventLibrary.cs" />
     <Compile Include="Library\RaceLibrary.cs" />
+    <Compile Include="Library\ResourceLibrary.cs" />
     <Compile Include="Library\ZoneLibrary.cs" />
     <Compile Include="LogWriter.cs" />
     <Compile Include="EventLog.cs" />
@@ -344,7 +345,6 @@
     <Compile Include="World\Economy\Resources\Resource.cs" />
     <Compile Include="World\Economy\Resources\ResourceAmount.cs" />
     <Compile Include="World\Economy\Resources\ResourceContainer.cs" />
-    <Compile Include="World\Economy\Resources\ResourceLibrary.cs" />
     <Compile Include="World\Economy\Resources\ResourceSet.cs" />
     <Compile Include="Entities\Animals\BatAI.cs" />
     <Compile Include="Entities\Animals\BrownRabbit.cs" />

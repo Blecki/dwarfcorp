@@ -70,7 +70,7 @@ namespace DwarfCorp
                         else if (type == RestockType.RestockResource && !Resources[k].MarkedForRestock)
                             continue;
 
-                        if (!Library.GetResourceType(Resources[k].Resource).Tags.Contains(quantity.Type)) continue;
+                        if (!Library.GetResourceType(Resources[k].Resource).HasValue(out var res) || !res.Tags.Contains(quantity.Type)) continue;
                         kRemove = k;
                         break;
                     }
@@ -262,28 +262,39 @@ namespace DwarfCorp
 
         public bool HasResource(Quantitiy<Resource.ResourceTags> itemToStock)
         {
-            Dictionary<String, int> resourceCounts = new Dictionary<String, int>();
+            var resourceCounts = new Dictionary<String, int>();
+
             foreach (var resource in Resources)
-            {
-                if (Library.GetResourceType(resource.Resource).Tags.Contains(itemToStock.Type))
+                if (Library.GetResourceType(resource.Resource).HasValue(out var res) && res.Tags.Contains(itemToStock.Type))
                 {
                     if (!resourceCounts.ContainsKey(resource.Resource))
-                    {
                         resourceCounts[resource.Resource] = 0;
-                    }
                     resourceCounts[resource.Resource]++;
                 }
-            }
 
             return resourceCounts.Count > 0 && resourceCounts.Max(r => r.Value >= itemToStock.Count);
         }
 
         public List<ResourceAmount> GetResources(Quantitiy<Resource.ResourceTags> quantitiy, RestockType type = RestockType.RestockResource)
         {
-            return (from resource in Resources where
-                    Library.GetResourceType(resource.Resource).Tags.Contains(quantitiy.Type) && ((type == RestockType.RestockResource 
-                    && resource.MarkedForRestock) || (type == RestockType.None && !resource.MarkedForRestock) || (type == RestockType.Any))
-                    select new ResourceAmount(resource.Resource)).ToList();
+            return Resources
+                .Where(r =>
+                {
+                    switch (type)
+                    {
+                        case RestockType.Any:
+                            return true;
+                        case RestockType.None:
+                            return !r.MarkedForRestock;
+                        case RestockType.RestockResource:
+                            return r.MarkedForRestock;
+                    }
+
+                    return false;
+                })
+                .Where(r => Library.GetResourceType(r.Resource).HasValue(out var res) && res.Tags.Contains(quantitiy.Type))
+                .Select(r => new ResourceAmount(r.Resource))
+                .ToList();
         }
 
         public void AddResource(ResourceAmount tradeGood, RestockType type = RestockType.RestockResource)

@@ -45,12 +45,15 @@ namespace DwarfCorp.Trade
 
         public DwarfBux ComputeValue(String Resource)
         {
-            var resource = Library.GetResourceType(Resource);
-            if (SourceEnvoy.OwnerFaction.Race.CommonResources.Any(r => resource.Tags.Contains(r)))
-                return resource.MoneyValue * 0.75m;
-            if (SourceEnvoy.OwnerFaction.Race.RareResources.Any(r => resource.Tags.Contains(r)))
-                return resource.MoneyValue * 1.25m;
-            return resource.MoneyValue;
+            if (Library.GetResourceType(Resource).HasValue(out var resource))
+            {
+                if (SourceEnvoy.OwnerFaction.Race.CommonResources.Any(r => resource.Tags.Contains(r)))
+                    return resource.MoneyValue * 0.75m;
+                if (SourceEnvoy.OwnerFaction.Race.RareResources.Any(r => resource.Tags.Contains(r)))
+                    return resource.MoneyValue * 1.25m;
+                return resource.MoneyValue;
+            }
+            return 0.0m;
         }
 
         public DwarfBux ComputeValue(List<ResourceAmount> Resources)

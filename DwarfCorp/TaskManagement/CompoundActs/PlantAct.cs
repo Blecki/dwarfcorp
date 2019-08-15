@@ -53,22 +53,25 @@ namespace DwarfCorp
 
                     if (FarmToWork.Progress >= FarmToWork.TargetProgress && !FarmToWork.Finished)
                     {
-                        var plant = EntityFactory.CreateEntity<Plant>(
-                            Library.GetResourceType(FarmToWork.SeedString).PlantToGenerate, 
-                            FarmToWork.Voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f));
+                        if (Library.GetResourceType(FarmToWork.SeedString).HasValue(out var seedType))
+                        {
+                            var plant = EntityFactory.CreateEntity<Plant>(
+                                seedType.PlantToGenerate,
+                                FarmToWork.Voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f));
 
-                        plant.Farm = FarmToWork;
+                            plant.Farm = FarmToWork;
 
-                        Matrix original = plant.LocalTransform;
-                        original.Translation += Vector3.Down;
-                        plant.AnimationQueue.Add(new EaseMotion(0.5f, original, plant.LocalTransform.Translation));
+                            Matrix original = plant.LocalTransform;
+                            original.Translation += Vector3.Down;
+                            plant.AnimationQueue.Add(new EaseMotion(0.5f, original, plant.LocalTransform.Translation));
 
-                        Creature.Manager.World.ParticleManager.Trigger("puff", original.Translation, Color.White, 20);
 
-                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, FarmToWork.Voxel.WorldPosition, true);
+                            Creature.Manager.World.ParticleManager.Trigger("puff", original.Translation, Color.White, 20);
+
+                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, FarmToWork.Voxel.WorldPosition, true);
+                        }
 
                         FarmToWork.Finished = true;
-
                         DestroyResources();
                     }
 

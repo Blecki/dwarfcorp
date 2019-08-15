@@ -61,14 +61,14 @@ namespace DwarfCorp.Gui.Widgets
             int k = 0;
             foreach (var resource in left)
             {
-                var resourceType = Library.GetResourceType(resource.Type);
-                LeftItems.AddChild(new ResourceIcon()
-                {
-                    Layers = resourceType.GuiLayers,
-                    MinimumSize = new Point(32, 32),
-                    MaximumSize = new Point(32, 32),
-                    Rect = new Rectangle(LeftWidget.Rect.X + 16 + k * 4 - leftCount * 2, LeftWidget.Rect.Y + 5, 32, 32)
-                });
+                if (Library.GetResourceType(resource.Type).HasValue(out var resourceType))
+                    LeftItems.AddChild(new ResourceIcon()
+                    {
+                        Layers = resourceType.GuiLayers,
+                        MinimumSize = new Point(32, 32),
+                        MaximumSize = new Point(32, 32),
+                        Rect = new Rectangle(LeftWidget.Rect.X + 16 + k * 4 - leftCount * 2, LeftWidget.Rect.Y + 5, 32, 32)
+                    });
                 k++;
             }
 
@@ -88,14 +88,14 @@ namespace DwarfCorp.Gui.Widgets
             k = 0;
             foreach (var resource in GetTopResources(rightResources))
             {
-                var resourceType = Library.GetResourceType(resource.Type);
-                RightItems.AddChild(new ResourceIcon()
-                {
-                    Layers = resourceType.GuiLayers,
-                    MinimumSize = new Point(32, 32),
-                    MaximumSize = new Point(32, 32),
-                    Rect = new Rectangle(RightWidget.Rect.X + 16 + k * 4 - rightCount * 2, RightWidget.Rect.Y + 5, 32, 32)
-                });
+                if (Library.GetResourceType(resource.Type).HasValue(out var resourceType))
+                    RightItems.AddChild(new ResourceIcon()
+                    {
+                        Layers = resourceType.GuiLayers,
+                        MinimumSize = new Point(32, 32),
+                        MaximumSize = new Point(32, 32),
+                        Rect = new Rectangle(RightWidget.Rect.X + 16 + k * 4 - rightCount * 2, RightWidget.Rect.Y + 5, 32, 32)
+                    });
                 k++;
             }
 
@@ -231,11 +231,10 @@ namespace DwarfCorp.Gui.Widgets
         {
             foreach (var amount in source)
             {
-                Resource r = Library.GetResourceType(amount.Type);
-                if (trader.TraderRace.HatedResources.Any(tag => r.Tags.Contains(tag)))
-                {
-                    continue;
-                }
+                if (Library.GetResourceType(amount.Type).HasValue(out var r))
+                    if (trader.TraderRace.HatedResources.Any(tag => r.Tags.Contains(tag)))
+                        continue;
+
                 if (amount.Count == 0) continue;
                 ResourceAmount destAmount =
                     destination.FirstOrDefault(resource => resource.Type == amount.Type);

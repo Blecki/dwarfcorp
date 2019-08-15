@@ -79,10 +79,10 @@ namespace DwarfCorp
 
         protected static float GetHealth(String type)
         {
-            var resource = Library.GetResourceType(type);
-            foreach(var tag in resource.Tags)
-                if (Healths.ContainsKey(tag))
-                    return Healths[tag];
+            if (Library.GetResourceType(type).HasValue(out var resource))
+                foreach(var tag in resource.Tags)
+                    if (Healths.ContainsKey(tag))
+                        return Healths[tag];
             return DefaultHealth;
         }
 

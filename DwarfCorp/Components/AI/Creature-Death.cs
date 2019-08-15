@@ -27,13 +27,16 @@ namespace DwarfCorp
 
                 if (!Library.DoesResourceTypeExist(type))
                 {
-                    var r = Library.CreateResourceType(Library.GetResourceType(Stats.Species.BaseMeatResource));
-                    r.Name = type;
-                    r.ShortName = type;
-                    Library.AddResourceType(r);
+                    if (Library.CreateResourceType(Library.GetResourceType(Stats.Species.BaseMeatResource)).HasValue(out var r))
+                    {
+                        r.Name = type;
+                        r.ShortName = type;
+                        Library.AddResourceType(r);
+                    }
                 }
 
-                Inventory.AddResource(new ResourceAmount(type, 1));
+                if (Library.DoesResourceTypeExist(type))
+                    Inventory.AddResource(new ResourceAmount(type, 1));
             }
 
             if (Stats.Species.HasBones)
@@ -42,13 +45,16 @@ namespace DwarfCorp
 
                 if (!Library.DoesResourceTypeExist(type))
                 {
-                    var r = Library.CreateResourceType(Library.GetResourceType("Bone"));
-                    r.Name = type;
-                    r.ShortName = type;
-                    Library.AddResourceType(r);
+                    if (Library.CreateResourceType(Library.GetResourceType("Bone")).HasValue(out var r))
+                    {
+                        r.Name = type;
+                        r.ShortName = type;
+                        Library.AddResourceType(r);
+                    }
                 }
 
-                Inventory.AddResource(new ResourceAmount(type, 1));
+                if (Library.DoesResourceTypeExist(type))
+                    Inventory.AddResource(new ResourceAmount(type, 1));
             }
 
             base.Die();

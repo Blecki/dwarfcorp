@@ -17,12 +17,14 @@ namespace DwarfCorp.Gui.Widgets
 
             var builder = new StringBuilder();
             builder.AppendLine("Plant " + Type);
-            var res = Library.GetResourceType(Type);
-            builder.AppendLine(res.Description);
-            if (res.Tags.Contains(Resource.ResourceTags.AboveGroundPlant))
-                builder.AppendLine("* Grows above ground");
-            if (res.Tags.Contains(Resource.ResourceTags.BelowGroundPlant))
-                builder.AppendLine("* Grows below ground");
+            if (Library.GetResourceType(Type).HasValue(out var res))
+            {
+                builder.AppendLine(res.Description);
+                if (res.Tags.Contains(Resource.ResourceTags.AboveGroundPlant))
+                    builder.AppendLine("* Grows above ground");
+                if (res.Tags.Contains(Resource.ResourceTags.BelowGroundPlant))
+                    builder.AppendLine("* Grows below ground");
+            }
             builder.AppendLine("* Grows in soil");
             Font = "font8";
             Text = builder.ToString();

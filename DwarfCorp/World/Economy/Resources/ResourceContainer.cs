@@ -57,12 +57,8 @@ namespace DwarfCorp
         {
             int toReturn = 0;
             foreach (ResourceAmount resource in Resources.Values)
-            {
-                if (Library.GetResourceType(resource.Type).Tags.Contains(tag))
-                {
+                if (Library.GetResourceType(resource.Type).HasValue(out var res) && res.Tags.Contains(tag))
                     toReturn += resource.Count;
-                }
-            }
 
             return toReturn;
         }
@@ -75,7 +71,7 @@ namespace DwarfCorp
             {
                 if (numLeft == 0) return true;
 
-                if (Library.GetResourceType(resource.Type).Tags.Contains(tags.Type))
+                if (Library.GetResourceType(resource.Type).HasValue(out var res) && res.Tags.Contains(tags.Type))
                 {
                     int rm = Math.Min(resource.Count, numLeft);
                     resource.Count -= rm;
@@ -196,7 +192,7 @@ namespace DwarfCorp
                     continue;
                 }
 
-                if (Library.GetResourceType(resourceAmount.Type).Tags.Contains(tags.Type))
+                if (Library.GetResourceType(resourceAmount.Type).HasValue(out var res) && res.Tags.Contains(tags.Type))
                 {
                     int amountToRemove = Math.Min(tags.Count, amountLeft);
 
@@ -214,14 +210,14 @@ namespace DwarfCorp
         public int GetResourceCount(Resource.ResourceTags resourceType)
         {
             int count = 0;
-            foreach (var resource in Resources.Values.Where(resource => Library.GetResourceType(resource.Type).Tags.Contains(resourceType)))
+            foreach (var resource in Resources.Values.Where(resource => Library.GetResourceType(resource.Type).HasValue(out var res) && res.Tags.Contains(resourceType)))
                 count = Math.Max(count, resource.Count);
             return count;
         }
 
         public bool HasResource(Resource.ResourceTags resourceType)
         {
-            return Resources.Values.Any(resource => Library.GetResourceType(resource.Type).Tags.Contains(resourceType));
+            return Resources.Values.Any(resource => Library.GetResourceType(resource.Type).HasValue(out var res) && res.Tags.Contains(resourceType));
         }
 
         public bool HasResource(Quantitiy<Resource.ResourceTags > resourceType)

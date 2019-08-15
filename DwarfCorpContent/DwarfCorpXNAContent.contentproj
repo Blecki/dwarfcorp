@@ -4039,6 +4039,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>CopperOre</Name>
     </None>
+    <None Include="World\Voxels\GoldBlock.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>GoldBlock</Name>
+    </None>
     <None Include="World\Voxels\IronBlock.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>IronBlock</Name>
