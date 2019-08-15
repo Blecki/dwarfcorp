@@ -1,4 +1,3 @@
-#define ENABLE_CHAT
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +9,6 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp.Play.EmployeeInfo
 {
-
     public class OverviewPanel : Widget
     {
         public bool EnablePosession = false;
@@ -37,6 +35,7 @@ namespace DwarfCorp.Play.EmployeeInfo
         private Widget StatsPanel;
         private Widget EquipmentPanel;
         private Widget PackPanel;
+        private Widget LevelButton;
 
         private String SetLength(String S, int L)
         {
@@ -82,6 +81,14 @@ namespace DwarfCorp.Play.EmployeeInfo
                 Font = "font8",
             });
 
+            var bottomBar = InteriorPanel.AddChild(new Widget
+            {
+                Transparent = true,
+                AutoLayout = AutoLayout.DockBottom,
+                MinimumSize = new Point(0, 32),
+                Font = "font8"
+            });
+
             var top = InteriorPanel.AddChild(new Gui.Widget
             {
                 AutoLayout = AutoLayout.DockTop,
@@ -124,17 +131,17 @@ namespace DwarfCorp.Play.EmployeeInfo
                 AutoLayout = AutoLayout.DockLeft,
                 MinimumSize = new Point(128, 24)
             });
-
+                        
             var tabs = InteriorPanel.AddChild(new Gui.Widgets.TabPanel
             {
-                AutoLayout = AutoLayout.DockFill
+                AutoLayout = AutoLayout.DockFill,
+                ButtonFont = "font8"
             }) as TabPanel;
 
-            MainPanel = tabs.AddTab("Main", new MainPanel
+            MainPanel = tabs.AddTab("Main", new TaskPanel
             {
                 SetHideSprite = (v) => HideSprite = v,
                 FetchEmployee = () => Employee,
-                OnFireClicked = (sender) => this.OnFireClicked?.Invoke(sender)
             });
 
             StatsPanel = tabs.AddTab("Stats", new StatsPanel
@@ -147,7 +154,7 @@ namespace DwarfCorp.Play.EmployeeInfo
                 FetchEmployee = () => Employee
             });
 
-            PackPanel = tabs.AddTab("Pack", new EquipmentPanel
+            PackPanel = tabs.AddTab("Pack", new PackPanel
             {
                 FetchEmployee = () => Employee
             });
@@ -209,6 +216,96 @@ namespace DwarfCorp.Play.EmployeeInfo
                     Employee.World.PersistentData.SelectedMinions = new List<CreatureAI>() { Employee };
                 }
             });
+                       
+            bottomBar.AddChild(new Button()
+            {
+                Text = "Fire",
+                Border = "border-button",
+                AutoLayout = AutoLayout.DockRight,
+                OnClick = (sender, args) =>
+                {
+                    if (Employee == null)
+                        return;
+
+                    Root.ShowModalPopup(Root.ConstructWidget(new Confirm
+                    {
+                        OkayText = Library.GetString("fire-dwarf"),
+                        CancelText = Library.GetString("keep-dwarf"),
+                        Text = String.Format("Really fire {0}? They will collect {1} in severance pay.", Employee.Stats.FullName, Employee.Stats.CurrentLevel.Pay * 4),
+                        Padding = new Margin(32, 10, 10, 10),
+                        MinimumSize = new Point(512, 128),
+                        OnClose = (confirm) =>
+                        {
+                            if ((confirm as Gui.Widgets.Confirm).DialogResult == DwarfCorp.Gui.Widgets.Confirm.Result.OKAY)
+                            {
+                                SoundManager.PlaySound(ContentPaths.Audio.change, 0.25f);
+
+                                if (Employee.IsDead)
+                                    return;
+
+                                if (Employee.GetRoot().GetComponent<Inventory>().HasValue(out var inv))
+                                    inv.Die();
+
+                                Employee.World.MakeAnnouncement(Library.GetString("was-fired", Employee.Stats.FullName));
+                                Employee.GetRoot().Delete();
+
+                                Employee.World.FireEmployee(Employee);
+                            }
+                        }
+                    }));
+
+                    Root.SafeCall(OnFireClicked, this);
+                }
+            });
+
+                bottomBar.AddChild(new Button()
+                {
+                    Text = "Chat...",
+                    Tooltip = "Have a talk with your employee.",
+                    AutoLayout = AutoLayout.DockRight,
+                    OnClick = (sender, args) =>
+                    {
+                        if (Employee != null)
+                            Employee.Chat();
+                    }
+                });
+
+            LevelButton = bottomBar.AddChild(new Button()
+            {
+                Text = "Promote!",
+                Border = "border-button",
+                AutoLayout = AutoLayout.DockRight,
+                Tooltip = "Click to promote this dwarf.\nPromoting Dwarves raises their pay and makes them\nmore effective workers.",
+                OnClick = (sender, args) =>
+                {
+                    var prevLevel = Employee.Stats.CurrentLevel;
+                    Employee.Stats.LevelUp(Employee.Creature);
+                    if (Employee.Stats.CurrentLevel.HealingPower > prevLevel.HealingPower)
+                    {
+                        Employee.World.MakeAnnouncement(String.Format("{0}'s healing power increased to {1}!", Employee.Stats.FullName, Employee.Stats.CurrentLevel.HealingPower));
+                    }
+
+                    if (Employee.Stats.CurrentLevel.ExtraWeapons.Count > prevLevel.ExtraWeapons.Count)
+                    {
+                        Employee.World.MakeAnnouncement(String.Format("{0} learned to cast {1}!", Employee.Stats.FullName, Employee.Stats.CurrentLevel.ExtraWeapons.Last().Name));
+                    }
+                    SoundManager.PlaySound(ContentPaths.Audio.change, 0.5f);
+                    Invalidate();
+                    Employee.Creature.AddThought("I got promoted recently.", new TimeSpan(3, 0, 0, 0), 20.0f);
+                }
+            });
+
+            bottomBar.AddChild(new Button()
+            {
+                Text = "Find",
+                Tooltip = "Zoom camera to this employee",
+                AutoLayout = AutoLayout.DockRight,
+                OnClick = (sender, args) =>
+                {
+                    Employee.World.Renderer.Camera.SetZoomTarget(Employee.Position);
+                }
+            });
+
 
             base.Construct();
         }
@@ -252,6 +349,32 @@ namespace DwarfCorp.Play.EmployeeInfo
                     Employee.Stats.CurrentClass.Name,
                     Employee.Stats.XP,
                     Employee.Creature.Stats.Gender);
+
+                if (Employee.Stats.CurrentClass.Levels.Count > Employee.Stats.LevelIndex + 1)
+                {
+                    var nextLevel = Employee.Stats.CurrentClass.Levels[Employee.Stats.LevelIndex + 1];
+                    var diff = nextLevel.XP - Employee.Stats.XP;
+
+                    if (diff > 0)
+                    {
+                        //ExperienceLabel.Text = String.Format("XP: {0}\n({1} to next level)",
+                        //    Employee.Stats.XP, diff);
+                        LevelButton.Hidden = true;
+                        LevelButton.Invalidate();
+                    }
+                    else
+                    {
+                        //ExperienceLabel.Text = String.Format("XP: {0}\n({1} to next level)",
+                        //    Employee.Stats.XP, "(Overqualified)");
+                        LevelButton.Hidden = false;
+                        LevelButton.Tooltip = "Promote to " + nextLevel.Name;
+                        LevelButton.Invalidate();
+                    }
+                }
+                else
+                {
+                    //ExperienceLabel.Text = String.Format("XP: {0}", Employee.Stats.XP);
+                }
             }
             else
                 InteriorPanel.Hidden = true;

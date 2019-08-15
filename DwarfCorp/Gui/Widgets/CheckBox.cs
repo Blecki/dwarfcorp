@@ -86,7 +86,7 @@ namespace DwarfCorp.Gui.Widgets
             if (!Enabled)
                 r = r.MorphEx(v =>
                 {
-                    v.Color = new Vector4(1.0f, 1.0f, 1.0f, 0.1f);
+                    v.Color = new Vector4(TextColor.X, TextColor.Y, TextColor.Z, 0.3f);
                     return v;
                 });
 

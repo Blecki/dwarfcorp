@@ -1,4 +1,3 @@
-#define ENABLE_CHAT
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +33,8 @@ namespace DwarfCorp.Play.EmployeeInfo
         private Gui.Widgets.TextProgressBar Boredom;
 
         private Widget Thoughts;
+        private Widget PayLabel;
+        private Widget AgeLabel;
 
         private String SetLength(String S, int L)
         {
@@ -69,6 +70,18 @@ namespace DwarfCorp.Play.EmployeeInfo
         public override void Construct()
         {
             Font = "font8";
+
+            PayLabel = AddChild(new Widget
+            {
+                AutoLayout = AutoLayout.DockTop,
+                MinimumSize = new Point(0, 24)
+            });
+
+            AgeLabel = AddChild(new Widget()
+            {
+                AutoLayout = AutoLayout.DockTop,
+                MinimumSize = new Point(0, 24)
+            });
 
             var columns = AddChild(new Gui.Widgets.Columns
             {
@@ -223,6 +236,10 @@ namespace DwarfCorp.Play.EmployeeInfo
             if (Employee != null && !Employee.IsDead)
             {
                 Hidden = false;
+
+                PayLabel.Text = String.Format("Pay: {0}/day -- Wealth: {1}", Employee.Stats.CurrentLevel.Pay, Employee.Stats.Money);
+                AgeLabel.Text = String.Format("Age: {0}", Employee.Stats.Age);
+
                 StatDexterity.Text = String.Format("Dex: {0}", Employee.Stats.Dexterity);
                 StatStrength.Text = String.Format("Str: {0}", Employee.Stats.Strength);
                 StatWisdom.Text = String.Format("Wis: {0}", Employee.Stats.Wisdom);

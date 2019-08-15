@@ -43,6 +43,7 @@ namespace TodoList
             }
 
             entry.Status = "✓";
+            entry.CompletionTime = DateTime.Now;
             EntryList.SaveFile(file, list);
             Presentation.OutputEntry(entry, null, 0, true);
         }

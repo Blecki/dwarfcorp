@@ -256,9 +256,11 @@
     <Compile Include="Entities\Steam\PowerAnvil.cs" />
     <Compile Include="Entities\Steam\BuildBuff.cs" />
     <Compile Include="Entities\Steam\SteamPipe.cs" />
+    <Compile Include="GameStates\Play\EmployeeInfo\AllowedTaskFilter.cs" />
     <Compile Include="GameStates\Play\EmployeeInfo\EquipmentPanel.cs" />
-    <Compile Include="GameStates\Play\EmployeeInfo\MainPanel.cs" />
+    <Compile Include="GameStates\Play\EmployeeInfo\PackPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfo\StatsPanel.cs" />
+    <Compile Include="GameStates\Play\EmployeeInfo\TaskPanel.cs" />
     <Compile Include="GameStates\Play\StockpileContentsPanel.cs" />
     <Compile Include="GameStates\Play\StockpilePropertiesDialog.cs" />
     <Compile Include="GameStates\Play\ResourceFilterPanel.cs" />
@@ -270,7 +272,6 @@
     <Compile Include="Gui\Widgets\DefaultTaskPriority.cs" />
     <Compile Include="Gui\Widgets\MarketPanel.cs" />
     <Compile Include="Gui\Widgets\PlaceCraftInfo.cs" />
-    <Compile Include="GameStates\Play\EmployeeInfo\EmployeeBackpackDialog.cs" />
     <Compile Include="Gui\Widgets\SliderCombo.cs" />
     <Compile Include="Library\BiomeLibrary.cs" />
     <Compile Include="Library\DifficultyLibrary.cs" />
@@ -293,7 +294,6 @@
     <Compile Include="Player\ContextCommands\GatherCommand.cs" />
     <Compile Include="Player\ContextCommands\PriorityCommand.cs" />
     <Compile Include="Player\ContextCommands\PromoteCommand.cs" />
-    <Compile Include="Player\ContextCommands\ViewAllowedTasksCommand.cs" />
     <Compile Include="Player\ContextCommands\WrangleCommand.cs" />
     <Compile Include="Player\InputManager.cs" />
     <Compile Include="Player\IVoxelBrush.cs" />
@@ -644,7 +644,6 @@
     <Compile Include="Graphics\Animation\CompositeLibrary.cs" />
     <Compile Include="Graphics\Animation\AnimationLibrary.cs" />
     <Compile Include="Gui\Widgets\CollapsableStack.cs" />
-    <Compile Include="Gui\Widgets\AllowedTaskFilter.cs" />
     <Compile Include="Gui\Widgets\DesignationFilter.cs" />
     <Compile Include="Gui\Widgets\TrayBackground.cs" />
     <Compile Include="World\Designations\DesignationType.cs" />

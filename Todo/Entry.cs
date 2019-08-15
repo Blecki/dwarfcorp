@@ -25,6 +25,7 @@ namespace TodoList
         public List<String> Tags = new List<String>();
         public List<Entry> Children = new List<Entry>();
         public DateTime CreationTime = DateTime.Now;
+        public DateTime CompletionTime = DateTime.Now;
         public String Notes = "";
 
         public IEnumerable<ParentChildPair> EnumerateParentChildPairs(Entry Parent = null)

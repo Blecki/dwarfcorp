@@ -50,7 +50,7 @@ namespace TodoList
         {
             Console.SetCursorPosition(0, Console.CursorTop);
             Console.BackgroundColor = ConsoleColor.DarkGray;
-            Console.Write(new string(' ', Console.WindowWidth));
+            Console.Write(new string(' ', Console.WindowWidth - 1));
         }
 
         public static String Fit(String S, int Length)

@@ -67,7 +67,7 @@ namespace DwarfCorp.Play
         public WorldManager World;
         public ResourceContainer Resources;
 
-        // Todo: What is there are more resources than fit on the screen? Need scrolling!
+        // Todo: What if there are more resources than fit on the screen? Need scrolling!
         
         public override void Construct()
         {
@@ -77,6 +77,12 @@ namespace DwarfCorp.Play
 
             OnUpdate = (sender, time) =>
             {
+                if (Resources == null)
+                {
+                    Children.Clear();
+                    return;
+                }
+
                 var existingResourceEntries = new List<Widget>(Children);
                 Children.Clear();
 
