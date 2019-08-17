@@ -49,7 +49,7 @@ namespace TodoList
             else if (tagMatch != null)
                 matcher = tagMatch;
 
-            var completeList = Presentation.BuildOutput(entry, matcher, -1, all).Where(l => l.Depth >= 0).ToList();
+            var completeList = Presentation.BuildOutput(entry, matcher, 0, all).Where(l => l.Depth >= 0).ToList();
             var screenHeight = Console.WindowHeight - 4;
 
             for (var row = 0; row < completeList.Count; row += screenHeight)

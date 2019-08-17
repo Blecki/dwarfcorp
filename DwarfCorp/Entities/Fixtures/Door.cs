@@ -182,6 +182,7 @@ namespace DwarfCorp
                             sprite.LocalTransform = Matrix.CreateRotationY(0.5f * (float)Math.PI) * CreateHingeTransform(t * 1.57f);
                         else
                             sprite.LocalTransform = Matrix.CreateRotationY(0.5f * (float)Math.PI) * CreateHingeTransform((1.0f - t) * 1.57f);
+                        sprite.ProcessTransformChange();
                     }
                 }
             }

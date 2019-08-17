@@ -13,6 +13,7 @@ namespace DwarfCorp
     {
         public string Resource;
         // Properties like durability left, etc.
+        // -- Will need to revamp player inventories for this. Actually... all inventories. 
     }
 
     public class Equipment
@@ -29,6 +30,11 @@ namespace DwarfCorp
         public void EquipItem(String Slot, EquippedItem Item)
         {
             EquippedItems[Slot] = Item;
+        }
+
+        public void UnequipItem(String Slot)
+        {
+            EquippedItems.Remove(Slot);
         }
 
     }

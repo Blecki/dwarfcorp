@@ -248,7 +248,8 @@ namespace DwarfCorp
 
         public override void Delete()
         {
-            World.RemoveFromSpeciesTracking(Stats.Species);
+            if (!FirstUpdate)
+                World.RemoveFromSpeciesTracking(Stats.Species);
 
             base.Delete();
         }

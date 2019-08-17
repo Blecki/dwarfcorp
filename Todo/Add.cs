@@ -15,6 +15,7 @@ namespace TodoList
     internal class Add : ICommand
     {
         [DefaultSwitch(0), GreedyArgument] public String desc = null;
+        public UInt32 sub = 0;
 
         public string file = "todo.txt";
 
@@ -26,10 +27,17 @@ namespace TodoList
                 return;
             }
 
-            var list = EntryList.LoadFile(file, true);
-            
             if (String.IsNullOrEmpty(desc))
                 throw new InvalidOperationException("You need to specify what you're adding dumbass.");
+
+            var list = EntryList.LoadFile(file, true);
+
+            var parent = list.Root.FindChildWithID(sub);
+            if (parent == null)
+            {
+                Console.WriteLine("No entry with id {0} found.", sub);
+                return;
+            }
 
             var entry = new Entry
             {
@@ -39,7 +47,7 @@ namespace TodoList
                 Description = desc
             };
 
-            list.Root.Children.Add(entry);
+            parent.Children.Add(entry);
             list.NextID += 1;
 
             EntryList.SaveFile(file, list);

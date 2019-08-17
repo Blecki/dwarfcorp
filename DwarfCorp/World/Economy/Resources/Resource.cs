@@ -104,6 +104,7 @@ namespace DwarfCorp
             IronOre,
             Iron,
             Tool,
+            Pick,
             Peppermint
         }
 
