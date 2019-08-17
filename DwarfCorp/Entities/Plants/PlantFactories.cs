@@ -4,6 +4,26 @@ namespace DwarfCorp
 {
     public static class PlantFactories
     {
+        #region Bamboo
+        [EntityFactory("Bamboo")]
+        private static GameComponent __factory20(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Tree("Bamboo", Manager, Position, "Entities\\Plants\\bamboo", "BambooSprout", Data.GetData("Scale", 2.0f), "Bamboo");
+        }
+
+        [EntityFactory("Bamboo Sprout")]
+        private static GameComponent __factory21(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Seedling(Manager, "Bamboo", Position, "Entities\\Plants\\bamboo-sprout")
+            {
+                GrowthHours = 8.0f,
+                MaxSize = 2.0f,
+                GoodBiomes = "Wetlands",
+                BadBiomes = "Tiaga Tundra Desert Waste Jolly Forest"
+            };
+        }
+        #endregion
+
         #region Haunted Tree
         [EntityFactory("Haunted Tree")]
         private static GameComponent __factory00(ComponentManager Manager, Vector3 Position, Blackboard Data)

@@ -2103,6 +2103,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>category-icons</Name>
     </None>
+    <None Include="World\Biomes\Wetlands.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Wetlands</Name>
+    </None>
     <None Include="World\Classes\Manager.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Manager</Name>
@@ -2114,6 +2118,10 @@
     <None Include="World\CraftItems\CraftTable.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>CraftTable</Name>
+    </None>
+    <None Include="World\CraftItems\Gold.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Gold</Name>
     </None>
     <None Include="World\CraftItems\Iron.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2187,6 +2195,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Corporate</Name>
     </None>
+    <None Include="World\ResourceItems\BambooSprout.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>BambooSprout</Name>
+    </None>
+    <None Include="World\ResourceItems\GoldOre.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>GoldOre</Name>
+    </None>
     <None Include="World\ResourceItems\StonePick.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>StonePick</Name>
@@ -2198,6 +2214,10 @@
     <None Include="World\ResourceItems\CopperPick.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>CopperPick</Name>
+    </None>
+    <None Include="World\ResourceItems\Bamboo.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Bamboo</Name>
     </None>
     <None Include="World\ResourceItems\WoodPick.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -5193,6 +5213,20 @@
   <ItemGroup>
     <Compile Include="Particles\purple_puff.png">
       <Name>purple_puff</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\Plants\bamboo.png">
+      <Name>bamboo</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\Plants\bamboo-sprout.png">
+      <Name>bamboo-sprout</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

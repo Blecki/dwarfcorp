@@ -19,7 +19,7 @@ namespace DwarfCorp
 
         }
 
-        public Tree(string name, ComponentManager manager, Vector3 position, string asset, String seed, float treeSize) :
+        public Tree(string name, ComponentManager manager, Vector3 position, string asset, String seed, float treeSize, String WoodAsset = "") :
             base(manager, name, position, MathFunctions.Rand(-0.1f, 0.1f),
                 new Vector3(
                     (70.0f / 32.0f) * 0.75f * treeSize, // Ugh, need to load the asset to get it's size so we can apply this calculation.
@@ -39,22 +39,36 @@ namespace DwarfCorp
 
             // Can these be spawned when the tree dies rather than when it is created?
             // Todo: Check entity def for resource emitted. Stop auto generating wood types.
-            if (Library.CreateResourceType(Library.GetResourceType("Wood")).HasValue(out var wood))
+            if (String.IsNullOrEmpty(WoodAsset))
             {
-                wood.Name = String.Format("{0} Wood", Name.Split(' ').First());
-                wood.ShortName = wood.Name;
-
-                Library.AddResourceTypeIfNew(wood);
-
-                for (int i = 0; i < treeSize * 2; i++)
+                if (Library.CreateResourceType(Library.GetResourceType("Wood")).HasValue(out var wood))
                 {
-                    inventory.Resources.Add(new Inventory.InventoryItem()
+                    wood.Name = String.Format("{0} Wood", Name.Split(' ').First());
+                    wood.ShortName = wood.Name;
+
+                    Library.AddResourceTypeIfNew(wood);
+
+                    for (int i = 0; i < treeSize * 2; i++)
                     {
-                        MarkedForRestock = false,
-                        MarkedForUse = false,
-                        Resource = wood.Name
-                    });
+                        inventory.Resources.Add(new Inventory.InventoryItem()
+                        {
+                            MarkedForRestock = false,
+                            MarkedForUse = false,
+                            Resource = wood.Name
+                        });
+                    }
                 }
+            }
+            else
+            {
+                if (Library.GetResourceType(WoodAsset).HasValue(out var wood))
+                    for (var i = 0; i < treeSize * 2; ++i)
+                        inventory.Resources.Add(new Inventory.InventoryItem()
+                        {
+                            MarkedForRestock = false,
+                            MarkedForUse = false,
+                            Resource = WoodAsset
+                        });
             }
 
             for (int i = 0; i < treeSize * 2; i++)

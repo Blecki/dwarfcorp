@@ -1,0 +1,46 @@
+{
+  "Name": "BambooSprout",
+  "MoneyValue": 3.0,
+  "Description": "Grows Bamboo.",
+  "Category": "Seeds",
+  "GuiLayers": [
+    {
+      "Sheet": "resources",
+      "Tile": 39
+    }
+  ],
+  "Tags": [
+    "Plantable",
+    "Fruit",
+    "Flammable",
+    "AboveGroundPlant",
+    "Edible",
+    "RawFood",
+    "Brewable"
+  ],
+  "FoodContent": 50.0,
+  "CompositeLayers": [
+    {
+      "Asset": "newgui\\resources",
+      "FrameSize": "32, 32",
+      "Frame": "7, 4"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": null,
+    "EncrustingAsset": null,
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "ShortName": "Bamboo Sprout",
+  "PlantToGenerate": "Bamboo Sprout",
+  "CanCraft": false,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "Tea"
+}

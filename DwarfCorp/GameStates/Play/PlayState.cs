@@ -1709,7 +1709,7 @@ namespace DwarfCorp.GameStates
                             var buildInfo = (sender as Gui.Widgets.BuildCraftInfo);
                             if (buildInfo == null)
                                 return;
-                            sender.Parent.Hidden = true;
+                            sender.Hidden = true;
 
                             var craftableResource = data.ObjectAsCraftableResource();
 

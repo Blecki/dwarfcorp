@@ -23,7 +23,6 @@ namespace DwarfCorp
 
         public override void OnBegin(Object Arguments)
         {
-            World.UserInterface.VoxSelector.SelectionType = GetSelectionTypeBySelectionBoxValue(Command);
         }
 
         public override void OnEnd()
@@ -135,11 +134,6 @@ namespace DwarfCorp
                     }
                 }
             }
-            else if (Command.Contains("Kill Things"))
-            { 
-                foreach (var comp in World.EnumerateIntersectingObjects(VoxelHelpers.GetVoxelBoundingBox(refs), CollisionType.Both).Where(c => c.IsRoot()))
-                    comp.Die();
-            }
             else if (Command.Contains("Disease"))
             { 
                 foreach (var creature in World.EnumerateIntersectingObjects(VoxelHelpers.GetVoxelBoundingBox(refs), CollisionType.Both).OfType<Creature>())
@@ -238,8 +232,18 @@ namespace DwarfCorp
                 return;
             }
 
-            World.UserInterface.VoxSelector.Enabled = true;
-            World.UserInterface.BodySelector.Enabled = false;
+            if (Command == "Kill Things")
+            {
+                World.UserInterface.BodySelector.Enabled = true;
+                World.UserInterface.VoxSelector.Enabled = false;
+            }
+            else
+            {
+                World.UserInterface.VoxSelector.SelectionType = GetSelectionTypeBySelectionBoxValue(Command);
+                World.UserInterface.VoxSelector.Enabled = true;
+                World.UserInterface.BodySelector.Enabled = false;
+            }
+
             World.UserInterface.SetMouse(World.UserInterface.MousePointer);
 
             if (Command == "Repulse")
@@ -270,7 +274,12 @@ namespace DwarfCorp
 
         public override void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)
         {
-            
+            if (Command.Contains("Kill Things"))
+            {
+                foreach (var root in bodies.Where(c => c.IsRoot()))
+                    root.Die();
+            }
+
         }
     }
 

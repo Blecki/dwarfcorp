@@ -1,46 +1,36 @@
 {
-  "Name": "Copper",
-  "MoneyValue": 100.0,
+  "Name": "GoldOre",
+  "MoneyValue": 500.0,
   "MaterialStrength": 80.0,
   "Description": "Needed to build things.",
-  "Category": "Metal",
+  "Category": "Ore",
   "GuiLayers": [
     {
       "Sheet": "resources",
-      "Tile": 54
+      "Tile": 0
     }
   ],
   "Tags": [
-    "Metal",
-    "Material",
-    "HardMaterial",
-    "Craft",
-    "Copper"
+    "CopperOre"
   ],
   "FoodContent": 0.0,
   "CompositeLayers": [
     {
       "Asset": "newgui\\resources",
       "FrameSize": "32, 32",
-      "Frame": "6, 6"
+      "Frame": "0, 0"
     }
   ],
   "TrinketData": {
-    "BaseAsset": "newgui\\trinkets-cast",
-    "EncrustingAsset": "newgui\\trinkets-cast-insets",
+    "BaseAsset": null,
+    "EncrustingAsset": null,
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Copper",
+  "ShortName": "Gold Ore",
   "PlantToGenerate": null,
-  "CanCraft": true,
-  "CraftPrerequisites": [
-    {
-      "Type": "CopperOre",
-      "Count": 1
-    }
-  ],
-
+  "CanCraft": false,
+  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,

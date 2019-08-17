@@ -1,13 +1,13 @@
 {
   "Name": "Gold",
   "MaterialStrength": 15.0,
-  "MoneyValue": 500.0,
+  "MoneyValue": 800.0,
   "Description": "Shiny!",
   "Category": "Metal",
   "GuiLayers": [
     {
       "Sheet": "resources",
-      "Tile": 0
+      "Tile": 46
     }
   ],
   "Tags": [
@@ -21,7 +21,7 @@
     {
       "Asset": "newgui\\resources",
       "FrameSize": "32, 32",
-      "Frame": "0, 0"
+      "Frame": "6, 5"
     }
   ],
   "TrinketData": {
@@ -32,8 +32,13 @@
   },
   "ShortName": "Gold",
   "PlantToGenerate": null,
-  "CanCraft": false,
-  "CraftPrerequisites": [],
+  "CanCraft": true,
+  "CraftPrerequisites": [
+    {
+      "Type": "GoldOre",
+      "Count": 1
+    }
+  ],
   "Tint": [
     255,
     255,
