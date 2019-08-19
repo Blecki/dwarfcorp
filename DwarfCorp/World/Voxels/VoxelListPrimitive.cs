@@ -434,7 +434,7 @@ namespace DwarfCorp
 
                 var rampOffset = Vector3.Zero;
                 if (V.IsExplored && V.Type.CanRamp && ShouldRamp(voxelVertex, V.RampType))
-                    rampOffset = new Vector3(0, -V.Type.RampSize, 0);
+                    rampOffset = new Vector3(0, -0.5f, 0);
 
                 var baseWorldPosition = V.WorldPosition + vertex.Position + rampOffset;
                 var noise = VertexNoise.GetNoiseVectorFromRepeatingTexture(baseWorldPosition);
@@ -492,7 +492,7 @@ namespace DwarfCorp
 
                 var rampOffset = Vector3.Zero;
                 if (V.IsExplored && V.Type.CanRamp && ShouldRamp(voxelVertex, V.RampType))
-                    rampOffset = new Vector3(0, -V.Type.RampSize, 0);
+                    rampOffset = new Vector3(0, -0.5f, 0);
 
                 var worldPosition = V.WorldPosition + vertex.Position + rampOffset;
                 //worldPosition += VertexNoise.GetNoiseVectorFromRepeatingTexture(worldPosition);

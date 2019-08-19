@@ -13,7 +13,6 @@
   "StartingHealth": 60.0,
   "ProbabilityOfRelease": 0.0,
   "CanRamp": false,
-  "RampSize": 0.0,
   "IsBuildable": true,
   "ParticleType": "stone_particle",
   "EmitsLight": false,

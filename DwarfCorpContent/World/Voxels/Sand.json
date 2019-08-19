@@ -12,7 +12,6 @@
   "StartingHealth": 30.0,
   "ProbabilityOfRelease": 1.0,
   "CanRamp": true,
-  "RampSize": 0.5,
   "IsBuildable": true,
   "ParticleType": "sand_particle",
   "EmitsLight": false,

@@ -16,7 +16,6 @@
   "StartingHealth": 1.0,
   "ProbabilityOfRelease": 0.0,
   "CanRamp": false,
-  "RampSize": 0.0,
   "IsBuildable": false,
   "ParticleType": "star_particle",
   "EmitsLight": true,

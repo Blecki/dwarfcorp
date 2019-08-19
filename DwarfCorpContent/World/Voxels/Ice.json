@@ -12,7 +12,6 @@
   "StartingHealth": 40.0,
   "ProbabilityOfRelease": 1.0,
   "CanRamp": false,
-  "RampSize": 0.0,
   "IsBuildable": true,
   "ParticleType": "snow_particle",
   "EmitsLight": false,

@@ -35,7 +35,6 @@ namespace DwarfCorp
         public float StartingHealth = 0.0f;
         public float ProbabilityOfRelease = 0.0f;
         public bool CanRamp = false;
-        public float RampSize = 0.0f;
         public bool IsBuildable = false;
         public string ParticleType = "puff";
         public bool IsFlammable = false;
