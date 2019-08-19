@@ -11,9 +11,10 @@ namespace DwarfCorp
 {
     public class CreatureAI : GameComponent
     {
-        public Task CurrentTask = null; // Todo: MaybeNull
+        public MaybeNull<Task> CurrentTask = null; // Todo: MaybeNull
         public List<Task> Tasks = new List<Task>();
         [JsonIgnore] protected MaybeNull<Act> CurrentAct = null;
+
         public BoundingBox PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue), new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
         public EnemySensor Sensor { get; set; } // Todo: Don't serialize this.
         public CreatureMovement Movement { get; set; }
@@ -173,48 +174,49 @@ namespace DwarfCorp
         /// <summary> Looks for any tasks with higher priority than the current task. Cancel the current task and do that one instead. </summary>
         public void PreEmptTasks()
         {
-            if (CurrentTask == null) return;
-
-            Task newTask = null;
-
-            _preEmptTimer.Update(DwarfTime.LastTime);
-
-            if (_preEmptTimer.HasTriggered)
+            if (CurrentTask.HasValue(out var currentTask))
             {
-                var inventory = Creature.Inventory;
-                if (inventory != null)
+                Task newTask = null;
+
+                _preEmptTimer.Update(DwarfTime.LastTime);
+
+                if (_preEmptTimer.HasTriggered)
                 {
-                    var applicablePotions = inventory.Resources.Where(resource => !resource.MarkedForRestock).
-                        Select(resource => Library.GetResourceType(resource.Resource)).
-                        Where(resource => resource.HasValue(out var res) 
-                            && res.Tags.Contains(Resource.ResourceTags.Potion) 
-                            && res.PotionType != null
-                            && res.PotionType.ShouldDrink(Creature));
-                    if (applicablePotions.FirstOrDefault().HasValue(out var potion))
+                    var inventory = Creature.Inventory;
+                    if (inventory != null)
                     {
-                        potion.PotionType.Drink(Creature);
-                        inventory.Remove(new ResourceAmount(potion), Inventory.RestockType.Any);
+                        var applicablePotions = inventory.Resources.Where(resource => !resource.MarkedForRestock).
+                            Select(resource => Library.GetResourceType(resource.Resource)).
+                            Where(resource => resource.HasValue(out var res)
+                                && res.Tags.Contains(Resource.ResourceTags.Potion)
+                                && res.PotionType != null
+                                && res.PotionType.ShouldDrink(Creature));
+                        if (applicablePotions.FirstOrDefault().HasValue(out var potion))
+                        {
+                            potion.PotionType.Drink(Creature);
+                            inventory.Remove(new ResourceAmount(potion), Inventory.RestockType.Any);
+                        }
+                    }
+
+                    foreach (Task task in Tasks)
+                    {
+                        if (task.Priority > currentTask.Priority && task.IsFeasible(Creature) == Feasibility.Feasible)
+                        {
+                            newTask = task;
+                            break;
+                        }
                     }
                 }
 
-                foreach (Task task in Tasks)
+                if (_preEmptTimer.HasTriggered && newTask == null && Faction == World.PlayerFaction && !Stats.IsOnStrike)
+                    newTask = World.TaskManager.GetBestTask(this, (int)currentTask.Priority);
+
+                if (newTask != null)
                 {
-                    if (task.Priority > CurrentTask.Priority && task.IsFeasible(Creature) == Feasibility.Feasible)
-                    {
-                        newTask = task;
-                        break;
-                    }
+                    if (currentTask.ShouldRetry(Creature))
+                        ReassignCurrentTask();
+                    ChangeTask(newTask);
                 }
-            }
-
-            if (_preEmptTimer.HasTriggered && newTask == null && Faction == World.PlayerFaction && !Stats.IsOnStrike)
-                newTask = World.TaskManager.GetBestTask(this, (int)CurrentTask.Priority);
-
-            if (newTask != null)
-            {
-                if (CurrentTask.ShouldRetry(Creature))
-                    ReassignCurrentTask();
-                ChangeTask(newTask);
             }
         }
 
@@ -251,16 +253,15 @@ namespace DwarfCorp
 
         public void HandleReproduction()
         {
+            if (CurrentTask.HasValue()) return;
             if (!Creature.Stats.Species.CanReproduce) return;
             if (Creature.IsPregnant) return;
             if (!MathFunctions.RandEvent(0.0002f)) return;
-            if (CurrentTask != null) return;
-            IEnumerable<CreatureAI> potentialMates =
-                Faction.Minions.Where(minion => minion != this && Mating.CanMate(minion.Creature, this.Creature));
+
             CreatureAI closestMate = null;
             float closestDist = float.MaxValue;
 
-            foreach (var ai in potentialMates)
+            foreach (var ai in Faction.Minions.Where(minion => minion != this && Mating.CanMate(minion.Creature, this.Creature)))
             {
                 var dist = (ai.Position - Position).LengthSquared();
                 if (!(dist < closestDist)) continue;
@@ -287,14 +288,10 @@ namespace DwarfCorp
 
         public void CancelCurrentTask()
         {
-            if (CurrentTask != null && Faction == World.PlayerFaction)
-            {
+            if (CurrentTask.HasValue() && Faction == World.PlayerFaction)
                 World.TaskManager.CancelTask(CurrentTask);
-            }
             else
-            {
                 SetCurrentTaskNull();
-            }
         }
 
 
@@ -350,33 +347,20 @@ namespace DwarfCorp
             // Try to find food if we are hungry. Wait - doesn't this rob the player?
             if (Stats.Hunger.IsDissatisfied() && World.CountResourcesWithTag(Resource.ResourceTags.Edible) > 0)
             {
-                Task toReturn = new SatisfyHungerTask();
+                var eatTask = new SatisfyHungerTask();
                 if (Stats.Hunger.IsCritical())
-                    toReturn.Priority = TaskPriority.Urgent;
-                if (!Tasks.Contains(toReturn) && CurrentTask != toReturn)
-                    AssignTask(toReturn);
+                    eatTask.Priority = TaskPriority.Urgent;
+                if (!Tasks.Contains(eatTask) && CurrentTask.HasValue(out var task) && task != eatTask) // Really should just leave the current task in the task list.
+                    AssignTask(eatTask);
             }
 
-            if (CurrentTask == null) // We need something to do.
-            {
-                    var goal = GetEasiestTask(Tasks);
-
-                    if (goal != null)
-                        ChangeTask(goal);
-                    else
-                    {
-                        var newTask = ActOnIdle();
-                        if (newTask != null)
-                            ChangeTask(newTask);
-                    }
-            }
-            else
+            if (CurrentTask.HasValue(out var currentTask))
             {
                 if (!CurrentAct.HasValue()) // Should be impossible to have a current task and no current act.
                 {
                     // Try and recover the correct act.
                     // <blecki> I always run with a breakpoint set here... just in case.
-                    ChangeAct(CurrentTask.CreateScript(Creature));
+                    ChangeAct(currentTask.CreateScript(Creature));
 
                     // This is a bad situation!
                     if (!CurrentAct.HasValue())
@@ -388,17 +372,17 @@ namespace DwarfCorp
                     var status = currentAct.Tick();
                     bool retried = false;
 
-                    if (CurrentAct.HasValue(out Act newCurrentAct) && CurrentTask != null)
+                    if (CurrentAct.HasValue(out Act newCurrentAct) && currentTask != null)
                     {
                         if (status == Act.Status.Fail)
                         {
                             LastFailedAct = newCurrentAct.Name;
 
-                            if (!FailedTasks.Any(task => task.TaskFailure.Equals(CurrentTask)))
-                                FailedTasks.Add(new FailedTask() { TaskFailure = CurrentTask, FailedTime = World.Time.CurrentDate });
+                            if (!FailedTasks.Any(task => task.TaskFailure.Equals(currentTask)))
+                                FailedTasks.Add(new FailedTask() { TaskFailure = currentTask, FailedTime = World.Time.CurrentDate });
 
-                            if (CurrentTask.ShouldRetry(Creature))
-                                if (!Tasks.Contains(CurrentTask))
+                            if (currentTask.ShouldRetry(Creature))
+                                if (!Tasks.Contains(currentTask))
                                 {
                                     ReassignCurrentTask();
                                     retried = true;
@@ -406,10 +390,23 @@ namespace DwarfCorp
                         }
                     }
 
-                    if (CurrentTask != null && CurrentTask.IsComplete(World))
+                    if (currentTask != null && currentTask.IsComplete(World))
                         ChangeTask(null);
                     else if (status != Act.Status.Running && !retried)
                         ChangeTask(null);
+                }
+            }
+            else
+            {
+                var goal = GetEasiestTask(Tasks);
+
+                if (goal != null)
+                    ChangeTask(goal);
+                else
+                {
+                    var newTask = ActOnIdle();
+                    if (newTask != null)
+                        ChangeTask(newTask);
                 }
             }
 
@@ -538,8 +535,8 @@ namespace DwarfCorp
                           ". Hunger: " + (100 - Stats.Hunger.Percentage) + ". Energy: " + Stats.Energy.Percentage +
                           "\n";
 
-            if (CurrentTask != null)
-                desc += "    Task: " + CurrentTask.Name;
+            if (CurrentTask.HasValue(out var currentTask))
+                desc += "    Task: " + currentTask.Name;
 
             if (CurrentAct.HasValue(out Act currentAct))
             {
@@ -656,12 +653,15 @@ namespace DwarfCorp
         public void ChangeTask(Task task)
         {
             Blackboard.Erase("NoPath");
-            if (CurrentTask != null)
-                CurrentTask.OnUnAssign(this);
+
+            if (CurrentTask.HasValue(out var previousTask))
+                previousTask.OnUnAssign(this);
+
             CurrentTask = task;
-            if (CurrentTask != null)
+
+            if (CurrentTask.HasValue(out var newTask))
             {
-                ChangeAct(CurrentTask.CreateScript(Creature));
+                ChangeAct(newTask.CreateScript(Creature));
 
                 if (Tasks.Contains(task))
                     Tasks.Remove(task);
@@ -669,16 +669,16 @@ namespace DwarfCorp
                     task.OnAssign(this);
             }
             else
-            {
                 ChangeAct(null);
-            }
         }
 
         public void ReassignCurrentTask()
         {
-            var task = CurrentTask;
-            ChangeTask(null);
-            AssignTask(task);
+            if (CurrentTask.HasValue(out var task))
+            {
+                ChangeTask(null);
+                AssignTask(task);
+            }
         }
 
         public int CountFeasibleTasks(TaskPriority minPriority)
@@ -688,31 +688,26 @@ namespace DwarfCorp
 
         public override void Die()
         {
-            if (CurrentTask != null)
+            Cleanup();
+            base.Die();
+        }
+
+        private void Cleanup()
+        {
+            if (CurrentTask.HasValue(out var currentTask))
             {
-                if (CurrentTask.ReassignOnDeath && Faction == World.PlayerFaction)
-                    World.TaskManager.AddTask(CurrentTask);
+                if (currentTask.ReassignOnDeath && Faction == World.PlayerFaction)
+                    World.TaskManager.AddTask(currentTask);
                 ChangeTask(null);
             }
+
             if (PlanSubscriber != null)
-            {
                 PlanSubscriber.Service.RemoveSubscriber(PlanSubscriber);
-            }
-            base.Die();
         }
 
         public override void Delete()
         {
-            if (CurrentTask != null)
-            {
-                if (CurrentTask.ReassignOnDeath && Faction == World.PlayerFaction)
-                    World.TaskManager.AddTask(CurrentTask);
-                ChangeTask(null);
-            }
-            if (PlanSubscriber != null)
-            {
-                PlanSubscriber.Service.RemoveSubscriber(PlanSubscriber);
-            }
+            Cleanup();
             base.Delete();
         }
 
@@ -761,7 +756,7 @@ namespace DwarfCorp
             cMem.SetValue("$personality", new Yarn.Value(personalities[myRandom.Next(0, personalities.Length)]));
             cMem.SetValue("$motto", new Yarn.Value(Employee.World.PlayerFaction.Economy.Information.Motto));
             cMem.SetValue("$company_name", new Yarn.Value(Employee.World.PlayerFaction.Economy.Information.Name));
-            cMem.SetValue("$employee_task", new Yarn.Value(Employee.CurrentTask == null ? "Nothing" : Employee.CurrentTask.Name));
+            cMem.SetValue("$employee_task", new Yarn.Value(Employee.CurrentTask.HasValue(out var currentTask) ? "Nothing" : currentTask.Name));
             cMem.SetValue("$employee_class", new Yarn.Value(Employee.Stats.CurrentClass.Name));
             var injuries = TextGenerator.GetListString(Employee.Creature.Stats.Buffs.OfType<Disease>().Select(disease => disease.Name));
             if (injuries == "")

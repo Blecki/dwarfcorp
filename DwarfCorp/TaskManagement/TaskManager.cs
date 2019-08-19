@@ -46,14 +46,17 @@ namespace DwarfCorp
             }
         }
 
-        public void CancelTask(Task Task)
+        public void CancelTask(MaybeNull<Task> Task)
         {
-            var localAssigneeList = new List<CreatureAI>(Task.AssignedCreatures);
-            foreach (var actor in localAssigneeList)
-                actor.RemoveTask(Task);
-            Tasks.RemoveAll(t => Object.ReferenceEquals(t, Task));
-            Task.OnDequeued(World);
-            Task.OnCancelled(this, World);
+            if (Task.HasValue(out var task))
+            {
+                var localAssigneeList = new List<CreatureAI>(task.AssignedCreatures);
+                foreach (var actor in localAssigneeList)
+                    actor.RemoveTask(task);
+                Tasks.RemoveAll(t => Object.ReferenceEquals(t, task));
+                task.OnDequeued(World);
+                task.OnCancelled(this, World);
+            }
         }
 
         public Task GetBestTask(CreatureAI creatureAI, int minPriority=-1)

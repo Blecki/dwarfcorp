@@ -27,5 +27,10 @@ namespace DwarfCorp
         {
             return _Value != null;
         }
+
+        public bool ReferenceEquals(MaybeNull<T> Other)
+        {
+            return Object.ReferenceEquals(_Value, Other._Value);
+        }
     }
 }

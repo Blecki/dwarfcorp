@@ -8,7 +8,7 @@
   "HasTransitionTextures": false,
   "TransitionTiles": null,
   "ReleasesResource": true,
-  "ResourceToRelease": "Gold",
+  "ResourceToRelease": "GoldOre",
   "StartingHealth": 200.0,
   "ProbabilityOfRelease": 1.0,
   "CanRamp": false,

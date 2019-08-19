@@ -16,6 +16,7 @@ namespace TodoList
     {
         public UInt32 id = 0;
         [DefaultSwitch(0), GreedyArgument] public String search = "";
+        public UInt32 p = 0;
         public bool all = false;
         public String tag = "";        
 
@@ -49,7 +50,7 @@ namespace TodoList
             else if (tagMatch != null)
                 matcher = tagMatch;
 
-            var completeList = Presentation.BuildOutput(entry, matcher, 0, all).Where(l => l.Depth >= 0).ToList();
+            var completeList = Presentation.BuildOutput(entry, matcher, 0, all).Where(l => l.Depth >= 0 && l.Entry.Priority >= p).ToList();
             var screenHeight = Console.WindowHeight - 4;
 
             for (var row = 0; row < completeList.Count; row += screenHeight)

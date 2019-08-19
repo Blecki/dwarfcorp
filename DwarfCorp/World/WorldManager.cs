@@ -127,8 +127,6 @@ namespace DwarfCorp
 
         public PlayState UserInterface;
 
-        private QueuedAnnouncement SleepPrompt = null;
-
         // event that is called when the world is done loading
         public delegate void OnLoaded();
         public event OnLoaded OnLoadedEvent;
@@ -271,7 +269,7 @@ namespace DwarfCorp
                     if (minion.Stats.IsAsleep)
                         continue;
 
-                    if (minion.CurrentTask == null)
+                    if (!minion.CurrentTask.HasValue())
                         continue;
 
                     if (minion.Stats.IsTaskAllowed(TaskCategory.Dig))

@@ -15,7 +15,7 @@
         public override bool CanBeAppliedTo(GameComponent Entity, WorldManager World)
         {
             if (Entity.GetComponent<CreatureAI>().HasValue(out var creature))
-                return World.PlayerFaction.Minions.Contains(creature) && creature.CurrentTask != null;
+                return World.PlayerFaction.Minions.Contains(creature) && creature.CurrentTask.HasValue();
             else
                 return false;
         }

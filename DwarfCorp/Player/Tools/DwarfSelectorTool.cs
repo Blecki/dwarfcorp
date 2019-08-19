@@ -65,15 +65,20 @@ namespace DwarfCorp
             foreach(CreatureAI minion in World.PersistentData.SelectedMinions)
             {
                 if (minion.Creature.Stats.IsAsleep) continue;
-                if(minion.CurrentTask != null)
-                    minion.AssignTask(minion.CurrentTask);
+
+                if(minion.CurrentTask.HasValue(out var currentTask))
+                    minion.AssignTask(currentTask); // Make sure the minion keeps the current task - avoided if the task stays in their queue in the first place!
 
                 var above = VoxelHelpers.GetVoxelAbove(vox);
-                minion.Blackboard.SetData("MoveTarget", above);
+                if (above.IsValid)
+                {
+                    minion.Blackboard.SetData("MoveTarget", above);
 
-                minion.ChangeTask(new GoToNamedVoxelAct("MoveTarget", PlanAct.PlanType.Adjacent, minion).AsTask());
-                minion.CurrentTask.AutoRetry = false;
-                minion.CurrentTask.Priority = TaskPriority.Urgent;
+                    var moveTask = new GoToNamedVoxelAct("MoveTarget", PlanAct.PlanType.Adjacent, minion).AsTask();
+                    moveTask.AutoRetry = false;
+                    moveTask.Priority = TaskPriority.Urgent;
+                    minion.ChangeTask(moveTask);
+                }
             }
             OnConfirm(World.PersistentData.SelectedMinions);
 

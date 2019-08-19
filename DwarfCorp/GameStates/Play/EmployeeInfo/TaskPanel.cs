@@ -116,22 +116,19 @@ namespace DwarfCorp.Play.EmployeeInfo
 
                 Bio.Text = Employee.Biography;
 
-                if (Employee.CurrentTask != null)
+                if (Employee.CurrentTask.HasValue(out var currentTask))
                 {
-                    TaskLabel.Text = "Current Task: " + Employee.CurrentTask.Name;
+                    TaskLabel.Text = "Current Task: " + currentTask.Name;
                     CancelTask.TextColor = new Vector4(0, 0, 0, 1);
                     CancelTask.Invalidate();
                     CancelTask.OnClick = (sender, args) =>
                     {
-                        if (Employee.CurrentTask != null)
-                        {
-                            Employee.CancelCurrentTask();
-                            TaskLabel.Text = "No tasks";
-                            TaskLabel.Invalidate();
-                            CancelTask.OnClick = null;
-                            CancelTask.TextColor = new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
-                            CancelTask.Invalidate();
-                        }
+                        Employee.CancelCurrentTask();
+                        TaskLabel.Text = "No tasks";
+                        TaskLabel.Invalidate();
+                        CancelTask.OnClick = null;
+                        CancelTask.TextColor = new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
+                        CancelTask.Invalidate();
                     };
                 }
                 else

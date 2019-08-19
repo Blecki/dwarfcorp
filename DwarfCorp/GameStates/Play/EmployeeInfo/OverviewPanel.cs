@@ -186,7 +186,8 @@ namespace DwarfCorp.Play.EmployeeInfo
                     else
                         idx--;
 
-                    Employee = Employee.Faction.Minions[Math.Abs(idx) % Employee.Faction.Minions.Count];
+                    if (idx == -1) idx = Employee.Faction.Minions.Count - 1;
+                    Employee = Employee.Faction.Minions[idx];
                     Employee.World.PersistentData.SelectedMinions = new List<CreatureAI>() { Employee };
                 }
             });
@@ -212,7 +213,8 @@ namespace DwarfCorp.Play.EmployeeInfo
                     else
                         idx++;
 
-                    Employee = Employee.Faction.Minions[idx % Employee.Faction.Minions.Count];
+                    if (idx >= Employee.Faction.Minions.Count) idx = 0;
+                    Employee = Employee.Faction.Minions[idx];
                     Employee.World.PersistentData.SelectedMinions = new List<CreatureAI>() { Employee };
                 }
             });

@@ -326,7 +326,7 @@ namespace DwarfCorp
 
         private void AssignGeneratedTask(Task Task)
         {
-            if (!Tasks.Contains(Task) && CurrentTask != Task) // Is this redundant?
+            if (!Tasks.Contains(Task) && !CurrentTask.ReferenceEquals(Task)) // Is this redundant?
                 AssignTask(Task);
         }
 
@@ -352,12 +352,6 @@ namespace DwarfCorp
 
             DeleteBadTasks();
             PreEmptTasks();
-
-            if (CurrentTask != null)
-            {
-                Stats.Boredom.CurrentValue -= (float)(CurrentTask.BoredomIncrease * gameTime.ElapsedGameTime.TotalSeconds);
-                Stats.Energy.CurrentValue += (float)(CurrentTask.EnergyDecrease * gameTime.ElapsedGameTime.TotalSeconds);
-            }
 
             // Freak out if on fire!
             if (GetRoot().GetComponent<Flammable>().HasValue(out var flames) && flames.IsOnFire)
@@ -392,12 +386,55 @@ namespace DwarfCorp
             if (Stats.Boredom.IsDissatisfied() && !Tasks.Any(task => task.BoredomIncrease < 0) && ChooseIdleTask(true).HasValue(out var idleTask))
                 AssignGeneratedTask(idleTask);
 
-            // Dwarves periodically empty their backpacks. Needs tuned?
-            //restockTimer.Update(DwarfTime.LastTime);
-            //if (restockTimer.HasTriggered && Creature.Inventory.Resources.Count > 10)
-            //    Creature.RestockAllImmediately();
+            if (CurrentTask.HasValue(out var currentTask))
+            {
+                bool processAct = true;
 
-            if (CurrentTask == null) // We need something to do.
+                Stats.Boredom.CurrentValue -= (float)(currentTask.BoredomIncrease * gameTime.ElapsedGameTime.TotalSeconds);
+                Stats.Energy.CurrentValue += (float)(currentTask.EnergyDecrease * gameTime.ElapsedGameTime.TotalSeconds);
+           
+                if (!CurrentAct.HasValue()) // Should be impossible to have a current task and no current act.
+                {
+                    // Try and recover the correct act.
+                    // <blecki> I always run with a breakpoint set here... just in case.
+                    ChangeAct(currentTask.CreateScript(Creature));
+
+                    // This is a bad situation!
+                    if (!CurrentAct.HasValue())
+                    {
+                        ChangeTask(null);
+                        processAct = false;
+                    }
+                }
+
+                if (processAct && CurrentAct.HasValue(out Act currentAct))
+                {
+                    var status = currentAct.Tick();
+                    var retried = false;
+
+                    if (CurrentAct.HasValue(out Act newCurrentAct))
+                        if (status == Act.Status.Fail)
+                        {
+                            LastFailedAct = newCurrentAct.Name;
+
+                            if (!FailedTasks.Any(task => task.TaskFailure.Equals(currentTask)))
+                                FailedTasks.Add(new FailedTask() { TaskFailure = currentTask, FailedTime = World.Time.CurrentDate });
+
+                            if (currentTask.ShouldRetry(Creature))
+                                if (!Tasks.Contains(currentTask))
+                                {
+                                    ReassignCurrentTask();
+                                    retried = true;
+                                }
+                        }
+
+                    if (currentTask.IsComplete(World))
+                        ChangeTask(null);
+                    else if (status != Act.Status.Running && !retried)
+                        ChangeTask(null);
+                }
+            }
+            else
             {
                 if (Stats.Happiness.IsSatisfied()) // We're happy, so make sure we aren't on strike.
                 {
@@ -469,50 +506,7 @@ namespace DwarfCorp
                 }
                 else
                     ChangeTask(ActOnIdle());
-            }
-            else
-            {
-                if (!CurrentAct.HasValue()) // Should be impossible to have a current task and no current act.
-                {
-                    // Try and recover the correct act.
-                    // <blecki> I always run with a breakpoint set here... just in case.
-                    ChangeAct(CurrentTask.CreateScript(Creature));
 
-                    // This is a bad situation!
-                    if (!CurrentAct.HasValue())
-                        ChangeTask(null);
-                }
-
-                if (CurrentAct.HasValue(out Act currentAct))
-                {
-                    var status = currentAct.Tick();
-                    bool retried = false;
-
-                    if (CurrentAct.HasValue(out Act newCurrentAct) && CurrentTask != null)
-                    {
-                        if (status == Act.Status.Fail)
-                        {
-                            LastFailedAct = newCurrentAct.Name;
-
-                            if (!FailedTasks.Any(task => task.TaskFailure.Equals(CurrentTask)))
-                                FailedTasks.Add(new FailedTask() { TaskFailure = CurrentTask, FailedTime = World.Time.CurrentDate });
-
-                            if (CurrentTask.ShouldRetry(Creature))
-                            {
-                                if (!Tasks.Contains(CurrentTask))
-                                {
-                                    ReassignCurrentTask();
-                                    retried = true;
-                                }
-                            }
-                        }
-                    }
-
-                    if (CurrentTask != null && CurrentTask.IsComplete(World))
-                        ChangeTask(null);
-                    else if (status != Act.Status.Running && !retried)
-                        ChangeTask(null);
-                }
             }
 
             // With a small probability, the creature will drown if its under water.

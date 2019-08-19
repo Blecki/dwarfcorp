@@ -750,8 +750,8 @@ namespace DwarfCorp.GameStates
                         if (task.IsFeasible(creature.Creature) == Feasibility.Feasible)
                             task.Render(gameTime);
 
-                    if (creature.CurrentTask != null)
-                        creature.CurrentTask.Render(gameTime);
+                    if (creature.CurrentTask.HasValue(out var currentTask))
+                        currentTask.Render(gameTime);
                 }
 
                 DwarfGame.SpriteBatch.Begin();

@@ -31,11 +31,11 @@ namespace DwarfCorp
 
         public void Update(DateTime currentDate, WorldManager world)
         {
-            if (GameSettings.Default.DisableWeather)
-                return;
-
             CurrentWind = new Vector3((float)Math.Sin(world.Time.GetTotalSeconds() * 0.001f), 0, (float)Math.Cos(world.Time.GetTotalSeconds() * 0.0015f));
             CurrentWind.Normalize();
+
+            if (GameSettings.Default.DisableWeather)
+                return;
 
             foreach (Storm storm in Forecast)
             {

@@ -20,7 +20,7 @@ namespace TodoList
     {
         public UInt32 ID = 0;
         public String Status = "-";
-        public UInt32 Priority = 0;
+        public UInt32 Priority = 0x01;
         public String Description = "ROOT";
         public List<String> Tags = new List<String>();
         public List<Entry> Children = new List<Entry>();

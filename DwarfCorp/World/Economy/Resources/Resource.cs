@@ -103,6 +103,7 @@ namespace DwarfCorp
             Copper,
             IronOre,
             Iron,
+            GoldOre,
             Tool,
             Pick,
             Peppermint
