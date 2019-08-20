@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     public class CompoundTask : Task
     {
-        private List<Task> SubTasks = new List<Task>();
-        private String NameFormat;
+        [JsonProperty] private List<Task> SubTasks = new List<Task>();
+        [JsonProperty] private String NameFormat;
 
         public CompoundTask(String Name, TaskCategory Category, TaskPriority Priority)
         {
@@ -23,11 +24,13 @@ namespace DwarfCorp
         public void AddSubTask(Task Task)
         {
             SubTasks.Add(Task);
+            Category = Task.Category;
         }
 
         public void AddSubTasks(IEnumerable<Task> Tasks)
         {
             SubTasks.AddRange(Tasks);
+            Category = SubTasks[0].Category;
         }
 
         public override MaybeNull<Act> CreateScript(Creature creature)

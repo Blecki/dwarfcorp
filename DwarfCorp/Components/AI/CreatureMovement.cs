@@ -595,7 +595,7 @@ namespace DwarfCorp
 
             // If the creature is not in water and is not standing on ground,
             // it can fall one voxel downward in free space.
-            if (!inWater && !standingOnGround)
+            if (!inWater && !standingOnGround && Storage.Neighborhood[1,0,1].IsValid)
             {
                 yield return (new MoveAction
                 {
@@ -613,51 +613,31 @@ namespace DwarfCorp
                 // This monstrosity is unrolling an inner loop so that we don't have to allocate an array or
                 // enumerators.
                 var wall = VoxelHandle.InvalidHandle;
-                var n211 = Storage.Neighborhood[2, 1, 1];
-                if (n211.IsValid && !n211.IsEmpty)
-                {
-                    wall = n211;
-                }
-                else
-                {
-                    var n011 = Storage.Neighborhood[0, 1, 1];
-                    if (n011.IsValid && !n011.IsEmpty)
-                    {
-                        wall = n011;
-                    }
-                    else
-                    {
-                        var n112 = Storage.Neighborhood[1, 1, 2];
-                        if (n112.IsValid && !n112.IsEmpty)
-                        {
-                            wall = n112;
-                        }
-                        else
-                        {
-                            var n110 = Storage.Neighborhood[1, 1, 0];
-                            if (n110.IsValid && !n110.IsEmpty)
-                            {
-                                wall = n110;
-                            }
-                        }
-                    }
-                }
-
+                if (Storage.Neighborhood[2, 1, 1].IsValid && !Storage.Neighborhood[2, 1, 1].IsEmpty)
+                    wall = Storage.Neighborhood[2, 1, 1];
+                else if (Storage.Neighborhood[0, 1, 1].IsValid && !Storage.Neighborhood[0, 1, 1].IsEmpty)
+                    wall = Storage.Neighborhood[0, 1, 1];
+                else if (Storage.Neighborhood[1, 1, 2].IsValid && !Storage.Neighborhood[1, 1, 2].IsEmpty)
+                    wall = Storage.Neighborhood[1, 1, 2];
+                else if (Storage.Neighborhood[1, 1, 0].IsValid && !Storage.Neighborhood[1, 1, 0].IsEmpty)
+                    wall = Storage.Neighborhood[1, 1, 0];
+                    
                 if (wall.IsValid)
                 {
                     isClimbing = true;
-                    yield return(new MoveAction
-                    {
-                        SourceState = state,
-                        Diff = new Vector3(1, 2, 1),
-                        MoveType = MoveType.ClimbWalls,
-                        ActionVoxel = wall,
-                        CostMultiplier = 1.0f,
-                        DestinationVoxel = Storage.Neighborhood[1,2,1]
-                    });
 
-                    if (!standingOnGround)
-                    {
+                    if (Storage.Neighborhood[1, 2, 1].IsValid)
+                        yield return (new MoveAction
+                        {
+                            SourceState = state,
+                            Diff = new Vector3(1, 2, 1),
+                            MoveType = MoveType.ClimbWalls,
+                            ActionVoxel = wall,
+                            CostMultiplier = 1.0f,
+                            DestinationVoxel = Storage.Neighborhood[1, 2, 1]
+                        });
+
+                    if (!standingOnGround && Storage.Neighborhood[1, 0, 1].IsValid)
                         yield return(new MoveAction
                         {
                             SourceState = state,
@@ -667,7 +647,6 @@ namespace DwarfCorp
                             CostMultiplier = 1.0f,
                             DestinationVoxel = Storage.Neighborhood[1,0,1]
                         });
-                    }
                 }
             }
 

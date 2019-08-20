@@ -4063,6 +4063,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>GoldBlock</Name>
     </None>
+    <None Include="World\Voxels\Candy.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Candy</Name>
+    </None>
     <None Include="World\Voxels\IronBlock.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>IronBlock</Name>

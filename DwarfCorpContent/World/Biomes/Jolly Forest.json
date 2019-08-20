@@ -3,7 +3,7 @@
   "Icon": "2, 2",
   "DayAmbience": "sfx_amb_tundra",
   "RuinFloorType" : "Blue Tile",
-  "RuinWallType" : "Ice",
+  "RuinWallType" : "Candy",
   "Vegetation": [
     {
       "Name": "Candycane",

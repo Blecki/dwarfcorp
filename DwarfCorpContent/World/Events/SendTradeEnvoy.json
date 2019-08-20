@@ -9,7 +9,7 @@
   "TributeDemanded": {
     "Value": 0.0
   },
-  "Likelihood": 5,
+  "Likelihood": 10,
   "Name": "Send Trade Envoy",
   "Difficulty": -10.0,
   "AllowedTime": "OnlyDayTime",

@@ -44,6 +44,12 @@ namespace DwarfCorp
                 Item.ResourcesReservedFor = null;
             }
 
+            if (Item.PreviewResource != null)
+            {
+                Item.PreviewResource.Delete();
+                Item.PreviewResource = null;
+            }
+
             foreach (var status in Creature.Unreserve(Item.ItemType.CraftLocation))
             {
             
@@ -257,9 +263,7 @@ namespace DwarfCorp
         {
             bool valid =  Item.HasResources || Item.ResourcesReservedFor != null;
             if (!valid)
-            {
                 Agent.SetMessage("Resource state not valid.");
-            }
             return valid;
         }
 
@@ -345,9 +349,12 @@ namespace DwarfCorp
             {
                 Act buildAct = null;
 
-                if (Item.ExistingResource != null)
+                if (Item.ExistingResource != null) // Hurk; is this ever null now that placement and building are different things?
                 {
-                    buildAct = new Always(Status.Success);
+                    buildAct = new Wrap(() => Creature.HitAndWait(true, () => 1.0f,
+                                        () => Item.Progress, () => Item.Progress += (Creature.Stats.BuildSpeed * 8) / Item.ItemType.BaseCraftTime, // Todo: Account for creature debuffs, environment buffs
+                                        () => Item.Location.WorldPosition + Vector3.One * 0.5f, "Craft"))
+                    { Name = "Construct object." };
                 }
                 else
                 {

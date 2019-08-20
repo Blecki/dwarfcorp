@@ -1709,7 +1709,7 @@ namespace DwarfCorp.GameStates
                             var buildInfo = (sender as Gui.Widgets.BuildCraftInfo);
                             if (buildInfo == null)
                                 return;
-                            sender.Hidden = true;
+                            //sender.Hidden = true;
 
                             var craftableResource = data.ObjectAsCraftableResource();
 
@@ -1720,9 +1720,9 @@ namespace DwarfCorp.GameStates
                                 var compositeTask = new CompoundTask(String.Format("Craft {0} {1}", numRepeats, data.PluralDisplayName), TaskCategory.CraftItem, TaskPriority.Medium);
                                 for (var i = 0; i < numRepeats; ++i)
                                     subTasks.Add(new CraftResourceTask(craftableResource, i + 1, numRepeats, buildInfo.GetSelectedResources()) { Hidden = true });
+                                World.TaskManager.AddTasks(subTasks);
                                 compositeTask.AddSubTasks(subTasks);
                                 World.TaskManager.AddTask(compositeTask);
-                                World.TaskManager.AddTasks(subTasks);
                             }
                             else
                                 World.TaskManager.AddTask(new CraftResourceTask(craftableResource, 1, 1, buildInfo.GetSelectedResources()));

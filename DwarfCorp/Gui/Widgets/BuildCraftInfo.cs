@@ -14,7 +14,6 @@ namespace DwarfCorp.Gui.Widgets
         private List<Gui.Widgets.ComboBox> ResourceCombos = new List<Gui.Widgets.ComboBox>();
         private Gui.Widgets.ComboBox NumCombo = new ComboBox();
         public Action<Gui.Widget, Gui.InputEventArgs> BuildAction = null;
-        public Action<Gui.Widget, Gui.InputEventArgs> PlaceAction = null;
         public bool AllowWildcard = true;
 
         public override void Construct()
@@ -210,25 +209,6 @@ namespace DwarfCorp.Gui.Widgets
 
                     if (BuildAction != null)
                     {
-                        if (Data.Type == CraftItem.CraftType.Object && PlaceAction != null)
-                        {
-                            var resources = World.ListResources();
-                            if (resources.Any(resource => Library.GetResourceType(resource.Key).HasValue(out var res) && res.CraftInfo.CraftItemType == Data.Name))
-                            {
-                                bottomBar.AddChild(new Button()
-                                {
-                                    Text = Library.GetString("place-existing"),
-                                    OnClick = (widget, args) =>
-                                    {
-                                        PlaceAction(this, args);
-                                    },
-                                    AutoLayout = AutoLayout.DockLeftCentered,
-                                    MinimumSize = new Point(64, 28),
-                                    Tooltip = Library.GetString("place-existing-tooltip", Data.DisplayName)
-                                });
-                            }
-                        }
-
                         var buildButton = bottomBar.AddChild(new Button()
                         {
                             Text = Library.GetString("place-new", Data.Verb),

@@ -36,7 +36,9 @@ namespace DwarfCorp.Play
                 Resource.ResourceTags.Potion,
                 Resource.ResourceTags.PreparedFood,
                 Resource.ResourceTags.Rail,
-                Resource.ResourceTags.Seed
+                Resource.ResourceTags.Seed,
+                Resource.ResourceTags.Edible,
+                Resource.ResourceTags.AnimalProduct
             }.OrderBy(t => t.ToString()).ToList();
 
             Font = "font10";
