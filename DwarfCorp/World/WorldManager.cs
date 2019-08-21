@@ -97,7 +97,6 @@ namespace DwarfCorp
             LogEvent(Message, Color.Black, Details);
         }
 
-
         public void LogEvent(String Message, Color textColor, String Details = "")
         {
             LogEvent(new EventLog.LogEntry()
@@ -113,10 +112,7 @@ namespace DwarfCorp
         {
             Stats.AddStat(stat, Time.CurrentDate, value);
         }
-
-        
-
-        
+                
         public struct Screenshot
         {
             public string FileName { get; set; }

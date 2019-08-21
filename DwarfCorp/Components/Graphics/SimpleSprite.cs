@@ -87,6 +87,8 @@ namespace DwarfCorp
                 return;
             WorldWidth = Sheet.FrameWidth / 32.0f;
             WorldHeight = Sheet.FrameHeight / 32.0f;
+            BoundingBoxSize = new Vector3(Math.Max(WorldWidth, WorldHeight), Math.Max(WorldWidth, WorldHeight), Math.Max(WorldWidth, WorldHeight));
+            UpdateBoundingBox();
         }
 
         override public void Render(DwarfTime gameTime,

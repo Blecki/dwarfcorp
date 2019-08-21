@@ -936,7 +936,9 @@ namespace DwarfCorp
                     .Any(n =>
                     {
                         var handle = Chunks.CreateVoxelHandle(n);
-                        return !handle.IsValid || handle.IsEmpty;
+                        if (handle.IsValid)
+                            return handle.IsEmpty;
+                        return false;
                     }))
                     continue;
 

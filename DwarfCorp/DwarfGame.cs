@@ -152,9 +152,9 @@ namespace DwarfCorp
 
         public static void InitializeLogger()
         {
-#if DEBUG
-            return;
-#endif
+//#if DEBUG
+//            return;
+//#endif
             try
             {
                 Trace.Listeners.Clear();

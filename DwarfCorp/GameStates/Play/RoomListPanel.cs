@@ -122,7 +122,6 @@ namespace DwarfCorp.Play
 
                         if (lambdaCopy.SupportsFilters)
                         {
-
                             tag.AddChild(new Button
                             {
                                 Text = "Resources...",
@@ -132,9 +131,13 @@ namespace DwarfCorp.Play
                                 TextVerticalAlign = VerticalAlign.Center,
                                 OnClick = (_sender, args) =>
                                 {
+                                    var savePaused = World.Paused;
+                                    World.Paused = true;
+
                                     Root.ShowModalPopup(new StockpilePropertiesDialog
                                     {
-                                        Stockpile = lambdaCopy as Stockpile
+                                        Stockpile = lambdaCopy as Stockpile,
+                                        OnClose = (_sen2) => World.Paused = savePaused
                                     });
                                 }
                             });

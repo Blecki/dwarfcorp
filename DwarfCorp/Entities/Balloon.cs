@@ -41,6 +41,7 @@ namespace DwarfCorp
 
             CreateCosmeticChildren(Manager);
             CollisionType = CollisionType.Dynamic;
+            UpdateBoundingBox();
 
             AddChild(new BalloonAI(Manager, Target, Owner));
         }
@@ -50,6 +51,8 @@ namespace DwarfCorp
             var tex = new SpriteSheet(ContentPaths.Entities.Balloon.Sprites.balloon);
 
             var balloonSprite = AddChild(new SimpleSprite(Manager, "BALLOON", Matrix.Identity, tex, Point.Zero)) as SimpleSprite;
+            balloonSprite.BoundingBoxSize = new Vector3(5.0f, 10.0f, 5.0f);
+            balloonSprite.UpdateBoundingBox();
             balloonSprite.OrientationType = SimpleSprite.OrientMode.Spherical;
             balloonSprite.SetFlag(Flag.ShouldSerialize, false);
             balloonSprite.AutoSetWorldSize();

@@ -24,8 +24,16 @@ namespace DwarfCorp.Generation
                 if (!v.IsValid) break;
                 v.Sunlight = true;
                 v.RawSetIsExplored();
+
                 if (v.Type.ID != 0 && !v.Type.IsTransparent)
                     break;
+                else
+                    foreach (var neighbor in VoxelHelpers.EnumerateManhattanNeighbors2D(v.Coordinate))
+                    {
+                        var nv = Settings.World.ChunkManager.CreateVoxelHandle(neighbor);
+                        if (nv.IsValid)
+                            nv.RawSetIsExplored();
+                    }
             }
         }
 
