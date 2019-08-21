@@ -14,8 +14,10 @@ namespace TodoList
     )]
     internal class Reset : ICommand
     {
+        [SwitchDocumentation("The ID of the task to unmark.")]
         [DefaultSwitch(0)] public UInt32 id = 0;
 
+        [SwitchDocumentation("Path to task file.")]
         public string file = "todo.txt";
 
         public void Invoke()

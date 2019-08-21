@@ -14,9 +14,11 @@ namespace TodoList
     )]
     internal class Sub : ICommand
     {
+        [SwitchDocumentation("The ID of the task to move.")]
         [DefaultSwitch(0)] public UInt32 id = 0;
         [DefaultSwitch(1)] public UInt32 parent = 0;
 
+        [SwitchDocumentation("Path to task file.")]
         public string file = "todo.txt";
 
         public void Invoke()

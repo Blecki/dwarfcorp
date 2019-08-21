@@ -15,6 +15,7 @@ namespace TodoList
     )]
     internal class Next : ICommand
     {
+        [SwitchDocumentation("Path to task file.")]
         public string file = "todo.txt";
         public bool all = false;
 

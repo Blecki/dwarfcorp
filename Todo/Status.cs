@@ -15,6 +15,7 @@ namespace TodoList
     )]
     internal class Status : ICommand
     {
+        [SwitchDocumentation("Path to task file.")]
         public string file = "todo.txt";
 
         public void Invoke()

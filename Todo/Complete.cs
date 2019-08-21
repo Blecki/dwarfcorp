@@ -15,8 +15,10 @@ namespace TodoList
     )]
     internal class Complete : ICommand
     {
+        [SwitchDocumentation("The ID of the task to mark complete.")]
         [DefaultSwitch(0)] public UInt32 id = 0;
 
+        [SwitchDocumentation("Path to task file.")]
         public string file = "todo.txt";
 
         public void Invoke()

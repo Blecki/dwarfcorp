@@ -54,6 +54,16 @@ namespace TodoList
 
     }
 
+    [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+    sealed class SwitchDocumentationAttribute: System.Attribute
+    {
+        public String Documentation = "";
+        public SwitchDocumentationAttribute(String Documentation)
+        {
+            this.Documentation = Documentation;
+        }
+    }
+
     [System.AttributeUsage(System.AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
     sealed class CommandAttribute : System.Attribute
     {
@@ -87,7 +97,7 @@ namespace TodoList
     )]
     internal class Test : ICommand
     {
-        [DefaultSwitch] public int foo = 2;
+        [DefaultSwitch][SwitchDocumentation("The value of this switch will be echoed to the console.")] public int foo = 2;
 
         public void Invoke()
         {

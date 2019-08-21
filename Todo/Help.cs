@@ -17,11 +17,15 @@ namespace TodoList
         public void Invoke()
         {
             if (String.IsNullOrEmpty(topic))
+            {
+                Presentation.FillBar();
+                Console.BackgroundColor = ConsoleColor.Black;
                 foreach (var type in System.Reflection.Assembly.GetExecutingAssembly().GetTypes())
                 {
                     var commandAttribute = type.GetCustomAttributes(true).FirstOrDefault(a => a is CommandAttribute) as CommandAttribute;
                     if (commandAttribute != null)
                     {
+                        Presentation.FillLine();
                         Console.Write(commandAttribute.Name);
                         foreach (var field in type.GetFields())
                         {
@@ -34,24 +38,41 @@ namespace TodoList
                         Console.WriteLine(" : " + commandAttribute.ShortDescription);
                     }
                 }
+                Presentation.FillBar();
+                Console.ResetColor();
+            }
             else
                 foreach (var type in System.Reflection.Assembly.GetExecutingAssembly().GetTypes())
                 {
                     var commandAttribute = type.GetCustomAttributes(true).FirstOrDefault(a => a is CommandAttribute) as CommandAttribute;
                     if (commandAttribute != null && commandAttribute.Name == topic)
                     {
-                        Console.Write(commandAttribute.Name);
+                        Presentation.FillBar();
+                        Console.BackgroundColor = ConsoleColor.Black;
+                        Presentation.FillLine();
+                        Console.WriteLine(commandAttribute.Name);
+                        Presentation.FillLine();
+                        Console.WriteLine(commandAttribute.ShortDescription);
                         foreach (var field in type.GetFields())
                         {
-                            Console.Write(" -" + field.Name);
+                            Presentation.FillLine();
+                            Console.Write(" -" + field.Name + " ");
                             if (field.GetCustomAttributes(true).Any(a => a is DefaultSwitchAttribute))
-                                Console.Write(" [dflt]");
+                                Console.Write("[dflt] ");
                             if (field.GetCustomAttributes(true).Any(a => a is GreedyArgumentAttribute))
-                                Console.Write(" [greedy]");
+                                Console.Write("[greedy] ");
+                            Console.Write(field.FieldType.ToString() + " ");
+                            var doc = field.GetCustomAttributes(true).FirstOrDefault(a => a is SwitchDocumentationAttribute) as SwitchDocumentationAttribute;
+                            if (doc != null)
+                                Console.Write(doc.Documentation);
+                            Console.WriteLine();
                         }
-                        Console.WriteLine(" : " + commandAttribute.ShortDescription);
+                        Presentation.FillLine();
                         Console.WriteLine("Synonyms: " + String.Join(" ", commandAttribute.Synonyms));
+                        Presentation.FillLine();
                         Console.WriteLine(commandAttribute.LongHelpText);
+                        Presentation.FillBar();
+                        Console.ResetColor();
                     }
                 }
         }

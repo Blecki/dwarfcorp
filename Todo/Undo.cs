@@ -14,6 +14,7 @@ namespace TodoList
     )]
     internal class Undo : ICommand
     {
+        [SwitchDocumentation("Path to task file.")]
         public string file = "todo.txt";
 
         public void Invoke()

@@ -14,10 +14,12 @@ namespace TodoList
     )]
     internal class Note : ICommand
     {
+        [SwitchDocumentation("The ID of the task to anotate.")]
         [DefaultSwitch(0)] public UInt32 id = 0;
         [DefaultSwitch(1), GreedyArgument] public String note = "";
         public bool r = false;
 
+        [SwitchDocumentation("Path to task file.")]
         public string file = "todo.txt";
 
         public void Invoke()

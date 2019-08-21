@@ -14,9 +14,11 @@ namespace TodoList
     )]
     internal class Delete : ICommand
     {
+        [SwitchDocumentation("The ID of the task to delete.")]
         [DefaultSwitch(0)] public UInt32 id = 0;
         public bool r = false;
 
+        [SwitchDocumentation("Path to task file.")]
         public string file = "todo.txt";
 
         public void Invoke()

@@ -15,6 +15,7 @@ namespace TodoList
     internal class PullUpdate : ICommand
     {
         [DefaultSwitch(0)] public UInt32 days = 7;
+        [SwitchDocumentation("Path to task file.")]
         public string file = "todo.txt";
 
         private class TimespanMatcher : Matcher

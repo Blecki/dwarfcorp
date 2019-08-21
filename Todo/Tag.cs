@@ -14,11 +14,13 @@ namespace TodoList
     )]
     internal class Tag : ICommand
     {
+        [SwitchDocumentation("The ID of the task to tag.")]
         [DefaultSwitch(0)] public UInt32 id = 0;
         [DefaultSwitch(1)] public String tag = "";
         public bool r = false;
         public bool l = false;
 
+        [SwitchDocumentation("Path to task file.")]
         public string file = "todo.txt";
 
         public void Invoke()
