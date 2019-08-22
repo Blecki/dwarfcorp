@@ -101,7 +101,7 @@ namespace DwarfCorp
                     new Domain(() => Verify(creature),
                         new Sequence
                         (
-                            new MeleeAct(Agent, entity)
+                            new AttackAct(Agent, entity)
                         ) | new Wrap(() => OnAttackEnd(creature))
                         );
             }
@@ -120,7 +120,7 @@ namespace DwarfCorp
                                 PlanType = planType,
                                 Radius = radius
                             } | new Wrap(() => OnAttackEnd(creature)),
-                            new MeleeAct(Agent, entity),
+                            new AttackAct(Agent, entity),
                             new Wrap(() => OnAttackEnd(creature))
                             ));
                 }
@@ -136,7 +136,7 @@ namespace DwarfCorp
                                 PlanType = PlanAct.PlanType.Into,
                             } | new Wrap(() => OnAttackEnd(creature)),
                             new TeleportAct(Creature.AI) { Location = closestDefensiveStructure.GetRotatedBoundingBox().Center(), Type = TeleportAct.TeleportType.Lerp },
-                            new MeleeAct(Agent, entity) {  DefensiveStructure = closestDefensiveStructure},
+                            new AttackAct(Agent, entity) {  DefensiveStructure = closestDefensiveStructure},
                             new Wrap(() => OnAttackEnd(creature))
                             ));
                 }

@@ -350,7 +350,9 @@
     <Compile Include="TaskManagement\CompoundActs\StockResourceAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\TransferResourcesAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\TransferResourcesTask.cs" />
+    <Compile Include="TaskManagement\LeafActs\AttackAct.cs" />
     <Compile Include="TaskManagement\LeafActs\EquipToolAct.cs" />
+    <Compile Include="TaskManagement\LeafActs\GreedyPathAct.cs" />
     <Compile Include="TaskManagement\SequentialTask.cs" />
     <Compile Include="TaskManagement\CompoundTask.cs" />
     <Compile Include="TaskManagement\ControlFlow\Condition.cs" />
@@ -372,7 +374,6 @@
     <Compile Include="TaskManagement\LeafActs\DigAct.cs" />
     <Compile Include="TaskManagement\LeafActs\FlyWanderAct.cs" />
     <Compile Include="TaskManagement\LeafActs\FollowPathAct.cs" />
-    <Compile Include="TaskManagement\LeafActs\MeleeAct.cs" />
     <Compile Include="TaskManagement\LeafActs\PlaceRoomResourcesAct.cs" />
     <Compile Include="TaskManagement\LeafActs\PlaceVoxelAct.cs" />
     <Compile Include="TaskManagement\LeafActs\PlanAct.cs" />

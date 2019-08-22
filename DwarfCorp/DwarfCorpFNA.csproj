@@ -173,6 +173,7 @@
     <Compile Include="TaskManagement\CompoundActs\TransferResourcesTask.cs" />
     <Compile Include="TaskManagement\Enums.cs" />
     <Compile Include="TaskManagement\LeafActs\EquipToolAct.cs" />
+    <Compile Include="TaskManagement\LeafActs\GreedyPathAct.cs" />
     <Compile Include="TaskManagement\SequentialTask.cs" />
     <Compile Include="TaskManagement\Tasks\BuildZoneTask.cs" />
     <Compile Include="TaskManagement\Tasks\DestroyObjectTask.cs" />
@@ -647,7 +648,7 @@
     <Compile Include="TaskManagement\LeafActs\DigAct.cs" />
     <Compile Include="TaskManagement\LeafActs\FlyWanderAct.cs" />
     <Compile Include="TaskManagement\LeafActs\FollowPathAct.cs" />
-    <Compile Include="TaskManagement\LeafActs\MeleeAct.cs" />
+    <Compile Include="TaskManagement\LeafActs\AttackAct.cs" />
     <Compile Include="TaskManagement\LeafActs\PlaceRoomResourcesAct.cs" />
     <Compile Include="TaskManagement\LeafActs\PlaceVoxelAct.cs" />
     <Compile Include="TaskManagement\LeafActs\PlanAct.cs" />

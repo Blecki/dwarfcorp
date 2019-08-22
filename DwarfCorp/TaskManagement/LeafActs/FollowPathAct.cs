@@ -341,7 +341,7 @@ namespace DwarfCorp
 
                     CleanupMinecart();
 
-                    var melee = new MeleeAct(Creature.AI, (GameComponent) Step.InteractObject);
+                    var melee = new AttackAct(Creature.AI, (GameComponent) Step.InteractObject);
                     melee.Initialize();
                     foreach (var status in melee.Run())
                     {

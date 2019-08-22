@@ -71,7 +71,7 @@ namespace DwarfCorp
             {
                 yield return Act.Status.Running;
             }
-            Creature.AI.AddXP(10);
+            Creature.AI.AddXP(5);
             yield return Act.Status.Success;
         }
 
@@ -79,7 +79,7 @@ namespace DwarfCorp
         {
             var tag = Magical ? "Research" : "Train";
             Act trainAct = Magical ? new Wrap(DoMagicResearch) { Name = "Magic research" } as Act :
-                new MeleeAct(Agent, "Train") { Training = true, Timeout = new Timer(10.0f, false) };
+                new AttackAct(Agent, "Train") { Training = true, Timeout = new Timer(10.0f, false) };
             Act unreserveAct = new Wrap(() => Creature.Unreserve(tag));
             Tree = new Sequence(
                 new Wrap(() => Creature.FindAndReserve(tag, tag)),

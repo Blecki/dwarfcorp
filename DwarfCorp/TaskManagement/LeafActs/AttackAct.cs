@@ -10,7 +10,7 @@ namespace DwarfCorp
     /// <summary>
     /// A creature attacks a target until the target is dead.
     /// </summary>
-    public class MeleeAct : CreatureAct
+    public class AttackAct : CreatureAct
     {
         public float EnergyLoss { get; set; }
         public Attack CurrentAttack { get; set; }
@@ -21,7 +21,7 @@ namespace DwarfCorp
         public Timer FailTimer { get; set; }
         public GameComponent DefensiveStructure { get; set; }
 
-        public MeleeAct(CreatureAI agent, string target) :
+        public AttackAct(CreatureAI agent, string target) :
             base(agent)
         {
             FailTimer = new Timer(5.0f, false, Timer.TimerMode.Real);
@@ -35,7 +35,7 @@ namespace DwarfCorp
 
         public float LastHp = 0.0f;
 
-        public MeleeAct(CreatureAI agent, GameComponent target) :
+        public AttackAct(CreatureAI agent, GameComponent target) :
             base(agent)
         {
             FailTimer = new Timer(5.0f, false, Timer.TimerMode.Real);
@@ -144,6 +144,7 @@ namespace DwarfCorp
 
             Timeout.Reset();
             FailTimer.Reset();
+
             if (Target == null && TargetName != null)
             {
                 Target = Agent.Blackboard.GetData<GameComponent>(TargetName);
@@ -155,21 +156,19 @@ namespace DwarfCorp
                 }
             }
 
-            if (Agent.Faction.Race.IsIntelligent)
-            {
-                if (Target.GetRoot().GetComponent<Inventory>().HasValue(out var targetInventory))
-                    targetInventory.SetLastAttacker(Agent);
-            }
+            // In case we kill it - this tells the inventory who to give the loot to.
+            if (Agent.Faction.Race.IsIntelligent && Target.GetRoot().GetComponent<Inventory>().HasValue(out var targetInventory))
+                targetInventory.SetLastAttacker(Agent);
 
-            CharacterMode defaultCharachterMode = Creature.AI.Movement.CanFly
-                ? CharacterMode.Flying
-                : CharacterMode.Walking;
+            CharacterMode defaultCharachterMode = Creature.AI.Movement.CanFly ? CharacterMode.Flying : CharacterMode.Walking;
 
-            bool avoided = false;
+            var avoided = false;
+
             while(true)
             {
                 Timeout.Update(DwarfTime.LastTime);
                 FailTimer.Update(DwarfTime.LastTime);
+
                 if (FailTimer.HasTriggered)
                 {
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
@@ -181,23 +180,16 @@ namespace DwarfCorp
 
                 if (Timeout.HasTriggered)
                 {
+                    Creature.Physics.Orientation = Physics.OrientMode.RotateY;
+                    Creature.OverrideCharacterMode = false;
+                    Creature.CurrentCharacterMode = defaultCharachterMode;
+
                     if (Training)
-                    {
-                        Agent.AddXP(1);
-                        Creature.Physics.Orientation = Physics.OrientMode.RotateY;
-                        Creature.OverrideCharacterMode = false;
-                        Creature.CurrentCharacterMode = defaultCharachterMode;
                         yield return Status.Success;
-                        yield break;
-                    }
                     else
-                    {
-                        Creature.Physics.Orientation = Physics.OrientMode.RotateY;
-                        Creature.OverrideCharacterMode = false;
-                        Creature.CurrentCharacterMode = defaultCharachterMode;
                         yield return Status.Fail;
-                        yield break;
-                    }
+
+                    yield break;
                 }
 
                 if (Target == null || Target.IsDead)
@@ -229,12 +221,11 @@ namespace DwarfCorp
                 }
 
                 if (DefensiveStructure != null)
-                {
-                 
-                    if (Creature.Hp < LastHp)
+                {                 
+                    if (Creature.Hp < LastHp) // Defensive structures have damage reduction.
                     {
                         float damage = LastHp - Creature.Hp;
-                        Creature.Heal(Math.Min(5.0f, damage));
+                        Creature.Heal(Math.Min(5.0f, damage)); // Todo: Make this configurable in the structure.
 
                         if (DefensiveStructure.GetRoot().GetComponent<Health>().HasValue(out var health))
                         {
@@ -268,13 +259,10 @@ namespace DwarfCorp
                     }
 
                     if (DefensiveStructure.IsDead)
-                    {
                         DefensiveStructure = null;
-                    }
                 }
 
                 LastHp = Creature.Hp;
-
                
                 // If we're out of attack range, run toward the target.
                 if(DefensiveStructure == null && !Creature.AI.Movement.IsSessile && !intersectsbounds && diff.Length() > CurrentAttack.Weapon.Range)
@@ -284,25 +272,22 @@ namespace DwarfCorp
                     greedyPath.Initialize();
 
                     foreach (Act.Status stat in greedyPath.Run())
-                    {
                         if (stat == Act.Status.Running)
                             yield return Status.Running;
                         else break;
-                    }
                 }
                 // If we have a ranged weapon, try avoiding the target for a few seconds to get within range.
-                else if (DefensiveStructure == null && !Creature.AI.Movement.IsSessile && !intersectsbounds && !avoided && (CurrentAttack.Weapon.Mode == Weapon.AttackMode.Ranged &&
-                    dist < CurrentAttack.Weapon.Range *0.15f))
-                {
+                else if (DefensiveStructure == null && !Creature.AI.Movement.IsSessile && !intersectsbounds && !avoided && (CurrentAttack.Weapon.Mode == Weapon.AttackMode.Ranged && dist < CurrentAttack.Weapon.Range *0.15f))
+                { 
                     FailTimer.Reset();
                     foreach (Act.Status stat in AvoidTarget(CurrentAttack.Weapon.Range, 3.0f))
                         yield return Status.Running;
                     avoided = true;
                 }
                 // Else, stop and attack
-                else if ((DefensiveStructure == null && dist < CurrentAttack.Weapon.Range) ||
-                         (DefensiveStructure != null && dist < CurrentAttack.Weapon.Range * 2.0))
+                else if ((DefensiveStructure == null && dist < CurrentAttack.Weapon.Range) || (DefensiveStructure != null && dist < CurrentAttack.Weapon.Range * 2.0))
                 {
+                    // Need line of sight for ranged weapons.
                     if (CurrentAttack.Weapon.Mode == Weapon.AttackMode.Ranged 
                         && VoxelHelpers.DoesRayHitSolidVoxel(Creature.World.ChunkManager, Creature.AI.Position, Target.Position))
                     {
@@ -320,9 +305,9 @@ namespace DwarfCorp
                     Creature.Sprite.PlayAnimations(Creature.Stats.CurrentClass.AttackMode);
                     Creature.CurrentCharacterMode = Creature.Stats.CurrentClass.AttackMode;
                     Creature.OverrideCharacterMode = true;
-                    Timer timeout = new Timer(10.0f, true);
-                    while (!CurrentAttack.Perform(Creature, Target, DwarfTime.LastTime, Creature.Stats.Strength + Creature.Stats.Size,
-                            Creature.AI.Position, Creature.Faction.ParentFaction.Name))
+                    var timeout = new Timer(10.0f, true);
+
+                    while (!CurrentAttack.Perform(Creature, Target, DwarfTime.LastTime, Creature.Stats.Strength + Creature.Stats.Size, Creature.AI.Position, Creature.Faction.ParentFaction.Name))
                     {
                         timeout.Update(DwarfTime.LastTime);
                         if (timeout.HasTriggered)
@@ -334,12 +319,16 @@ namespace DwarfCorp
                         yield return Status.Running;
                     }
 
+                    Agent.AddXP(2); // Gain XP for attacking.
+
                     timeout.Reset();
+
                     while (!Agent.Creature.Sprite.AnimPlayer.IsDone())
                     {
                         timeout.Update(DwarfTime.LastTime);
                         if (timeout.HasTriggered)
                             break;
+
                         if (Creature.AI.Movement.CanFly)
                             Creature.Physics.ApplyForce(-Creature.Physics.Gravity * 0.1f, DwarfTime.Dt);
                         yield return Status.Running;
@@ -367,9 +356,7 @@ namespace DwarfCorp
                         {
                             Creature.Physics.Velocity = Vector3.Zero;
                             if (Creature.AI.Movement.CanFly)
-                            {
                                 Creature.Physics.ApplyForce(-Creature.Physics.Gravity, DwarfTime.Dt);
-                            }
                         }
                         yield return Status.Running;
                     }
@@ -395,95 +382,6 @@ namespace DwarfCorp
 
                 yield return Status.Running;
             }
-        }
-    }
-
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
-    public class GreedyPathAct : CompoundCreatureAct
-    {
-        public int PathLength { get; set; }
-        public bool Is2D { get; set; }
-        public GameComponent Target { get; set; }
-        public float Threshold { get; set; }
-
-        public GreedyPathAct()
-        {
-
-        }
-
-        public GreedyPathAct(CreatureAI creature, GameComponent target, float threshold)
-            : base(creature)
-        {
-            Target = target;
-            Threshold = threshold;
-        }
-
-        public IEnumerable<Status> FindGreedyPath()
-        {
-            Vector3 target = Target.Position;
-
-            if (Is2D) target.Y = Creature.AI.Position.Y;
-            List<MoveAction> path = new List<MoveAction>();
-            var curr = Creature.Physics.CurrentVoxel;
-            var bodies = Agent.World.PlayerFaction.OwnedObjects.Where(o => o.Tags.Contains("Teleporter")).ToList();
-            var storage = new MoveActionTempStorage();
-            for (int i = 0; i < PathLength; i++)
-            {
-                IEnumerable<MoveAction> actions =
-                    Creature.AI.Movement.GetMoveActions(new MoveState() { Voxel = curr }, bodies, storage);
-
-                MoveAction? bestAction = null;
-                float bestDist = float.MaxValue;
-
-                foreach (MoveAction action in actions)
-                {
-                    // Prevents a stack overflow due to "DestroyObject" task creating a FollowPathAct!
-                    if (action.MoveType == MoveType.DestroyObject)
-                    {
-                        continue;
-                    }
-                    float dist = (action.DestinationVoxel.WorldPosition - target).LengthSquared();
-
-                    if (dist < bestDist)
-                    {
-                        bestDist = dist;
-                        bestAction = action;
-                    }
-                }
-
-                Vector3 half = Vector3.One*0.5f;
-                if (bestAction.HasValue &&
-                    !path.Any(p => p.DestinationVoxel.Equals(bestAction.Value.DestinationVoxel) && p.MoveType == bestAction.Value.MoveType))
-                {
-                    path.Add(bestAction.Value);
-                    MoveAction action = bestAction.Value;
-                    action.DestinationVoxel = curr;
-                    curr = bestAction.Value.DestinationVoxel;
-                    bestAction = action;
-
-                    if (((bestAction.Value.DestinationVoxel.WorldPosition + half) - target).Length() < Threshold)
-                    {
-                        break;
-                    }
-                }
-
-            }
-
-            if (path.Count > 0)
-            {
-                Creature.AI.Blackboard.SetData("RandomPath", path);
-                yield return Status.Success;
-            }
-            else
-            {
-                yield return Status.Fail;
-            }
-        }
-
-        public override void Initialize()
-        {
-            Tree = new Sequence(new Wrap(FindGreedyPath), new FollowPathAct(Creature.AI, "RandomPath"));
-            base.Initialize();
         }
     }
 }

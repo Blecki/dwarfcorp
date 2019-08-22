@@ -58,7 +58,7 @@ namespace DwarfCorp
                     new Domain(Verify(Agent),
                         new Sequence
                         (
-                            new MeleeAct(Agent, entity)
+                            new AttackAct(Agent, entity)
                         ) | new Wrap(() => OnAttackEnd(creature)) | Verify(Agent)
                         );
             }
@@ -74,7 +74,7 @@ namespace DwarfCorp
                             PlanType = planType,
                             Radius = radius
                         } | new Wrap(() => OnAttackEnd(creature)),
-                        new MeleeAct(Agent, entity)
+                        new AttackAct(Agent, entity)
                         ) | Verify(Agent));
 
             }

@@ -18,8 +18,9 @@ namespace TodoList
         [DefaultSwitch(0), GreedyArgument] public String search = "";
         public UInt32 p = 0;
         public bool all = false;
-        public String tag = "";        
+        public String tag = "";
 
+        [SwitchDocumentation("Path to task file.")]
         public string file = "todo.txt";
 
         public void Invoke()
