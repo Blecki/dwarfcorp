@@ -40,18 +40,12 @@ namespace TodoList
                 return;
             }
 
-            var regexMatch = String.IsNullOrEmpty(search) ? null : new RegexMatcher { Pattern = new Regex(search) };
-            var tagMatch = String.IsNullOrEmpty(tag) ? null : new TagMatcher { Tag = tag };
+            var matcher = all ? (Matcher)(new MatchAllMatcher()) : new StatusMatcher { Status = "-" };
+            if (!String.IsNullOrEmpty(search)) matcher = Presentation.ComposeMatchers(matcher, new RegexMatcher { Pattern = new Regex(search) });
+            if (!String.IsNullOrEmpty(tag)) matcher = Presentation.ComposeMatchers(matcher, new TagMatcher { Tag = tag });
+            if (p > 0) matcher = Presentation.ComposeMatchers(matcher, new PriorityMatcher { Priority = p });
 
-            Matcher matcher = new MatchAllMatcher();
-            if (regexMatch != null && tagMatch != null)
-                matcher = new CompoundMatcher { A = tagMatch, B = regexMatch };
-            else if (regexMatch != null)
-                matcher = regexMatch;
-            else if (tagMatch != null)
-                matcher = tagMatch;
-
-            var completeList = Presentation.BuildOutput(entry, matcher, 0, all).Where(l => l.Depth >= 0 && l.Entry.Priority >= p).ToList();
+            var completeList = Presentation.SearchEntries(entry, matcher, 0).Where(l => l.Depth >= 0).ToList();
             Presentation.DisplayPaginated(completeList);
         }
     }

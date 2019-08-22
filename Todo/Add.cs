@@ -52,7 +52,7 @@ namespace TodoList
             list.NextID += 1;
 
             EntryList.SaveFile(file, list);
-            Presentation.OutputEntry(entry, null, 0, false);
+            Presentation.OutputEntry(entry, null, 0);
         }
     }
 }

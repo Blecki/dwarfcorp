@@ -21,6 +21,5 @@ namespace DwarfCorp
             this.SetFlag(Flag.ShouldSerialize, true);
             AddChild(details);
         }
-
     }
 }

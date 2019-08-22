@@ -16,28 +16,25 @@ namespace TodoList
         {
             public int Depth;
             public Entry Entry;
-            public Tuple<ConsoleColor, ConsoleColor> Color;
+            public bool Hilite;
         }
 
-        private static Tuple<ConsoleColor, ConsoleColor> GetStandardColors(Entry Entry)
+        private static void SetStandardColors(OutputLine Line)
         {
-            if (Entry.Status == "X")
-                return Tuple.Create(ConsoleColor.Black, ConsoleColor.DarkRed);
-            else if (Entry.Status == "✓")
-                return Tuple.Create(ConsoleColor.Black, ConsoleColor.Cyan);
-            else if (Entry.Status == "█")
-                return Tuple.Create(ConsoleColor.Black, ConsoleColor.Red);
+            Console.BackgroundColor = ConsoleColor.Black;
+            if (Line.Entry.Status == "X")
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+            else if (Line.Entry.Status == "✓")
+                Console.ForegroundColor = ConsoleColor.Cyan;
+            else if (Line.Entry.Status == "█")
+                Console.ForegroundColor = ConsoleColor.Red;
             else
-                return Tuple.Create(ConsoleColor.Black, ConsoleColor.DarkGreen);
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+
+            if (!Line.Hilite)
+                Console.ForegroundColor = ConsoleColor.DarkGray;
         }
 
-        private static Tuple<ConsoleColor, ConsoleColor> GetSearchColors(Entry Entry, bool Matched)
-        {
-            if (Matched)
-                return Tuple.Create(ConsoleColor.Black, ConsoleColor.Yellow);
-            else
-                return GetStandardColors(Entry);
-        }
 
         public static void FillLine()
         {
@@ -73,8 +70,7 @@ namespace TodoList
 
         public static void PrintEntry(OutputLine Line)
         {
-            Console.BackgroundColor = Line.Color.Item1;
-            Console.ForegroundColor = Line.Color.Item2;
+            SetStandardColors(Line);
             FillLine();
             for (var i = 0; i < Line.Depth; ++i)
                 Console.Write(" |");
@@ -82,25 +78,25 @@ namespace TodoList
             Console.ResetColor();
         }
 
-        public static List<OutputLine> BuildOutput(Entry Entry, Matcher Matcher, int Depth, bool all)
+        public static List<OutputLine> SearchEntries(Entry Entry, Matcher Matcher, int Depth)
         {
-            var parentMatch = (all || Entry.Status == "-") && (Matcher == null || Matcher.Matches(Entry));
+            var parentMatch = Matcher == null || Matcher.Matches(Entry);
             var r = new List<OutputLine>();
             foreach (var child in Entry.Children)
-                r.AddRange(BuildOutput(child, Matcher, Depth + 1, all));
+                r.AddRange(SearchEntries(child, Matcher, Depth + 1));
             if (parentMatch || r.Count > 0)
                 r.Insert(0, new OutputLine
                 {
                     Depth = Depth,
                     Entry = Entry,
-                    Color = (Matcher != null && Matcher.Hilite) ? GetSearchColors(Entry, parentMatch) : GetStandardColors(Entry)
+                    Hilite = parentMatch,
                 });
             return r;
         }
 
-        public static void OutputEntry(Entry Entry, Matcher Matcher, int Depth, bool all)
+        public static void OutputEntry(Entry Entry, Matcher Matcher, int Depth)
         {
-            foreach (var line in BuildOutput(Entry, Matcher, Depth, all))
+            foreach (var line in SearchEntries(Entry, Matcher, Depth))
                 PrintEntry(line);
         }
 
@@ -109,7 +105,7 @@ namespace TodoList
             var depth = 0;
             foreach (var item in Chain)
             {
-                PrintEntry(new OutputLine { Depth = depth, Entry = item, Color = GetStandardColors(item) });
+                PrintEntry(new OutputLine { Depth = depth, Entry = item, Hilite = false });
                 depth += 1;
             }
         }
@@ -117,7 +113,7 @@ namespace TodoList
         public static void OutputEntryDetails(Entry Entry)
         {
             Presentation.FillBar();
-            Presentation.OutputEntry(Entry, null, 0, true);
+            Presentation.OutputEntry(Entry, new MatchAllMatcher(), 0);
             Presentation.FillLine();
             Console.WriteLine(String.Format("Created {0}", Entry.CreationTime));
             Presentation.FillLine();
@@ -179,6 +175,13 @@ namespace TodoList
             Console.ForegroundColor = ConsoleColor.Black;
             Console.SetCursorPosition(0, pos);
             Console.WriteLine("{0} to {1} of {2}", Start, Start + shown - 1, Lines.Count);
+        }
+
+        public static Matcher ComposeMatchers(Matcher A, Matcher B)
+        {
+            if (A == null) return B;
+            if (B == null) return A;
+            return new AndMatcher { A = A, B = B };
         }
     }
 }

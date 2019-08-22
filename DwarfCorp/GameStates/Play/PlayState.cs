@@ -21,6 +21,7 @@ namespace DwarfCorp.GameStates
         public String Category;
         public String Label;
         public Gui.TileReference Icon;
+        public String Tooltip;
     }
 
     public class PlayState : GameState
@@ -2233,13 +2234,14 @@ namespace DwarfCorp.GameStates
                 categoryInfo = new CategoryIcon
                 {
                     Label = Category,
-                    Icon = Crafts.Where(item => item.Category == Category).First().Icon
+                    Icon = Crafts.Where(item => item.Category == Category).First().Icon,
+                    Tooltip = "Craft items in the " + Category + " category."
                 };
 
             var menuIcon = new FlatToolTray.Icon
             {
                 Icon = categoryInfo.Icon,
-                Tooltip = "Craft " + Category,
+                Tooltip = categoryInfo.Tooltip,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 ReplacementMenu = menu,
                 Text = categoryInfo.Label,

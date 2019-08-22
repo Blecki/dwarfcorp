@@ -40,7 +40,7 @@ namespace TodoList
 
             var list = EntryList.LoadFile(file, false);
 
-            var completeList = Presentation.BuildOutput(list.Root, new TimespanMatcher { Days = days }, -1, true).Where(l => l.Depth >= 0).ToList();
+            var completeList = Presentation.SearchEntries(list.Root, new TimespanMatcher { Days = days }, -1).Where(l => l.Depth >= 0).ToList();
             Presentation.DisplayPaginated(completeList);
         }
     }

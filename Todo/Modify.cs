@@ -50,7 +50,7 @@ namespace TodoList
 
             entry.Description = desc;
             EntryList.SaveFile(file, list);
-            Presentation.OutputEntry(entry, null, 0, false);
+            Presentation.OutputEntry(entry, null, 0);
         }
     }
 }

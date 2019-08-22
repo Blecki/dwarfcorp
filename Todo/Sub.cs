@@ -67,7 +67,7 @@ namespace TodoList
             newParent.Children.Add(entry.Child);
 
             EntryList.SaveFile(file, list);
-            Presentation.OutputEntry(newParent, null, 0, false);
+            Presentation.OutputEntry(newParent, null, 0);
         }
     }
 }

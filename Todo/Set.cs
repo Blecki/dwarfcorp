@@ -53,7 +53,7 @@ namespace TodoList
 
             entry.Priority = priority;
             EntryList.SaveFile(file, list);
-            Presentation.OutputEntry(entry, null, 0, false);
+            Presentation.OutputEntry(entry, null, 0);
         }
     }
 }

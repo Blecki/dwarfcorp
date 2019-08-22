@@ -45,7 +45,7 @@ namespace TodoList
 
             entry.Status = "█";
             EntryList.SaveFile(file, list);
-            Presentation.OutputEntry(entry, null, 0, true);
+            Presentation.OutputEntry(entry, null, 0);
         }
     }
 }
