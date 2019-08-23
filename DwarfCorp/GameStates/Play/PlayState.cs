@@ -78,6 +78,10 @@ namespace DwarfCorp.GameStates
         private Widget BottomBar;
         private Widget BottomBackground;
         private Widget MinimapIcon;
+        private Widget EmployeesIcon;
+        private Widget ZonesIcon;
+        private Widget TasksIcon;
+        private Widget MarksIcon;
         public Dictionary<String, PlayerTool> Tools;
         public PlayerTool CurrentTool { get { return Tools[CurrentToolMode]; } }
         public String CurrentToolMode = "SelectUnits";
@@ -452,15 +456,16 @@ namespace DwarfCorp.GameStates
                         Gui.RootItem.Hidden = !Gui.RootItem.Hidden;
                         Gui.RootItem.Invalidate();
                     }
-                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.Map)
-                    {
-                        if (PausePanel == null || PausePanel.Hidden)
-                        {
-                            Gui.SafeCall(MinimapIcon.OnClick, MinimapIcon, new InputEventArgs
-                            {
-                            });
-                        }
-                    }
+                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.Map && (PausePanel == null || PausePanel.Hidden))
+                            Gui.SafeCall(MinimapIcon.OnClick, MinimapIcon, new InputEventArgs());
+                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.Employees && (PausePanel == null || PausePanel.Hidden))
+                        Gui.SafeCall(EmployeesIcon.OnClick, EmployeesIcon, new InputEventArgs());
+                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.Tasks && (PausePanel == null || PausePanel.Hidden))
+                        Gui.SafeCall(TasksIcon.OnClick, TasksIcon, new InputEventArgs());
+                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.Zones && (PausePanel == null || PausePanel.Hidden))
+                        Gui.SafeCall(ZonesIcon.OnClick, ZonesIcon, new InputEventArgs());
+                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.Marks && (PausePanel == null || PausePanel.Hidden))
+                        Gui.SafeCall(MarksIcon.OnClick, MarksIcon, new InputEventArgs());
                     else if ((Keys)args.KeyValue == ControlSettings.Mappings.Xray)
                     {
                         Xray.CheckState = !Xray.CheckState;
@@ -1037,6 +1042,86 @@ namespace DwarfCorp.GameStates
                 }
             };
 
+            EmployeesIcon = new FramedIcon
+            {
+                Icon = new Gui.TileReference("tool-icons", 34),
+                Text = "@play-employee-icon-label",
+                Tooltip = "@play-employee-icon-tooltip",
+                EnabledTextColor = Vector4.One,
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Below,
+                OnClick = (sender, args) =>
+                {
+                    if (SelectedEmployeeInfo.Hidden)
+                    {
+                        HideTogglePanels();
+                        SelectedEmployeeInfo.Hidden = false;
+                    }
+                    else
+                        SelectedEmployeeInfo.Hidden = true;
+                }
+            };
+
+            MarksIcon = new FramedIcon
+            {
+                Icon = new Gui.TileReference("tool-icons", 17),
+                Text = "@play-marks-icon-label",
+                Tooltip = "@play-marks-icon-tooltip",
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Below,
+                EnabledTextColor = Vector4.One,
+                OnClick = (sender, args) =>
+                {
+                    if (markerFilter.Hidden)
+                    {
+                        HideTogglePanels();
+                        markerFilter.Hidden = false;
+                    }
+                    else
+                        markerFilter.Hidden = true;
+                }
+            };
+
+            TasksIcon = new FramedIcon
+            {
+                Icon = new Gui.TileReference("tool-icons", 35),
+                Text = "@play-tasks-icon-label",
+                Tooltip = "@play-tasks-icon-tooltip",
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Below,
+                EnabledTextColor = Vector4.One,
+                OnClick = (sender, args) =>
+                {
+                    if (taskList.Hidden)
+                    {
+                        HideTogglePanels();
+                        taskList.Hidden = false;
+                    }
+                    else
+                        taskList.Hidden = true;
+                }
+            };
+
+            ZonesIcon = new FramedIcon
+            {
+                Icon = new Gui.TileReference("tool-icons", 37),
+                Text = "@play-rooms-icon-label",
+                Tooltip = "@play-rooms-icon-tooltip",
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Below,
+                EnabledTextColor = Vector4.One,
+                OnClick = (sender, args) =>
+                {
+                    if (roomList.Hidden)
+                    {
+                        HideTogglePanels();
+                        roomList.Hidden = false;
+                    }
+                    else
+                        roomList.Hidden = true;
+                }
+            };
+
             var bottomLeft = secondBar.AddChild(new Gui.Widgets.IconTray
             {
                 Corners = 0,
@@ -1047,85 +1132,10 @@ namespace DwarfCorp.GameStates
                 ItemSource = new Gui.Widget[]
                         {
                             MinimapIcon,
-                            new FramedIcon
-                            {
-                                Icon = new Gui.TileReference("tool-icons", 34),
-                                Text = "@play-employee-icon-label",
-                                Tooltip = "@play-employee-icon-tooltip",
-                                EnabledTextColor = Vector4.One,
-                                TextHorizontalAlign = HorizontalAlign.Center,
-                                TextVerticalAlign = VerticalAlign.Below,
-                                OnClick = (sender, args) =>
-                               {
-                                   if (SelectedEmployeeInfo.Hidden)
-                                   {
-                                       HideTogglePanels();
-                                       SelectedEmployeeInfo.Hidden = false;
-                                   }
-                                   else
-                                       SelectedEmployeeInfo.Hidden = true;
-                               }
-                            },
-
-                            new FramedIcon
-                            {
-                               Icon  = new Gui.TileReference("tool-icons", 17),
-                               Text = "@play-marks-icon-label",
-                               Tooltip = "@play-marks-icon-tooltip",
-                               TextHorizontalAlign = HorizontalAlign.Center,
-                               TextVerticalAlign = VerticalAlign.Below,
-                               EnabledTextColor = Vector4.One,
-                               OnClick = (sender, args) =>
-                               {
-                                   if (markerFilter.Hidden)
-                                   {
-                                       HideTogglePanels();
-                                       markerFilter.Hidden = false;
-                                   }
-                                   else
-                                       markerFilter.Hidden = true;
-                               }
-                            },
-
-                            new FramedIcon
-                            {
-                                Icon = new Gui.TileReference("tool-icons", 35),
-                                Text = "@play-tasks-icon-label",
-                                Tooltip = "@play-tasks-icon-tooltip",
-                                TextHorizontalAlign = HorizontalAlign.Center,
-                                TextVerticalAlign = VerticalAlign.Below,
-                                EnabledTextColor = Vector4.One,
-                                OnClick = (sender, args) =>
-                                {
-                                    if (taskList.Hidden)
-                                    {
-                                        HideTogglePanels();
-                                        taskList.Hidden = false;
-                                    }
-                                    else
-                                        taskList.Hidden = true;
-                                }
-                            },
-
-                            new FramedIcon
-                            {
-                                Icon = new Gui.TileReference("tool-icons", 37),
-                                Text = "@play-rooms-icon-label",
-                                Tooltip = "@play-rooms-icon-tooltip",
-                                TextHorizontalAlign = HorizontalAlign.Center,
-                                TextVerticalAlign = VerticalAlign.Below,
-                                EnabledTextColor = Vector4.One,
-                                OnClick = (sender, args) =>
-                                {
-                                    if (roomList.Hidden)
-                                    {
-                                        HideTogglePanels();
-                                        roomList.Hidden = false;
-                                    }
-                                    else
-                                        roomList.Hidden = true;
-                                }
-                            }
+                            EmployeesIcon,
+                            MarksIcon,
+                            TasksIcon,
+                            ZonesIcon
                         },
             });
 

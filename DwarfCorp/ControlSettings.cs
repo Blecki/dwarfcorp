@@ -23,6 +23,10 @@ namespace DwarfCorp
             public Keys SliceDown = Keys.PageDown;
             public Keys Pause = Keys.Space;
             public Keys Map = Keys.M;
+            public Keys Employees = Keys.OemComma;
+            public Keys Tasks = Keys.OemPeriod;
+            public Keys Zones = Keys.N;
+            public Keys Marks = Keys.V;
             public Keys SliceSelected = Keys.Q;
             public Keys Unslice = Keys.E;
             public Keys ToggleGUI = Keys.B;
@@ -41,6 +45,7 @@ namespace DwarfCorp
 
             public Keys Xray = Keys.Tab;
 
+            // Todo: Seriously?
             public IEnumerable<Keys> GetKeys()
             {
                 yield return SliceSelected;
@@ -56,6 +61,10 @@ namespace DwarfCorp
                 yield return SliceDown;
                 yield return Pause;
                 yield return Map;
+                yield return Employees;
+                yield return Tasks;
+                yield return Zones;
+                yield return Marks;
                 yield return Unslice;
                 yield return ToggleGUI;
                 yield return Jump;
