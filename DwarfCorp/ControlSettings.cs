@@ -33,13 +33,13 @@ namespace DwarfCorp
             public Keys Jump = Keys.C;
             public Keys Fly = Keys.K;
             public Keys SelectAllDwarves = Keys.F;
+            public Keys SelectNextEmployee = Keys.H;
+            public Keys SelectPreviousEmployee = Keys.G;
 
             // Toggles a variable in GamePerformance that can be used with if-blocks to quickly change between old and new code for comparison purposes.
             // Likely should be removed for a true release as there should be no toggles left in.
             public Keys DebugToggle2 = Keys.F8;
             public Keys DebugToggle1 = Keys.F9;
-            // Toggles FPS and other stat showing via GamePerformance.
-            public Keys TogglePerformanceOverlay = Keys.F10;
             public Keys RotateObjectLeft = Keys.R;
             public Keys RotateObjectRight = Keys.T;
 
@@ -70,9 +70,10 @@ namespace DwarfCorp
                 yield return Jump;
                 yield return Fly;
                 yield return SelectAllDwarves;
+                yield return SelectPreviousEmployee;
+                yield return SelectNextEmployee;
                 yield return DebugToggle1;
                 yield return DebugToggle2;
-                yield return TogglePerformanceOverlay;
                 yield return RotateObjectLeft;
                 yield return RotateObjectRight;
                 yield return Xray;

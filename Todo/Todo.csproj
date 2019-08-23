@@ -64,7 +64,7 @@
     <Compile Include="Tag.cs" />
     <Compile Include="Undo.cs" />
     <Compile Include="List.cs" />
-    <Compile Include="main.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Modify.cs" />
     <Compile Include="Next.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

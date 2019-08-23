@@ -1,0 +1,29 @@
+{
+  "Name": "Wood Hammer",
+  "EntityName": "",
+  "Category": "Tools",
+  "RequiredResources": [
+    {
+      "Type": "Wood",
+      "Count": 2
+    }
+  ],
+  "Icon": {
+    "Sheet": "hammer-resources",
+    "Tile": 0
+  },
+  "BaseCraftTime": 9.0,
+  "Description": "A hammer made of wood.",
+  "Type": "Resource",
+  "Prerequisites": [],
+  "ResourceCreated": "Wood Hammer",
+  "CraftLocation": "Craft Table",
+  "Verb": "Build",
+  "PastTeseVerb": "Built",
+  "CurrentVerb": "Building",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.45, 0",
+  "AddToOwnedPool": true,
+  "CraftActBehavior": "Normal",
+  "Tutorial": "Dwarves need hammers to craft items."
+}

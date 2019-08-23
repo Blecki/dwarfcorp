@@ -1,0 +1,33 @@
+{
+  "Name": "Copper Hammer",
+  "EntityName": "",
+  "Category": "Tools",
+  "RequiredResources": [
+    {
+      "Type": "Wood",
+      "Count": 1
+    },
+    {
+      "Type": "Copper",
+      "Count": 1
+    }
+  ],
+  "Icon": {
+    "Sheet": "hammer-resources",
+    "Tile": 3
+  },
+  "BaseCraftTime": 9.0,
+  "Description": "A hammer made of copper.",
+  "Type": "Resource",
+  "Prerequisites": [],
+  "ResourceCreated": "Copper Hammer",
+  "CraftLocation": "Anvil",
+  "Verb": "Build",
+  "PastTeseVerb": "Built",
+  "CurrentVerb": "Building",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.45, 0",
+  "AddToOwnedPool": true,
+  "CraftActBehavior": "Normal",
+  "Tutorial": "Dwarves need hammers to craft items."
+}

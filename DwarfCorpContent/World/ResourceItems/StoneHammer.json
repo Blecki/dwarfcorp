@@ -1,24 +1,24 @@
 {
-  "Name": "Wood Pick",
+  "Name": "Stone Hammer",
   "MoneyValue": 15.0,
-  "Description": "A pick made of wood.",
+  "Description": "A hammer made of stone.",
   "Category": "Tools",
   "GuiLayers": [
     {
-      "Sheet": "pick-resources",
-      "Tile": 0
+      "Sheet": "hammer-resources",
+      "Tile": 1
     }
   ],
   "Tags": [
     "Tool",
-    "Pick"
+    "Hammer"
   ],
   "FoodContent": 0.0,
   "CompositeLayers": [
     {
-      "Asset": "Entities/Dwarf/ToolIcons/pick",
+      "Asset": "Entities/Dwarf/ToolIcons/hammer",
       "FrameSize": "32, 32",
-      "Frame": "0, 0"
+      "Frame": "1, 0"
     }
   ],
   "TrinketData": {
@@ -27,7 +27,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Wood Pick",
+  "ShortName": "Stone Hammer",
   "PlantToGenerate": "",
   "CanCraft": false,
   "CraftPrerequisites": [],

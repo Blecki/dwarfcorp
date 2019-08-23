@@ -106,7 +106,8 @@ namespace DwarfCorp
             GoldOre,
             Tool,
             Pick,
-            Peppermint
+            Peppermint,
+            Hammer
         }
 
         public Resource()

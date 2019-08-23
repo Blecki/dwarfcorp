@@ -1,0 +1,33 @@
+{
+  "Name": "Iron Hammer",
+  "EntityName": "",
+  "Category": "Tools",
+  "RequiredResources": [
+    {
+      "Type": "Wood",
+      "Count": 1
+    },
+    {
+      "Type": "Iron",
+      "Count": 1
+    }
+  ],
+  "Icon": {
+    "Sheet": "hammer-resources",
+    "Tile": 2
+  },
+  "BaseCraftTime": 9.0,
+  "Description": "A hammer made of iron.",
+  "Type": "Resource",
+  "Prerequisites": [],
+  "ResourceCreated": "Iron Hammer",
+  "CraftLocation": "Anvil",
+  "Verb": "Build",
+  "PastTeseVerb": "Built",
+  "CurrentVerb": "Building",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.45, 0",
+  "AddToOwnedPool": true,
+  "CraftActBehavior": "Normal",
+  "Tutorial": "Dwarves need need hammers to craft items."
+}

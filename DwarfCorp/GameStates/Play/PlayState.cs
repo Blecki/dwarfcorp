@@ -420,11 +420,51 @@ namespace DwarfCorp.GameStates
                         else
                             OpenPauseMenu();
                     }
-                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.SelectAllDwarves)
+                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.SelectAllDwarves && (PausePanel == null || PausePanel.Hidden))
                     {
-                        if (PausePanel == null || PausePanel.Hidden)
-                        {
                             World.PersistentData.SelectedMinions.AddRange(World.PlayerFaction.Minions);
+                            World.Tutorial("dwarf selected");
+                    }
+                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.SelectNextEmployee && (PausePanel == null || PausePanel.Hidden))
+                    {
+                        if (World.PlayerFaction.Minions.Count > 0)
+                        {
+                            if (World.PersistentData.SelectedMinions.Count == 0)
+                            {
+                                World.PersistentData.SelectedMinions.Clear();
+                                World.PersistentData.SelectedMinions.Add(World.PlayerFaction.Minions[0]);
+                            }
+                            else
+                            {
+                                var index = World.PlayerFaction.Minions.IndexOf(World.PersistentData.SelectedMinions[0]);
+                                index += 1;
+                                if (index >= World.PlayerFaction.Minions.Count)
+                                    index = 0;
+                                World.PersistentData.SelectedMinions.Clear();
+                                World.PersistentData.SelectedMinions.Add(World.PlayerFaction.Minions[index]);
+                            }
+
+                            World.Tutorial("dwarf selected");
+                        }
+                    }
+                    else if ((Keys)args.KeyValue == ControlSettings.Mappings.SelectPreviousEmployee && (PausePanel == null || PausePanel.Hidden))
+                    {
+                        if (World.PlayerFaction.Minions.Count > 0)
+                        {
+                            if (World.PersistentData.SelectedMinions.Count == 0)
+                            {
+                                World.PersistentData.SelectedMinions.Clear();
+                                World.PersistentData.SelectedMinions.Add(World.PlayerFaction.Minions[0]);
+                            }
+                            else
+                            {
+                                var index = World.PlayerFaction.Minions.IndexOf(World.PersistentData.SelectedMinions[0]);
+                                index -= 1;
+                                if (index < 0)
+                                    index = World.PlayerFaction.Minions.Count - 1;
+                                World.PersistentData.SelectedMinions.Clear();
+                                World.PersistentData.SelectedMinions.Add(World.PlayerFaction.Minions[index]);
+                            }
                             World.Tutorial("dwarf selected");
                         }
                     }

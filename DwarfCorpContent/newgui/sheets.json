@@ -188,6 +188,12 @@
     "TileHeight": 32
   },
   {
+    "Name": "hammer-resources",
+    "Texture": "Entities/Dwarf/ToolIcons/hammer",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
     "Name": "tray-border",
     "Texture": "newgui/tray-border",
     "TileWidth": 32,
