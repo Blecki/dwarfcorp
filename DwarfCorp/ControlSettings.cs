@@ -33,8 +33,8 @@ namespace DwarfCorp
             public Keys Jump = Keys.C;
             public Keys Fly = Keys.K;
             public Keys SelectAllDwarves = Keys.F;
-            public Keys SelectNextEmployee = Keys.H;
-            public Keys SelectPreviousEmployee = Keys.G;
+            public Keys SelectNextEmployee = Keys.J;
+            public Keys SelectPreviousEmployee = Keys.H;
 
             // Toggles a variable in GamePerformance that can be used with if-blocks to quickly change between old and new code for comparison purposes.
             // Likely should be removed for a true release as there should be no toggles left in.

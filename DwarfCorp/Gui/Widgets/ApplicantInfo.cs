@@ -28,6 +28,8 @@ namespace DwarfCorp.Gui.Widgets
 
         public override void Construct()
         {
+            Font = "font16";
+
             Widget topWidget = AddChild(new Widget()
             {
                 AutoLayout = AutoLayout.DockTop,
@@ -100,6 +102,7 @@ namespace DwarfCorp.Gui.Widgets
         {
             if (Applicant != null)
             {
+                // Todo: Just use one widget for all the text.
                 NameLabel.Text = Applicant.Name;
                 ClassLabel.Text = Applicant.Class.Name;
                 StartingWageLabel.Text = String.Format("Starts at {0}/day", Applicant.Level.Pay);

@@ -187,7 +187,7 @@
     <Compile Include="Components\AI\DwarfAI.cs" />
     <Compile Include="Components\AI\Equipment.cs" />
     <Compile Include="Components\AI\SpeciesLibrary.cs" />
-    <Compile Include="Components\AI\ClassLibrary.cs" />
+    <Compile Include="Library\ClassLibrary.cs" />
     <Compile Include="Components\AI\Creature-Indicators.cs" />
     <Compile Include="Components\AI\Creature-Reproduction.cs" />
     <Compile Include="Components\AI\CreatureSpecies.cs" />

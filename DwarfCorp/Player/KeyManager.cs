@@ -40,6 +40,12 @@ namespace DwarfCorp
             ControlSettings.Mappings.SelectAllDwarves = this["Select All Dwarves"];
             ControlSettings.Mappings.Fly = this["Fly"];
             ControlSettings.Mappings.Xray = this["Xray"];
+            ControlSettings.Mappings.SelectNextEmployee = this["Select Next Dwarf"];
+            ControlSettings.Mappings.SelectPreviousEmployee = this["Select Previous Dwarf"];
+            ControlSettings.Mappings.Employees = this["Toggle Employee List"];
+            ControlSettings.Mappings.Tasks = this["Toggle Task List"];
+            ControlSettings.Mappings.Zones = this["Toggle Zone List"];
+            ControlSettings.Mappings.Marks = this["Toggle Mark Filter"];
             ControlSettings.Save();
         }
 
@@ -64,11 +70,17 @@ namespace DwarfCorp
             this["Time -"] = ControlSettings.Mappings.TimeBackward;
             this["Toggle GUI"] = ControlSettings.Mappings.ToggleGUI;
             this["Toggle Map"] = ControlSettings.Mappings.Map;
+            this["Toggle Employee List"] = ControlSettings.Mappings.Employees;
+            this["Toggle Task List"] = ControlSettings.Mappings.Tasks;
+            this["Toggle Zone List"] = ControlSettings.Mappings.Zones;
+            this["Toggle Mark Filter"] = ControlSettings.Mappings.Marks;
             this["Pause"] = ControlSettings.Mappings.Pause;
             this["Jump"] = ControlSettings.Mappings.Jump;
             this["Rotate Object Left"] = ControlSettings.Mappings.RotateObjectLeft;
             this["Rotate Object Right"] = ControlSettings.Mappings.RotateObjectRight;
             this["Select All Dwarves"] = ControlSettings.Mappings.SelectAllDwarves;
+            this["Select Next Dwarf"] = ControlSettings.Mappings.SelectNextEmployee;
+            this["Select Previous Dwarf"] = ControlSettings.Mappings.SelectPreviousEmployee;
             this["Fly"] = ControlSettings.Mappings.Fly;
             this["Xray"] = ControlSettings.Mappings.Xray;
         }

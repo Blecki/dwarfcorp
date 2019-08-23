@@ -28,6 +28,7 @@ namespace DwarfCorp
         public bool PlayerClass = false;
         public bool Managerial = false;
         public string DefaultTool = "";
+        public string JobDescription = "There is no description for this class.";
 
         // Todo: Should just include name of attack animation. Kinda what the AttackMode is.
 
