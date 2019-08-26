@@ -3,7 +3,7 @@
   "Plural": "Drones",
   "Posessive": "Dwarvish",
   "DiplomacyConversation": "World/corporate.conv",
-  "CreatureTypes": [ "Dwarf Crafter" ],
+  "CreatureTypes": [ "Non-Player Dwarf Crafter" ],
   "IsIntelligent": true,
   "IsNative": false,
   "FactionNameFile": "Text\\Templates\\nations_dwarf.txt",

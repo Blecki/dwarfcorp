@@ -85,7 +85,8 @@ namespace DwarfCorp
                     if (Object.ReferenceEquals(intersectingObject, sensor)) continue;
                     var objectRoot = intersectingObject.GetRoot() as GameComponent;
                     if (objectRoot is WorkPile) continue;
-                    if (objectRoot == PreviewBody) continue; 
+                    if (objectRoot == PreviewBody) continue;
+                    if (objectRoot.IsDead) continue;
                     if (objectRoot != null && objectRoot.GetRotatedBoundingBox().Intersects(previewBox))
                     {
                         World.UserInterface.ShowTooltip("Can't " + Verb + " here: intersects " + objectRoot.Name);

@@ -59,6 +59,9 @@ namespace DwarfCorp
             MinHealth = minHealth;
 
             Hp = currentHp;
+
+            BoundingBoxSize = new Microsoft.Xna.Framework.Vector3(0.2f, 0.2f, 0.2f);
+            UpdateBoundingBox();
         }
 
         public virtual void Heal(float amount)

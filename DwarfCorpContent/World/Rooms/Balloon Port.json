@@ -7,12 +7,7 @@
   "Name": "Balloon Port",
   "DisplayName": "Balloon\nPort",
   "FloorType": "Stockpile",
-  "RequiredResources": {
-    "Stone": {
-      "Type": "Stone",
-      "Count": 4
-    }
-  },
+  "RequiredResources": {},
   "NewIcon": {
     "Sheet": "rooms",
     "Tile": 1

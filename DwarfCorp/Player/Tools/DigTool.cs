@@ -71,14 +71,17 @@ namespace DwarfCorp
 
                 }
 
-                World.TaskManager.AddTasks(assignments);
+                if (assignments.Count > 0)
+                {
+                    World.TaskManager.AddTasks(assignments);
 
-                var compoundTask = new CompoundTask("DIG A HOLE", TaskCategory.Dig, TaskPriority.Medium);
-                compoundTask.AddSubTasks(assignments);
-                World.TaskManager.AddTask(compoundTask);
+                    var compoundTask = new CompoundTask("DIG A HOLE", TaskCategory.Dig, TaskPriority.Medium);
+                    compoundTask.AddSubTasks(assignments);
+                    World.TaskManager.AddTask(compoundTask);
 
-                var minions = Faction.FilterMinionsWithCapability(World.PersistentData.SelectedMinions, TaskCategory.Dig);
-                OnConfirm(minions);
+                    var minions = Faction.FilterMinionsWithCapability(World.PersistentData.SelectedMinions, TaskCategory.Dig);
+                    OnConfirm(minions);
+                }
             }
             else
             {

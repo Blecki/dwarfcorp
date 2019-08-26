@@ -27,7 +27,7 @@ namespace DwarfCorp
             new ColorConverter(),
             new Newtonsoft.Json.Converters.StringEnumConverter(),
             new Rail.CompassConnectionConverter(),
-            new NewAnimationFrameConverter()
+            new NewAnimationFrameConverter(),
         };
 
         public class TypeNameSerializationBinder : SerializationBinder
