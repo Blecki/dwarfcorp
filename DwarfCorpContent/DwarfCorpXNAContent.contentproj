@@ -2115,6 +2115,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>corporate</Name>
     </None>
+    <None Include="World\CraftItems\CopperAxe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>CopperAxe</Name>
+    </None>
     <None Include="World\CraftItems\CopperHammer.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>CopperHammer</Name>
@@ -2139,6 +2143,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>CopperPick</Name>
     </None>
+    <None Include="World\CraftItems\IronAxe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>IronAxe</Name>
+    </None>
     <None Include="World\CraftItems\IronHammer.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>IronHammer</Name>
@@ -2146,6 +2154,10 @@
     <None Include="World\CraftItems\IronPick.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>IronPick</Name>
+    </None>
+    <None Include="World\CraftItems\StoneAxe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>StoneAxe</Name>
     </None>
     <None Include="World\CraftItems\StoneHammer.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2162,6 +2174,10 @@
     <None Include="World\CraftItems\CandyTable.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>CandyTable</Name>
+    </None>
+    <None Include="World\CraftItems\WoodAxe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>WoodAxe</Name>
     </None>
     <None Include="World\CraftItems\WoodHammer.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2215,6 +2231,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>BambooSprout</Name>
     </None>
+    <None Include="World\ResourceItems\CopperAxe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>CopperAxe</Name>
+    </None>
     <None Include="World\ResourceItems\CopperHammer.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>CopperHammer</Name>
@@ -2223,9 +2243,17 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>GoldOre</Name>
     </None>
+    <None Include="World\ResourceItems\IronAxe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>IronAxe</Name>
+    </None>
     <None Include="World\ResourceItems\IronHammer.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>IronHammer</Name>
+    </None>
+    <None Include="World\ResourceItems\StoneAxe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>StoneAxe</Name>
     </None>
     <None Include="World\ResourceItems\StoneHammer.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2246,6 +2274,10 @@
     <None Include="World\ResourceItems\Bamboo.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Bamboo</Name>
+    </None>
+    <None Include="World\ResourceItems\WoodAxe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>WoodAxe</Name>
     </None>
     <None Include="World\ResourceItems\WoodHammer.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -4107,9 +4139,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Sandstone</Name>
     </None>
-    <None Include="World\Voxels\Gold.json">
+    <None Include="World\Voxels\GoldOre.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Gold</Name>
+      <Name>GoldOre</Name>
     </None>
     <None Include="World\Voxels\Ruby.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -4211,9 +4243,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Water</Name>
     </None>
-    <None Include="World\Voxels\Iron.json">
+    <None Include="World\Voxels\IronOre.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Iron</Name>
+      <Name>IronOre</Name>
     </None>
     <None Include="World\Voxels\Mana.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -5270,6 +5302,13 @@
   <ItemGroup>
     <Compile Include="Entities\Dwarf\ToolIcons\hammer.png">
       <Name>hammer</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\Dwarf\ToolIcons\axe.png">
+      <Name>axe</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

@@ -1,6 +1,6 @@
 {
   "Name": "Copper Hammer",
-  "MoneyValue": 20.0,
+  "MoneyValue": 200.0,
   "Description": "A hammer made of copper.",
   "Category": "Tools",
   "GuiLayers": [

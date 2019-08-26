@@ -1,12 +1,12 @@
 {
-  "Name": "Stone Axe",
+  "Name": "Wood Axe",
   "MoneyValue": 15.0,
-  "Description": "An axe made of stone.",
+  "Description": "An axe made of wood. There's something sadistic about this.",
   "Category": "Tools",
   "GuiLayers": [
     {
       "Sheet": "axe-resources",
-      "Tile": 1
+      "Tile": 0
     }
   ],
   "Tags": [
@@ -18,7 +18,7 @@
     {
       "Asset": "Entities/Dwarf/ToolIcons/axe",
       "FrameSize": "32, 32",
-      "Frame": "1, 0"
+      "Frame": "0, 0"
     }
   ],
   "TrinketData": {
@@ -27,7 +27,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Stone Axe",
+  "ShortName": "Wood Axe",
   "PlantToGenerate": "",
   "CanCraft": false,
   "CraftPrerequisites": [],

@@ -1,6 +1,6 @@
 {
   "Name": "Iron Hammer",
-  "MoneyValue": 20.0,
+  "MoneyValue": 100.0,
   "Description": "A hammer made of iron.",
   "Category": "Tools",
   "GuiLayers": [

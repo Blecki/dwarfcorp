@@ -1,12 +1,12 @@
 {
-  "Name": "Stone Axe",
-  "MoneyValue": 15.0,
-  "Description": "An axe made of stone.",
+  "Name": "Copper Axe",
+  "MoneyValue": 200.0,
+  "Description": "An axe made of copper.",
   "Category": "Tools",
   "GuiLayers": [
     {
       "Sheet": "axe-resources",
-      "Tile": 1
+      "Tile": 3
     }
   ],
   "Tags": [
@@ -18,7 +18,7 @@
     {
       "Asset": "Entities/Dwarf/ToolIcons/axe",
       "FrameSize": "32, 32",
-      "Frame": "1, 0"
+      "Frame": "3, 0"
     }
   ],
   "TrinketData": {
@@ -27,7 +27,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Stone Axe",
+  "ShortName": "Copper Axe",
   "PlantToGenerate": "",
   "CanCraft": false,
   "CraftPrerequisites": [],

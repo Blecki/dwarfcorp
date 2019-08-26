@@ -194,6 +194,12 @@
     "TileHeight": 32
   },
   {
+    "Name": "axe-resources",
+    "Texture": "Entities/Dwarf/ToolIcons/axe",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
     "Name": "tray-border",
     "Texture": "newgui/tray-border",
     "TileWidth": 32,
