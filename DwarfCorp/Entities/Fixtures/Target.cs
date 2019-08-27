@@ -13,14 +13,14 @@ namespace DwarfCorp
 
         public Target()
         {
-            DebugColor = Microsoft.Xna.Framework.Color.RosyBrown;
+            DebugColor = Microsoft.Xna.Framework.Color.Turquoise;
 
         }
 
         public Target(ComponentManager componentManager, Vector3 position, List<ResourceAmount> resources) :
             base(componentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 5), new DwarfCorp.CraftDetails(componentManager, "Target", resources))
         {
-            DebugColor = Microsoft.Xna.Framework.Color.RosyBrown;
+            DebugColor = Microsoft.Xna.Framework.Color.Turquoise;
 
             Name = "Target";
             Tags.Add("Target");

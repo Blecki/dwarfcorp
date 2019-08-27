@@ -39,10 +39,10 @@ namespace DwarfCorp
             CollisionType = CollisionType.Static;
             this.OrientMode = OrientMode;
 
-            AddChild(new Health(Manager, "Hp", 10, 0, 10));
+            AddChild(new Health(Manager, "Hp", 10, 0, 10) { DebugColor = Color.Silver });
 
-            PropogateTransforms();
             CreateCosmeticChildren(Manager);
+            PropogateTransforms();
         }
 
         public Fixture(
