@@ -38,6 +38,8 @@ namespace DwarfCorp
             Point Frame)
             : base(Manager, Name, LocalTransform, Vector3.Zero, Vector3.Zero)
         {
+            DebugColor = Microsoft.Xna.Framework.Color.Yellow;
+
             this.Sheet = Sheet;
             this.Frame = Frame;
             AutoSetWorldSize();
@@ -45,6 +47,7 @@ namespace DwarfCorp
 
         public SimpleSprite()
         {
+            DebugColor = Microsoft.Xna.Framework.Color.Yellow;
         }
 
         public void SetFrame(Point Frame)

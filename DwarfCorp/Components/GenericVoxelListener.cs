@@ -21,7 +21,7 @@ namespace DwarfCorp
 
         public GenericVoxelListener()
         {
-
+            DebugColor = Microsoft.Xna.Framework.Color.DarkSlateGray;
         }
 
         public GenericVoxelListener(ComponentManager Manager,
@@ -31,6 +31,8 @@ namespace DwarfCorp
             Action<VoxelChangeEvent> Handler) :
             base(Manager, "New Voxel Listener", Transform, BoundingBoxExtents, BoundingBoxOffset)
         {
+            DebugColor = Microsoft.Xna.Framework.Color.DarkSlateGray;
+
             CollisionType = CollisionType.Static;
             SetFlag(Flag.DontUpdate, true);
             this.Handler = Handler;

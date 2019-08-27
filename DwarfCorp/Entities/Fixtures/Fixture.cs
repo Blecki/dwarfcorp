@@ -32,6 +32,8 @@ namespace DwarfCorp
                 new Vector3(asset.FrameWidth / 32.0f, asset.FrameHeight / 32.0f, asset.FrameWidth / 32.0f) * 0.9f, 
                 Vector3.Zero)
         {
+            DebugColor = Microsoft.Xna.Framework.Color.Salmon;
+
             Asset = asset;
             Frame = frame;
             CollisionType = CollisionType.Static;
@@ -52,7 +54,9 @@ namespace DwarfCorp
             Point frame,
             SimpleSprite.OrientMode OrientMode = SimpleSprite.OrientMode.Spherical) :
             this(Manager, position, asset, frame, OrientMode)
-        { 
+        {
+            DebugColor = Microsoft.Xna.Framework.Color.Salmon;
+
             this.Name = Name;
             this.Tags.AddRange(Tags);
         }

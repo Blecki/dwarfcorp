@@ -10,11 +10,13 @@ namespace DwarfCorp
 {
     public partial class GameComponent
     {
+        public Color DebugColor = Color.Blue;
+
         public virtual void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             if (Debugger.Switches.DrawBoundingBoxes)
             {
-                Drawer3D.DrawBox(BoundingBox, Color.Blue, 0.02f, false);
+                Drawer3D.DrawBox(BoundingBox, DebugColor, 0.02f, false);
                 Drawer3D.DrawLine(GlobalTransform.Translation, GlobalTransform.Translation + Vector3.UnitX, Color.Red, 0.02f);
                 Drawer3D.DrawLine(GlobalTransform.Translation, GlobalTransform.Translation + Vector3.UnitY, Color.Blue, 0.02f);
                 Drawer3D.DrawLine(GlobalTransform.Translation, GlobalTransform.Translation + Vector3.UnitZ, Color.Green, 0.02f);

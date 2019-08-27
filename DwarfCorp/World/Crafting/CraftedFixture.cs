@@ -21,6 +21,7 @@ namespace DwarfCorp
             base(manager, position, sheet, frame, OrientMode)
         {
             this.SetFlag(Flag.ShouldSerialize, true);
+            details.DebugColor = Color.Brown;
             AddChild(details);
         }
 
@@ -33,6 +34,7 @@ namespace DwarfCorp
             base(Manager, position, asset, details.GetSpritesheetFrame(details.Resources[0].Type), OrientMode)
         {
             this.SetFlag(Flag.ShouldSerialize, true);
+            details.DebugColor = Color.Brown;
             AddChild(details);
         }
 
@@ -47,7 +49,7 @@ namespace DwarfCorp
             : base(Name, Tags, Manager, Position, Sheet, Sprite)
         {
             this.SetFlag(Flag.ShouldSerialize, true);
-            AddChild(new CraftDetails(Manager, Name, Resources));
+            AddChild(new CraftDetails(Manager, Name, Resources) { DebugColor = Color.Brown });
         }
     }
 }

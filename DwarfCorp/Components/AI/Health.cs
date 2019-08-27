@@ -37,6 +37,7 @@ namespace DwarfCorp
 
         public Health()
         {
+            DebugColor = Microsoft.Xna.Framework.Color.Red;
         }
 
         public void InitializeResistance()
@@ -54,6 +55,7 @@ namespace DwarfCorp
         public Health(ComponentManager manager, string name, float maxHealth, float minHealth, float currentHp) :
             base(name, manager)
         {
+            DebugColor = Microsoft.Xna.Framework.Color.Red;
             InitializeResistance();
             MaxHealth = maxHealth;
             MinHealth = minHealth;

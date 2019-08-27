@@ -136,5 +136,10 @@ namespace DwarfCorp
 
             return true;
         }
+
+        public override void OnCancelled(TaskManager Manager, WorldManager World)
+        {
+            base.OnCancelled(Manager, World);
+        }
     }
 }
