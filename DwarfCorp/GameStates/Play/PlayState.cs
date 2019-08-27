@@ -1962,11 +1962,11 @@ namespace DwarfCorp.GameStates
             var icon_BuildTool = new FlatToolTray.Icon
             {
                 Tag = "build",
-                Text = "Build",
+                Text = "Place",
                 TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 2),
                 KeepChildVisible = true,
-                Tooltip = "Build",
+                Tooltip = "Place voxels and object's you've built.",
                 ReplacementMenu = menu_BuildTools,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };

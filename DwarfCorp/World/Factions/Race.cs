@@ -64,7 +64,7 @@ namespace DwarfCorp
 
             foreach (var tags in TradeGoods)
             {
-                int num = MathFunctions.RandInt(tags.Value - 5, tags.Value + 5);
+                int num = MathFunctions.RandInt(tags.Value, tags.Value + 4);
 
                 var resources = Library.EnumerateResourceTypesWithTag(tags.Key);
 

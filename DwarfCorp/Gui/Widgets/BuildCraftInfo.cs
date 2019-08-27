@@ -156,8 +156,29 @@ namespace DwarfCorp.Gui.Widgets
                             Tooltip = String.Format("Type of {0} to use.", resourceAmount.Type)
                         }) as Gui.Widgets.ComboBox;
 
+                        var resourceCountIndicator = child.AddChild(new Widget
+                        {
+                            Font = "font8",
+                            AutoLayout = AutoLayout.DockFill
+                        });
+
                         if (resourceSelector.Items.Count == 0)
                             resourceSelector.Items.Add("<Not enough!>");
+
+                        resourceSelector.OnSelectedIndexChanged += (_sender) =>
+                        {
+                            if (resourceSelector.SelectedItem == "<Not enough!>")
+                                resourceCountIndicator.Text = "";
+                            else
+                            {
+                                var resources = World.ListResources();
+                                if (resources.ContainsKey(resourceSelector.SelectedItem))
+                                    resourceCountIndicator.Text = String.Format("Available: {0}", resources[resourceSelector.SelectedItem].Count);
+                                else
+                                    resourceCountIndicator.Text = "Available: None!";
+                            }
+                            resourceCountIndicator.Invalidate();
+                        };
 
                         resourceSelector.SelectedIndex = 0;
 
