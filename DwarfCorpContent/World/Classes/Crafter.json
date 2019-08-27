@@ -3,6 +3,7 @@
   "PlayerClass": true,
   "Actions": 114576,
   "AttackMode": "Attacking",
+  "JobDescription": "Nothing of real substance gets done without a crafter there to do it. If you need something built, you need a crafter involved. You want some walls built, that's right, a crafter is gonna do it. They are the most versatile dwarves, capable of just about anything except mining.",
   "Weapons": [
     {
       "DamageAmount": 1.0,

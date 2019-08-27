@@ -2,8 +2,9 @@
   "Name": "Miner",
   "PlayerClass": true,
   "Actions": 112662,
-  "DefaultTool":  "Iron Pick",
+  "DefaultTool": "Iron Pick",
   "AttackMode": "Attacking",
+  "JobDescription": "Miners are the workforce of any dwarf settlement. Miners did holes. They can cut trees too, but they prefer to be underground digging through stone.",
   "Weapons": [
     {
       "DamageAmount": 1.5,

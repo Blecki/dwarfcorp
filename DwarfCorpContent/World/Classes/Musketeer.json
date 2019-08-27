@@ -3,6 +3,7 @@
   "PlayerClass": true,
   "Actions": 24592,
   "AttackMode": "Attacking02",
+  "JobDescription": "Musketeers are highly trained in the use of their weapon. They are powerful defenders and ranged attackers, but they aren't going to soil their hands with such mundane things as digging holes or building things.",
   "Weapons": [
     {
       "DamageAmount": 20.0,

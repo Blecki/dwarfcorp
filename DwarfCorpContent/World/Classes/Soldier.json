@@ -3,6 +3,7 @@
   "PlayerClass": true,
   "Actions": 24596,
   "AttackMode": "Attacking",
+  "JobDescription": "Soldiers are best at looking tough. They are devestating warriors, and also pretty good lumberjacks and cooks.",
   "Weapons": [
     {
       "DamageAmount": 4.0,
@@ -48,8 +49,8 @@
       "BaseStats": {
         "Name": "",
         "Dexterity": 5.0,
-        "Constitution": 5.0,
-        "Strength": 6.0,
+        "Constitution": 7.0,
+        "Strength": 8.0,
         "Wisdom": 5.0,
         "Charisma": 5.0,
         "Intelligence": 5.0,
@@ -68,8 +69,8 @@
       "BaseStats": {
         "Name": "",
         "Dexterity": 5.0,
-        "Constitution": 6.0,
-        "Strength": 7.0,
+        "Constitution": 8.0,
+        "Strength": 9.0,
         "Wisdom": 5.0,
         "Charisma": 6.0,
         "Intelligence": 5.0,
@@ -88,8 +89,8 @@
       "BaseStats": {
         "Name": "",
         "Dexterity": 5.0,
-        "Constitution": 7.0,
-        "Strength": 7.0,
+        "Constitution": 9.0,
+        "Strength": 10.0,
         "Wisdom": 5.0,
         "Charisma": 6.0,
         "Intelligence": 5.0,
@@ -108,11 +109,11 @@
       "BaseStats": {
         "Name": "",
         "Dexterity": 6.0,
-        "Constitution": 7.0,
-        "Strength": 7.0,
-        "Wisdom": 5.0,
-        "Charisma": 6.0,
-        "Intelligence": 5.0,
+        "Constitution": 10.0,
+        "Strength": 11.0,
+        "Wisdom": 6.0,
+        "Charisma": 8.0,
+        "Intelligence": 6.0,
         "Size": 5.0
       },
       "ExtraWeapons": [],
