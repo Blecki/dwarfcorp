@@ -312,8 +312,7 @@ namespace DwarfCorp
             if (Item.ExistingResource != null)
             {
                 getResources = new Select(new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true),
-                                          new Domain(() => !Item.HasResources &&
-                                                           (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
+                                            new Domain(() => !Item.HasResources && (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
                                                      new Select(
                                                             new Sequence(new Wrap(ReserveResources),
                                                                          new GetResourcesAct(Agent, new List<ResourceAmount>() { new ResourceAmount(Item.ExistingResource) } ),
@@ -340,9 +339,13 @@ namespace DwarfCorp
             else
             {
                 getResources = new Select(new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true),
-                                          new Domain(() => !Item.HasResources && (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
-                                                     new Sequence(new Wrap(ReserveResources), new GetResourcesAct(Agent, Item.SelectedResources)) | (new Wrap(UnReserve)) & false),
-                                          new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true));
+                                            new Domain(() => !Item.HasResources && (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
+                                                new Sequence(
+                                                    new Wrap(ReserveResources),
+                                                    new GetResourcesAct(Agent, Item.SelectedResources)) 
+                                                | (new Wrap(UnReserve)) 
+                                                & false),
+                                            new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true));
             }
 
             if (Item.ItemType.Type == CraftItem.CraftType.Object)

@@ -14,7 +14,6 @@ namespace DwarfCorp.Gui.Widgets
         private List<Gui.Widgets.ComboBox> ResourceCombos = new List<Gui.Widgets.ComboBox>();
         private Gui.Widgets.ComboBox NumCombo = new ComboBox();
         public Action<Gui.Widget, Gui.InputEventArgs> BuildAction = null;
-        public bool AllowWildcard = true;
 
         public override void Construct()
         {
@@ -157,9 +156,6 @@ namespace DwarfCorp.Gui.Widgets
                             Tooltip = String.Format("Type of {0} to use.", resourceAmount.Type)
                         }) as Gui.Widgets.ComboBox;
 
-                        if (AllowWildcard)
-                            resourceSelector.Items.Insert(0, "Any");
-
                         if (resourceSelector.Items.Count == 0)
                             resourceSelector.Items.Add("<Not enough!>");
 
@@ -263,16 +259,7 @@ namespace DwarfCorp.Gui.Widgets
                     return false;
                 }
             }
-
-            if (!AllowWildcard)
-            {
-                foreach (var resourceAmount in Data.RequiredResources)
-                    if (World.ListResourcesWithTag(resourceAmount.Type).Count == 0)
-                    {
-                        return false;
-                    }
-            }
-
+            
             return true;
         }
 
@@ -283,7 +270,6 @@ namespace DwarfCorp.Gui.Widgets
             {
                 if (ResourceCombos[i].SelectedItem == null) continue;
                 if (ResourceCombos[i].SelectedItem == "<Not enough!>") continue;
-                if (ResourceCombos[i].SelectedItem == "Any") continue;
                 r.Add(new ResourceAmount(ResourceCombos[i].SelectedItem,
                     Data.RequiredResources[i].Count));
             }

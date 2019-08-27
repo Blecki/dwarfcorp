@@ -85,13 +85,13 @@ namespace DwarfCorp
 
                             World.TaskManager.AddTask(new CraftItemTask(newDesignation));
 
-                            PreviewBody = CreatePreviewBody();
-
                             if (!HandlePlaceExistingUpdate())
                             {
                                 World.UserInterface.ShowToolPopup("Unable to place any more.");
                                 World.UserInterface.ChangeTool("SelectUnits");
                             }
+                            else
+                                PreviewBody = CreatePreviewBody();
                         }
 
                         break;
