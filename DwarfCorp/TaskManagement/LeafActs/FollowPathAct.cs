@@ -362,7 +362,7 @@ namespace DwarfCorp
 
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_ic_dwarf_magic_research, Agent.Position, true, 1.0f);
                     Agent.World.ParticleManager.Trigger("green_flame", (Step.InteractObject as GameComponent).Position, Color.White, 1);
-                    Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
+                    //Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
 
                     foreach (var bit in Translate(GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel), actionSpeed))
                     {
@@ -370,7 +370,8 @@ namespace DwarfCorp
                         yield return Status.Running;
                     }
 
-                    Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
+                    SetAgentTranslation(GetPathPoint(Step.DestinationVoxel));
+                    //Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
                         break;
             }
         }
