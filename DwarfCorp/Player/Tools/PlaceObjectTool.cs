@@ -77,7 +77,7 @@ namespace DwarfCorp
                                 WorkPile = new WorkPile(World.ComponentManager, startPos)
                             };
 
-                                newDesignation.ExistingResource = ExistingPlacement;
+                            newDesignation.ExistingResource = ExistingPlacement;
 
                             World.ComponentManager.RootComponent.AddChild(newDesignation.WorkPile);
                             newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), pos));
@@ -87,6 +87,7 @@ namespace DwarfCorp
 
                             if (!HandlePlaceExistingUpdate())
                             {
+                                PreviewBody = null;
                                 World.UserInterface.ShowToolPopup("Unable to place any more.");
                                 World.UserInterface.ChangeTool("SelectUnits");
                             }
