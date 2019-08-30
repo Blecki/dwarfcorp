@@ -53,7 +53,10 @@ namespace DwarfCorp.Gui.Widgets
             // Todo: Use entity ID instead of just comparing message
             var existingMessage = Messages.FirstOrDefault(m => m.EntityID == EntityID);
             if (existingMessage != null)
+            {
                 existingMessage.DeletionTime = DateTime.Now.AddSeconds(MessageLiveSeconds);
+                existingMessage.RawMessage = Message;
+            }
             else
                 Messages.Add(new InfoTray.Message
                 {

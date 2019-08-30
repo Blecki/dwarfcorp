@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -63,6 +63,27 @@ namespace TodoList
         public bool Matches(Entry Entry)
         {
             return A.Matches(Entry) && B.Matches(Entry);
+        }
+    }
+
+    public class CompletedTimespanMatcher : Matcher
+    {
+        public UInt32 Days;
+
+        public bool Matches(Entry Entry)
+        {
+            return Entry.Status == "✓"
+                && Entry.CompletionTime > (DateTime.Now - new TimeSpan((int)Days, 0, 0, 0));
+        }
+    }
+
+    public class CreatedTimespanMatcher : Matcher
+    {
+        public UInt32 Days;
+
+        public bool Matches(Entry Entry)
+        {
+            return Entry.CreationTime > (DateTime.Now - new TimeSpan((int)Days, 0, 0, 0));
         }
     }
 }

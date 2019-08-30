@@ -18,18 +18,6 @@ namespace TodoList
         [SwitchDocumentation("Path to task file.")]
         public string file = "todo.txt";
 
-        private class TimespanMatcher : Matcher
-        {
-            public bool Hilite => false;
-            public UInt32 Days;
-
-            public bool Matches(Entry Entry)
-            {
-                return Entry.Status == "✓"
-                    && Entry.CompletionTime > (DateTime.Now - new TimeSpan((int)Days, 0, 0, 0));
-            }
-        }
-
         public void Invoke()
         {
             if (String.IsNullOrEmpty(file))
@@ -40,7 +28,7 @@ namespace TodoList
 
             var list = EntryList.LoadFile(file, false);
 
-            var completeList = Presentation.SearchEntries(list.Root, new TimespanMatcher { Days = days }, -1).Where(l => l.Depth >= 0).ToList();
+            var completeList = Presentation.SearchEntries(list.Root, new CompletedTimespanMatcher { Days = days }, -1).Where(l => l.Depth >= 0).ToList();
             Presentation.DisplayPaginated(completeList);
         }
     }

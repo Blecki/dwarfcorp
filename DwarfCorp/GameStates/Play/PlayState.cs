@@ -367,7 +367,7 @@ namespace DwarfCorp.GameStates
 
                     if (args.MouseButton == 1) // Right mouse click.
                     {
-                        var bodiesClicked = World.ComponentManager.SelectRootBodiesOnScreen(
+                        var bodiesClicked = World.ComponentManager.FindRootBodiesInsideScreenRectangle(
                             new Rectangle(args.X, args.Y, 1, 1), Renderer.Camera);
 
                         if (bodiesClicked.Count > 0)

@@ -19,6 +19,8 @@ namespace TodoList
         public UInt32 p = 0;
         public bool all = false;
         public String tag = "";
+        public UInt32 days = 0;
+        public UInt32 cdays = 0;
 
         [SwitchDocumentation("Path to task file.")]
         public string file = "todo.txt";
@@ -40,10 +42,12 @@ namespace TodoList
                 return;
             }
 
-            var matcher = all ? (Matcher)(new MatchAllMatcher()) : new StatusMatcher { Status = "-" };
+            var matcher = (all || cdays > 0) ? (Matcher)(new MatchAllMatcher()) : new StatusMatcher { Status = "-" };
             if (!String.IsNullOrEmpty(search)) matcher = Presentation.ComposeMatchers(matcher, new RegexMatcher { Pattern = new Regex(search) });
             if (!String.IsNullOrEmpty(tag)) matcher = Presentation.ComposeMatchers(matcher, new TagMatcher { Tag = tag });
             if (p > 0) matcher = Presentation.ComposeMatchers(matcher, new PriorityMatcher { Priority = p });
+            if (days > 0) matcher = Presentation.ComposeMatchers(matcher, new CreatedTimespanMatcher { Days = days });
+            if (cdays > 0) matcher = Presentation.ComposeMatchers(matcher, new CompletedTimespanMatcher { Days = cdays });
 
             var completeList = Presentation.SearchEntries(entry, matcher, 0).Where(l => l.Depth >= 0).ToList();
             Presentation.DisplayPaginated(completeList);

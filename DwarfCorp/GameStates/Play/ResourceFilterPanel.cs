@@ -38,7 +38,8 @@ namespace DwarfCorp.Play
                 Resource.ResourceTags.Rail,
                 Resource.ResourceTags.Seed,
                 Resource.ResourceTags.Edible,
-                Resource.ResourceTags.AnimalProduct
+                Resource.ResourceTags.AnimalProduct,
+                Resource.ResourceTags.Stone
             }.OrderBy(t => t.ToString()).ToList();
 
             Font = "font10";

@@ -152,7 +152,7 @@ namespace DwarfCorp
             StartThreads();
         }
 
-        public List<GameComponent> SelectRootBodiesOnScreen(Rectangle selectionRectangle, Camera camera)
+        public List<GameComponent> FindRootBodiesInsideScreenRectangle(Rectangle selectionRectangle, Camera camera)
         {
             if (World.Renderer.SelectionBuffer == null)
                 return new List<GameComponent>();

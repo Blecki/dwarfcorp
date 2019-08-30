@@ -128,6 +128,9 @@ namespace DwarfCorp
             if (!Active) return;
 
             UpdateCloak();
+
+            Stats.Health.CurrentValue = (Hp - MinHealth) / (MaxHealth - MinHealth); // Todo: MinHealth always 0?
+
             UpdateHealthBar(gameTime);
             CheckNeighborhood(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
             UpdateAnimation(gameTime, chunks, camera);

@@ -52,7 +52,6 @@
     <Compile Include="Complete.cs" />
     <Compile Include="Delete.cs" />
     <Compile Include="Details.cs" />
-    <Compile Include="Top.cs" />
     <Compile Include="PullUpdate.cs" />
     <Compile Include="Matcher.cs" />
     <Compile Include="Presentation.cs" />
