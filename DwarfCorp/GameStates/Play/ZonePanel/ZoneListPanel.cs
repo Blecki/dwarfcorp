@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace DwarfCorp.Play
 {
-    public class RoomListPanel : Widget
+    public class ZoneListPanel : Widget
     {
         public WorldManager World;
 

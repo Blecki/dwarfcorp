@@ -1044,7 +1044,7 @@ namespace DwarfCorp.GameStates
                 World = this.World
             });
 
-            var roomList = Gui.RootItem.AddChild(new Play.RoomListPanel
+            var roomList = Gui.RootItem.AddChild(new Play.ZoneListPanel
             {
                 Border = "border-fancy",
                 AutoLayout = AutoLayout.FloatBottomLeft,
