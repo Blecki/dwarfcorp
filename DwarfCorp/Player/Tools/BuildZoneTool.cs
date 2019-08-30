@@ -78,6 +78,8 @@ namespace DwarfCorp
                 throw new InvalidOperationException("Invalid zone type passed to BuildZoneTool");
 
             World.UserInterface.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+            World.UserInterface.VoxSelector.DrawVoxel = true;
+            World.UserInterface.VoxSelector.DrawBox = true;
             World.UserInterface.ShowToolPopup("Click and drag to build " + CurrentZoneType.Name);
             World.Tutorial("build rooms");
 
@@ -111,6 +113,7 @@ namespace DwarfCorp
                 World.UserInterface.VoxSelector.Enabled = true;
                 World.UserInterface.BodySelector.Enabled = false;
                 World.UserInterface.VoxSelector.DrawBox = true;
+                World.UserInterface.VoxSelector.DrawVoxel = true;
                 World.UserInterface.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
 
                 if (World.UserInterface.IsMouseOverGui)

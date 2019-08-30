@@ -308,6 +308,18 @@ namespace DwarfCorp.Play.EmployeeInfo
                 }
             });
 
+            bottomBar.AddChild(new Button()
+            {
+                Text = "Empty Pack",
+                AutoLayout = AutoLayout.FloatBottomRight,
+                OnClick = (sender1, args1) =>
+                {
+                    if (Employee.Creature != null)
+                        Employee.Creature.AssignRestockAllTasks(TaskPriority.Urgent, true);
+                },
+                MinimumSize = new Point(128, 32)
+            });
+
 
             base.Construct();
         }

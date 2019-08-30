@@ -28,7 +28,7 @@ namespace DwarfCorp.Gui.Widgets
 
         public override void Construct()
         {
-            Font = "font16";
+            Font = "font10";
 
             Widget topWidget = AddChild(new Widget()
             {

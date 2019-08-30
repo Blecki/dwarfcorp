@@ -68,16 +68,17 @@ namespace DwarfCorp.Gui.Widgets
             var jobDescription = right.AddChild(new Widget
             {
                 MinimumSize = new Point((int)(w * 0.4f), 0),
-                InteriorMargin = new Margin(8, 8, 8, 8),
+                InteriorMargin = new Margin(16, 16, 16, 16),
                 WrapWithinWords = false,
                 WrapText = true,
                 AutoLayout = AutoLayout.DockLeft,
-                Font = "font16"
+                Font = "font10"
             });
 
             var applicantInfo = right.AddChild(new ApplicantInfo
             {
-                AutoLayout = AutoLayout.DockFill
+                AutoLayout = AutoLayout.DockFill,
+                Font = "font10"
             }) as ApplicantInfo;
             
             applicantInfo.Hidden = true;
@@ -109,7 +110,7 @@ namespace DwarfCorp.Gui.Widgets
                     TextVerticalAlign = VerticalAlign.Bottom,
                     OnClick = (sender, args) =>
                     {
-                        jobDescription.Text = applicant.Applicant.Class.JobDescription;
+                        jobDescription.Text = "\n\n" + applicant.Applicant.Class.JobDescription;
                         jobDescription.Invalidate();
                         applicantInfo.Hidden = false;
                         HireButton.Hidden = false;
