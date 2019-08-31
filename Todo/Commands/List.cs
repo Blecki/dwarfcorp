@@ -6,6 +6,12 @@ using System.Text.RegularExpressions;
 
 namespace TodoList
 {
+    public enum SortOrder
+    {
+        DEFAULT,
+        COMPLETION,
+    }
+
     [Command(
         Name: "list",
         ShortDescription: "Lists todo tasks.",
@@ -21,6 +27,7 @@ namespace TodoList
         public String tag = "";
         public UInt32 days = 0;
         public UInt32 cdays = 0;
+        public SortOrder order = SortOrder.DEFAULT;
 
         [SwitchDocumentation("Path to task file.")]
         public string file = "todo.txt";
@@ -50,6 +57,10 @@ namespace TodoList
             if (cdays > 0) matcher = Presentation.ComposeMatchers(matcher, new CompletedTimespanMatcher { Days = cdays });
 
             var completeList = Presentation.SearchEntries(entry, matcher, 0).Where(l => l.Depth >= 0).ToList();
+
+            if (order == SortOrder.COMPLETION)
+                completeList.Sort((a, b) => (int)(a.Entry.CompletionTime - b.Entry.CompletionTime).TotalMilliseconds);
+
             Presentation.DisplayPaginated(completeList);
         }
     }

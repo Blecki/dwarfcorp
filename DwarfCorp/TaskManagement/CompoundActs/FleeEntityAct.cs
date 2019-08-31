@@ -9,6 +9,7 @@ namespace DwarfCorp
     {
         public int PathLength;
         public GameComponent Entity;
+        public FleeEntityTask ParentTask;
 
         public FleeEntityAct()
         {
@@ -34,6 +35,7 @@ namespace DwarfCorp
 
         public IEnumerable<Status> ClearFleeing()
         {
+            if (ParentTask != null) ParentTask.Completed = true;
             Creature.Stats.IsFleeing = false;
             yield return Status.Success;
         }

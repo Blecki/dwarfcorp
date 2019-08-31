@@ -42,7 +42,7 @@ namespace DwarfCorp
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(10, 5, 10), Vector3.Zero));
 
-            Physics.AddChild(new CreatureAI(Manager, "Fairy AI", Sensor));
+            Physics.AddChild(new FairyAI(Manager, "Fairy AI", Sensor));
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 

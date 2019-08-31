@@ -10,6 +10,7 @@ namespace DwarfCorp
     public class FleeEntityTask : Task
     {
         public GameComponent ScaryEntity = null;
+        public bool Completed = false;
         public int Distance = 10;
 
         public FleeEntityTask()
@@ -34,7 +35,7 @@ namespace DwarfCorp
 
             Name = "Flee Entity: " + ScaryEntity.Name + " " + ScaryEntity.GlobalID;
             IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.Exclaim, creature.AI.Position, 1.0f, 1.0f, Vector2.UnitY * -32);
-            return new FleeEntityAct(creature.AI) { Entity = ScaryEntity, PathLength = Distance };
+            return new FleeEntityAct(creature.AI) { Entity = ScaryEntity, PathLength = Distance, ParentTask = this };
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
@@ -44,7 +45,8 @@ namespace DwarfCorp
 
         public override bool ShouldRetry(Creature agent)
         {
-            return ScaryEntity != null && !ScaryEntity.IsDead;
+            return false;
+            //return ScaryEntity != null && !ScaryEntity.IsDead;
         }
 
         public override bool ShouldDelete(Creature agent)
@@ -65,7 +67,7 @@ namespace DwarfCorp
 
         public override bool IsComplete(WorldManager World)
         {
-            return ScaryEntity == null || ScaryEntity.IsDead;
+            return ScaryEntity == null || ScaryEntity.IsDead || Completed;
         }
 
     }

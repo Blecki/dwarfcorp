@@ -3559,9 +3559,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>TowerOfHealth</Name>
     </None>
-    <None Include="World\CraftItems\MagicHelper.json">
+    <None Include="World\CraftItems\Fairy.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>MagicHelper</Name>
+      <Name>Fairy</Name>
     </None>
     <None Include="World\CraftItems\WoodenLadder.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -342,7 +342,7 @@ namespace DwarfCorp
             IdleTimer.Update(gameTime);
             SpeakTimer.Update(gameTime);
 
-            if (AutoGatherTimer.HasTriggered)
+            if (AutoGatherTimer.HasTriggered && !Creature.Stats.IsAsleep)
             {
                 foreach (var body in World.EnumerateIntersectingObjects(Physics.BoundingBox.Expand(3.0f)).OfType<ResourceEntity>().Where(r => r.Active && r.AnimationQueue.Count == 0))
                     Creature.GatherImmediately(body, Inventory.RestockType.RestockResource);

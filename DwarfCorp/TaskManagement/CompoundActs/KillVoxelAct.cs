@@ -28,6 +28,7 @@ namespace DwarfCorp
 
         public bool CheckForPick(CreatureAI Creature)
         {
+            if (!Creature.Stats.CurrentClass.RequiresTools) return true;
             if (Creature.Stats.Equipment.GetItemInSlot("tool").HasValue(out var tool) && Library.GetResourceType(tool.Resource).HasValue(out var res))
                 return res.Tags.Contains(Resource.ResourceTags.Pick);
             return false;

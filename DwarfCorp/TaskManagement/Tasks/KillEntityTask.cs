@@ -16,6 +16,7 @@ namespace DwarfCorp
         }
         public GameComponent EntityToKill = null;
         public KillType Mode { get; set; }
+        public bool Cancelled = false;
 
         public KillEntityTask()
         {
@@ -96,6 +97,11 @@ namespace DwarfCorp
                 return true;
             }
 
+            if (Mode == KillType.Attack 
+                && Object.ReferenceEquals(agent.Faction, agent.World.PlayerFaction) 
+                && !agent.World.PersistentData.Designations.GetEntityDesignation(EntityToKill, DesignationType.Attack).HasValue())
+                return true;
+
             if (Mode == KillType.Auto && (agent.AI.Position - EntityToKill.Position).Length() > 20)
                 return true;
             
@@ -114,13 +120,18 @@ namespace DwarfCorp
                 if (Mode == KillType.Auto && (agent.AI.Position - EntityToKill.Position).Length() > 20)
                     return Feasibility.Infeasible;
 
+                if (Mode == KillType.Attack
+                && Object.ReferenceEquals(agent.Faction, agent.World.PlayerFaction)
+                && !agent.World.PersistentData.Designations.GetEntityDesignation(EntityToKill, DesignationType.Attack).HasValue())
+                    return Feasibility.Infeasible;
+
                 return Feasibility.Feasible;
             }
         }
 
         public override bool IsComplete(WorldManager World)
         {
-            return EntityToKill == null || EntityToKill.IsDead;
+            return Cancelled || EntityToKill == null || EntityToKill.IsDead;
         }
 
         public override void OnEnqueued(WorldManager World)
@@ -131,6 +142,7 @@ namespace DwarfCorp
         public override void OnDequeued(WorldManager World)
         {
             World.PersistentData.Designations.RemoveEntityDesignation(EntityToKill, DesignationType.Attack);
+            Cancelled = true;
         }
 
         public override Vector3? GetCameraZoomLocation()

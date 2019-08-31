@@ -169,8 +169,7 @@ namespace DwarfCorp.Gui.Widgets
                                             OnClick = (sender, args) =>
                                             {
                                                 var railTool = World.UserInterface.Tools["BuildRail"] as Rail.BuildRailTool;
-                                                railTool.Pattern = p;
-                                                World.UserInterface.ChangeTool("BuildRail");
+                                                World.UserInterface.ChangeTool("BuildRail", p);
                                                 railTool.GodModeSwitch = true;
                                             }
                                         })

@@ -1879,13 +1879,7 @@ namespace DwarfCorp.GameStates
             var menu_Rail = new FlatToolTray.Tray
             {
                 Tag = "build rail",
-                ItemSource = new List<Widget>(),
-                OnShown = (widget) =>
-                {
-                    // Dynamically rebuild the tray
-                    widget.Clear();
-                    (widget as FlatToolTray.Tray).ItemSource =
-                        (new Widget[] { icon_menu_Rail_Return, icon_menu_Rail_Paint }).Concat(
+                ItemSource = (new Widget[] { icon_menu_Rail_Return, icon_menu_Rail_Paint }).Concat(
                             Library.EnumerateRailPatterns()
                             .Select(data => new FlatToolTray.Icon
                             {
@@ -1899,17 +1893,11 @@ namespace DwarfCorp.GameStates
                                 Behavior = FlatToolTray.IconBehavior.LeafIcon,
                                 OnClick = (sender, args) =>
                                 {
-                                    VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty; // This should be set by the tool.
-                                    var railTool = Tools["BuildRail"] as Rail.BuildRailTool;
-                                    railTool.Pattern = data;
-                                    ChangeTool("BuildRail");
+                                    ChangeTool("BuildRail", data);
                                 },
                                 Hidden = false
-                            }));
-                    widget.Construct();
-                    widget.Hidden = false;
-                    widget.Layout();
-                }
+                            }))
+                
             };
 
             var icon_RailTool = new FlatToolTray.Icon

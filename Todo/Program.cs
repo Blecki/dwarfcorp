@@ -4,107 +4,6 @@ using System.Linq;
 
 namespace TodoList
 {
-    public struct CommandLineIterator
-    {   
-        public readonly String[] Arguments;
-        public readonly int Place;
-
-        public String Peek()
-        {
-            return Arguments[Place];
-        }
-
-        public CommandLineIterator(String[] Arguments, int Place)
-        {
-            this.Arguments = Arguments;
-            this.Place = Place;
-        }
-
-        public CommandLineIterator Advance()
-        {
-            return new CommandLineIterator(Arguments, Place + 1);
-        }   
-
-        public bool AtEnd()
-        {
-            return Place >= Arguments.Length;
-        } 
-    }
-
-    [System.AttributeUsage(System.AttributeTargets.Field, Inherited = false, AllowMultiple = true)]
-    sealed class DefaultSwitchAttribute : System.Attribute
-    {
-        public int Order = 0;
-
-        public DefaultSwitchAttribute(int Order = 0)
-        {
-            this.Order = Order;
-        }
-    }
-
-    [System.AttributeUsage(System.AttributeTargets.Field, Inherited = false, AllowMultiple = true)]
-    sealed class UnknownSwitchAttribute : System.Attribute
-    {
-
-    }
-
-    [System.AttributeUsage(System.AttributeTargets.Field, Inherited = false, AllowMultiple = true)]
-    sealed class GreedyArgumentAttribute : System.Attribute
-    {
-
-    }
-
-    [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-    sealed class SwitchDocumentationAttribute: System.Attribute
-    {
-        public String Documentation = "";
-        public SwitchDocumentationAttribute(String Documentation)
-        {
-            this.Documentation = Documentation;
-        }
-    }
-
-    [System.AttributeUsage(System.AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
-    sealed class CommandAttribute : System.Attribute
-    {
-        public string Name;
-        public string ShortDescription = "";
-        public string LongHelpText = "Long help not specified for this command.";
-        public string ErrorText = "";
-        public List<String> Synonyms = new List<string>();
-
-        public CommandAttribute(String Name, String ShortDescription = "", String LongHelpText = "Long help not specified for this command.", String ErrorText = "", String Synonyms = "")
-        {
-            this.Name = Name;
-            this.ShortDescription = ShortDescription;
-            this.LongHelpText = LongHelpText;
-            this.ErrorText = ErrorText;
-            this.Synonyms.AddRange(Synonyms.Split(' '));
-        }
-    }
-
-    internal interface ICommand
-    {
-        void Invoke();
-    }
-
-    [Command(
-        Name: "test",
-        LongHelpText: "This command exists only for testing purposes. It doesn't do anything.",
-        ShortDescription: "test!",
-        ErrorText: "How did you manage to fuck that up?",
-        Synonyms: "syn-test ttt"
-    )]
-    internal class Test : ICommand
-    {
-        [DefaultSwitch][SwitchDocumentation("The value of this switch will be echoed to the console.")] public int foo = 2;
-
-        public void Invoke()
-        {
-            Console.WriteLine(foo);
-        }
-    }
-
     public class Program
     {
         private static CommandLineIterator ParseCommand(Tuple<CommandAttribute, Type> Command, CommandLineIterator Iterator)
@@ -226,6 +125,11 @@ namespace TodoList
                 return Argument;
             else if (DestinationType == typeof(UInt32))
                 return Convert.ToUInt32(Argument, 16);
+            else if (DestinationType.IsEnum)
+            {
+                var value = Enum.Parse(DestinationType, Argument.ToUpperInvariant());
+                return Convert.ChangeType(value, DestinationType);
+            }
             else
                 return Convert.ChangeType(Argument, DestinationType);
         }

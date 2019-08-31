@@ -63,8 +63,11 @@ namespace DwarfCorp.Rail
         public override void OnBegin(Object Arguments)
         {
             World.Tutorial("place rail");
-            global::System.Diagnostics.Debug.Assert(Pattern != null);
+            Pattern = Arguments as Rail.JunctionPattern;
             GodModeSwitch = false;
+
+            if (Pattern == null) throw new InvalidOperationException();
+
             CreatePreviewBodies(World.ComponentManager, new VoxelHandle(World.ChunkManager, new GlobalVoxelCoordinate(0, 0, 0)));
         }
 

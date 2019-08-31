@@ -1,6 +1,7 @@
 {
   "Actions": 112518,
   "AttackMode": "Attacking",
+  "RequiresTools": false,
   "Weapons": [
     {
       "DamageAmount": 10.0,

@@ -290,8 +290,7 @@ namespace DwarfCorp
         {
             if (CurrentTask.HasValue() && Faction == World.PlayerFaction)
                 World.TaskManager.CancelTask(CurrentTask);
-            else
-                SetCurrentTaskNull();
+            SetCurrentTaskNull();
         }
 
 

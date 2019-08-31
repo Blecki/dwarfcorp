@@ -184,6 +184,7 @@
     <Compile Include="AssetManagement\ObjLoader.cs" />
     <Compile Include="AssetManagement\StringLibrary.cs" />
     <Compile Include="Components\AI\Creature-Death.cs" />
+    <Compile Include="Components\AI\FairyAI.cs" />
     <Compile Include="Components\AI\DwarfAI.cs" />
     <Compile Include="Components\AI\Equipment.cs" />
     <Compile Include="Components\AI\SpeciesLibrary.cs" />

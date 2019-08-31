@@ -78,6 +78,7 @@ namespace DwarfCorp.Rail
                 if (entity is WorkPile) continue;
                 if (entity is Health) continue;
                 if (entity is CraftDetails) continue;
+                if (entity is SimpleSprite) continue;
 
                 if (FindPossibleCombination(junctionPiece, entity).HasValue(out var possibleCombination))
                 {
