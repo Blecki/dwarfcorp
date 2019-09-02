@@ -31,6 +31,7 @@ namespace DwarfCorp
             EnergyLoss = 200.0f;
             TargetName = target;
             CurrentAttack = Datastructures.SelectRandom(agent.Creature.Attacks);
+            
         }
 
         public float LastHp = 0.0f;

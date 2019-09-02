@@ -21,7 +21,7 @@ namespace DwarfCorp
         [JsonProperty] private String LastMesage = "";
         [JsonIgnore] public PlanSubscriber PlanSubscriber = null;
         private Timer AutoGatherTimer = new Timer(MathFunctions.Rand() * 5 + 3, false);
-        private Timer _preEmptTimer = new Timer(1.21f, false);
+        private Timer _preEmptTimer = new Timer(4.0f, false);
         [JsonIgnore] public Blackboard Blackboard = new Blackboard(); // Todo: Does not serializing this break all tasks?
         public string Biography = "";
         public string LastFailedAct = null;

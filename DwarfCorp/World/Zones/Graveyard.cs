@@ -19,6 +19,7 @@ namespace DwarfCorp
         public Graveyard()
         {
             SupportsFilters = false;
+            BoxType = "Grave";
         }
 
         public override string GetDescriptionString()

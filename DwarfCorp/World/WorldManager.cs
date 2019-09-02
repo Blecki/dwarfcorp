@@ -241,18 +241,14 @@ namespace DwarfCorp
                 UpdateZones(gameTime);
 
                 #region Mourn dead minions
-                if (PlayerFaction.Minions.Any(m => m.IsDead))
+                foreach (var deadMinion in PlayerFaction.Minions.Where(m => m.IsDead && m.Stats.CurrentClass.TriggersMourning))
                 {
+                    MakeAnnouncement(String.Format("{0} ({1}) died!", deadMinion.Stats.FullName, deadMinion.Stats.CurrentClass.Name));
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
+                    Tutorial("death");
+
                     foreach (var minion in PlayerFaction.Minions)
-                    {
                         minion.Creature.AddThought("A friend died recently.", new TimeSpan(2, 0, 0, 0), -25.0f);
-
-                        if (!minion.IsDead) continue;
-
-                        MakeAnnouncement(String.Format("{0} ({1}) died!", minion.Stats.FullName, minion.Stats.CurrentClass.Name));
-                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
-                        Tutorial("death");
-                    }
                 }
                 #endregion
 

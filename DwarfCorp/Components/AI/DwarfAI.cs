@@ -199,15 +199,17 @@ namespace DwarfCorp
                         if (Library.GetRandomApplicableCraftable(AI.Faction, AI.World).HasValue(out var item))
                         {
                             var resources = new List<ResourceAmount>();
+                            var allow = true;
                             foreach (var resource in item.RequiredResources)
                             {
                                 var amount = AI.World.GetResourcesWithTags(new List<Quantitiy<Resource.ResourceTags>>() { resource });
                                 if (amount == null || amount.Count == 0)
-                                    break;
-                                resources.Add(Datastructures.SelectRandom(amount));
+                                    allow = false;
+                                else
+                                    resources.Add(Datastructures.SelectRandom(amount));
                             }
 
-                            if (resources.Count > 0)
+                            if (allow && resources.Count > 0)
                                 return new CraftResourceTask(item, 1, 1, resources) { IsAutonomous = true, Priority = TaskPriority.Low };
                         }
 
@@ -336,6 +338,8 @@ namespace DwarfCorp
 
             if (!Active)
                 return;
+
+            SetMessage("");
             Creature.NoiseMaker.BasePitch = Stats.VoicePitch;
 
             AutoGatherTimer.Update(gameTime);

@@ -20,14 +20,14 @@ namespace DwarfCorp
 
         public KillEntityTask()
         {
-            MaxAssignable = 3;
+            MaxAssignable = 64;
             BoredomIncrease = GameSettings.Default.Boredom_ExcitingTask;
             EnergyDecrease = GameSettings.Default.Energy_Arduous;
         }
 
         public KillEntityTask(GameComponent entity, KillType type)
         {
-            MaxAssignable = 3;
+            MaxAssignable = 64;
             Mode = type;
             Name = "Kill Entity: " + entity.Name + " " + entity.GlobalID;
             EntityToKill = entity;
@@ -51,7 +51,7 @@ namespace DwarfCorp
                 if (!otherCreature.IsDead && otherCreature.AI != null)
                 {
                     // Flee if the other creature is too scary.
-                    if (otherCreature != null && creature.AI.FightOrFlight(otherCreature.AI) == CreatureAI.FightOrFlightResponse.Flee)
+                    if (otherCreature != null && (creature.AI.Position - EntityToKill.Position).Length() < 10 && creature.AI.FightOrFlight(otherCreature.AI) == CreatureAI.FightOrFlightResponse.Flee)
                     {
                         Name = "Flee Entity: " + EntityToKill.Name + " " + EntityToKill.GlobalID;
                         ReassignOnDeath = false;

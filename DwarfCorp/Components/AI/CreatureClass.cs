@@ -30,6 +30,7 @@ namespace DwarfCorp
         public string DefaultTool = "";
         public string JobDescription = "There is no description for this class.";
         public bool RequiresTools = true;
+        public bool TriggersMourning = true;
 
         // Todo: Should just include name of attack animation. Kinda what the AttackMode is.
 
