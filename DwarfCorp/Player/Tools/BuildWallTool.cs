@@ -81,8 +81,12 @@ namespace DwarfCorp
                 case (InputManager.MouseButton.Right):
                     {
                         foreach (var r in voxels)
+                        {
                             if (World.PersistentData.Designations.GetVoxelDesignation(r, DesignationType.Put).HasValue(out var designation))
                                 World.TaskManager.CancelTask(designation.Task);
+                            if (World.PersistentData.Designations.GetVoxelDesignation(r, DesignationType.Dig).HasValue(out var digDesignation))
+                                World.TaskManager.CancelTask(digDesignation.Task);
+                        }
 
                         break;
                     }

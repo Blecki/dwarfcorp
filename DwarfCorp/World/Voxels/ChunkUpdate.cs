@@ -71,6 +71,11 @@ namespace DwarfCorp
                                 CollisionType.Static).Any();
                             if (entityPresent) continue;
 
+                            // Don't spread if there's a voxel above us.
+                            var voxelAbove = VoxelHelpers.GetVoxelAbove(voxel);
+                            if (voxelAbove.IsValid && !voxelAbove.IsEmpty)
+                                continue;
+
                             if (chunk.Manager.World.Overworld.Map.GetBiomeAt(voxel.Coordinate.ToVector3(), chunk.Manager.World.Overworld.InstanceSettings.Origin).HasValue(out var biome))
                             {
                                 var grassyNeighbors = VoxelHelpers.EnumerateManhattanNeighbors2D(voxel.Coordinate)

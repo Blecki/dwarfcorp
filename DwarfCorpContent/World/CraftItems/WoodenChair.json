@@ -12,7 +12,7 @@
     "Sheet": "furniture",
     "Tile": 45
   },
-  "BaseCraftTime": 9.0,
+  "BaseCraftTime": 6.0,
   "Description": "Dwarves sit here and relax. Place next to tables for eating.",
   "Type": "Object",
   "Prerequisites": [

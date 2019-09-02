@@ -61,15 +61,15 @@ namespace DwarfCorp
             Agent.Physics.Active = true;
             Agent.Physics.IsSleeping = false;
 
-            if (Agent.Blackboard.GetData<bool>("NoPath", false)
-                && Item.Entity != null
-                && !Item.Entity.IsDead
-                && Agent.World.PersistentData.Designations.GetEntityDesignation(Item.Entity, DesignationType.Craft).HasValue(out var designation)
-                && Agent.Faction == Agent.World.PlayerFaction)
-            {
-                Agent.World.MakeAnnouncement(String.Format("{0} cancelled crafting {1} because it is unreachable", Agent.Stats.FullName, Item.Entity.Name));
-                Agent.World.TaskManager.CancelTask(designation.Task);
-            }
+            //if (Agent.Blackboard.GetData<bool>("NoPath", false)
+            //    && Item.Entity != null
+            //    && !Item.Entity.IsDead
+            //    && Agent.World.PersistentData.Designations.GetEntityDesignation(Item.Entity, DesignationType.Craft).HasValue(out var designation)
+            //    && Agent.Faction == Agent.World.PlayerFaction)
+            //{
+            //    Agent.World.MakeAnnouncement(String.Format("{0} cancelled crafting {1} because it is unreachable", Agent.Stats.FullName, Item.Entity.Name));
+            //    Agent.World.TaskManager.CancelTask(designation.Task);
+            //}
                     
 
             yield return Act.Status.Success;

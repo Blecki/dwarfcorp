@@ -132,7 +132,7 @@ namespace DwarfCorp
                     Agent.World.UserInterface.MakeWorldPopup(String.Format("{0} passed out.", Agent.Stats.FullName), Agent.Physics, -10, 10);
                     Agent.World.TaskManager.AddTask(new HealAllyTask(Agent) { Priority = TaskPriority.High });
                 }
-                Tree = new SleepAct(Creature.AI) { HealRate = 0.1f, RechargeRate = 1.0f, Teleport = false, Type = SleepAct.SleepType.Heal };
+                Tree = new SleepAct(Creature.AI) { HealRate = 0.4f, RechargeRate = 1.0f, Teleport = false, Type = SleepAct.SleepType.Heal };
             }
             base.Initialize();
         }

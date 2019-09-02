@@ -17,6 +17,7 @@ namespace DwarfCorp
         public string Name;
         public float BoredomIncrease = 0.0f;
         public float EnergyDecrease = 0.0f;
+        public bool WasCancelled = false;
 
         [JsonIgnore] public object GuiTag = null;
 

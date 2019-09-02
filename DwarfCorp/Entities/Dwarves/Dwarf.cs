@@ -206,7 +206,7 @@ namespace DwarfCorp
             if (!Stats.IsAsleep)
                 Stats.Hunger.CurrentValue -= (float)gameTime.ElapsedGameTime.TotalSeconds * Stats.HungerGrowth;
             else
-                Hp += (float)gameTime.ElapsedGameTime.TotalSeconds * 0.1f;
+                Hp += (float)gameTime.ElapsedGameTime.TotalSeconds * 0.2f;
 
             Stats.Health.CurrentValue = (Hp - MinHealth) / (MaxHealth - MinHealth); // Todo: MinHealth always 0?
 

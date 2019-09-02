@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class FleeEntityAct : CompoundCreatureAct
     {
         public int PathLength;

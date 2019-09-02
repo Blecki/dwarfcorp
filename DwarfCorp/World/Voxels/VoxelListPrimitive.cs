@@ -128,6 +128,8 @@ namespace DwarfCorp
                     if (!neighbor.IsVisible)
                         return true;
 
+                    if (neighbor.IsExplored && neighbor.IsEmpty) return true;
+
                     if (!neighbor.Type.CanRamp)
                         return false;
 

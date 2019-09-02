@@ -606,7 +606,7 @@ namespace DwarfCorp
                 fear += 0.125f;
 
             // If there are a lot of nearby threats vs allies, we are even more afraid.
-            if (Faction.Threats.Where(threat => threat != null &&  threat.AI != null && !threat.IsDead).Sum(threat => (threat.AI.Position - Position).Length() < 6.0f ? 1 : 0) - 
+            if (Faction.Threats.Where(threat => threat != null &&  threat.AI != null && !threat.IsDead).Sum(threat => (threat.AI.Position - Position).Length() < 5.0f ? 1 : 0) - 
                 Faction.Minions.Where(minion => minion != null && !minion.IsDead).Sum(minion => (minion.Position - Position).Length() < 6.0f ? 1 : 0) > Creature.Stats.Constitution)
                 fear += 0.125f;
 

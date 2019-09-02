@@ -74,7 +74,7 @@ namespace DwarfCorp
                 {
                     MaybeNull<Resource> randResource = Datastructures.SelectRandom(resources);
 
-                    if (!randResource.HasValue(out var res) || !res.Tags.Any(blacklistTags.Contains))
+                    if (!randResource.HasValue(out var res) || res.Tags.Any(blacklistTags.Contains))
                         continue;
 
                     if (tags.Key == Resource.ResourceTags.Craft)

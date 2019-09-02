@@ -51,14 +51,14 @@ namespace DwarfCorp
 
         public IEnumerable<Act.Status> ReleaseAnimal(CreatureAI animal, CreatureAI creature)
         {
-            if (creature.Blackboard.GetData<bool>("NoPath", false)
-                && animal.GetRoot().GetComponent<Physics>().HasValue(out var animalPhysics)
-                && creature.World.PersistentData.Designations.GetEntityDesignation(animalPhysics, DesignationType.Wrangle).HasValue(out var designation)
-                && creature.Faction == creature.World.PlayerFaction)
-            {
-                creature.World.MakeAnnouncement(String.Format("{0} stopped trying to catch {1} because it is unreachable.", creature.Stats.FullName, animal.Stats.FullName));
-                creature.World.TaskManager.CancelTask(designation.Task);
-            }
+            //if (creature.Blackboard.GetData<bool>("NoPath", false)
+            //    && animal.GetRoot().GetComponent<Physics>().HasValue(out var animalPhysics)
+            //    && creature.World.PersistentData.Designations.GetEntityDesignation(animalPhysics, DesignationType.Wrangle).HasValue(out var designation)
+            //    && creature.Faction == creature.World.PlayerFaction)
+            //{
+            //    creature.World.MakeAnnouncement(String.Format("{0} stopped trying to catch {1} because it is unreachable.", creature.Stats.FullName, animal.Stats.FullName));
+            //    creature.World.TaskManager.CancelTask(designation.Task);
+            //}
 
             animal.ResetPositionConstraint();
             yield return Act.Status.Success;

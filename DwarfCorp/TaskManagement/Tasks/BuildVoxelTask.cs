@@ -69,11 +69,11 @@ namespace DwarfCorp
         {
             if (creature.Blackboard.GetData<bool>("NoPath", false))
             {
-                if (creature.Faction == creature.World.PlayerFaction)
-                {
-                    creature.World.MakeAnnouncement(String.Format("{0} cancelled build task because it is unreachable", creature.Stats.FullName));
-                    creature.World.TaskManager.CancelTask(this);
-                }
+                //if (creature.Faction == creature.World.PlayerFaction)
+                //{
+                //    creature.World.MakeAnnouncement(String.Format("{0} cancelled build task because it is unreachable", creature.Stats.FullName));
+                //    creature.World.TaskManager.CancelTask(this);
+                //}
                 return false;
             }
 

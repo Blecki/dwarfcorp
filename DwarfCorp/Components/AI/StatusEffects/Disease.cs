@@ -67,9 +67,13 @@ namespace DwarfCorp
         {
             float hungerChange = creature.Stats.Hunger.CurrentValue - LastHunger;
             LastHunger = creature.Stats.Hunger.CurrentValue;
+
             switch (Type)
             {
                 case HealType.Food:
+                    if (creature.Stats.IsAsleep)
+                        break;
+
                     FoodValueUntilHealed -= hungerChange;
                     if (FoodValueUntilHealed > 0)
                     {

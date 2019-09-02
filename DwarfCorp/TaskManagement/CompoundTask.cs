@@ -50,7 +50,7 @@ namespace DwarfCorp
 
         private void Cleanup(WorldManager World)
         {
-            SubTasks.RemoveAll(t => t.IsComplete(World));
+            SubTasks.RemoveAll(t => t.IsComplete(World) || t.WasCancelled);
         }
 
         public override bool ShouldDelete(Creature agent)

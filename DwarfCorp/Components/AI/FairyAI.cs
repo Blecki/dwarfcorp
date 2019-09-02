@@ -49,9 +49,6 @@ namespace DwarfCorp
             {
                 bool processAct = true;
 
-                Stats.Boredom.CurrentValue -= (float)(currentTask.BoredomIncrease * gameTime.ElapsedGameTime.TotalSeconds);
-                Stats.Energy.CurrentValue += (float)(currentTask.EnergyDecrease * gameTime.ElapsedGameTime.TotalSeconds);
-
                 if (!CurrentAct.HasValue()) // Should be impossible to have a current task and no current act.
                 {
                     // Try and recover the correct act.

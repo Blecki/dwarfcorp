@@ -56,6 +56,7 @@ namespace DwarfCorp
                 Tasks.RemoveAll(t => Object.ReferenceEquals(t, task));
                 task.OnDequeued(World);
                 task.OnCancelled(this, World);
+                task.WasCancelled = true;
             }
         }
 

@@ -1,9 +1,9 @@
 {
   "ID": 0,
   "Name": "_empty",
-  "Top": "0, 0",
-  "Bottom": "0, 0",
-  "Sides": "0, 0",
+  "Top": "12, 0",
+  "Bottom": "12, 0",
+  "Sides": "12, 0",
   "Transitions": 1,
   "HasTransitionTextures": false,
   "TransitionTiles": null,

@@ -428,7 +428,7 @@ namespace DwarfCorp
                                 }
                         }
 
-                    if (currentTask.IsComplete(World))
+                    if (currentTask.IsComplete(World) || currentTask.WasCancelled)
                         ChangeTask(null);
                     else if (status != Act.Status.Running && !retried)
                         ChangeTask(null);

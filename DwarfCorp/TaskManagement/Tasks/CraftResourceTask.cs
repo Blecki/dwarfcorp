@@ -99,12 +99,12 @@ namespace DwarfCorp
         {
             if (creature.Blackboard.GetData<bool>("NoPath", false))
             {
-                if (creature.Faction == creature.World.PlayerFaction)
-                {
-                    creature.World.MakeAnnouncement(
-                        Library.GetString("cancelled-crafting-unreachable", creature.Stats.FullName, Item.ItemType.DisplayName));
-                    creature.World.TaskManager.CancelTask(this);
-                }
+                //if (creature.Faction == creature.World.PlayerFaction)
+                //{
+                //    creature.World.MakeAnnouncement(
+                //        Library.GetString("cancelled-crafting-unreachable", creature.Stats.FullName, Item.ItemType.DisplayName));
+                //    creature.World.TaskManager.CancelTask(this);
+                //}
             }
             yield return Act.Status.Success;
         }

@@ -83,9 +83,12 @@ namespace DwarfCorp
                     Category = CurrentTask.Category;
                 }
             }
-
+           
             if (CurrentTaskIndex < SubTasks.Count)
             {
+                if (CurrentTask.WasCancelled)
+                    World.TaskManager.CancelTask(this);
+
                 Name = String.Format("{0} (Step {1} of {2})", CurrentTask.Name, CurrentTaskIndex + 1, SubTasks.Count);
                 CurrentTask.Priority = Priority;
             }

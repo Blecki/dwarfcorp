@@ -19,14 +19,14 @@ namespace DwarfCorp
         {
             if (creature.Blackboard.GetData<bool>("NoPath", false))
             {
-                if (creature.World.PersistentData.Designations.GetEntityDesignation(ItemToGather, DesignationType.Gather).HasValue(out var designation))
-                {
-                    creature.World.MakeAnnouncement(String.Format("{0} cancelled gather task because it is unreachable", creature.Stats.FullName));
-                    if (creature.Faction == creature.World.PlayerFaction)
-                    {
-                        creature.World.TaskManager.CancelTask(designation.Task);
-                    }
-                }
+                //if (creature.World.PersistentData.Designations.GetEntityDesignation(ItemToGather, DesignationType.Gather).HasValue(out var designation))
+                //{
+                //    creature.World.MakeAnnouncement(String.Format("{0} cancelled gather task because it is unreachable", creature.Stats.FullName));
+                //    if (creature.Faction == creature.World.PlayerFaction)
+                //    {
+                //        creature.World.TaskManager.CancelTask(designation.Task);
+                //    }
+                //}
 
                 Agent.SetMessage("Failed to gather. No path.");
                 yield return Act.Status.Fail;
