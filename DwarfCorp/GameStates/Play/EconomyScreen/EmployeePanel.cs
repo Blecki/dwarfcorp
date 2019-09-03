@@ -61,7 +61,7 @@ namespace DwarfCorp.Gui.Widgets
                     AutoLayout = AutoLayout.DockFill,
                     TextVerticalAlign = VerticalAlign.Center,
                     MinimumSize = new Point(128, 64),
-                    Text = (employee.Stats.IsOverQualified ? employee.Stats.FullName + "*" : employee.Stats.FullName) + " (" + employee.Stats.Title ?? employee.Stats.CurrentLevel.Name + ")"
+                    Text = (employee.Stats.IsOverQualified ? employee.Stats.FullName + "*" : employee.Stats.FullName) + " (" + (employee.Stats.Title ?? employee.Stats.CurrentLevel.Name) + ")"
                 });
 
                 EmployeeList.AddItem(bar);

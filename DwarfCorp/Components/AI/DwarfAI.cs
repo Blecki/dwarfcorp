@@ -19,6 +19,8 @@ namespace DwarfCorp
         [JsonProperty] private double UnhappinessTime = 0.0f;
         private Timer AutoGatherTimer = new Timer(MathFunctions.Rand() * 5 + 3, false);
 
+        [JsonIgnore] public bool BreakOnUpdate = false;
+
         public DwarfAI()
         {
         }
@@ -335,6 +337,9 @@ namespace DwarfCorp
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera) 
         {
             //base.Update(gameTime, chunks, camera);
+
+            if (BreakOnUpdate)
+                BreakOnUpdate = false;
 
             if (!Active)
                 return;

@@ -229,7 +229,7 @@ namespace DwarfCorp
                 ShouldRemove = false,
                 OwnerFaction = this,
                 TradeGoods = Race.GenerateTradeItems(World),
-                TradeMoney = new DwarfBux((decimal)MathFunctions.Rand(150.0f, 550.0f))
+                TradeMoney = new DwarfBux((decimal)MathFunctions.Rand(1500.0f, 5500.0f)) // Todo: Make this a setting.
             };
 
             if (Race.IsNative)

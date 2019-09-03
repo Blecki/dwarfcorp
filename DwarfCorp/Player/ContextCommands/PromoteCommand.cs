@@ -25,10 +25,17 @@ namespace DwarfCorp.ContextCommands
 
         public override void Apply(GameComponent Entity, WorldManager World) // Todo: This logic is duplicated
         {
+            ImplementPromotion(Entity, World);
+        }
+
+        public static void ImplementPromotion(GameComponent Entity, WorldManager World) // Todo: This logic is duplicated
+        {
             if (Entity.GetComponent<CreatureAI>().HasValue(out var employee))
             {
                 var prevLevel = employee.Stats.CurrentLevel;
                 employee.Stats.LevelUp(employee.Creature);
+                if (employee.Stats.Title == prevLevel.Name)
+                    employee.Stats.Title = employee.Stats.CurrentLevel.Name;
 
                 if (employee.Stats.CurrentLevel.HealingPower > prevLevel.HealingPower)
                     World.MakeAnnouncement(String.Format("{0}'s healing power increased to {1}!", employee.Stats.FullName, employee.Stats.CurrentLevel.HealingPower));

@@ -35,6 +35,7 @@ namespace DwarfCorp.Play.EmployeeInfo
         private Widget StatsPanel;
         private Widget EquipmentPanel;
         private Widget PackPanel;
+        private Widget DebugPanel;
         private Widget LevelButton;
 
         private String SetLength(String S, int L)
@@ -159,6 +160,13 @@ namespace DwarfCorp.Play.EmployeeInfo
                 FetchEmployee = () => Employee
             });
 
+#if DEBUG
+            DebugPanel = tabs.AddTab("Debug", new DebugPanel
+            {
+                FetchEmployee = () => Employee
+            });
+#endif
+
             var topbuttons = top.AddChild(new Widget()
             {
                 AutoLayout = AutoLayout.FloatTopRight,
@@ -280,20 +288,8 @@ namespace DwarfCorp.Play.EmployeeInfo
                 Tooltip = "Click to promote this dwarf.\nPromoting Dwarves raises their pay and makes them\nmore effective workers.",
                 OnClick = (sender, args) =>
                 {
-                    var prevLevel = Employee.Stats.CurrentLevel;
-                    Employee.Stats.LevelUp(Employee.Creature);
-                    if (Employee.Stats.CurrentLevel.HealingPower > prevLevel.HealingPower)
-                    {
-                        Employee.World.MakeAnnouncement(String.Format("{0}'s healing power increased to {1}!", Employee.Stats.FullName, Employee.Stats.CurrentLevel.HealingPower));
-                    }
-
-                    if (Employee.Stats.CurrentLevel.ExtraWeapons.Count > prevLevel.ExtraWeapons.Count)
-                    {
-                        Employee.World.MakeAnnouncement(String.Format("{0} learned to cast {1}!", Employee.Stats.FullName, Employee.Stats.CurrentLevel.ExtraWeapons.Last().Name));
-                    }
-                    SoundManager.PlaySound(ContentPaths.Audio.change, 0.5f);
+                    ContextCommands.PromoteCommand.ImplementPromotion(Employee, Employee.World);
                     Invalidate();
-                    Employee.Creature.AddThought("I got promoted recently.", new TimeSpan(3, 0, 0, 0), 20.0f);
                 }
             });
 
@@ -399,6 +395,7 @@ namespace DwarfCorp.Play.EmployeeInfo
             StatsPanel.Invalidate();
             EquipmentPanel.Invalidate();
             PackPanel.Invalidate();
+            DebugPanel?.Invalidate();
 
             return base.Redraw();
         }

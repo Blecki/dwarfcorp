@@ -34,6 +34,13 @@ namespace DwarfCorp
 
         protected List<FailedTask> FailedTasks = new List<FailedTask>();
 
+        public String GetCurrentActString()
+        {
+            if (CurrentAct.HasValue(out var act))
+                return act.Name;
+            return "NO ACT";
+        }
+
         [OnDeserialized]
         public void OnDeserialize(StreamingContext ctx)
         {

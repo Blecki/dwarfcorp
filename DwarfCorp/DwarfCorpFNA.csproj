@@ -130,10 +130,12 @@
     <Compile Include="GameStates\Play\EconomyScreen\EmployeePanel.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\HireEmployeeDialog.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\AllowedTaskFilter.cs" />
+    <Compile Include="GameStates\Play\EmployeeInfoPanel\DebugPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\EquipmentPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\OverviewPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\PackPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\StatsPanel.cs" />
+    <Compile Include="GameStates\Play\EmployeeInfoPanel\TaskListPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\TaskPanel.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ResourceFilterPanel.cs" />
     <Compile Include="GameStates\Play\ZonePanel\StockpileContentsPanel.cs" />
