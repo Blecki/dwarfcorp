@@ -327,7 +327,7 @@ namespace DwarfCorp
             Politics politics = World.Overworld.GetPolitics(ParentFaction, World.PlayerFaction.ParentFaction);
             politics.IsAtWar = true;
             
-            List<CreatureAI> creatures = World.MonsterSpawner.Spawn(World.MonsterSpawner.GenerateSpawnEvent(this, World.PlayerFaction, MathFunctions.Random.Next(World.Overworld.Difficulty) + 1, false));
+            List<CreatureAI> creatures = World.MonsterSpawner.Spawn(World.MonsterSpawner.GenerateSpawnEvent(this, World.PlayerFaction, MathFunctions.Random.Next(World.Overworld.Difficulty.Value) + 1, false));
 
             var party = new WarParty(World.Time.CurrentDate)
             {

@@ -20,7 +20,7 @@ namespace DwarfCorp.Events
             {
                 var envoy = world.Factions.Factions[faction].SendTradeEnvoy();
                 if (envoy != null)
-                    envoy.TributeDemanded = (int)(TributeDemanded * world.Overworld.Difficulty * MathFunctions.Rand(0.9f, 1.5f));
+                    envoy.TributeDemanded = (int)(TributeDemanded * world.Overworld.Difficulty.Value * MathFunctions.Rand(0.9f, 1.5f));
             }
             base.Trigger(world);
         }

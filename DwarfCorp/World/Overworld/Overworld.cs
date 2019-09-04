@@ -15,7 +15,7 @@ namespace DwarfCorp.GameStates // Todo: Why in GameStates?
         public int Width = 128;
         public int Height = 128;
         public string Name = "";
-        public int Difficulty = 2;
+        public Difficulty Difficulty = Library.GetDifficulty("Normal");
         public int Seed = 0;
         public int NumCaveLayers = 8;
         public int zLevels = 4; // This is actually y levels but genre convention is to call depth Z.

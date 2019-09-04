@@ -145,7 +145,7 @@ namespace DwarfCorp.Generation
 
         public static void GenerateCaveFauna(VoxelHandle CaveFloor, BiomeData Biome, ChunkGeneratorSettings Settings)
         {
-            var spawnLikelihood = (Settings.Overworld.Difficulty + 0.1f);
+            var spawnLikelihood = (Settings.Overworld.Difficulty.Value + 0.1f);
 
             foreach (var animalType in Biome.Fauna)
             {
