@@ -34,7 +34,7 @@ namespace DwarfCorp
 
         public DwarfBux CalculateLandValue()
         {
-            return Cell.Bounds.Width * Cell.Bounds.Height * 5;
+            return Cell.Bounds.Width * Cell.Bounds.Height * 3;
         }
         
         public DwarfBux TotalCreationCost()
