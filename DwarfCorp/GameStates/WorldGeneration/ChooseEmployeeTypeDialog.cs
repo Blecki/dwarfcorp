@@ -62,6 +62,16 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(0, 30)
             });
 
+            var jobDescription = right.AddChild(new Widget
+            {
+                MinimumSize = new Point((int)(w * 0.4f), 0),
+                InteriorMargin = new Margin(16, 16, 16, 16),
+                WrapWithinWords = false,
+                WrapText = true,
+                AutoLayout = AutoLayout.DockLeft,
+                Font = "font10"
+            });
+
             var applicantInfo = right.AddChild(new ApplicantInfo
             {
                 AutoLayout = AutoLayout.DockFill
@@ -95,6 +105,8 @@ namespace DwarfCorp.GameStates
                     TextVerticalAlign = VerticalAlign.Bottom,
                     OnClick = (sender, args) =>
                     {
+                        jobDescription.Text = "\n\n" + applicant.Applicant.Class.JobDescription;
+                        jobDescription.Invalidate();
                         applicantInfo.Hidden = false;
                         HireButton.Hidden = false;
                         HireButton.Invalidate();

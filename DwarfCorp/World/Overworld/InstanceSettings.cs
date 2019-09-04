@@ -17,7 +17,7 @@ namespace DwarfCorp
         public string ExistingFile = null;
         public LoadType LoadType = LoadType.CreateNew;
 
-        [JsonIgnore] public Embarkment InitalEmbarkment = new Embarkment();
+        [JsonIgnore] public Embarkment InitalEmbarkment = null;
         [JsonIgnore] public Vector2 Origin => new Vector2(Cell.Bounds.X, Cell.Bounds.Y);
 
         public ColonyCell Cell = null;

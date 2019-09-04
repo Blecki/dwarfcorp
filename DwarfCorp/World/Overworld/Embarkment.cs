@@ -10,6 +10,12 @@ namespace DwarfCorp
         public ResourceSet Resources = new ResourceSet();
         public DwarfBux Funds;
 
+        public Embarkment(GameStates.Overworld Overworld)
+        {
+            foreach (var dwarf in Overworld.Difficulty.Dwarves)
+                Employees.Add(Applicant.Random(dwarf, Overworld.Company));
+        }
+
         public DwarfBux TotalCost()
         {
             return Funds + Employees.Sum(e => e.SigningBonus);

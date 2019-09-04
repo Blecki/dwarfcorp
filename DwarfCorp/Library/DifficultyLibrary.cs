@@ -9,6 +9,7 @@ namespace DwarfCorp
         public int CombatModifier = 0;
         public String Name = "Tranquil";
         public DwarfBux StartingFunds;
+        public List<String> Dwarves = new List<string>();
     }
 
     public static partial class Library
@@ -23,6 +24,8 @@ namespace DwarfCorp
             DifficultiesInitialized = true;
 
             Difficulties = FileUtils.LoadJsonListFromDirectory<Difficulty>("World/Difficulties", null, b => b.Name);
+            Difficulties.Sort((a, b) => a.CombatModifier - b.CombatModifier);
+
             Console.WriteLine("Loaded Difficulty Library.");
         }
 

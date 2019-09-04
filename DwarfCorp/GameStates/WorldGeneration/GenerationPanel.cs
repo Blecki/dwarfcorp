@@ -113,7 +113,7 @@ namespace DwarfCorp.GameStates
                 {
                     Settings.Company.Name = NameField.Text;
                     Settings.Company.Motto = MottoField.Text;
-                    Settings.InstanceSettings.InitalEmbarkment = new Embarkment();
+                    Settings.InstanceSettings.InitalEmbarkment = new Embarkment(Settings);
                     Settings.PlayerCorporationFunds = Settings.Difficulty.StartingFunds;
                     Settings.Natives.FirstOrDefault(n => n.Name == "Player").PrimaryColor = new Color(Settings.Company.LogoBackgroundColor);
 

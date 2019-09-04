@@ -1,5 +1,6 @@
 {
   "Name": "Easy",
   "CombatModifier": 1,
-  "StartingFunds": 5000
+  "StartingFunds": 5000,
+  "Dwarves": [ "Miner", "Miner", "Miner", "Crafter", "Soldier", "Manager" ]
 }
