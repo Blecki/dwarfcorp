@@ -219,6 +219,7 @@ namespace DwarfCorp
             public int DwarfArrivalDelayHours = 4;
             public int MaxLiveChunks = 10; // How many chunks can have geometry saved
             public float SpeciesLimitAdjust = 1.0f;
+            public int LandCost = 3;
 
             public bool DisableWeather = true;
 

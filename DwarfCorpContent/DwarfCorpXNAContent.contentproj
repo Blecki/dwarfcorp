@@ -2223,6 +2223,26 @@
       <Name>Wrangle</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="World\Difficulties\Normal.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Normal</Name>
+    </None>
+    <None Include="World\Difficulties\Easy.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Easy</Name>
+    </None>
+    <None Include="World\Difficulties\Hard.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Hard</Name>
+    </None>
+    <None Include="World\Difficulties\What.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>What</Name>
+    </None>
+    <None Include="World\Difficulties\Tranquil.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Tranquil</Name>
+    </None>
     <None Include="World\Races\Corporate.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Corporate</Name>

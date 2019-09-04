@@ -79,7 +79,7 @@ namespace DwarfCorp.Events
             int iters = 0;
             var filteredEvents = Forecast.Count == 0 ? Library.EnumerateEvents() : Library.EnumerateEvents().Where(e => e.Name != Forecast.Last().Event.Name).ToList();
 
-            if (World.Overworld.Difficulty.Value == 0)
+            if (World.Overworld.Difficulty.CombatModifier == 0)
                 filteredEvents = filteredEvents.Where(e => e.SpawnOnTranquil).ToList();
 
             while (!foundEvent && iters < 100)

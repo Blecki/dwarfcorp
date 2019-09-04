@@ -6,25 +6,36 @@ namespace DwarfCorp
 {
     public class Difficulty
     {
-        public int Value = 0;
+        public int CombatModifier = 0;
         public String Name = "Tranquil";
         public DwarfBux StartingFunds;
     }
 
     public static partial class Library
     {
+        private static List<Difficulty> Difficulties = null;
+        private static bool DifficultiesInitialized = false;
+
+        private static void InitializeDifficulties()
+        {
+            if (DifficultiesInitialized)
+                return;
+            DifficultiesInitialized = true;
+
+            Difficulties = FileUtils.LoadJsonListFromDirectory<Difficulty>("World/Difficulties", null, b => b.Name);
+            Console.WriteLine("Loaded Difficulty Library.");
+        }
+
         public static IEnumerable<Difficulty> EnumerateDifficulties()
         {
-            yield return new Difficulty { Value = 0, Name = "Tranquil", StartingFunds = 5000 };
-            yield return new Difficulty { Value = 1, Name = "Easy", StartingFunds = 5000 };
-            yield return new Difficulty { Value = 2, Name = "Normal", StartingFunds = 2000 };
-            yield return new Difficulty { Value = 5, Name = "Hard", StartingFunds = 1000 };
-            yield return new Difficulty { Value = 10, Name = "What", StartingFunds = 100 };
+            InitializeDifficulties();
+            return Difficulties;
         }
 
         public static Difficulty GetDifficulty(String Name)
         {
-            return EnumerateDifficulties().FirstOrDefault(d => Name == d.Name);
+            InitializeDifficulties();
+            return Difficulties.FirstOrDefault(d => Name == d.Name);
         }
     }
 }
