@@ -114,7 +114,7 @@ namespace DwarfCorp
                 World.UserInterface.BodySelector.Enabled = false;
                 World.UserInterface.VoxSelector.DrawBox = true;
                 World.UserInterface.VoxSelector.DrawVoxel = true;
-                World.UserInterface.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+                World.UserInterface.VoxSelector.SelectionType = VoxelSelectionType.SelectPrism;
 
                 if (World.UserInterface.IsMouseOverGui)
                     World.UserInterface.SetMouse(World.UserInterface.MousePointer);

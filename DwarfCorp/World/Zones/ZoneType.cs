@@ -36,12 +36,6 @@ namespace DwarfCorp
                 return false;
             }
 
-            if (Voxels.Any(v => World.PersistentData.Designations.GetVoxelDesignation(v, DesignationType._All).HasValue(out var _)))
-            {
-                World.UserInterface.ShowTooltip("Something else is designated for this area.");
-                return false;
-            }
-
             List<BoundingBox> boxes = Voxels.Select(voxel => voxel.GetBoundingBox()).ToList();
             BoundingBox box = MathFunctions.GetBoundingBox(boxes);
 
@@ -50,9 +44,25 @@ namespace DwarfCorp
             float maxExtents = Math.Max(extents.X, extents.Z);
             float minExtents = Math.Min(extents.X, extents.Z);
 
+            //Voxels = VoxelHelpers.EnumerateCoordinatesInBoundingBox(box).Select(c => World.ChunkManager.CreateVoxelHandle(c)).ToList();
+
+            if (Voxels.Any(v => World.PersistentData.Designations.GetVoxelDesignation(v, DesignationType._All).HasValue(out var _)))
+            {
+                World.UserInterface.ShowTooltip("Something else is designated for this area.");
+                return false;
+            }
+
+            
+
             if (maxExtents < MinimumSideLength || minExtents < MinimumSideWidth)
             {
                 World.UserInterface.ShowTooltip("Room is too small (minimum is " + MinimumSideLength + " x " + MinimumSideWidth + ")!");
+                return false;
+            }
+
+            if (extents.Y != 1)
+            {
+                World.UserInterface.ShowTooltip("Only select one layer of voxels.");
                 return false;
             }
 

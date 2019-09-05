@@ -50,6 +50,7 @@ namespace DwarfCorp.GameStates
                     DwarfGame.LogSentryBreadcrumb("Menu", "User generating a random world.");
 
                     var overworldSettings = Overworld.Create();
+                    overworldSettings.InstanceSettings.InitalEmbarkment = new Embarkment(overworldSettings);
                     overworldSettings.InstanceSettings.InitalEmbarkment.Funds = 1000u;
                     overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Crafter", overworldSettings.Company));
                     overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Manager", overworldSettings.Company));
@@ -68,6 +69,7 @@ namespace DwarfCorp.GameStates
 
                     var overworldSettings = Overworld.Create();
                     overworldSettings.InstanceSettings.Cell = new ColonyCell { Bounds = new Rectangle(0, 0, 64, 64), Faction = overworldSettings.ColonyCells.GetCellAt(0,0).Faction };
+                    overworldSettings.InstanceSettings.InitalEmbarkment = new Embarkment(overworldSettings);
                     overworldSettings.InstanceSettings.InitalEmbarkment.Funds = 1000u;
                     overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Crafter", overworldSettings.Company));
                     overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Manager", overworldSettings.Company));

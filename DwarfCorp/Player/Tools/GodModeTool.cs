@@ -241,8 +241,10 @@ namespace DwarfCorp
             {
                 World.UserInterface.VoxSelector.SelectionType = GetSelectionTypeBySelectionBoxValue(Command);
                 World.UserInterface.VoxSelector.Enabled = true;
+                World.UserInterface.VoxSelector.DrawBox = true;
+                World.UserInterface.VoxSelector.DrawVoxel = true;
                 World.UserInterface.BodySelector.Enabled = false;
-            }
+            }           
 
             World.UserInterface.SetMouse(World.UserInterface.MousePointer);
 

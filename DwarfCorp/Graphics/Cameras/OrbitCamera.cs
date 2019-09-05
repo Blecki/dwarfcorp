@@ -513,9 +513,25 @@ namespace DwarfCorp
             MouseState mouse = Mouse.GetState();
             KeyboardState keys = Keyboard.GetState();
             var bounds = new BoundingBox(World.ChunkManager.Bounds.Min, World.ChunkManager.Bounds.Max + Vector3.UnitY * 20).Expand(VoxelConstants.ChunkSizeX * 8);
+
             if (ZoomTargets.Count > 0)
             {
-                Vector3 currTarget = MathFunctions.Clamp(ProjectToSurface(ZoomTargets.First()), bounds);
+                var target = ZoomTargets.First();
+                var tVoxel = World.ChunkManager.CreateVoxelHandle(GlobalVoxelCoordinate.FromVector3(target));
+
+                if (tVoxel.IsValid && tVoxel.Coordinate.Y > World.Renderer.PersistentSettings.MaxViewingLevel) // Unslice to make it visible.
+                    World.Renderer.SetMaxViewingLevel(tVoxel.Coordinate.Y + 1);
+                else
+                {
+                    var skyVoxel = World.ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(tVoxel.Coordinate.X, World.WorldSizeInVoxels.Y - 1, tVoxel.Coordinate.Z));
+                    var sVoxel = VoxelHelpers.FindFirstVoxelBelow(skyVoxel);
+
+                    if (tVoxel.Coordinate.Y < sVoxel.Coordinate.Y) // Zooming below the surface - slice.
+                        World.Renderer.SetMaxViewingLevel(tVoxel.Coordinate.Y + 1);
+                }
+
+                var currTarget = MathFunctions.Clamp(ProjectToSurface(ZoomTargets.First()), bounds);
+
                 if (MathFunctions.Dist2D(Target, currTarget) > 5 && _zoomTime < 3)
                 {
                     Vector3 newTarget = 0.8f * Target + 0.2f * currTarget;

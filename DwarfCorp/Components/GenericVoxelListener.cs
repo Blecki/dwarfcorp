@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Runtime.Serialization;
-using System.Text;
-using DwarfCorp.GameStates;
-using Microsoft.Xna.Framework;
-using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -21,7 +16,7 @@ namespace DwarfCorp
 
         public GenericVoxelListener()
         {
-            DebugColor = Microsoft.Xna.Framework.Color.DarkSlateGray;
+            DebugColor = Color.DarkSlateGray;
         }
 
         public GenericVoxelListener(ComponentManager Manager,
@@ -31,7 +26,7 @@ namespace DwarfCorp
             Action<VoxelChangeEvent> Handler) :
             base(Manager, "New Voxel Listener", Transform, BoundingBoxExtents, BoundingBoxOffset)
         {
-            DebugColor = Microsoft.Xna.Framework.Color.DarkSlateGray;
+            DebugColor = Color.DarkSlateGray;
 
             CollisionType = CollisionType.Static;
             SetFlag(Flag.DontUpdate, true);
@@ -40,8 +35,7 @@ namespace DwarfCorp
 
         public void OnVoxelChanged(VoxelChangeEvent V)
         {
-            if (Handler != null)
-                Handler(V);
+            Handler?.Invoke(V);
         }
     }
 }

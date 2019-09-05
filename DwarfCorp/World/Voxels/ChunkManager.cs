@@ -178,12 +178,17 @@ namespace DwarfCorp
                             chunk.Rebuild(GameState.Game.GraphicsDevice);
 
                             liveChunks.Add(chunk);
-                            while (liveChunks.Count() > GameSettings.Default.MaxLiveChunks)
+
+                            if (liveChunks.Count() > GameSettings.Default.MaxLiveChunks)
                             {
                                 liveChunks.Sort((a, b) => a.RenderCycleWhenLastVisible - b.RenderCycleWhenLastVisible);
-                                if (liveChunks[0].Visible) break;
-                                liveChunks[0].DiscardPrimitive();
-                                liveChunks.RemoveAt(0);
+
+                                while (liveChunks.Count() > GameSettings.Default.MaxLiveChunks)
+                                {
+                                    if (liveChunks[0].Visible) break;
+                                    liveChunks[0].DiscardPrimitive();
+                                    liveChunks.RemoveAt(0);
+                                }
                             }
 
                             NeedsMinimapUpdate = true; // Soon to be redundant.
@@ -203,15 +208,6 @@ namespace DwarfCorp
             }
 #endif       
             Console.Out.WriteLine(String.Format("Chunk regeneration thread exited cleanly Exit Game: {0} Exit Thread: {1}.", DwarfGame.ExitGame, ExitThreads));
-        }
-
-        public void GenerateAllGeometry()
-        {
-            while (RebuildQueue.Count > 0)
-            {
-                var chunk = RebuildQueue.Dequeue();
-                chunk.Rebuild(GameState.Game.GraphicsDevice);
-            }
         }
 
         public void RecalculateBounds()

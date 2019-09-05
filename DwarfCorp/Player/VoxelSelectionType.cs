@@ -12,6 +12,7 @@ namespace DwarfCorp
         /// <summary>
         /// Selects only empty voxels
         /// </summary>
-        SelectEmpty
+        SelectEmpty,
+        SelectPrism,
     }
 }

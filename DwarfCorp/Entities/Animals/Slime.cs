@@ -90,9 +90,8 @@ namespace DwarfCorp
             AI.Movement.CanWalk = true;
             AI.Movement.CanClimbWalls = false;
             AI.Movement.CanSwim = false;
+            AI.Movement.CanClimb = false;
             AI.Movement.SetSpeed(MoveType.Jump, 1.5f);
-            AI.Movement.SetSpeed(MoveType.Climb, 1.5f);
-            AI.Movement.SetCost(MoveType.Climb, 0.1f);
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)

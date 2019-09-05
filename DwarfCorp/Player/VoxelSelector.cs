@@ -326,7 +326,7 @@ namespace DwarfCorp
 
         public IEnumerable<VoxelHandle> Select(BoundingBox buffer, Vector3 start, Vector3 end)
         {
-            return Brush.Select(buffer, start, end, SelectionType == VoxelSelectionType.SelectFilled)
+            return Brush.Select(buffer, start, end, SelectionType != VoxelSelectionType.SelectEmpty)
                 .Select(c => new VoxelHandle(Chunks, c))
                 .Where(v => VoxelPassesSelectionCriteria(v));
         }
@@ -417,6 +417,8 @@ namespace DwarfCorp
 
             switch (SelectionType)
             {
+                case VoxelSelectionType.SelectPrism:
+                    return true;
                 case VoxelSelectionType.SelectFilled:
                     return !V.IsEmpty || World.PersistentData.Designations.IsVoxelDesignation(V, DesignationType.Put);
                 case VoxelSelectionType.SelectEmpty:

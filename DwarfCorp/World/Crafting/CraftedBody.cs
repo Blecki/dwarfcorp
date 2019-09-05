@@ -20,6 +20,9 @@ namespace DwarfCorp
         {
             this.SetFlag(Flag.ShouldSerialize, true);
             AddChild(details);
+
+            LocalPosition += VertexNoise.GetNoiseVectorFromRepeatingTexture(LocalPosition);
+
         }
     }
 }

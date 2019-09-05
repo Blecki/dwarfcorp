@@ -8,6 +8,7 @@ namespace DwarfCorp
     public class Fence : Fixture
     {
         public float FenceRotation { get; set; }
+        public Vector3 BasePosition = Vector3.Zero;
 
         public Fence()
         {
@@ -28,6 +29,13 @@ namespace DwarfCorp
                 sprite.OrientationType = SimpleSprite.OrientMode.Fixed;
 
             LocalTransform = Matrix.CreateRotationY(FenceRotation) * Matrix.CreateTranslation(position);
+            BasePosition = position;
+
+            var under = new VoxelHandle(Manager.World.ChunkManager, GlobalVoxelCoordinate.FromVector3(BasePosition - new Vector3(0.0f, 0.5f, 0.0f)));
+            if (under.IsValid && under.RampType != RampType.None)
+                LocalPosition = BasePosition - new Vector3(0.0f, 0.5f, 0.0f);
+            else
+                LocalPosition = BasePosition;
 
             PropogateTransforms();
         }
@@ -38,6 +46,24 @@ namespace DwarfCorp
 
             if (GetComponent<SimpleSprite>().HasValue(out var sprite))
                 sprite.OrientationType = SimpleSprite.OrientMode.Fixed;
+
+            AddChild(new GenericVoxelListener(Manager,
+                Matrix.Identity,
+                new Vector3(0.25f, 0.25f, 0.25f), // Position just below surface.
+                new Vector3(0.0f, -0.30f, 0.0f),
+                (v) =>
+                {
+                    if (v.Type == VoxelChangeEventType.RampsChanged)
+                    {
+                        var transform = LocalTransform.Translation;
+                        if (v.OldRamps != RampType.None && v.NewRamps == RampType.None)
+                            LocalPosition = BasePosition;
+                        else if (v.OldRamps == RampType.None && v.NewRamps != RampType.None)
+                            LocalPosition = BasePosition - new Vector3(0.0f, 0.5f, 0.0f);
+                        ProcessTransformChange();
+                    }
+                }))
+                .SetFlag(Flag.ShouldSerialize, false);
         }
 
         private struct FenceSegmentInfo

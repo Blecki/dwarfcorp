@@ -195,7 +195,7 @@ namespace DwarfCorp
             var sliceStack = new List<RawPrimitive>();
             var cache = new Cache();
             int maxViewingLevel = World.Renderer.PersistentSettings.MaxViewingLevel;
-            for (var localY = 0; localY < maxViewingLevel - chunk.Origin.Y && localY < VoxelConstants.ChunkSizeY; ++localY) // Todo: Only iterate inside the chunk.
+            for (var localY = 0; localY < maxViewingLevel - chunk.Origin.Y && localY < VoxelConstants.ChunkSizeY; ++localY)
             {
                 RawPrimitive sliceGeometry = null;
 
