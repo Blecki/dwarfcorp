@@ -3,6 +3,7 @@
   "AttackMode": "Attacking",
   "RequiresTools": false,
   "TriggersMourning": false,
+  "RequiresSupervision": false,
   "Weapons": [
     {
       "DamageAmount": 10.0,

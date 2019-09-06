@@ -10,6 +10,9 @@ namespace DwarfCorp
         public String Name = "Tranquil";
         public DwarfBux StartingFunds;
         public List<String> Dwarves = new List<string>();
+
+        public Difficulty(int v)
+        { }
     }
 
     public static partial class Library

@@ -74,12 +74,12 @@ namespace DwarfCorp
 
         public AnimalPen GetClosestPen(Creature agent)
         {
-            if (LastPen != null && (LastPen.Species == "" || LastPen.Species == Animal.Stats.CurrentClass.Name) && agent.World.EnumerateZones().Contains(LastPen) && LastPen.IsBuilt)
+            if (LastPen != null && LastPen.CanHold(Animal.Stats.SpeciesName) && agent.World.EnumerateZones().Contains(LastPen) && LastPen.IsBuilt)
             {
                 return LastPen;
             }
 
-            var pens = agent.World.EnumerateZones().Where(room => room is AnimalPen && room.IsBuilt).Cast<AnimalPen>().Where(pen => pen.Species == "" || pen.Species == Animal.Stats.CurrentClass.Name);
+            var pens = agent.World.EnumerateZones().Where(room => room is AnimalPen && room.IsBuilt).Cast<AnimalPen>().Where(pen => pen.CanHold(Animal.Stats.SpeciesName));
             AnimalPen closestPen = null;
             float closestDist = float.MaxValue;
 
@@ -106,8 +106,7 @@ namespace DwarfCorp
             if (closestPen == null)
                 return null;
 
-
-            closestPen.Species = Animal.Stats.CurrentClass.Name;
+            closestPen.SetSpecies(Animal.Stats.SpeciesName);
 
             return new Select(new Sequence(new Domain(() => IsFeasible(agent) == Feasibility.Feasible, new GoToEntityAct(Animal.Physics, agent.AI)),
                 new Domain(() => IsFeasible(agent) == Feasibility.Feasible, new Parallel(new Repeat(new Wrap(() => WrangleAnimal(agent.AI, Animal.AI)), -1, false),

@@ -607,6 +607,9 @@ namespace DwarfCorp
 
                 var newSliceIndex = PersistentSettings.MaxViewingLevel - 1 - c.Origin.Y;
                 if (newSliceIndex >= 0 && newSliceIndex < VoxelConstants.ChunkSizeY) c.InvalidateSlice(newSliceIndex);
+
+                if (oldLevel < c.Origin.Y && level >= c.Origin.Y)
+                    World.ChunkManager.InvalidateChunk(c);
             }
         }
     }

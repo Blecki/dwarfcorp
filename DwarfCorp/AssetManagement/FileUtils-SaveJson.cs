@@ -28,6 +28,7 @@ namespace DwarfCorp
             new Newtonsoft.Json.Converters.StringEnumConverter(),
             new Rail.CompassConnectionConverter(),
             new NewAnimationFrameConverter(),
+            //new DifficultyConverter()
         };
 
         public class TypeNameSerializationBinder : SerializationBinder

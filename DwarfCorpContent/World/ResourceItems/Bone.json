@@ -2,7 +2,7 @@
   "Name": "Bone",
   "MoneyValue": 15.0,
   "Description": "Came from an animal.",
-  "Category": "Meat",
+  "Category": "Bone",
   "GuiLayers": [
     {
       "Sheet": "resources",

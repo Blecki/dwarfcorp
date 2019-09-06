@@ -37,19 +37,18 @@ namespace DwarfCorp
                 if (!animal.GetRoot().Tags.Contains("DomesticAnimal"))
                     return false;
 
-                var pens = World.EnumerateZones().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.IsBuilt &&
-                                (pen.Species == "" || pen.Species == creature.Stats.CurrentClass.Name));
+                var pens = World.EnumerateZones().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.IsBuilt && pen.CanHold(creature.Stats.SpeciesName));
 
                 if (pens.Any())
                 {
                     if (print)
-                        World.UserInterface.ShowTooltip("Will wrangle this " + creature.Stats.CurrentClass.Name);
+                        World.UserInterface.ShowTooltip("Will wrangle this " + creature.Stats.SpeciesName);
                     return true;
                 }
                 else
                 {
                     if (print)
-                        World.UserInterface.ShowTooltip("Can't wrangle this " + creature.Stats.CurrentClass.Name + " : need more animal pens.");
+                        World.UserInterface.ShowTooltip("Can't wrangle this " + creature.Stats.SpeciesName + " : need more animal pens.");
                 }
             }
 

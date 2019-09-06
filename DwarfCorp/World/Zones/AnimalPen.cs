@@ -18,7 +18,7 @@ namespace DwarfCorp
 
         public List<GameComponent> Animals = new List<GameComponent>();
 
-        public string Species = "";
+        [JsonProperty] private string Species = "";
 
         public AnimalPen()
         {
@@ -33,6 +33,16 @@ namespace DwarfCorp
         public override string GetDescriptionString()
         {
             return "Animal Pen " + ID + " - contains " + Species + " (" + Animals.Count + ").";
+        }
+
+        public bool CanHold(String Species)
+        {
+            return String.IsNullOrEmpty(this.Species) || this.Species == Species;
+        }
+
+        public void SetSpecies(String Species)
+        {
+            this.Species = Species;
         }
 
         public override void OnBuilt()

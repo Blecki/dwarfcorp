@@ -91,7 +91,7 @@ namespace DwarfCorp
 
         public int CalculateSupervisedEmployees()
         {
-            return PlayerFaction.Minions.Where(c => !c.Stats.CurrentClass.Managerial).Count() + PersistentData.NewArrivals.Where(c => !c.Applicant.Class.Managerial).Count();
+            return PlayerFaction.Minions.Where(c => c.Stats.CurrentClass.RequiresSupervision).Count() + PersistentData.NewArrivals.Where(c => c.Applicant.Class.RequiresSupervision).Count();
         }
 
         public void PayEmployees()

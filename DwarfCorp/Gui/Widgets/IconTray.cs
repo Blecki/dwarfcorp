@@ -141,6 +141,11 @@ namespace DwarfCorp.Gui.Widgets
 
             var nextHotkey = 0;
 
+            GetChild(0).Hidden = true;
+            GetChild(1).Hidden = true;
+            (GetChild(0) as FramedIcon).HotkeyValue = 0;
+            (GetChild(1) as FramedIcon).HotkeyValue = 0;
+            
             if (totalItemWidth > rect.Width)
             {
                 // Need to paginate.
@@ -216,7 +221,10 @@ namespace DwarfCorp.Gui.Widgets
                 ++nextHotkey;
             }
             else
+            {
+                (child as FramedIcon).HotkeyValue = 0;
                 (child as FramedIcon).DrawHotkey = false;
+            }
             return nextHotkey;
         }
 

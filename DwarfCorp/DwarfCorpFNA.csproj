@@ -109,6 +109,7 @@
     <Compile Include=".\AssetManagement\StringLibrary.cs" />
     <Compile Include=".\AssetManagement\TextureTool.cs" />
     <Compile Include=".\Components\AI\CharacterMode.cs" />
+    <Compile Include="AssetManagement\JsonConverters\DifficultyConverter.cs" />
     <Compile Include="AssetManagement\JsonConverters\BoxConverter.cs" />
     <Compile Include="AssetManagement\JsonConverters\MatrixConverter.cs" />
     <Compile Include="AssetManagement\JsonConverters\RectangleConverter.cs" />

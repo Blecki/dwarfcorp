@@ -663,7 +663,7 @@ namespace DwarfCorp.GameStates
             StocksLabel.Invalidate();
             LevelLabel.Text = String.Format("{0}/{1}", Renderer.PersistentSettings.MaxViewingLevel, World.WorldSizeInVoxels.Y);
             LevelLabel.Invalidate();
-            SupervisionLabel.Text = String.Format("{0}/{1}", World.PlayerFaction.Minions.Count, World.CalculateSupervisionCap());
+            SupervisionLabel.Text = String.Format("{0}/{1}", World.CalculateSupervisedEmployees(), World.CalculateSupervisionCap());
             SupervisionLabel.Invalidate();
             #endregion
 
@@ -1962,7 +1962,7 @@ namespace DwarfCorp.GameStates
 
             #endregion
 
-            #region icon_DigTool
+#region icon_DigTool
 
             var icon_DigTool = new FlatToolTray.Icon
             {

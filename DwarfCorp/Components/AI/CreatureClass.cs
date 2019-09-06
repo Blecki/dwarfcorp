@@ -27,6 +27,7 @@ namespace DwarfCorp
         public CharacterMode AttackMode;
         public bool PlayerClass = false;
         public bool Managerial = false;
+        public bool RequiresSupervision = true;
         public string DefaultTool = "";
         public string JobDescription = "There is no description for this class.";
         public bool RequiresTools = true;
