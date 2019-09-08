@@ -43,7 +43,7 @@ namespace DwarfCorp.GameStates // Todo: Why in GameStates?
             r.PlayerCorporationResources = new ResourceSet();
 
             r.ColonyCells = new CellSet("World\\colonies");
-            r.InstanceSettings = new InstanceSettings(r.ColonyCells.GetCellAt(16, 0));
+            r.InstanceSettings = new InstanceSettings(r.ColonyCells.GetCellAt(16, 0), r);
 
             return r;
         }

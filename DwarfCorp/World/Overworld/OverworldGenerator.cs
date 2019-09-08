@@ -252,7 +252,7 @@ namespace DwarfCorp.GameStates
                 Politics.Initialize(Overworld);
 
                 Overworld.ColonyCells = new CellSet("World\\colonies");
-                Overworld.InstanceSettings = new InstanceSettings(Overworld.ColonyCells.GetCellAt(16, 0));
+                Overworld.InstanceSettings = new InstanceSettings(Overworld.ColonyCells.GetCellAt(16, 0), Overworld);
 
                 SeedCivs();
                 GrowCivs();

@@ -24,12 +24,13 @@ namespace DwarfCorp
 
         public InstanceSettings()
         {
-
+            int x = 5;
         }
 
-        public InstanceSettings(ColonyCell Cell)
+        public InstanceSettings(ColonyCell Cell, GameStates.Overworld Overworld)
         {
             this.Cell = Cell;
+            InitalEmbarkment = new Embarkment(Overworld);
         }
 
         public DwarfBux CalculateLandValue()

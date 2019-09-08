@@ -57,6 +57,7 @@ namespace DwarfCorp.GameStates
             if (PanelState != PanelStates.Generate)
                 return;
 
+
             PanelState = PanelStates.Launch;
 
             var rect = RightPanel.Rect;
@@ -212,6 +213,8 @@ namespace DwarfCorp.GameStates
                     (RightPanel as LaunchPanel).Generator = Generator;
                     break;
             }
+
+            Settings.InstanceSettings.InitalEmbarkment = new Embarkment(Settings);
 
             IsInitialized = true;
             base.OnEnter();
