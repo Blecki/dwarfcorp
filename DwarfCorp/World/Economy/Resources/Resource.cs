@@ -46,6 +46,8 @@ namespace DwarfCorp
         public CraftItemInfo CraftInfo;
         public Potion PotionType = null;
         public string Category = "";
+        public TaskCategory CraftTaskCategory = TaskCategory.CraftItem;
+        public string CraftNoise = "Craft";
 
         // Todo: Replace this with strings so mods can extend it.
         public enum ResourceTags
@@ -96,6 +98,7 @@ namespace DwarfCorp
             Explosive,
             CraftItem,
             Mana,
+            RefinedMana,
             Potion,
             Seed,
             Slime,

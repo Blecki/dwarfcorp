@@ -42,16 +42,22 @@ namespace DwarfCorp
             Name = String.Format("{4} order {0}: {1}/{2} {3}", TaskID, CurrentRepeat, NumRepeats, selectedResource.PluralDisplayName, verb);
             Priority = TaskPriority.Medium;
 
-            if (Library.GetResourceType(Item.ItemType.ResourceCreated).HasValue(out var res) && res.Tags.Contains(Resource.ResourceTags.Edible))
+            if (Library.GetResourceType(Item.ItemType.ResourceCreated).HasValue(out var res))
             {
-                noise = "Cook";
-                Category = TaskCategory.Cook;
+                noise = res.CraftNoise;
+                Category = res.CraftTaskCategory;
             }
-            else
-            {
-                noise = "Craft";
-                Category = selectedResource.IsMagical ? TaskCategory.Research : TaskCategory.CraftItem;
-            }
+
+            //if (Library.GetResourceType(Item.ItemType.ResourceCreated).HasValue(out var res) && res.Tags.Contains(Resource.ResourceTags.Edible))
+            //{
+            //    noise = "Cook";
+            //    Category = TaskCategory.Cook;
+            //}
+            //else
+            //{
+            //    noise = "Craft";
+            //    Category = selectedResource.IsMagical ? TaskCategory.Research : TaskCategory.CraftItem;
+            //}
 
             AutoRetry = true;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
@@ -75,12 +81,9 @@ namespace DwarfCorp
 
         private bool HasLocation(Creature agent)
         {
-            if (Item.ItemType.CraftLocation != "")
-            {
-                var anyCraftLocation = agent.Faction.OwnedObjects.Any(o => o.Tags.Contains(Item.ItemType.CraftLocation) && (!o.IsReserved || o.ReservedFor == agent.AI));
-                if (!anyCraftLocation)
+            if (Item.ItemType.CraftLocation != ""
+                && !agent.Faction.OwnedObjects.Any(o => o.Tags.Contains(Item.ItemType.CraftLocation) && (!o.IsReserved || o.ReservedFor == agent.AI)))
                     return false;
-            }
             return true;
         }
 
@@ -107,6 +110,11 @@ namespace DwarfCorp
                 //}
             }
             yield return Act.Status.Success;
+        }
+
+        public override void OnDequeued(WorldManager World)
+        {
+            if (Item.PreviewResource != null) Item.PreviewResource.GetRoot().Delete();
         }
 
         public override MaybeNull<Act> CreateScript(Creature creature)

@@ -264,6 +264,11 @@ namespace DwarfCorp
             bool valid =  Item.HasResources || Item.ResourcesReservedFor != null;
             if (!valid)
                 Agent.SetMessage("Resource state not valid.");
+
+            var location = Creature.AI.Blackboard.GetData<GameComponent>(Item.ItemType.CraftLocation);
+            if (location != null && location.IsDead)
+                return false;
+
             return valid;
         }
 
@@ -409,6 +414,7 @@ namespace DwarfCorp
                                     () => Item.Progress, // Current Progress
                                     () => { // Increment Progress
                                         var location = Creature.AI.Blackboard.GetData<GameComponent>(Item.ItemType.CraftLocation);
+
                                         float workstationBuff = 1.0f;
                                         if (location != null)
                                         {
@@ -433,8 +439,10 @@ namespace DwarfCorp
                                 unreserveAct,
                                 new Wrap(() => CreateResources(Item.SelectedResources)),
                                 new Wrap(Creature.RestockAll)
-                                )) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false)
-                            ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false);
+                                )) 
+                                | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false)
+                            ) 
+                            | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false);
                 }
                 else
                 {
@@ -469,11 +477,11 @@ namespace DwarfCorp
 
             if (Item.PreviewResource != null)
             {
-                Item.PreviewResource.SetFlagRecursive(GameComponent.Flag.Visible, false);
+                Item.PreviewResource.Delete();
+                Item.PreviewResource = null;
             }
-            base.OnCanceled();
-        }
 
-       
+            base.OnCanceled();
+        }       
     }
 }

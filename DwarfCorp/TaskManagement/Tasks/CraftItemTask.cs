@@ -54,6 +54,7 @@ namespace DwarfCorp
             if (!CraftDesignation.Finished)
             {
                 if (CraftDesignation.WorkPile != null) CraftDesignation.WorkPile.GetRoot().Delete();
+                if (CraftDesignation.PreviewResource != null) CraftDesignation.PreviewResource.GetRoot().Delete();
                 if (CraftDesignation.HasResources)
                     foreach (var resource in CraftDesignation.SelectedResources)
                     {
@@ -111,30 +112,33 @@ namespace DwarfCorp
 
         public bool CanBuild(Creature agent)
         {
-            if (CraftDesignation.ExistingResource != null) // This is a placement of an existing item.
+            if (CraftDesignation.ExistingResource == null)
+                throw new InvalidProgramException();
+
+            //if (CraftDesignation.ExistingResource != null) // This is a placement of an existing item.
             {
                 bool hasResource = agent.World.HasResources(CraftDesignation.ExistingResource);
                 return hasResource;
             }
 
-            if (!String.IsNullOrEmpty(CraftDesignation.ItemType.CraftLocation))
-            {
-                var nearestBuildLocation = agent.Faction.FindNearestItemWithTags(CraftDesignation.ItemType.CraftLocation, Vector3.Zero, false, agent.AI);
+            //if (!String.IsNullOrEmpty(CraftDesignation.ItemType.CraftLocation))
+            //{
+            //    var nearestBuildLocation = agent.Faction.FindNearestItemWithTags(CraftDesignation.ItemType.CraftLocation, Vector3.Zero, false, agent.AI);
 
-                if (nearestBuildLocation == null)
-                    return false;
-            }
+            //    if (nearestBuildLocation == null)
+            //        return false;
+            //}
 
-            foreach (var resourceAmount in CraftDesignation.ItemType.RequiredResources)
-            {
-                var resources = agent.World.ListResourcesWithTag(resourceAmount.Type, CraftDesignation.ItemType.AllowHeterogenous);
-                if (resources.Count == 0 || !resources.Any(r => r.Count >= resourceAmount.Count))
-                {
-                    return false;
-                }
-            }
+            //foreach (var resourceAmount in CraftDesignation.ItemType.RequiredResources)
+            //{
+            //    var resources = agent.World.ListResourcesWithTag(resourceAmount.Type, CraftDesignation.ItemType.AllowHeterogenous);
+            //    if (resources.Count == 0 || !resources.Any(r => r.Count >= resourceAmount.Count))
+            //    {
+            //        return false;
+            //    }
+            //}
 
-            return true;
+            //return true;
         }
 
         public override void OnCancelled(TaskManager Manager, WorldManager World)

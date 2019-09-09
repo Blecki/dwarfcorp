@@ -191,34 +191,34 @@ namespace DwarfCorp
                     Available = (AI, world) => AI.Stats.CurrentLevel.HealingPower > 0 && AI.Faction.Minions.Any(minion => !minion.Creature.Stats.Health.IsSatisfied())
                 });
 
-                IdleTasks.Add(new IdleTask
-                {
-                    Name = "Craft",
-                    PreferWhenBored = true,
-                    Chance = () => GameSettings.Default.IdleBehavior_Craft,
-                    Create = (AI) =>
-                    {
-                        if (Library.GetRandomApplicableCraftable(AI.Faction, AI.World).HasValue(out var item))
-                        {
-                            var resources = new List<ResourceAmount>();
-                            var allow = true;
-                            foreach (var resource in item.RequiredResources)
-                            {
-                                var amount = AI.World.GetResourcesWithTags(new List<Quantitiy<Resource.ResourceTags>>() { resource });
-                                if (amount == null || amount.Count == 0)
-                                    allow = false;
-                                else
-                                    resources.Add(Datastructures.SelectRandom(amount));
-                            }
+                //IdleTasks.Add(new IdleTask
+                //{
+                //    Name = "Craft",
+                //    PreferWhenBored = true,
+                //    Chance = () => GameSettings.Default.IdleBehavior_Craft,
+                //    Create = (AI) =>
+                //    {
+                //        if (Library.GetRandomApplicableCraftable(AI.Faction, AI.World).HasValue(out var item))
+                //        {
+                //            var resources = new List<ResourceAmount>();
+                //            var allow = true;
+                //            foreach (var resource in item.RequiredResources)
+                //            {
+                //                var amount = AI.World.GetResourcesWithTags(new List<Quantitiy<Resource.ResourceTags>>() { resource });
+                //                if (amount == null || amount.Count == 0)
+                //                    allow = false;
+                //                else
+                //                    resources.Add(Datastructures.SelectRandom(amount));
+                //            }
 
-                            if (allow && resources.Count > 0)
-                                return new CraftResourceTask(item, 1, 1, resources) { IsAutonomous = true, Priority = TaskPriority.Low };
-                        }
+                //            if (allow && resources.Count > 0)
+                //                return new CraftResourceTask(item, 1, 1, resources) { IsAutonomous = true, Priority = TaskPriority.Low };
+                //        }
 
-                        return null;
-                    },
-                    Available = (AI, World) => AI.Stats.IsTaskAllowed(TaskCategory.CraftItem)
-                });
+                //        return null;
+                //    },
+                //    Available = (AI, World) => AI.Stats.IsTaskAllowed(TaskCategory.CraftItem)
+                //});
 
                 IdleTasks.Add(new IdleTask
                 {

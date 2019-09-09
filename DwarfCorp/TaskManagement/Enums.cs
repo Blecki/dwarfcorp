@@ -34,7 +34,8 @@ namespace DwarfCorp
         Gather = 8192,
         Guard = 16384,
         Wrangle = 32768,
-        Plant = 65536
+        Plant = 65536,
+        Brew = 131072
     }
 
     public enum Feasibility

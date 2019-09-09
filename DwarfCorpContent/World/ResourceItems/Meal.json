@@ -3,6 +3,8 @@
   "MoneyValue": 10.0,
   "Description": "A nutritious dwarf meal.",
   "Category": "Food",
+  "CraftNoise": "Cook",
+  "CraftTaskCategory": "Cook",
   "GuiLayers": [
     {
       "Sheet": "resources",
