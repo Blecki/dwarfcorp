@@ -2,6 +2,8 @@
   "Name": "Bread",
   "EntityName": "Bread",
   "Category": "Food",
+  "CraftNoise": "Cook",
+  "CraftTaskCategory": "Cook",
   "RequiredResources": [
     {
       "Type": "Bakeable",

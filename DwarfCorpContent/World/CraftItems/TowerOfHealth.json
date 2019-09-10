@@ -2,6 +2,8 @@
   "Name": "Tower of Health",
   "EntityName": "Tower of Health",
   "Category": "Magic",
+  "CraftNoise": "Craft",
+  "CraftTaskCategory": "Research",
   "RequiredResources": [
     {
       "Type": "Magical",

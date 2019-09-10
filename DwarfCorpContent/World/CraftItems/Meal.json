@@ -2,7 +2,8 @@
   "Name": "Meal",
   "EntityName": "Meal",
   "Category": "Food",
-
+  "CraftNoise": "Cook",
+  "CraftTaskCategory": "Cook",
   "RequiredResources": [
     {
       "Type": "RawFood",

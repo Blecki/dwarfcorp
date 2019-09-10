@@ -62,6 +62,8 @@ namespace DwarfCorp
         public bool IsMagical = false;
         public string Tutorial = "";
         public bool AllowUserCrafting = true;
+        public TaskCategory CraftTaskCategory = TaskCategory.CraftItem;
+        public string CraftNoise = "Craft";
 
         public bool Disable = false;
 
@@ -151,6 +153,8 @@ namespace DwarfCorp
             r.ObjectName = Name;
             r.AllowUserCrafting = false;
             r.Category = this.Category;
+            r.CraftTaskCategory = this.CraftTaskCategory;
+            r.CraftNoise = this.CraftNoise;
             Library.AddCraftable(r);
 
             // Todo: Obsolete when new building system is in place.

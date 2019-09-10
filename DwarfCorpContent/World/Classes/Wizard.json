@@ -1,7 +1,7 @@
 {
   "Name": "Wizard",
   "PlayerClass": true,
-  "Actions": 8272,
+  "Actions": "Attack, Hunt, Research, Brew",
   "AttackMode": "Attacking01",
   "JobDescription": "Wizards excel in the archaic arts. They can cast powerful offensive magic, and also are excellent healers.",
   "Weapons": [

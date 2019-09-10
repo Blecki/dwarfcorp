@@ -6,7 +6,8 @@
   "ShortDisplayName": null,
   "PluralDisplayName": null,
   "Category": "Magic",
-
+  "CraftNoise": "Craft",
+  "CraftTaskCategory": "Research",
   "RequiredResources": [
     {
       "Type": "Magical",

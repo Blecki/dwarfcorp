@@ -12,7 +12,6 @@ namespace DwarfCorp
         public int TaskID = 0;
         private static int MaxID = 0;
         public CraftDesignation Item { get; set; }
-        private string noise;
         public bool IsAutonomous { get; set; }
         public int NumRepeats;
         public int CurrentRepeat;
@@ -42,22 +41,7 @@ namespace DwarfCorp
             Name = String.Format("{4} order {0}: {1}/{2} {3}", TaskID, CurrentRepeat, NumRepeats, selectedResource.PluralDisplayName, verb);
             Priority = TaskPriority.Medium;
 
-            if (Library.GetResourceType(Item.ItemType.ResourceCreated).HasValue(out var res))
-            {
-                noise = res.CraftNoise;
-                Category = res.CraftTaskCategory;
-            }
-
-            //if (Library.GetResourceType(Item.ItemType.ResourceCreated).HasValue(out var res) && res.Tags.Contains(Resource.ResourceTags.Edible))
-            //{
-            //    noise = "Cook";
-            //    Category = TaskCategory.Cook;
-            //}
-            //else
-            //{
-            //    noise = "Craft";
-            //    Category = selectedResource.IsMagical ? TaskCategory.Research : TaskCategory.CraftItem;
-            //}
+            Category = Item.ItemType.CraftTaskCategory;
 
             AutoRetry = true;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
@@ -121,7 +105,7 @@ namespace DwarfCorp
         {
             return new Sequence(new CraftItemAct(creature.AI, Item)
             {
-                Noise = noise
+                Noise = Item.ItemType.CraftNoise
             }) | new Wrap(() => Cleanup(creature.AI));
         }
     }

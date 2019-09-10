@@ -2,6 +2,8 @@
   "Name": "Tower of Life",
   "EntityName": "Tower of Life",
   "Category": "Magic",
+  "CraftNoise": "Craft",
+  "CraftTaskCategory": "Research",
   "RequiredResources": [
     {
       "Type": "Magical",

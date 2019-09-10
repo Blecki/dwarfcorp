@@ -3,7 +3,8 @@
   "EntityName": "Summoning Circle",
   "DisplayName": "Summon Circle",
   "Category": "Magic",
-
+  "CraftNoise": "Craft",
+  "CraftTaskCategory": "Research",
   "RequiredResources": [
     {
       "Type": "Magical",

@@ -4,6 +4,8 @@
   "DisplayName": "@ale",
   "ShortDisplayName": "@s-ale",
   "Category": "Food",
+  "CraftNoise": "Cook",
+  "CraftTaskCategory": "Brew",
   "RequiredResources": [
     {
       "Type": "Brewable",

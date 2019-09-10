@@ -2,6 +2,8 @@
   "Name": "Fairy",
   "EntityName": "Fairy",
   "Category": "Magic",
+  "CraftNoise": "Craft",
+  "CraftTaskCategory": "Research",
   "RequiredResources": [
     {
       "Type": "RefinedMana",

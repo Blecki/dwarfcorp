@@ -2,7 +2,8 @@
   "Name": "Refined Mana",
   "EntityName": "Refined Mana",
   "Category": "Magic",
-
+  "CraftNoise": "Craft",
+  "CraftTaskCategory": "Research",
   "RequiredResources": [
     {
       "Type": "Mana",
