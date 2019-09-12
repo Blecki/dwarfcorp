@@ -7,9 +7,6 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// A creature goes to a voxel location, and places an object with the desired tags there to build it.
-    /// </summary>
     internal class CraftItemAct : CompoundCreatureAct
     {
         public CraftDesignation Item { get; set; }
@@ -60,17 +57,6 @@ namespace DwarfCorp
 
             Agent.Physics.Active = true;
             Agent.Physics.IsSleeping = false;
-
-            //if (Agent.Blackboard.GetData<bool>("NoPath", false)
-            //    && Item.Entity != null
-            //    && !Item.Entity.IsDead
-            //    && Agent.World.PersistentData.Designations.GetEntityDesignation(Item.Entity, DesignationType.Craft).HasValue(out var designation)
-            //    && Agent.Faction == Agent.World.PlayerFaction)
-            //{
-            //    Agent.World.MakeAnnouncement(String.Format("{0} cancelled crafting {1} because it is unreachable", Agent.Stats.FullName, Item.Entity.Name));
-            //    Agent.World.TaskManager.CancelTask(designation.Task);
-            //}
-                    
 
             yield return Act.Status.Success;
         }
@@ -377,6 +363,7 @@ namespace DwarfCorp
                     getResources,
                     new Sequence(new Domain(ResourceStateValid, 
                         new Sequence(
+                            ActHelper.CreateToolCheckAct(Resource.ResourceTags.Hammer, Agent),
                             new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
                             new Wrap(() => DestroyResources(() => Item.Location.WorldPosition)),
                             new Wrap(WaitForResources) { Name = "Wait for resources." },
@@ -398,6 +385,7 @@ namespace DwarfCorp
                         getResources,
                         new Domain(ResourceStateValid, 
                             new Sequence(
+                                ActHelper.CreateToolCheckAct(Resource.ResourceTags.Hammer, Agent),
                                 new GoToTaggedObjectAct(Agent)
                                 {
                                     Tag = Item.ItemType.CraftLocation,
@@ -450,6 +438,7 @@ namespace DwarfCorp
                         new ClearBlackboardData(Agent, "ResourcesStashed"),
                         getResources,
                         new Domain(ResourceStateValid, new Sequence(
+                            ActHelper.CreateToolCheckAct(Resource.ResourceTags.Hammer, Agent),
                             new Wrap(() => DestroyResources(() => Creature.Physics.Position + MathFunctions.RandVector3Cube() * 0.5f)),
                             new Wrap(WaitForResources) { Name = "Wait for resources." },
                             new Wrap(() => Creature.HitAndWait(time, true, () => Creature.Physics.Position)) { Name = "Construct object."},

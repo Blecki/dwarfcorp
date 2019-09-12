@@ -5,11 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// A creature finds an item with a particular tag, and then puts it into a build zone
-    /// for a BuildRoom. (This is used to construct rooms)
-    /// </summary>
-    public class BuildRoomAct : CompoundCreatureAct
+    public class BuildZoneAct : CompoundCreatureAct
     {
         public BuildZoneOrder BuildRoom { get; set; }
         public List<Quantitiy<Resource.ResourceTags>> Resources { get; set; }
@@ -50,7 +46,7 @@ namespace DwarfCorp
             return Agent.World.IsActiveBuildZoneOrder(BuildRoom);
         }
 
-        public BuildRoomAct()
+        public BuildZoneAct()
         {
 
         }
@@ -138,7 +134,7 @@ namespace DwarfCorp
         }
 
 
-        public BuildRoomAct(CreatureAI agent, BuildZoneOrder buildRoom) :
+        public BuildZoneAct(CreatureAI agent, BuildZoneOrder buildRoom) :
             base(agent)
         {
             Name = "Build BuildRoom " + buildRoom.ToString();
@@ -152,6 +148,7 @@ namespace DwarfCorp
                                            new Domain(buildRoom.MeetsBuildRequirements() || buildRoom.ResourcesReservedFor != null, true)),
                 new Domain(() => IsRoomBuildOrder(buildRoom) && !buildRoom.IsBuilt && !buildRoom.IsDestroyed && ValidResourceState(), 
                 new Sequence(
+                    ActHelper.CreateToolCheckAct(Resource.ResourceTags.Hammer, agent),
                     SetTargetVoxelFromRoomAct(buildRoom, "ActionVoxel"),
                     new GoToNamedVoxelAct("ActionVoxel", PlanAct.PlanType.Adjacent, Agent),
                     new Wrap(PutResources),

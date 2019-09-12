@@ -68,14 +68,7 @@ namespace DwarfCorp
         public bool Validate(CreatureAI creature, VoxelHandle voxel, ResourceAmount resources)
         {
             if (creature.Blackboard.GetData<bool>("NoPath", false))
-            {
-                //if (creature.Faction == creature.World.PlayerFaction)
-                //{
-                //    creature.World.MakeAnnouncement(String.Format("{0} cancelled build task because it is unreachable", creature.Stats.FullName));
-                //    creature.World.TaskManager.CancelTask(this);
-                //}
                 return false;
-            }
 
             return creature.Creature.Inventory.HasResource(resources);
         }
@@ -87,14 +80,13 @@ namespace DwarfCorp
                 var resource = creature.World.ListResources().Where(r => Library.GetResourceType(r.Key).HasValue(out var res) && voxtype.CanBuildWith(res)).FirstOrDefault();
 
                 if (resource.Key == null)
-                {
                     return null;
-                }
 
                 var resources = new ResourceAmount(resource.Value.Type, 1);
 
                 return new Select(
                     new Sequence(
+                        ActHelper.CreateToolCheckAct(Resource.ResourceTags.Hammer, creature.AI),
                         new GetResourcesAct(creature.AI, new List<ResourceAmount>() { resources }),
                         new Domain(() => Validate(creature.AI, Voxel, resources),
                             new GoToVoxelAct(Voxel, PlanAct.PlanType.Radius, creature.AI, 4.0f)),

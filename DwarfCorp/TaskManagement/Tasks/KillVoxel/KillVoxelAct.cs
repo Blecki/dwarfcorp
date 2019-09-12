@@ -26,14 +26,6 @@ namespace DwarfCorp
             return false;
         }
 
-        public bool CheckForPick(CreatureAI Creature)
-        {
-            if (!Creature.Stats.CurrentClass.RequiresTools) return true;
-            if (Creature.Stats.Equipment.GetItemInSlot("tool").HasValue(out var tool) && Library.GetResourceType(tool.Resource).HasValue(out var res))
-                return res.Tags.Contains(Resource.ResourceTags.Pick);
-            return false;
-        }
-
         public IEnumerable<Act.Status> Cleanup(CreatureAI creature, KillVoxelTask OwnerTask)
         {
             if (creature.Blackboard.GetData<bool>("NoPath", false))
@@ -54,16 +46,10 @@ namespace DwarfCorp
             Tree = 
                 new Domain(() => CheckIsDigDesignation(creature, OwnerTask),
                 new Sequence(
-                    new Select(
-                            new Condition(() => CheckForPick(creature)),
-                            new Sequence(
-                                new GetResourcesAct(creature, new List<Quantitiy<Resource.ResourceTags>>() { new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Pick, 1) }),
-                                new EquipToolAct(creature))
-                        ),
+                    ActHelper.CreateToolCheckAct(Resource.ResourceTags.Pick, creature),
                     new GoToVoxelAct(OwnerTask.Voxel, PlanAct.PlanType.Radius, creature) { Radius = 2.0f },
                     new DigAct(Agent, OwnerTask)))
                 | new Wrap(() => Cleanup(creature, OwnerTask));
         }
     }
-
 }

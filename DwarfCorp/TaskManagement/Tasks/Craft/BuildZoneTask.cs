@@ -49,7 +49,7 @@ namespace DwarfCorp
             if (Zone == null)
                 return null;
 
-            return new BuildRoomAct(creature.AI, Zone);
+            return new BuildZoneAct(creature.AI, Zone);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
