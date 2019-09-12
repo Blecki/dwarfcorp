@@ -9,6 +9,47 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp.Play.EmployeeInfo
 {
+    public class BetterResourceIcon : Widget
+    {
+        private String _ResourceType = "";
+        public String ResourceType
+        {
+            set
+            {
+                _ResourceType = value;
+                Invalidate();
+            }
+        }
+
+        public override void Construct()
+        {
+            base.Construct();
+        }
+
+        protected override Mesh Redraw()
+        {
+            if (String.IsNullOrEmpty(_ResourceType))
+                return base.Redraw();
+
+            if (Library.GetResourceType(_ResourceType).HasValue(out var res))
+            {
+                Tooltip = res.Name;
+
+                var r = new List<Mesh>();
+                foreach (var layer in res.GuiLayers)
+                    r.Add(Mesh.Quad()
+                                .Scale(Rect.Width, Rect.Height)
+                                .Translate(Rect.X, Rect.Y)
+                                .Colorize(BackgroundColor)
+                                .Texture(Root.GetTileSheet(layer.Sheet).TileMatrix(layer.Tile)));
+                r.Add(base.Redraw());
+                return Mesh.Merge(r.ToArray());
+            }
+            else
+                return base.Redraw();
+        }
+    }
+
     public class EquipmentPanel : Widget
     {
         public Func<CreatureAI> FetchEmployee = null;
@@ -17,36 +58,45 @@ namespace DwarfCorp.Play.EmployeeInfo
             get { return FetchEmployee?.Invoke(); }
         }
 
+        private BetterResourceIcon ToolIcon;
+
         public override void Construct()
         {
             Font = "font8";
 
-
+            ToolIcon = AddChild(new BetterResourceIcon {
+                
+            }) as BetterResourceIcon;
 
             base.Construct();
+
+            OnLayout += (sender) =>
+            {
+                ToolIcon.Rect = new Rectangle(this.Rect.X + 64, this.Rect.Y + 64, 32, 32);
+            };
         }
 
         protected override Gui.Mesh Redraw()
         {
-            // Set values from CreatureAI
             if (Employee != null && !Employee.IsDead)
             {
                 Hidden = false;
                 Text = "";
-                var equipment = Employee.Stats.Equipment;
-                if (equipment != null)
+
+                ToolIcon.ResourceType = null;
+
+                if (Employee.Stats.Equipment == null)
+                    Text = "This employee cannot use equipment.";
+                else
                 {
-                    foreach (var item in equipment.EquippedItems)
-                    {
-                        Text += item.Key + ": " + item.Value.Resource + "\n";
-                    }
+                    if (Employee.Stats.Equipment.GetItemInSlot("tool").HasValue(out var tool))
+                        ToolIcon.ResourceType = tool.Resource;
+                   
                 }
+
             }
             else
                 Hidden = true;
-
-            foreach (var child in Children)
-                child.Invalidate();
 
             return base.Redraw();
         }
