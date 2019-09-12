@@ -1,6 +1,7 @@
 {
   "Name": "Soldier",
   "PlayerClass": true,
+  "DefaultTool": "Iron Axe",
   "Actions": "Attack, Chop, Harvest, Hunt, Gather, Guard",
   "AttackMode": "Attacking",
   "JobDescription": "Soldiers are best at looking tough. They are devestating warriors, and also pretty good lumberjacks and cooks.",

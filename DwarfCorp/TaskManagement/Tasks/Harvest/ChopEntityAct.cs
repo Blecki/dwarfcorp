@@ -44,9 +44,7 @@ namespace DwarfCorp
                         PlanType = PlanAct.PlanType.Adjacent,
                         Radius = 0.0f
                     } | new Wrap(() => OnAttackEnd(Creature)),
-                    new AttackAct(Agent, Entity)) 
-                | Verify(Agent));
-
+                    new AttackAct(Agent, Entity)));
         }
     }
 }
