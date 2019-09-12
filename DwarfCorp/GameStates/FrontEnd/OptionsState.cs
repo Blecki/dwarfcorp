@@ -30,6 +30,7 @@ namespace DwarfCorp.GameStates
         private CheckBox FollowSurface;
         //private CheckBox FogOfWar;
         private CheckBox AutoFarming;
+        private CheckBox IdleCrafting;
         private CheckBox AutoDigging;
         private CheckBox PlayIntro;
         private CheckBox AllowReporting;
@@ -190,6 +191,7 @@ namespace DwarfCorp.GameStates
             }) as Gui.Widgets.TabPanel;
 
             CreateGameplayTab();
+            CreateAITab();
             CreateAudioTab();
             CreateKeysTab();
             CreateGraphicsTab();
@@ -356,22 +358,6 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-            AutoDigging = rightPanel.AddChild(new CheckBox
-            {
-                Text = "Auto-digging",
-                Tooltip = "When checked, dwarfs will automatically dig to get out of tricky situations.",
-                OnCheckStateChange = OnItemChanged,
-                AutoLayout = AutoLayout.DockTop
-            }) as CheckBox;
-
-            AutoFarming = rightPanel.AddChild(new CheckBox
-            {
-                Text = "Auto-farming",
-                Tooltip = "When checked, dwarfs will automatically harvest plants in farms and plant new seeds.",
-                OnCheckStateChange = OnItemChanged,
-                AutoLayout = AutoLayout.DockTop
-            }) as CheckBox;
-
             var guiScaleItems = new List<String>();
             for (int i = 1; i < 10; ++i)
                 if (i * 480 <= GameSettings.Default.ResolutionY)
@@ -476,6 +462,56 @@ namespace DwarfCorp.GameStates
                 Tooltip = "Percentage of overall species limit to use. Turn it down to spawn less critters, up to spawn more."
             })).GetChild(1) as SliderCombo;
         }
+
+        private void CreateAITab()
+        {
+            var panel = TabPanel.AddTab("@options-ai-tab", new Widget
+            {
+                Border = "border-thin",
+                Padding = new Margin(4, 4, 0, 0)
+            });
+
+            var split = panel.AddChild(new Gui.Widgets.Columns
+            {
+                AutoLayout = AutoLayout.DockFill
+            }) as Gui.Widgets.Columns;
+
+            var leftPanel = split.AddChild(new Widget
+            {
+                Padding = new Margin(2, 2, 2, 2)
+            });
+
+            var rightPanel = split.AddChild(new Widget
+            {
+                Padding = new Margin(2, 2, 2, 2)
+            });
+
+            AutoDigging = leftPanel.AddChild(new CheckBox
+            {
+                Text = "Auto-digging",
+                Tooltip = "When checked, dwarfs will automatically dig to get out of tricky situations.",
+                OnCheckStateChange = OnItemChanged,
+                AutoLayout = AutoLayout.DockTop
+            }) as CheckBox;
+
+            AutoFarming = leftPanel.AddChild(new CheckBox
+            {
+                Text = "Auto-farming",
+                Tooltip = "When checked, dwarfs will automatically harvest plants in farms and plant new seeds.",
+                OnCheckStateChange = OnItemChanged,
+                AutoLayout = AutoLayout.DockTop
+            }) as CheckBox;
+
+            IdleCrafting = leftPanel.AddChild(new CheckBox
+            {
+                Text = "Allow Idle Crafting",
+                Tooltip = "When checked, dwarfs may craft random items when bored.",
+                OnCheckStateChange = OnItemChanged,
+                AutoLayout = AutoLayout.DockTop
+            }) as CheckBox;
+
+        }
+
 
         private void CreateAudioTab()
         {
@@ -895,6 +931,7 @@ namespace DwarfCorp.GameStates
             //toReturn.FogofWar = this.FogOfWar.CheckState;
             toReturn.AllowAutoDigging = this.AutoDigging.CheckState;
             toReturn.AllowAutoFarming = this.AutoFarming.CheckState;
+            toReturn.AllowIdleCrafting = this.IdleCrafting.CheckState;
             toReturn.InvertZoom = this.InvertZoom.CheckState;
             toReturn.ZoomCameraTowardMouse = this.ZoomTowardMouse.CheckState;
             toReturn.DisplayIntro = this.PlayIntro.CheckState;
@@ -1056,6 +1093,7 @@ namespace DwarfCorp.GameStates
             //this.FogOfWar.CheckState = GameSettings.Default.FogofWar;
             this.AutoFarming.CheckState = GameSettings.Default.AllowAutoFarming;
             this.AutoDigging.CheckState = GameSettings.Default.AllowAutoDigging;
+            this.IdleCrafting.CheckState = GameSettings.Default.AllowIdleCrafting;
             this.InvertZoom.CheckState = GameSettings.Default.InvertZoom;
             this.ZoomTowardMouse.CheckState = GameSettings.Default.ZoomCameraTowardMouse;
             this.PlayIntro.CheckState = GameSettings.Default.DisplayIntro;

@@ -295,7 +295,10 @@ namespace DwarfCorp
                         DwarfGame.GumInput.FireKeyboardActionsOnly(ConsoleGui);
                 }
 
-                PerformanceMonitor.BeginFrame();
+            Debugger.ClearConsoleCommandContext();
+
+
+            PerformanceMonitor.BeginFrame();
                 PerformanceMonitor.PushFrame("Update");
                 AssetManagement.Steam.Steam.Update();
                 DwarfTime.LastTime.Update(time);

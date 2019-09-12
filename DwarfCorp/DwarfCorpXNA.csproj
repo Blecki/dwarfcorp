@@ -189,6 +189,7 @@
     <Compile Include="Components\AI\DwarfAI.cs" />
     <Compile Include="Components\AI\Equipment.cs" />
     <Compile Include="Components\AI\SpeciesLibrary.cs" />
+    <Compile Include="Components\Systems\ConsoleCommands.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\DebugPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\TaskListPanel.cs" />
     <Compile Include="Library\ClassLibrary.cs" />

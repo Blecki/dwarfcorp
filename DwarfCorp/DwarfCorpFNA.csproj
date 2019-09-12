@@ -120,6 +120,7 @@
     <Compile Include="Components\AI\FairyAI.cs" />
     <Compile Include="Components\Graphics\MeshComponent.cs" />
     <Compile Include="Components\Physics\Fire.cs" />
+    <Compile Include="Components\Systems\ConsoleCommands.cs" />
     <Compile Include="Entities\Dwarves\NonPlayerDwarf.cs" />
     <Compile Include="Entities\Fixtures\CandyChair.cs" />
     <Compile Include="Entities\Fixtures\CandyTable.cs" />

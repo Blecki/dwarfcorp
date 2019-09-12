@@ -320,6 +320,7 @@ namespace DwarfCorp.GameStates
                 return;
             }
 
+            Debugger.SetConsoleCommandContext(World);
             InfoTray.ClearTopMessage();
 
             // Hide tutorial while menu is up
@@ -342,6 +343,9 @@ namespace DwarfCorp.GameStates
             DwarfGame.GumInput.FireActions(Gui, (@event, args) =>
             {
                 // Let old input handle mouse interaction for now. Will eventually need to be replaced.
+
+                if (DwarfGame.IsConsoleVisible)
+                    return;
 
                 // Mouse down but not handled by GUI? Collapse menu.
                 if (@event == DwarfCorp.Gui.InputEvents.MouseClick)

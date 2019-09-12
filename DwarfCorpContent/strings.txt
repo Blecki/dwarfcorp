@@ -84,6 +84,7 @@ options-camera-movement-tooltip: Sensitivity of the camera to the movement keys
 options-camera-zoom: Camera Zoom Speed
 options-camera-zoom-tooltip: Sensitivity of the camera to zooming
 options-gameplay-tab: GAMEPLAY
+options-ai-tab: AI
 options-invert-zoom: Invert Zoom
 options-invert-zoom-tooltip: When checked, zooming in/out with the scroll wheel will be inverted
 options-zoom-to-mouse: Zoom to Mouse

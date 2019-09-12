@@ -12,6 +12,10 @@ namespace DwarfCorp
     /// </summary>
     public static class Debugger
     {
+        public static Object ConsoleCommandContext = null;
+        public static void ClearConsoleCommandContext() { ConsoleCommandContext = null; }
+        public static void SetConsoleCommandContext(Object Context) { ConsoleCommandContext = Context; }
+
         public static class Switches
         {
             public static bool DrawBoundingBoxes = false;
@@ -28,6 +32,7 @@ namespace DwarfCorp
             public static bool DrawUpdateBox = false;
             public static bool DisableWaterUpdate = false;
             public static bool DrawInvisible = false;
+            public static bool ShowEntityInfo = false;
         }
 
         public class Switch

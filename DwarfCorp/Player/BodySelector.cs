@@ -55,7 +55,12 @@ namespace DwarfCorp
         {
             MouseOver.Invoke(entities);
             foreach (GameComponent body in entities)
-                World.UserInterface.ShowInfo(body.GlobalID, body.GetDescription());
+            {
+                if (Debugger.Switches.ShowEntityInfo)
+                    World.UserInterface.ShowInfo(body.GlobalID, String.Format("ID: {0}\n", body.GlobalID) + body.GetDescription());
+                else
+                    World.UserInterface.ShowInfo(body.GlobalID, body.GetDescription());
+            }
         }
 
         public void Update()

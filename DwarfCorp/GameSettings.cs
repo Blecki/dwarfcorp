@@ -223,6 +223,8 @@ namespace DwarfCorp
 
             public bool DisableWeather = true;
 
+            public bool AllowIdleCrafting = false;
+
             [AutoResetBool(false)] public bool FastGen = false;
             [AutoResetFloat(0.15f)] public float GenerationRuinsRate = 0.15f;
             [AutoResetBool(false)] public bool NoStone = false;
