@@ -611,7 +611,7 @@
     <Compile Include="GameStates\Screensaver\DwarfRunner.cs" />
     <Compile Include="GameStates\Screensaver\Terrain2D.cs" />
     <Compile Include="World\Combat\Alliance.cs" />
-    <Compile Include="TaskManagement\CompoundActs\ChopEntityAct.cs" />
+    <Compile Include="TaskManagement\Tasks\Harvest\ChopEntityAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\CompoundAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\CompoundCreatureAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\FindAndEatFoodAct.cs" />
@@ -747,7 +747,7 @@
     <Compile Include="TaskManagement\CompoundTask.cs" />
     <Compile Include="TaskManagement\Task.cs" />
     <Compile Include="TaskManagement\TaskManager.cs" />
-    <Compile Include="TaskManagement\Tasks\ChopEntityTask.cs" />
+    <Compile Include="TaskManagement\Tasks\Harvest\ChopEntityTask.cs" />
     <Compile Include="TaskManagement\Tasks\FindLandTask.cs" />
     <Compile Include="TaskManagement\Tasks\FleeEntityTask.cs" />
     <Compile Include="TaskManagement\Tasks\GatherItemTask.cs" />

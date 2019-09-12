@@ -330,7 +330,6 @@
     <Compile Include="TaskManagement\BehaviorExtensions.cs" />
     <Compile Include="TaskManagement\Blackboard.cs" />
     <Compile Include="TaskManagement\Tasks\Craft\BuildZoneAct.cs" />
-    <Compile Include="TaskManagement\CompoundActs\ChopEntityAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\CompoundAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\CompoundCreatureAct.cs" />
     <Compile Include="TaskManagement\Tasks\Craft\CraftItemAct.cs" />
@@ -348,6 +347,8 @@
     <Compile Include="TaskManagement\CompoundActs\GoToZoneAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\GoTrainAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\KillEntityAct.cs" />
+    <Compile Include="TaskManagement\Tasks\Harvest\ChopEntityAct.cs" />
+    <Compile Include="TaskManagement\Tasks\Harvest\ChopEntityTask.cs" />
     <Compile Include="TaskManagement\Tasks\KillVoxel\KillVoxelAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\MournGraves.cs" />
     <Compile Include="TaskManagement\CompoundActs\PlantAct.cs" />
@@ -402,7 +403,6 @@
     <Compile Include="TaskManagement\Tasks\GoToZoneTask.cs" />
     <Compile Include="TaskManagement\Tasks\Craft\BuildZoneTask.cs" />
     <Compile Include="TaskManagement\Tasks\Craft\BuildVoxelTask.cs" />
-    <Compile Include="TaskManagement\Tasks\ChopEntityTask.cs" />
     <Compile Include="TaskManagement\Tasks\Craft\CraftItemTask.cs" />
     <Compile Include="TaskManagement\Tasks\Craft\CraftResourceTask.cs" />
     <Compile Include="TaskManagement\Tasks\FindLandTask.cs" />

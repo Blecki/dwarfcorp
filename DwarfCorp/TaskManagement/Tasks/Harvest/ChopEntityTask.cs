@@ -35,7 +35,6 @@ namespace DwarfCorp
             if (creature.IsDead || creature.AI.IsDead)
                 return null;
 
-            // Todo: Ugh - need to seperate the acts as well
             return new ChopEntityAct(EntityToKill, creature.AI);
         }
 
