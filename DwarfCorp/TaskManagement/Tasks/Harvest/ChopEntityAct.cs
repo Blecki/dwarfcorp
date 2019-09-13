@@ -23,7 +23,6 @@ namespace DwarfCorp
 
         public IEnumerable<Act.Status> OnAttackEnd(CreatureAI creature)
         {
-            Verify(creature);
             creature.Creature.OverrideCharacterMode = false;
             creature.Creature.CurrentCharacterMode = CharacterMode.Idle;
             yield return Act.Status.Success;
@@ -37,7 +36,7 @@ namespace DwarfCorp
 
             Tree = new Domain(Verify(Agent),
                 new Sequence(
-                    ActHelper.CreateToolCheckAct(Resource.ResourceTags.Axe, Creature),
+                    ActHelper.CreateToolCheckAct(Creature, Resource.ResourceTags.Axe, Resource.ResourceTags.Pick),
                     new GoToEntityAct(Entity, Creature)
                     {
                         MovingTarget = false,

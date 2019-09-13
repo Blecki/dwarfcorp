@@ -86,7 +86,7 @@ namespace DwarfCorp
 
                 return new Select(
                     new Sequence(
-                        ActHelper.CreateToolCheckAct(Resource.ResourceTags.Hammer, creature.AI),
+                        ActHelper.CreateToolCheckAct(creature.AI, Resource.ResourceTags.Hammer),
                         new GetResourcesAct(creature.AI, new List<ResourceAmount>() { resources }),
                         new Domain(() => Validate(creature.AI, Voxel, resources),
                             new GoToVoxelAct(Voxel, PlanAct.PlanType.Radius, creature.AI, 4.0f)),

@@ -46,7 +46,7 @@ namespace DwarfCorp
             Tree = 
                 new Domain(() => CheckIsDigDesignation(creature, OwnerTask),
                 new Sequence(
-                    ActHelper.CreateToolCheckAct(Resource.ResourceTags.Pick, creature),
+                    ActHelper.CreateToolCheckAct(creature, Resource.ResourceTags.Pick),
                     new GoToVoxelAct(OwnerTask.Voxel, PlanAct.PlanType.Radius, creature) { Radius = 2.0f },
                     new DigAct(Agent, OwnerTask)))
                 | new Wrap(() => Cleanup(creature, OwnerTask));

@@ -363,7 +363,7 @@ namespace DwarfCorp
                     getResources,
                     new Sequence(new Domain(ResourceStateValid, 
                         new Sequence(
-                            ActHelper.CreateToolCheckAct(Resource.ResourceTags.Hammer, Agent),
+                            ActHelper.CreateToolCheckAct(Agent, Resource.ResourceTags.Hammer),
                             new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
                             new Wrap(() => DestroyResources(() => Item.Location.WorldPosition)),
                             new Wrap(WaitForResources) { Name = "Wait for resources." },
@@ -385,7 +385,7 @@ namespace DwarfCorp
                         getResources,
                         new Domain(ResourceStateValid, 
                             new Sequence(
-                                ActHelper.CreateToolCheckAct(Resource.ResourceTags.Hammer, Agent),
+                                ActHelper.CreateToolCheckAct(Agent, Resource.ResourceTags.Hammer),
                                 new GoToTaggedObjectAct(Agent)
                                 {
                                     Tag = Item.ItemType.CraftLocation,
@@ -438,7 +438,7 @@ namespace DwarfCorp
                         new ClearBlackboardData(Agent, "ResourcesStashed"),
                         getResources,
                         new Domain(ResourceStateValid, new Sequence(
-                            ActHelper.CreateToolCheckAct(Resource.ResourceTags.Hammer, Agent),
+                            ActHelper.CreateToolCheckAct(Agent, Resource.ResourceTags.Hammer),
                             new Wrap(() => DestroyResources(() => Creature.Physics.Position + MathFunctions.RandVector3Cube() * 0.5f)),
                             new Wrap(WaitForResources) { Name = "Wait for resources." },
                             new Wrap(() => Creature.HitAndWait(time, true, () => Creature.Physics.Position)) { Name = "Construct object."},

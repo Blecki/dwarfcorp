@@ -1,28 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     public static partial class ActHelper
     {
-        public static Act CreateToolCheckAct(Resource.ResourceTags ToolType, CreatureAI Creature)
+        public static Act CreateToolCheckAct(CreatureAI Creature, params Resource.ResourceTags[] ToolType)
         {
             return new Select(
                 new Condition(() =>
                 {
                     if (!Creature.Stats.CurrentClass.RequiresTools) return true;
                     if (Creature.Stats.Equipment.GetItemInSlot("tool").HasValue(out var tool) && Library.GetResourceType(tool.Resource).HasValue(out var res))
-                        return res.Tags.Contains(ToolType);
+                        return res.Tags.Any(t => ToolType.Contains(t));
                     return false;
                 }),
                 new Sequence(
-                    new GetResourcesAct(Creature, new List<Quantitiy<Resource.ResourceTags>>() { new Quantitiy<Resource.ResourceTags>(ToolType, 1) }),
+                    new GetAnySingleMatchingResourceAct(Creature, ToolType.ToList()),
                     new EquipToolAct(Creature))
                 );
         }

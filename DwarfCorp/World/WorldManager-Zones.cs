@@ -113,6 +113,17 @@ namespace DwarfCorp
             }
         }
 
+        public KeyValuePair<Zone, ResourceAmount>? GetFirstStockpileContainingResourceWithMatchingTag(List<Resource.ResourceTags> Tags)
+        {
+            foreach (var stockpile in EnumerateZones())
+            {
+                foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => Library.GetResourceType(sResource.Type).HasValue(out var res) && res.Tags.Any(t => Tags.Contains(t))))
+                    return new KeyValuePair<Zone, ResourceAmount>(stockpile, new ResourceAmount(resource.Type, 1));
+            }
+
+            return null;
+        }
+
         public Zone FindNearestZone(Vector3 position)
         {
             Zone desiredRoom = null;

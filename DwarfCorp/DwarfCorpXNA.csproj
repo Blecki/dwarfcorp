@@ -338,6 +338,7 @@
     <Compile Include="TaskManagement\CompoundActs\FleeEntityAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\GatherItemAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\GetMoneyAct.cs" />
+    <Compile Include="TaskManagement\Tasks\Craft\GetAnySingleMatchingResourceAct.cs" />
     <Compile Include="TaskManagement\Tasks\Craft\GetResourcesAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\GoToChairAndSitAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\GoToEntityAct.cs" />

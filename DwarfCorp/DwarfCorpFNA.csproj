@@ -192,6 +192,7 @@
     <Compile Include="TaskManagement\Tasks\Craft\CraftItemAct.cs" />
     <Compile Include="TaskManagement\Tasks\Craft\CraftItemTask.cs" />
     <Compile Include="TaskManagement\Tasks\Craft\CraftResourceTask.cs" />
+    <Compile Include="TaskManagement\Tasks\Craft\GetAnySingleMatchingResourceAct.cs" />
     <Compile Include="TaskManagement\Tasks\Craft\GetResourcesAct.cs" />
     <Compile Include="TaskManagement\Tasks\DestroyObjectTask.cs" />
     <Compile Include="TaskManagement\Tasks\GoToZoneTask.cs" />
