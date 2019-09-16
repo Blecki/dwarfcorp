@@ -185,6 +185,7 @@
     <Compile Include="TaskManagement\Enums.cs" />
     <Compile Include="TaskManagement\LeafActs\EquipToolAct.cs" />
     <Compile Include="TaskManagement\LeafActs\GreedyPathAct.cs" />
+    <Compile Include="TaskManagement\LeafActs\LongWanderAct.cs" />
     <Compile Include="TaskManagement\SequentialTask.cs" />
     <Compile Include="TaskManagement\Tasks\Craft\BuildVoxelTask.cs" />
     <Compile Include="TaskManagement\Tasks\Craft\BuildZoneAct.cs" />

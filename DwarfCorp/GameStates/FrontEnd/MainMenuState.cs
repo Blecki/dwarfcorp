@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using DwarfCorp.Gui;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Linq;
+using System.IO;
 
 namespace DwarfCorp.GameStates
 {
@@ -14,9 +16,25 @@ namespace DwarfCorp.GameStates
        
         }
 
-        public void MakeMenu()
+        public void MakeMenu(DirectoryInfo GameToContinue)
         {
             var frame = CreateMenu(Library.GetString("main-menu-title"));
+
+            if (GameToContinue != null && NewOverworldFile.CheckCompatibility(GameToContinue.FullName))
+            {
+                CreateMenuItem(frame,
+                    "Continue",
+                    NewOverworldFile.GetOverworldName(GameToContinue.FullName),
+                    (sender, args) => {
+
+                        var file = NewOverworldFile.Load(GameToContinue.FullName);
+                        GameStateManager.PopState();
+                        var overworldSettings = file.CreateSettings();
+                        overworldSettings.InstanceSettings.LoadType = LoadType.LoadFromFile;
+                        overworldSettings.InstanceSettings.ExistingFile = DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + overworldSettings.Name + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)overworldSettings.InstanceSettings.Origin.X, (int)overworldSettings.InstanceSettings.Origin.Y);
+                        GameStateManager.PushState(new LoadState(Game, overworldSettings, LoadTypes.UseExistingOverworld));
+                    });
+            }
 
             CreateMenuItem(frame,
                 Library.GetString("new-game"),
@@ -107,14 +125,25 @@ namespace DwarfCorp.GameStates
             EntityFactory.Cleanup();
             Drawer3D.Cleanup();
             ParticleEmitter.Cleanup();
-            //Overworld.Cleanup();
             PlayState.Input = null;
             InputManager.Cleanup();
             LayeredSprites.LayerLibrary.Cleanup();
 
             base.OnEnter();
 
-            MakeMenu();
+            var worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetWorldDirectory());
+            var dirs = worldDirectory.EnumerateDirectories().ToList();
+            dirs.Sort((a, b) =>
+        {
+            var aMeta = a.GetFiles("meta.txt");
+            var bMeta = b.GetFiles("meta.txt");
+            if (aMeta.Length > 0 && bMeta.Length > 0)
+                return bMeta[0].LastWriteTime.CompareTo(aMeta[0].LastWriteTime);
+
+            return b.LastWriteTime.CompareTo(a.LastWriteTime);
+        });
+
+            MakeMenu(dirs.FirstOrDefault());
             IsInitialized = true;
 
             DwarfTime.LastTime.Speed = 1.0f;

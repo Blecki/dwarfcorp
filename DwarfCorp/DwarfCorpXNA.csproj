@@ -329,6 +329,7 @@
     <Compile Include="TaskManagement\ActData.cs" />
     <Compile Include="TaskManagement\BehaviorExtensions.cs" />
     <Compile Include="TaskManagement\Blackboard.cs" />
+    <Compile Include="TaskManagement\LeafActs\LongWanderAct.cs" />
     <Compile Include="TaskManagement\Tasks\Craft\BuildZoneAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\CompoundAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\CompoundCreatureAct.cs" />

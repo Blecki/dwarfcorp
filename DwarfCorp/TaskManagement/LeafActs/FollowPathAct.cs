@@ -238,6 +238,7 @@ namespace DwarfCorp
                     var dest = GetPathPoint(Step.DestinationVoxel);
                     foreach (var bit in Jump(Agent.Position, dest, dest - Agent.Position, actionSpeed / 2.0f))
                     {
+                        Creature.Physics.CollisionType = CollisionType.None;
                         Creature.OverrideCharacterMode = false;
                         SetCharacterMode(Creature.Physics.Velocity.Y > 0 ? CharacterMode.Jumping : CharacterMode.Falling);
                         yield return Status.Running;
@@ -418,6 +419,7 @@ namespace DwarfCorp
                 {
                     //Agent.Physics.PropogateTransforms();
                     DeltaTime += (float)DwarfTime.LastTime.ElapsedGameTime.TotalSeconds;
+                    Creature.Physics.CollisionType = CollisionType.Dynamic;
 
                     if (status == Status.Fail)
                     {

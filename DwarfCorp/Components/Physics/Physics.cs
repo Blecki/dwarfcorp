@@ -180,12 +180,11 @@ namespace DwarfCorp
                     CurrentVoxel = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(Position));
 
                     if (CurrentVoxel != prevVoxel)
-                    {
                         queryNeighborhood = true;
-                    }
 
                     // Collide with the world.
-                    HandleCollisions(queryNeighborhood, neighborHood, chunks, FixedDT);
+                    if (CollisionType != CollisionType.None)
+                        HandleCollisions(queryNeighborhood, neighborHood, chunks, FixedDT);
                     queryNeighborhood = false;
                     Matrix transform = LocalTransform;
                     // Avoid leaving the world.
@@ -369,6 +368,7 @@ namespace DwarfCorp
             if (CollideMode == CollisionMode.None) return;
 
             int y = (int)Position.Y;
+
             if (CurrentVoxel.IsValid && !CurrentVoxel.IsEmpty)
             {
                 var currentBox = CurrentVoxel.GetBoundingBox();
@@ -414,17 +414,13 @@ namespace DwarfCorp
             Vector3 localGradient = Vector3.Zero;
 
             var p = Position;
-            foreach (var v in VoxelHelpers.EnumerateAllNeighbors(CurrentVoxel.Coordinate))
+            localGradient = Position - CurrentVoxel.Center;
+            localGradient += Velocity; // Prefer to push in the direction we're already going.
+            foreach (var v in VoxelHelpers.EnumerateManhattanNeighbors(CurrentVoxel.Coordinate))
             {
                 var handle = new VoxelHandle(World.ChunkManager, v);
-                if (!handle.IsValid)
-                    continue;
-                
-                var center = handle.WorldPosition + Vector3.One*0.5f;
-                var offset = p - center;
-                var dist = offset.LengthSquared();
-                var sign = handle.IsEmpty ? -1 : 1;
-                localGradient += offset*sign/dist;
+                var sign = (handle.IsValid && handle.IsEmpty) ? -1 : 1;
+                localGradient += (p - handle.Center) * sign;
             }
 
             p += localGradient*0.01f;
