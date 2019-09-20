@@ -14,7 +14,6 @@ namespace DwarfCorp
 
     public class InstanceSettings
     {
-        public string ExistingFile = null;
         public LoadType LoadType = LoadType.CreateNew;
 
         [JsonIgnore] public Embarkment InitalEmbarkment = null;

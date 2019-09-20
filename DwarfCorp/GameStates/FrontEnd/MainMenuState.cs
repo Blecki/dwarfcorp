@@ -31,7 +31,6 @@ namespace DwarfCorp.GameStates
                         GameStateManager.PopState();
                         var overworldSettings = file.CreateSettings();
                         overworldSettings.InstanceSettings.LoadType = LoadType.LoadFromFile;
-                        overworldSettings.InstanceSettings.ExistingFile = DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + overworldSettings.Name + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)overworldSettings.InstanceSettings.Origin.X, (int)overworldSettings.InstanceSettings.Origin.Y);
                         GameStateManager.PushState(new LoadState(Game, overworldSettings, LoadTypes.UseExistingOverworld));
                     });
             }

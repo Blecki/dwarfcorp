@@ -12,6 +12,7 @@ namespace DwarfCorp
         Walk,
         /// <summary> Jump from one voxel to another. </summary>
         Jump,
+        HighJump,
         /// <summary> Climb up a climbable object </summary>
         Climb,
         /// <summary> Move through water </summary>

@@ -22,6 +22,11 @@ namespace DwarfCorp.GameStates // Todo: Why in GameStates?
 
         public InstanceSettings InstanceSettings; // These are only saved because it makes the selector default to the last launched branch.
 
+        public String GetInstancePath()
+        {
+            return DwarfGame.GetWorldDirectory() + System.IO.Path.DirectorySeparatorChar + Name + System.IO.Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)InstanceSettings.Origin.X, (int)InstanceSettings.Origin.Y);
+        }
+
         public Dictionary<String, Politics> Politics = new Dictionary<string, Politics>();
         public Dictionary<TaskCategory, TaskPriority> DefaultTaskPriorities = new Dictionary<TaskCategory, TaskPriority>();
 

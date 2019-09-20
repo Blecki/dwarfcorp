@@ -8,9 +8,6 @@ namespace DwarfCorp
     {
         public void CreateInitialEmbarkment(Generation.ChunkGeneratorSettings Settings)
         {
-            // If no file exists, we have to create the balloon and balloon port.
-            if (!string.IsNullOrEmpty(Settings.Overworld.InstanceSettings.ExistingFile)) return; // Todo: Don't call in the first place??
-
             PlayerFaction.Economy.Funds = Settings.Overworld.InstanceSettings.InitalEmbarkment.Funds;
             Settings.Overworld.PlayerCorporationFunds -= Settings.Overworld.InstanceSettings.InitalEmbarkment.Funds;
             Settings.Overworld.PlayerCorporationFunds -= Settings.Overworld.InstanceSettings.CalculateLandValue();

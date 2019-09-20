@@ -156,7 +156,7 @@ namespace DwarfCorp
 
                     Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
 
-                    foreach (var bit in Jump(GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel), Step.DestinationVoxel.Center - Step.SourceVoxel.Center, actionSpeed))
+                    foreach (var bit in Jump(GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel), Step.DestinationVoxel.Center - Step.SourceVoxel.Center, actionSpeed, 1.5f))
                     {
                         SetCharacterMode(Creature.Physics.Velocity.Y > 0 ? CharacterMode.Jumping : CharacterMode.Falling);
                         yield return Status.Running;
@@ -231,23 +231,49 @@ namespace DwarfCorp
                     break;
 
                 case MoveType.Jump:
-
-                    CleanupMinecart();
-                    Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
-
-                    var dest = GetPathPoint(Step.DestinationVoxel);
-                    foreach (var bit in Jump(Agent.Position, dest, dest - Agent.Position, actionSpeed / 2.0f))
                     {
-                        Creature.Physics.CollisionType = CollisionType.None;
-                        Creature.OverrideCharacterMode = false;
-                        SetCharacterMode(Creature.Physics.Velocity.Y > 0 ? CharacterMode.Jumping : CharacterMode.Falling);
-                        yield return Status.Running;
+                        CleanupMinecart();
+                        Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
+
+                        var dest = GetPathPoint(Step.DestinationVoxel);
+                        var above = VoxelHelpers.GetVoxelAbove(Step.SourceVoxel);
+                        if (above.IsValid && !above.IsEmpty)
+                            yield return Status.Fail;
+
+                        foreach (var bit in Jump(Agent.Position, dest, dest - Agent.Position, actionSpeed / 2.0f, 0.0f))
+                        {
+                            Creature.Physics.CollisionType = CollisionType.None;
+                            Creature.OverrideCharacterMode = false;
+                            SetCharacterMode(Creature.Physics.Velocity.Y > 0 ? CharacterMode.Jumping : CharacterMode.Falling);
+                            yield return Status.Running;
+                        }
+
+                        SetAgentTranslation(dest);
+
+                        break;
                     }
+                case MoveType.HighJump:
+                    {
+                        CleanupMinecart();
+                        Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
 
-                    SetAgentTranslation(dest);
+                        var dest = GetPathPoint(Step.DestinationVoxel);
+                        var above = VoxelHelpers.GetVoxelAbove(Step.SourceVoxel);
+                        if (above.IsValid && !above.IsEmpty)
+                            yield return Status.Fail;
 
-                    break;
+                        foreach (var bit in Jump(Agent.Position, dest, dest - Agent.Position, actionSpeed / 2.0f, 1.5f))
+                        {
+                            Creature.Physics.CollisionType = CollisionType.None;
+                            Creature.OverrideCharacterMode = false;
+                            SetCharacterMode(Creature.Physics.Velocity.Y > 0 ? CharacterMode.Jumping : CharacterMode.Falling);
+                            yield return Status.Running;
+                        }
 
+                        SetAgentTranslation(dest);
+
+                        break;
+                    }
                 case MoveType.Fall:
 
                     CleanupMinecart();
@@ -448,6 +474,8 @@ namespace DwarfCorp
                 {
                     if (Path[i].MoveType == MoveType.Jump)
                         Drawer3D.DrawLine(GetPathPoint(Path[i].SourceVoxel), GetPathPoint(Path[i].DestinationVoxel), Color.Red, 0.1f);
+                    else if (Path[i].MoveType == MoveType.HighJump)
+                        Drawer3D.DrawLine(GetPathPoint(Path[i].SourceVoxel), GetPathPoint(Path[i].DestinationVoxel), Color.Orange, 0.1f);
                     else
                         Drawer3D.DrawLine(GetPathPoint(Path[i].SourceVoxel), GetPathPoint(Path[i].DestinationVoxel), Color.Blue, 0.1f);
                 }
@@ -463,7 +491,7 @@ namespace DwarfCorp
             base.OnCanceled();
         }
 
-        private IEnumerable<Status> Jump(Vector3 Start, Vector3 End, Vector3 JumpDelta, float MovementSpeed)
+        private IEnumerable<Status> Jump(Vector3 Start, Vector3 End, Vector3 JumpDelta, float MovementSpeed, float JumpHeight)
         {
             DeltaTime = 0.0f;
 
@@ -472,7 +500,7 @@ namespace DwarfCorp
             {
                 var jumpProgress = DeltaTime / jumpTime;
                 var dx = ((End - Start) * jumpProgress) + Start;
-                dx.Y += Easing.Ballistic(DeltaTime, jumpTime, 1.5f);
+                dx.Y += Easing.Ballistic(DeltaTime, jumpTime, JumpHeight);
                 SetAgentTranslation(dx);
                 Agent.Physics.Velocity = JumpDelta;
                 yield return Status.Running;

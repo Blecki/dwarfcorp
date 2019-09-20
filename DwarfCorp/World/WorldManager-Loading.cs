@@ -100,9 +100,9 @@ namespace DwarfCorp
 
             #region Reading game file
 
-            SetLoadingMessage("Loading " + Overworld.InstanceSettings.ExistingFile);
+            SetLoadingMessage("Loading " + Overworld.GetInstancePath());
 
-            var gameFile = SaveGame.LoadMetaFromDirectory(Overworld.InstanceSettings.ExistingFile);
+            var gameFile = SaveGame.LoadMetaFromDirectory(Overworld.GetInstancePath());
 
             if (gameFile == null)
                 throw new InvalidOperationException("Game File does not exist.");
@@ -172,7 +172,7 @@ namespace DwarfCorp
             ChunkManager.LoadChunks(gameFile.LoadChunks(), ChunkManager);
 
             SetLoadingMessage("Loading Entities...");
-            gameFile.LoadPlayData(Overworld.InstanceSettings.ExistingFile, this);
+            gameFile.LoadPlayData(Overworld.GetInstancePath(), this);
 
             PersistentData = gameFile.PlayData.PersistentData;
 
@@ -234,6 +234,7 @@ namespace DwarfCorp
             if (MathFunctions.RandEvent(0.01f))
                 SetLoadingMessage("Reticulating Splines...");
 
+            ChunkManager.NeedsMinimapUpdate = true;
             ChunkManager.StartThreads();
             SetLoadingMessage("Presimulating ...");
             ShowingWorld = false;

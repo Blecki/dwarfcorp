@@ -72,7 +72,6 @@ namespace DwarfCorp.GameStates
                     if (saveGame != null)
                     {
                         DwarfGame.LogSentryBreadcrumb("WorldGenerator", "User is loading a saved game.");
-                        Settings.InstanceSettings.ExistingFile = saveName;
                         Settings.InstanceSettings.LoadType = LoadType.LoadFromFile;
                         
                         GameStateManager.ClearState();
@@ -81,7 +80,6 @@ namespace DwarfCorp.GameStates
                     else
                     {
                         DwarfGame.LogSentryBreadcrumb("WorldGenerator", string.Format("User is starting a game with a {0} x {1} world.", Settings.Width, Settings.Height));
-                        Settings.InstanceSettings.ExistingFile = null;
                         Settings.InstanceSettings.LoadType = LoadType.CreateNew;
 
                         var message = "";

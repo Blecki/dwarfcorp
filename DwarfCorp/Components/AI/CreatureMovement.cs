@@ -114,6 +114,15 @@ namespace DwarfCorp
                     }
                 },
                 {
+                    MoveType.HighJump,
+                    new ActionStats
+                    {
+                        CanMove = true,
+                        Cost = 1.0f,
+                        Speed = 1.0f
+                    }
+                },
+                {
                     MoveType.Fly,
                     new ActionStats
                     {
@@ -759,14 +768,27 @@ namespace DwarfCorp
 
                         if (Storage.Neighborhood[dx, 1, dz].IsValid && !Storage.Neighborhood[dx, 1, dz].IsEmpty)
                         {
-                            yield return (new MoveAction
-                            {
-                                SourceState = state,
-                                Diff = new Vector3(dx, 2, dz),
-                                MoveType = MoveType.Jump,
-                                DestinationVoxel = Storage.Neighborhood[dx, 2, dz],
-                                CostMultiplier = 1.0f
-                            });
+                            // Check to see if there is headspace for a higher jump.
+
+                            //var highAbove = state.Voxel.Chunk.Manager.CreateVoxelHandle(Storage.Neighborhood[dx, 1, dz].Coordinate + new GlobalVoxelOffset(0, 2, 0));
+                            //if (highAbove.IsValid && highAbove.IsEmpty)
+                            //    yield return new MoveAction
+                            //    {
+                            //        SourceState = state,
+                            //        Diff = new Vector3(dx, 2, dz),
+                            //        MoveType = MoveType.HighJump,
+                            //        DestinationVoxel = Storage.Neighborhood[dx, 2, dz],
+                            //        CostMultiplier = 1.0f
+                            //    };
+                            //else
+                                yield return new MoveAction
+                                {
+                                    SourceState = state,
+                                    Diff = new Vector3(dx, 2, dz),
+                                    MoveType = MoveType.Jump,
+                                    DestinationVoxel = Storage.Neighborhood[dx, 2, dz],
+                                    CostMultiplier = 1.0f
+                                };
                         }
                     }
                 }
