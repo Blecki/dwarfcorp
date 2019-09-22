@@ -30,13 +30,13 @@ namespace DwarfCorp
             Console.WriteLine("Loaded Resource Library.");
         }
 
-        public static IEnumerable<Resource> EnumerateResourceTypesWithTag(Resource.ResourceTags tag)
+        public static IEnumerable<Resource> EnumerateResourceTypesWithTag(String tag)
         {
             InitializeResources();
             return Resources.Values.Where(resource => resource.Tags.Contains(tag));
         }
 
-        public static Resource FindMedianResourceTypeWithTag(Resource.ResourceTags tag)
+        public static Resource FindMedianResourceTypeWithTag(String tag)
         {
             InitializeResources();
             var applicable = Resources.Values.Where(resource => resource.Tags.Contains(tag)).ToList();
@@ -69,7 +69,7 @@ namespace DwarfCorp
 
             Resources[resource.Name] = resource;
 
-            if (resource.Tags.Contains(Resource.ResourceTags.Money))
+            if (resource.Tags.Contains("Money"))
                 EntityFactory.RegisterEntity(resource.Name + " Resource", (position, data) => new CoinPile(EntityFactory.World.ComponentManager, position)
                 {
                     Money = data.Has("Money") ? data.GetData<DwarfBux>("Money") : (DwarfBux)64m
@@ -100,10 +100,9 @@ namespace DwarfCorp
                 r.Description = from.Description;
                 r.GuiLayers = new List<TileReference>(from.GuiLayers);
                 r.Tint = from.Tint;
-                r.Tags = new List<Resource.ResourceTags>(from.Tags);
+                r.Tags = new List<String>(from.Tags);
                 r.FoodContent = from.FoodContent;
                 r.PlantToGenerate = from.PlantToGenerate;
-                r.CraftPrerequisites = new List<Quantitiy<Resource.ResourceTags>>(from.CraftPrerequisites);
                 r.CraftInfo = from.CraftInfo;
                 r.CompositeLayers = from.CompositeLayers == null ? null : new List<Resource.CompositeLayer>(from.CompositeLayers);
                 r.TrinketData = from.TrinketData;
@@ -183,7 +182,7 @@ namespace DwarfCorp
                 {
                     toReturn.Name = resultName;
                     toReturn.MoneyValue += gemResource.MoneyValue * 2m;
-                    toReturn.Tags = new List<Resource.ResourceTags>() { Resource.ResourceTags.Craft, Resource.ResourceTags.Precious };
+                    toReturn.Tags = new List<String>() { "Craft", "Precious" };
 
                     toReturn.CompositeLayers = new List<Resource.CompositeLayer>();
                     toReturn.CompositeLayers.AddRange(baseResource.CompositeLayers);

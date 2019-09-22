@@ -15,31 +15,31 @@ namespace DwarfCorp.Play
 
         public override void Construct()
         {
-            List<Resource.ResourceTags> blacklistableResources = new List<Resource.ResourceTags>()
+            List<String> blacklistableResources = new List<String>()
             {
-                Resource.ResourceTags.Alcohol, // Todo: Need a central clearing house for all resource tags. Do they need to be an actual object rather than an enum?
-                Resource.ResourceTags.Meat,
-                Resource.ResourceTags.Metal,
-                Resource.ResourceTags.Gem,
-                Resource.ResourceTags.Magical,
-                Resource.ResourceTags.Wood,
-                Resource.ResourceTags.Soil,
-                Resource.ResourceTags.Sand,
-                Resource.ResourceTags.Fruit,
-                Resource.ResourceTags.Gourd,
-                Resource.ResourceTags.Grain,
-                Resource.ResourceTags.Fungus,
-                Resource.ResourceTags.Fuel,
-                Resource.ResourceTags.Craft,
-                Resource.ResourceTags.CraftItem,
-                Resource.ResourceTags.Bone,
-                Resource.ResourceTags.Potion,
-                Resource.ResourceTags.PreparedFood,
-                Resource.ResourceTags.Rail,
-                Resource.ResourceTags.Seed,
-                Resource.ResourceTags.Edible,
-                Resource.ResourceTags.AnimalProduct,
-                Resource.ResourceTags.Stone
+                "Alcohol", // Todo: Need a central clearing house for all resource tags. Do they need to be an actual object rather than an enum?
+                "Meat",
+                "Metal",
+                "Gem",
+                "Magical",
+                "Wood",
+                "Soil",
+                "Sand",
+                "Fruit",
+                "Gourd",
+                "Grain",
+                "Fungus",
+                "Fuel",
+                "Craft",
+                "CraftItem",
+                "Bone",
+                "Potion",
+                "PreparedFood",
+                "Rail",
+                "Seed",
+                "Edible",
+                "AnimalProduct",
+                "Stone"
             }.OrderBy(t => t.ToString()).ToList();
 
             Font = "font10";
@@ -58,11 +58,11 @@ namespace DwarfCorp.Play
             }) as GridPanel;
 
             List<CheckBox> boxes = new List<CheckBox>();
-            foreach (Resource.ResourceTags tagType in blacklistableResources)
+            foreach (var tagType in blacklistableResources)
             {
                 var resource = Library.FindMedianResourceTypeWithTag(tagType);
                 var resources = Library.EnumerateResourceTypesWithTag(tagType);
-                Resource.ResourceTags lambdaType = tagType;
+                var lambdaType = tagType;
                 var entry = grid.AddChild(new Widget());
 
                 if (resource != null)

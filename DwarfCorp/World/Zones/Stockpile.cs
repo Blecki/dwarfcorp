@@ -32,10 +32,10 @@ namespace DwarfCorp
             base(Data, World)
         {
             Boxes = new List<GameComponent>();
-            BlacklistResources = new List<Resource.ResourceTags>()
+            BlacklistResources = new List<String>()
             {
-                Resource.ResourceTags.Corpse,
-                Resource.ResourceTags.Money
+                "Corpse",
+                "Money"
             };
 
             SupportsFilters = true;
@@ -55,10 +55,10 @@ namespace DwarfCorp
 
         // If this is empty, all resources are allowed if and only if whitelist is empty. Otherwise,
         // all but these resources are allowed.
-        public List<Resource.ResourceTags> BlacklistResources = new List<Resource.ResourceTags>();
+        public List<String> BlacklistResources = new List<String>();
         // If this is empty, all resources are allowed if and only if blacklist is empty. Otherwise,
         // only these resources are allowed.
-        public List<Resource.ResourceTags> WhitelistResources = new List<Resource.ResourceTags>(); 
+        public List<String> WhitelistResources = new List<String>(); 
 
         public static uint NextID()
         {

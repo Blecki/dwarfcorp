@@ -102,8 +102,8 @@ namespace DwarfCorp
                             new Repeat(
                                 new FindAndEatFoodAct(AI, true)
                                 {
-                                    FoodTag = Resource.ResourceTags.Alcohol,
-                                    FallbackTag = Resource.ResourceTags.Alcohol
+                                    FoodTag = "Alcohol",
+                                    FallbackTag = "Alcohol"
                                 },
                                 3, false)
                             {
@@ -116,7 +116,7 @@ namespace DwarfCorp
                             EnergyDecrease = GameSettings.Default.Energy_Restful,
                         };
                     },
-                    Available = (AI, World) => World.ListResourcesWithTag(Resource.ResourceTags.Alcohol).Count > 0
+                    Available = (AI, World) => World.ListResourcesWithTag("Alcohol").Count > 0
                 });
 
                 IdleTasks.Add(new IdleTask
@@ -204,7 +204,7 @@ namespace DwarfCorp
                             var allow = true;
                             foreach (var resource in item.RequiredResources)
                             {
-                                var amount = AI.World.GetResourcesWithTags(new List<Quantitiy<Resource.ResourceTags>>() { resource });
+                                var amount = AI.World.GetResourcesWithTags(new List<Quantitiy<String>>() { resource });
                                 if (amount == null || amount.Count == 0)
                                     allow = false;
                                 else
@@ -274,7 +274,7 @@ namespace DwarfCorp
                     {
                         return new GatherPotionsTask();
                     },
-                    Available = (AI, World) => World.ListResourcesWithTag(Resource.ResourceTags.Potion).Count > 0
+                    Available = (AI, World) => World.ListResourcesWithTag("Potion").Count > 0
                 });
 
                 IdleTasks.Add(new IdleTask
@@ -375,7 +375,7 @@ namespace DwarfCorp
                 AssignGeneratedTask(new SatisfyTirednessTask());
 
             // Try to find food if we are hungry.
-            if (Stats.Hunger.IsDissatisfied() && World.CountResourcesWithTag(Resource.ResourceTags.Edible) > 0)
+            if (Stats.Hunger.IsDissatisfied() && World.CountResourcesWithTag("Edible") > 0)
                 AssignGeneratedTask(new SatisfyHungerTask()
                 {
                     MustPay = true,

@@ -44,7 +44,7 @@ namespace DwarfCorp
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
-            var gems = Library.EnumerateResourceTypesWithTag(Resource.ResourceTags.Gem);
+            var gems = Library.EnumerateResourceTypesWithTag("Gem");
             for (int i = 0; i < 16;  i++)
             {
                 int num = MathFunctions.RandInt(1, 32 - i);

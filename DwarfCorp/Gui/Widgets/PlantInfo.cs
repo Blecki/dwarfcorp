@@ -20,9 +20,9 @@ namespace DwarfCorp.Gui.Widgets
             if (Library.GetResourceType(Type).HasValue(out var res))
             {
                 builder.AppendLine(res.Description);
-                if (res.Tags.Contains(Resource.ResourceTags.AboveGroundPlant))
+                if (res.Tags.Contains("AboveGroundPlant"))
                     builder.AppendLine("* Grows above ground");
-                if (res.Tags.Contains(Resource.ResourceTags.BelowGroundPlant))
+                if (res.Tags.Contains("BelowGroundPlant"))
                     builder.AppendLine("* Grows below ground");
             }
             builder.AppendLine("* Grows in soil");

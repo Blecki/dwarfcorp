@@ -1,10 +1,11 @@
 using System.Linq;
+using System;
 
 namespace DwarfCorp
 {
     public static partial class ActHelper
     {
-        public static Act CreateToolCheckAct(CreatureAI Creature, params Resource.ResourceTags[] ToolType)
+        public static Act CreateToolCheckAct(CreatureAI Creature, params String[] ToolType)
         {
             return new Select(
                 new Condition(() =>

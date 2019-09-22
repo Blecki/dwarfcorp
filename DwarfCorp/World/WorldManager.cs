@@ -208,9 +208,9 @@ namespace DwarfCorp
             checkFoodTimer.Update(gameTime);
             if (checkFoodTimer.HasTriggered)
             {
-                var food = CountResourcesWithTag(Resource.ResourceTags.Edible);
+                var food = CountResourcesWithTag("Edible");
                 if (food == 0)
-                    MakeAnnouncement("We're out of food!", null, () => { return CountResourcesWithTag(Resource.ResourceTags.Edible) == 0; });
+                    MakeAnnouncement("We're out of food!", null, () => { return CountResourcesWithTag("Edible") == 0; });
             }
 
             GamblingState.Update(gameTime);

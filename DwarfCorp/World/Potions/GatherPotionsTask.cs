@@ -27,12 +27,12 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            return agent.World.ListResourcesWithTag(Resource.ResourceTags.Potion).Count > 0 ? Feasibility.Feasible : Feasibility.Infeasible;
+            return agent.World.ListResourcesWithTag("Potion").Count > 0 ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override MaybeNull<Act> CreateScript(Creature agent)
         {
-            return new GetResourcesAct(agent.AI, new List<Quantitiy<Resource.ResourceTags>>() { new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Potion)});
+            return new GetResourcesAct(agent.AI, new List<Quantitiy<String>>() { new Quantitiy<String>("Potion")});
         }
     }
 }

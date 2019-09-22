@@ -14,21 +14,21 @@ namespace DwarfCorp
         public FindAndEatFoodAct()
         {
             Name = "Find and Eat Edible";
-            FoodTag = Resource.ResourceTags.PreparedFood;
-            FallbackTag = Resource.ResourceTags.Edible;
+            FoodTag = "PreparedFood";
+            FallbackTag = "Edible";
         }
 
         public FindAndEatFoodAct(CreatureAI agent, bool MustPay) :
             base(agent)
         {
             Name = "Find and Eat Edible";
-            FoodTag = Resource.ResourceTags.PreparedFood;
-            FallbackTag = Resource.ResourceTags.Edible;
+            FoodTag = "PreparedFood";
+            FallbackTag = "Edible";
             this.MustPay = MustPay;
         }
 
-        public Resource.ResourceTags FoodTag { get; set; }
-        public Resource.ResourceTags FallbackTag { get; set; }
+        public String FoodTag { get; set; }
+        public String FallbackTag { get; set; }
 
         public override void Initialize()
         {
@@ -69,7 +69,7 @@ namespace DwarfCorp
         public override IEnumerable<Act.Status> Run()
         {
             List<ResourceAmount> foods =
-                Agent.Creature.Inventory.GetResources(new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Edible), Inventory.RestockType.Any);
+                Agent.Creature.Inventory.GetResources(new Quantitiy<String>("Edible"), Inventory.RestockType.Any);
 
             if (foods.Count == 0 && Agent.Creature.Faction == Agent.World.PlayerFaction)
             {
@@ -118,7 +118,7 @@ namespace DwarfCorp
                         {
                             Agent.Creature.Stats.Hunger.CurrentValue += resource.FoodContent;
 
-                            if (resource.Tags.Contains(Resource.ResourceTags.Alcohol))
+                            if (resource.Tags.Contains("Alcohol"))
                                 Agent.Creature.AddThought("I had good ale recently.", new TimeSpan(0, 8, 0, 0), 10.0f);
                             else
                                 Agent.Creature.AddThought("I ate good food recently.", new TimeSpan(0, 8, 0, 0), 5.0f);

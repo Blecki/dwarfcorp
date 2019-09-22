@@ -15,7 +15,7 @@ namespace DwarfCorp
         // Defines a mapping from specific resource tags in a crafted
         // resource to frames in a sprite sheet.
         [JsonIgnore]
-        public Dictionary<Resource.ResourceTags, Point> Sprites;
+        public Dictionary<String, Point> Sprites;
         // The default sprite sheet to use if there is no such mapping.
         [JsonIgnore]
         public Point DefaultSpriteFrame;
@@ -46,7 +46,7 @@ namespace DwarfCorp
             var details = new FixtureCraftDetails(Manager)
             {
                 Resources = new List<ResourceAmount>(),
-                Sprites = new Dictionary<Resource.ResourceTags, Point>(),
+                Sprites = new Dictionary<String, Point>(),
                 DefaultSpriteFrame = DefaultSpriteFrame,
                 CraftType = CraftType
             };

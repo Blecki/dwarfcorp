@@ -19,7 +19,7 @@ namespace DwarfCorp.Gui.Widgets
 
         private class ResourceCombo
         {
-            public Quantitiy<Resource.ResourceTags> Resource;
+            public Quantitiy<String> Resource;
             public ComboBox Combo;
             public Widget Count;
         }

@@ -93,7 +93,7 @@ namespace DwarfCorp
             }
         }
 
-        public IEnumerable<KeyValuePair<Zone, ResourceAmount>> GetStockpilesContainingResources(List<Quantitiy<Resource.ResourceTags>> tags)
+        public IEnumerable<KeyValuePair<Zone, ResourceAmount>> GetStockpilesContainingResources(List<Quantitiy<String>> tags)
         {
             foreach (var tag in tags)
             {
@@ -113,7 +113,7 @@ namespace DwarfCorp
             }
         }
 
-        public KeyValuePair<Zone, ResourceAmount>? GetFirstStockpileContainingResourceWithMatchingTag(List<Resource.ResourceTags> Tags)
+        public KeyValuePair<Zone, ResourceAmount>? GetFirstStockpileContainingResourceWithMatchingTag(List<String> Tags)
         {
             foreach (var stockpile in EnumerateZones())
             {

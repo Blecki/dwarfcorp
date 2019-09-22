@@ -42,34 +42,34 @@ namespace DwarfCorp
         bool IsOpen { get; set; }
         bool IsMoving { get; set; }
 
-        protected static Dictionary<Resource.ResourceTags, Point> Sprites = new Dictionary<Resource.ResourceTags, Point>()
+        protected static Dictionary<String, Point> Sprites = new Dictionary<String, Point>()
         {
             {
-                Resource.ResourceTags.Metal,
+                "Metal",
                 new Point(1, 8)
             },
             {
-                Resource.ResourceTags.Stone,
+                "Stone",
                 new Point(0, 8)
             },
             {
-                Resource.ResourceTags.Wood,
+                "Wood",
                 new Point(3, 1)
             }
         };
 
-        protected static Dictionary<Resource.ResourceTags, float> Healths = new Dictionary<Resource.ResourceTags, float>()
+        protected static Dictionary<String, float> Healths = new Dictionary<String, float>()
         {
             {
-                Resource.ResourceTags.Metal,
+                "Metal",
                 75.0f
             },
             {
-                Resource.ResourceTags.Stone,
+                "Stone",
                 80.0f
             },
             {
-                Resource.ResourceTags.Wood,
+                "Wood",
                 30.0f
             }
         };

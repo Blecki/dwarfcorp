@@ -8,7 +8,7 @@ namespace DwarfCorp
     public class BuildZoneAct : CompoundCreatureAct
     {
         public BuildZoneOrder BuildRoom { get; set; }
-        public List<Quantitiy<Resource.ResourceTags>> Resources { get; set; }
+        public List<Quantitiy<String>> Resources { get; set; }
 
         public IEnumerable<Status> SetTargetVoxelFromRoom(BuildZoneOrder buildRoom, string target)
         {
@@ -148,7 +148,7 @@ namespace DwarfCorp
                                            new Domain(buildRoom.MeetsBuildRequirements() || buildRoom.ResourcesReservedFor != null, true)),
                 new Domain(() => IsRoomBuildOrder(buildRoom) && !buildRoom.IsBuilt && !buildRoom.IsDestroyed && ValidResourceState(), 
                 new Sequence(
-                    ActHelper.CreateToolCheckAct(agent, Resource.ResourceTags.Hammer),
+                    ActHelper.CreateToolCheckAct(agent, "Hammer"),
                     SetTargetVoxelFromRoomAct(buildRoom, "ActionVoxel"),
                     new GoToNamedVoxelAct("ActionVoxel", PlanAct.PlanType.Adjacent, Agent),
                     new Wrap(PutResources),

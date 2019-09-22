@@ -7,7 +7,7 @@ namespace DwarfCorp
 {
     public class GetAnySingleMatchingResourceAct : CompoundCreatureAct
     {
-        public List<Resource.ResourceTags> Tags;
+        public List<String> Tags;
         public String BlackboardEntry = "ResourcesStashed";
 
         public GetAnySingleMatchingResourceAct()
@@ -15,7 +15,7 @@ namespace DwarfCorp
 
         }
 
-        public GetAnySingleMatchingResourceAct(CreatureAI agent, List<Resource.ResourceTags> Tags) :
+        public GetAnySingleMatchingResourceAct(CreatureAI agent, List<String> Tags) :
             base(agent)
         {
             Name = "Get Resources";
@@ -37,7 +37,7 @@ namespace DwarfCorp
             var hasAllResources = false;
 
             foreach (var tag in Tags)
-                if (Creature.Inventory.HasResource(new Quantitiy<Resource.ResourceTags>(tag, 1)))
+                if (Creature.Inventory.HasResource(new Quantitiy<String>(tag, 1)))
                     hasAllResources = true;
 
             if (!hasAllResources)
@@ -64,7 +64,7 @@ namespace DwarfCorp
                 // In this case the dwarf already has all the resources. We have to find the resources from the inventory.
                 var resource = Tags.Select(t =>
                 {
-                    var matches = Creature.Inventory.GetResources(new Quantitiy<Resource.ResourceTags>(t));
+                    var matches = Creature.Inventory.GetResources(new Quantitiy<String>(t));
                     if (matches.Count > 0)
                         return matches[0];
                     return null;

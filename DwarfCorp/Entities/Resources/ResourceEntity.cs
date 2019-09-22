@@ -39,7 +39,7 @@ namespace DwarfCorp
                 Tags.Add("Resource");
 
                 // Todo: Clean this whole thing up
-                if (type.Tags.Contains(DwarfCorp.Resource.ResourceTags.Flammable))
+                if (type.Tags.Contains("Flammable"))
                 {
                     AddChild(new Health(Manager, "health", 10.0f, 0.0f, 10.0f));
                     AddChild(new Flammable(Manager, "Flames"));

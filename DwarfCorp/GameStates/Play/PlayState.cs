@@ -2062,7 +2062,7 @@ namespace DwarfCorp.GameStates
 
                     (widget as FlatToolTray.Tray).ItemSource =
                         (new Widget[] { icon_menu_Plant_Return }).Concat(
-                         World.ListResourcesWithTag(Resource.ResourceTags.Plantable)
+                         World.ListResourcesWithTag("Plantable")
                         .Select(resource => new FlatToolTray.Icon
                         {
                             Icon = Library.GetResourceType(resource.Type).HasValue(out var res) ? res.GuiLayers[0] : null,

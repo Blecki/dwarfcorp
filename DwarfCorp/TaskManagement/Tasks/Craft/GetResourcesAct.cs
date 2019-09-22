@@ -10,7 +10,7 @@ namespace DwarfCorp
     /// </summary>
     public class GetResourcesAct : CompoundCreatureAct
     {
-        public List<Quantitiy<Resource.ResourceTags>> Resources { get; set; }
+        public List<Quantitiy<String>> Resources { get; set; }
         public List<KeyValuePair<Zone, ResourceAmount> > ResourcesToStash { get; set; }
         public String BlackboardEntry = "ResourcesStashed";
 
@@ -27,18 +27,18 @@ namespace DwarfCorp
         }
 
 
-        public GetResourcesAct(CreatureAI agent, List<Quantitiy<Resource.ResourceTags>> resources ) :
+        public GetResourcesAct(CreatureAI agent, List<Quantitiy<String>> resources ) :
             base(agent)
         {
             Name = "Get Resources";
             Resources = resources;
         }
 
-        public GetResourcesAct(CreatureAI agent, Resource.ResourceTags resources) :
+        public GetResourcesAct(CreatureAI agent, String resources) :
             base(agent)
         {
             Name = "Get Resources";
-            Resources = new List<Quantitiy<Resource.ResourceTags>>(){new Quantitiy<Resource.ResourceTags>(resources)};
+            Resources = new List<Quantitiy<String>>(){new Quantitiy<String>(resources)};
         }
 
         public IEnumerable<Status> AlwaysTrue()
@@ -57,7 +57,7 @@ namespace DwarfCorp
 
             if (Resources != null)
             {
-                foreach (Quantitiy<Resource.ResourceTags> resource in Resources)
+                foreach (var resource in Resources)
                     if (!Creature.Inventory.HasResource(resource))
                         hasAllResources = false;
             }

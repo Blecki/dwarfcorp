@@ -195,7 +195,7 @@ namespace DwarfCorp
                         var applicablePotions = inventory.Resources.Where(resource => !resource.MarkedForRestock).
                             Select(resource => Library.GetResourceType(resource.Resource)).
                             Where(resource => resource.HasValue(out var res)
-                                && res.Tags.Contains(Resource.ResourceTags.Potion)
+                                && res.Tags.Contains("Potion")
                                 && res.PotionType != null
                                 && res.PotionType.ShouldDrink(Creature));
                         if (applicablePotions.FirstOrDefault().HasValue(out var potion))
@@ -332,10 +332,10 @@ namespace DwarfCorp
 
                 foreach (var body in World.EnumerateIntersectingObjects(Physics.BoundingBox.Expand(3.0f)).OfType<ResourceEntity>().Where(r => r.Active && r.AnimationQueue.Count == 0))
                 {
-                    if (Library.GetResourceType(body.Resource.Type).HasValue(out var resource) && resource.Tags.Contains(Resource.ResourceTags.Edible))
+                    if (Library.GetResourceType(body.Resource.Type).HasValue(out var resource) && resource.Tags.Contains("Edible"))
                     {
-                        if ((Faction.Race.EatsMeat && resource.Tags.Contains(Resource.ResourceTags.AnimalProduct)) ||
-                            (Faction.Race.EatsPlants && !resource.Tags.Contains(Resource.ResourceTags.AnimalProduct)))
+                        if ((Faction.Race.EatsMeat && resource.Tags.Contains("AnimalProduct")) ||
+                            (Faction.Race.EatsPlants && !resource.Tags.Contains("AnimalProduct")))
                         {
                             Creature.GatherImmediately(body);
                             AssignTask(new ActWrapperTask(new EatFoodAct(this, false)));
@@ -351,7 +351,7 @@ namespace DwarfCorp
             HandleReproduction();
 
             // Try to find food if we are hungry. Wait - doesn't this rob the player?
-            if (Stats.Hunger.IsDissatisfied() && World.CountResourcesWithTag(Resource.ResourceTags.Edible) > 0)
+            if (Stats.Hunger.IsDissatisfied() && World.CountResourcesWithTag("Edible") > 0)
             {
                 var eatTask = new SatisfyHungerTask();
                 if (Stats.Hunger.IsCritical())

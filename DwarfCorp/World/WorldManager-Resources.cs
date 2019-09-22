@@ -8,7 +8,7 @@ namespace DwarfCorp
 {
     public partial class PersistentWorldData
     {
-        public Dictionary<Resource.ResourceTags, int> CachedResourceTagCounts = new Dictionary<Resource.ResourceTags, int>();
+        public Dictionary<String, int> CachedResourceTagCounts = new Dictionary<String, int>();
         public Dictionary<string, bool> CachedCanBuildVoxel = new Dictionary<string, bool>();
     }
 
@@ -94,13 +94,13 @@ namespace DwarfCorp
             return true;
         }
 
-        public List<ResourceAmount> GetResourcesWithTags(List<Quantitiy<Resource.ResourceTags>> tags) // Todo: This is only ever called with a list of 1.
+        public List<ResourceAmount> GetResourcesWithTags(List<Quantitiy<String>> tags) // Todo: This is only ever called with a list of 1.
         {
-            var tagsRequired = new Dictionary<Resource.ResourceTags, int>();
-            var tagsGot = new Dictionary<Resource.ResourceTags, int>();
+            var tagsRequired = new Dictionary<String, int>();
+            var tagsGot = new Dictionary<String, int>();
             var amounts = new Dictionary<String, ResourceAmount>();
 
-            foreach (Quantitiy<Resource.ResourceTags> quantity in tags)
+            foreach (var quantity in tags)
             {
                 tagsRequired[quantity.Type] = quantity.Count;
                 tagsGot[quantity.Type] = 0;
@@ -149,9 +149,9 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public bool HasResources(IEnumerable<Quantitiy<Resource.ResourceTags>> resources)
+        public bool HasResources(IEnumerable<Quantitiy<String>> resources)
         {
-            foreach (Quantitiy<Resource.ResourceTags> resource in resources)
+            foreach (var resource in resources)
             {
                 int count = EnumerateZones().Sum(stock => stock.Resources.GetResourceCount(resource.Type));
 
@@ -180,7 +180,7 @@ namespace DwarfCorp
             return HasResources(new List<ResourceAmount>() { new ResourceAmount(resource) });
         }
 
-        public int CountResourcesWithTag(Resource.ResourceTags tag)
+        public int CountResourcesWithTag(String tag)
         {
             List<ResourceAmount> resources = ListResourcesWithTag(tag);
             int amounts = 0;
@@ -193,7 +193,7 @@ namespace DwarfCorp
             return amounts;
         }
 
-        public List<ResourceAmount> ListResourcesWithTag(Resource.ResourceTags tag, bool allowHeterogenous = true)
+        public List<ResourceAmount> ListResourcesWithTag(String tag, bool allowHeterogenous = true)
         {
             if (allowHeterogenous)
                 return ListResources()
@@ -315,7 +315,7 @@ namespace DwarfCorp
             }
         }
 
-        public bool HasResourcesCached(IEnumerable<Resource.ResourceTags> resources)
+        public bool HasResourcesCached(IEnumerable<String> resources)
         {
             foreach (var resource in resources)
             {

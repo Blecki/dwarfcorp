@@ -40,7 +40,7 @@ namespace DwarfCorp
 
             if (Library.GetResourceType(PlantType).HasValue(out var plantRes))
             {
-                if (plantRes.Tags.Contains(Resource.ResourceTags.AboveGroundPlant))
+                if (plantRes.Tags.Contains("AboveGroundPlant"))
                 {
                     if (voxel.Sunlight == false)
                     {
@@ -48,7 +48,7 @@ namespace DwarfCorp
                         return false;
                     }
                 }
-                else if (plantRes.Tags.Contains(Resource.ResourceTags.BelowGroundPlant))
+                else if (plantRes.Tags.Contains("BelowGroundPlant"))
                 {
                     if (voxel.Sunlight)
                     {

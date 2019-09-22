@@ -3,6 +3,7 @@ using System.Security.AccessControl;
 using DwarfCorp.GameStates;
 using DwarfCorp.Gui;
 using Microsoft.Xna.Framework;
+using System;
 
 namespace DwarfCorp
 {
@@ -33,84 +34,18 @@ namespace DwarfCorp
         public DwarfBux MoneyValue;
         public string Description;
         public List<TileReference> GuiLayers; // Todo: Would like to combine the different graphics options
-        public List<ResourceTags> Tags;
+        public List<String> Tags;
         public float FoodContent;
         public List<CompositeLayer> CompositeLayers;
         public TrinketInfo TrinketData;
         public bool Generated = true;
         public string ShortName;
         public string PlantToGenerate;
-        public List<Quantitiy<ResourceTags>> CraftPrerequisites;
         public Color Tint;
         public string AleName = "";
         public CraftItemInfo CraftInfo;
         public Potion PotionType = null;
         public string Category = "";
-
-        // Todo: Replace this with strings so mods can extend it.
-        public enum ResourceTags
-        {
-            Edible,
-            Material,
-            HardMaterial,
-            Precious,
-            Flammable,
-            SelfIlluminating,
-            Wood,
-            Metal,
-            Stone,
-            Sandstone,
-            Obsidian,
-            Granite,
-            Slate,
-            Marble,
-            Fuel,
-            Magical,
-            Soil,
-            Grain,
-            Fungus,
-            None,
-            AnimalProduct,
-            Meat,
-            Gem,
-            Craft,
-            Encrustable,
-            Alcohol,
-            Brewable,
-            Bakeable,
-            RawFood,
-            PreparedFood,
-            Plantable,
-            AboveGroundPlant,
-            BelowGroundPlant,
-            Bone,
-            Corpse,
-            Money,
-            Sand,
-            Glass,
-            Fruit,
-            Gourd,
-            Evil,
-            Jolly,
-            Rail,
-            Explosive,
-            CraftItem,
-            Mana,
-            RefinedMana,
-            Potion,
-            Seed,
-            Slime,
-            CopperOre,
-            Copper,
-            IronOre,
-            Iron,
-            GoldOre,
-            Tool,
-            Pick,
-            Peppermint,
-            Hammer,
-            Axe
-        }
 
         public Resource()
         {

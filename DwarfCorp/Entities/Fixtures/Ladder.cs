@@ -40,18 +40,18 @@ namespace DwarfCorp
                 resources, craftType);
         }
 
-        protected static Dictionary<Resource.ResourceTags, Point> Sprites = new Dictionary<Resource.ResourceTags, Point>()
+        protected static Dictionary<String, Point> Sprites = new Dictionary<String, Point>()
         {
             {
-                Resource.ResourceTags.Metal,
+                "Metal",
                 new Point(3, 8)
             },
             {
-                Resource.ResourceTags.Stone,
+                "Stone",
                 new Point(2, 8)
             },
             {
-                Resource.ResourceTags.Wood,
+                "Wood",
                 new Point(2, 0)
             }
         };

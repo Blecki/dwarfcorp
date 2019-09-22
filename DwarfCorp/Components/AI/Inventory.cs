@@ -57,7 +57,7 @@ namespace DwarfCorp
             CollisionType = CollisionType.None;
         }
 
-        public bool Remove(IEnumerable<Quantitiy<Resource.ResourceTags>> amount, RestockType type)
+        public bool Remove(IEnumerable<Quantitiy<String>> amount, RestockType type)
         {
             foreach (var quantity in amount)
                 for (int i = 0; i < quantity.Count; i++)
@@ -260,7 +260,7 @@ namespace DwarfCorp
             return Resources.Count(resource => resource.Resource == itemToStock.Type) >= itemToStock.Count;
         }
 
-        public bool HasResource(Quantitiy<Resource.ResourceTags> itemToStock)
+        public bool HasResource(Quantitiy<String> itemToStock)
         {
             var resourceCounts = new Dictionary<String, int>();
 
@@ -275,7 +275,7 @@ namespace DwarfCorp
             return resourceCounts.Count > 0 && resourceCounts.Max(r => r.Value >= itemToStock.Count);
         }
 
-        public List<ResourceAmount> GetResources(Quantitiy<Resource.ResourceTags> quantitiy, RestockType type = RestockType.RestockResource)
+        public List<ResourceAmount> GetResources(Quantitiy<String> quantitiy, RestockType type = RestockType.RestockResource)
         {
             return Resources
                 .Where(r =>

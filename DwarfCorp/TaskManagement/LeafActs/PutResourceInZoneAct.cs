@@ -102,7 +102,7 @@ namespace DwarfCorp
             while (!Creature.Sprite.AnimPlayer.IsDone())
                 yield return Status.Running;
 
-            if (Library.GetResourceType(Resource.Type).HasValue(out var res) && res.Tags.Contains(DwarfCorp.Resource.ResourceTags.Corpse))
+            if (Library.GetResourceType(Resource.Type).HasValue(out var res) && res.Tags.Contains("Corpse"))
                 Creature.AddThought("I laid a friend to rest.", new TimeSpan(0, 8, 0, 0), 10.0f);
 
             yield return Status.Running;

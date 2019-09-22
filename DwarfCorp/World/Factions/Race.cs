@@ -30,14 +30,14 @@ namespace DwarfCorp
         [JsonIgnore]
         public List<List<string>> NameTemplates { get; set; }
 
-        public List<Resource.ResourceTags> LikedResources { get; set; }
-        public List<Resource.ResourceTags> HatedResources { get; set; }
-        public List<Resource.ResourceTags> CommonResources { get; set; }
-        public List<Resource.ResourceTags> RareResources { get; set; } 
+        public List<String> LikedResources { get; set; }
+        public List<String> HatedResources { get; set; }
+        public List<String> CommonResources { get; set; }
+        public List<String> RareResources { get; set; } 
 
-        public Dictionary<Resource.ResourceTags, int> TradeGoods { get; set; }
-        public List<Resource.ResourceTags> Crafts { get; set; }
-        public List<Resource.ResourceTags> Encrustings { get; set; }
+        public Dictionary<String, int> TradeGoods { get; set; }
+        public List<String> Crafts { get; set; }
+        public List<String> Encrustings { get; set; }
         public string TradeMusic { get; set; }
 
         public Dictionary<String, String> Biomes = new Dictionary<string, string>();
@@ -60,7 +60,7 @@ namespace DwarfCorp
         public List<ResourceAmount> GenerateTradeItems(WorldManager world)
         {
             var toReturn = new Dictionary<String, ResourceAmount>();
-            Resource.ResourceTags[] blacklistTags = { Resource.ResourceTags.Money, Resource.ResourceTags.Corpse };
+            String[] blacklistTags = { "Money", "Corpse" };
 
             foreach (var tags in TradeGoods)
             {
@@ -77,7 +77,7 @@ namespace DwarfCorp
                     if (!randResource.HasValue(out var res) || res.Tags.Any(blacklistTags.Contains))
                         continue;
 
-                    if (tags.Key == Resource.ResourceTags.Craft)
+                    if (tags.Key == "Craft")
                     {
                         var craftTag = Datastructures.SelectRandom(Crafts);
                         var availableCrafts = Library.EnumerateResourceTypesWithTag(craftTag);

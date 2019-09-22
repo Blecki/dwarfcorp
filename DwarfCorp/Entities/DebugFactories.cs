@@ -14,11 +14,11 @@ namespace DwarfCorp
         [EntityFactory("RandTrinket")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            if (Library.CreateTrinketResourceType(Datastructures.SelectRandom(Library.EnumerateResourceTypes().Where(r => r.Tags.Contains(Resource.ResourceTags.Material))).Name, MathFunctions.Rand(0.1f, 3.5f)).HasValue(out var randResource))
+            if (Library.CreateTrinketResourceType(Datastructures.SelectRandom(Library.EnumerateResourceTypes().Where(r => r.Tags.Contains("Material"))).Name, MathFunctions.Rand(0.1f, 3.5f)).HasValue(out var randResource))
             {
 
                 if (MathFunctions.RandEvent(0.5f))
-                    if (Library.CreateEncrustedTrinketResourceType(randResource.Name, Datastructures.SelectRandom(Library.EnumerateResourceTypes().Where(r => r.Tags.Contains(Resource.ResourceTags.Gem))).Name).HasValue(out var _rr))
+                    if (Library.CreateEncrustedTrinketResourceType(randResource.Name, Datastructures.SelectRandom(Library.EnumerateResourceTypes().Where(r => r.Tags.Contains("Gem"))).Name).HasValue(out var _rr))
                         randResource = _rr;
 
                 return new ResourceEntity(Manager, new ResourceAmount(randResource.Name), Position);
@@ -30,7 +30,7 @@ namespace DwarfCorp
         [EntityFactory("RandFood")]
         private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            var foods = Library.EnumerateResourceTypesWithTag(Resource.ResourceTags.RawFood);
+            var foods = Library.EnumerateResourceTypesWithTag("RawFood");
             if (Library.CreateMealResourceType(Datastructures.SelectRandom(foods).Name, Datastructures.SelectRandom(foods).Name).HasValue(out var randResource))
                 return new ResourceEntity(Manager, new ResourceAmount(randResource.Name), Position);
             return null;

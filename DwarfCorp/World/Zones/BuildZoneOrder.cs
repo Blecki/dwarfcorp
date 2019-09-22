@@ -11,7 +11,7 @@ namespace DwarfCorp
     public class BuildZoneOrder
     {
         public Zone ToBuild { get; set; }
-        public Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> PutResources { get; set; }
+        public Dictionary<String, Quantitiy<String>> PutResources { get; set; }
         public List<BuildVoxelOrder> VoxelOrders { get; set; }
         public List<GameComponent> WorkObjects = new List<GameComponent>(); 
         public bool IsBuilt { get; set; }
@@ -40,25 +40,25 @@ namespace DwarfCorp
             BuildProgress = 0;
             World = world;
             ToBuild = toBuild;
-            PutResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>();
+            PutResources = new Dictionary<String, Quantitiy<String>>();
             VoxelOrders = new List<BuildVoxelOrder>();
             IsBuilt = false;
             IsDestroyed = false;
         }
 
 
-        public void AddResources(List<Quantitiy<Resource.ResourceTags>> resources)
+        public void AddResources(List<Quantitiy<String>> resources)
         {
-            foreach (Quantitiy<Resource.ResourceTags> resource in resources)
+            foreach (Quantitiy<String> resource in resources)
             {
                 if(PutResources.ContainsKey(resource.Type))
                 {
-                    Quantitiy<Resource.ResourceTags> amount = PutResources[resource.Type];
+                    Quantitiy<String> amount = PutResources[resource.Type];
                     amount.Count += resource.Count;
                 }
                 else
                 {
-                    Quantitiy<Resource.ResourceTags> amount = new Quantitiy<Resource.ResourceTags>();
+                    Quantitiy<String> amount = new Quantitiy<String>();
                     amount.Count += resource.Count;
                     amount.Type = resource.Type;
 
@@ -71,7 +71,7 @@ namespace DwarfCorp
         public bool MeetsBuildRequirements()
         {
             bool toReturn = true;
-            foreach (Resource.ResourceTags s in ToBuild.Type.RequiredResources.Keys)
+            foreach (var s in ToBuild.Type.RequiredResources.Keys)
             {
                 if (!PutResources.ContainsKey(s))
                 {
@@ -135,7 +135,7 @@ namespace DwarfCorp
             return MathFunctions.GetBoundingBox(components);
         }
 
-        public bool IsResourceSatisfied(Resource.ResourceTags name)
+        public bool IsResourceSatisfied(String name)
         {
             int required = GetNumRequiredResources(name);
             int current = 0;
@@ -148,7 +148,7 @@ namespace DwarfCorp
             return current >= required;
         }
 
-        public int GetNumRequiredResources(Resource.ResourceTags name)
+        public int GetNumRequiredResources(String name)
         {
             if(ToBuild.Type.RequiredResources.ContainsKey(name))
             {
@@ -164,7 +164,7 @@ namespace DwarfCorp
         {
             string toReturn = ToBuild.Type.Name;
 
-            foreach (Quantitiy<Resource.ResourceTags> amount in ToBuild.Type.RequiredResources.Values)
+            foreach (Quantitiy<String> amount in ToBuild.Type.RequiredResources.Values)
             {
                 toReturn += "\n";
                 int numResource = 0;
@@ -178,10 +178,10 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public List<Quantitiy<Resource.ResourceTags>> ListRequiredResources()
+        public List<Quantitiy<String>> ListRequiredResources()
         {
-            List<Quantitiy<Resource.ResourceTags>> toReturn = new List<Quantitiy<Resource.ResourceTags>>();
-            foreach (Resource.ResourceTags s in ToBuild.Type.RequiredResources.Keys)
+            var toReturn = new List<Quantitiy<String>>();
+            foreach (String s in ToBuild.Type.RequiredResources.Keys)
             {
                 int needed = Math.Max((int) (ToBuild.Type.RequiredResources[s].Count * VoxelOrders.Count * 0.25f), 1);
                 int currentResources = 0;
@@ -196,7 +196,7 @@ namespace DwarfCorp
                     continue;
                 }
 
-                toReturn.Add(new Quantitiy<Resource.ResourceTags>(s, needed - currentResources));
+                toReturn.Add(new Quantitiy<String>(s, needed - currentResources));
             }
 
             return toReturn;

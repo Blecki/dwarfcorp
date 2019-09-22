@@ -32,12 +32,12 @@ namespace DwarfCorp
         {
             Resources = new ResourceContainer();
 
-            WhitelistResources = new List<Resource.ResourceTags>()
+            WhitelistResources = new List<String>()
             {
-                Resource.ResourceTags.Corpse
+                "Corpse"
             };
 
-            BlacklistResources = new List<Resource.ResourceTags>();
+            BlacklistResources = new List<String>();
             BoxType = "Grave";
             BoxOffset = new Vector3(0.5f, 0.4f, 0.5f);
             ResourcesPerVoxel = 1;

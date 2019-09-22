@@ -40,7 +40,7 @@ namespace DwarfCorp
         public String ShortDisplayName = null;
         public String PluralDisplayName = null;
 
-        public List<Quantitiy<Resource.ResourceTags>> RequiredResources = new List<Quantitiy<Resource.ResourceTags>>();
+        public List<Quantitiy<String>> RequiredResources = new List<Quantitiy<String>>();
         public Gui.TileReference Icon = null;
         public float BaseCraftTime = 0.0f;
         public string Description = "";
@@ -112,10 +112,10 @@ namespace DwarfCorp
             var point = new Point(Icon.Tile % numTilesX, Icon.Tile / numTilesX);
             var toReturn = Library.CreateResourceType();
             toReturn.Name = resourceName;
-            toReturn.Tags = new List<Resource.ResourceTags>()
+            toReturn.Tags = new List<String>()
                     {
-                        Resource.ResourceTags.CraftItem,
-                        Resource.ResourceTags.Craft
+                        "CraftItem",
+                        "Craft"
                     };
             toReturn.MoneyValue = selectedResources.Sum(r => Library.GetResourceType(r.Type).HasValue(out var res) ? res.MoneyValue : 0) * 2.0m;
             toReturn.CraftInfo = new Resource.CraftItemInfo
