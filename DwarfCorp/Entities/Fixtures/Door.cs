@@ -10,32 +10,6 @@ namespace DwarfCorp
 {
     public class Door : CraftedFixture
     {
-        [EntityFactory("Door")]
-        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
-        {
-            var resources = Data.GetData<List<ResourceAmount>>("Resources", null);
-            var craftType = Data.GetData<string>("CraftType", null);
-            if (resources == null && craftType != null)
-            {
-                resources = new List<ResourceAmount>();
-                if (Library.GetCraftable(craftType).HasValue(out var craftItem))
-                    foreach (var resource in craftItem.RequiredResources)
-                    {
-                        var genericResource = Library.EnumerateResourceTypesWithTag(resource.Type).FirstOrDefault();
-                        resources.Add(new ResourceAmount(genericResource, resource.Count));
-                    }
-            }
-            else if (resources == null && craftType == null)
-            {
-                craftType = "Wooden Door";
-                resources = new List<ResourceAmount>() { new ResourceAmount("Wood") };
-            }
-            else if (craftType == null)
-                craftType = "Wooden Door";
-
-            return new Door(Manager, Position, Manager.World.PlayerFaction, resources, craftType);
-        }
-
         public Faction TeamFaction { get; set; }
         public Matrix ClosedTransform { get; set; }
         public Timer OpenTimer { get; set; }
@@ -91,7 +65,7 @@ namespace DwarfCorp
             IsOpen = false;
         }
 
-        public Door(ComponentManager manager, Vector3 position, Faction team, List<ResourceAmount> resourceType, string craftType) :
+        public Door(ComponentManager manager, Vector3 position, Faction team, List<ResourceAmount> resourceType, string craftType, float HP) :
             base(manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new FixtureCraftDetails(manager)
             {
                 Resources = resourceType.ConvertAll(p => new ResourceAmount(p)),
@@ -110,8 +84,8 @@ namespace DwarfCorp
             OrientToWalls();
             ClosedTransform = LocalTransform;
             CollisionType = CollisionType.Static;
-            var hp = GetHealth(resourceType.FirstOrDefault().Type);
-            AddChild(new Health(manager, "Health", hp, 0.0f, hp));
+
+            AddChild(new Health(manager, "Health", HP, 0.0f, HP));
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)

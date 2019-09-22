@@ -1,6 +1,6 @@
 {
   "Name": "Iron Door",
-  "EntityName": "Door",
+  "EntityName": "Iron Door",
   "Category": "Furniture",
   "RequiredResources": [
     {

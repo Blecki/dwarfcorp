@@ -1,6 +1,6 @@
 {
   "Name": "Wooden Door",
-  "EntityName": "Door",
+  "EntityName": "Wooden Door",
   "Category": "Furniture",
   "RequiredResources": [
     {
