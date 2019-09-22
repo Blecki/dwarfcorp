@@ -53,10 +53,10 @@ namespace DwarfCorp
         }
 
 
-        [EntityFactory("Metal Table")]
+        [EntityFactory("Iron Table")]
         private static GameComponent __factory6(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Table("Metal Table", Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null), new Point(4, 7), new Point(5, 7));
+            return new Table("Iron Table", Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null), new Point(4, 7), new Point(5, 7));
         }
 
         public SpriteSheet fixtureAsset;

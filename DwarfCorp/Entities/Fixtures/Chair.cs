@@ -36,10 +36,10 @@ namespace DwarfCorp
             return new Chair(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null), "Stone Chair", new Point(6, 6), new Point(7, 6));
         }
 
-        [EntityFactory("Metal Chair")]
+        [EntityFactory("Iron Chair")]
         private static GameComponent __factory3(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Chair(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null), "Metal Chair", new Point(6, 7), new Point(7, 7));
+            return new Chair(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null), "Iron Chair", new Point(6, 7), new Point(7, 7));
         }
 
         private void Initialize(ComponentManager manager)

@@ -1,10 +1,10 @@
 {
-  "Name": "Metal Chair",
-  "EntityName": "Metal Chair",
+  "Name": "Iron Chair",
+  "EntityName": "Iron Chair",
   "Category": "Furniture",
   "RequiredResources": [
     {
-      "Type": "Metal",
+      "Type": "Iron",
       "Count": 1
     }
   ],

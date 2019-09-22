@@ -126,6 +126,10 @@
     <Compile Include="Entities\Fixtures\CandyTable.cs" />
     <Compile Include="Entities\Fixtures\Cart.cs" />
     <Compile Include="Entities\Fixtures\CraftTable.cs" />
+    <Compile Include="Entities\Fixtures\IronDoor.cs" />
+    <Compile Include="Entities\Fixtures\StoneDoor.cs" />
+    <Compile Include="Entities\Fixtures\WoodenDoor.cs" />
+    <Compile Include="Entities\Fixtures\WoodenLadder.cs" />
     <Compile Include="Entities\Plants\CandyCane.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\ApplicantInfo.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\EconomyState.cs" />

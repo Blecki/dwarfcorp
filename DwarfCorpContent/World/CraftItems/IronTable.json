@@ -1,10 +1,10 @@
 {
-  "Name": "Metal Table",
-  "EntityName": "Metal Table",
+  "Name": "Iron Table",
+  "EntityName": "Iron Table",
   "Category": "Furniture",
   "RequiredResources": [
     {
-      "Type": "Metal",
+      "Type": "Iron",
       "Count": 4
     }
   ],

@@ -3635,9 +3635,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>StoneChair</Name>
     </None>
-    <None Include="World\CraftItems\MetalChair.json">
+    <None Include="World\CraftItems\IronChair.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>MetalChair</Name>
+      <Name>IronChair</Name>
     </None>
     <None Include="World\CraftItems\WoodenTable.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -3647,9 +3647,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>StoneTable</Name>
     </None>
-    <None Include="World\CraftItems\MetalTable.json">
+    <None Include="World\CraftItems\IronTable.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>MetalTable</Name>
+      <Name>IronTable</Name>
     </None>
     <None Include="World\CraftItems\Anvil.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
