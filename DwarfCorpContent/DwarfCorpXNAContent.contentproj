@@ -3587,9 +3587,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>WoodenLadder</Name>
     </None>
-    <None Include="World\CraftItems\MetalLadder.json">
+    <None Include="World\CraftItems\IronLadder.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>MetalLadder</Name>
+      <Name>IronLadder</Name>
     </None>
     <None Include="World\CraftItems\StoneLadder.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

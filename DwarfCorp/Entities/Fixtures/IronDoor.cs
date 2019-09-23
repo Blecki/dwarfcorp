@@ -21,17 +21,9 @@ namespace DwarfCorp
         }
 
         public IronDoor(ComponentManager manager, Vector3 position, Faction team, List<ResourceAmount> resourceType, string craftType) :
-            base(manager, position, team, resourceType, craftType, 30.0f)
+            base(manager, position, team, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 8), resourceType, craftType, 75.0f)
         {
-            Name = "Wooden Door";
-        }
-
-        public override void CreateCosmeticChildren(ComponentManager manager)
-        {
-            Asset = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32);
-            Frame = new Point(1, 8);
-
-            base.CreateCosmeticChildren(manager);
+            Name = "Iron Door";
         }
     }
 }

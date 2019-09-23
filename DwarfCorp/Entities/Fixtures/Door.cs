@@ -16,69 +16,27 @@ namespace DwarfCorp
         bool IsOpen { get; set; }
         bool IsMoving { get; set; }
 
-        protected static Dictionary<String, Point> Sprites = new Dictionary<String, Point>()
-        {
-            {
-                "Metal",
-                new Point(1, 8)
-            },
-            {
-                "Stone",
-                new Point(0, 8)
-            },
-            {
-                "Wood",
-                new Point(3, 1)
-            }
-        };
-
-        protected static Dictionary<String, float> Healths = new Dictionary<String, float>()
-        {
-            {
-                "Metal",
-                75.0f
-            },
-            {
-                "Stone",
-                80.0f
-            },
-            {
-                "Wood",
-                30.0f
-            }
-        };
-
-        protected static float DefaultHealth = 30.0f;
-        protected static Point DefaultSprite = new Point(0, 8);
-
-        protected static float GetHealth(String type)
-        {
-            if (Library.GetResourceType(type).HasValue(out var resource))
-                foreach(var tag in resource.Tags)
-                    if (Healths.ContainsKey(tag))
-                        return Healths[tag];
-            return DefaultHealth;
-        }
-
         public Door()
         {
             IsOpen = false;
         }
 
-        public Door(ComponentManager manager, Vector3 position, Faction team, List<ResourceAmount> resourceType, string craftType, float HP) :
-            base(manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new FixtureCraftDetails(manager)
-            {
-                Resources = resourceType.ConvertAll(p => new ResourceAmount(p)),
-                Sprites = Door.Sprites,
-                DefaultSpriteFrame = Door.DefaultSprite,
-                CraftType = craftType,
-            }, SimpleSprite.OrientMode.Fixed)
+        public Door(
+            ComponentManager manager, 
+            Vector3 position, 
+            Faction team, 
+            SpriteSheet Asset,
+            Point Frame,
+            List<ResourceAmount> resourceType, 
+            string craftType, 
+            float HP) :
+            base(manager, position, Asset, Frame, new CraftDetails(manager, craftType, resourceType), SimpleSprite.OrientMode.Fixed)
         {
             IsMoving = false;
             IsOpen = false;
             OpenTimer = new Timer(0.5f, false);
             TeamFaction = team;
-            Name = resourceType.FirstOrDefault().Type + " Door";
+            Name = craftType;
             Tags.Add("Door");
 
             OrientToWalls();

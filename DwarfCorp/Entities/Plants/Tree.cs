@@ -38,38 +38,17 @@ namespace DwarfCorp
             Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBoxSize, LocalBoundingBoxOffset)) as Inventory;
 
             // Can these be spawned when the tree dies rather than when it is created?
-            // Todo: Check entity def for resource emitted. Stop auto generating wood types.
             if (String.IsNullOrEmpty(WoodAsset))
-            {
-                if (Library.CreateResourceType(Library.GetResourceType("Wood")).HasValue(out var wood))
-                {
-                    wood.Name = String.Format("{0} Wood", Name.Split(' ').First());
-                    wood.ShortName = wood.Name;
+                WoodAsset = "Wood";
 
-                    Library.AddResourceTypeIfNew(wood);
-
-                    for (int i = 0; i < treeSize * 2; i++)
+            if (Library.GetResourceType(WoodAsset).HasValue(out var wood))
+                for (var i = 0; i < treeSize * 2; ++i)
+                    inventory.Resources.Add(new Inventory.InventoryItem()
                     {
-                        inventory.Resources.Add(new Inventory.InventoryItem()
-                        {
-                            MarkedForRestock = false,
-                            MarkedForUse = false,
-                            Resource = wood.Name
-                        });
-                    }
-                }
-            }
-            else
-            {
-                if (Library.GetResourceType(WoodAsset).HasValue(out var wood))
-                    for (var i = 0; i < treeSize * 2; ++i)
-                        inventory.Resources.Add(new Inventory.InventoryItem()
-                        {
-                            MarkedForRestock = false,
-                            MarkedForUse = false,
-                            Resource = WoodAsset
-                        });
-            }
+                        MarkedForRestock = false,
+                        MarkedForUse = false,
+                        Resource = WoodAsset
+                    });            
 
             for (int i = 0; i < treeSize * 2; i++)
             {

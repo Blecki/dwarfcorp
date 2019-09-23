@@ -26,19 +26,6 @@ namespace DwarfCorp
         }
 
         public CraftedFixture(
-            ComponentManager Manager,
-            Vector3 position,
-            SpriteSheet asset,
-            FixtureCraftDetails details,
-            SimpleSprite.OrientMode OrientMode = SimpleSprite.OrientMode.Spherical) :
-            base(Manager, position, asset, details.GetSpritesheetFrame(details.Resources[0].Type), OrientMode)
-        {
-            this.SetFlag(Flag.ShouldSerialize, true);
-            details.DebugColor = Color.Brown;
-            AddChild(details);
-        }
-
-        public CraftedFixture(
             String Name,
             IEnumerable<String> Tags,
             ComponentManager Manager,

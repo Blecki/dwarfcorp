@@ -1,6 +1,6 @@
 {
   "Name": "Wooden Ladder",
-  "EntityName": "Ladder",
+  "EntityName": "Wooden Ladder",
   "Category": "Furniture",
   "RequiredResources": [
     {

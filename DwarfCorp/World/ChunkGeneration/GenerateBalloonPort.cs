@@ -98,7 +98,7 @@ namespace DwarfCorp.Generation
                             var ladderVox = chunkManager.CreateVoxelHandle(GlobalVoxelCoordinate.FromVector3(ladderPos));
                             if (ladderVox.IsValid && ladderVox.IsEmpty)
                             {
-                                var ladder = EntityFactory.CreateEntity<Ladder>("Ladder", ladderPos);
+                                var ladder = EntityFactory.CreateEntity<WoodenLadder>("Wooden Ladder", ladderPos);
                                 Settings.World.PlayerFaction.OwnedObjects.Add(ladder);
                                 ladder.Tags.Add("Moveable");
                                 ladder.Tags.Add("Deconstructable");

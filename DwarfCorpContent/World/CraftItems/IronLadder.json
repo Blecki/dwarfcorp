@@ -1,10 +1,10 @@
 {
-  "Name": "Metal Ladder",
-  "EntityName": "Ladder",
+  "Name": "Iron Ladder",
+  "EntityName": "Iron Ladder",
   "Category": "Furniture",
   "RequiredResources": [
     {
-      "Type": "Metal",
+      "Type": "Iron",
       "Count": 1
     }
   ],

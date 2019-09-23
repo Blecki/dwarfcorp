@@ -7,31 +7,30 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    public class WoodenLadder : CraftedFixture
+    public class IronLadder : CraftedFixture
     {
-        [EntityFactory("Wooden Ladder")]
+        [EntityFactory("Iron Ladder")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new WoodenLadder(
+            return new IronLadder(
                 Manager,
                 Position,
                 Data.GetData<List<ResourceAmount>>("Resources", null), "Wooden Ladder");
         }
 
-        public WoodenLadder()
+        public IronLadder()
         {
 
         }
 
-        public WoodenLadder(ComponentManager manager, Vector3 position, List<ResourceAmount> resourceType, string craftType) :
-            base(manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2,0), 
-                new CraftDetails(manager, "Wooden Ladder", resourceType))
+        public IronLadder(ComponentManager manager, Vector3 position, List<ResourceAmount> resourceType, string craftType) :
+            base("Iron Ladder", new List<String> { "Climbable" }, manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 8), resourceType)
         {
             this.LocalBoundingBoxOffset = new Vector3(0, 0, 0.45f);
             this.BoundingBoxSize = new Vector3(0.7f, 1, 0.1f);
             this.SetFlag(Flag.RotateBoundingBox, true);
 
-            Name = "Wooden Ladder";
+            Name = resourceType[0].Type + " Ladder";
             Tags.Add("Climbable");
             OrientToWalls();
             CollisionType = CollisionType.Static;
