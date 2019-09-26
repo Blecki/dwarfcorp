@@ -14,7 +14,15 @@ namespace DwarfCorp
     {
         [JsonProperty] private Dictionary<String, int> Resources = new Dictionary<string, int>();
 
-        public int Count = 0;
+        public int TotalCount = 0;
+
+        public bool Has(String Type, int Amount)
+        {
+            if (Resources.ContainsKey(Type))
+                return Resources[Type] >= Amount;
+            else
+                return false;
+        }
 
         public void Add(String Type, int Amount)
         {
@@ -23,12 +31,7 @@ namespace DwarfCorp
             else
                 Resources.Add(Type, Amount);
 
-            Count = Resources.Values.Sum();
-        }
-
-        public void Add(ResourceAmount Resource)
-        {
-            Add(Resource.Type, Resource.Count);
+            TotalCount = Resources.Values.Sum();
         }
 
         public void Remove(String Type, int Amount)
@@ -40,18 +43,21 @@ namespace DwarfCorp
                     Resources.Remove(Type);
             }
 
-            Count = Resources.Values.Sum();
-        }
-
-        public void Remove(ResourceAmount Resource)
-        {
-            Remove(Resource.Type, Resource.Count);
+            TotalCount = Resources.Values.Sum();
         }
 
         public IEnumerable<ResourceAmount> Enumerate()
         {
             foreach (var item in Resources)
                 yield return new ResourceAmount(item.Key, item.Value);
+        }
+
+        public int Count(String Type)
+        {
+            if (Resources.ContainsKey(Type))
+                return Resources[Type];
+            else
+                return 0;
         }
     }
 }

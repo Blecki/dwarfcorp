@@ -198,6 +198,7 @@
     <Compile Include="Entities\Fixtures\WoodenDoor.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\DebugPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\TaskListPanel.cs" />
+    <Compile Include="GameStates\Play\ZonePanel\ResourceIcon.cs" />
     <Compile Include="Library\ClassLibrary.cs" />
     <Compile Include="Components\AI\Creature-Indicators.cs" />
     <Compile Include="Components\AI\Creature-Reproduction.cs" />
@@ -457,7 +458,6 @@
     <Compile Include="World\Economy\Resources\Resource.cs" />
     <Compile Include="World\Economy\Resources\ResourceAmount.cs" />
     <Compile Include="World\Economy\Resources\ResourceSet.cs" />
-    <Compile Include="World\Economy\Resources\ResourceContainer.cs" />
     <Compile Include="Library\ResourceLibrary.cs" />
     <Compile Include="Library\EventLibrary.cs" />
     <Compile Include="GameStates\Play\WorldPopup.cs" />

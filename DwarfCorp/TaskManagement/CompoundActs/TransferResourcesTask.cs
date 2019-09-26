@@ -55,25 +55,19 @@ namespace DwarfCorp
             if (!GetStockpile())
                 return true;
 
-            return !stockpile.Resources.HasResources(Resources);
+            return !stockpile.Resources.Has(Resources.Type, Resources.Count);
         }
 
         public override Feasibility IsFeasible(Creature agent)
         {
             if (agent == null || agent.IsDead || agent.Stats.IsAsleep || !agent.Active)
-            {
                 return Feasibility.Infeasible;
-            }
 
             if (!GetStockpile())
-            {
                 return Feasibility.Infeasible;
-            }
 
-            if (stockpile.Resources.HasResource(Resources))
-            {
+            if (stockpile.Resources.Has(Resources.Type, Resources.Count))
                 return Feasibility.Feasible;
-            }
 
             return Feasibility.Infeasible;
         }

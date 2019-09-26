@@ -133,9 +133,9 @@ namespace DwarfCorp
                 Boxes.Clear();
             }
 
-            int numBoxes = Math.Min(Math.Max(Resources.CurrentResourceCount / ResourcesPerVoxel, 1), Voxels.Count);
+            int numBoxes = Math.Min(Math.Max(Resources.TotalCount / ResourcesPerVoxel, 1), Voxels.Count);
 
-            if (Resources.CurrentResourceCount == 0)
+            if (Resources.TotalCount == 0)
                 numBoxes = 0;
 
             if (Boxes.Count > numBoxes)
@@ -187,10 +187,10 @@ namespace DwarfCorp
             if (resource == null)
                 return false;
 
-            if (resource.Count + Resources.CurrentResourceCount > ResourceCapacity)
+            if (resource.Count + Resources.TotalCount > ResourceCapacity)
                 return false;
 
-            Resources.AddResource(resource);
+            Resources.Add(resource.Type, resource.Count);
             return true;
         }
 
@@ -200,7 +200,7 @@ namespace DwarfCorp
             box.Min += Vector3.Up;
             box.Max += Vector3.Up;
 
-            foreach(var resource in EntityFactory.CreateResourcePiles(Resources.Resources.Values, box))
+            foreach(var resource in EntityFactory.CreateResourcePiles(Resources.Enumerate(), box))
             {
 
             }
@@ -230,15 +230,15 @@ namespace DwarfCorp
 
             if (HandleStockpilesTimer.HasTriggered)
                 foreach (var blacklist in BlacklistResources)
-                    foreach (var resourcePair in Resources.Resources)
+                    foreach (var resourcePair in Resources.Enumerate())
                     {
-                        if (resourcePair.Value.Count == 0)
+                        if (resourcePair.Count == 0)
                             continue;
 
-                        if (Library.GetResourceType(resourcePair.Key).HasValue(out var resourceType))
+                        if (Library.GetResourceType(resourcePair.Type).HasValue(out var resourceType))
                             if (resourceType.Tags.Any(tag => tag == blacklist))
                             {
-                                var transferTask = new TransferResourcesTask(World, ID, resourcePair.Value.CloneResource());
+                                var transferTask = new TransferResourcesTask(World, ID, resourcePair.CloneResource());
                                 if (World.TaskManager.HasTask(transferTask))
                                     continue;
                                 World.TaskManager.AddTask(transferTask);

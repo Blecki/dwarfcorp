@@ -146,6 +146,7 @@
     <Compile Include="GameStates\Play\EmployeeInfoPanel\TaskListPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\TaskPanel.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ResourceFilterPanel.cs" />
+    <Compile Include="GameStates\Play\ZonePanel\ResourceIcon.cs" />
     <Compile Include="GameStates\Play\ZonePanel\StockpileContentsPanel.cs" />
     <Compile Include="GameStates\Play\ZonePanel\StockpilePropertiesDialog.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ZoneListPanel.cs" />
@@ -369,7 +370,6 @@
     <Compile Include="World\Economy\Quantity.cs" />
     <Compile Include="World\Economy\Resources\Resource.cs" />
     <Compile Include="World\Economy\Resources\ResourceAmount.cs" />
-    <Compile Include="World\Economy\Resources\ResourceContainer.cs" />
     <Compile Include="World\Economy\Resources\ResourceSet.cs" />
     <Compile Include="Entities\Animals\BatAI.cs" />
     <Compile Include="Entities\Animals\BrownRabbit.cs" />

@@ -26,14 +26,15 @@ namespace DwarfCorp
             None,
             Any
         }
+
         public List<InventoryItem> Resources { get; set; } 
         public float DropRate { get; set; }
 
-        public ResourceContainer ContentsAsResourceContainer()
+        public ResourceSet ContentsAsResourceContainer()
         {
-            var r = new ResourceContainer();
+            var r = new ResourceSet();
             foreach (var item in Resources)
-                r.AddResource(new ResourceAmount(item.Resource, 1));
+                r.Add(item.Resource, 1);
             return r;
         }
 

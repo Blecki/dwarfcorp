@@ -72,7 +72,7 @@ namespace DwarfCorp
                     Tree = new Sequence(
                         new SetBlackboardData<GameComponent>(Agent, "GatherItem", ItemToGather),
                         new GoToEntityAct(ItemToGather, Agent),
-                        new StashAct(Agent, StashAct.PickUpType.None, null, "GatherItem", "GatheredResource"))
+                        new StashAct(Agent, null, "GatherItem", "GatheredResource"))
                         | (new Wrap(() => Finally(Agent)) & false);
 
                     Tree.Initialize();

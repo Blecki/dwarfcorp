@@ -40,7 +40,7 @@ namespace DwarfCorp
 
         protected ChunkManager Chunks { get { return World.ChunkManager; } }
 
-        public ResourceContainer Resources { get; set; }
+        public ResourceSet Resources;
 
         [OnDeserialized]
         public void OnDeserialized(StreamingContext ctx)
@@ -61,10 +61,7 @@ namespace DwarfCorp
             ID = Counter + ". " + Type.Name;
             ++Counter;
 
-            Resources = new ResourceContainer
-            {
-                //MaxResources = 1
-            };
+            Resources = new ResourceSet();
         }
 
         public Zone()
@@ -154,7 +151,7 @@ namespace DwarfCorp
 
         public virtual bool IsFull()
         {
-            return Resources.CurrentResourceCount >= ResourceCapacity;
+            return Resources.TotalCount >= ResourceCapacity;
         }
         
         public bool ContainsVoxel(VoxelHandle voxel)
@@ -186,18 +183,7 @@ namespace DwarfCorp
         {
             if (Voxels == null) return;
             int newResources = Voxels.Count * ResourcesPerVoxel;
-
-            if (Resources != null)
-            {
-                if (newResources < Resources.CurrentResourceCount)
-                {
-                    while (Resources.CurrentResourceCount > newResources)
-                        Resources.RemoveResource(new ResourceAmount(Resources.Enumerate().Where(r => r.Count > 0).First().Type, 1));
-                }
-
-                ResourceCapacity = newResources;
-                //Resources.MaxResources = newResources;
-            }
+            ResourceCapacity = newResources;
         }
 
         public virtual void AddVoxel(VoxelHandle Voxel)
@@ -235,7 +221,7 @@ namespace DwarfCorp
         }
 
 
-        public virtual bool AddItem(GameComponent component)
+        public virtual bool AddItem(GameComponent component) // Todo: Kill
         {
             return AddResource(new ResourceAmount(component));
         }

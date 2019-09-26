@@ -14,59 +14,34 @@ namespace DwarfCorp
 
     public partial class WorldManager
     {
-        public bool RemoveResourcesWithToss(ResourceAmount resources, Vector3 position, Zone Zone) // Todo: Kill this one.
+        public bool RemoveResourcesFromSpecificZone(ResourceAmount resource, Zone Zone)
         {
-            if (!Zone.Resources.HasResource(resources))
-                return false;
-            if (!(Zone is Stockpile))
-                return false;
-
-            var stock = Zone as Stockpile;
-            var num = stock.Resources.RemoveMaxResources(resources, resources.Count);
-
-            if (Library.GetResourceType(resources.Type).HasValue(out var resourceType))
-                foreach (var tag in resourceType.Tags)
-                    if (PersistentData.CachedResourceTagCounts.ContainsKey(tag))
-                        PersistentData.CachedResourceTagCounts[tag] -= num;
-
-            for (int i = 0; i < num; i++)
+            if (Zone is Stockpile stock && stock.Resources.Count(resource.Type) >= resource.Count)
             {
-                var startPosition = stock.GetBoundingBox().Center() + new Vector3(0.0f, 1.0f, 0.0f);
-                var newEntity = EntityFactory.CreateEntity<GameComponent>(resources.Type + " Resource", startPosition);
-
-                if (newEntity.GetRoot().GetComponent<Physics>().HasValue(out var newPhysics))
-                    newPhysics.CollideMode = Physics.CollisionMode.None;
-
-                var toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f), 2.5f + MathFunctions.Rand(-0.5f, 0.5f), newEntity.LocalTransform, position);
-                newEntity.AnimationQueue.Add(toss);
-                toss.OnComplete += () => newEntity.Die();
+                stock.Resources.Remove(resource.Type, resource.Count);
+                RemoveFromResourceTagCounts(resource, resource.Count);
+                RecomputeCachedVoxelstate();
+                return true;
             }
-
-            RecomputeCachedVoxelstate();
-            return true;
+            else
+                return false;
         }
 
-        public bool RemoveResources(List<ResourceAmount> resources)
+        public void RemoveResources(List<ResourceAmount> resources)
         {
             foreach (var resource in resources)
             {
                 int count = 0;
-                var resourceType = Library.GetResourceType(resource.Type);
-                foreach (var stock in EnumerateZones().Where(s => resources.All(r => s is Stockpile && (s as Stockpile).IsAllowed(r.Type))))
+
+                foreach (var stock in EnumerateZones().OfType<Stockpile>())
                 {
-                    int num = stock.Resources.RemoveMaxResources(resource, resource.Count - count);
-
-                    if (resourceType.HasValue(out var type))
-                        foreach (var tag in type.Tags)
-                        {
-                            if (PersistentData.CachedResourceTagCounts.ContainsKey(tag))
-                            {
-                                PersistentData.CachedResourceTagCounts[tag] -= num;
-                                Trace.Assert(PersistentData.CachedResourceTagCounts[tag] >= 0);
-                            }
-                        }
-
-                    count += num;
+                    var num = Math.Min(stock.Resources.Count(resource.Type), resource.Count);
+                    if (num > 0)
+                    {
+                        stock.Resources.Remove(resource.Type, num);
+                        RemoveFromResourceTagCounts(resource, num);
+                        count += num;
+                    }
 
                     if (count >= resource.Count)
                         break;
@@ -74,7 +49,14 @@ namespace DwarfCorp
             }
 
             RecomputeCachedVoxelstate();
-            return true;
+        }
+
+        private void RemoveFromResourceTagCounts(ResourceAmount resource, int num)
+        {
+            if (Library.GetResourceType(resource.Type).HasValue(out var resourceType))
+                foreach (var tag in resourceType.Tags)
+                    if (PersistentData.CachedResourceTagCounts.ContainsKey(tag))
+                        PersistentData.CachedResourceTagCounts[tag] -= num;
         }
 
         public List<ResourceAmount> GetResourcesWithTags(List<Quantitiy<String>> tags) // Todo: This is only ever called with a list of 1.
@@ -136,7 +118,7 @@ namespace DwarfCorp
         {
             foreach (var resource in resources)
             {
-                int count = EnumerateZones().Sum(stock => stock.Resources.GetResourceCount(resource.Type));
+                int count = EnumerateZones().Sum(stock => stock.Resources.Count(resource.Type));
 
                 if (count < resource.Count)
                     return false;
@@ -149,7 +131,7 @@ namespace DwarfCorp
         {
             foreach (ResourceAmount resource in resources)
             {
-                int count = EnumerateZones().Sum(stock => stock.Resources.GetResourceCount(resource.Type));
+                int count = EnumerateZones().Sum(stock => stock.Resources.Count(resource.Type));
 
                 if (count < resources.Where(r => r.Type == resource.Type).Sum(r => r.Count))
                     return false;
@@ -224,7 +206,7 @@ namespace DwarfCorp
 
             foreach (Stockpile stockpile in EnumerateZones().Where(s => s is Stockpile && (s as Stockpile).IsAllowed(resources.Type)))
             {
-                int space = stockpile.ResourceCapacity - stockpile.Resources.CurrentResourceCount;
+                int space = stockpile.ResourceCapacity - stockpile.Resources.TotalCount;
 
                 if (space >= amount.Count)
                 {

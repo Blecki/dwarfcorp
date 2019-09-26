@@ -48,7 +48,7 @@ namespace DwarfCorp
 
         bool HasResources(CreatureAI agent, KeyValuePair<Zone, ResourceAmount> resource)
         {
-            return resource.Key.Resources.HasResources(resource.Value);
+            return resource.Key.Resources.Has(resource.Value.Type, resource.Value.Count);
         }
 
         public override void Initialize()

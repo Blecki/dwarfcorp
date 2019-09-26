@@ -29,7 +29,7 @@ namespace DwarfCorp.Trade
         public void AddResources(List<ResourceAmount> Resources)
         {
             foreach(var resource in Resources)
-                World.Overworld.PlayerCorporationResources.Add(resource);
+                World.Overworld.PlayerCorporationResources.Add(resource.Type, resource.Count);
         }
 
         public Race TraderRace { get { return SourceEnvoy.OwnerFaction.Race; } }
@@ -48,7 +48,7 @@ namespace DwarfCorp.Trade
         public void RemoveResources(List<ResourceAmount> Resources)
         {
             foreach (var r in Resources)
-                World.Overworld.PlayerCorporationResources.Remove(r);
+                World.Overworld.PlayerCorporationResources.Remove(r.Type, r.Count);
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -64,12 +65,21 @@ namespace DwarfCorp
             }
 
             Timer waitTimer = new Timer(1.0f, true);
-            bool removed = Creature.World.RemoveResourcesWithToss(Resources, Agent.Position, Zone);
-
-            if(!removed)
+            bool removed = Creature.World.RemoveResourcesFromSpecificZone(Resources, Zone);
+            
+            if (!removed)
                 yield return Status.Fail;
             else
             {
+                var newEntity = EntityFactory.CreateEntity<GameComponent>(Resources.Type + " Resource", Zone.GetBoundingBox().Center() + new Vector3(0.0f, 1.0f, 0.0f));
+
+                if (newEntity.GetRoot().GetComponent<Physics>().HasValue(out var newPhysics))
+                    newPhysics.CollideMode = Physics.CollisionMode.None;
+
+                var toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f), 2.5f + MathFunctions.Rand(-0.5f, 0.5f), newEntity.LocalTransform, Agent.Position);
+                newEntity.AnimationQueue.Add(toss);
+                toss.OnComplete += () => newEntity.Die();
+
                 Agent.Creature.Inventory.AddResource(Resources.CloneResource(), Inventory.RestockType.None);
                 Agent.Creature.Sprite.ResetAnimations(Creature.Stats.CurrentClass.AttackMode);
                 while (!waitTimer.HasTriggered)

@@ -24,13 +24,13 @@ namespace DwarfCorp
 
         public override string GetDescriptionString()
         {
-            return "Graveyard " + ID + " - " + Resources.CurrentResourceCount + " of " + Voxels.Count + " plots filled.";
+            return "Graveyard " + ID + " - " + Resources.TotalCount + " of " + Voxels.Count + " plots filled.";
         }
 
         private Graveyard(ZoneType Data, WorldManager World) :
             base(Data, World)
         {
-            Resources = new ResourceContainer();
+            Resources = new ResourceSet();
 
             WhitelistResources = new List<String>()
             {

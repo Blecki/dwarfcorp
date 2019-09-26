@@ -123,7 +123,7 @@ namespace DwarfCorp.GameStates
                 OnClick = (sender, args) =>
                 {
                     foreach (var resource in ResourceColumns.SelectedResources)
-                        Settings.InstanceSettings.InitalEmbarkment.Resources.Add(resource);
+                        Settings.InstanceSettings.InitalEmbarkment.Resources.Add(resource.Type, resource.Count);
 
                     var message = "";
                     var valid = Embarkment.ValidateEmbarkment(Settings, out message);

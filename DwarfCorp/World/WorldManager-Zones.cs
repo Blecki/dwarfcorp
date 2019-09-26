@@ -41,7 +41,7 @@ namespace DwarfCorp
 
         public int ComputeRemainingStockpileSpace()
         {
-            return EnumerateZones().Where(pile => !(pile is Graveyard)).Sum(pile => pile.ResourceCapacity - pile.Resources.CurrentResourceCount);
+            return EnumerateZones().Where(pile => !(pile is Graveyard)).Sum(pile => pile.ResourceCapacity - pile.Resources.TotalCount);
         }
 
         public int ComputeTotalStockpileSpace()

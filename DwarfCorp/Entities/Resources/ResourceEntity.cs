@@ -34,7 +34,6 @@ namespace DwarfCorp
 
             if (Library.GetResourceType(resourceType.Type).HasValue(out var type))
             {
-
                 Tags.Add(type.Name);
                 Tags.Add("Resource");
 
