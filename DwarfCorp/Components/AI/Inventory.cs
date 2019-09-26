@@ -31,7 +31,7 @@ namespace DwarfCorp
 
         public ResourceContainer ContentsAsResourceContainer()
         {
-            var r = new ResourceContainer { MaxResources = int.MaxValue };
+            var r = new ResourceContainer();
             foreach (var item in Resources)
                 r.AddResource(new ResourceAmount(item.Resource, 1));
             return r;

@@ -14,12 +14,16 @@ namespace DwarfCorp
     {
         [JsonProperty] private Dictionary<String, int> Resources = new Dictionary<string, int>();
 
+        public int Count = 0;
+
         public void Add(String Type, int Amount)
         {
             if (Resources.ContainsKey(Type))
                 Resources[Type] += Amount;
             else
                 Resources.Add(Type, Amount);
+
+            Count = Resources.Values.Sum();
         }
 
         public void Add(ResourceAmount Resource)
@@ -35,6 +39,8 @@ namespace DwarfCorp
                 if (Resources[Type] <= 0)
                     Resources.Remove(Type);
             }
+
+            Count = Resources.Values.Sum();
         }
 
         public void Remove(ResourceAmount Resource)

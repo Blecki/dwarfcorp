@@ -12,7 +12,7 @@ namespace DwarfCorp
 {
     public class ResourceContainer
     {
-        public int MaxResources;
+        //public int MaxResources;
         public int CurrentResourceCount;
 
         [JsonProperty]
@@ -20,11 +20,6 @@ namespace DwarfCorp
 
         public ResourceContainer()
         {
-        }
-
-        public void Clear()
-        {
-            CurrentResourceCount = 0;
         }
 
         public bool HasResources(ResourceAmount resource)
@@ -53,47 +48,13 @@ namespace DwarfCorp
             return 0;
         }
 
-        public int CountResourcesWithTags(String tag)
-        {
-            int toReturn = 0;
-            foreach (ResourceAmount resource in Resources.Values)
-                if (Library.GetResourceType(resource.Type).HasValue(out var res) && res.Tags.Contains(tag))
-                    toReturn += resource.Count;
-
-            return toReturn;
-        }
-
-        public bool RemoveResourceImmediate(Quantitiy<String> tags )
-        {
-            int numLeft = tags.Count;
-
-            foreach (ResourceAmount resource in Resources.Values)
-            {
-                if (numLeft == 0) return true;
-
-                if (Library.GetResourceType(resource.Type).HasValue(out var res) && res.Tags.Contains(tags.Type))
-                {
-                    int rm = Math.Min(resource.Count, numLeft);
-                    resource.Count -= rm;
-                    numLeft -= rm;
-                    CurrentResourceCount -= rm;
-                }
-            }
-
-            return numLeft == 0;
-        }
-
         public bool RemoveResource(ResourceAmount resource)
         {
             if (resource == null)
-            {
                 return false;
-            }
 
             if(resource.Count > Resources[resource.Type].Count)
-            {
                 return false;
-            }
 
             if (!Resources.ContainsKey(resource.Type)) return false;
 
@@ -104,20 +65,8 @@ namespace DwarfCorp
 
         public bool AddResource(ResourceAmount resource)
         {
-            if (resource == null)
-            {
-                return false;
-            }
-
-            if(resource.Count + CurrentResourceCount > MaxResources)
-            {
-                return false;
-            }
-
             if (!Resources.ContainsKey(resource.Type))
-            {
                 Resources[resource.Type] = new ResourceAmount(resource.Type, 0);
-            }
 
             Resources[resource.Type].Count += resource.Count;
             CurrentResourceCount += resource.Count;
@@ -127,79 +76,6 @@ namespace DwarfCorp
         public IEnumerable<ResourceAmount> Enumerate()
         {
             return Resources.Values;
-        }
-
-        public bool IsFull()
-        {
-            return CurrentResourceCount >= MaxResources;
-        }
-
-        public bool AddItem(GameComponent component)
-        {
-            if(IsFull())
-            {
-                return false;
-            }
-            else
-            {
-                AddResource(new ResourceAmount(component));
-
-                return true;
-            }
-        }
-
-        public void RemoveAnyResource()
-        {
-            foreach(KeyValuePair<String, ResourceAmount> resource in Resources)
-            {
-                if(resource.Value.Count > 0)
-                {
-                    resource.Value.Count = Math.Max(resource.Value.Count - 1, 0);
-                    CurrentResourceCount -= 1;
-                    return;
-                }
-            }
-        }
-
-        public List<ResourceAmount> GetResources(Quantitiy<String> tags)
-        {
-            List<ResourceAmount> toReturn = new List<ResourceAmount>();
-            int amountLeft = tags.Count;
-            foreach (ResourceAmount resourceAmount in Resources.Values)
-            {
-                if (amountLeft <= 0)
-                {
-                    break;
-                }
-
-                if (resourceAmount.Count == 0)
-                {
-                    continue;
-                }
-
-                if (Library.GetResourceType(resourceAmount.Type).HasValue(out var res) && res.Tags.Contains(tags.Type))
-                {
-                    int amountToRemove = Math.Min(tags.Count, amountLeft);
-
-                    if (amountToRemove > 0)
-                    {
-                        toReturn.Add(new ResourceAmount(resourceAmount.Type, amountToRemove));
-                        amountLeft -= amountToRemove;
-                    }
-                }
-            }
-
-            return toReturn;
-        }
-
-        public bool HasResource(Quantitiy<String> resourceType)
-        {
-            return GetResourceCount(resourceType.Type) >= resourceType.Count;
-        }
-
-        public int GetResourceCount(Resource resourceType)
-        {
-            return GetResourceCount(resourceType.Name);
         }
 
         public int GetResourceCount(String resourceType)

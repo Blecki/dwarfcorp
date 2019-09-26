@@ -60,7 +60,7 @@ namespace DwarfCorp
 
             if (Item.SelectedResources.Count != 0)
                 return agent.World.HasResources(Item.SelectedResources);
-            return agent.World.HasResources(Item.ItemType.RequiredResources);
+            return agent.World.HasResourcesWithTags(Item.ItemType.RequiredResources);
         }
 
         private bool HasLocation(Creature agent)

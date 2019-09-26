@@ -117,7 +117,7 @@ namespace DwarfCorp
 
             //if (CraftDesignation.ExistingResource != null) // This is a placement of an existing item.
             {
-                bool hasResource = agent.World.HasResources(CraftDesignation.ExistingResource);
+                bool hasResource = agent.World.HasResource(CraftDesignation.ExistingResource);
                 return hasResource;
             }
 

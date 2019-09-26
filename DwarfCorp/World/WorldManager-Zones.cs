@@ -41,12 +41,12 @@ namespace DwarfCorp
 
         public int ComputeRemainingStockpileSpace()
         {
-            return EnumerateZones().Where(pile => !(pile is Graveyard)).Sum(pile => pile.Resources.MaxResources - pile.Resources.CurrentResourceCount);
+            return EnumerateZones().Where(pile => !(pile is Graveyard)).Sum(pile => pile.ResourceCapacity - pile.Resources.CurrentResourceCount);
         }
 
         public int ComputeTotalStockpileSpace()
         {
-            return EnumerateZones().Where(pile => !(pile is Graveyard)).Sum(pile => pile.Resources.MaxResources);
+            return EnumerateZones().Where(pile => !(pile is Graveyard)).Sum(pile => pile.ResourceCapacity);
         }
 
         public Zone GetNearestRoomOfType(string typeName, Vector3 position)
@@ -273,7 +273,7 @@ namespace DwarfCorp
                     var requiredResources = buildOrder.ListRequiredResources();
                     if (buildOrder.DisplayWidget == null)
                     {
-                        if (!HasResources(requiredResources))
+                        if (!HasResourcesWithTags(requiredResources))
                         {
                             var resourceList = new StringBuilder();
                             foreach (var resource in requiredResources)
@@ -303,7 +303,7 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        if (HasResources(requiredResources))
+                        if (HasResourcesWithTags(requiredResources))
                         {
                             buildOrder.DisplayWidget.Root.DestroyWidget(buildOrder.DisplayWidget);
                             buildOrder.DisplayWidget = null;

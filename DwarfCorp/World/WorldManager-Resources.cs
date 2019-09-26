@@ -22,26 +22,22 @@ namespace DwarfCorp
                 return false;
 
             var stock = Zone as Stockpile;
-
-                var num = stock.Resources.RemoveMaxResources(resources, resources.Count);
+            var num = stock.Resources.RemoveMaxResources(resources, resources.Count);
 
             if (Library.GetResourceType(resources.Type).HasValue(out var resourceType))
                 foreach (var tag in resourceType.Tags)
                     if (PersistentData.CachedResourceTagCounts.ContainsKey(tag))
-                    {
                         PersistentData.CachedResourceTagCounts[tag] -= num;
-                        Trace.Assert(PersistentData.CachedResourceTagCounts[tag] >= 0);
-                    }
 
             for (int i = 0; i < num; i++)
             {
                 var startPosition = stock.GetBoundingBox().Center() + new Vector3(0.0f, 1.0f, 0.0f);
+                var newEntity = EntityFactory.CreateEntity<GameComponent>(resources.Type + " Resource", startPosition);
 
-                GameComponent newEntity = EntityFactory.CreateEntity<GameComponent>(resources.Type + " Resource", startPosition);
-
-                TossMotion toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f), 2.5f + MathFunctions.Rand(-0.5f, 0.5f), newEntity.LocalTransform, position);
                 if (newEntity.GetRoot().GetComponent<Physics>().HasValue(out var newPhysics))
                     newPhysics.CollideMode = Physics.CollisionMode.None;
+
+                var toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f), 2.5f + MathFunctions.Rand(-0.5f, 0.5f), newEntity.LocalTransform, position);
                 newEntity.AnimationQueue.Add(toss);
                 toss.OnComplete += () => newEntity.Die();
             }
@@ -52,19 +48,6 @@ namespace DwarfCorp
 
         public bool RemoveResources(List<ResourceAmount> resources)
         {
-            var amounts = new Dictionary<String, ResourceAmount>();
-
-            foreach (ResourceAmount resource in resources)
-            {
-                if (!amounts.ContainsKey(resource.Type))
-                    amounts.Add(resource.Type, new ResourceAmount(resource));
-                else
-                    amounts[resource.Type].Count += resource.Count;
-            }
-
-            if (!HasResources(amounts.Values))
-                return false;
-
             foreach (var resource in resources)
             {
                 int count = 0;
@@ -149,7 +132,7 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public bool HasResources(IEnumerable<Quantitiy<String>> resources)
+        public bool HasResourcesWithTags(IEnumerable<Quantitiy<String>> resources)
         {
             foreach (var resource in resources)
             {
@@ -175,7 +158,7 @@ namespace DwarfCorp
             return true;
         }
 
-        public bool HasResources(String resource)
+        public bool HasResource(String resource)
         {
             return HasResources(new List<ResourceAmount>() { new ResourceAmount(resource) });
         }
@@ -241,11 +224,11 @@ namespace DwarfCorp
 
             foreach (Stockpile stockpile in EnumerateZones().Where(s => s is Stockpile && (s as Stockpile).IsAllowed(resources.Type)))
             {
-                int space = stockpile.Resources.MaxResources - stockpile.Resources.CurrentResourceCount;
+                int space = stockpile.ResourceCapacity - stockpile.Resources.CurrentResourceCount;
 
                 if (space >= amount.Count)
                 {
-                    stockpile.Resources.AddResource(amount);
+                    stockpile.AddResource(amount);
 
                     if (resource.HasValue(out var res))
                         foreach (var tag in res.Tags)
@@ -261,7 +244,7 @@ namespace DwarfCorp
                 else
                 {
                     var amountToMove = space;
-                    stockpile.Resources.AddResource(new ResourceAmount(resources.Type, amountToMove));
+                    stockpile.AddResource(new ResourceAmount(resources.Type, amountToMove));
                     amount.Count -= amountToMove;
 
                     if (resource.HasValue(out var res))
@@ -311,7 +294,7 @@ namespace DwarfCorp
             foreach (var type in Library.EnumerateVoxelTypes())
             {
                 bool nospecialRequried = type.BuildRequirements.Count == 0;
-                PersistentData.CachedCanBuildVoxel[type.Name] = type.IsBuildable && ((nospecialRequried && HasResources(type.ResourceToRelease)) || (!nospecialRequried && HasResourcesCached(type.BuildRequirements)));
+                PersistentData.CachedCanBuildVoxel[type.Name] = type.IsBuildable && ((nospecialRequried && HasResource(type.ResourceToRelease)) || (!nospecialRequried && HasResourcesCached(type.BuildRequirements)));
             }
         }
 

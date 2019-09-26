@@ -15,9 +15,6 @@ namespace DwarfCorp
         private static int Counter = 0;
 
         public List<VoxelHandle> Voxels = new List<VoxelHandle>();
-        // This is a list of voxel type ids that existed before this zone
-        // was created. When the zone is destroyed, the voxel types will be restored.
-        public List<byte> OriginalVoxelTypes = new List<byte>(); 
         public List<GameComponent> ZoneBodies = new List<GameComponent>();
         public ZoneType Type;
         [JsonIgnore] public Gui.Widget GuiTag;
@@ -27,6 +24,9 @@ namespace DwarfCorp
         
         [JsonProperty]
         protected int ResPerVoxel = 32;
+
+        [JsonProperty]
+        public int ResourceCapacity { get; private set; }
 
         [JsonIgnore]
         public int ResourcesPerVoxel
@@ -63,7 +63,7 @@ namespace DwarfCorp
 
             Resources = new ResourceContainer
             {
-                MaxResources = 1
+                //MaxResources = 1
             };
         }
 
@@ -77,9 +77,9 @@ namespace DwarfCorp
             GameComponent toReturn = null;
             float nearestDistance = float.MaxValue;
 
-            foreach (GameComponent body in ZoneBodies)
+            foreach (var body in ZoneBodies)
             {
-                float dist = (location - body.GlobalTransform.Translation).LengthSquared();
+                var dist = (location - body.Position).LengthSquared();
                 if (dist < nearestDistance)
                 {
                     toReturn = body;
@@ -138,9 +138,7 @@ namespace DwarfCorp
             List<GameComponent> toKill = new List<GameComponent>();
             toKill.AddRange(ZoneBodies);
             foreach (GameComponent body in toKill)
-            {
                 body.Die();
-            }
 
             var voxelsToKill = new List<VoxelHandle>();
             voxelsToKill.AddRange(Voxels);
@@ -150,21 +148,14 @@ namespace DwarfCorp
                 RemoveVoxel(voxel);
             }
 
-            ClearItems();
-            Voxels.Clear();
-        }
-
-        public void ClearItems()
-        {
-            Resources.Clear();
             ZoneBodies.Clear();
+            Voxels.Clear();
         }
 
         public virtual bool IsFull()
         {
-            return Resources.IsFull();
+            return Resources.CurrentResourceCount >= ResourceCapacity;
         }
-
         
         public bool ContainsVoxel(VoxelHandle voxel)
         {
@@ -185,11 +176,6 @@ namespace DwarfCorp
                 Voxels.Remove(toRemove);
                 toRemove.IsPlayerBuilt = false;
                 removed = true;
-                    if (OriginalVoxelTypes.Count > i)
-                    {
-                        toRemove.TypeID = OriginalVoxelTypes[i];
-                        OriginalVoxelTypes.RemoveAt(i);
-                    }
                 break;
             }
             RecalculateMaxResources();
@@ -206,12 +192,11 @@ namespace DwarfCorp
                 if (newResources < Resources.CurrentResourceCount)
                 {
                     while (Resources.CurrentResourceCount > newResources)
-                    {
-                        Resources.RemoveAnyResource();
-                    }
+                        Resources.RemoveResource(new ResourceAmount(Resources.Enumerate().Where(r => r.Count > 0).First().Type, 1));
                 }
 
-                Resources.MaxResources = newResources;
+                ResourceCapacity = newResources;
+                //Resources.MaxResources = newResources;
             }
         }
 
@@ -221,7 +206,6 @@ namespace DwarfCorp
                 return;
             Voxel.IsPlayerBuilt = true;
             Voxels.Add(Voxel);
-            OriginalVoxelTypes.Add(Voxel.TypeID);
 
             if (Library.GetVoxelType(Type.FloorType).HasValue(out VoxelType floor))
                 Voxel.Type = floor;
@@ -253,7 +237,12 @@ namespace DwarfCorp
 
         public virtual bool AddItem(GameComponent component)
         {
-            return Resources.AddItem(component);
+            return AddResource(new ResourceAmount(component));
+        }
+
+        public virtual bool AddResource(ResourceAmount Resource)
+        {
+            return false;
         }
 
        

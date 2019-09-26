@@ -182,6 +182,18 @@ namespace DwarfCorp
             return worked;
         }
 
+        public override bool AddResource(ResourceAmount resource)
+        {
+            if (resource == null)
+                return false;
+
+            if (resource.Count + Resources.CurrentResourceCount > ResourceCapacity)
+                return false;
+
+            Resources.AddResource(resource);
+            return true;
+        }
+
         public override void Destroy()
         {
             var box = GetBoundingBox();

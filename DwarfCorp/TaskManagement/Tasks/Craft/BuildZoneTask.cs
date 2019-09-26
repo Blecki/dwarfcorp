@@ -41,7 +41,7 @@ namespace DwarfCorp
         {
             return Zone != null && !Zone.IsBuilt && IsZoneBuildOrder(agent.World, Zone) &&
                 agent.Stats.IsTaskAllowed(TaskCategory.BuildZone) &&
-                agent.World.HasResources(Zone.ListRequiredResources()) ? Feasibility.Feasible : Feasibility.Infeasible;
+                agent.World.HasResourcesWithTags(Zone.ListRequiredResources()) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override MaybeNull<Act> CreateScript(Creature creature)
