@@ -8,7 +8,7 @@ namespace DwarfCorp
 {
     public static partial class Library
     {
-        private static Dictionary<String, Resource> Resources = null;
+        private static Dictionary<String, ResourceType> Resources = null;
         private static bool ResourcesInitialized = false;
 
         private static void InitializeResources()
@@ -17,9 +17,9 @@ namespace DwarfCorp
                 return;
             ResourcesInitialized = true;
 
-            Resources = new Dictionary<String, Resource>();
+            Resources = new Dictionary<String, ResourceType>();
 
-            var resourceList = FileUtils.LoadJsonListFromDirectory<Resource>("World\\ResourceItems", null, r => r.Name);
+            var resourceList = FileUtils.LoadJsonListFromDirectory<ResourceType>("World\\ResourceItems", null, r => r.Name);
 
             foreach (var resource in resourceList)
             {
@@ -30,13 +30,13 @@ namespace DwarfCorp
             Console.WriteLine("Loaded Resource Library.");
         }
 
-        public static IEnumerable<Resource> EnumerateResourceTypesWithTag(String tag)
+        public static IEnumerable<ResourceType> EnumerateResourceTypesWithTag(String tag)
         {
             InitializeResources();
             return Resources.Values.Where(resource => resource.Tags.Contains(tag));
         }
 
-        public static Resource FindMedianResourceTypeWithTag(String tag)
+        public static ResourceType FindMedianResourceTypeWithTag(String tag)
         {
             InitializeResources();
             var applicable = Resources.Values.Where(resource => resource.Tags.Contains(tag)).ToList();
@@ -45,7 +45,7 @@ namespace DwarfCorp
             return applicable[applicable.Count / 2];
         }
 
-        public static MaybeNull<Resource> GetResourceType(string name)
+        public static MaybeNull<ResourceType> GetResourceType(string name)
         {
             InitializeResources();
             return Resources.ContainsKey((String) name) ? Resources[name] : null;
@@ -57,13 +57,13 @@ namespace DwarfCorp
             return Resources.ContainsKey(Name);
         }
 
-        public static IEnumerable<Resource> EnumerateResourceTypes()
+        public static IEnumerable<ResourceType> EnumerateResourceTypes()
         {
             InitializeResources();
             return Resources.Values;
         }
 
-        public static void AddResourceType(Resource resource)
+        public static void AddResourceType(ResourceType resource)
         {
             InitializeResources();
 
@@ -78,7 +78,7 @@ namespace DwarfCorp
                 EntityFactory.RegisterEntity(resource.Name + " Resource", (position, data) => new ResourceEntity(EntityFactory.World.ComponentManager, new ResourceAmount(resource.Name, data.GetData<int>("num", 1)), position));   
         }
 
-        public static void AddResourceTypeIfNew(Resource Resource)
+        public static void AddResourceTypeIfNew(ResourceType Resource)
         {
             InitializeResources();
 
@@ -86,7 +86,7 @@ namespace DwarfCorp
                 AddResourceType(Resource);
         }
 
-        public static MaybeNull<Resource> CreateResourceType(MaybeNull<Resource> From)
+        public static MaybeNull<ResourceType> CreateResourceType(MaybeNull<ResourceType> From)
         {
             if (From.HasValue(out var from))
             {
@@ -104,7 +104,7 @@ namespace DwarfCorp
                 r.FoodContent = from.FoodContent;
                 r.PlantToGenerate = from.PlantToGenerate;
                 r.CraftInfo = from.CraftInfo;
-                r.CompositeLayers = from.CompositeLayers == null ? null : new List<Resource.CompositeLayer>(from.CompositeLayers);
+                r.CompositeLayers = from.CompositeLayers == null ? null : new List<ResourceType.CompositeLayer>(from.CompositeLayers);
                 r.TrinketData = from.TrinketData;
                 r.AleName = from.AleName;
                 r.PotionType = from.PotionType;
@@ -116,15 +116,15 @@ namespace DwarfCorp
             return null;
         }
 
-        public static Resource CreateResourceType()
+        public static ResourceType CreateResourceType()
         {
-            return new Resource()
+            return new ResourceType()
             {
                 Generated = true
             };
         }
         
-        public static MaybeNull<Resource> CreateAleResourceType(String type)
+        public static MaybeNull<ResourceType> CreateAleResourceType(String type)
         {
             InitializeResources();
 
@@ -148,7 +148,7 @@ namespace DwarfCorp
             return null;
         }
 
-        public static MaybeNull<Resource> CreateMealResourceType(String typeA, String typeB)
+        public static MaybeNull<ResourceType> CreateMealResourceType(String typeA, String typeB)
         {
             InitializeResources();
 
@@ -168,7 +168,7 @@ namespace DwarfCorp
             return null;
         }
 
-        public static MaybeNull<Resource> CreateEncrustedTrinketResourceType(String resourcetype, String gemType)
+        public static MaybeNull<ResourceType> CreateEncrustedTrinketResourceType(String resourcetype, String gemType)
         {
             InitializeResources();
 
@@ -184,11 +184,11 @@ namespace DwarfCorp
                     toReturn.MoneyValue += gemResource.MoneyValue * 2m;
                     toReturn.Tags = new List<String>() { "Craft", "Precious" };
 
-                    toReturn.CompositeLayers = new List<Resource.CompositeLayer>();
+                    toReturn.CompositeLayers = new List<ResourceType.CompositeLayer>();
                     toReturn.CompositeLayers.AddRange(baseResource.CompositeLayers);
                     if (baseResource.TrinketData.EncrustingAsset != null)
                         toReturn.CompositeLayers.Add(
-                            new Resource.CompositeLayer
+                            new ResourceType.CompositeLayer
                             {
                                 Asset = baseResource.TrinketData.EncrustingAsset,
                                 FrameSize = new Point(32, 32),
@@ -207,7 +207,7 @@ namespace DwarfCorp
             return null;
         }
 
-        public static MaybeNull<Resource> CreateTrinketResourceType(String baseMaterial, float quality)
+        public static MaybeNull<ResourceType> CreateTrinketResourceType(String baseMaterial, float quality)
         {
             InitializeResources();
 
@@ -275,9 +275,9 @@ namespace DwarfCorp
 
                 var tile = new Point(tiles[item], material.TrinketData.SpriteRow);
 
-                toReturn.CompositeLayers = new List<Resource.CompositeLayer>(new Resource.CompositeLayer[]
+                toReturn.CompositeLayers = new List<ResourceType.CompositeLayer>(new ResourceType.CompositeLayer[]
                 {
-                new Resource.CompositeLayer
+                new ResourceType.CompositeLayer
                 {
                     Asset = material.TrinketData.BaseAsset,
                     FrameSize = new Point(32, 32),
@@ -297,7 +297,7 @@ namespace DwarfCorp
             return null;
         }
         
-        public static MaybeNull<Resource> CreateBreadResourceType(String component)
+        public static MaybeNull<ResourceType> CreateBreadResourceType(String component)
         {
             InitializeResources();
 

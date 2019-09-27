@@ -171,12 +171,7 @@ namespace DwarfCorp.GameStates
 
         private List<ResourceAmount> Clone(List<ResourceAmount> resources)
         {
-            List<ResourceAmount> toReturn = new List<ResourceAmount>();
-            foreach(var resource in resources)
-            {
-                toReturn.Add(new ResourceAmount(resource));
-            }
-            return toReturn;
+            return resources.Select(r => r.CloneResource()).ToList();
         }
 
         public override void Construct()

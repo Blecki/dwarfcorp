@@ -6,7 +6,7 @@
   "Category": "Defense",
   "RequiredResources": [
     {
-      "Type": "Metal",
+      "Tag": "Metal",
       "Count": 4
     }
   ],

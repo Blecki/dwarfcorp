@@ -5,7 +5,7 @@
 
   "RequiredResources": [
     {
-      "Type": "Stone",
+      "Tag": "Stone",
       "Count": 1
     }
   ],

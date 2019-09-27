@@ -37,7 +37,7 @@ namespace DwarfCorp
             var hasAllResources = false;
 
             foreach (var tag in Tags)
-                if (Creature.Inventory.HasResource(new Quantitiy<String>(tag, 1)))
+                if (Creature.Inventory.HasResource(new ResourceTagAmount(tag, 1)))
                     hasAllResources = true;
 
             if (!hasAllResources)
@@ -64,7 +64,7 @@ namespace DwarfCorp
                 // In this case the dwarf already has all the resources. We have to find the resources from the inventory.
                 var resource = Tags.Select(t =>
                 {
-                    var matches = Creature.Inventory.GetResources(new Quantitiy<String>(t));
+                    var matches = Creature.Inventory.GetResources(new ResourceTagAmount(t, 1));
                     if (matches.Count > 0)
                         return matches[0];
                     return null;

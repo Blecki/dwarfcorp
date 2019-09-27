@@ -367,8 +367,8 @@
     <Compile Include="World\Economy\Money.cs" />
     <Compile Include="World\Economy\Payroll\CollectMoney.cs" />
     <Compile Include="World\Economy\Payroll\DepositMoney.cs" />
-    <Compile Include="World\Economy\Quantity.cs" />
     <Compile Include="World\Economy\Resources\Resource.cs" />
+    <Compile Include="World\Economy\Resources\ResourceTagAmount.cs" />
     <Compile Include="World\Economy\Resources\ResourceAmount.cs" />
     <Compile Include="World\Economy\Resources\ResourceSet.cs" />
     <Compile Include="Entities\Animals\BatAI.cs" />

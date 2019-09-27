@@ -32,7 +32,7 @@ namespace DwarfCorp
                     var resource = Datastructures.SelectRandom(resources);
                     if (resource.Value.Count > 0)
                     {
-                        AssignTask(new ActWrapperTask(new GetResourcesAct(this, new List<ResourceAmount>() { new ResourceAmount(resource.Value.Type, 1) })) { Name = "Steal stuff", Priority = TaskPriority.High });
+                        AssignTask(new ActWrapperTask(new GetResourcesWithTag(this, new List<ResourceAmount>() { new ResourceAmount(resource.Value.Type, 1) })) { Name = "Steal stuff", Priority = TaskPriority.High });
                     }
                 }
             }

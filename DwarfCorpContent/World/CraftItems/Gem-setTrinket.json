@@ -5,11 +5,11 @@
 
   "RequiredResources": [
     {
-      "Type": "Encrustable",
+      "Tag": "Encrustable",
       "Count": 1
     },
     {
-      "Type": "Gem",
+      "Tag": "Gem",
       "Count": 1
     }
   ],

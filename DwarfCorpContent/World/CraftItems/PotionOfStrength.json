@@ -10,11 +10,11 @@
   "CraftTaskCategory": "Research",
   "RequiredResources": [
     {
-      "Type": "Magical",
+      "Tag": "Magical",
       "Count": 1
     },
     {
-      "Type": "Bone",
+      "Tag": "Bone",
       "Count": 1
     }
   ],

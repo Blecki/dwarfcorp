@@ -19,7 +19,7 @@ namespace DwarfCorp.Gui.Widgets
 
         private class ResourceCombo
         {
-            public Quantitiy<String> Resource;
+            public ResourceTagAmount Resource;
             public ComboBox Combo;
             public Widget Count;
         }
@@ -40,7 +40,7 @@ namespace DwarfCorp.Gui.Widgets
             int k = 0;
             foreach (var ingredient in Data.RequiredResources)
             {
-                var resource = Library.FindMedianResourceTypeWithTag(ingredient.Type);
+                var resource = Library.FindMedianResourceTypeWithTag(ingredient.Tag);
                 if (resource != null)
                     titleBar.AddChild(new Gui.Widget
                     {
@@ -53,7 +53,7 @@ namespace DwarfCorp.Gui.Widgets
                         TextVerticalAlign = VerticalAlign.Bottom,
                         Font = "font10-outline-numsonly",
                         TextColor = Color.White.ToVector4(),
-                        Tooltip = ingredient.Type.ToString()
+                        Tooltip = ingredient.Tag.ToString()
                     });
 
                 if (k < Data.RequiredResources.Count - 1)
@@ -126,7 +126,7 @@ namespace DwarfCorp.Gui.Widgets
                 child.AddChild(new Gui.Widget()
                 {
                     Font = "font8",
-                    Text = String.Format("{0} {1}: ", resourceAmount.Count, resourceAmount.Type),
+                    Text = String.Format("{0} {1}: ", resourceAmount.Count, resourceAmount.Tag),
                     AutoLayout = AutoLayout.DockLeft
                 });
 
@@ -138,7 +138,7 @@ namespace DwarfCorp.Gui.Widgets
                     Items = new List<string> { "<Not enough!>" },
                     AutoLayout = AutoLayout.DockLeft,
                     MinimumSize = new Point(200, 18),
-                    Tooltip = String.Format("Type of {0} to use.", resourceAmount.Type)
+                    Tooltip = String.Format("Type of {0} to use.", resourceAmount.Tag)
                 }) as Gui.Widgets.ComboBox;
 
                 var resourceCountIndicator = child.AddChild(new Widget
@@ -219,7 +219,7 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     var currentSelection = combo.Combo.SelectedItem;
 
-                    combo.Combo.Items = World.ListResourcesWithTag(combo.Resource.Type).Where(r => r.Count >= combo.Resource.Count).Select(r => r.Type).OrderBy(p => p).ToList();
+                    combo.Combo.Items = World.ListResourcesWithTag(combo.Resource.Tag).Where(r => r.Count >= combo.Resource.Count).Select(r => r.Type).OrderBy(p => p).ToList();
 
                     if (combo.Combo.Items.Count == 0)
                     {

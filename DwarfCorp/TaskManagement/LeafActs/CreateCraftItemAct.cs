@@ -45,7 +45,7 @@ namespace DwarfCorp
             {
                 item.AddChild(new CraftDetails(Creature.Manager)
                 {
-                    Resources = Item.SelectedResources.ConvertAll(p => new ResourceAmount(p)),
+                    Resources = Item.SelectedResources.ConvertAll(p => p.CloneResource()),
                     CraftType = Item.ItemType.Name
                 });
 

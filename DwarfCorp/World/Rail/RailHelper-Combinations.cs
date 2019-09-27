@@ -14,10 +14,7 @@ namespace DwarfCorp.Rail
         private static CraftItem RailCraftItem = new CraftItem
         {
             Description = "Rail.",
-            RequiredResources = new List<Quantitiy<String>>
-                        {
-                            new Quantitiy<String>("Rail", 1)
-                        },
+            RequiredResources = new List<ResourceTagAmount> { new ResourceTagAmount("Rail", 1) },
             Icon = new Gui.TileReference("resources", 38),
             BaseCraftTime = 10,
             Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround },

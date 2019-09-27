@@ -6,7 +6,7 @@
   "CraftTaskCategory": "Research",
   "RequiredResources": [
     {
-      "Type": "Mana",
+      "Tag": "Mana",
       "Count": 1
     }
   ],

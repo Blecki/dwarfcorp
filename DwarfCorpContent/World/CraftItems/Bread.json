@@ -6,7 +6,7 @@
   "CraftTaskCategory": "Cook",
   "RequiredResources": [
     {
-      "Type": "Bakeable",
+      "Tag": "Bakeable",
       "Count": 1
     }
   ],

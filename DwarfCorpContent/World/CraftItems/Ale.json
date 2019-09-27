@@ -8,7 +8,7 @@
   "CraftTaskCategory": "Brew",
   "RequiredResources": [
     {
-      "Type": "Brewable",
+      "Tag": "Brewable",
       "Count": 1
     }
   ],

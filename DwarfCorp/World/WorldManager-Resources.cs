@@ -59,7 +59,7 @@ namespace DwarfCorp
                         PersistentData.CachedResourceTagCounts[tag] -= num;
         }
 
-        public List<ResourceAmount> GetResourcesWithTags(List<Quantitiy<String>> tags) // Todo: This is only ever called with a list of 1.
+        public List<ResourceAmount> GetResourcesWithTags(List<ResourceTagAmount> tags) // Todo: This is only ever called with a list of 1.
         {
             var tagsRequired = new Dictionary<String, int>();
             var tagsGot = new Dictionary<String, int>();
@@ -67,8 +67,8 @@ namespace DwarfCorp
 
             foreach (var quantity in tags)
             {
-                tagsRequired[quantity.Type] = quantity.Count;
-                tagsGot[quantity.Type] = 0;
+                tagsRequired[quantity.Tag] = quantity.Count;
+                tagsGot[quantity.Tag] = 0;
             }
 
             var r = new Random();
@@ -114,11 +114,11 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public bool HasResourcesWithTags(IEnumerable<Quantitiy<String>> resources)
+        public bool HasResourcesWithTags(IEnumerable<ResourceTagAmount> resources)
         {
             foreach (var resource in resources)
             {
-                int count = EnumerateZones().OfType<Stockpile>().Sum(stock => stock.Resources.Count(resource.Type));
+                int count = EnumerateZones().OfType<Stockpile>().Sum(stock => stock.Resources.Count(resource.Tag));
 
                 if (count < resource.Count)
                     return false;
@@ -192,7 +192,7 @@ namespace DwarfCorp
                     if (toReturn.ContainsKey(resource.Type))
                         toReturn[resource.Type].Count += resource.Count;
                     else
-                        toReturn[resource.Type] = new ResourceAmount(resource);
+                        toReturn[resource.Type] = resource.CloneResource();
                 }
             }
 

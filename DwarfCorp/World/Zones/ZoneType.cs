@@ -12,7 +12,7 @@ namespace DwarfCorp
         public string DisplayName;
         public uint ID;
         public string FloorType;
-        public Dictionary<String, Quantitiy<String>> RequiredResources;
+        public Dictionary<String, ResourceTagAmount> RequiredResources;
         public Gui.TileReference NewIcon;
         public bool CanBuildAboveGround = true;
         public bool CanBuildBelowGround = true;
@@ -20,9 +20,9 @@ namespace DwarfCorp
         public int MinimumSideWidth = 3;
         public int MaxNumRooms = int.MaxValue;
 
-        public List<Quantitiy<String>> GetRequiredResources(int numVoxels)
+        public List<ResourceTagAmount> GetRequiredResources(int numVoxels)
         {
-            return RequiredResources.Select(r => new Quantitiy<String>(r.Value) { Count = (int)(numVoxels * r.Value.Count * 0.25f) }).ToList();
+            return RequiredResources.Select(r => new ResourceTagAmount(r.Value.Tag, 1) { Count = (int)(numVoxels * r.Value.Count * 0.25f) }).ToList();
         }
 
         public bool CanBuildHere(List<VoxelHandle> Voxels, WorldManager World)

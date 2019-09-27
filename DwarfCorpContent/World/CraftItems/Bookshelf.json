@@ -5,7 +5,7 @@
   "DisplayName": "Book Shelf",
   "RequiredResources": [
     {
-      "Type": "Magical",
+      "Tag": "Magical",
       "Count": 4
     }
   ],

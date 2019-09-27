@@ -4,7 +4,7 @@
   "Category": "Material",
   "RequiredResources": [
     {
-      "Type": "GoldOre",
+      "Tag": "GoldOre",
       "Count": 1
     }
   ],

@@ -94,7 +94,7 @@ namespace DwarfCorp
             }
         }
 
-        public IEnumerable<KeyValuePair<Stockpile, ResourceAmount>> GetStockpilesContainingResources(List<Quantitiy<String>> tags)
+        public IEnumerable<KeyValuePair<Stockpile, ResourceAmount>> GetStockpilesContainingResources(List<ResourceTagAmount> tags)
         {
             foreach (var tag in tags)
             {
@@ -103,7 +103,7 @@ namespace DwarfCorp
                 {
                     if (numGot >= tag.Count)
                         break;
-                    foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => Library.GetResourceType(sResource.Type).HasValue(out var res) && res.Tags.Contains(tag.Type)))
+                    foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => Library.GetResourceType(sResource.Type).HasValue(out var res) && res.Tags.Contains(tag.Tag)))
                     {
                         int amountToRemove = global::System.Math.Min(resource.Count, tag.Count - numGot);
                         if (amountToRemove <= 0) continue;
@@ -281,7 +281,7 @@ namespace DwarfCorp
                             {
                                 resourceList.Append(resource.Count);
                                 resourceList.Append(" ");
-                                resourceList.Append(resource.Type);
+                                resourceList.Append(resource.Tag);
                             }
 
                             buildOrder.DisplayWidget = UserInterface.Gui.RootItem.AddChild(new Gui.Widget()

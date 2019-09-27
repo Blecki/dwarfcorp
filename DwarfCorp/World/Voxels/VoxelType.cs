@@ -69,7 +69,7 @@ namespace DwarfCorp
             
         }
 
-        public bool CanBuildWith(Resource resource)
+        public bool CanBuildWith(ResourceType resource)
         {
             return IsBuildable && ((BuildRequirements.Count == 0 && resource.Name == ResourceToRelease) || 
                 (BuildRequirements.Count > 0 && BuildRequirements.TrueForAll(requirement => resource.Tags.Contains(requirement))));

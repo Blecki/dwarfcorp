@@ -8,18 +8,18 @@ namespace DwarfCorp
     /// <summary>
     /// A creature finds an item from a stockpile with the given tags, goes to it, and picks it up.
     /// </summary>
-    public class GetResourcesAct : CompoundCreatureAct
+    public class GetResourcesWithTag : CompoundCreatureAct
     {
-        public List<Quantitiy<String>> Resources { get; set; }
+        public List<ResourceTagAmount> Resources { get; set; }
         public List<KeyValuePair<Stockpile, ResourceAmount> > ResourcesToStash { get; set; }
         public String BlackboardEntry = "ResourcesStashed";
 
-        public GetResourcesAct()
+        public GetResourcesWithTag()
         {
 
         }
 
-        public GetResourcesAct(CreatureAI agent, List<ResourceAmount> resources) :
+        public GetResourcesWithTag(CreatureAI agent, List<ResourceAmount> resources) :
             base(agent)
         {
             Name = "Get Resources";
@@ -27,18 +27,18 @@ namespace DwarfCorp
         }
 
 
-        public GetResourcesAct(CreatureAI agent, List<Quantitiy<String>> resources ) :
+        public GetResourcesWithTag(CreatureAI agent, List<ResourceTagAmount> resources ) :
             base(agent)
         {
             Name = "Get Resources";
             Resources = resources;
         }
 
-        public GetResourcesAct(CreatureAI agent, String resources) :
+        public GetResourcesWithTag(CreatureAI agent, String Tag) :
             base(agent)
         {
             Name = "Get Resources";
-            Resources = new List<Quantitiy<String>>(){new Quantitiy<String>(resources)};
+            Resources = new List<ResourceTagAmount>(){new ResourceTagAmount(Tag, 1)};
         }
 
         public IEnumerable<Status> AlwaysTrue()

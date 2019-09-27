@@ -4,11 +4,11 @@
   "Category": "Furniture",
   "RequiredResources": [
     {
-      "Type": "Wood",
+      "Tag": "Wood",
       "Count": 2
     },
     {
-      "Type": "Metal",
+      "Tag": "Metal",
       "Count": 2
     }
   ],

@@ -4,11 +4,11 @@
   "Category": "Tools",
   "RequiredResources": [
     {
-      "Type": "Wood",
+      "Tag": "Wood",
       "Count": 1
     },
     {
-      "Type": "Copper",
+      "Tag": "Copper",
       "Count": 1
     }
   ],

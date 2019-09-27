@@ -54,33 +54,6 @@ namespace DwarfCorp
             CollisionType = CollisionType.None;
         }
 
-        public bool Remove(IEnumerable<Quantitiy<String>> amount, RestockType type)
-        {
-            foreach (var quantity in amount)
-                for (int i = 0; i < quantity.Count; i++)
-                {
-                    int kRemove = -1;
-                    for (int k = 0; k < Resources.Count; k++)
-                    {
-                        if (type == RestockType.None && Resources[k].MarkedForRestock)
-                            continue;
-                        else if (type == RestockType.RestockResource && !Resources[k].MarkedForRestock)
-                            continue;
-
-                        if (!Library.GetResourceType(Resources[k].Resource).HasValue(out var res) || !res.Tags.Contains(quantity.Type)) continue;
-                        kRemove = k;
-                        break;
-                    }
-
-                    if (kRemove < 0)
-                        return false;
-
-                    Resources.RemoveAt(kRemove);
-                }
-
-            return true;
-        }
-
         public bool Remove(IEnumerable<ResourceAmount> resourceAmount, RestockType type)
         {
             foreach (var quantity in resourceAmount)
@@ -252,12 +225,12 @@ namespace DwarfCorp
             return Resources.Count(resource => resource.Resource == itemToStock.Type) >= itemToStock.Count;
         }
 
-        public bool HasResource(Quantitiy<String> itemToStock)
+        public bool HasResource(ResourceTagAmount itemToStock)
         {
             var resourceCounts = new Dictionary<String, int>();
 
             foreach (var resource in Resources)
-                if (Library.GetResourceType(resource.Resource).HasValue(out var res) && res.Tags.Contains(itemToStock.Type))
+                if (Library.GetResourceType(resource.Resource).HasValue(out var res) && res.Tags.Contains(itemToStock.Tag))
                 {
                     if (!resourceCounts.ContainsKey(resource.Resource))
                         resourceCounts[resource.Resource] = 0;
@@ -267,7 +240,7 @@ namespace DwarfCorp
             return resourceCounts.Count > 0 && resourceCounts.Max(r => r.Value >= itemToStock.Count);
         }
 
-        public List<ResourceAmount> GetResources(Quantitiy<String> quantitiy, RestockType type = RestockType.RestockResource)
+        public List<ResourceAmount> GetResources(ResourceTagAmount quantitiy, RestockType type = RestockType.RestockResource)
         {
             return Resources
                 .Where(r =>
@@ -284,7 +257,7 @@ namespace DwarfCorp
 
                     return false;
                 })
-                .Where(r => Library.GetResourceType(r.Resource).HasValue(out var res) && res.Tags.Contains(quantitiy.Type))
+                .Where(r => Library.GetResourceType(r.Resource).HasValue(out var res) && res.Tags.Contains(quantitiy.Tag))
                 .Select(r => new ResourceAmount(r.Resource, 1))
                 .ToList();
         }

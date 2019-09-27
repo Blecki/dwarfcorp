@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace DwarfCorp
 {
-    public class Resource
+    public class ResourceType
     {
         public struct TrinketInfo
         {
@@ -45,7 +45,7 @@ namespace DwarfCorp
         public Potion PotionType = null;
         public string Category = "";
 
-        public Resource()
+        public ResourceType()
         {
 
         }

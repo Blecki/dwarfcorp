@@ -8,7 +8,7 @@ namespace DwarfCorp
     public class BuildZoneAct : CompoundCreatureAct
     {
         public BuildZoneOrder BuildRoom { get; set; }
-        public List<Quantitiy<String>> Resources { get; set; }
+        public List<ResourceTagAmount> Resources { get; set; }
 
         public IEnumerable<Status> SetTargetVoxelFromRoom(BuildZoneOrder buildRoom, string target)
         {
@@ -54,18 +54,19 @@ namespace DwarfCorp
         public IEnumerable<Act.Status> PutResources()
         {
             if (BuildRoom.MeetsBuildRequirements())
-            {
                 yield return Act.Status.Success;
-            }
 
             if (BuildRoom.ResourcesReservedFor == Agent)
             {
-                Agent.Creature.Inventory.Remove(Resources, Inventory.RestockType.None);
-                BuildRoom.AddResources(Resources);
+                var resources = Agent.Blackboard.GetData<List<ResourceAmount>>("zone_resources");
+                Agent.Creature.Inventory.Remove(resources, Inventory.RestockType.None);
+                BuildRoom.AddResources(resources);
                 BuildRoom.ResourcesReservedFor = null;
             }
+
             yield return Act.Status.Success;
         }
+
         public IEnumerable<Status> WaitForResources()
         {
             if (BuildRoom.ResourcesReservedFor == Agent)
@@ -105,8 +106,6 @@ namespace DwarfCorp
             return BuildRoom.MeetsBuildRequirements() || (BuildRoom.ResourcesReservedFor != null);
         }
 
-
-
         public IEnumerable<Act.Status> OnFailOrCancel()
         {
             if (BuildRoom.ResourcesReservedFor == Agent)
@@ -133,7 +132,6 @@ namespace DwarfCorp
             base.OnCanceled(); 
         }
 
-
         public BuildZoneAct(CreatureAI agent, BuildZoneOrder buildRoom) :
             base(agent)
         {
@@ -144,7 +142,7 @@ namespace DwarfCorp
                 BuildRoom.ResourcesReservedFor = null;
 
             Tree = new Sequence(new Select(new Domain(buildRoom.MeetsBuildRequirements() || buildRoom.ResourcesReservedFor != null, true), 
-                                           new Domain(!buildRoom.MeetsBuildRequirements() && (buildRoom.ResourcesReservedFor == null || buildRoom.ResourcesReservedFor == Agent), new Sequence(new Wrap(Reserve), new GetResourcesAct(Agent, Resources))),
+                                           new Domain(!buildRoom.MeetsBuildRequirements() && (buildRoom.ResourcesReservedFor == null || buildRoom.ResourcesReservedFor == Agent), new Sequence(new Wrap(Reserve), new GetResourcesWithTag(Agent, Resources) { BlackboardEntry = "zone_resources" })),
                                            new Domain(buildRoom.MeetsBuildRequirements() || buildRoom.ResourcesReservedFor != null, true)),
                 new Domain(() => IsRoomBuildOrder(buildRoom) && !buildRoom.IsBuilt && !buildRoom.IsDestroyed && ValidResourceState(), 
                 new Sequence(

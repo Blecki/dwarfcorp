@@ -10,7 +10,7 @@ namespace DwarfCorp
         public String Name;
         public string Description;
         public StatusEffect Effects;
-        public List<Quantitiy<String>> Ingredients;
+        public List<ResourceTagAmount> Ingredients;
         public int Icon;
 
         public Potion()

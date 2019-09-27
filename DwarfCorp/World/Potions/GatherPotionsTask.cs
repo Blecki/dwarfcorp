@@ -32,7 +32,7 @@ namespace DwarfCorp
 
         public override MaybeNull<Act> CreateScript(Creature agent)
         {
-            return new GetResourcesAct(agent.AI, new List<Quantitiy<String>>() { new Quantitiy<String>("Potion")});
+            return new GetResourcesWithTag(agent.AI, new List<ResourceTagAmount>() { new ResourceTagAmount("Potion", 1)});
         }
     }
 }

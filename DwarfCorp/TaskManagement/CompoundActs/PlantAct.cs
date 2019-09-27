@@ -133,7 +133,7 @@ namespace DwarfCorp
                 if (FarmToWork.Voxel.IsValid)
                 {
                     Tree = new Select(new Sequence(
-                        new GetResourcesAct(Agent, Resources),
+                        new GetResourcesWithTag(Agent, Resources),
                         new Domain(Validate, new GoToVoxelAct(FarmToWork.Voxel, PlanAct.PlanType.Adjacent, Creature.AI)),
                         new Domain(Validate, new StopAct(Creature.AI)),
                         new Domain(Validate, new Wrap(FarmATile)),

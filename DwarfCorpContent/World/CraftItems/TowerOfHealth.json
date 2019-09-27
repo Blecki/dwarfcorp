@@ -6,11 +6,11 @@
   "CraftTaskCategory": "Research",
   "RequiredResources": [
     {
-      "Type": "Magical",
+      "Tag": "Magical",
       "Count": 4
     },
     {
-      "Type": "Edible",
+      "Tag": "Edible",
       "Count": 2
     }
   ],

@@ -10,11 +10,11 @@
 
   "RequiredResources": [
     {
-      "Type": "Metal",
+      "Tag": "Metal",
       "Count": 4
     },
     {
-      "Type": "Magical",
+      "Tag": "Magical",
       "Count": 4
     }
   ],

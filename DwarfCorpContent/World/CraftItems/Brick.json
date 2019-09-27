@@ -4,7 +4,7 @@
   "Category": "Material",
   "RequiredResources": [
     {
-      "Type": "Soil",
+      "Tag": "Soil",
       "Count": 1
     }
   ],

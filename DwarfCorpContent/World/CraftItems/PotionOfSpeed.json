@@ -10,11 +10,11 @@
   "CraftTaskCategory": "Research",
   "RequiredResources": [
     {
-      "Type": "Magical",
+      "Tag": "Magical",
       "Count": 1
     },
     {
-      "Type": "Fungus",
+      "Tag": "Fungus",
       "Count": 1
     }
   ],

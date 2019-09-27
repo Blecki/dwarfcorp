@@ -136,7 +136,7 @@ namespace DwarfCorp
                 // Todo: This switch sucks.
                 case CraftItem.CraftActBehaviors.Object:
                     {
-                        Resource craft = Item.ItemType.ToResource(Creature.World, stashed);
+                        ResourceType craft = Item.ItemType.ToResource(Creature.World, stashed);
                         ResourceCreated = craft.Name;
                     }
                     break;
@@ -174,8 +174,8 @@ namespace DwarfCorp
                     break;
                 case CraftItem.CraftActBehaviors.GemTrinket:
                     {
-                        Resource gem = null;
-                        Resource trinket = null;
+                        ResourceType gem = null;
+                        ResourceType trinket = null;
                         foreach (ResourceAmount stashedResource in stashed)
                         {
                             if (Library.GetResourceType(stashedResource.Type).HasValue(out var res) && res.Tags.Contains("Craft"))
@@ -306,7 +306,7 @@ namespace DwarfCorp
                                             new Domain(() => !Item.HasResources && (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
                                                      new Select(
                                                             new Sequence(new Wrap(ReserveResources),
-                                                                         new GetResourcesAct(Agent, new List<ResourceAmount>() { new ResourceAmount(Item.ExistingResource, 1) } ),
+                                                                         new GetResourcesWithTag(Agent, new List<ResourceAmount>() { new ResourceAmount(Item.ExistingResource, 1) } ),
                                                                          new Wrap(SetSelectedResources)),
                                                             new Sequence(new Wrap(UnReserve), Act.Status.Fail)
                                                             )
@@ -320,7 +320,7 @@ namespace DwarfCorp
                                                            (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
                                                      new Select(
                                                             new Sequence(new Wrap(ReserveResources), 
-                                                                         new GetResourcesAct(Agent, Item.ItemType.RequiredResources), 
+                                                                         new GetResourcesWithTag(Agent, Item.ItemType.RequiredResources), 
                                                                          new Wrap(SetSelectedResources)),
                                                             new Sequence(new Wrap(UnReserve), Act.Status.Fail)
                                                             )
@@ -333,7 +333,7 @@ namespace DwarfCorp
                                             new Domain(() => !Item.HasResources && (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
                                                 new Sequence(
                                                     new Wrap(ReserveResources),
-                                                    new GetResourcesAct(Agent, Item.SelectedResources)) 
+                                                    new GetResourcesWithTag(Agent, Item.SelectedResources)) 
                                                 | (new Wrap(UnReserve)) 
                                                 & false),
                                             new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true));

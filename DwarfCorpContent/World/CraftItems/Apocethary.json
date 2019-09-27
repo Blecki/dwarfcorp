@@ -5,7 +5,7 @@
   "Category": "Furniture",
   "RequiredResources": [
     {
-      "Type": "Magical",
+      "Tag": "Magical",
       "Count": 2
     }
   ],

@@ -11,7 +11,7 @@ namespace DwarfCorp
     public class BuildZoneOrder
     {
         public Zone ToBuild { get; set; }
-        public Dictionary<String, Quantitiy<String>> PutResources { get; set; }
+        public Dictionary<String, ResourceAmount> PutResources { get; set; }
         public List<BuildVoxelOrder> VoxelOrders { get; set; }
         public List<GameComponent> WorkObjects = new List<GameComponent>(); 
         public bool IsBuilt { get; set; }
@@ -40,33 +40,22 @@ namespace DwarfCorp
             BuildProgress = 0;
             World = world;
             ToBuild = toBuild;
-            PutResources = new Dictionary<String, Quantitiy<String>>();
+            PutResources = new Dictionary<String, ResourceAmount>();
             VoxelOrders = new List<BuildVoxelOrder>();
             IsBuilt = false;
             IsDestroyed = false;
         }
-
-
-        public void AddResources(List<Quantitiy<String>> resources)
+        
+        public void AddResources(List<ResourceAmount> resources)
         {
-            foreach (Quantitiy<String> resource in resources)
+            foreach (var resource in resources)
             {
-                if(PutResources.ContainsKey(resource.Type))
-                {
-                    Quantitiy<String> amount = PutResources[resource.Type];
-                    amount.Count += resource.Count;
-                }
+                if (PutResources.ContainsKey(resource.Type))
+                    PutResources[resource.Type].Count += resource.Count;
                 else
-                {
-                    Quantitiy<String> amount = new Quantitiy<String>();
-                    amount.Count += resource.Count;
-                    amount.Type = resource.Type;
-
-                    PutResources[resource.Type] = amount;
-                }
+                    PutResources[resource.Type] = resource.CloneResource();
             }
         }
-
 
         public bool MeetsBuildRequirements()
         {
@@ -164,23 +153,23 @@ namespace DwarfCorp
         {
             string toReturn = ToBuild.Type.Name;
 
-            foreach (Quantitiy<String> amount in ToBuild.Type.RequiredResources.Values)
+            foreach (var amount in ToBuild.Type.RequiredResources.Values)
             {
                 toReturn += "\n";
                 int numResource = 0;
-                if(PutResources.ContainsKey(amount.Type))
+                if(PutResources.ContainsKey(amount.Tag))
                 {
-                    numResource = (int) (PutResources[amount.Type].Count);
+                    numResource = (int) (PutResources[amount.Tag].Count);
                 }
-                toReturn += amount.Type.ToString() + " : " + numResource + "/" + Math.Max((int) (amount.Count * VoxelOrders.Count * 0.25f), 1);
+                toReturn += amount.Tag.ToString() + " : " + numResource + "/" + Math.Max((int) (amount.Count * VoxelOrders.Count * 0.25f), 1);
             }
 
             return toReturn;
         }
 
-        public List<Quantitiy<String>> ListRequiredResources()
+        public List<ResourceTagAmount> ListRequiredResources()
         {
-            var toReturn = new List<Quantitiy<String>>();
+            var toReturn = new List<ResourceTagAmount>();
             foreach (String s in ToBuild.Type.RequiredResources.Keys)
             {
                 int needed = Math.Max((int) (ToBuild.Type.RequiredResources[s].Count * VoxelOrders.Count * 0.25f), 1);
@@ -196,7 +185,7 @@ namespace DwarfCorp
                     continue;
                 }
 
-                toReturn.Add(new Quantitiy<String>(s, needed - currentResources));
+                toReturn.Add(new ResourceTagAmount(s, needed - currentResources));
             }
 
             return toReturn;

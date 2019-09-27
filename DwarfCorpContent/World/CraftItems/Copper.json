@@ -4,7 +4,7 @@
   "Category": "Material",
   "RequiredResources": [
     {
-      "Type": "CopperOre",
+      "Tag": "CopperOre",
       "Count": 1
     }
   ],

@@ -5,7 +5,7 @@
 
   "RequiredResources": [
     {
-      "Type": "Material",
+      "Tag": "Material",
       "Count": 3
     }
   ],

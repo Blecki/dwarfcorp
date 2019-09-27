@@ -454,7 +454,6 @@
     <Compile Include="World\Economy\Payroll\CollectMoney.cs" />
     <Compile Include="World\Economy\Payroll\DepositMoney.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\HireEmployeeDialog.cs" />
-    <Compile Include="World\Economy\Quantity.cs" />
     <Compile Include="World\Economy\Resources\Resource.cs" />
     <Compile Include="World\Economy\Resources\ResourceAmount.cs" />
     <Compile Include="World\Economy\Resources\ResourceSet.cs" />
@@ -468,6 +467,7 @@
     <Compile Include="Graphics\ParticleEffects\ParticleManager.cs" />
     <Compile Include="Graphics\ParticleEffects\ParticleTrigger.cs" />
     <Compile Include="World\Designations\DesignationTypeProperties.cs" />
+    <Compile Include="World\Economy\Resources\ResourceTagAmount.cs" />
     <Compile Include="World\Factions\PoliticalEvent.cs" />
     <Compile Include="World\Factions\Politics.cs" />
     <Compile Include="Library\DesignationLibrary.cs" />

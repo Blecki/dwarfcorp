@@ -40,7 +40,7 @@ namespace DwarfCorp
         public String ShortDisplayName = null;
         public String PluralDisplayName = null;
 
-        public List<Quantitiy<String>> RequiredResources = new List<Quantitiy<String>>();
+        public List<ResourceTagAmount> RequiredResources = new List<ResourceTagAmount>();
         public Gui.TileReference Icon = null;
         public float BaseCraftTime = 0.0f;
         public string Description = "";
@@ -96,7 +96,7 @@ namespace DwarfCorp
             }
         }
 
-        public Resource ToResource(WorldManager world, List<ResourceAmount> selectedResources, string prefix = "")
+        public ResourceType ToResource(WorldManager world, List<ResourceAmount> selectedResources, string prefix = "")
         {
             var objectName = String.IsNullOrEmpty(ObjectName) ? Name : ObjectName;
             string resourceName = prefix + objectName + " (" + TextGenerator.GetListString(MergeResources(selectedResources).Select(r => (string)r.Type)) + ")";
@@ -118,7 +118,7 @@ namespace DwarfCorp
                         "Craft"
                     };
             toReturn.MoneyValue = selectedResources.Sum(r => Library.GetResourceType(r.Type).HasValue(out var res) ? res.MoneyValue : 0) * 2.0m;
-            toReturn.CraftInfo = new Resource.CraftItemInfo
+            toReturn.CraftInfo = new ResourceType.CraftItemInfo
             {
                 Resources = selectedResources,
                 CraftItemType = objectName
@@ -126,7 +126,7 @@ namespace DwarfCorp
             toReturn.ShortName = Name;
             toReturn.Description = Description;
             toReturn.GuiLayers = new List<Gui.TileReference>() { Icon };
-            toReturn.CompositeLayers = new List<Resource.CompositeLayer>() { new Resource.CompositeLayer() { Asset = sheet.Texture, Frame = point, FrameSize = new Point(sheet.TileWidth, sheet.TileHeight) } };
+            toReturn.CompositeLayers = new List<ResourceType.CompositeLayer>() { new ResourceType.CompositeLayer() { Asset = sheet.Texture, Frame = point, FrameSize = new Point(sheet.TileWidth, sheet.TileHeight) } };
             toReturn.Tint = Color.White;
             Library.AddResourceType(toReturn);
 

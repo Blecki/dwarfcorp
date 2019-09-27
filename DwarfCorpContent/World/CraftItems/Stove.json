@@ -5,7 +5,7 @@
 
   "RequiredResources": [
     {
-      "Type": "Fuel",
+      "Tag": "Fuel",
       "Count": 2
     }
   ],

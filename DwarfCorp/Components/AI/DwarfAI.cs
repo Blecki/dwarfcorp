@@ -204,7 +204,7 @@ namespace DwarfCorp
                             var allow = true;
                             foreach (var resource in item.RequiredResources)
                             {
-                                var amount = AI.World.GetResourcesWithTags(new List<Quantitiy<String>>() { resource });
+                                var amount = AI.World.GetResourcesWithTags(new List<ResourceTagAmount>() { resource });
                                 if (amount == null || amount.Count == 0)
                                     allow = false;
                                 else

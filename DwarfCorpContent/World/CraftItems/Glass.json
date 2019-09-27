@@ -5,7 +5,7 @@
 
   "RequiredResources": [
     {
-      "Type": "Sand",
+      "Tag": "Sand",
       "Count": 1
     }
   ],

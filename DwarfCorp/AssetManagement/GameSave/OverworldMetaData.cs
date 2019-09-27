@@ -16,7 +16,7 @@ namespace DwarfCorp
         public Overworld Overworld;
 
         public Dictionary<int, String> BiomeTypeMap;
-        public List<Resource> Resources; // Dislike the way resources are generated on the fly.
+        public List<ResourceType> Resources; // Dislike the way resources are generated on the fly.
 
         public OverworldMetaData()
         {

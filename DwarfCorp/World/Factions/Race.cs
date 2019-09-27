@@ -72,7 +72,7 @@ namespace DwarfCorp
 
                 for (int i = 0; i < num; i++)
                 {
-                    MaybeNull<Resource> randResource = Datastructures.SelectRandom(resources);
+                    MaybeNull<ResourceType> randResource = Datastructures.SelectRandom(resources);
 
                     if (!randResource.HasValue(out var res) || res.Tags.Any(blacklistTags.Contains))
                         continue;
@@ -104,13 +104,13 @@ namespace DwarfCorp
             for (int i = 0; i < NumFurniture; i++)
             {
                 var randomObject = Datastructures.SelectRandom(Library.EnumerateCraftables().Where(type => type.Type == CraftItem.CraftType.Object && type.RequiredResources.All((tags) =>
-                    TradeGoods.Any(good => good.Key == tags.Type))));
+                    TradeGoods.Any(good => good.Key == tags.Tag))));
                 if (randomObject == null)
                     continue;
 
                 var selectedResources = new List<ResourceAmount>();
                 foreach (var requirement in randomObject.RequiredResources)
-                    selectedResources.Add(new ResourceAmount(Datastructures.SelectRandom(Library.EnumerateResourceTypesWithTag(requirement.Type)).Name, requirement.Count));
+                    selectedResources.Add(new ResourceAmount(Datastructures.SelectRandom(Library.EnumerateResourceTypesWithTag(requirement.Tag)).Name, requirement.Count));
 
                 var randResource = randomObject.ToResource(world, selectedResources, Posessive + " ");
                 if (!toReturn.ContainsKey(randResource.Name))

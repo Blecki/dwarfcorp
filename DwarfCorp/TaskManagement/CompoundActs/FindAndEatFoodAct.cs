@@ -32,8 +32,8 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-            Tree = new Sequence(new Select(new GetResourcesAct(Agent, FoodTag) { Name = "Get " + FoodTag },
-                                            new GetResourcesAct(Agent, FallbackTag) { Name = "Get " + FallbackTag })
+            Tree = new Sequence(new Select(new GetResourcesWithTag(Agent, FoodTag) { Name = "Get " + FoodTag },
+                                            new GetResourcesWithTag(Agent, FallbackTag) { Name = "Get " + FallbackTag })
             { Name = "Get Food" },
                                 new Select(new GoToChairAndSitAct(Agent), true) { Name = "Find a place to eat." },
                                 new EatFoodAct(Agent, MustPay));
@@ -69,7 +69,7 @@ namespace DwarfCorp
         public override IEnumerable<Act.Status> Run()
         {
             List<ResourceAmount> foods =
-                Agent.Creature.Inventory.GetResources(new Quantitiy<String>("Edible"), Inventory.RestockType.Any);
+                Agent.Creature.Inventory.GetResources(new ResourceTagAmount("Edible", 1), Inventory.RestockType.Any);
 
             if (foods.Count == 0 && Agent.Creature.Faction == Agent.World.PlayerFaction)
             {

@@ -10,7 +10,7 @@
 
   "RequiredResources": [
     {
-      "Type": "Metal",
+      "Tag": "Metal",
       "Count": 1
     }
   ],
