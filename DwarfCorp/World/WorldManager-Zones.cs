@@ -28,6 +28,7 @@ namespace DwarfCorp
     {
         public List<Zone> Zones = new List<Zone>();
         public List<BuildZoneOrder> BuildDesignations = new List<BuildZoneOrder>();
+        public int NextRoomID = 0;
     }
 
     public partial class WorldManager

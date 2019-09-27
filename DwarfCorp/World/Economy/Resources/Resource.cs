@@ -1,9 +1,7 @@
-using System.Collections.Generic;
-using System.Security.AccessControl;
-using DwarfCorp.GameStates;
 using DwarfCorp.Gui;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace DwarfCorp
 {

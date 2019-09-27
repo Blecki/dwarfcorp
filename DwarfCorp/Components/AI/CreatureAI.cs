@@ -201,7 +201,7 @@ namespace DwarfCorp
                         if (applicablePotions.FirstOrDefault().HasValue(out var potion))
                         {
                             potion.PotionType.Drink(Creature);
-                            inventory.Remove(new ResourceAmount(potion), Inventory.RestockType.Any);
+                            inventory.Remove(new ResourceAmount(potion.Name, 1), Inventory.RestockType.Any);
                         }
                     }
 

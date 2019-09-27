@@ -39,7 +39,7 @@ namespace DwarfCorp.Play.EmployeeInfo
                 if (Employee.GetRoot().GetComponent<Inventory>().HasValue(out var inventory))
                 {
                     ContentsPanel.Hidden = false;
-                    ContentsPanel.Resources = inventory.ContentsAsResourceContainer();
+                    ContentsPanel.Resources = inventory.ContentsAsResourceSet();
                     ContentsPanel.Invalidate();
                     Text = "";
                 }

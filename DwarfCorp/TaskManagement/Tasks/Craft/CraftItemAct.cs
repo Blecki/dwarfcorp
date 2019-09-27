@@ -67,7 +67,7 @@ namespace DwarfCorp
             {
                 if (Item.ExistingResource != null)
                 {
-                    if (!Creature.Inventory.RemoveAndCreateWithToss(new List<ResourceAmount>() { new ResourceAmount(Item.ExistingResource) }, pos(), Inventory.RestockType.None))
+                    if (!Creature.Inventory.RemoveAndCreateWithToss(new List<ResourceAmount>() { new ResourceAmount(Item.ExistingResource, 1) }, pos(), Inventory.RestockType.None))
                     {
                         Agent.SetMessage("Failed to create resources for item (1).");
                         yield return Act.Status.Fail;
@@ -306,7 +306,7 @@ namespace DwarfCorp
                                             new Domain(() => !Item.HasResources && (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
                                                      new Select(
                                                             new Sequence(new Wrap(ReserveResources),
-                                                                         new GetResourcesAct(Agent, new List<ResourceAmount>() { new ResourceAmount(Item.ExistingResource) } ),
+                                                                         new GetResourcesAct(Agent, new List<ResourceAmount>() { new ResourceAmount(Item.ExistingResource, 1) } ),
                                                                          new Wrap(SetSelectedResources)),
                                                             new Sequence(new Wrap(UnReserve), Act.Status.Fail)
                                                             )

@@ -2078,7 +2078,7 @@ namespace DwarfCorp.GameStates
                                 plantTool.PlantType = resource.Type;
                                 plantTool.RequiredResources = new List<ResourceAmount>()
                                     {
-                                          new ResourceAmount(resource.Type)
+                                          new ResourceAmount(resource.Type, 1)
                                     };
                                 World.Tutorial("plant");
                             },

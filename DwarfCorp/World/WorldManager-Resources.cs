@@ -142,7 +142,7 @@ namespace DwarfCorp
 
         public bool HasResource(String resource)
         {
-            return HasResources(new List<ResourceAmount>() { new ResourceAmount(resource) });
+            return HasResources(new List<ResourceAmount>() { new ResourceAmount(resource, 1) });
         }
 
         public int CountResourcesWithTag(String tag)
@@ -264,7 +264,7 @@ namespace DwarfCorp
                     if (toReturn.ContainsKey(resource))
                         toReturn[resource].Second.Count += 1;
                     else
-                        toReturn[resource] = new Pair<ResourceAmount>(new ResourceAmount(resource, 0), new ResourceAmount(resource));
+                        toReturn[resource] = new Pair<ResourceAmount>(new ResourceAmount(resource, 0), new ResourceAmount(resource, 1));
                 }
             }
 

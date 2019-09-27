@@ -12,33 +12,6 @@ namespace DwarfCorp
             Count = amount.Count;
         }
 
-        public ResourceAmount(String type)
-        {
-            Type = type;
-            Count = 1;
-        }
-
-        public ResourceAmount(Resource resource)
-        {
-            Type = resource.Name;
-            Count = 1;
-        }
-        
-        public ResourceAmount(GameComponent component)
-        {
-            // Todo: GROSS
-            // Assume that the first tag of the body is
-            // the name of the resource.
-            Type = component.Tags[0];
-            Count = 1;
-        }
-
-        public ResourceAmount(Resource resourceType, int numResources)
-        {
-            Type = resourceType.Name;
-            Count = numResources;
-        }
-
         public ResourceAmount(String type, int num)
         {
             Type = type;

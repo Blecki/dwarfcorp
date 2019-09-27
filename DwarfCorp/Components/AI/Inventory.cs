@@ -12,7 +12,6 @@ namespace DwarfCorp
 {
     public class Inventory : GameComponent
     {
-        //public ResourceContainer Resources { get; set; }
         public class InventoryItem
         {
             public String Resource;
@@ -27,10 +26,9 @@ namespace DwarfCorp
             Any
         }
 
-        public List<InventoryItem> Resources { get; set; } 
-        public float DropRate { get; set; }
+        public List<InventoryItem> Resources = new List<InventoryItem>();
 
-        public ResourceSet ContentsAsResourceContainer()
+        public ResourceSet ContentsAsResourceSet()
         {
             var r = new ResourceSet();
             foreach (var item in Resources)
@@ -53,8 +51,6 @@ namespace DwarfCorp
         public Inventory(ComponentManager Manager, string name, Vector3 BoundingBoxExtents, Vector3 LocalBoundingBoxOffset) :
             base(Manager, name, Matrix.Identity, BoundingBoxExtents, LocalBoundingBoxOffset)
         {
-            DropRate = 1.0f;
-            Resources = new List<InventoryItem>();
             CollisionType = CollisionType.None;
         }
 
@@ -150,8 +146,7 @@ namespace DwarfCorp
             }
 
             item.SetFlag(Flag.Active, false);
-            BodyTossMotion toss = new BodyTossMotion(0.5f + MathFunctions.Rand(0.05f, 0.08f),
-                1.0f, item.GlobalTransform, Parent as GameComponent);
+            var toss = new BodyTossMotion(0.5f + MathFunctions.Rand(0.05f, 0.08f), 1.0f, item.GlobalTransform, Parent);
             item.AnimationQueue.Add(toss);
             toss.OnComplete += () => item.GetRoot().Delete();
 
@@ -166,7 +161,7 @@ namespace DwarfCorp
                 List<GameComponent> things = RemoveAndCreate(resource, type);
                 foreach (var body in things)
                 {
-                    TossMotion toss = new TossMotion(1.0f, 2.5f, body.LocalTransform, pos);
+                    var toss = new TossMotion(1.0f, 2.5f, body.LocalTransform, pos);
 
                     if (body.GetRoot().GetComponent<Physics>().HasValue(out var physics))
                         physics.CollideMode = Physics.CollisionMode.None;
@@ -179,17 +174,17 @@ namespace DwarfCorp
             return createdAny;
         }
 
-        public List<GameComponent> RemoveAndCreate(ResourceAmount resources, RestockType type) // todo: Kill
+        public List<GameComponent> RemoveAndCreate(ResourceAmount Resource, RestockType RestockType) // todo: Kill
         {
-            var parentBody = GetRoot() as GameComponent;
-            var pos = parentBody == null ? GlobalTransform.Translation : parentBody.Position;
-            List<GameComponent> toReturn = new List<GameComponent>();
+            var parentBody = GetRoot();
+            var pos = parentBody.Position;
+            var toReturn = new List<GameComponent>();
 
-            if(!Remove(resources.CloneResource(), type))
+            if(!Remove(Resource.CloneResource(), RestockType))
                 return toReturn;
 
-            for(int i = 0; i < resources.Count; i++)
-                toReturn.Add(EntityFactory.CreateEntity<GameComponent>(resources.Type + " Resource", pos + MathFunctions.RandVector3Cube() * 0.5f));
+            for(int i = 0; i < Resource.Count; i++)
+                toReturn.Add(EntityFactory.CreateEntity<GameComponent>(Resource.Type + " Resource", pos + MathFunctions.RandVector3Cube() * 0.5f));
 
             return toReturn;
         }
@@ -205,7 +200,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    toReturn.Add(resource.Resource, new ResourceAmount(resource.Resource));
+                    toReturn.Add(resource.Resource, new ResourceAmount(resource.Resource, 1));
                 }
             }
             return toReturn;
@@ -290,7 +285,7 @@ namespace DwarfCorp
                     return false;
                 })
                 .Where(r => Library.GetResourceType(r.Resource).HasValue(out var res) && res.Tags.Contains(quantitiy.Type))
-                .Select(r => new ResourceAmount(r.Resource))
+                .Select(r => new ResourceAmount(r.Resource, 1))
                 .ToList();
         }
 

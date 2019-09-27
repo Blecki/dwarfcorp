@@ -110,7 +110,7 @@ namespace DwarfCorp
 
                 var selectedResources = new List<ResourceAmount>();
                 foreach (var requirement in randomObject.RequiredResources)
-                    selectedResources.Add(new ResourceAmount(Datastructures.SelectRandom(Library.EnumerateResourceTypesWithTag(requirement.Type)), requirement.Count));
+                    selectedResources.Add(new ResourceAmount(Datastructures.SelectRandom(Library.EnumerateResourceTypesWithTag(requirement.Type)).Name, requirement.Count));
 
                 var randResource = randomObject.ToResource(world, selectedResources, Posessive + " ");
                 if (!toReturn.ContainsKey(randResource.Name))

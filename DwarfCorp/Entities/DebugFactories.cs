@@ -21,7 +21,7 @@ namespace DwarfCorp
                     if (Library.CreateEncrustedTrinketResourceType(randResource.Name, Datastructures.SelectRandom(Library.EnumerateResourceTypes().Where(r => r.Tags.Contains("Gem"))).Name).HasValue(out var _rr))
                         randResource = _rr;
 
-                return new ResourceEntity(Manager, new ResourceAmount(randResource.Name), Position);
+                return new ResourceEntity(Manager, new ResourceAmount(randResource.Name, 1), Position);
             }
 
             return null;
@@ -32,7 +32,7 @@ namespace DwarfCorp
         {
             var foods = Library.EnumerateResourceTypesWithTag("RawFood");
             if (Library.CreateMealResourceType(Datastructures.SelectRandom(foods).Name, Datastructures.SelectRandom(foods).Name).HasValue(out var randResource))
-                return new ResourceEntity(Manager, new ResourceAmount(randResource.Name), Position);
+                return new ResourceEntity(Manager, new ResourceAmount(randResource.Name, 1), Position);
             return null;
         }
     }

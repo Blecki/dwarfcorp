@@ -39,7 +39,7 @@ namespace DwarfCorp
             {
                 Resources = new List<ResourceAmount>();
                 if (Library.GetCraftable(craftType).HasValue(out var libraryType))
-                    Resources.AddRange(libraryType.RequiredResources.Select(requirement => new ResourceAmount(Library.EnumerateResourceTypesWithTag(requirement.Type).OrderBy(r => r.MoneyValue.Value).FirstOrDefault(), requirement.Count)));
+                    Resources.AddRange(libraryType.RequiredResources.Select(requirement => new ResourceAmount(Library.EnumerateResourceTypesWithTag(requirement.Type).OrderBy(r => r.MoneyValue.Value).FirstOrDefault().Name, requirement.Count)));
             }
         }
 

@@ -75,7 +75,7 @@ namespace DwarfCorp
                     Money = data.Has("Money") ? data.GetData<DwarfBux>("Money") : (DwarfBux)64m
                 });
             else
-                EntityFactory.RegisterEntity(resource.Name + " Resource", (position, data) => new ResourceEntity(EntityFactory.World.ComponentManager, new ResourceAmount(resource, data.GetData<int>("num", 1)), position));   
+                EntityFactory.RegisterEntity(resource.Name + " Resource", (position, data) => new ResourceEntity(EntityFactory.World.ComponentManager, new ResourceAmount(resource.Name, data.GetData<int>("num", 1)), position));   
         }
 
         public static void AddResourceTypeIfNew(Resource Resource)

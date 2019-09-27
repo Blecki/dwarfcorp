@@ -39,7 +39,7 @@ namespace DwarfCorp
             if (item.GetComponent<CraftDetails>().HasValue(out var details))
             {
                 details.CraftType = Item.ItemType.Name;
-                details.Resources = Item.SelectedResources.ConvertAll(p => new ResourceAmount(p));
+                details.Resources = Item.SelectedResources.ConvertAll(p => p.CloneResource());
             }
             else
             {

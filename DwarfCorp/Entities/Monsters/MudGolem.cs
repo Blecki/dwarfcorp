@@ -48,7 +48,7 @@ namespace DwarfCorp
             for (int i = 0; i < 16;  i++)
             {
                 int num = MathFunctions.RandInt(1, 32 - i);
-                Inventory.AddResource(new ResourceAmount(Datastructures.SelectRandom(gems), num));
+                Inventory.AddResource(new ResourceAmount(Datastructures.SelectRandom(gems).Name, num));
                 i += num - 1;
             }
 

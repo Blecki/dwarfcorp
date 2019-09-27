@@ -36,7 +36,7 @@ namespace DwarfCorp
                 var resourcesToStock = Creature.Inventory.Resources.Where(a => a.MarkedForRestock && Zone is Stockpile && (Zone as Stockpile).IsAllowed(a.Resource)).ToList();
                 foreach (var resource in resourcesToStock)
                 {
-                    List<GameComponent> createdItems = Creature.Inventory.RemoveAndCreate(new ResourceAmount(resource.Resource), Inventory.RestockType.RestockResource);
+                    List<GameComponent> createdItems = Creature.Inventory.RemoveAndCreate(new ResourceAmount(resource.Resource, 1), Inventory.RestockType.RestockResource);
 
                     foreach (var b in createdItems.OfType<ResourceEntity>())
                     {

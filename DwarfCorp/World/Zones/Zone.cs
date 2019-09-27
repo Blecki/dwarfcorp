@@ -12,23 +12,14 @@ namespace DwarfCorp
     public class Zone
     {
         public string ID = "";
-        private static int Counter = 0; // Todo: List to save data.
-
         public List<VoxelHandle> Voxels = new List<VoxelHandle>();
         public List<GameComponent> ZoneBodies = new List<GameComponent>();
         public ZoneType Type;
-        [JsonIgnore] public Gui.Widget GuiTag;
         public bool IsBuilt;
         public virtual String GetDescriptionString() { return Library.GetString("generic-room-description"); }
 
-        
-
-
-        [JsonIgnore]
-        public WorldManager World { get; set; }
-
-        protected ChunkManager Chunks { get { return World.ChunkManager; } }
-
+        [JsonIgnore] public Gui.Widget GuiTag;
+        [JsonIgnore] public WorldManager World;
 
         [OnDeserialized]
         public void OnDeserialized(StreamingContext ctx)
@@ -46,8 +37,8 @@ namespace DwarfCorp
             this.World = World;
             this.Type = Type;
 
-            ID = Counter + ". " + Type.Name;
-            ++Counter;
+            ID = World.PersistentData.NextRoomID + ". " + Type.Name;
+            ++World.PersistentData.NextRoomID;
         }
 
         public Zone()
@@ -58,7 +49,7 @@ namespace DwarfCorp
         public GameComponent GetNearestBody(Vector3 location)
         {
             GameComponent toReturn = null;
-            float nearestDistance = float.MaxValue;
+            var nearestDistance = float.MaxValue;
 
             foreach (var body in ZoneBodies)
             {
@@ -69,32 +60,27 @@ namespace DwarfCorp
                     nearestDistance = dist;
                 }
             }
+
             return toReturn;
         }
 
         public void SetTint(Color color)
         {
-            foreach (var obj in ZoneBodies)
-            {
-                SetDisplayColor(obj, color);
-            }
-        }
-
-        private void SetDisplayColor(GameComponent body, Color color)
-        {
-            foreach (var sprite in body.EnumerateAll().OfType<Tinter>())
-                sprite.VertexColorTint = color;
+            foreach (var body in ZoneBodies)
+                foreach (var sprite in body.EnumerateAll().OfType<Tinter>())
+                    sprite.VertexColorTint = color;
         }
 
         public GameComponent GetNearestBodyWithTag(Vector3 location, string tag, bool filterReserved)
         {
             GameComponent toReturn = null;
-            float nearestDistance = float.MaxValue;
+            var nearestDistance = float.MaxValue;
 
             foreach (GameComponent body in ZoneBodies)
             {
                 if (!body.Tags.Contains(tag)) continue;
                 if (filterReserved && (body.IsReserved || body.ReservedFor != null)) continue;
+
                 float dist = (location - body.GlobalTransform.Translation).LengthSquared();
                 if (dist < nearestDistance)
                 {
@@ -102,6 +88,7 @@ namespace DwarfCorp
                     nearestDistance = dist;
                 }
             }
+
             return toReturn;
         }
 

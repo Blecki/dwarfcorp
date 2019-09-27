@@ -64,10 +64,19 @@ namespace DwarfCorp
             //    break;
             //}
 
-            ResourceAmount resource = new ResourceAmount(Target);
-            Agent.Blackboard.SetData(StashedItemOut, resource);
-            Agent.Creature.NoiseMaker.MakeNoise("Stash", Agent.Position);
-            yield return Status.Success;
+            if (Target is ResourceEntity resEnt)
+            {
+                var resource = resEnt.Resource;
+                // Todo: This is disgusting.
+                //var resource = new ResourceAmount(Target.Tags[0], 1);
+                Agent.Blackboard.SetData(StashedItemOut, resource);
+                Agent.Creature.NoiseMaker.MakeNoise("Stash", Agent.Position);
+                yield return Status.Success;
+            }
+            else
+            {
+                yield return Status.Fail;
+            }
         }        
     }    
 }
