@@ -105,7 +105,7 @@ namespace DwarfCorp
                     // In this case the dwarf already has all the resources. We have to find the resources from the inventory.
                     var resourcesStashed = new List<ResourceAmount>();
                     foreach (var tag in Resources)
-                        resourcesStashed.AddRange(Creature.Inventory.GetResources(tag, Inventory.RestockType.Any));
+                        resourcesStashed.AddRange(Creature.Inventory.EnumerateResources(tag, Inventory.RestockType.Any));
                     Tree = new SetBlackboardData<List<ResourceAmount>>(Agent, BlackboardEntry, resourcesStashed);
                 }
                 else if (ResourcesToStash != null)

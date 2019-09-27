@@ -270,7 +270,7 @@ namespace DwarfCorp
             {
                 if (Creature.Inventory.HasResource(resource))
                 {
-                    var matchingResources = Creature.Inventory.GetResources(resource, Inventory.RestockType.Any);
+                    var matchingResources = Creature.Inventory.EnumerateResources(resource, Inventory.RestockType.Any);
                     for (int i = 0; i < resource.Count; i++)
                     {
                         foreach(var matching in matchingResources)

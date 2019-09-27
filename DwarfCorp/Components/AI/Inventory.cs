@@ -48,32 +48,32 @@ namespace DwarfCorp
         {
         }
 
-        public Inventory(ComponentManager Manager, string name, Vector3 BoundingBoxExtents, Vector3 LocalBoundingBoxOffset) :
-            base(Manager, name, Matrix.Identity, BoundingBoxExtents, LocalBoundingBoxOffset)
+        public Inventory(ComponentManager Manager, string Name, Vector3 BoundingBoxExtents, Vector3 LocalBoundingBoxOffset) :
+            base(Manager, Name, Matrix.Identity, BoundingBoxExtents, LocalBoundingBoxOffset)
         {
             CollisionType = CollisionType.None;
         }
 
-        public bool Remove(IEnumerable<ResourceAmount> resourceAmount, RestockType type)
+        public bool Remove(IEnumerable<ResourceAmount> ResourceAmounts, RestockType RestockType)
         {
-            foreach (var quantity in resourceAmount)
-                if (!Remove(quantity, type))
+            foreach (var resource in ResourceAmounts)
+                if (!Remove(resource, RestockType))
                     return false;
             return true;
         }
 
-        public bool Remove(ResourceAmount resourceAmount, RestockType type)
+        public bool Remove(ResourceAmount Resource, RestockType RestockType)
         {
-            for (int i = 0; i < resourceAmount.Count; i++)
+            for (int i = 0; i < Resource.Count; i++)
             {
                 var kRemove = -1;
                 for (int k = 0; k < Resources.Count; k++)
                 {
-                    if (type == RestockType.None && Resources[k].MarkedForRestock)
+                    if (RestockType == RestockType.None && Resources[k].MarkedForRestock)
                         continue;
-                    else if (type == RestockType.RestockResource && !Resources[k].MarkedForRestock)
+                    else if (RestockType == RestockType.RestockResource && !Resources[k].MarkedForRestock)
                         continue;
-                    if (Resources[k].Resource != resourceAmount.Type) continue;
+                    if (Resources[k].Resource != Resource.Type) continue;
                     kRemove = k;
                     break;
                 }
@@ -86,8 +86,7 @@ namespace DwarfCorp
 
             return true;
         }
-
-
+        
         public bool Pickup(GameComponent item, RestockType restockType)
         {
             if(item == null || item.IsDead)
@@ -164,17 +163,13 @@ namespace DwarfCorp
 
         internal Dictionary<string, ResourceAmount> Aggregate()
         {
-            Dictionary<string, ResourceAmount> toReturn = new Dictionary<string, ResourceAmount>();
+            var toReturn = new Dictionary<string, ResourceAmount>();
             foreach(var resource in Resources)
             {
                 if (toReturn.ContainsKey(resource.Resource))
-                {
                     toReturn[resource.Resource].Count++;
-                }
                 else
-                {
                     toReturn.Add(resource.Resource, new ResourceAmount(resource.Resource, 1));
-                }
             }
             return toReturn;
         }
@@ -195,12 +190,11 @@ namespace DwarfCorp
             foreach (var resource in Resources)
             {
                 if (!resourceCounts.ContainsKey(resource.Resource))
-                {
                     resourceCounts[resource.Resource] = 0;
-                }
                 resourceCounts[resource.Resource]++;
             }
-            var parentBody = GetRoot() as GameComponent;
+
+            var parentBody = GetRoot();
             var myBox = GetBoundingBox();
             var box = parentBody == null ? GetBoundingBox() : new BoundingBox(myBox.Min - myBox.Center() + parentBody.Position, myBox.Max - myBox.Center() + parentBody.Position);
             var aggregatedResources = resourceCounts.Select(c => new ResourceAmount(c.Key, c.Value));
@@ -209,9 +203,7 @@ namespace DwarfCorp
             if (Attacker != null && !Attacker.IsDead)
                 foreach (var item in piles)
                     Attacker.Creature.Gather(item);
-            //else
-            //    foreach (var item in piles)
-            //        World.Master.TaskManager.AddTask(new GatherItemTask(item));
+
             Resources.Clear();
 
             if (GetRoot().GetComponent<Flammable>().HasValue(out var flames) && flames.Heat >= flames.Flashpoint)
@@ -240,7 +232,7 @@ namespace DwarfCorp
             return resourceCounts.Count > 0 && resourceCounts.Max(r => r.Value >= itemToStock.Count);
         }
 
-        public List<ResourceAmount> GetResources(ResourceTagAmount quantitiy, RestockType type = RestockType.RestockResource)
+        public List<ResourceAmount> EnumerateResources(ResourceTagAmount quantitiy, RestockType type = RestockType.RestockResource)
         {
             return Resources
                 .Where(r =>

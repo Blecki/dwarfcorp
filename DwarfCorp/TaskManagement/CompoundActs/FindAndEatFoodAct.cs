@@ -69,7 +69,7 @@ namespace DwarfCorp
         public override IEnumerable<Act.Status> Run()
         {
             List<ResourceAmount> foods =
-                Agent.Creature.Inventory.GetResources(new ResourceTagAmount("Edible", 1), Inventory.RestockType.Any);
+                Agent.Creature.Inventory.EnumerateResources(new ResourceTagAmount("Edible", 1), Inventory.RestockType.Any);
 
             if (foods.Count == 0 && Agent.Creature.Faction == Agent.World.PlayerFaction)
             {

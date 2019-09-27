@@ -64,7 +64,7 @@ namespace DwarfCorp
                 // In this case the dwarf already has all the resources. We have to find the resources from the inventory.
                 var resource = Tags.Select(t =>
                 {
-                    var matches = Creature.Inventory.GetResources(new ResourceTagAmount(t, 1));
+                    var matches = Creature.Inventory.EnumerateResources(new ResourceTagAmount(t, 1));
                     if (matches.Count > 0)
                         return matches[0];
                     return null;
