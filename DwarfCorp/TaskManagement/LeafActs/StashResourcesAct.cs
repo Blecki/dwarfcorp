@@ -38,10 +38,18 @@ namespace DwarfCorp
                 {
                     List<GameComponent> createdItems = Creature.Inventory.RemoveAndCreate(new ResourceAmount(resource.Resource), Inventory.RestockType.RestockResource);
 
-                    foreach (GameComponent b in createdItems)
+                    foreach (var b in createdItems.OfType<ResourceEntity>())
                     {
-                        if (Zone.AddItem(b))
+                        if (Zone.AddResource(b.Resource))
                         {
+                            var toss = new TossMotion(1.0f, 2.5f, b.LocalTransform, Zone.GetBoundingBox().Center() + new Vector3(0.5f, 0.5f, 0.5f));
+
+                            if (b.GetRoot().GetComponent<Physics>().HasValue(out var physics))
+                                physics.CollideMode = Physics.CollisionMode.None;
+
+                            b.AnimationQueue.Add(toss);
+                            toss.OnComplete += b.Die;
+
                             Creature.NoiseMaker.MakeNoise("Stockpile", Creature.AI.Position);
                             Creature.Stats.NumItemsGathered++;
                             Creature.CurrentCharacterMode = Creature.Stats.CurrentClass.AttackMode;
@@ -49,9 +57,7 @@ namespace DwarfCorp
                             Creature.Sprite.PlayAnimations(Creature.Stats.CurrentClass.AttackMode);
 
                             while (!Creature.Sprite.AnimPlayer.IsDone())
-                            {
                                 yield return Status.Running;
-                            }
 
                             yield return Status.Running;
                         }

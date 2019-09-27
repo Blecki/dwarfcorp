@@ -120,7 +120,7 @@ namespace DwarfCorp.Play
                             }
                         });
 
-                        if (lambdaCopy.SupportsFilters)
+                        if (lambdaCopy is Stockpile stock && stock.SupportsFilters)
                         {
                             tag.AddChild(new Button
                             {

@@ -73,7 +73,7 @@ namespace DwarfCorp
 
             var r = new Random();
 
-            foreach (var stockpile in EnumerateZones())
+            foreach (var stockpile in EnumerateZones().OfType<Stockpile>())
                 foreach (var resource in stockpile.Resources.Enumerate().OrderBy(x => r.Next()))
                     foreach (var requirement in tagsRequired)
                     {
@@ -118,7 +118,7 @@ namespace DwarfCorp
         {
             foreach (var resource in resources)
             {
-                int count = EnumerateZones().Sum(stock => stock.Resources.Count(resource.Type));
+                int count = EnumerateZones().OfType<Stockpile>().Sum(stock => stock.Resources.Count(resource.Type));
 
                 if (count < resource.Count)
                     return false;
@@ -131,7 +131,7 @@ namespace DwarfCorp
         {
             foreach (ResourceAmount resource in resources)
             {
-                int count = EnumerateZones().Sum(stock => stock.Resources.Count(resource.Type));
+                int count = EnumerateZones().OfType<Stockpile>().Sum(stock => stock.Resources.Count(resource.Type));
 
                 if (count < resources.Where(r => r.Type == resource.Type).Sum(r => r.Count))
                     return false;
@@ -182,7 +182,7 @@ namespace DwarfCorp
         {
             var toReturn = new Dictionary<string, ResourceAmount>();
 
-            foreach (var stockpile in EnumerateZones().Where(pile => !(pile is Graveyard)))
+            foreach (var stockpile in EnumerateZones().OfType<Stockpile>().Where(pile => !(pile is Graveyard)))
             {
                 foreach (var resource in stockpile.Resources.Enumerate())
                 {

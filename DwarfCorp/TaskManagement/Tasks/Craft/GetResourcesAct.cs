@@ -11,7 +11,7 @@ namespace DwarfCorp
     public class GetResourcesAct : CompoundCreatureAct
     {
         public List<Quantitiy<String>> Resources { get; set; }
-        public List<KeyValuePair<Zone, ResourceAmount> > ResourcesToStash { get; set; }
+        public List<KeyValuePair<Stockpile, ResourceAmount> > ResourcesToStash { get; set; }
         public String BlackboardEntry = "ResourcesStashed";
 
         public GetResourcesAct()
@@ -46,7 +46,7 @@ namespace DwarfCorp
             yield return Status.Success;
         }
 
-        bool HasResources(CreatureAI agent, KeyValuePair<Zone, ResourceAmount> resource)
+        bool HasResources(CreatureAI agent, KeyValuePair<Stockpile, ResourceAmount> resource)
         {
             return resource.Key.Resources.Has(resource.Value.Type, resource.Value.Count);
         }

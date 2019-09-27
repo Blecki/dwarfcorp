@@ -41,6 +41,7 @@ namespace DwarfCorp
             BoxType = "Grave";
             BoxOffset = new Vector3(0.5f, 0.4f, 0.5f);
             ResourcesPerVoxel = 1;
+            RecalculateMaxResources();
             SupportsFilters = false;
         }
 

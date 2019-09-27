@@ -12,7 +12,7 @@ namespace DwarfCorp
     public class Zone
     {
         public string ID = "";
-        private static int Counter = 0;
+        private static int Counter = 0; // Todo: List to save data.
 
         public List<VoxelHandle> Voxels = new List<VoxelHandle>();
         public List<GameComponent> ZoneBodies = new List<GameComponent>();
@@ -20,27 +20,15 @@ namespace DwarfCorp
         [JsonIgnore] public Gui.Widget GuiTag;
         public bool IsBuilt;
         public virtual String GetDescriptionString() { return Library.GetString("generic-room-description"); }
-        public bool SupportsFilters = false;
-        
-        [JsonProperty]
-        protected int ResPerVoxel = 32;
 
-        [JsonProperty]
-        public int ResourceCapacity { get; private set; }
-
-        [JsonIgnore]
-        public int ResourcesPerVoxel
-        {
-            get { return ResPerVoxel; }
-            set { ResPerVoxel = value; RecalculateMaxResources(); }
-        }
         
+
+
         [JsonIgnore]
         public WorldManager World { get; set; }
 
         protected ChunkManager Chunks { get { return World.ChunkManager; } }
 
-        public ResourceSet Resources;
 
         [OnDeserialized]
         public void OnDeserialized(StreamingContext ctx)
@@ -60,8 +48,6 @@ namespace DwarfCorp
 
             ID = Counter + ". " + Type.Name;
             ++Counter;
-
-            Resources = new ResourceSet();
         }
 
         public Zone()
@@ -149,10 +135,6 @@ namespace DwarfCorp
             Voxels.Clear();
         }
 
-        public virtual bool IsFull()
-        {
-            return Resources.TotalCount >= ResourceCapacity;
-        }
         
         public bool ContainsVoxel(VoxelHandle voxel)
         {
@@ -175,15 +157,7 @@ namespace DwarfCorp
                 removed = true;
                 break;
             }
-            RecalculateMaxResources();
             return removed;
-        }
-
-        public virtual void RecalculateMaxResources()
-        {
-            if (Voxels == null) return;
-            int newResources = Voxels.Count * ResourcesPerVoxel;
-            ResourceCapacity = newResources;
         }
 
         public virtual void AddVoxel(VoxelHandle Voxel)
@@ -195,9 +169,6 @@ namespace DwarfCorp
 
             if (Library.GetVoxelType(Type.FloorType).HasValue(out VoxelType floor))
                 Voxel.Type = floor;
-
-            RecalculateMaxResources();
-          
         }
 
         public VoxelHandle GetNearestVoxel(Vector3 position)
@@ -220,17 +191,10 @@ namespace DwarfCorp
             return closest;
         }
 
-
-        public virtual bool AddItem(GameComponent component) // Todo: Kill
-        {
-            return AddResource(new ResourceAmount(component));
-        }
-
         public virtual bool AddResource(ResourceAmount Resource)
         {
             return false;
         }
-
        
         public bool Intersects(BoundingBox box)
         {

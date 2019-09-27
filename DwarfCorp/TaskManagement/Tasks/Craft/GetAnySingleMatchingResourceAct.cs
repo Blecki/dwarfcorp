@@ -27,7 +27,7 @@ namespace DwarfCorp
             yield return Status.Success;
         }
 
-        bool HasResources(CreatureAI agent, KeyValuePair<Zone, ResourceAmount> resource)
+        bool HasResources(CreatureAI agent, KeyValuePair<Stockpile, ResourceAmount> resource)
         {
             return resource.Key.Resources.Has(resource.Value.Type, resource.Value.Count);
         }

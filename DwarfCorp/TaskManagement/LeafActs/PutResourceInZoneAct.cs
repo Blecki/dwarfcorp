@@ -83,10 +83,20 @@ namespace DwarfCorp
 
             var createdItems = Creature.Inventory.RemoveAndCreate(Resource, Inventory.RestockType.RestockResource);
 
-            foreach (var b in createdItems)
+            foreach (var b in createdItems.OfType<ResourceEntity>())
             {
-                if (Zone.AddItem(b))
+                if (Zone.AddResource(b.Resource))
+                {
+                    var toss = new TossMotion(1.0f, 2.5f, b.LocalTransform, Zone.GetBoundingBox().Center() + new Vector3(0.5f, 0.5f, 0.5f));
+
+                    if (b.GetRoot().GetComponent<Physics>().HasValue(out var physics))
+                        physics.CollideMode = Physics.CollisionMode.None;
+
+                    b.AnimationQueue.Add(toss);
+                    toss.OnComplete += b.Die;
+
                     Creature.Stats.NumItemsGathered++;
+                }
                 else
                 {
                     Creature.Inventory.AddResource(new ResourceAmount(Resource.Type, 1), Inventory.RestockType.RestockResource);

@@ -23,9 +23,14 @@ namespace DwarfCorp
             return new Stockpile(Data, World);
         }
 
+        public bool SupportsFilters = true;
+        public int ResourceCapacity { get; private set; }
+        public int ResourcesPerVoxel = 32;
+        public ResourceSet Resources = new ResourceSet();
+
         public Stockpile()
         {
-            SupportsFilters = true;
+            RecalculateMaxResources();
         }
 
         protected Stockpile(ZoneType Data, WorldManager World) :
@@ -37,8 +42,6 @@ namespace DwarfCorp
                 "Corpse",
                 "Money"
             };
-
-            SupportsFilters = true;
         }
 
         private static uint maxID = 0;
@@ -153,35 +156,6 @@ namespace DwarfCorp
             }
         }
         
-        public override bool AddItem(GameComponent component)
-        {
-            if (component.Tags.Count == 0)
-                return false;
-
-            var resourceType = component.Tags[0];
-            if (!IsAllowed(resourceType))
-                return false;
-
-            bool worked =  base.AddItem(component);
-
-            if (Boxes.Count > 0)
-            {
-                TossMotion toss = new TossMotion(1.0f, 2.5f, component.LocalTransform,
-                    Boxes[Boxes.Count - 1].LocalTransform.Translation + new Vector3(0.5f, 0.5f, 0.5f));
-
-                if (component.GetRoot().GetComponent<Physics>().HasValue(out var physics))
-                    physics.CollideMode = Physics.CollisionMode.None;
-
-                component.AnimationQueue.Add(toss);
-                toss.OnComplete += component.Die;
-            }
-            else
-                component.Die();
-
-            World.RecomputeCachedResourceState();
-            return worked;
-        }
-
         public override bool AddResource(ResourceAmount resource)
         {
             if (resource == null)
@@ -191,6 +165,8 @@ namespace DwarfCorp
                 return false;
 
             Resources.Add(resource.Type, resource.Count);
+            World.RecomputeCachedResourceState();
+
             return true;
         }
 
@@ -219,9 +195,29 @@ namespace DwarfCorp
             base.Destroy();
         }
 
-        public override void RecalculateMaxResources()
+        public void RecalculateMaxResources()
         {
-            base.RecalculateMaxResources();
+            if (Voxels == null) return;
+            int newResources = Voxels.Count * ResourcesPerVoxel;
+            ResourceCapacity = newResources;
+        }
+
+        public override void AddVoxel(VoxelHandle Voxel)
+        {
+            base.AddVoxel(Voxel);
+            RecalculateMaxResources();
+        }
+
+        public override bool RemoveVoxel(VoxelHandle voxel)
+        {
+            var r = base.RemoveVoxel(voxel);
+            RecalculateMaxResources();
+            return r;
+        }
+
+        public virtual bool IsFull()
+        {
+            return Resources.TotalCount >= ResourceCapacity;
         }
 
         public override void Update(DwarfTime Time)

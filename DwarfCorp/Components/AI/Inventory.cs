@@ -158,7 +158,7 @@ namespace DwarfCorp
             return true;
         }
 
-        public bool RemoveAndCreateWithToss(List<ResourceAmount> resources, Vector3 pos, RestockType type)
+        public bool RemoveAndCreateWithToss(List<ResourceAmount> resources, Vector3 pos, RestockType type) // Todo: Kill
         {
             bool createdAny = false;
             foreach (var resource in resources)
@@ -179,7 +179,7 @@ namespace DwarfCorp
             return createdAny;
         }
 
-        public List<GameComponent> RemoveAndCreate(ResourceAmount resources, RestockType type)
+        public List<GameComponent> RemoveAndCreate(ResourceAmount resources, RestockType type) // todo: Kill
         {
             var parentBody = GetRoot() as GameComponent;
             var pos = parentBody == null ? GlobalTransform.Translation : parentBody.Position;
@@ -189,11 +189,7 @@ namespace DwarfCorp
                 return toReturn;
 
             for(int i = 0; i < resources.Count; i++)
-            {
-                GameComponent newEntity = EntityFactory.CreateEntity<GameComponent>(resources.Type + " Resource",
-                    pos + MathFunctions.RandVector3Cube()*0.5f);
-                toReturn.Add(newEntity);
-            }
+                toReturn.Add(EntityFactory.CreateEntity<GameComponent>(resources.Type + " Resource", pos + MathFunctions.RandVector3Cube() * 0.5f));
 
             return toReturn;
         }

@@ -76,7 +76,7 @@ namespace DwarfCorp
         {
             bool validTargetFound = false;
 
-            var sortedPiles = new List<Zone>(Creature.World.EnumerateZones().Where(pile => pile is Stockpile && (pile as Stockpile).IsAllowed(Item.Type)));
+            var sortedPiles = Creature.World.EnumerateZones().OfType<Stockpile>().Where(pile => pile.IsAllowed(Item.Type)).ToList();
             sortedPiles.Sort(CompareStockpiles);
 
             foreach (var s in sortedPiles)
