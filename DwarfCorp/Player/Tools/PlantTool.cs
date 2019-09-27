@@ -80,7 +80,7 @@ namespace DwarfCorp
             }
 
             var voxelBox = voxel.GetBoundingBox().Expand(-0.2f);
-            if (World.EnumerateZones().Where(room => room.Intersects(voxelBox)).Any())
+            if (World.EnumerateZones().Any(z => z.GetBoundingBox().Expand(0.1f).Intersects(voxelBox)))
             {
                 World.UserInterface.ShowTooltip("Can't plant inside zones.");
                 return false;

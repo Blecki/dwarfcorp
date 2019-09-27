@@ -13,18 +13,7 @@ namespace DwarfCorp
     public class PutResourceInZone : CreatureAct
     {
         [JsonIgnore]
-        public Zone Zone { get { return GetZone(); } set { SetZone(value); } }
-
-        public Zone GetZone()
-        {
-            return Agent.Blackboard.GetData<Stockpile>(StockpileName);
-        }
-
-        public void SetZone(Zone pile)
-        {
-            Agent.Blackboard.SetData(StockpileName, pile);
-        }
-
+        public Stockpile Zone { get { return Agent.Blackboard.GetData<Stockpile>(StockpileName); } set { Agent.Blackboard.SetData(StockpileName, value); } }
 
         [JsonIgnore]
         public VoxelHandle Voxel { get { return GetVoxel(); } set { SetVoxel(value); } }

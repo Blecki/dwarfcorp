@@ -206,8 +206,12 @@ namespace DwarfCorp
                     if (creature.Tasks.Count == 0)
                         creature.Tasks.Add(new TradeTask(tradePort, this));
 
-                    if (!tradePort.IsRestingOnZone(creature.Position)) continue;
-
+                    var zoneBox = tradePort.GetBoundingBox();
+                    zoneBox.Max.Y += 1;
+                    zoneBox = zoneBox.Expand(1.0f);
+                    if (zoneBox.Contains(creature.Position) == ContainmentType.Disjoint)
+                        continue;
+                    
                     if (ExpiditionState != Expedition.State.Trading || !IsTradeWidgetValid())
                         MakeTradeWidget(World);
 

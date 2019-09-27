@@ -12,7 +12,7 @@ namespace DwarfCorp
     public class StashResourcesAct : CreatureAct
     {
         public ResourceAmount Resources { get; set; }
-        public Zone Zone = null;
+        public Stockpile Zone = null;
         public Inventory.RestockType RestockType = Inventory.RestockType.None;
 
         public StashResourcesAct()
@@ -20,7 +20,7 @@ namespace DwarfCorp
 
         }
 
-        public StashResourcesAct(CreatureAI agent, Zone zone, ResourceAmount resources) :
+        public StashResourcesAct(CreatureAI agent, Stockpile zone, ResourceAmount resources) :
             base(agent)
         {
             Zone = zone;

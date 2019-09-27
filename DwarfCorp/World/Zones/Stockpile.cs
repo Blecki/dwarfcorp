@@ -156,7 +156,7 @@ namespace DwarfCorp
             }
         }
         
-        public override bool AddResource(ResourceAmount resource)
+        public bool AddResource(ResourceAmount resource)
         {
             if (resource == null)
                 return false;

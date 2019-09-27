@@ -191,17 +191,6 @@ namespace DwarfCorp
             return closest;
         }
 
-        public virtual bool AddResource(ResourceAmount Resource)
-        {
-            return false;
-        }
-       
-        public bool Intersects(BoundingBox box)
-        {
-            BoundingBox larger = box.Expand(0.1f);
-            return Voxels.Any(storage => storage.GetBoundingBox().Intersects(larger));
-        }
-
         public BoundingBox GetBoundingBox()
         {
             var minX = Int32.MaxValue;
@@ -224,15 +213,7 @@ namespace DwarfCorp
 
             return new BoundingBox(new Vector3(minX, minY, minZ), new Vector3(maxX + 1, maxY + 1, maxZ + 1));
         }
-
-        public bool IsRestingOnZone(Vector3 worldCoordinate, float expansion=1.0f)
-        {
-            BoundingBox box = GetBoundingBox();
-            box.Max.Y += 1;
-            box = box.Expand(expansion);
-            return box.Contains(worldCoordinate) != ContainmentType.Disjoint;
-        }
-
+                
         public virtual void OnBuilt()
         {
 
