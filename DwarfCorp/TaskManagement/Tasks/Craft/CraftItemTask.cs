@@ -113,7 +113,8 @@ namespace DwarfCorp
         public bool CanBuild(Creature agent)
         {
             if (CraftDesignation.ExistingResource == null)
-                throw new InvalidProgramException();
+                //throw new InvalidProgramException();
+                return false;
 
             //if (CraftDesignation.ExistingResource != null) // This is a placement of an existing item.
             {
