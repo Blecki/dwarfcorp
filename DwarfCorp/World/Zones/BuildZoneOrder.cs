@@ -11,7 +11,7 @@ namespace DwarfCorp
     public class BuildZoneOrder
     {
         public Zone ToBuild { get; set; }
-        public Dictionary<String, ResourceAmount> PutResources { get; set; }
+        public ResourceSet PutResources;
         public List<BuildVoxelOrder> VoxelOrders { get; set; }
         public List<GameComponent> WorkObjects = new List<GameComponent>(); 
         public bool IsBuilt { get; set; }
@@ -40,36 +40,26 @@ namespace DwarfCorp
             BuildProgress = 0;
             World = world;
             ToBuild = toBuild;
-            PutResources = new Dictionary<String, ResourceAmount>();
+            PutResources = new ResourceSet();
             VoxelOrders = new List<BuildVoxelOrder>();
             IsBuilt = false;
             IsDestroyed = false;
         }
         
-        public void AddResources(List<ResourceAmount> resources)
+        public void AddResources(List<Resource> resources)
         {
-            foreach (var resource in resources)
-            {
-                if (PutResources.ContainsKey(resource.Type))
-                    PutResources[resource.Type].Count += resource.Count;
-                else
-                    PutResources[resource.Type] = resource.CloneResource();
-            }
+            foreach (var res in resources)
+                PutResources.Add(res);
         }
 
         public bool MeetsBuildRequirements()
         {
             bool toReturn = true;
-            foreach (var s in ToBuild.Type.RequiredResources.Keys)
+            foreach (var s in ToBuild.Type.RequiredResources)
             {
-                if (!PutResources.ContainsKey(s))
-                {
-                    return false;
-                }
-                else
-                {
-                    toReturn = toReturn && (PutResources[s].Count >= Math.Max((int)(ToBuild.Type.RequiredResources[s].Count * VoxelOrders.Count * 0.25f), 1));
-                }
+                var required = Math.Max((int)(s.Value.Count * VoxelOrders.Count * 0.25f), 1);
+                var has = PutResources.CountWithTag(s.Value.Tag);
+                toReturn = toReturn && has >= required;
             }
 
             return toReturn;
@@ -124,16 +114,10 @@ namespace DwarfCorp
             return MathFunctions.GetBoundingBox(components);
         }
 
-        public bool IsResourceSatisfied(String name)
+        public bool IsResourceSatisfied(String Tag)
         {
-            int required = GetNumRequiredResources(name);
-            int current = 0;
-
-            if(PutResources.ContainsKey(name))
-            {
-                current = (int) PutResources[name].Count;
-            }
-
+            int required = GetNumRequiredResources(Tag);
+            int current = PutResources.CountWithTag(Tag);
             return current >= required;
         }
 
@@ -156,11 +140,7 @@ namespace DwarfCorp
             foreach (var amount in ToBuild.Type.RequiredResources.Values)
             {
                 toReturn += "\n";
-                int numResource = 0;
-                if(PutResources.ContainsKey(amount.Tag))
-                {
-                    numResource = (int) (PutResources[amount.Tag].Count);
-                }
+                int numResource = PutResources.CountWithTag(amount.Tag);
                 toReturn += amount.Tag.ToString() + " : " + numResource + "/" + Math.Max((int) (amount.Count * VoxelOrders.Count * 0.25f), 1);
             }
 
@@ -173,12 +153,7 @@ namespace DwarfCorp
             foreach (String s in ToBuild.Type.RequiredResources.Keys)
             {
                 int needed = Math.Max((int) (ToBuild.Type.RequiredResources[s].Count * VoxelOrders.Count * 0.25f), 1);
-                int currentResources = 0;
-
-                if(PutResources.ContainsKey(s))
-                {
-                    currentResources = PutResources[s].Count;
-                }
+                int currentResources = PutResources.CountWithTag(s);
 
                 if(currentResources >= needed)
                 {

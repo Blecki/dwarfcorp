@@ -8,18 +8,18 @@ namespace DwarfCorp
     public class PlaceVoxelAct : CreatureAct
     {
         public VoxelHandle Location;
-        public ResourceAmount Resource;
         public String VoxelType;
+        public String ResourceBlackboardName;
 
         public PlaceVoxelAct(
             VoxelHandle Location,
             CreatureAI Agent,
-            ResourceAmount Resource,
+            String ResourceBlackboardName,
             String VoxelType) :
             base(Agent)
         {
             this.Location = Location;
-            this.Resource = Resource;
+            this.ResourceBlackboardName = ResourceBlackboardName;
             this.VoxelType = VoxelType;
 
             Name = "Build DestinationVoxel " + Location.ToString();
@@ -33,7 +33,7 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            if (!Creature.Inventory.HasResource(Resource))
+            if (!Creature.Inventory.Contains(Agent.Blackboard.GetData<Resource>(ResourceBlackboardName)))
             {
                 yield return Status.Fail;
             }
@@ -44,7 +44,7 @@ namespace DwarfCorp
                     yield return status;
             }
 
-            var grabbed = Creature.Inventory.RemoveAndCreate(Resource, Inventory.RestockType.Any).FirstOrDefault();
+            var grabbed = Creature.Inventory.RemoveAndCreate(Agent.Blackboard.GetData<Resource>(ResourceBlackboardName), Inventory.RestockType.Any);
 
             if (grabbed == null)
             {

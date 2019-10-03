@@ -10,6 +10,7 @@ namespace DwarfCorp
     internal class CraftItemTask : Task
     {
         public CraftDesignation CraftDesignation;
+        public Stockpile ItemSource;
 
         public CraftItemTask()
         {
@@ -37,11 +38,6 @@ namespace DwarfCorp
 
             if (CraftDesignation.ItemType.IsMagical)
                 Category = TaskCategory.Research;
-
-            if (CraftDesignation.ExistingResource != null)
-            {
-                MaxAssignable = 1;
-            }
         }
 
         public override void OnEnqueued(WorldManager World)
@@ -55,12 +51,8 @@ namespace DwarfCorp
             {
                 if (CraftDesignation.WorkPile != null) CraftDesignation.WorkPile.GetRoot().Delete();
                 if (CraftDesignation.PreviewResource != null) CraftDesignation.PreviewResource.GetRoot().Delete();
-                if (CraftDesignation.HasResources)
-                    foreach (var resource in CraftDesignation.SelectedResources)
-                    {
-                        var resourceEntity = new ResourceEntity(World.ComponentManager, resource, CraftDesignation.Entity.GlobalTransform.Translation);
-                        World.ComponentManager.RootComponent.AddChild(resourceEntity);
-                    }
+                var resourceEntity = new ResourceEntity(World.ComponentManager, CraftDesignation.SelectedResource, CraftDesignation.Entity.GlobalTransform.Translation);
+                World.ComponentManager.RootComponent.AddChild(resourceEntity);
                 CraftDesignation.Entity.GetRoot().Delete();
             }
 
@@ -74,7 +66,7 @@ namespace DwarfCorp
 
         public override MaybeNull<Act> CreateScript(Creature creature)
         {
-            return new CraftItemAct(creature.AI, CraftDesignation);
+            return new CraftItemAct(creature.AI, CraftDesignation) { ItemSource = ItemSource };
         }
 
         public override bool ShouldRetry(Creature agent)
@@ -112,34 +104,7 @@ namespace DwarfCorp
 
         public bool CanBuild(Creature agent)
         {
-            if (CraftDesignation.ExistingResource == null)
-                //throw new InvalidProgramException();
-                return false;
-
-            //if (CraftDesignation.ExistingResource != null) // This is a placement of an existing item.
-            {
-                bool hasResource = agent.World.HasResource(CraftDesignation.ExistingResource);
-                return hasResource;
-            }
-
-            //if (!String.IsNullOrEmpty(CraftDesignation.ItemType.CraftLocation))
-            //{
-            //    var nearestBuildLocation = agent.Faction.FindNearestItemWithTags(CraftDesignation.ItemType.CraftLocation, Vector3.Zero, false, agent.AI);
-
-            //    if (nearestBuildLocation == null)
-            //        return false;
-            //}
-
-            //foreach (var resourceAmount in CraftDesignation.ItemType.RequiredResources)
-            //{
-            //    var resources = agent.World.ListResourcesWithTag(resourceAmount.Type, CraftDesignation.ItemType.AllowHeterogenous);
-            //    if (resources.Count == 0 || !resources.Any(r => r.Count >= resourceAmount.Count))
-            //    {
-            //        return false;
-            //    }
-            //}
-
-            //return true;
+            return true;
         }
 
         public override void OnCancelled(TaskManager Manager, WorldManager World)

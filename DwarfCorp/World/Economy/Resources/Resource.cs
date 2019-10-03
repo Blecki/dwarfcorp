@@ -1,53 +1,36 @@
-using DwarfCorp.Gui;
-using Microsoft.Xna.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class ResourceType
+    public class Resource
     {
-        public struct TrinketInfo
+        [JsonProperty] private String _Type;
+        [JsonIgnore] public String Type => _Type;
+
+        [JsonIgnore] private MaybeNull<ResourceType> _cachedResourceType = null;
+        [JsonIgnore] public MaybeNull<ResourceType> ResourceType
         {
-            public string BaseAsset;
-            public string EncrustingAsset;
-            public int SpriteRow;
-            public int SpriteColumn;
+            get
+            {
+                if (!_cachedResourceType.HasValue())
+                    _cachedResourceType = Library.GetResourceType(_Type);
+                return _cachedResourceType;
+            }
         }
 
-        public struct CompositeLayer
+        public Resource()
         {
-            public string Asset;
-            public Point FrameSize;
-            public Point Frame;
+            _Type = "invalid";
         }
 
-        public struct CraftItemInfo
+        public Resource(String Type)
         {
-            public string CraftItemType;
-            public List<ResourceAmount> Resources;
-        }
-
-        public string Name;
-        public DwarfBux MoneyValue;
-        public string Description;
-        public List<TileReference> GuiLayers; // Todo: Would like to combine the different graphics options
-        public List<String> Tags;
-        public float FoodContent;
-        public List<CompositeLayer> CompositeLayers;
-        public TrinketInfo TrinketData;
-        public bool Generated = true;
-        public string ShortName;
-        public string PlantToGenerate;
-        public Color Tint;
-        public string AleName = "";
-        public CraftItemInfo CraftInfo;
-        public Potion PotionType = null;
-        public string Category = "";
-
-        public ResourceType()
-        {
-
+            _Type = Type;
         }
     }
 }

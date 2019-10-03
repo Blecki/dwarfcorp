@@ -197,7 +197,6 @@ namespace DwarfCorp
         {
             IndicatorManager.Update(gameTime);
             HandleAmbientSound();
-            UpdateOrphanedTasks();
 
             TaskManager.Update(PlayerFaction.Minions);
 
@@ -368,47 +367,6 @@ namespace DwarfCorp
 
             if (LoadingThread != null && LoadingThread.IsAlive)
                 LoadingThread.Abort();
-        }
-
-        // This hack exists to find orphaned tasks not assigned to any dwarf, and to then
-        // put them on the task list.
-        // Todo: With the new task pool, how often is this used?
-        public void UpdateOrphanedTasks()
-        {
-            orphanedTaskRateLimiter.Update(DwarfTime.LastTime);
-            if (orphanedTaskRateLimiter.HasTriggered)
-            {
-                List<Task> orphanedTasks = new List<Task>();
-
-                foreach (var ent in PersistentData.Designations.EnumerateEntityDesignations())
-                {
-                    if (ent.Type == DesignationType.Attack)
-                    {
-                        var task = new KillEntityTask(ent.Body, KillEntityTask.KillType.Attack);
-                        if (!TaskManager.HasTask(task) &&
-                            !PlayerFaction.Minions.Any(minion => minion.Tasks.Contains(task)))
-                        {
-                            orphanedTasks.Add(task);
-                        }
-                    }
-
-
-                    else if (ent.Type == DesignationType.Craft)
-                    {
-                        var task = new CraftItemTask(ent.Tag as CraftDesignation);
-                        if (!TaskManager.HasTask(task) &&
-                            !PlayerFaction.Minions.Any(minion => minion.Tasks.Contains(task)))
-                        {
-                            orphanedTasks.Add(task);
-                        }
-                    }
-
-                    // TODO ... other entity task types
-                }
-
-                if (orphanedTasks.Count > 0)
-                    TaskManager.AddTasks(orphanedTasks);
-            }
         }
 
         public void OnVoxelDestroyed(VoxelHandle V)

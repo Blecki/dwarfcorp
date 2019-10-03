@@ -12,7 +12,7 @@ namespace DwarfCorp
 {
     public class ResourceEntity : Physics
     {
-        public ResourceAmount Resource { get; set; }
+        public Resource Resource { get; set; }
         public Timer LifeTimer = new Timer(3600, true);
        
         public ResourceEntity()
@@ -20,15 +20,13 @@ namespace DwarfCorp
             
         }
 
-        public ResourceEntity(ComponentManager manager, ResourceAmount resourceType, Vector3 position) :
+        public ResourceEntity(ComponentManager manager, Resource resourceType, Vector3 position) :
             base(manager, resourceType.Type, 
                 Matrix.CreateTranslation(position), new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0))
         {
             Resource = resourceType;
-            if (Resource.Count > 1)
-            {
-                Name = String.Format("Pile of {0} {1}s", Resource.Count, Resource.Type);
-            }
+            //if (Resource.Count > 1)
+            //    Name = String.Format("Pile of {0} {1}s", Resource.Count, Resource.Type);
             Restitution = 0.1f;
             Friction = 0.1f;
 
@@ -77,7 +75,7 @@ namespace DwarfCorp
             {
                 Tinter sprite = null;
 
-                int numSprites = Math.Min(Resource.Count, 3);
+                int numSprites = 1;// Math.Min(Resource.Count, 3);
                 for (int i = 0; i < numSprites; i++)
                 {
                     // Minor optimization for single layer resources.

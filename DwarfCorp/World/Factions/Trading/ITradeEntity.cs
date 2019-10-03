@@ -8,15 +8,15 @@ namespace DwarfCorp.Trade
 {
     public interface ITradeEntity
     {
-        List<ResourceAmount> Resources { get; }
+        ResourceSet Resources { get; }
         DwarfBux Money { get; }
         int AvailableSpace { get; }
-        DwarfBux ComputeValue(List<ResourceAmount> Resources);
+        DwarfBux ComputeValue(List<ResourceTypeAmount> Resources);
         DwarfBux ComputeValue(String Resource);
         Race TraderRace { get; }
         Faction TraderFaction { get; }
-        void RemoveResources(List<ResourceAmount> Resources);
-        void AddResources(List<ResourceAmount> Resources);
+        List<Resource> RemoveResourcesByType(List<ResourceTypeAmount> Resources);
+        void AddResources(List<Resource> Resources);
         void AddMoney(DwarfBux Money);
     }
 }

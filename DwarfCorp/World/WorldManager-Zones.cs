@@ -71,7 +71,7 @@ namespace DwarfCorp
             return desiredRoom;
         }
 
-        public IEnumerable<KeyValuePair<Stockpile, ResourceAmount>> GetStockpilesContainingResources(Vector3 biasPos, IEnumerable<ResourceAmount> required)
+        public IEnumerable<KeyValuePair<Stockpile, Resource>> GetStockpilesContainingResources(Vector3 biasPos, IEnumerable<ResourceTypeAmount> required)
         {
             foreach (var amount in required)
             {
@@ -83,18 +83,33 @@ namespace DwarfCorp
 
                     foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => sResource.Type == amount.Type))
                     {
-                        var amountToRemove = System.Math.Min(resource.Count, amount.Count - numGot);
-                        if (amountToRemove <= 0)
-                            continue;
-
-                        numGot += amountToRemove;
-                        yield return new KeyValuePair<Stockpile, ResourceAmount>(stockpile, new ResourceAmount(resource.Type, amountToRemove));
+                        numGot += 1;
+                        yield return new KeyValuePair<Stockpile, Resource>(stockpile, resource);
                     }
                 }
             }
         }
 
-        public IEnumerable<KeyValuePair<Stockpile, ResourceAmount>> GetStockpilesContainingResources(List<ResourceTagAmount> tags)
+        public IEnumerable<KeyValuePair<Stockpile, Resource>> GetStockpilesContainingResources( IEnumerable<ResourceTypeAmount> required)
+        {
+            foreach (var amount in required)
+            {
+                var numGot = 0;
+                foreach (var stockpile in EnumerateZones().OfType<Stockpile>())
+                {
+                    if (numGot >= amount.Count)
+                        break;
+
+                    foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => sResource.Type == amount.Type))
+                    {
+                        numGot += 1;
+                        yield return new KeyValuePair<Stockpile, Resource>(stockpile, resource);
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<KeyValuePair<Stockpile, Resource>> GetStockpilesContainingResources(List<ResourceTagAmount> tags)
         {
             foreach (var tag in tags)
             {
@@ -103,23 +118,22 @@ namespace DwarfCorp
                 {
                     if (numGot >= tag.Count)
                         break;
+
                     foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => Library.GetResourceType(sResource.Type).HasValue(out var res) && res.Tags.Contains(tag.Tag)))
                     {
-                        int amountToRemove = global::System.Math.Min(resource.Count, tag.Count - numGot);
-                        if (amountToRemove <= 0) continue;
-                        numGot += amountToRemove;
-                        yield return new KeyValuePair<Stockpile, ResourceAmount>(stockpile, new ResourceAmount(resource.Type, amountToRemove));
+                        numGot += 1;
+                        yield return new KeyValuePair<Stockpile, Resource>(stockpile, resource);
                     }
                 }
             }
         }
 
-        public KeyValuePair<Stockpile, ResourceAmount>? GetFirstStockpileContainingResourceWithMatchingTag(List<String> Tags)
+        public KeyValuePair<Stockpile, Resource>? GetFirstStockpileContainingResourceWithMatchingTag(List<String> Tags)
         {
             foreach (var stockpile in EnumerateZones().OfType<Stockpile>())
             {
                 foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => Library.GetResourceType(sResource.Type).HasValue(out var res) && res.Tags.Any(t => Tags.Contains(t))))
-                    return new KeyValuePair<Stockpile, ResourceAmount>(stockpile, new ResourceAmount(resource.Type, 1));
+                    return new KeyValuePair<Stockpile, Resource>(stockpile, resource);
             }
 
             return null;
@@ -152,7 +166,7 @@ namespace DwarfCorp
             return EnumerateZones().OfType<Stockpile>().Any(s => !(s is Graveyard) && s.IsBuilt && !s.IsFull());
         }
 
-        public bool HasFreeStockpile(ResourceAmount toPut)
+        public bool HasFreeStockpile(ResourceTypeAmount toPut)
         {
             return EnumerateZones().OfType<Stockpile>().Any(s => s.IsBuilt && !s.IsFull() && s.IsAllowed(toPut.Type));
         }

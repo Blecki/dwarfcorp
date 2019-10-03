@@ -17,7 +17,7 @@ namespace DwarfCorp
         }
 
         public CoinPile(ComponentManager manager, Vector3 position) :
-            base(manager, new ResourceAmount("Coins", 1), position)
+            base(manager, new Resource("Coins"), position)
         {
             Name = "Coins";
             Tags.Add("Coins");

@@ -122,8 +122,8 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.FloatBottomRight,
                 OnClick = (sender, args) =>
                 {
-                    foreach (var resource in ResourceColumns.SelectedResources)
-                        Settings.InstanceSettings.InitalEmbarkment.Resources.Add(resource.Type, resource.Count);
+                    foreach (var res in Settings.PlayerCorporationResources.GetByType(ResourceColumns.SelectedResources))
+                        Settings.InstanceSettings.InitalEmbarkment.Resources.Add(res);
 
                     var message = "";
                     var valid = Embarkment.ValidateEmbarkment(Settings, out message);
@@ -261,8 +261,8 @@ namespace DwarfCorp.GameStates
                     else
                         return 0;
                 },
-                SourceResources = Settings.PlayerCorporationResources.Enumerate().ToList(),
-                SelectedResources = Settings.InstanceSettings.InitalEmbarkment.Resources.Enumerate().ToList(),
+                SourceResources = Settings.PlayerCorporationResources.AggregateByType(),
+                SelectedResources = Settings.InstanceSettings.InitalEmbarkment.Resources.AggregateByType(),
                 LeftHeader = "Available",
                 RightHeader = "Taking"
             }) as EmbarkmentResourceColumns;

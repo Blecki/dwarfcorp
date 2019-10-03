@@ -11,9 +11,7 @@ namespace DwarfCorp
 {
     public class EquippedItem
     {
-        public string Resource;
-        // Properties like durability left, etc.
-        // -- Will need to revamp player inventories for this. Actually... all inventories. 
+        public Resource Resource;
     }
 
     public class Equipment

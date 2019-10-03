@@ -42,7 +42,7 @@ namespace DwarfCorp
 
         public bool ValidateSit()
         {
-            GameComponent chair = Agent.Blackboard.GetData<GameComponent>("Chair");
+            var chair = Agent.Blackboard.GetData<GameComponent>("reserved-chair");
             if (chair == null || chair.IsDead || !chair.Active)
             {
                 return false;
@@ -54,7 +54,7 @@ namespace DwarfCorp
         public IEnumerable<Status> WaitUntilBored()
         {
             Timer waitTimer = new Timer(SitTime, false);
-            GameComponent body = Creature.AI.Blackboard.GetData<GameComponent>("Chair");
+            var body = Creature.AI.Blackboard.GetData<GameComponent>("reserved-chair");
 
             // Snap relative the chair's position, not their own...
             Vector3 snapPosition = body.Position + new Vector3(0, 0.4f, 0);
@@ -118,12 +118,14 @@ namespace DwarfCorp
             Creature.OverrideCharacterMode = false;
            
             Tree = new Domain(  () => !Agent.IsDead && !Agent.Creature.Stats.IsAsleep,
-                                new Sequence(new ClearBlackboardData(Creature.AI, "Chair"),
-                                new Wrap(() => Creature.FindAndReserve("Chair", "Chair")),
+                                new Sequence(new ClearBlackboardData(Creature.AI, "reserved-chair"),
+                                new Wrap(() => Creature.FindAndReserve("Chair", "reserved-chair")),
                                 new Domain(ValidateSit, new Sequence(
-                                new GoToTaggedObjectAct(Creature.AI) {Tag = "Chair", Teleport = true, TeleportOffset = new Vector3(0, 0.1f, 0), ObjectName = "Chair", CheckForOcclusion = false},
+                                new GoToTaggedObjectAct(Creature.AI) {
+                                    Teleport = true,
+                                    TeleportOffset = new Vector3(0, 0.1f, 0), ObjectBlackboardName = "reserved-chair", CheckForOcclusion = false},
                                 new Wrap(WaitUntilBored))),
-                                new Wrap(() => Creature.Unreserve("Chair")))) | new Wrap(() => Creature.Unreserve("Chair"));
+                                new Wrap(() => Creature.Unreserve("reserved-chair")))) | new Wrap(() => Creature.Unreserve("reserved-chair"));
             base.Initialize();
         }
 
@@ -132,7 +134,7 @@ namespace DwarfCorp
             Agent.Physics.IsSleeping = false;
             Agent.Physics.Velocity = Vector3.Zero;
             Creature.OverrideCharacterMode = false;
-            foreach (var statuses in Creature.Unreserve("Chair"))
+            foreach (var statuses in Creature.Unreserve("reserved-chair"))
             {
                 continue;
             }

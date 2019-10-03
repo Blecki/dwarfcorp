@@ -14,7 +14,7 @@ namespace DwarfCorp
     {
         public class InventoryItem
         {
-            public String Resource;
+            public Resource Resource;
             public bool MarkedForRestock = false;
             public bool MarkedForUse = false;
         }
@@ -32,7 +32,7 @@ namespace DwarfCorp
         {
             var r = new ResourceSet();
             foreach (var item in Resources)
-                r.Add(item.Resource, 1);
+                r.Add(item.Resource);
             return r;
         }
 
@@ -54,37 +54,46 @@ namespace DwarfCorp
             CollisionType = CollisionType.None;
         }
 
-        public bool Remove(IEnumerable<ResourceAmount> ResourceAmounts, RestockType RestockType)
+        public Resource Find(String OfType, RestockType RestockType)
         {
-            foreach (var resource in ResourceAmounts)
+            return Resources
+                .Where(r =>
+                {
+                    switch (RestockType)
+                    {
+                        case RestockType.Any:
+                            return true;
+                        case RestockType.None:
+                            return !r.MarkedForRestock;
+                        case RestockType.RestockResource:
+                            return r.MarkedForRestock;
+                    }
+
+                    return false;
+                })
+                .Where(r => r.Resource.Type == OfType)
+                .Select(r => r.Resource)
+                .FirstOrDefault();
+        }
+
+        public bool Remove(IEnumerable<Resource> Resources, RestockType RestockType)
+        {
+            foreach (var resource in Resources)
                 if (!Remove(resource, RestockType))
                     return false;
             return true;
         }
 
-        public bool Remove(ResourceAmount Resource, RestockType RestockType)
+        public bool Remove(Resource Resource, RestockType RestockType)
         {
-            for (int i = 0; i < Resource.Count; i++)
+            var index = Resources.FindIndex(r => Object.ReferenceEquals(r.Resource, Resource));
+            if (index >= 0)
             {
-                var kRemove = -1;
-                for (int k = 0; k < Resources.Count; k++)
-                {
-                    if (RestockType == RestockType.None && Resources[k].MarkedForRestock)
-                        continue;
-                    else if (RestockType == RestockType.RestockResource && !Resources[k].MarkedForRestock)
-                        continue;
-                    if (Resources[k].Resource != Resource.Type) continue;
-                    kRemove = k;
-                    break;
-                }
-
-                if (kRemove < 0)
-                    return false;
-
-                Resources.RemoveAt(kRemove);
+                Resources.RemoveAt(index);
+                return true;
             }
-
-            return true;
+            throw new InvalidOperationException();
+            return false;
         }
         
         public bool Pickup(GameComponent item, RestockType restockType)
@@ -96,25 +105,17 @@ namespace DwarfCorp
 
             if (item is ResourceEntity)
             {
-                ResourceEntity entity = item as ResourceEntity;
-                for (int i = 0; i < entity.Resource.Count; i++)
-                {
-                    Resources.Add(new InventoryItem()
-                    {
-                        MarkedForRestock = restockType == RestockType.RestockResource,
-                        MarkedForUse = restockType != RestockType.RestockResource,
-                        Resource = entity.Resource.Type
-                    });
-                }
-            }
-            else
-            {
+                var entity = item as ResourceEntity;
                 Resources.Add(new InventoryItem()
                 {
                     MarkedForRestock = restockType == RestockType.RestockResource,
                     MarkedForUse = restockType != RestockType.RestockResource,
-                    Resource = item.Tags[0]
+                    Resource = entity.Resource
                 });
+            }
+            else
+            {
+                throw new InvalidOperationException();
             }
 
             item.SetFlag(Flag.Active, false);
@@ -125,51 +126,44 @@ namespace DwarfCorp
             return true;
         }
 
-        public bool RemoveAndCreateWithToss(List<ResourceAmount> resources, Vector3 pos, RestockType type) // Todo: Kill
+        public bool RemoveAndCreateWithToss(Resource Resource, Vector3 pos, RestockType type) // Todo: Kill
         {
-            bool createdAny = false;
-            foreach (var resource in resources)
+            var body = RemoveAndCreate(Resource, type);
+            if (body != null)
             {
-                List<GameComponent> things = RemoveAndCreate(resource, type);
-                foreach (var body in things)
-                {
-                    var toss = new TossMotion(1.0f, 2.5f, body.LocalTransform, pos);
+                var toss = new TossMotion(1.0f, 2.5f, body.LocalTransform, pos);
 
-                    if (body.GetRoot().GetComponent<Physics>().HasValue(out var physics))
-                        physics.CollideMode = Physics.CollisionMode.None;
+                if (body.GetRoot().GetComponent<Physics>().HasValue(out var physics))
+                    physics.CollideMode = Physics.CollisionMode.None;
 
-                    body.AnimationQueue.Add(toss);
-                    toss.OnComplete += body.Delete;
-                    createdAny = true;
-                }
+                body.AnimationQueue.Add(toss);
+                toss.OnComplete += body.Delete;
+                return true;
             }
-            return createdAny;
+            return false;
         }
 
-        public List<GameComponent> RemoveAndCreate(ResourceAmount Resource, RestockType RestockType) // todo: Kill
+        public GameComponent RemoveAndCreate(Resource Resource, RestockType RestockType) // todo: Kill
         {
             var parentBody = GetRoot();
             var pos = parentBody.Position;
-            var toReturn = new List<GameComponent>();
 
-            if(!Remove(Resource.CloneResource(), RestockType))
-                return toReturn;
+            if(!Remove(Resource, RestockType))
+                return null;
 
-            for(int i = 0; i < Resource.Count; i++)
-                toReturn.Add(EntityFactory.CreateEntity<GameComponent>(Resource.Type + " Resource", pos + MathFunctions.RandVector3Cube() * 0.5f));
-
-            return toReturn;
+            return EntityFactory.CreateEntity<GameComponent>(Resource.Type + " Resource", pos + MathFunctions.RandVector3Cube() * 0.5f,
+                Blackboard.Create("resource", Resource));
         }
 
-        internal Dictionary<string, ResourceAmount> Aggregate()
+        internal Dictionary<string, ResourceTypeAmount> Aggregate()
         {
-            var toReturn = new Dictionary<string, ResourceAmount>();
+            var toReturn = new Dictionary<string, ResourceTypeAmount>();
             foreach(var resource in Resources)
             {
-                if (toReturn.ContainsKey(resource.Resource))
-                    toReturn[resource.Resource].Count++;
+                if (toReturn.ContainsKey(resource.Resource.Type))
+                    toReturn[resource.Resource.Type].Count++;
                 else
-                    toReturn.Add(resource.Resource, new ResourceAmount(resource.Resource, 1));
+                    toReturn.Add(resource.Resource.Type, new ResourceTypeAmount(resource.Resource.Type, 1));
             }
             return toReturn;
         }
@@ -186,19 +180,13 @@ namespace DwarfCorp
 
         public void DropAll()
         {
-            var resourceCounts = new Dictionary<String, int>();
-            foreach (var resource in Resources)
-            {
-                if (!resourceCounts.ContainsKey(resource.Resource))
-                    resourceCounts[resource.Resource] = 0;
-                resourceCounts[resource.Resource]++;
-            }
-
+            //var resourceCounts = Aggregate();
             var parentBody = GetRoot();
             var myBox = GetBoundingBox();
             var box = parentBody == null ? GetBoundingBox() : new BoundingBox(myBox.Min - myBox.Center() + parentBody.Position, myBox.Max - myBox.Center() + parentBody.Position);
-            var aggregatedResources = resourceCounts.Select(c => new ResourceAmount(c.Key, c.Value));
-            var piles = EntityFactory.CreateResourcePiles(aggregatedResources, box).ToList();
+            //var aggregatedResources = resourceCounts.Select(c => new ResourceTypeAmount(c.Key, c.Value.Count));
+            //var piles = EntityFactory.CreateResourcePiles(aggregatedResources, box).ToList();
+            var piles = EntityFactory.CreateResourcePiles(Resources.Select(r => r.Resource), box).ToList();
 
             if (Attacker != null && !Attacker.IsDead)
                 foreach (var item in piles)
@@ -212,9 +200,14 @@ namespace DwarfCorp
                         itemFlames.Heat = flames.Heat;
         }
 
-        public bool HasResource(ResourceAmount itemToStock)
+        public bool Contains(Resource Resource)
         {
-            return Resources.Count(resource => resource.Resource == itemToStock.Type) >= itemToStock.Count;
+            return Resources.Any(r => Object.ReferenceEquals(r.Resource, Resource));
+        }
+
+        public bool HasResource(ResourceTypeAmount itemToStock)
+        {
+            return Resources.Count(resource => resource.Resource.Type == itemToStock.Type) >= itemToStock.Count;
         }
 
         public bool HasResource(ResourceTagAmount itemToStock)
@@ -222,17 +215,17 @@ namespace DwarfCorp
             var resourceCounts = new Dictionary<String, int>();
 
             foreach (var resource in Resources)
-                if (Library.GetResourceType(resource.Resource).HasValue(out var res) && res.Tags.Contains(itemToStock.Tag))
+                if (resource.Resource.ResourceType.HasValue(out var res) && res.Tags.Contains(itemToStock.Tag))
                 {
-                    if (!resourceCounts.ContainsKey(resource.Resource))
-                        resourceCounts[resource.Resource] = 0;
-                    resourceCounts[resource.Resource]++;
+                    if (!resourceCounts.ContainsKey(resource.Resource.Type))
+                        resourceCounts[resource.Resource.Type] = 0;
+                    resourceCounts[resource.Resource.Type]++;
                 }
 
             return resourceCounts.Count > 0 && resourceCounts.Max(r => r.Value >= itemToStock.Count);
         }
 
-        public List<ResourceAmount> EnumerateResources(ResourceTagAmount quantitiy, RestockType type = RestockType.RestockResource)
+        public List<Resource> EnumerateResources(ResourceTagAmount quantitiy, RestockType type = RestockType.RestockResource)
         {
             return Resources
                 .Where(r =>
@@ -249,22 +242,36 @@ namespace DwarfCorp
 
                     return false;
                 })
-                .Where(r => Library.GetResourceType(r.Resource).HasValue(out var res) && res.Tags.Contains(quantitiy.Tag))
-                .Select(r => new ResourceAmount(r.Resource, 1))
+                .Where(r => r.Resource.ResourceType.HasValue(out var res) && res.Tags.Contains(quantitiy.Tag))
+                .Select(r => r.Resource)
                 .ToList();
         }
 
-        public void AddResource(ResourceAmount tradeGood, RestockType type = RestockType.RestockResource)
+        public List<Resource> FindResourcesOfType(ResourceTypeAmount amount)
         {
-            for (int i = 0; i < tradeGood.Count; i++)
+            var count = 0;
+            var r = new List<Resource>();
+            foreach (var res in Resources)
             {
-                Resources.Add(new InventoryItem()
+                if (res.Resource.Type == amount.Type && count < amount.Count)
                 {
-                    Resource = tradeGood.Type,
-                    MarkedForRestock = type == RestockType.RestockResource,
-                    MarkedForUse = type != RestockType.RestockResource
-                });
+                    r.Add(res.Resource);
+                    count += 1;
+                    if (count >= amount.Count)
+                        break;
+                }
             }
+            return r;
+        }
+
+        public void AddResource(Resource tradeGood, RestockType type = RestockType.RestockResource)
+        {
+            Resources.Add(new InventoryItem()
+            {
+                Resource = tradeGood,
+                MarkedForRestock = type == RestockType.RestockResource,
+                MarkedForUse = type != RestockType.RestockResource
+            });
         }
     }
 }

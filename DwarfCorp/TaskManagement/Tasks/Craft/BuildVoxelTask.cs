@@ -65,12 +65,12 @@ namespace DwarfCorp
             return !Voxel.IsValid ? 1000 : 0.01f * (agent.AI.Position - Voxel.WorldPosition).LengthSquared() + (Voxel.Coordinate.Y);
         }
 
-        public bool Validate(CreatureAI creature, VoxelHandle voxel, ResourceAmount resources)
+        public bool Validate(CreatureAI creature, VoxelHandle voxel, ResourceTypeAmount Resource)
         {
             if (creature.Blackboard.GetData<bool>("NoPath", false))
                 return false;
 
-            return creature.Creature.Inventory.HasResource(resources);
+            return creature.Creature.Inventory.HasResource(Resource);
         }
 
         public override MaybeNull<Act> CreateScript(Creature creature)
@@ -82,15 +82,15 @@ namespace DwarfCorp
                 if (resource.Key == null)
                     return null;
 
-                var resources = new ResourceAmount(resource.Value.Type, 1);
+                var resources = new ResourceTypeAmount(resource.Value.Type, 1);
 
                 return new Select(
                     new Sequence(
                         ActHelper.CreateToolCheckAct(creature.AI, "Hammer"),
-                        new GetResourcesWithTag(creature.AI, new List<ResourceAmount>() { resources }),
+                        new GetResourcesOfType(creature.AI, new List<ResourceTypeAmount>() { resources }) { BlackboardEntry = "stashed-resource" },
                         new Domain(() => Validate(creature.AI, Voxel, resources),
                             new GoToVoxelAct(Voxel, PlanAct.PlanType.Radius, creature.AI, 4.0f)),
-                        new PlaceVoxelAct(Voxel, creature.AI, resources, VoxType)),
+                        new PlaceVoxelAct(Voxel, creature.AI, "stashed-resource", VoxType)),
                     new Wrap(creature.RestockAll))
                 { Name = "Build Voxel" };
             }

@@ -24,16 +24,16 @@ namespace DwarfCorp
             }
         }
 
-        public static IEnumerable<Act.Status> FindAndReserve(this Creature agent, string tag, string thing)
+        public static IEnumerable<Act.Status> FindAndReserve(this Creature agent, string tag, string BlackboardName)
         {
-            GameComponent closestItem = agent.Faction.FindNearestItemWithTags(tag, agent.AI.Position, true, agent.AI);
+            var closestItem = agent.Faction.FindNearestItemWithTags(tag, agent.AI.Position, true, agent.AI);
 
             if (closestItem != null)
             {
                 //PlayState.AnnouncementManager.Announce("Creature " + agent.GlobalID + " reserves " + closestItem.Name + " " + closestItem.GlobalID, "");
                 closestItem.ReservedFor = agent.AI;
-                agent.AI.Blackboard.Erase(thing);
-                agent.AI.Blackboard.SetData(thing, closestItem);
+                agent.AI.Blackboard.Erase(BlackboardName);
+                agent.AI.Blackboard.SetData(BlackboardName, closestItem);
                 yield return Act.Status.Success;
                 yield break;
             }
@@ -54,20 +54,18 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
-        public static IEnumerable<Act.Status> Unreserve(this Creature agent, string thing)
+        public static IEnumerable<Act.Status> Unreserve(this Creature agent, string BlackboardName)
         {
-            if (String.IsNullOrEmpty(thing))
+            if (String.IsNullOrEmpty(BlackboardName))
             {
                 yield return Act.Status.Success;
                 yield break;
             }
-            GameComponent objectToHit = agent.AI.Blackboard.GetData<GameComponent>(thing);
+
+            var objectToHit = agent.AI.Blackboard.GetData<GameComponent>(BlackboardName);
 
             if (objectToHit != null && objectToHit.ReservedFor == agent.AI)
-            {
-                //PlayState.AnnouncementManager.Announce("Creature " + agent.GlobalID + " unreserves " + objectToHit.Name + " " + objectToHit.GlobalID, "");
                 objectToHit.ReservedFor = null;
-            }
 
             yield return Act.Status.Success;
             yield break;
@@ -81,7 +79,7 @@ namespace DwarfCorp
 
         public static void AssignRestockAllTasks(this Creature agent, TaskPriority Priority, bool IgnoreMarks)
         {
-            var aggregatedResources = new Dictionary<string, ResourceAmount>();
+            var aggregatedResources = new Dictionary<string, ResourceTypeAmount>();
 
             foreach (var resource in agent.Inventory.Resources)
             {
@@ -89,20 +87,7 @@ namespace DwarfCorp
                     continue;
 
                 resource.MarkedForRestock = true;
-
-                if (!aggregatedResources.ContainsKey(resource.Resource))
-                    aggregatedResources[resource.Resource] = new ResourceAmount(resource.Resource, 0);
-
-                aggregatedResources[resource.Resource].Count++;
-            }
-
-            foreach (var resource in aggregatedResources)
-            {
-                var task = new StockResourceTask(resource.Value.CloneResource())
-                {
-                    Priority = Priority
-                };
-
+                var task = new StockResourceTask(resource.Resource) { Priority = Priority };
                 if (task.IsFeasible(agent) == Feasibility.Feasible && !agent.AI.Tasks.Contains(task))
                     agent.AI.AssignTask(task);
             }

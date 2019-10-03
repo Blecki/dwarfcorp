@@ -27,22 +27,25 @@ namespace DwarfCorp
             yield return Status.Success;
         }
 
-        bool HasResources(CreatureAI agent, KeyValuePair<Stockpile, ResourceAmount> resource)
+        bool HasResources(CreatureAI agent, KeyValuePair<Stockpile, Resource> resource)
         {
-            return resource.Key.Resources.Has(resource.Value.Type, resource.Value.Count);
+            return resource.Key.Resources.Contains(resource.Value);
         }
 
         public override void Initialize()
         {
-            var hasAllResources = false;
+            var resource = Tags.Select(t =>
+            {
+                var matches = Creature.Inventory.EnumerateResources(new ResourceTagAmount(t, 1));
+                if (matches.Count > 0)
+                    return matches[0];
+                return null;
+            }).FirstOrDefault(r => r != null);
 
-            foreach (var tag in Tags)
-                if (Creature.Inventory.HasResource(new ResourceTagAmount(tag, 1)))
-                    hasAllResources = true;
-
-            if (!hasAllResources)
+            if (resource == null)
             {
                 var location = Creature.World.GetFirstStockpileContainingResourceWithMatchingTag(Tags);
+
                 if (!location.HasValue)
                 {
                     Tree = null;
@@ -55,32 +58,15 @@ namespace DwarfCorp
                             new GoToZoneAct(Agent, location.Value.Key)),
                         new Condition(() => HasResources(Agent, location.Value)),
                         new StashResourcesAct(Agent, location.Value.Key, location.Value.Value),
-                        new SetBlackboardData<List<ResourceAmount>>(Agent, BlackboardEntry, new List<ResourceAmount> { location.Value.Value }))
+                        new SetBlackboardData<Resource>(Agent, BlackboardEntry, location.Value.Value))
                         | (new Wrap(Agent.Creature.RestockAll) & false);
                 }
             }
             else
             {
-                // In this case the dwarf already has all the resources. We have to find the resources from the inventory.
-                var resource = Tags.Select(t =>
-                {
-                    var matches = Creature.Inventory.EnumerateResources(new ResourceTagAmount(t, 1));
-                    if (matches.Count > 0)
-                        return matches[0];
-                    return null;
-                }).FirstOrDefault(r => r != null);
-
-                if (resource == null)
-                {
-                    Tree = null;
-                    return;
-                }
-                else
-                {
-                    Tree = new SetBlackboardData<List<ResourceAmount>>(Agent, BlackboardEntry, new List<ResourceAmount> { resource });
-                }
+                Tree = new SetBlackboardData<Resource>(Agent, BlackboardEntry, resource);
             }
-          
+            
             base.Initialize();
         }
     }

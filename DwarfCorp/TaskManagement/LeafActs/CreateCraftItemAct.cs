@@ -36,23 +36,6 @@ namespace DwarfCorp
             if (Item.WorkPile != null)
                 Item.WorkPile.Die();
 
-            if (item.GetComponent<CraftDetails>().HasValue(out var details))
-            {
-                details.CraftType = Item.ItemType.Name;
-                details.Resources = Item.SelectedResources.ConvertAll(p => p.CloneResource());
-            }
-            else
-            {
-                item.AddChild(new CraftDetails(Creature.Manager)
-                {
-                    Resources = Item.SelectedResources.ConvertAll(p => p.CloneResource()),
-                    CraftType = Item.ItemType.Name
-                });
-
-                if (Item.SelectedResources.Count > 0)
-                    item.Name = Item.SelectedResources.FirstOrDefault().Type + " " + item.Name;
-            }
-
             if (Item.ItemType.AddToOwnedPool)
                 Creature.Faction.OwnedObjects.Add(item);
 

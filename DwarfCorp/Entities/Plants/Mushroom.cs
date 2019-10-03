@@ -33,7 +33,7 @@ namespace DwarfCorp
                 {
                     MarkedForRestock = false,
                     MarkedForUse = false,
-                    Resource = resource
+                    Resource = new Resource(resource)
                 });
             }
 

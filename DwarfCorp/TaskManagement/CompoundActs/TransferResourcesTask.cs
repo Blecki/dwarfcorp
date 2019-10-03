@@ -9,9 +9,8 @@ namespace DwarfCorp
 {
     public class TransferResourcesTask : Task
     {
-        public string StockpileFrom;
-        private Stockpile stockpile;
-        public ResourceAmount Resources;
+        public Stockpile Stockpile;
+        public Resource Resource;
 
         [JsonIgnore] public WorldManager World;
         [OnDeserialized]
@@ -25,37 +24,25 @@ namespace DwarfCorp
 
         }
 
-        public TransferResourcesTask(WorldManager World, string stockpile, ResourceAmount resources)
+        public TransferResourcesTask(WorldManager World, Stockpile Stockpile, Resource Resource)
         {
             this.World = World;
             Priority = TaskPriority.Medium;
-            StockpileFrom = stockpile;
-            Resources = resources;
-            Name = String.Format("Transfer {0} {1} from {2}", Resources.Count, Resources.Type, stockpile);
+            this.Stockpile = Stockpile;
+            this.Resource = Resource;
+            Name = String.Format("Transfer {0} from {1}", Resource.Type, Stockpile);
             AutoRetry = true;
             ReassignOnDeath = true;
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            if (!GetStockpile())
-                return 9999;
-
-            return (stockpile.GetBoundingBox().Center() - agent.AI.Position).LengthSquared();
-        }
-
-        public bool GetStockpile()
-        {
-            stockpile = World.FindZone(StockpileFrom) as Stockpile;
-            return stockpile != null;
+            return (Stockpile.GetBoundingBox().Center() - agent.AI.Position).LengthSquared();
         }
 
         public override bool IsComplete(WorldManager World)
         {
-            if (!GetStockpile())
-                return true;
-
-            return !stockpile.Resources.Has(Resources.Type, Resources.Count);
+            return !Stockpile.Resources.Contains(Resource);
         }
 
         public override Feasibility IsFeasible(Creature agent)
@@ -63,23 +50,12 @@ namespace DwarfCorp
             if (agent == null || agent.IsDead || agent.Stats.IsAsleep || !agent.Active)
                 return Feasibility.Infeasible;
 
-            if (!GetStockpile())
-                return Feasibility.Infeasible;
-
-            if (stockpile.Resources.Has(Resources.Type, Resources.Count))
-                return Feasibility.Feasible;
-
             return Feasibility.Infeasible;
         }
 
         public override MaybeNull<Act> CreateScript(Creature agent)
         {
-            if (!GetStockpile())
-            {
-                return null;
-            }
-
-            return new TransferResourcesAct(agent.AI, stockpile, Resources) { Name = "Transfer Resources" };
+            return new TransferResourcesAct(agent.AI, Stockpile, Resource) { Name = "Transfer Resources" };
         }
     }
 }

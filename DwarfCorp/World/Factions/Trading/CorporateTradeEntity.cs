@@ -19,17 +19,17 @@ namespace DwarfCorp.Trade
 
         public int AvailableSpace => 0;
         public DwarfBux Money => World.Overworld.PlayerCorporationFunds;
-        public List<ResourceAmount> Resources => World.Overworld.PlayerCorporationResources.Enumerate().ToList();
+        public ResourceSet Resources => World.Overworld.PlayerCorporationResources; // Todo: Makes add/remove obsolete?
 
         public void AddMoney(DwarfBux Money)
         {
             World.Overworld.PlayerCorporationFunds += Money;
         }
 
-        public void AddResources(List<ResourceAmount> Resources)
+        public void AddResources(List<Resource> Resources)
         {
             foreach(var resource in Resources)
-                World.Overworld.PlayerCorporationResources.Add(resource.Type, resource.Count);
+                World.Overworld.PlayerCorporationResources.Add(resource);
         }
 
         public Race TraderRace { get { return SourceEnvoy.OwnerFaction.Race; } }
@@ -40,15 +40,14 @@ namespace DwarfCorp.Trade
             return 0;
         }
 
-        public DwarfBux ComputeValue(List<ResourceAmount> Resources)
+        public DwarfBux ComputeValue(List<ResourceTypeAmount> Resources)
         {
             return 0;
         }
 
-        public void RemoveResources(List<ResourceAmount> Resources)
+        public List<Resource> RemoveResourcesByType(List<ResourceTypeAmount> ResourceTypes)
         {
-            foreach (var r in Resources)
-                World.Overworld.PlayerCorporationResources.Remove(r.Type, r.Count);
+            return World.Overworld.PlayerCorporationResources.RemoveByType(ResourceTypes);
         }
     }
 }

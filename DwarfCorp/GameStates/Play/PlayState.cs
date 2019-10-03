@@ -1872,10 +1872,7 @@ namespace DwarfCorp.GameStates
                 {
                     VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty; // This should be set by the tool.
                     var railTool = Tools["PaintRail"] as Rail.PaintRailTool;
-                    railTool.SelectedResources = new List<ResourceAmount>
-                                    {
-                                        new ResourceAmount("Rail", 1)
-                                    };
+                    railTool.SelectedResources = new List<Resource> { new Resource("Rail") }; // Todo: Use tool argument passing mechanism
                     ChangeTool("PaintRail");
                 }
             };
@@ -2062,7 +2059,7 @@ namespace DwarfCorp.GameStates
 
                     (widget as FlatToolTray.Tray).ItemSource =
                         (new Widget[] { icon_menu_Plant_Return }).Concat(
-                         World.ListResourcesWithTag("Plantable")
+                         World.GetResourcesWithTagAggregatedByType("Plantable")                         
                         .Select(resource => new FlatToolTray.Icon
                         {
                             Icon = Library.GetResourceType(resource.Type).HasValue(out var res) ? res.GuiLayers[0] : null,
@@ -2076,10 +2073,7 @@ namespace DwarfCorp.GameStates
                                 ChangeTool("Plant");
                                 var plantTool = Tools["Plant"] as PlantTool;
                                 plantTool.PlantType = resource.Type;
-                                plantTool.RequiredResources = new List<ResourceAmount>()
-                                    {
-                                          new ResourceAmount(resource.Type, 1)
-                                    };
+                                plantTool.RequiredResources = new List<ResourceTypeAmount>() { new ResourceTypeAmount(resource.Type, 1) };
                                 World.Tutorial("plant");
                             },
                             PopupChild = new PlantInfo()

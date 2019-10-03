@@ -69,13 +69,13 @@ namespace DwarfCorp.Gui.Widgets
         private class AggregatedResource
         {
             public string Category;
-            public ResourceAmount InStockpile;
-            public ResourceAmount InBackpacks;
+            public ResourceTypeAmount InStockpile;
+            public ResourceTypeAmount InBackpacks;
             public List<string> Members = new List<string>(); 
         }
 
         // Aggregates resources by tags so that there aren't as many to display.
-        private List<AggregatedResource> AggregateResources(IEnumerable<KeyValuePair<string, Pair<ResourceAmount>>> resources)
+        private List<AggregatedResource> AggregateResources(IEnumerable<KeyValuePair<string, Pair<ResourceTypeAmount>>> resources)
         {
             List<AggregatedResource> aggregated = new List<AggregatedResource>();
             foreach (var pair in resources)

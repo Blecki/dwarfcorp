@@ -15,7 +15,7 @@ namespace DwarfCorp
             return new IronLadder(
                 Manager,
                 Position,
-                Data.GetData<List<ResourceAmount>>("Resources", null), "Wooden Ladder");
+                Data.GetData<Resource>("Resource", null));
         }
 
         public IronLadder()
@@ -23,14 +23,14 @@ namespace DwarfCorp
 
         }
 
-        public IronLadder(ComponentManager manager, Vector3 position, List<ResourceAmount> resourceType, string craftType) :
-            base("Iron Ladder", new List<String> { "Climbable" }, manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 8), resourceType)
+        public IronLadder(ComponentManager manager, Vector3 position, Resource Resource) :
+            base("Iron Ladder", new List<String> { "Climbable" }, manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 8), Resource)
         {
             this.LocalBoundingBoxOffset = new Vector3(0, 0, 0.45f);
             this.BoundingBoxSize = new Vector3(0.7f, 1, 0.1f);
             this.SetFlag(Flag.RotateBoundingBox, true);
 
-            Name = resourceType[0].Type + " Ladder";
+            Name = "Iron Ladder";
             Tags.Add("Climbable");
             OrientToWalls();
             CollisionType = CollisionType.Static;

@@ -199,8 +199,10 @@
     <Compile Include="TaskManagement\Tasks\Craft\BuildZoneTask.cs" />
     <Compile Include="TaskManagement\Tasks\Craft\CraftItemAct.cs" />
     <Compile Include="TaskManagement\Tasks\Craft\CraftItemTask.cs" />
+    <Compile Include="TaskManagement\Tasks\Craft\CraftResourceAct.cs" />
     <Compile Include="TaskManagement\Tasks\Craft\CraftResourceTask.cs" />
     <Compile Include="TaskManagement\Tasks\Craft\GetAnySingleMatchingResourceAct.cs" />
+    <Compile Include="TaskManagement\Tasks\Craft\GetResourcesOfType.cs" />
     <Compile Include="TaskManagement\Tasks\Craft\GetResourcesAct.cs" />
     <Compile Include="TaskManagement\Tasks\DestroyObjectTask.cs" />
     <Compile Include="TaskManagement\Tasks\GoToZoneTask.cs" />
@@ -219,7 +221,6 @@
     <Compile Include=".\Components\AI\Egg.cs" />
     <Compile Include=".\Components\AI\Gender.cs" />
     <Compile Include=".\Components\AI\Health.cs" />
-    <Compile Include=".\Components\AI\Inventory.cs" />
     <Compile Include=".\Components\AI\LeaveWorldTask.cs" />
     <Compile Include=".\Components\AI\MateTask.cs" />
     <Compile Include=".\Components\AI\Mating.cs" />
@@ -367,9 +368,9 @@
     <Compile Include="World\Economy\Money.cs" />
     <Compile Include="World\Economy\Payroll\CollectMoney.cs" />
     <Compile Include="World\Economy\Payroll\DepositMoney.cs" />
+    <Compile Include="World\Economy\Resources\Inventory.cs" />
     <Compile Include="World\Economy\Resources\Resource.cs" />
     <Compile Include="World\Economy\Resources\ResourceTagAmount.cs" />
-    <Compile Include="World\Economy\Resources\ResourceAmount.cs" />
     <Compile Include="World\Economy\Resources\ResourceSet.cs" />
     <Compile Include="Entities\Animals\BatAI.cs" />
     <Compile Include="Entities\Animals\BrownRabbit.cs" />
@@ -649,6 +650,8 @@
     <Compile Include="TaskManagement\ControlFlow\WhileLoop.cs" />
     <Compile Include="TaskManagement\ControlFlow\Wrap.cs" />
     <Compile Include="World\Crafting\CraftItem.cs" />
+    <Compile Include="World\Economy\Resources\ResourceType.cs" />
+    <Compile Include="World\Economy\Resources\ResourceTypeAmount.cs" />
     <Compile Include="World\Factions\TradeTask.cs" />
     <Compile Include="World\Factions\PoliticalEvent.cs" />
     <Compile Include="World\Factions\Politics.cs" />

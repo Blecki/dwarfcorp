@@ -10,7 +10,7 @@ namespace DwarfCorp
     {
         public Farm FarmToWork;
         public string Plant;
-        public List<ResourceAmount> RequiredResources;
+        public List<ResourceTypeAmount> RequiredResources;
 
         public PlantTask()
         {

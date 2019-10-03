@@ -36,9 +36,9 @@ namespace DwarfCorp.Gui.Widgets
         public Widget LeftItems;
         public Widget RightItems;
 
-        private IEnumerable<ResourceAmount> GetTopResources(List<ResourceAmount> resources, int num = 3)
+        private IEnumerable<ResourceTypeAmount> GetTopResources(List<ResourceTypeAmount> resources, int num = 3)
         {
-            var copy = new List<ResourceAmount>();
+            var copy = new List<ResourceTypeAmount>();
             copy.AddRange(resources);
 
             copy.Sort((a, b) => a.Count.CompareTo(b.Count));
@@ -49,7 +49,7 @@ namespace DwarfCorp.Gui.Widgets
             }
         }
 
-        public void SetTradeItems(List<ResourceAmount> leftResources, List<ResourceAmount> rightResources, DwarfBux leftMoney, DwarfBux rightMoney)
+        public void SetTradeItems(List<ResourceTypeAmount> leftResources, List<ResourceTypeAmount> rightResources, DwarfBux leftMoney, DwarfBux rightMoney)
         {
             Update();
             LeftItems.Clear();
@@ -206,16 +206,16 @@ namespace DwarfCorp.Gui.Widgets
         {
             Result = TradeDialogResult.Pending;
             Transaction = null;
-            EnvoyColumns.Reconstruct(Envoy.Resources, new List<ResourceAmount>(), (int)Envoy.Money);
-            PlayerColumns.Reconstruct(Player.Resources, new List<ResourceAmount>(), (int)Player.Money);
+            EnvoyColumns.Reconstruct(Envoy.Resources.AggregateByType(), new List<ResourceTypeAmount>(), (int)Envoy.Money);
+            PlayerColumns.Reconstruct(Player.Resources.AggregateByType(), new List<ResourceTypeAmount>(), (int)Player.Money);
             UpdateBottomDisplays();
             if (Balance != null)
                 Balance.TradeBalance = 0.0f;
             Layout();
         }
 
-        private DwarfBux ComputeNetValue(List<ResourceAmount> playerResources, DwarfBux playerTradeMoney,
-            List<ResourceAmount> envoyResources, DwarfBux envoyMoney)
+        private DwarfBux ComputeNetValue(List<ResourceTypeAmount> playerResources, DwarfBux playerTradeMoney,
+            List<ResourceTypeAmount> envoyResources, DwarfBux envoyMoney)
         {
             return (Envoy.ComputeValue(playerResources) + playerTradeMoney) - (Envoy.ComputeValue(envoyResources) + envoyMoney);   
         }
@@ -226,7 +226,7 @@ namespace DwarfCorp.Gui.Widgets
                 PlayerColumns.TradeMoney, EnvoyColumns.SelectedResources, EnvoyColumns.TradeMoney);
         }
 
-        private void MoveRandomValue(IEnumerable<ResourceAmount> source, List<ResourceAmount> destination,
+        private void MoveRandomValue(IEnumerable<ResourceTypeAmount> source, List<ResourceTypeAmount> destination,
             ITradeEntity trader)
         {
             foreach (var amount in source)
@@ -236,11 +236,10 @@ namespace DwarfCorp.Gui.Widgets
                         continue;
 
                 if (amount.Count == 0) continue;
-                ResourceAmount destAmount =
-                    destination.FirstOrDefault(resource => resource.Type == amount.Type);
+                var destAmount = destination.FirstOrDefault(resource => resource.Type == amount.Type);
                 if (destAmount == null)
                 {
-                    destAmount = new ResourceAmount(amount.Type, 0);
+                    destAmount = new ResourceTypeAmount(amount.Type, 0);
                     destination.Add(destAmount);
                 }
 
@@ -278,12 +277,12 @@ namespace DwarfCorp.Gui.Widgets
                     return;
                 }
 
-                List<ResourceAmount> sourceResourcesEnvoy = EnvoyColumns.SourceResources;
-                List<ResourceAmount> selectedResourcesEnvoy = EnvoyColumns.SelectedResources;
+                var sourceResourcesEnvoy = EnvoyColumns.SourceResources;
+                var selectedResourcesEnvoy = EnvoyColumns.SelectedResources;
                 DwarfBux selectedMoneyEnvoy = EnvoyColumns.TradeMoney;
                 DwarfBux remainingMoneyEnvoy = Envoy.Money - selectedMoneyEnvoy;
-                List<ResourceAmount> sourceResourcesPlayer = PlayerColumns.SourceResources;
-                List<ResourceAmount> selectedResourcesPlayer = PlayerColumns.SelectedResources;
+                var sourceResourcesPlayer = PlayerColumns.SourceResources;
+                var selectedResourcesPlayer = PlayerColumns.SelectedResources;
                 DwarfBux selectedMoneyPlayer = PlayerColumns.TradeMoney;
                 DwarfBux remainingMoneyPlayer = Player.Money - selectedMoneyPlayer;
 
@@ -470,8 +469,8 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockRight,
                 OnClick = (sender, args) =>
                 {
-                    EnvoyColumns.Reconstruct(Envoy.Resources, new List<ResourceAmount>(), (int)Envoy.Money);
-                    PlayerColumns.Reconstruct(Player.Resources, new List<ResourceAmount>(), (int)Player.Money);
+                    EnvoyColumns.Reconstruct(Envoy.Resources.AggregateByType(), new List<ResourceTypeAmount>(), (int)Envoy.Money);
+                    PlayerColumns.Reconstruct(Player.Resources.AggregateByType(), new List<ResourceTypeAmount>(), (int)Player.Money);
                     UpdateBottomDisplays();
                     Layout();
                 }

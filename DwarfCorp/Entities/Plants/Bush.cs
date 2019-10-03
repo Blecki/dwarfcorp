@@ -23,11 +23,8 @@ namespace DwarfCorp
 
             Inventory inventory = AddChild(new Inventory(componentManager, "Inventory", BoundingBox.Extents(), LocalBoundingBoxOffset)) as Inventory;
 
-            inventory.AddResource(new ResourceAmount()
-            {
-                Count = 3,
-                Type = "Berry"
-            });
+            for (var i = 0; i < 3; ++i)
+                inventory.AddResource(new Resource("Berry"));
 
             CollisionType = CollisionType.Static;
             PropogateTransforms();

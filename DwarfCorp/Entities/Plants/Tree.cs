@@ -40,7 +40,7 @@ namespace DwarfCorp
                     {
                         MarkedForRestock = false,
                         MarkedForUse = false,
-                        Resource = WoodAsset
+                        Resource = new Resource(WoodAsset)
                     });            
 
             for (int i = 0; i < treeSize * 2; i++)
@@ -49,7 +49,7 @@ namespace DwarfCorp
                 {
                     MarkedForRestock = false,
                     MarkedForUse = false,
-                    Resource = seed
+                    Resource = new Resource(seed)
                 });
             }
 

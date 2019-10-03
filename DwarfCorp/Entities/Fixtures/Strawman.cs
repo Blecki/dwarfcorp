@@ -8,7 +8,7 @@ namespace DwarfCorp
         [EntityFactory("Strawman")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Strawman(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+            return new Strawman(Manager, Position, Data.GetData<Resource>("Resource", null));
         }
 
         public Strawman()
@@ -16,8 +16,8 @@ namespace DwarfCorp
 
         }
 
-        public Strawman(ComponentManager manager, Vector3 position, List<ResourceAmount> Resources) :
-            base(manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 5), new DwarfCorp.CraftDetails(manager, "Strawman", Resources))
+        public Strawman(ComponentManager manager, Vector3 position, Resource Resource) :
+            base(manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 5), new DwarfCorp.CraftDetails(manager, Resource))
         {
             Name = "Strawman";
             Tags.Add("Strawman");

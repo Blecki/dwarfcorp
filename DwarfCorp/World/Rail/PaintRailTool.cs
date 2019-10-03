@@ -16,7 +16,7 @@ namespace DwarfCorp.Rail
         }
 
         private List<RailEntity> PreviewBodies = new List<RailEntity>();
-        public List<ResourceAmount> SelectedResources;
+        public List<Resource> SelectedResources;
         public bool GodModeSwitch = false;
         private bool Dragging = false;
         private VoxelHandle DragStartVoxel = VoxelHandle.InvalidHandle;

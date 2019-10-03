@@ -3,25 +3,25 @@ using System.Diagnostics;
 
 namespace DwarfCorp
 {
-    public class ResourceAmount
+    public class ResourceTypeAmount
     {
         public String Type { get; set; }
         public int Count { get; set; }
         
-        public ResourceAmount(String Type, int Count)
+        public ResourceTypeAmount(String Type, int Count)
         {
             this.Type = Type;
             this.Count = Count;
         }
 
-        public ResourceAmount()
+        public ResourceTypeAmount()
         {
             
         }
 
-        public ResourceAmount CloneResource()
+        public ResourceTypeAmount CloneResource()
         {
-            return new ResourceAmount(Type, Count);
+            return new ResourceTypeAmount(Type, Count);
         }
     }
 }

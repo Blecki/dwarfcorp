@@ -12,7 +12,7 @@ namespace DwarfCorp.SteamPipes
         [EntityFactory("Check Valve")]
         private static GameComponent __factory6(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new CheckValve(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+            return new CheckValve(Manager, Position, Data.GetData<Resource>("Resource", null));
         }
 
         public class CheckValveSteamObject : SteamPoweredObject
@@ -36,8 +36,8 @@ namespace DwarfCorp.SteamPipes
 
         }
 
-        public CheckValve(ComponentManager manager, Vector3 position, List<ResourceAmount> resources) :
-            base(manager, "Steam Pipe", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new DwarfCorp.CraftDetails(manager, "Steam Pipe", resources))
+        public CheckValve(ComponentManager manager, Vector3 position, Resource Resource) :
+            base(manager, "Steam Pipe", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(manager, Resource))
         {
             var matrix = Matrix.CreateRotationY((float)Math.PI * 0.5f);
             matrix.Translation = position;

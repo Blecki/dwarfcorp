@@ -27,10 +27,10 @@ namespace DwarfCorp
             Faction team, 
             SpriteSheet Asset,
             Point Frame,
-            List<ResourceAmount> resourceType, 
+            Resource RawMaterials, 
             string craftType, 
             float HP) :
-            base(manager, position, Asset, Frame, new CraftDetails(manager, craftType, resourceType), SimpleSprite.OrientMode.Fixed)
+            base(manager, position, Asset, Frame, new CraftDetails(manager, RawMaterials), SimpleSprite.OrientMode.Fixed)
         {
             IsMoving = false;
             IsOpen = false;

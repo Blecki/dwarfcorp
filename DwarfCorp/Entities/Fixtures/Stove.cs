@@ -13,7 +13,7 @@ namespace DwarfCorp
         [EntityFactory("Stove")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Stove(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+            return new Stove(Manager, Position, Data.GetData<Resource>("Resource", null));
         }
 
         public Stove()
@@ -21,8 +21,8 @@ namespace DwarfCorp
 
         }
 
-        public Stove(ComponentManager manager, Vector3 position, List<ResourceAmount> resources) :
-            base(manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 4), new CraftDetails(manager, "Stove", resources))
+        public Stove(ComponentManager manager, Vector3 position, Resource Resource) :
+            base(manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 4), new CraftDetails(manager, Resource))
         {
             Name = "Stove";
             Tags.Add("Stove");

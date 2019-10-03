@@ -116,7 +116,7 @@ namespace DwarfCorp
                             EnergyDecrease = GameSettings.Default.Energy_Restful,
                         };
                     },
-                    Available = (AI, World) => World.ListResourcesWithTag("Alcohol").Count > 0
+                    Available = (AI, World) => World.GetResourcesWithTag("Alcohol").Count > 0
                 });
 
                 IdleTasks.Add(new IdleTask
@@ -200,19 +200,19 @@ namespace DwarfCorp
                     {
                         if (Library.GetRandomApplicableCraftable(AI.Faction, AI.World).HasValue(out var item))
                         {
-                            var resources = new List<ResourceAmount>();
+                            var resources = new List<Resource>();
                             var allow = true;
                             foreach (var resource in item.RequiredResources)
                             {
-                                var amount = AI.World.GetResourcesWithTags(new List<ResourceTagAmount>() { resource });
-                                if (amount == null || amount.Count == 0)
+                                var available = AI.World.GetResourcesWithTag(resource.Tag);
+                                if (available.Count == 0)
                                     allow = false;
                                 else
-                                    resources.Add(Datastructures.SelectRandom(amount));
+                                    resources.Add(Datastructures.SelectRandom(available));
                             }
 
                             if (allow && resources.Count > 0)
-                                return new CraftResourceTask(item, 1, 1, resources) { IsAutonomous = true, Priority = TaskPriority.Low };
+                                return new CraftResourceTask(item, 1, 1, resources.Select(r => new ResourceTypeAmount(r.Type, 1)).ToList()) { IsAutonomous = true, Priority = TaskPriority.Low };
                         }
 
                         return null;
@@ -274,7 +274,7 @@ namespace DwarfCorp
                     {
                         return new GatherPotionsTask();
                     },
-                    Available = (AI, World) => World.ListResourcesWithTag("Potion").Count > 0
+                    Available = (AI, World) => World.GetResourcesWithTag("Potion").Count > 0
                 });
 
                 IdleTasks.Add(new IdleTask

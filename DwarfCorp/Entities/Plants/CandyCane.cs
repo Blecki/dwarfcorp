@@ -67,7 +67,7 @@ namespace DwarfCorp
                 {
                     MarkedForRestock = false,
                     MarkedForUse = false,
-                    Resource = "Peppermint"
+                    Resource = new Resource("Peppermint")
                 });
             }
 

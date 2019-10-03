@@ -60,8 +60,8 @@ namespace DwarfCorp.Play
                                 AddChild(icon);
                         }
 
-                        string text = resource.Count.ToString();
-                        icon.Text = text;
+                        //string text = resource.ToString();
+                        //icon.Text = text;
                         icon.Invalidate();
                     }
                 }

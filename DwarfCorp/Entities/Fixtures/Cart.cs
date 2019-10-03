@@ -14,7 +14,7 @@ namespace DwarfCorp
         [EntityFactory("Cart")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Cart(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+            return new Cart(Manager, Position, Data.GetData<Resource>("Resource", null));
         }
 
         private static RawPrimitive SharedMesh = null;
@@ -24,11 +24,11 @@ namespace DwarfCorp
 
         }
 
-        public Cart(ComponentManager manager, Vector3 position, List<ResourceAmount> resources) :
+        public Cart(ComponentManager manager, Vector3 position, Resource Resource) :
             base(manager, "Cart", Matrix.CreateTranslation(position), 
                 new Vector3(0.9f, 0.9f, 0.9f),
                 new Vector3(0.25f, 0.25f, 0.0f), 
-                new DwarfCorp.CraftDetails(manager, "Cart", resources))
+                new CraftDetails(manager, Resource))
         {
             Tags.Add("Cart");
             CollisionType = CollisionType.Static;

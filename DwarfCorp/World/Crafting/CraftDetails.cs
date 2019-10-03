@@ -12,10 +12,7 @@ namespace DwarfCorp
 {
     public class CraftDetails : GameComponent
     {
-        // Corresponds to a type in the CraftLibrary
-        public string CraftType = "";
-        // The Resources used to craft the item.
-        public List<ResourceAmount> Resources = new List<ResourceAmount>();
+        public Resource Resource;
 
         public CraftDetails()
         {
@@ -28,46 +25,38 @@ namespace DwarfCorp
             this.SetFlag(Flag.ShouldSerialize, true);
         }
 
-        public CraftDetails(ComponentManager manager, string craftType, List<ResourceAmount> resources = null) :
+        public CraftDetails(ComponentManager manager, Resource Resource) :
             this(manager)
         {
-            CraftType = craftType;
-
-            if (resources != null)
-                Resources = resources;
-            else
-            {
-                Resources = new List<ResourceAmount>();
-                if (Library.GetCraftable(craftType).HasValue(out var libraryType))
-                    Resources.AddRange(libraryType.RequiredResources.Select(requirement => new ResourceAmount(Library.EnumerateResourceTypesWithTag(requirement.Tag).OrderBy(r => r.MoneyValue.Value).FirstOrDefault().Name, requirement.Count)));
-            }
+            this.SetFlag(Flag.ShouldSerialize, true);
         }
 
         public override void Die()
         {
-            try
-            {
-                if (Parent != null)
-                {
-                    var body = Parent.GetRoot();
+            // Todo: Use craft type to create a thing? Or store underlying resource used to place object?
+            //try
+            //{
+            //    if (Parent != null)
+            //    {
+            //        var body = Parent.GetRoot();
 
-                    if (body != null)
-                    {
-                        if (Library.GetCraftable(this.CraftType).HasValue(out var craftable))
-                        {
-                            var bounds = body.GetBoundingBox();
-                            var resource = craftable.ToResource(World, Resources);
-                            var pos = MathFunctions.RandVector3Box(bounds);
-                            EntityFactory.CreateEntity<GameComponent>(resource.Name + " Resource", pos);
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Error while destroying crafted item - " + e.Message);
-                Program.WriteExceptionLog(e);
-            }
+            //        if (body != null)
+            //        {
+            //            if (Library.GetCraftable(this.CraftType).HasValue(out var craftable))
+            //            {
+            //                var bounds = body.GetBoundingBox();
+            //                var resource = craftable.ToResource(World, Resources);
+            //                var pos = MathFunctions.RandVector3Box(bounds);
+            //                EntityFactory.CreateEntity<GameComponent>(resource.Name + " Resource", pos);
+            //            }
+            //        }
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine("Error while destroying crafted item - " + e.Message);
+            //    Program.WriteExceptionLog(e);
+            //}
 
             base.Die();
         }

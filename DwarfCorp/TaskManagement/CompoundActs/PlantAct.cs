@@ -10,7 +10,7 @@ namespace DwarfCorp
     public class PlantAct : CompoundCreatureAct
     {
         public Farm FarmToWork { get; set; }
-        public List<ResourceAmount> Resources { get; set; }   
+        public List<ResourceTypeAmount> Resources { get; set; }   
 
         public PlantAct()
         {
@@ -123,7 +123,9 @@ namespace DwarfCorp
 
         public void DestroyResources()
         {
-            Agent.Creature.Inventory.Remove(Resources, Inventory.RestockType.None);
+            var stashed = Agent.Blackboard.GetData<List<Resource>>("stashed-resources");
+            foreach (var res in stashed)
+                Agent.Creature.Inventory.Remove(res, Inventory.RestockType.None);
         }
 
         public override void Initialize()
@@ -133,7 +135,7 @@ namespace DwarfCorp
                 if (FarmToWork.Voxel.IsValid)
                 {
                     Tree = new Select(new Sequence(
-                        new GetResourcesWithTag(Agent, Resources),
+                        new GetResourcesOfType(Agent, Resources) { BlackboardEntry = "stashed-resources" },
                         new Domain(Validate, new GoToVoxelAct(FarmToWork.Voxel, PlanAct.PlanType.Adjacent, Creature.AI)),
                         new Domain(Validate, new StopAct(Creature.AI)),
                         new Domain(Validate, new Wrap(FarmATile)),

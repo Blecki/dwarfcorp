@@ -68,8 +68,7 @@ namespace DwarfCorp
 
         public override IEnumerable<Act.Status> Run()
         {
-            List<ResourceAmount> foods =
-                Agent.Creature.Inventory.EnumerateResources(new ResourceTagAmount("Edible", 1), Inventory.RestockType.Any);
+            var foods = Agent.Creature.Inventory.EnumerateResources(new ResourceTagAmount("Edible", 1), Inventory.RestockType.Any);
 
             if (foods.Count == 0 && Agent.Creature.Faction == Agent.World.PlayerFaction)
             {
@@ -81,65 +80,59 @@ namespace DwarfCorp
             FoodBody = null;
             Timer eatTimer = new Timer(3.0f, true);
 
-            foreach (ResourceAmount resourceAmount in foods)
+            foreach (var resourceAmount in foods)
             {
-                if (resourceAmount.Count > 0)
+                FoodBody = Agent.Creature.Inventory.RemoveAndCreate(resourceAmount, Inventory.RestockType.Any);
+                Agent.Creature.NoiseMaker.MakeNoise("Chew", Agent.Creature.AI.Position);
+
+                if (FoodBody == null)
                 {
-                    var bodies = Agent.Creature.Inventory.RemoveAndCreate(new ResourceAmount(resourceAmount.Type, 1), Inventory.RestockType.Any);
-                    Agent.Creature.NoiseMaker.MakeNoise("Chew", Agent.Creature.AI.Position);
-
-                    if (bodies.Count == 0)
-                    {
-                        Agent.SetMessage("Failed to eat. No food in inventory.");
-                        yield return Act.Status.Fail;
-                    }
-                    else
-                    {
-                        FoodBody = bodies[0];
-
-                        while (!eatTimer.HasTriggered)
-                        {
-                            eatTimer.Update(DwarfTime.LastTime);
-                            Matrix rot = Agent.Creature.Physics.LocalTransform;
-                            rot.Translation = Vector3.Zero;
-                            FoodBody.LocalTransform = Agent.Creature.Physics.LocalTransform;
-                            Vector3 foodPosition = Agent.Creature.Physics.Position + Vector3.Up * 0.05f + Vector3.Transform(Vector3.Forward, rot) * 0.5f;
-                            FoodBody.LocalPosition = foodPosition;
-                            FoodBody.PropogateTransforms();
-                            FoodBody.Active = false;
-                            Agent.Creature.Physics.Velocity = Vector3.Zero;
-                            Agent.Creature.CurrentCharacterMode = CharacterMode.Sitting;
-                            if (MathFunctions.RandEvent(0.05f))
-                                Agent.Creature.World.ParticleManager.Trigger("crumbs", foodPosition, Color.White, 3);
-                            yield return Act.Status.Running;
-                        }
-
-                        if (Library.GetResourceType(resourceAmount.Type).HasValue(out var resource))
-                        {
-                            Agent.Creature.Stats.Hunger.CurrentValue += resource.FoodContent;
-
-                            if (resource.Tags.Contains("Alcohol"))
-                                Agent.Creature.AddThought("I had good ale recently.", new TimeSpan(0, 8, 0, 0), 10.0f);
-                            else
-                                Agent.Creature.AddThought("I ate good food recently.", new TimeSpan(0, 8, 0, 0), 5.0f);
-
-                            FoodBody.GetRoot().Delete();
-
-                            if (MustPay)
-                            {
-                                var depositAct = new DepositMoney(Agent, resource.MoneyValue);
-                                foreach (var result in depositAct.Run())
-                                    if (result == Status.Running)
-                                        yield return result;
-                            }
-                        }
-
-                        yield return Act.Status.Success;
-                    }
-                    yield break;
+                    Agent.SetMessage("Failed to eat. No food in inventory.");
+                    yield return Act.Status.Fail;
                 }
+                else
+                {
+                    while (!eatTimer.HasTriggered)
+                    {
+                        eatTimer.Update(DwarfTime.LastTime);
+                        Matrix rot = Agent.Creature.Physics.LocalTransform;
+                        rot.Translation = Vector3.Zero;
+                        FoodBody.LocalTransform = Agent.Creature.Physics.LocalTransform;
+                        Vector3 foodPosition = Agent.Creature.Physics.Position + Vector3.Up * 0.05f + Vector3.Transform(Vector3.Forward, rot) * 0.5f;
+                        FoodBody.LocalPosition = foodPosition;
+                        FoodBody.PropogateTransforms();
+                        FoodBody.Active = false;
+                        Agent.Creature.Physics.Velocity = Vector3.Zero;
+                        Agent.Creature.CurrentCharacterMode = CharacterMode.Sitting;
+                        if (MathFunctions.RandEvent(0.05f))
+                            Agent.Creature.World.ParticleManager.Trigger("crumbs", foodPosition, Color.White, 3);
+                        yield return Act.Status.Running;
+                    }
+
+                    if (Library.GetResourceType(resourceAmount.Type).HasValue(out var resource))
+                    {
+                        Agent.Creature.Stats.Hunger.CurrentValue += resource.FoodContent;
+
+                        if (resource.Tags.Contains("Alcohol"))
+                            Agent.Creature.AddThought("I had good ale recently.", new TimeSpan(0, 8, 0, 0), 10.0f);
+                        else
+                            Agent.Creature.AddThought("I ate good food recently.", new TimeSpan(0, 8, 0, 0), 5.0f);
+
+                        FoodBody.GetRoot().Delete();
+
+                        if (MustPay)
+                        {
+                            var depositAct = new DepositMoney(Agent, resource.MoneyValue);
+                            foreach (var result in depositAct.Run())
+                                if (result == Status.Running)
+                                    yield return result;
+                        }
+                    }
+
+                    yield return Act.Status.Success;
+                }
+                yield break;
             }
         }
     }
-
 }

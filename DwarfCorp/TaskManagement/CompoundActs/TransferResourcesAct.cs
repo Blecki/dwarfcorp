@@ -8,7 +8,7 @@ namespace DwarfCorp
     public class TransferResourcesAct : CompoundCreatureAct
     {
         public Stockpile StockpileFrom = null;
-        public ResourceAmount Resources = null;
+        public Resource Resource = null;
 
 
         public TransferResourcesAct()
@@ -16,18 +16,18 @@ namespace DwarfCorp
 
         }
 
-        public TransferResourcesAct(CreatureAI agent, Stockpile from, ResourceAmount resources) :
+        public TransferResourcesAct(CreatureAI agent, Stockpile from, Resource Resource) :
             base(agent)
         {
             StockpileFrom = from;
-            Resources = resources;
+            this.Resource = Resource;
         }
 
         public override void Initialize()
         {
             Tree = new Sequence(new GoToZoneAct(Agent, StockpileFrom),
-                                new StashResourcesAct(Agent, StockpileFrom, Resources) { RestockType = Inventory.RestockType.RestockResource },
-                                new StockResourceAct(Agent, Resources));
+                                new StashResourcesAct(Agent, StockpileFrom, Resource) { RestockType = Inventory.RestockType.RestockResource },
+                                new StockResourceAct(Agent, Resource));
             base.Initialize();                     
         }
     }

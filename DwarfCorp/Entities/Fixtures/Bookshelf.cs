@@ -14,7 +14,7 @@ namespace DwarfCorp
         [EntityFactory("Bookshelf")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Bookshelf(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null)) { Tags = new List<string>() { "Research" } };
+            return new Bookshelf(Manager, Position, Data.GetData<Resource>("Resource", null)) { Tags = new List<string>() { "Research" } };
         }
 
         private static GeometricPrimitive SharedPrimitive = null;
@@ -24,10 +24,10 @@ namespace DwarfCorp
             CollisionType = CollisionType.Static;
         }
 
-        public Bookshelf(ComponentManager manager, Vector3 position, List<ResourceAmount> resources) :
+        public Bookshelf(ComponentManager manager, Vector3 position, Resource Resource) :
             base(manager, "Bookshelf", Matrix.CreateTranslation(position), 
                 new Vector3(0.5f, 0.9f, 0.28f), 
-                new Vector3(0.0f, 0.5f, 0.35f), new CraftDetails(manager, "Bookshelf", resources))
+                new Vector3(0.0f, 0.5f, 0.35f), new CraftDetails(manager, Resource))
         {
             Tags.Add("Books");
             CollisionType = CollisionType.Static;

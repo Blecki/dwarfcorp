@@ -32,14 +32,14 @@ namespace DwarfCorp
         public string VoxelName { get; set; }
 
         [JsonIgnore]
-        public ResourceAmount Resource { get { return GetResource(); } set { SetResource(value); } }
+        public Resource Resource { get { return GetResource(); } set { SetResource(value); } }
 
-        public ResourceAmount GetResource()
+        public Resource GetResource()
         {
-            return Agent.Blackboard.GetData<ResourceAmount>(ResourceName);
+            return Agent.Blackboard.GetData<Resource>(ResourceName);
         }
 
-        public void SetResource(ResourceAmount amount)
+        public void SetResource(Resource amount)
         {
             Agent.Blackboard.SetData(ResourceName, amount);
         }
@@ -64,33 +64,24 @@ namespace DwarfCorp
                 yield break;
             }
 
-            if (Resource.Count <= 0)
-            {
-                yield return Status.Success;
-                yield break;
-            }
-
             var createdItems = Creature.Inventory.RemoveAndCreate(Resource, Inventory.RestockType.RestockResource);
 
-            foreach (var b in createdItems.OfType<ResourceEntity>())
+            if (Zone.AddResource(Resource))
             {
-                if (Zone.AddResource(b.Resource))
-                {
-                    var toss = new TossMotion(1.0f, 2.5f, b.LocalTransform, Zone.GetBoundingBox().Center() + new Vector3(0.5f, 0.5f, 0.5f));
+                var toss = new TossMotion(1.0f, 2.5f, createdItems.LocalTransform, Zone.GetBoundingBox().Center() + new Vector3(0.5f, 0.5f, 0.5f));
 
-                    if (b.GetRoot().GetComponent<Physics>().HasValue(out var physics))
-                        physics.CollideMode = Physics.CollisionMode.None;
+                if (createdItems.GetRoot().GetComponent<Physics>().HasValue(out var physics))
+                    physics.CollideMode = Physics.CollisionMode.None;
 
-                    b.AnimationQueue.Add(toss);
-                    toss.OnComplete += b.Die;
+                createdItems.AnimationQueue.Add(toss);
+                toss.OnComplete += createdItems.Die;
 
-                    Creature.Stats.NumItemsGathered++;
-                }
-                else
-                {
-                    Creature.Inventory.AddResource(new ResourceAmount(Resource.Type, 1), Inventory.RestockType.RestockResource);
-                    b.Delete();
-                }
+                Creature.Stats.NumItemsGathered++;
+            }
+            else
+            {
+                Creature.Inventory.AddResource(Resource, Inventory.RestockType.RestockResource);
+                createdItems.Delete();
             }
 
             Creature.NoiseMaker.MakeNoise("Stockpile", Creature.AI.Position);

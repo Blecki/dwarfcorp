@@ -32,11 +32,11 @@ namespace DwarfCorp
             Vector3 Position,
             SpriteSheet Sheet,
             Point Sprite,
-            List<ResourceAmount> Resources)
+            Resource Resource)
             : base(Name, Tags, Manager, Position, Sheet, Sprite)
         {
             this.SetFlag(Flag.ShouldSerialize, true);
-            AddChild(new CraftDetails(Manager, Name, Resources) { DebugColor = Color.Brown });
+            AddChild(new CraftDetails(Manager, Resource) { DebugColor = Color.Brown });
         }
     }
 }

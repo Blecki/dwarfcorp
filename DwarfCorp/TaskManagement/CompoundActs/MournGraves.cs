@@ -34,7 +34,7 @@ namespace DwarfCorp
         {
             Timer waitTimer = new Timer(SitTime, false);
             Vector3 snapPosition = Agent.Position;
-            GameComponent body = Creature.AI.Blackboard.GetData<GameComponent>("Grave");
+            GameComponent body = Creature.AI.Blackboard.GetData<GameComponent>("grave-object");
 
             if (body == null || body.IsDead)
             {
@@ -93,20 +93,18 @@ namespace DwarfCorp
         {
             Creature.OverrideCharacterMode = false;
 
-            Tree = new Sequence(new ClearBlackboardData(Creature.AI, "Grave"),
-                                new Wrap(() => Creature.FindAndReserve("Grave", "Grave")),
-                                new GoToTaggedObjectAct(Creature.AI) { Tag = "Grave", Teleport = false, TeleportOffset = new Vector3(1.0f, 0.0f, 0), ObjectName = "Grave" },
+            Tree = new Sequence(new ClearBlackboardData(Creature.AI, "grave-object"),
+                                new Wrap(() => Creature.FindAndReserve("Grave", "grave-object")),
+                                new GoToTaggedObjectAct(Creature.AI) { Teleport = false, TeleportOffset = new Vector3(1.0f, 0.0f, 0), ObjectBlackboardName = "grave-object" },
                                 new Wrap(WaitUntilBored),
-                                new Wrap(() => Creature.Unreserve("Grave"))) | new Wrap(() => Creature.Unreserve("Grave"));
+                                new Wrap(() => Creature.Unreserve("grave-object"))) | new Wrap(() => Creature.Unreserve("grave-object"));
             base.Initialize();
         }
 
         public override void OnCanceled()
         {
-            foreach (var statuses in Creature.Unreserve("Grave"))
-            {
+            foreach (var statuses in Creature.Unreserve("grave-object"))
                 continue;
-            }
             base.OnCanceled();
         }
 

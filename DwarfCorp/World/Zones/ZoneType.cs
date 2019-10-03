@@ -12,7 +12,7 @@ namespace DwarfCorp
         public string DisplayName;
         public uint ID;
         public string FloorType;
-        public Dictionary<String, ResourceTagAmount> RequiredResources;
+        public Dictionary<String, ResourceTagAmount> RequiredResources; // Todo: Disgusting.
         public Gui.TileReference NewIcon;
         public bool CanBuildAboveGround = true;
         public bool CanBuildBelowGround = true;

@@ -1,60 +1,17 @@
-﻿// BalloonAI.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
+﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using DwarfCorp.GameStates;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// A simple hacked AI script for the DwarfCorp balloon. Has a state machine which makes it go up and down.
-    /// </summary>
     public class BalloonAI : GameComponent
     {
-        public PIDController VelocityController { get; set; }
-        public Vector3 TargetPosition { get; set; }
-        public float MaxVelocity { get; set; }
-        public float MaxForce { get; set; }
-        public BalloonState State { get; set; }
-        public Faction Faction { get; set; }
-        public Timer WaitTimer { get; set; }
-        public List<ResourceAmount> CurrentResources { get; set; }
+        public PIDController VelocityController = new PIDController(0.9f, 0.5f, 0.0f);
+        public Vector3 TargetPosition;
+        public float MaxVelocity = 2.0f;
+        public float MaxForce = 15.0f;
+        public BalloonState State = BalloonState.DeliveringGoods;
+        public Faction Faction;
+        public Timer WaitTimer = new Timer(5.0f, true);
 
         private bool shipmentGiven = false;
 
@@ -73,22 +30,14 @@ namespace DwarfCorp
         public BalloonAI(ComponentManager Manager, Vector3 target, Faction faction) :
             base("BalloonAI", Manager)
         {
-            VelocityController = new PIDController(0.9f, 0.5f, 0.0f);
-            MaxVelocity = 2.0f;
-            MaxForce = 15.0f;
             TargetPosition = target;
-            State = BalloonState.DeliveringGoods;
             Faction = faction;
-            CurrentResources = new List<ResourceAmount>();
-            WaitTimer = new Timer(5.0f, true);
         }
 
         public override void Die()
         {
             if (!IsDead)
-            {
                 Parent.Die();
-            }
         }
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
@@ -126,23 +75,17 @@ namespace DwarfCorp
                             Vector3 diff = body.GlobalTransform.Translation - TargetPosition;
 
                             if (diff.LengthSquared() < 2)
-                            {
                                 State = BalloonState.Waiting;
-                            }
                         }
                         else
-                        {
                             State = BalloonState.Leaving;
-                        }
                     }
                     break;
                 case BalloonState.Leaving:
                     TargetPosition = Vector3.UnitY * 100 + body.GlobalTransform.Translation;
 
                     if(body.GlobalTransform.Translation.Y > World.WorldSizeInVoxels.Y + 2)
-                    {
                         Die();
-                    }
 
                     break;
                 case BalloonState.Waiting:
@@ -161,19 +104,14 @@ namespace DwarfCorp
                         WaitTimer.Update(DwarfTime.LastTime);
                         break;
                     }
-                    if(!shipmentGiven)
-                    {
-                        shipmentGiven = true;
-                    }
-                    else
-                    {
-                        State = BalloonState.Leaving;
-                    }
 
+                    if (!shipmentGiven)
+                        shipmentGiven = true;
+                    else
+                        State = BalloonState.Leaving;
 
                     break;
             }
         }
     }
-
 }

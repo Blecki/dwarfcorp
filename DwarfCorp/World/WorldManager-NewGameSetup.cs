@@ -15,7 +15,7 @@ namespace DwarfCorp
             foreach (var res in Settings.Overworld.InstanceSettings.InitalEmbarkment.Resources.Enumerate())
             {
                 AddResources(res);
-                Settings.Overworld.PlayerCorporationResources.Remove(res.Type, res.Count);
+                Settings.Overworld.PlayerCorporationResources.Remove(res);
             }
 
             if (GenerateInitialBalloonPort(Renderer.Camera.Position.X, Renderer.Camera.Position.Z, 1, Settings).HasValue(out var port))

@@ -74,7 +74,7 @@ namespace DwarfCorp
                 }
 
             if (Library.DoesResourceTypeExist(type))
-                Inventory.AddResource(new ResourceAmount(type, 1));
+                Inventory.AddResource(new Resource(type));
 
             base.Die();
         }

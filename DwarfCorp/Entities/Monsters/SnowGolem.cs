@@ -48,9 +48,8 @@ namespace DwarfCorp
             var gems = Library.EnumerateResourceTypesWithTag("Gem");
             for (int i = 0; i < 16; i++)
             {
-                int num = MathFunctions.RandInt(1, 32 - i);
-                Inventory.AddResource(new ResourceAmount(Datastructures.SelectRandom(gems).Name, num));
-                i += num - 1;
+                for (var j = 0; j < MathFunctions.RandInt(1, 32 - i); ++j)
+                    Inventory.AddResource(new Resource(Datastructures.SelectRandom(gems).Name));
             }
 
             Physics.Tags.Add("MudGolem");

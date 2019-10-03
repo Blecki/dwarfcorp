@@ -11,8 +11,8 @@ namespace DwarfCorp.GameStates
 {
     public class EmbarkmentResourceColumns : Columns
     {
-        public List<ResourceAmount> SourceResources;
-        public List<ResourceAmount> SelectedResources;
+        public List<ResourceTypeAmount> SourceResources;
+        public List<ResourceTypeAmount> SelectedResources;
         public String LeftHeader;
         public String RightHeader;
         public Func<String, DwarfBux> ComputeValue;
@@ -29,12 +29,12 @@ namespace DwarfCorp.GameStates
 
         public EmbarkmentResourceColumns()
         {
-            SourceResources = new List<ResourceAmount>();
-            SelectedResources = new List<ResourceAmount>();
+            SourceResources = new List<ResourceTypeAmount>();
+            SelectedResources = new List<ResourceTypeAmount>();
         }
 
-        public void Reconstruct(IEnumerable<ResourceAmount> sourceResource, 
-                                IEnumerable<ResourceAmount> selectedResources,
+        public void Reconstruct(IEnumerable<ResourceTypeAmount> sourceResource, 
+                                IEnumerable<ResourceTypeAmount> selectedResources,
                                 int tradeMoney)
         {
             Clear();
@@ -88,8 +88,8 @@ namespace DwarfCorp.GameStates
             SetupList(rightmostList, leftmostList, SelectedResources, SourceResources);
         }
 
-        private void SetupList(WidgetListView listA, WidgetListView listB, List<ResourceAmount> resourcesA, 
-            List<ResourceAmount> resourcesB)
+        private void SetupList(WidgetListView listA, WidgetListView listB, List<ResourceTypeAmount> resourcesA, 
+            List<ResourceTypeAmount> resourcesB)
         {
             foreach (var resource in resourcesA)
             {
@@ -111,7 +111,7 @@ namespace DwarfCorp.GameStates
                     var existingEntry = resourcesB.FirstOrDefault(r => r.Type == lambdaResource.Type);
                     if (existingEntry == null)
                     {
-                        existingEntry = new ResourceAmount(lambdaResource.Type, toMove);
+                        existingEntry = new ResourceTypeAmount(lambdaResource.Type, toMove);
                         resourcesB.Add(existingEntry);
                         var rightLineItem = CreateLineItem(existingEntry);
                         rightLineItem.EnableHoverClick();
@@ -169,7 +169,7 @@ namespace DwarfCorp.GameStates
         }
 
 
-        private List<ResourceAmount> Clone(List<ResourceAmount> resources)
+        private List<ResourceTypeAmount> Clone(List<ResourceTypeAmount> resources)
         {
             return resources.Select(r => r.CloneResource()).ToList();
         }
@@ -179,7 +179,7 @@ namespace DwarfCorp.GameStates
             Reconstruct(SourceResources, SelectedResources, 0);
         }
 
-        private void UpdateColumn(Gui.Widgets.WidgetListView ListView, List<ResourceAmount> selectedResources)
+        private void UpdateColumn(Gui.Widgets.WidgetListView ListView, List<ResourceTypeAmount> selectedResources)
         {
             for (var i = 0; i < SelectedResources.Count; ++i)
                 UpdateLineItemText(ListView.GetChild(i + 1), selectedResources[i]);
@@ -190,7 +190,7 @@ namespace DwarfCorp.GameStates
             UpdateColumn(ListView, SelectedResources);
         }
 
-        private Widget CreateLineItem(ResourceAmount Resource)
+        private Widget CreateLineItem(ResourceTypeAmount Resource)
         {
             var r = Root.ConstructWidget(new Gui.Widget
             {
@@ -247,7 +247,7 @@ namespace DwarfCorp.GameStates
             return r;
         }
 
-        private void UpdateLineItemText(Widget LineItem, ResourceAmount Resource)
+        private void UpdateLineItemText(Widget LineItem, ResourceTypeAmount Resource)
         {
             if (Library.GetResourceType(Resource.Type).HasValue(out var resourceInfo))
             {

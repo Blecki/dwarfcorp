@@ -28,7 +28,7 @@ namespace DwarfCorp
         public HealingTower(ComponentManager Manager, Vector3 Position, Blackboard Data) :
             base("Tower of Health", new String[] { "Tower of Health" },
                 Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(6, 2),
-                Data.GetData<List<ResourceAmount>>("Resources", null))
+                Data.GetData<Resource>("Resource", null))
         {
             OrientMode = SimpleSprite.OrientMode.YAxis;
             AddChild(new MagicalObject(Manager));

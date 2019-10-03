@@ -156,15 +156,15 @@ namespace DwarfCorp
             }
         }
         
-        public bool AddResource(ResourceAmount resource)
+        public bool AddResource(Resource resource)
         {
             if (resource == null)
                 return false;
 
-            if (resource.Count + Resources.TotalCount > ResourceCapacity)
+            if (Resources.TotalCount >= ResourceCapacity)
                 return false;
 
-            Resources.Add(resource.Type, resource.Count);
+            Resources.Add(resource);
             World.RecomputeCachedResourceState();
 
             return true;
@@ -186,7 +186,7 @@ namespace DwarfCorp
                     foreach (var tag in resourceType.Tags)
                         if (World.PersistentData.CachedResourceTagCounts.ContainsKey(tag)) // Todo: Move to World Manager.
                         {
-                            World.PersistentData.CachedResourceTagCounts[tag] -= resource.Count;
+                            World.PersistentData.CachedResourceTagCounts[tag] -= 1;
                             System.Diagnostics.Trace.Assert(World.PersistentData.CachedResourceTagCounts[tag] >= 0);
                         }
 
@@ -226,15 +226,12 @@ namespace DwarfCorp
 
             if (HandleStockpilesTimer.HasTriggered)
                 foreach (var blacklist in BlacklistResources)
-                    foreach (var resourcePair in Resources.Enumerate())
+                    foreach (var resource in Resources.Enumerate())
                     {
-                        if (resourcePair.Count == 0)
-                            continue;
-
-                        if (Library.GetResourceType(resourcePair.Type).HasValue(out var resourceType))
+                        if (resource.ResourceType.HasValue(out var resourceType))
                             if (resourceType.Tags.Any(tag => tag == blacklist))
                             {
-                                var transferTask = new TransferResourcesTask(World, ID, resourcePair.CloneResource());
+                                var transferTask = new TransferResourcesTask(World, this, resource);
                                 if (World.TaskManager.HasTask(transferTask))
                                     continue;
                                 World.TaskManager.AddTask(transferTask);

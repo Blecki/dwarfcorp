@@ -14,7 +14,7 @@ namespace DwarfCorp
         [EntityFactory("Bear Trap")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new BearTrap(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+            return new BearTrap(Manager, Position, Data.GetData<Resource>("Resources", null));
         }
 
         public float DamageAmount { get; set; }
@@ -27,10 +27,10 @@ namespace DwarfCorp
             
         }
 
-        public BearTrap(ComponentManager manager, Vector3 pos, List<ResourceAmount> resources) :
+        public BearTrap(ComponentManager manager, Vector3 pos, Resource Resource) :
             base(manager,
             "BearTrap", Matrix.CreateTranslation(pos),
-            new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new DwarfCorp.CraftDetails(manager, "Bear Trap", resources))
+            new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(manager, Resource))
         {
             Allies = manager.World.PlayerFaction;
             

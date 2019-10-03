@@ -10,7 +10,7 @@ namespace DwarfCorp
     /// </summary>
     public class StockResourceAct : CompoundCreatureAct
     {
-        public ResourceAmount ItemToStock { get; set; }
+        public Resource ItemToStock;
         public string ItemID { get; set; }
 
         public StockResourceAct()
@@ -18,19 +18,10 @@ namespace DwarfCorp
 
         }
 
-        public StockResourceAct(CreatureAI agent, string item) :
+        public StockResourceAct(CreatureAI agent, Resource item) :
             base(agent)
         {
-            ItemID = item;
-            Tree = null;
-            ItemToStock = null;
-            Name = "Stock Item";
-        }
-
-        public StockResourceAct(CreatureAI agent, ResourceAmount item) :
-            base(agent)
-        {
-            ItemToStock = item.CloneResource();
+            ItemToStock = item;
             Name = "Stock Item";
             Tree = null;
         }
@@ -45,21 +36,15 @@ namespace DwarfCorp
             if (Tree == null)
             {
                 if (ItemToStock == null)
-                {
-                    ItemToStock = Agent.Blackboard.GetData<ResourceAmount>(ItemID);
-                }
+                    throw new InvalidOperationException();
 
-
-                if (ItemToStock != null)
-                {
-                    Tree = new Sequence(
-                        new SetBlackboardData<ResourceAmount>(Agent, "GatheredResource", ItemToStock.CloneResource()),
+                Tree = new Sequence(
+                        new SetBlackboardData<Resource>(Agent, "GatheredResource", ItemToStock),
                         new SearchFreeStockpileAct(Agent, "TargetStockpile", "FreeVoxel", ItemToStock),
                         new GoToNamedVoxelAct("FreeVoxel", PlanAct.PlanType.Adjacent, Agent),
                         new PutResourceInZone(Agent, "TargetStockpile", "FreeVoxel", "GatheredResource"));
 
                     Tree.Initialize();
-                }
             }
 
             return base.Run();

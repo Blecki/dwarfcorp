@@ -12,52 +12,118 @@ namespace DwarfCorp
 {
     public class ResourceSet
     {
-        [JsonProperty] private Dictionary<String, int> Resources = new Dictionary<string, int>();
+        [JsonProperty] private List<Resource> Resources = new List<Resource>();
 
-        public int TotalCount = 0;
+        [JsonIgnore] public int TotalCount => Resources.Count;
 
-        public bool Has(String Type, int Amount)
+        public bool Has(ResourceTypeAmount ResourceType)
         {
-            if (Resources.ContainsKey(Type))
-                return Resources[Type] >= Amount;
-            else
-                return false;
+            return Resources.Count(r => r.Type == ResourceType.Type) >= ResourceType.Count;
         }
 
-        public void Add(String Type, int Amount)
+        public bool Contains(Resource Resource)
         {
-            if (Resources.ContainsKey(Type))
-                Resources[Type] += Amount;
-            else
-                Resources.Add(Type, Amount);
-
-            TotalCount = Resources.Values.Sum();
+            return Resources.Contains(Resource);
         }
 
-        public void Remove(String Type, int Amount)
+        public void Add(Resource Resource)
         {
-            if (Resources.ContainsKey(Type))
-            {
-                Resources[Type] -= Amount;
-                if (Resources[Type] <= 0)
-                    Resources.Remove(Type);
-            }
-
-            TotalCount = Resources.Values.Sum();
+            Resources.Add(Resource);
         }
 
-        public IEnumerable<ResourceAmount> Enumerate()
+        public bool Remove(Resource Resource)
         {
-            foreach (var item in Resources)
-                yield return new ResourceAmount(item.Key, item.Value);
+            return Resources.Remove(Resource);
+        }
+
+        public IEnumerable<Resource> Enumerate()
+        {
+            return Resources;
         }
 
         public int Count(String Type)
         {
-            if (Resources.ContainsKey(Type))
-                return Resources[Type];
-            else
-                return 0;
+            return Resources.Count(r => r.Type == Type);
+        }
+
+        public int CountWithTag(String Tag)
+        {
+            return Resources.Count(r => r.ResourceType.HasValue(out var res) && res.Tags.Contains(Tag));
+        }
+
+        public List<ResourceTypeAmount> AggregateByType()
+        {
+            var r = new Dictionary<String, int>();
+            foreach (var res in Resources)
+                if (r.ContainsKey(res.Type))
+                    r[res.Type] += 1;
+                else
+                    r.Add(res.Type, 1);
+            return r.Select(p => new ResourceTypeAmount(p.Key, p.Value)).ToList();
+        }
+
+        public List<Resource> RemoveByType(List<ResourceTypeAmount> Types)
+        {
+            var needed = new Dictionary<String, int>();
+            foreach (var type in Types)
+                needed[type.Type] = type.Count;
+
+            var r = new List<Resource>();
+            foreach (var res in Enumerate())
+                if (needed.ContainsKey(res.Type) && needed[res.Type] > 0)
+                {
+                    needed[res.Type] -= 1;
+                    r.Add(res);
+                }
+
+            foreach (var res in r)
+                Remove(res);
+
+            return r;
+        }
+
+        public List<Resource> GetByType(List<ResourceTypeAmount> Types)
+        {
+            var needed = new Dictionary<String, int>();
+            foreach (var type in Types)
+                needed[type.Type] = type.Count;
+
+            var r = new List<Resource>();
+            foreach (var res in Enumerate())
+                if (needed.ContainsKey(res.Type) && needed[res.Type] > 0)
+                {
+                    needed[res.Type] -= 1;
+                    r.Add(res);
+                }
+
+            return r;
+        }
+
+        public List<Resource> RemoveByType(Dictionary<String, int> NeedToRemove)
+        {
+            var r = new List<Resource>();
+            foreach (var res in Enumerate())
+                if (NeedToRemove.ContainsKey(res.Type) && NeedToRemove[res.Type] > 0)
+                {
+                    NeedToRemove[res.Type] -= 1;
+                    r.Add(res);
+                }
+
+            foreach (var res in r)
+                Remove(res);
+
+            return r;
+        }
+
+        public static List<ResourceTypeAmount> AggregateByType(List<Resource> Resources)
+        {
+            var r = new Dictionary<String, int>();
+            foreach (var res in Resources)
+                if (r.ContainsKey(res.Type))
+                    r[res.Type] += 1;
+                else
+                    r.Add(res.Type, 1);
+            return r.Select(p => new ResourceTypeAmount(p.Key, p.Value)).ToList();
         }
     }
 }

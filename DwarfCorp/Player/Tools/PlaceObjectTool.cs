@@ -26,19 +26,16 @@ namespace DwarfCorp
 
         public CraftItem CraftType { get; set; }
         public GameComponent PreviewBody { get; set; }
-        public List<ResourceAmount> SelectedResources;
+        public Resource SelectedResource;
         private float Orientation = 0.0f;
         private bool OverrideOrientation = false;
         private bool RightPressed = false;
         private bool LeftPressed = false;
 
-        public String ExistingPlacement;
-
         private GameComponent CreatePreviewBody()
         {
             Blackboard blackboard = new Blackboard();
-            if (SelectedResources != null && SelectedResources.Count > 0)
-                blackboard.SetData<List<ResourceAmount>>("Resources", SelectedResources);
+            blackboard.SetData("Resource", SelectedResource);
 
             blackboard.SetData<string>("CraftType", CraftType.Name);
 
@@ -73,17 +70,17 @@ namespace DwarfCorp
                                 OverrideOrientation = OverrideOrientation,
                                 Valid = true,
                                 Entity = PreviewBody,
-                                SelectedResources = SelectedResources,
+                                SelectedResource = SelectedResource,
                                 WorkPile = new WorkPile(World.ComponentManager, startPos)
                             };
-
-                            newDesignation.ExistingResource = ExistingPlacement;
 
                             World.ComponentManager.RootComponent.AddChild(newDesignation.WorkPile);
                             newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), pos));
                             World.ParticleManager.Trigger("puff", pos, Color.White, 10);
 
-                            World.TaskManager.AddTask(new CraftItemTask(newDesignation));
+                            var zone = World.EnumerateZones().OfType<Stockpile>().Where(z => z.Resources.Contains(SelectedResource)).FirstOrDefault();
+                            if (zone != null)
+                                World.TaskManager.AddTask(new CraftItemTask(newDesignation) { ItemSource = zone });
 
                             if (!HandlePlaceExistingUpdate())
                             {
@@ -114,26 +111,12 @@ namespace DwarfCorp
             var toPlace = World.PersistentData.Designations.EnumerateEntityDesignations().Where(designation => designation.Type == DesignationType.Craft &&
                 ((CraftDesignation)designation.Tag).ItemType.Name == CraftType.Name).ToList();
 
-            if (resources.Sum(r => r.Value.Count) <= toPlace.Count)
+            if (!resources.Any())
             {
-                ExistingPlacement = null;
-                SelectedResources = new List<ResourceAmount>();
+                SelectedResource = null;
                 return false;
             }
 
-            String resourceType = null;
-            int i = 0;
-            int j = 0;
-            while (i <= toPlace.Count && j < resources.Count)
-            {
-                i += resources[j].Value.Count;
-                resourceType = resources[j].Key;
-                j++;
-            }
-            ExistingPlacement = resourceType;
-            SelectedResources = new List<ResourceAmount>();
-            if (Library.GetResourceType(ExistingPlacement).HasValue(out var eres))
-                SelectedResources.AddRange(eres.CraftInfo.Resources);
             return true;
         }
 

@@ -94,13 +94,13 @@ namespace DwarfCorp
             }
         }
 
-        public static IEnumerable<GameComponent> CreateResourcePiles(IEnumerable<ResourceAmount> resources, BoundingBox box)
+        public static IEnumerable<GameComponent> CreateResourcePiles(IEnumerable<Resource> resources, BoundingBox box)
         {
-            const int maxPileSize = 64;
-            foreach (ResourceAmount resource in resources)
+            //const int maxPileSize = 64;
+            foreach (var resource in resources)
             {
-                for (int numRemaining = resource.Count; numRemaining > 0; numRemaining -= maxPileSize)
-                {
+                //for (int numRemaining = resource.Count; numRemaining > 0; numRemaining -= maxPileSize)
+                //{
                     const int maxIters = 10;
 
                     for (int i = 0; i < maxIters; i++)
@@ -110,10 +110,16 @@ namespace DwarfCorp
                         if ((!voxel.IsValid) || !voxel.IsEmpty)
                             continue;
 
-                        Physics body = EntityFactory.CreateEntity<Physics>(resource.Type + " Resource",
-                        pos, Blackboard.Create<int>("num", Math.Min(numRemaining, maxPileSize))) as Physics;
+                    var blackboard = new Blackboard();
+                    blackboard.SetData("num", 1);
+                    blackboard.SetData("resource", resource);
 
-
+                    Physics body = EntityFactory.CreateEntity<Physics>(
+                        resource.Type + " Resource",
+                        pos,
+                        //Blackboard.Create<int>("num", Math.Min(numRemaining, maxPileSize))) as Physics;
+                        blackboard) as Physics;
+                    
                         if (body != null)
                         {
                             body.Velocity = MathFunctions.RandVector3Cube();
@@ -124,7 +130,7 @@ namespace DwarfCorp
                         }
                         break;
                     }
-                }
+                //}
             }
         }
     }

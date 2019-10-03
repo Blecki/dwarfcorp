@@ -90,7 +90,7 @@ namespace DwarfCorp.Play.EmployeeInfo
                 else
                 {
                     if (Employee.Stats.Equipment.GetItemInSlot("tool").HasValue(out var tool))
-                        ToolIcon.ResourceType = tool.Resource;
+                        ToolIcon.ResourceType = tool.Resource.Type;
                    
                 }
 

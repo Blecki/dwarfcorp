@@ -14,104 +14,63 @@ namespace DwarfCorp
 
     public partial class WorldManager
     {
-        public bool RemoveResourcesFromSpecificZone(ResourceAmount resource, Zone Zone)
+        public bool RemoveResourcesFromSpecificZone(Resource resource, Zone Zone)
         {
-            if (Zone is Stockpile stock && stock.Resources.Count(resource.Type) >= resource.Count)
+            if (Zone is Stockpile stock)
             {
-                stock.Resources.Remove(resource.Type, resource.Count);
-                RemoveFromResourceTagCounts(resource, resource.Count);
-                RecomputeCachedVoxelstate();
-                return true;
+                if (stock.Resources.Remove(resource))
+                {
+                    RemoveFromResourceTagCounts(resource);
+                    RecomputeCachedVoxelstate();
+                    return true;
+                }
             }
-            else
-                return false;
+
+            return false;
         }
 
-        public void RemoveResources(List<ResourceAmount> resources)
+        public bool RemoveResources(List<Resource> resources)
         {
             foreach (var resource in resources)
             {
-                int count = 0;
-
                 foreach (var stock in EnumerateZones().OfType<Stockpile>())
-                {
-                    var num = Math.Min(stock.Resources.Count(resource.Type), resource.Count);
-                    if (num > 0)
-                    {
-                        stock.Resources.Remove(resource.Type, num);
-                        RemoveFromResourceTagCounts(resource, num);
-                        count += num;
-                    }
-
-                    if (count >= resource.Count)
+                    if (RemoveResourcesFromSpecificZone(resource, stock))
                         break;
-                }
+                return false;
             }
 
-            RecomputeCachedVoxelstate();
+            return true;
         }
 
-        private void RemoveFromResourceTagCounts(ResourceAmount resource, int num)
+        public List<Resource> RemoveResourcesByType(List<ResourceTypeAmount> Types)
         {
-            if (Library.GetResourceType(resource.Type).HasValue(out var resourceType))
+            var needed = new Dictionary<String, int>();
+            foreach (var type in Types)
+                needed[type.Type] = type.Count;
+
+            var r = new List<Resource>();
+            foreach (var stockpile in EnumerateZones().OfType<Stockpile>())
+                r.AddRange(stockpile.Resources.RemoveByType(needed));
+
+            return r;
+        }
+
+        private void RemoveFromResourceTagCounts(Resource resource)
+        {
+            if (resource.ResourceType.HasValue(out var resourceType))
                 foreach (var tag in resourceType.Tags)
                     if (PersistentData.CachedResourceTagCounts.ContainsKey(tag))
-                        PersistentData.CachedResourceTagCounts[tag] -= num;
+                        PersistentData.CachedResourceTagCounts[tag] -= 1;
         }
 
-        public List<ResourceAmount> GetResourcesWithTags(List<ResourceTagAmount> tags) // Todo: This is only ever called with a list of 1.
+        public List<Resource> GetResourcesWithTag(String Tag)
         {
-            var tagsRequired = new Dictionary<String, int>();
-            var tagsGot = new Dictionary<String, int>();
-            var amounts = new Dictionary<String, ResourceAmount>();
+            return EnumerateZones().OfType<Stockpile>().SelectMany(zone => zone.Resources.Enumerate().Where(r => r.ResourceType.HasValue(out var res) && res.Tags.Contains(Tag))).ToList();
+        }
 
-            foreach (var quantity in tags)
-            {
-                tagsRequired[quantity.Tag] = quantity.Count;
-                tagsGot[quantity.Tag] = 0;
-            }
-
-            var r = new Random();
-
-            foreach (var stockpile in EnumerateZones().OfType<Stockpile>())
-                foreach (var resource in stockpile.Resources.Enumerate().OrderBy(x => r.Next()))
-                    foreach (var requirement in tagsRequired)
-                    {
-                        var got = tagsGot[requirement.Key];
-
-                        if (requirement.Value <= got) continue;
-
-                        if (!Library.GetResourceType(resource.Type).HasValue(out var type) || !type.Tags.Contains(requirement.Key)) continue;
-
-                        int amountToRemove = Math.Min(resource.Count, requirement.Value - got);
-
-                        if (amountToRemove <= 0) continue;
-
-                        tagsGot[requirement.Key] += amountToRemove;
-
-                        if (amounts.ContainsKey(resource.Type))
-                            amounts[resource.Type].Count += amountToRemove;
-                        else
-                            amounts[resource.Type] = new ResourceAmount(resource.Type, amountToRemove);
-                    }
-
-            var toReturn = new List<ResourceAmount>();
-
-            foreach (var requirement in tagsRequired)
-            {
-                ResourceAmount maxAmount = null;
-
-                foreach (var pair in amounts)
-                {
-                    if (!Library.GetResourceType(pair.Key).HasValue(out var type) || !type.Tags.Contains(requirement.Key)) continue;
-                    if (maxAmount == null || pair.Value.Count > maxAmount.Count)
-                        maxAmount = pair.Value;
-                }
-
-                if (maxAmount != null)
-                    toReturn.Add(maxAmount);
-            }
-            return toReturn;
+        public List<ResourceTypeAmount> GetResourcesWithTagAggregatedByType(String Tag)
+        {
+            return ResourceSet.AggregateByType(GetResourcesWithTag(Tag));
         }
 
         public bool HasResourcesWithTags(IEnumerable<ResourceTagAmount> resources)
@@ -127,9 +86,9 @@ namespace DwarfCorp
             return true;
         }
 
-        public bool HasResources(IEnumerable<ResourceAmount> resources)
+        public bool HasResources(IEnumerable<ResourceTypeAmount> resources)
         {
-            foreach (ResourceAmount resource in resources)
+            foreach (var resource in resources)
             {
                 int count = EnumerateZones().OfType<Stockpile>().Sum(stock => stock.Resources.Count(resource.Type));
 
@@ -142,129 +101,92 @@ namespace DwarfCorp
 
         public bool HasResource(String resource)
         {
-            return HasResources(new List<ResourceAmount>() { new ResourceAmount(resource, 1) });
+            return HasResources(new List<ResourceTypeAmount>() { new ResourceTypeAmount(resource, 1) });
         }
 
-        public int CountResourcesWithTag(String tag)
+        public int CountResourcesWithTag(String Tag)
         {
-            List<ResourceAmount> resources = ListResourcesWithTag(tag);
-            int amounts = 0;
-
-            foreach (ResourceAmount amount in resources)
-            {
-                amounts += amount.Count;
-            }
-
-            return amounts;
+            return GetResourcesWithTag(Tag).Count();
         }
 
-        public List<ResourceAmount> ListResourcesWithTag(String tag, bool allowHeterogenous = true)
+        public Dictionary<string, ResourceTypeAmount> ListResources()
         {
-            if (allowHeterogenous)
-                return ListResources()
-                    .Where(r => Library.GetResourceType(r.Key).HasValue(out var res) && res.Tags.Contains(tag))
-                    .Select(r => r.Value)
-                    .ToList();
-
-            ResourceAmount maxAmount = null;
-            foreach (var pair in ListResources())
-            {
-                if (!Library.GetResourceType(pair.Value.Type).HasValue(out var type) || !type.Tags.Contains(tag)) continue;
-
-                if (maxAmount == null || pair.Value.Count > maxAmount.Count)
-                    maxAmount = pair.Value;
-            }
-
-            return maxAmount != null ? new List<ResourceAmount>() { maxAmount } : new List<ResourceAmount>();
-        }
-
-        public Dictionary<string, ResourceAmount> ListResources()
-        {
-            var toReturn = new Dictionary<string, ResourceAmount>();
+            var toReturn = new Dictionary<string, ResourceTypeAmount>();
 
             foreach (var stockpile in EnumerateZones().OfType<Stockpile>().Where(pile => !(pile is Graveyard)))
             {
                 foreach (var resource in stockpile.Resources.Enumerate())
                 {
-                    if (resource.Count == 0)
-                        continue;
 
                     if (toReturn.ContainsKey(resource.Type))
-                        toReturn[resource.Type].Count += resource.Count;
+                        toReturn[resource.Type].Count += 1;
                     else
-                        toReturn[resource.Type] = resource.CloneResource();
+                        toReturn[resource.Type] = new ResourceTypeAmount(resource.Type, 1);
                 }
             }
 
             return toReturn;
         }
 
-        public bool AddResources(ResourceAmount resources)
+        public ResourceSet GetTradeableResources()
         {
-            var amount = new ResourceAmount(resources.Type, resources.Count);
-            var resource = Library.GetResourceType(amount.Type);
-
-            foreach (Stockpile stockpile in EnumerateZones().Where(s => s is Stockpile && (s as Stockpile).IsAllowed(resources.Type)))
-            {
-                int space = stockpile.ResourceCapacity - stockpile.Resources.TotalCount;
-
-                if (space >= amount.Count)
-                {
-                    stockpile.AddResource(amount);
-
-                    if (resource.HasValue(out var res))
-                        foreach (var tag in res.Tags)
-                        {
-                            if (!PersistentData.CachedResourceTagCounts.ContainsKey(tag))
-                                PersistentData.CachedResourceTagCounts[tag] = 0;
-                            PersistentData.CachedResourceTagCounts[tag] += amount.Count;
-                        }
-
-                    RecomputeCachedVoxelstate();
-                    return true;
-                }
-                else
-                {
-                    var amountToMove = space;
-                    stockpile.AddResource(new ResourceAmount(resources.Type, amountToMove));
-                    amount.Count -= amountToMove;
-
-                    if (resource.HasValue(out var res))
-                        foreach (var tag in res.Tags)
-                        {
-                            if (!PersistentData.CachedResourceTagCounts.ContainsKey(tag))
-                                PersistentData.CachedResourceTagCounts[tag] = 0;
-                            PersistentData.CachedResourceTagCounts[tag] += amountToMove;
-                        }
-
-                    RecomputeCachedVoxelstate();
-
-                    if (amount.Count == 0)
-                        return true;
-                }
-            }
-
-            return false;
+            var r = new ResourceSet();
+            foreach (var stockpile in EnumerateZones().OfType<Stockpile>().Where(pile => !(pile is Graveyard)))
+                foreach (var resource in stockpile.Resources.Enumerate())
+                    r.Add(resource);
+            return r;
         }
 
-        public Dictionary<string, Pair<ResourceAmount>> ListResourcesInStockpilesPlusMinions()
+        public MaybeNull<Tuple<Stockpile, Resource>> FindResource(String Type)
+        {
+            foreach (var stockpile in EnumerateZones().OfType<Stockpile>())
+                foreach (var resource in stockpile.Resources.Enumerate())
+                    if (resource.Type == Type)
+                        return Tuple.Create(stockpile, resource);
+            return null;
+        }
+
+        public bool AddResources(Resource Resource)
+        {
+            bool added = false;
+
+            foreach (Stockpile stockpile in EnumerateZones().Where(s => s is Stockpile && (s as Stockpile).IsAllowed(Resource.Type)))
+                if (!stockpile.IsFull())
+                    added = stockpile.AddResource(Resource);
+
+            if (added)
+            {
+                if (Resource.ResourceType.HasValue(out var res))
+                    foreach (var tag in res.Tags)
+                    {
+                        if (!PersistentData.CachedResourceTagCounts.ContainsKey(tag))
+                            PersistentData.CachedResourceTagCounts[tag] = 0;
+                        PersistentData.CachedResourceTagCounts[tag] += 1;
+                    }
+
+                RecomputeCachedVoxelstate();
+            }
+
+            return added;
+        }
+
+        public Dictionary<string, Pair<ResourceTypeAmount>> ListResourcesInStockpilesPlusMinions()
         {
             var stocks = ListResources();
-            var toReturn = new Dictionary<string, Pair<ResourceAmount>>();
+            var toReturn = new Dictionary<string, Pair<ResourceTypeAmount>>();
 
             foreach (var pair in stocks)
-                toReturn[pair.Key] = new Pair<ResourceAmount>(pair.Value, new ResourceAmount(pair.Value.Type, 0));
+                toReturn[pair.Key] = new Pair<ResourceTypeAmount>(pair.Value, new ResourceTypeAmount(pair.Value.Type, 0));
 
             foreach (var creature in PlayerFaction.Minions)
             {
                 var inventory = creature.Creature.Inventory;
                 foreach (var i in inventory.Resources)
                 {
-                    var resource = i.Resource;
-                    if (toReturn.ContainsKey(resource))
-                        toReturn[resource].Second.Count += 1;
+                    if (toReturn.ContainsKey(i.Resource.Type))
+                        toReturn[i.Resource.Type].Second.Count += 1;
                     else
-                        toReturn[resource] = new Pair<ResourceAmount>(new ResourceAmount(resource, 0), new ResourceAmount(resource, 1));
+                        toReturn[i.Resource.Type] = new Pair<ResourceTypeAmount>(new ResourceTypeAmount(i.Resource.Type, 0), new ResourceTypeAmount(i.Resource.Type, 1));
                 }
             }
 

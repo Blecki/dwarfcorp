@@ -340,6 +340,7 @@
     <Compile Include="TaskManagement\Tasks\Craft\BuildZoneAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\CompoundAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\CompoundCreatureAct.cs" />
+    <Compile Include="TaskManagement\Tasks\Craft\CraftResourceAct.cs" />
     <Compile Include="TaskManagement\Tasks\Craft\CraftItemAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\FindAndEatFoodAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\FindBedAndSleepAct.cs" />
@@ -356,6 +357,7 @@
     <Compile Include="TaskManagement\CompoundActs\GoToZoneAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\GoTrainAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\KillEntityAct.cs" />
+    <Compile Include="TaskManagement\Tasks\Craft\GetResourcesOfType.cs" />
     <Compile Include="TaskManagement\Tasks\Harvest\ChopEntityAct.cs" />
     <Compile Include="TaskManagement\Tasks\Harvest\ChopEntityTask.cs" />
     <Compile Include="TaskManagement\Tasks\KillVoxel\KillVoxelAct.cs" />
@@ -454,8 +456,10 @@
     <Compile Include="World\Economy\Payroll\CollectMoney.cs" />
     <Compile Include="World\Economy\Payroll\DepositMoney.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\HireEmployeeDialog.cs" />
+    <Compile Include="World\Economy\Resources\Inventory.cs" />
     <Compile Include="World\Economy\Resources\Resource.cs" />
-    <Compile Include="World\Economy\Resources\ResourceAmount.cs" />
+    <Compile Include="World\Economy\Resources\ResourceType.cs" />
+    <Compile Include="World\Economy\Resources\ResourceTypeAmount.cs" />
     <Compile Include="World\Economy\Resources\ResourceSet.cs" />
     <Compile Include="Library\ResourceLibrary.cs" />
     <Compile Include="Library\EventLibrary.cs" />
@@ -544,7 +548,6 @@
     <Compile Include="Components\AI\Creature.cs" />
     <Compile Include="Components\AI\CreatureAI.cs" />
     <Compile Include="Components\AI\Health.cs" />
-    <Compile Include="Components\AI\Inventory.cs" />
     <Compile Include="Components\AI\Mating.cs" />
     <Compile Include="Components\AI\MoveAction.cs" />
     <Compile Include="Components\AI\MoveType.cs" />

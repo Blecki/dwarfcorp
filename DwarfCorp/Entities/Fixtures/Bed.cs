@@ -14,7 +14,7 @@ namespace DwarfCorp
         [EntityFactory("Bed")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Bed(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+            return new Bed(Manager, Position, Data.GetData<Resource>("Resource", null));
         }
 
         private static GeometricPrimitive SharedPrimitive = null;
@@ -24,11 +24,11 @@ namespace DwarfCorp
 
         }
 
-        public Bed(ComponentManager manager, Vector3 position, List<ResourceAmount> resources) :
+        public Bed(ComponentManager manager, Vector3 position, Resource Resource) :
             base(manager, "Bed", Matrix.CreateTranslation(position), 
                 new Vector3(1.9f, 0.4f, 0.9f),
                 new Vector3(0.5f, 0.25f, 0.0f), 
-                new DwarfCorp.CraftDetails(manager, "Bed", resources))
+                new CraftDetails(manager, Resource))
         {
             Tags.Add("Bed");
             CollisionType = CollisionType.Static;

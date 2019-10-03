@@ -13,7 +13,7 @@ namespace DwarfCorp
         [EntityFactory("Palisade")]
         private static GameComponent __factory01(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Palisade(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+            return new Palisade(Manager, Position, Data.GetData<Resource>("Resource", null));
         }
 
         public Palisade()
@@ -21,8 +21,8 @@ namespace DwarfCorp
 
         }
 
-        public Palisade(ComponentManager manager, Vector3 position, List<ResourceAmount> resources) :
-            base(manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 4), new DwarfCorp.CraftDetails(manager, "Palisade", resources))
+        public Palisade(ComponentManager manager, Vector3 position, Resource Resource) :
+            base(manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 4), new DwarfCorp.CraftDetails(manager, Resource))
         {
             Name = "Palisade";
             Tags.Add("Defensive");

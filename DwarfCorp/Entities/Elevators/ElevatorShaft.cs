@@ -14,12 +14,7 @@ namespace DwarfCorp.Elevators
         [EntityFactory("Elevator Shaft")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            var resources = Data.GetData<List<ResourceAmount>>("Resources", null);
-
-            if (resources == null)
-                resources = new List<ResourceAmount>() { new ResourceAmount("Wood", 1) };
-
-            return new ElevatorShaft(Manager, Position, resources);
+            return new ElevatorShaft(Manager, Position, Data.GetData<Resource>("Resource", null));
         }
 
         public UInt32 TrackAbove = ComponentManager.InvalidID;
@@ -54,12 +49,12 @@ namespace DwarfCorp.Elevators
             Shaft.Pieces.Add(this);
         }
 
-        public ElevatorShaft(ComponentManager Manager, Vector3 Position, List<ResourceAmount> Resources) :
+        public ElevatorShaft(ComponentManager Manager, Vector3 Position, Resource Resource) :
             base(Manager, "Elevator Shaft", Matrix.CreateTranslation(Position), Vector3.One, Vector3.Zero)
         {
             CollisionType = CollisionType.Static;
 
-            AddChild(new CraftDetails(Manager, "Elevator Shaft", Resources));
+            AddChild(new CraftDetails(Manager, Resource));
             Shaft.Pieces.Add(this);
 
             CreateCosmeticChildren(Manager);

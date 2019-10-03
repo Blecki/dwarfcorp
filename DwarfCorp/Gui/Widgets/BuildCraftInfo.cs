@@ -219,7 +219,7 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     var currentSelection = combo.Combo.SelectedItem;
 
-                    combo.Combo.Items = World.ListResourcesWithTag(combo.Resource.Tag).Where(r => r.Count >= combo.Resource.Count).Select(r => r.Type).OrderBy(p => p).ToList();
+                    combo.Combo.Items = ResourceSet.AggregateByType(World.GetResourcesWithTag(combo.Resource.Tag)).Where(r => r.Count >= combo.Resource.Count).Select(r => r.Type).OrderBy(p => p).ToList();
 
                     if (combo.Combo.Items.Count == 0)
                     {
@@ -303,15 +303,14 @@ namespace DwarfCorp.Gui.Widgets
             return true;
         }
 
-        public List<ResourceAmount> GetSelectedResources()
+        public List<ResourceTypeAmount> GetSelectedResources()
         {
-            var r = new List<ResourceAmount>();
+            var r = new List<ResourceTypeAmount>();
             for (var i = 0; i < Data.RequiredResources.Count && i < ResourceCombos.Count; ++i)
             {
                 //if (ResourceCombos[i].SelectedItem == null) continue;
                 //if (ResourceCombos[i].SelectedItem == "<Not enough!>") continue;
-                r.Add(new ResourceAmount(ResourceCombos[i].Combo.SelectedItem,
-                    Data.RequiredResources[i].Count));
+                r.Add(new ResourceTypeAmount(ResourceCombos[i].Combo.SelectedItem, Data.RequiredResources[i].Count));
             }
             return r;
         }

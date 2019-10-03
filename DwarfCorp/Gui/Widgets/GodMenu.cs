@@ -182,7 +182,7 @@ namespace DwarfCorp.Gui.Widgets
                                 OnClick = (sender, args) =>
                                 {
                                     var railTool = World.UserInterface.Tools["PaintRail"] as Rail.PaintRailTool;
-                                    railTool.SelectedResources = new List<ResourceAmount>(new ResourceAmount[] { new ResourceAmount("Rail", 1) });
+                                    railTool.SelectedResources = new List<Resource>() { new Resource("Rail") };
                                     World.UserInterface.ChangeTool("PaintRail");
                                     railTool.GodModeSwitch = true;
                                 }
@@ -434,55 +434,6 @@ namespace DwarfCorp.Gui.Widgets
                                 i++;
                             }
                         }
-                    }
-                },
-                new HorizontalMenuTray.MenuItem
-                {
-                    Text = "SPAWN CRAFTS",
-                    OnClick = (sender, args) =>
-                    {
-                        // Copy is required because spawning some types results in the creation of new types. EG, snakes create snake meat.
-                        var itemTypes = Library.EnumerateCraftables().Where(craft => craft.Type == CraftItem.CraftType.Object).ToList();
-                        int num = itemTypes.Count();
-                        float gridSize = (float)Math.Ceiling(Math.Sqrt((double)num));
-                        Vector3 gridCenter = World.Renderer.CursorLightPos;
-
-                        int i = 0;
-                        for (float dx = -gridSize/2; dx <= gridSize/2; dx++)
-                        {
-                            for (float dz = -gridSize/2; dz <= gridSize/2; dz++)
-                            {
-                                if (i < num)
-                                {
-                                    var item = itemTypes[i];
-                                    if (item.Name != "Explosive")
-                                    {
-                                        Vector3 pos = MathFunctions.Clamp(gridCenter + new Vector3(dx, World.WorldSizeInVoxels.Y, dz), World.ChunkManager.Bounds);
-                                        VoxelHandle handle = VoxelHelpers.FindFirstVisibleVoxelOnRay(World.ChunkManager, pos, pos + Vector3.Down * 100);
-
-                                        if (handle.IsValid)
-                                        {
-
-                                            var blackboard = new Blackboard();
-                                            List<ResourceAmount> resources = item.RequiredResources.Select(r => new ResourceAmount(Library.EnumerateResourceTypesWithTag(r.Tag).First().Name, r.Count)).ToList();
-                                            blackboard.SetData<List<ResourceAmount>>("Resources", resources);
-                                            blackboard.SetData<string>("CraftType", item.Name);
-
-                                            var entity = EntityFactory.CreateEntity<GameComponent>(item.EntityName, handle.WorldPosition + Vector3.Up + item.SpawnOffset, blackboard);
-                                            if (entity != null)
-                                            {
-                                                if (item.AddToOwnedPool)
-                                                    World.PlayerFaction.OwnedObjects.Add(entity as GameComponent);
-                                                if (item.Deconstructable)
-                                                    entity.Tags.Add("Deconstructable");
-                                            }
-                                        }
-                                    }
-                                }
-                                i++;
-                            }
-                        }
-                        
                     }
                 },
                 new HorizontalMenuTray.MenuItem

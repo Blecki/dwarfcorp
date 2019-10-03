@@ -9,7 +9,7 @@ namespace ManaLampMod
         [EntityFactory("Mana Lamp")]
         private static DwarfCorp.GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new ManaLamp(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+            return new ManaLamp(Manager, Position, Data.GetData<Resource>("Resource", null));
         }
 
         public ManaLamp()
@@ -17,8 +17,8 @@ namespace ManaLampMod
 
         }
 
-        public ManaLamp(ComponentManager Manager, Vector3 position, List<ResourceAmount> Resources) :
-            base(Manager, "Lamp", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(Manager, "Mana Lamp", Resources))
+        public ManaLamp(ComponentManager Manager, Vector3 position, Resource Resource) :
+            base(Manager, "Lamp", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(Manager, Resource))
         {
             Tags.Add("Lamp");
             CollisionType = CollisionType.Static;

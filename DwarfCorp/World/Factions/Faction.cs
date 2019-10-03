@@ -245,7 +245,7 @@ namespace DwarfCorp
                 foreach (CreatureAI creature in envoy.Creatures)
                 {
                     creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
-                    creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, Economy.Information));
+                    creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, Economy.Information, new Resource("Flag")));
                 }
             }
             else
@@ -282,7 +282,7 @@ namespace DwarfCorp
                     foreach (CreatureAI creature in envoy.Creatures)
                     {
                         creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
-                        creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, Economy.Information));
+                        creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, Economy.Information, new Resource("Flag")));
                     }
                 }
             }
@@ -366,7 +366,7 @@ namespace DwarfCorp
                 if (Economy.Information == null)
                     Economy.Information = new CompanyInformation();
 
-                creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, Economy.Information));
+                creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, Economy.Information, new Resource("Flag")));
             }
             return party;
         }

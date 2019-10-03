@@ -16,15 +16,15 @@ namespace DwarfCorp
         [EntityFactory("Conveyor")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Conveyor(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+            return new Conveyor(Manager, Position, Data.GetData<Resource>("Resource", null));
         }
 
         public Conveyor()
         {
         }
 
-        public Conveyor(ComponentManager manager, Vector3 position, List<ResourceAmount> resources = null) :
-            base(manager, "Conveyor", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(manager, "Conveyor", resources))
+        public Conveyor(ComponentManager manager, Vector3 position, Resource Resource) :
+            base(manager, "Conveyor", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(manager, Resource))
         {
             Tags.Add("Conveyor");
             CollisionType = CollisionType.Static;

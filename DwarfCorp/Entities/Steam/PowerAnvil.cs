@@ -17,7 +17,7 @@ namespace DwarfCorp.SteamPipes
                 Manager, 
                 Position, 
                 new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), 
-                new Point(0, 3), Data.GetData<List<ResourceAmount>>("Resources", null));
+                new Point(0, 3), Data.GetData<Resource>("Resource", null));
             r.AddChild(new SteamPoweredBuildBuff(Manager) { BuffMultiplier = 2.0f, SteamThreshold = 0.25f });
             r.AddChild(new SteamPoweredObject(Manager));
             return r;

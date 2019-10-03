@@ -8,10 +8,10 @@ namespace DwarfCorp.Trade
     public class TradeTransaction
     {
         public ITradeEntity EnvoyEntity;
-        public List<ResourceAmount> EnvoyItems;
+        public List<ResourceTypeAmount> EnvoyItems;
         public DwarfBux EnvoyMoney;
         public ITradeEntity PlayerEntity;
-        public List<ResourceAmount> PlayerItems;
+        public List<ResourceTypeAmount> PlayerItems;
         public DwarfBux PlayerMoney;
 
         public void Apply(WorldManager World)
@@ -20,16 +20,16 @@ namespace DwarfCorp.Trade
             {
                 EnvoyEntity.AddMoney(-EnvoyMoney);
                 EnvoyEntity.AddMoney(PlayerMoney);
-                EnvoyEntity.RemoveResources(EnvoyItems);
-                EnvoyEntity.AddResources(PlayerItems);
+                var removedResources = EnvoyEntity.RemoveResourcesByType(EnvoyItems);
+                EnvoyEntity.AddResources(removedResources);
             }
 
             if (PlayerEntity != null)
             {
                 PlayerEntity.AddMoney(-PlayerMoney);
                 PlayerEntity.AddMoney(EnvoyMoney);
-                PlayerEntity.RemoveResources(PlayerItems);
-                PlayerEntity.AddResources(EnvoyItems);
+                var removedResources = PlayerEntity.RemoveResourcesByType(PlayerItems);
+                PlayerEntity.AddResources(removedResources);
             }
         }
     }
@@ -37,13 +37,13 @@ namespace DwarfCorp.Trade
     public class MarketTransaction
     {
         public ITradeEntity PlayerEntity;
-        public List<ResourceAmount> PlayerItems;
+        public List<ResourceTypeAmount> PlayerItems;
         public DwarfBux PlayerMoney;
 
         public void Apply(WorldManager World)
         {
             PlayerEntity.AddMoney(PlayerMoney);
-            PlayerEntity.RemoveResources(PlayerItems);
+            PlayerEntity.RemoveResourcesByType(PlayerItems);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace DwarfCorp
         }
 
         public string PlantType { get; set; }
-        public List<ResourceAmount> RequiredResources { get; set; }
+        public List<ResourceTypeAmount> RequiredResources { get; set; }
 
         public PlantTool(WorldManager World)
         {

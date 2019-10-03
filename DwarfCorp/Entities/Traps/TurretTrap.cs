@@ -14,7 +14,7 @@ namespace DwarfCorp
         [EntityFactory("Turret")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new TurretTrap(Manager, Position, Manager.World.PlayerFaction, Data.GetData<List<ResourceAmount>>("Resources", null));
+            return new TurretTrap(Manager, Position, Manager.World.PlayerFaction, Data.GetData<Resource>("Resource", null));
         }
 
         public Weapon Weapon { get; set; }
@@ -35,9 +35,9 @@ namespace DwarfCorp
             
         }
 
-        public TurretTrap(ComponentManager manager, Vector3 position, Faction faction, List<ResourceAmount> resources) :
+        public TurretTrap(ComponentManager manager, Vector3 position, Faction faction, Resource Resource) :
             base(manager, "TurretTrap", Matrix.CreateTranslation(position),
-            new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(manager, "Turret", resources))
+            new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(manager, Resource))
         {
             Allies = faction;
         

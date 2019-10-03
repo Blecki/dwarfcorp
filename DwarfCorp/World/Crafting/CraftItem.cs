@@ -64,6 +64,7 @@ namespace DwarfCorp
         public bool AllowUserCrafting = true;
         public TaskCategory CraftTaskCategory = TaskCategory.CraftItem;
         public string CraftNoise = "Craft";
+        public DwarfBux MoneyValue = 20.0m;
 
         public bool Disable = false;
 
@@ -78,7 +79,7 @@ namespace DwarfCorp
             Description = Library.TransformDataString(Description, Description);
         }
 
-        private IEnumerable<ResourceAmount> MergeResources(IEnumerable<ResourceAmount> resources)
+        private IEnumerable<ResourceTypeAmount> MergeResources(IEnumerable<ResourceTypeAmount> resources)
         {
             Dictionary<String, int> counts = new Dictionary<String, int>();
             foreach(var resource in resources)
@@ -92,14 +93,14 @@ namespace DwarfCorp
 
             foreach(var count in counts)
             {
-                yield return new ResourceAmount(count.Key, count.Value);
+                yield return new ResourceTypeAmount(count.Key, count.Value);
             }
         }
 
-        public ResourceType ToResource(WorldManager world, List<ResourceAmount> selectedResources, string prefix = "")
+        public ResourceType ToResource(WorldManager world, string prefix = "")
         {
             var objectName = String.IsNullOrEmpty(ObjectName) ? Name : ObjectName;
-            string resourceName = prefix + objectName + " (" + TextGenerator.GetListString(MergeResources(selectedResources).Select(r => (string)r.Type)) + ")";
+            string resourceName = prefix + objectName;// + " (" + TextGenerator.GetListString(MergeResources(selectedResources).Select(r => (string)r.Type)) + ")";
 
             if (Library.GetResourceType(resourceName).HasValue(out var existing))
                 return existing;
@@ -117,10 +118,9 @@ namespace DwarfCorp
                         "CraftItem",
                         "Craft"
                     };
-            toReturn.MoneyValue = selectedResources.Sum(r => Library.GetResourceType(r.Type).HasValue(out var res) ? res.MoneyValue : 0) * 2.0m;
+            toReturn.MoneyValue = MoneyValue;
             toReturn.CraftInfo = new ResourceType.CraftItemInfo
             {
-                Resources = selectedResources,
                 CraftItemType = objectName
             };
             toReturn.ShortName = Name;

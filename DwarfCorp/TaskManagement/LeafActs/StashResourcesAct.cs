@@ -11,7 +11,7 @@ namespace DwarfCorp
     /// </summary>
     public class StashResourcesAct : CreatureAct
     {
-        public ResourceAmount Resources { get; set; }
+        public Resource Resource;
         public Stockpile Zone = null;
         public Inventory.RestockType RestockType = Inventory.RestockType.None;
 
@@ -20,12 +20,12 @@ namespace DwarfCorp
 
         }
 
-        public StashResourcesAct(CreatureAI agent, Stockpile zone, ResourceAmount resources) :
+        public StashResourcesAct(CreatureAI agent, Stockpile zone, Resource Resource) :
             base(agent)
         {
             Zone = zone;
-            Resources = resources;
-            Name = "Stash " + Resources.Type;
+            this.Resource = Resource;
+            Name = "Stash " + Resource.Type;
         }
 
         public override IEnumerable<Status> Run()
@@ -33,22 +33,20 @@ namespace DwarfCorp
             Creature.IsCloaked = false;
             if (Zone != null)
             {
-                var resourcesToStock = Creature.Inventory.Resources.Where(a => a.MarkedForRestock && Zone is Stockpile && (Zone as Stockpile).IsAllowed(a.Resource)).ToList();
+                var resourcesToStock = Creature.Inventory.Resources.Where(a => a.MarkedForRestock && Zone is Stockpile && (Zone as Stockpile).IsAllowed(a.Resource.Type)).ToList();
+
                 foreach (var resource in resourcesToStock)
                 {
-                    List<GameComponent> createdItems = Creature.Inventory.RemoveAndCreate(new ResourceAmount(resource.Resource, 1), Inventory.RestockType.RestockResource);
-
-                    foreach (var b in createdItems.OfType<ResourceEntity>())
-                    {
-                        if (Zone.AddResource(b.Resource))
+                    var createdItem = Creature.Inventory.RemoveAndCreate(resource.Resource, Inventory.RestockType.RestockResource);
+                    if (Zone.AddResource(resource.Resource))
                         {
-                            var toss = new TossMotion(1.0f, 2.5f, b.LocalTransform, Zone.GetBoundingBox().Center() + new Vector3(0.5f, 0.5f, 0.5f));
+                            var toss = new TossMotion(1.0f, 2.5f, createdItem.LocalTransform, Zone.GetBoundingBox().Center() + new Vector3(0.5f, 0.5f, 0.5f));
 
-                            if (b.GetRoot().GetComponent<Physics>().HasValue(out var physics))
+                            if (createdItem.GetRoot().GetComponent<Physics>().HasValue(out var physics))
                                 physics.CollideMode = Physics.CollisionMode.None;
 
-                            b.AnimationQueue.Add(toss);
-                            toss.OnComplete += b.Die;
+                        createdItem.AnimationQueue.Add(toss);
+                            toss.OnComplete += createdItem.Die;
 
                             Creature.NoiseMaker.MakeNoise("Stockpile", Creature.AI.Position);
                             Creature.Stats.NumItemsGathered++;
@@ -63,21 +61,20 @@ namespace DwarfCorp
                         }
                         else
                         {
-                            Creature.Inventory.AddResource(new ResourceAmount(resource.Resource, 1), Inventory.RestockType.RestockResource);
-                            b.Delete();
+                            Creature.Inventory.AddResource(resource.Resource, Inventory.RestockType.RestockResource);
+                        createdItem.Delete();
                         }
-                    }
                 }
             }
 
             Timer waitTimer = new Timer(1.0f, true);
-            bool removed = Creature.World.RemoveResourcesFromSpecificZone(Resources, Zone);
+            bool removed = Creature.World.RemoveResourcesFromSpecificZone(Resource, Zone);
             
             if (!removed)
                 yield return Status.Fail;
             else
             {
-                var newEntity = EntityFactory.CreateEntity<GameComponent>(Resources.Type + " Resource", Zone.GetBoundingBox().Center() + new Vector3(0.0f, 1.0f, 0.0f));
+                var newEntity = EntityFactory.CreateEntity<GameComponent>(Resource.Type + " Resource", Zone.GetBoundingBox().Center() + new Vector3(0.0f, 1.0f, 0.0f));
 
                 if (newEntity.GetRoot().GetComponent<Physics>().HasValue(out var newPhysics))
                     newPhysics.CollideMode = Physics.CollisionMode.None;
@@ -86,7 +83,7 @@ namespace DwarfCorp
                 newEntity.AnimationQueue.Add(toss);
                 toss.OnComplete += () => newEntity.Die();
 
-                Agent.Creature.Inventory.AddResource(Resources.CloneResource(), Inventory.RestockType.None);
+                Agent.Creature.Inventory.AddResource(Resource, Inventory.RestockType.None);
                 Agent.Creature.Sprite.ResetAnimations(Creature.Stats.CurrentClass.AttackMode);
                 while (!waitTimer.HasTriggered)
                 {

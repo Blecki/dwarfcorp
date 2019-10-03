@@ -9,7 +9,7 @@ namespace DwarfCorp
         [EntityFactory("Candy Table")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new CandyTable("Candy Table", Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+            return new CandyTable("Candy Table", Manager, Position, Data.GetData<Resource>("Resource", null));
         }
 
         public SpriteSheet fixtureAsset;
@@ -20,20 +20,21 @@ namespace DwarfCorp
             
         }
 
-        public CandyTable(string craftType, ComponentManager componentManager, Vector3 position, List<ResourceAmount> resources) :
-            this(craftType, componentManager, position, null, Point.Zero, resources)
+        public CandyTable(string craftType, ComponentManager componentManager, Vector3 position, Resource Resource) :
+            this(craftType, componentManager, position, null, Point.Zero, Resource)
         {
             
         }
 
-        public CandyTable(string craftType, ComponentManager manager, Vector3 position, string asset, List<ResourceAmount> resources) :
-            this(craftType, manager, position, new SpriteSheet(asset), Point.Zero, resources)
+        public CandyTable(string craftType, ComponentManager manager, Vector3 position, string asset, Resource Resource) :
+            this(craftType, manager, position, new SpriteSheet(asset), Point.Zero, Resource)
         {
 
         }
 
-        public CandyTable(string craftType, ComponentManager manager, Vector3 position, SpriteSheet fixtureAsset, Point fixtureFrame, List<ResourceAmount> resources) :
-            base(manager, craftType, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new DwarfCorp.CraftDetails(manager, craftType, resources))
+        // Todo: Pointless extra constructors?
+        public CandyTable(string craftType, ComponentManager manager, Vector3 position, SpriteSheet fixtureAsset, Point fixtureFrame, Resource Resource) :
+            base(manager, craftType, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new DwarfCorp.CraftDetails(manager, Resource))
         {
             this.fixtureAsset = fixtureAsset;
             this.fixtureFrame = fixtureFrame;

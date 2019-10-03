@@ -26,7 +26,7 @@ namespace DwarfCorp
         public SummoningCircle(ComponentManager Manager, Vector3 Position, Blackboard Data) :
             base("Summoning Circle", new String[] { "Teleporter" },
                 Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(4, 2),
-                Data.GetData<List<ResourceAmount>>("Resources", null))
+                Data.GetData<Resource>("Resource", null))
         {
             OrientMode = SimpleSprite.OrientMode.Fixed;
             ParticleTimer = new Timer(0.5f + MathFunctions.Rand(-0.25f, 0.25f), false);

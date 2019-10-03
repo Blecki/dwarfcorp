@@ -14,7 +14,7 @@ namespace DwarfCorp
         [EntityFactory("Forge")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Forge(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+            return new Forge(Manager, Position, Data.GetData<Resource>("Resource", null));
         }
 
         public Forge()
@@ -22,8 +22,8 @@ namespace DwarfCorp
 
         }
 
-        public Forge(ComponentManager manager, Vector3 position, List<ResourceAmount> resources) :
-            base(manager, "Forge", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new DwarfCorp.CraftDetails(manager, "Forge", resources))
+        public Forge(ComponentManager manager, Vector3 position, Resource Resource) :
+            base(manager, "Forge", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(manager, Resource))
         {
             Tags.Add("Forge");
             CollisionType = CollisionType.Static;

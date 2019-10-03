@@ -8,37 +8,23 @@ namespace DwarfCorp
     /// <summary>
     /// A creature finds an item from a stockpile with the given tags, goes to it, and picks it up.
     /// </summary>
-    public class GetResourcesWithTag : CompoundCreatureAct
+    public class GetResourcesOfType : CompoundCreatureAct
     {
-        public List<ResourceTagAmount> Resources { get; set; }
-        public List<KeyValuePair<Stockpile, Resource> > ResourcesToStash { get; set; }
+        public List<ResourceTypeAmount> Resources;
+        public List<KeyValuePair<Stockpile, Resource>> ResourcesToStash;
         public String BlackboardEntry = "ResourcesStashed";
 
-        public GetResourcesWithTag()
+        public GetResourcesOfType()
         {
 
         }
 
-        public GetResourcesWithTag(CreatureAI agent, List<ResourceTypeAmount> resources) :
+        public GetResourcesOfType(CreatureAI agent, List<ResourceTypeAmount> Resources) :
             base(agent)
         {
             Name = "Get Resources";
-            ResourcesToStash = agent.World.GetStockpilesContainingResources(agent.Position, resources).ToList();
-        }
-
-
-        public GetResourcesWithTag(CreatureAI agent, List<ResourceTagAmount> resources ) :
-            base(agent)
-        {
-            Name = "Get Resources";
-            Resources = resources;
-        }
-
-        public GetResourcesWithTag(CreatureAI agent, String Tag) :
-            base(agent)
-        {
-            Name = "Get Resources";
-            Resources = new List<ResourceTagAmount>(){new ResourceTagAmount(Tag, 1)};
+            this.Resources = Resources;
+            ResourcesToStash = agent.World.GetStockpilesContainingResources(agent.Position, Resources).ToList();
         }
 
         public IEnumerable<Status> AlwaysTrue()
@@ -88,7 +74,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    List<Act> children = new List<Act>();
+                    var children = new List<Act>();
                     foreach (var resource in ResourcesToStash.OrderBy(r => (r.Key.GetBoundingBox().Center() - Agent.Position).LengthSquared()))
                     {
                         children.Add(new Domain(() => HasResources(Agent, resource), new GoToZoneAct(Agent, resource.Key)));
@@ -104,8 +90,8 @@ namespace DwarfCorp
                 {
                     // In this case the dwarf already has all the resources. We have to find the resources from the inventory.
                     var resourcesStashed = new List<Resource>();
-                    foreach (var tag in Resources)
-                        resourcesStashed.AddRange(Creature.Inventory.EnumerateResources(tag, Inventory.RestockType.Any));
+                    foreach (var amount in Resources)
+                        resourcesStashed.AddRange(Creature.Inventory.FindResourcesOfType(amount));
                     Tree = new SetBlackboardData<List<Resource>>(Agent, BlackboardEntry, resourcesStashed);
                 }
                 else if (ResourcesToStash != null)

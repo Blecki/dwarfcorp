@@ -28,7 +28,7 @@ namespace DwarfCorp
         public PlantGrowthTower(ComponentManager Manager, Vector3 Position, Blackboard Data) :
             base("Tower of Life", new String[] { "Tower of Life" },
                 Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(5, 2),
-                Data.GetData<List<ResourceAmount>>("Resources", null))
+                Data.GetData<Resource>("Resource", null)) // Todo: The crafted fixture constructor should be extracting this. Pass Data down instead?
         {
             OrientMode = SimpleSprite.OrientMode.YAxis;
             AddChild(new MagicalObject(Manager));

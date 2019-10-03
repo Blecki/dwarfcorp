@@ -10,7 +10,7 @@ namespace DwarfCorp
     /// </summary>
     internal class StockResourceTask : Task
     {
-        public ResourceAmount EntityToGather = null;
+        public Resource ResourceToStock = null;
         public string ZoneType = "Stockpile";
 
         public StockResourceTask()
@@ -21,11 +21,11 @@ namespace DwarfCorp
             EnergyDecrease = GameSettings.Default.Energy_Tiring;
         }
 
-        public StockResourceTask(ResourceAmount entity)
+        public StockResourceTask(Resource ResourceToStock)
         {
             Category = TaskCategory.Gather;
-            EntityToGather = entity.CloneResource();
-            Name = "Stock Entity: " + entity.Type + " " + entity.Count;
+            this.ResourceToStock = ResourceToStock;
+            Name = "Stock Entity: " + ResourceToStock.Type;
             Priority = TaskPriority.Medium;
             ReassignOnDeath = false;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
@@ -34,15 +34,13 @@ namespace DwarfCorp
 
         public override MaybeNull<Act> CreateScript(Creature creature)
         {
-            return new StockResourceAct(creature.AI, EntityToGather);
+            return new StockResourceAct(creature.AI, ResourceToStock);
         }
 
         public override bool ShouldDelete(Creature agent)
         {
-            if (!agent.Inventory.HasResource(EntityToGather))
-            {
+            if (!agent.Inventory.Contains(ResourceToStock))
                 return true;
-            }
             return false;
         }
 
@@ -51,8 +49,8 @@ namespace DwarfCorp
             if (agent.AI.Stats.IsAsleep)
                 return Feasibility.Infeasible;
 
-            return agent.World.HasFreeStockpile(EntityToGather) && 
-                !agent.AI.Movement.IsSessile && agent.Inventory.HasResource(EntityToGather) ? Feasibility.Feasible : Feasibility.Infeasible;
+            return agent.World.HasFreeStockpile(new ResourceTypeAmount(ResourceToStock.Type, 1)) && 
+                !agent.AI.Movement.IsSessile && agent.Inventory.Contains(ResourceToStock) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

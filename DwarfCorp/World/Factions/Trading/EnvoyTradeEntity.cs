@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp.Trade
 {
@@ -17,28 +18,12 @@ namespace DwarfCorp.Trade
 
         public int AvailableSpace { get { return 0; } }
         public DwarfBux Money { get { return SourceEnvoy.TradeMoney; } }
-        public List<ResourceAmount> Resources { get { return SourceEnvoy.TradeGoods; } }
+        public ResourceSet Resources { get { return SourceEnvoy.TradeGoods; } }
         public void AddMoney(DwarfBux Money) { SourceEnvoy.TradeMoney += Money; }
-        public void AddResources(List<ResourceAmount> Resources)
+        public void AddResources(List<Resource> Resources)
         {
-            foreach(var resource in Resources)
-            {
-                bool found = false;
-                foreach (var existingResource in SourceEnvoy.TradeGoods)
-                {
-                    if (existingResource.Type == resource.Type)
-                    {
-                        existingResource.Count += resource.Count;
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (!found)
-                {
-                    SourceEnvoy.TradeGoods.Add(resource);
-                }
-            }
+            foreach (var res in Resources)
+                SourceEnvoy.TradeGoods.Add(res);
         }
         public Race TraderRace { get { return SourceEnvoy.OwnerFaction.Race; } }
         public Faction TraderFaction { get { return SourceEnvoy.OwnerFaction; } }
@@ -56,23 +41,14 @@ namespace DwarfCorp.Trade
             return 0.0m;
         }
 
-        public DwarfBux ComputeValue(List<ResourceAmount> Resources)
+        public DwarfBux ComputeValue(List<ResourceTypeAmount> Resources)
         {
-            return Resources.Sum(r => ComputeValue(r.Type) * (decimal)r.Count);
+            return Resources.Sum(r => ComputeValue(r.Type) * r.Count);
         }
 
-        public void RemoveResources(List<ResourceAmount> Resources)
+        public List<Resource> RemoveResourcesByType(List<ResourceTypeAmount> Resources)
         {
-            foreach(var r in Resources)
-            {
-                foreach(var r2 in SourceEnvoy.TradeGoods)
-                {
-                    if (r.Type == r2.Type)
-                    {
-                        r2.Count -= r.Count;
-                    }
-                }
-            }
+            return SourceEnvoy.TradeGoods.RemoveByType(Resources);
         }
     }
 }

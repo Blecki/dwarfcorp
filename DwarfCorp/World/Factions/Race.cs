@@ -57,9 +57,9 @@ namespace DwarfCorp
             NameTemplates = TextGenerator.GetAtoms(NameFile);
         }
 
-        public List<ResourceAmount> GenerateTradeItems(WorldManager world)
+        public ResourceSet GenerateTradeItems(WorldManager world)
         {
-            var toReturn = new Dictionary<String, ResourceAmount>();
+            var toReturn = new ResourceSet();
             String[] blacklistTags = { "Money", "Corpse" };
 
             foreach (var tags in TradeGoods)
@@ -92,12 +92,7 @@ namespace DwarfCorp
                     }
 
                     if (randResource.HasValue(out res))
-                    {
-                        if (!toReturn.ContainsKey(res.Name))
-                            toReturn[res.Name] = new ResourceAmount(res.Name, 1);
-                        else
-                            toReturn[res.Name].Count += 1;
-                    }
+                        toReturn.Add(new Resource(res.Name));
                 }
             }
 
@@ -108,18 +103,10 @@ namespace DwarfCorp
                 if (randomObject == null)
                     continue;
 
-                var selectedResources = new List<ResourceAmount>();
-                foreach (var requirement in randomObject.RequiredResources)
-                    selectedResources.Add(new ResourceAmount(Datastructures.SelectRandom(Library.EnumerateResourceTypesWithTag(requirement.Tag)).Name, requirement.Count));
-
-                var randResource = randomObject.ToResource(world, selectedResources, Posessive + " ");
-                if (!toReturn.ContainsKey(randResource.Name))
-                    toReturn[randResource.Name] = new ResourceAmount(randResource.Name, 1);
-                else
-                    toReturn[randResource.Name].Count += 1;
+                toReturn.Add(new Resource(randomObject.ToResource(world, Posessive + " ").Name));
             }
 
-            return toReturn.Select(amount => amount.Value).ToList();
+            return toReturn;
         }
        
     }

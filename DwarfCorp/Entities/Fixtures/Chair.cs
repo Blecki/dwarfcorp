@@ -18,28 +18,30 @@ namespace DwarfCorp
         public Point TopSprite;
         public Point LegsSprite;
 
+        // Todo: Split
+
         [EntityFactory("Chair")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Chair(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null), "Wooden Chair", DefaultTopSprite, DefaultLegsSprite);
+            return new Chair(Manager, Position, Data.GetData<Resource>("Resource", null), "Wooden Chair", DefaultTopSprite, DefaultLegsSprite);
         }
 
         [EntityFactory("Wooden Chair")]
         private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Chair(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null), "Wooden Chair", DefaultTopSprite, DefaultLegsSprite);
+            return new Chair(Manager, Position, Data.GetData<Resource>("Resource", null), "Wooden Chair", DefaultTopSprite, DefaultLegsSprite);
         }
 
         [EntityFactory("Stone Chair")]
         private static GameComponent __factory2(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Chair(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null), "Stone Chair", new Point(6, 6), new Point(7, 6));
+            return new Chair(Manager, Position, Data.GetData<Resource>("Resource", null), "Stone Chair", new Point(6, 6), new Point(7, 6));
         }
 
         [EntityFactory("Iron Chair")]
         private static GameComponent __factory3(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Chair(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null), "Iron Chair", new Point(6, 7), new Point(7, 7));
+            return new Chair(Manager, Position, Data.GetData<Resource>("Resource", null), "Iron Chair", new Point(6, 7), new Point(7, 7));
         }
 
         private void Initialize(ComponentManager manager)
@@ -52,8 +54,8 @@ namespace DwarfCorp
         {
         }
 
-        public Chair(ComponentManager manager, Vector3 position, List<ResourceAmount> resources, string craftType, Point topSprite, Point legsSprite) :
-            base(manager, "Chair", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(manager, craftType, resources))
+        public Chair(ComponentManager manager, Vector3 position, Resource Resource, string craftType, Point topSprite, Point legsSprite) :
+            base(manager, "Chair", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(manager, Resource))
         {
             TopSprite = topSprite;
             LegsSprite = legsSprite;

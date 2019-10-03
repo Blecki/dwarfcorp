@@ -24,11 +24,8 @@ namespace DwarfCorp
                 Resources = new List<Inventory.InventoryItem>(),
             }) as Inventory;
 
-            inventory.AddResource(new ResourceAmount()
-            {
-                Count = 2,
-                Type = "Cactus"
-            });
+            for (var i = 0; i < 2; ++i)
+                inventory.AddResource(new Resource("Cactus"));
 
             var particles = AddChild(new ParticleTrigger("Leaves", Manager, "LeafEmitter",
                 Matrix.Identity, LocalBoundingBoxOffset, GetBoundingBox().Extents())

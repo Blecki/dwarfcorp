@@ -14,7 +14,7 @@ namespace DwarfCorp
         [EntityFactory("Anvil")]
         private static GameComponent __factory00(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Anvil(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+            return new Anvil(Manager, Position, Data.GetData<Resource>("Resource", null));
         }
 
         private static RawPrimitive SharedMesh = null;
@@ -24,11 +24,11 @@ namespace DwarfCorp
 
         }
 
-        public Anvil(ComponentManager manager, Vector3 position, List<ResourceAmount> resources) :
+        public Anvil(ComponentManager manager, Vector3 position, Resource Resource) :
             base(manager, "Anvil", Matrix.CreateTranslation(position),
                 new Vector3(0.9f, 0.9f, 0.9f),
                 new Vector3(0.0f, 0.5f, 0.0f),
-                new DwarfCorp.CraftDetails(manager, "Anvil", resources))
+                new CraftDetails(manager, Resource))
         {
             Tags.Add("Anvil");
             CollisionType = CollisionType.Static;

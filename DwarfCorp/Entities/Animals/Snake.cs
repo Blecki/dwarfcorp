@@ -117,7 +117,7 @@ namespace DwarfCorp
                         }
 
                     if (Library.DoesResourceTypeExist(type))
-                        inventory.AddResource(new ResourceAmount(type, 1));
+                        inventory.AddResource(new Resource(type));
                 }
 
                 {
@@ -132,7 +132,7 @@ namespace DwarfCorp
                         }
 
                     if (Library.DoesResourceTypeExist(type))
-                        inventory.AddResource(new ResourceAmount(type, 1));
+                        inventory.AddResource(new Resource(type));
                 }
             }
 

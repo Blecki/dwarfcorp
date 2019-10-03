@@ -58,7 +58,7 @@ namespace DwarfCorp
 
             if (BuildRoom.ResourcesReservedFor == Agent)
             {
-                var resources = Agent.Blackboard.GetData<List<ResourceAmount>>("zone_resources");
+                var resources = Agent.Blackboard.GetData<List<Resource>>("zone_resources");
                 Agent.Creature.Inventory.Remove(resources, Inventory.RestockType.None);
                 BuildRoom.AddResources(resources);
                 BuildRoom.ResourcesReservedFor = null;

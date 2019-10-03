@@ -24,28 +24,23 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            var list = Agent.Blackboard.GetData<List<ResourceAmount>>(BlackboardEntry);
-            if (list.Count == 0)
+            var toolResource = Agent.Blackboard.GetData<Resource>(BlackboardEntry);
+
+            if (toolResource == null)
             {
                 yield return Status.Fail;
                 yield break;
             }
 
-            var actualResource = Creature.Inventory.Resources.FirstOrDefault(i => i.Resource == list[0].Type);
-            if (actualResource == null)
-                yield return Status.Fail;
-            else
+            if (Agent.Stats.Equipment.GetItemInSlot("tool").HasValue(out var existingTool))
             {
-                if (Agent.Stats.Equipment.GetItemInSlot("tool").HasValue(out var existingTool))
-                {
-                    Agent.Stats.Equipment.UnequipItem("tool");
-                    Creature.Inventory.AddResource(new ResourceAmount(existingTool.Resource, 1));
-                }
-
-                Agent.Stats.Equipment.EquipItem("tool", new EquippedItem { Resource = list[0].Type });
-                Creature.Inventory.Remove(new ResourceAmount(list[0].Type, 1), Inventory.RestockType.Any);
-                yield return Status.Success;
+                Agent.Stats.Equipment.UnequipItem("tool");
+                Creature.Inventory.AddResource(existingTool.Resource);
             }
+
+            Agent.Stats.Equipment.EquipItem("tool", new EquippedItem { Resource = toolResource });
+            Creature.Inventory.Remove(toolResource, Inventory.RestockType.Any);
+            yield return Status.Success;
         }
     }
 }

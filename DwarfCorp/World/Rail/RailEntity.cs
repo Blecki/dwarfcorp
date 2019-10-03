@@ -112,7 +112,7 @@ namespace DwarfCorp.Rail
                 Matrix.CreateTranslation(Location.WorldPosition + new Vector3(Piece.Offset.X, 0, Piece.Offset.Y)), 
                 Vector3.One,
                 Vector3.Zero,
-                new CraftDetails(Manager, "Rail", new List<ResourceAmount> { new ResourceAmount("Rail", 1) }))
+                new CraftDetails(Manager, new Resource("Rail")))
         {
             this.Piece = Piece;
             this.Location = Location;

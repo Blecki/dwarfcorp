@@ -9,15 +9,15 @@ namespace DwarfCorp
         [EntityFactory("Candy Chair")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new CandyChair(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+            return new CandyChair(Manager, Position, Data.GetData<Resource>("Resource", null));
         }
 
         public CandyChair()
         {
         }
 
-        public CandyChair(ComponentManager Manager, Vector3 Position, List<ResourceAmount> Resources) :
-            base(Manager, "Candy Chair", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(Manager, "Candy Chair", Resources))
+        public CandyChair(ComponentManager Manager, Vector3 Position, Resource Resource) :
+            base(Manager, "Candy Chair", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(Manager, Resource))
         {
             var matrix = Matrix.CreateRotationY((float)Math.PI * 0.5f);
             matrix.Translation = Position;

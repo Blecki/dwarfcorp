@@ -18,13 +18,13 @@ namespace DwarfCorp
         [EntityFactory("Table")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Table("Wooden Table", Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null), DefaultTopFrame, DefaultLegsFrame);
+            return new Table("Wooden Table", Manager, Position, Data.GetData<Resource>("Resource", null), DefaultTopFrame, DefaultLegsFrame);
         }
 
         [EntityFactory("Cutting Board")]
         private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Table("Cutting Board", Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 7), Data.GetData<List<ResourceAmount>>("Resources", null), DefaultTopFrame, DefaultLegsFrame)
+            return new Table("Cutting Board", Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 7), Data.GetData<Resource>("Resource", null), DefaultTopFrame, DefaultLegsFrame)
             {
                 Tags = new List<string>() { "Cutting Board" }
             };
@@ -33,7 +33,7 @@ namespace DwarfCorp
         [EntityFactory("Apothecary")]
         private static GameComponent __factory3(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Table("Apothecary", Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(1, 4), Data.GetData<List<ResourceAmount>>("Resources", null), DefaultTopFrame, DefaultLegsFrame)
+            return new Table("Apothecary", Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(1, 4), Data.GetData<Resource>("Resource", null), DefaultTopFrame, DefaultLegsFrame)
             {
                 Tags = new List<string>() { "Research", "Apothecary" }
             };
@@ -42,21 +42,21 @@ namespace DwarfCorp
         [EntityFactory("Wooden Table")]
         private static GameComponent __factory4(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Table("Wooden Table", Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null), DefaultTopFrame, DefaultLegsFrame);
+            return new Table("Wooden Table", Manager, Position, Data.GetData<Resource>("Resource", null), DefaultTopFrame, DefaultLegsFrame);
         }
 
 
         [EntityFactory("Stone Table")]
         private static GameComponent __factory5(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Table("Stone Table", Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null), new Point(4, 6), new Point(5, 6));
+            return new Table("Stone Table", Manager, Position, Data.GetData<Resource>("Resource", null), new Point(4, 6), new Point(5, 6));
         }
 
 
         [EntityFactory("Iron Table")]
         private static GameComponent __factory6(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Table("Iron Table", Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null), new Point(4, 7), new Point(5, 7));
+            return new Table("Iron Table", Manager, Position, Data.GetData<Resource>("Resource", null), new Point(4, 7), new Point(5, 7));
         }
 
         public SpriteSheet fixtureAsset;
@@ -70,20 +70,21 @@ namespace DwarfCorp
             
         }
 
-        public Table(string craftType, ComponentManager componentManager, Vector3 position, List<ResourceAmount> resources, Point topFrame, Point legsFrame) :
-            this(craftType, componentManager, position, null, Point.Zero, resources, topFrame, legsFrame)
+        // Todo: Why so many constructors?
+        public Table(string craftType, ComponentManager componentManager, Vector3 position, Resource Resource, Point topFrame, Point legsFrame) :
+            this(craftType, componentManager, position, null, Point.Zero, Resource, topFrame, legsFrame)
         {
             
         }
 
-        public Table(string craftType, ComponentManager manager, Vector3 position, string asset, List<ResourceAmount> resources, Point topFrame, Point legsFrame) :
-            this(craftType, manager, position, new SpriteSheet(asset), Point.Zero, resources, topFrame, legsFrame)
+        public Table(string craftType, ComponentManager manager, Vector3 position, string asset, Resource Resource, Point topFrame, Point legsFrame) :
+            this(craftType, manager, position, new SpriteSheet(asset), Point.Zero, Resource, topFrame, legsFrame)
         {
 
         }
 
-        public Table(string craftType, ComponentManager manager, Vector3 position, SpriteSheet fixtureAsset, Point fixtureFrame, List<ResourceAmount> resources, Point topFrame, Point legsFrame) :
-            base(manager, craftType, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new DwarfCorp.CraftDetails(manager, craftType, resources))
+        public Table(string craftType, ComponentManager manager, Vector3 position, SpriteSheet fixtureAsset, Point fixtureFrame, Resource Resource, Point topFrame, Point legsFrame) :
+            base(manager, craftType, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(manager, Resource))
         {
             TopFrame = topFrame;
             LegsFrame = legsFrame;

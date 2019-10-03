@@ -28,7 +28,7 @@ namespace DwarfCorp
                 {
                     MarkedForRestock = false,
                     MarkedForUse = false,
-                    Resource = "Grain"
+                    Resource = new Resource("Grain")
                 });
             }
 

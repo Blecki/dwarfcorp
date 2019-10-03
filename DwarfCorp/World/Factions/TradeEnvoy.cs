@@ -16,7 +16,7 @@ namespace DwarfCorp
     public class TradeEnvoy : Expedition
     {
         public DwarfBux TradeMoney;
-        public List<ResourceAmount> TradeGoods;
+        public ResourceSet TradeGoods;
         public DateTimer WaitForTradeTimer = null;
         public DwarfBux TributeDemanded = 0m;
         [JsonIgnore] public WorldPopup TradeWidget = null;
@@ -123,17 +123,17 @@ namespace DwarfCorp
 
         public void DistributeGoods()
         {
-            if (Creatures.Count == 0) return;
-            int goodsPerCreature = TradeGoods.Count / Creatures.Count;
-            int currentGood = 0;
-            foreach (CreatureAI creature in Creatures)
-                if (creature.GetRoot().GetComponent<ResourcePack>().HasValue(out var pack))
-                {
-                    pack.Contents.Resources.Clear();
-                    for (int i = currentGood; i < global::System.Math.Min(currentGood + goodsPerCreature, TradeGoods.Count); i++)
-                        pack.Contents.AddResource(TradeGoods[i]);
-                    currentGood += goodsPerCreature;
-                }
+            //if (Creatures.Count == 0) return;
+            //int goodsPerCreature = TradeGoods.TotalCount / Creatures.Count;
+            //int currentGood = 0;
+            //foreach (CreatureAI creature in Creatures)
+            //    if (creature.GetRoot().GetComponent<ResourcePack>().HasValue(out var pack))
+            //    {
+            //        pack.Contents.Resources.Clear();
+            //        for (int i = currentGood; i < global::System.Math.Min(currentGood + goodsPerCreature, TradeGoods.TotalCount); i++)
+            //            pack.Contents.AddResource(TradeGoods[i]);
+            //        currentGood += goodsPerCreature;
+            //    }
         }
 
         public void Update(WorldManager World)
