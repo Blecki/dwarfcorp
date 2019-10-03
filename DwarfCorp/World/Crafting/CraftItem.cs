@@ -148,7 +148,7 @@ namespace DwarfCorp
             r.Name = resourceName;
             r.Type = CraftType.Resource;
             r.CraftActBehavior = CraftActBehaviors.Object;
-            r.ResourceCreated = "Object";
+            r.ResourceCreated = resourceName;
             r.CraftLocation = /*String.IsNullOrEmpty(CraftLocation) ? "Anvil" :*/ CraftLocation;
             r.ObjectName = Name;
             r.AllowUserCrafting = false;
