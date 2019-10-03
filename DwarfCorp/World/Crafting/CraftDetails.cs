@@ -16,23 +16,21 @@ namespace DwarfCorp
 
         public CraftDetails()
         {
-            this.SetFlag(Flag.ShouldSerialize, true);
-        }
-
-        public CraftDetails(ComponentManager manager) :
-            base(manager)
-        {
-            this.SetFlag(Flag.ShouldSerialize, true);
         }
 
         public CraftDetails(ComponentManager manager, Resource Resource) :
-            this(manager)
+            base(manager)
         {
             this.SetFlag(Flag.ShouldSerialize, true);
+            this.Resource = Resource;
         }
 
         public override void Die()
         {
+            var bounds = this.GetRoot().GetBoundingBox();
+            var pos = MathFunctions.RandVector3Box(bounds);
+            new ResourceEntity(Manager, Resource, pos);
+
             // Todo: Use craft type to create a thing? Or store underlying resource used to place object?
             //try
             //{

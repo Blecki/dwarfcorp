@@ -35,7 +35,8 @@ namespace DwarfCorp
         private GameComponent CreatePreviewBody()
         {
             Blackboard blackboard = new Blackboard();
-            blackboard.SetData("Resource", SelectedResource);
+            if (SelectedResource.HasValue(out var selRes))
+                blackboard.SetData("Resource", selRes.Item2);
 
             blackboard.SetData<string>("CraftType", CraftType.Name);
 
