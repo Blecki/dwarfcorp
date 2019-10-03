@@ -49,7 +49,7 @@ namespace DwarfCorp
 
                 var box = zone.GetBoundingBox();
                 var at = new Vector3((box.Min.X + box.Max.X - 1) / 2, box.Max.Y, (box.Min.Z + box.Max.Z - 1) / 2);
-                var flag = EntityFactory.CreateEntity<Flag>("Flag", at + new Vector3(0.5f, 0.5f, 0.5f));
+                var flag = new Flag(Settings.World.ComponentManager, at, Settings.World.PlayerFaction.Economy.Information, new Resource("Flag"));
                 Settings.World.PlayerFaction.OwnedObjects.Add(flag);
                 flag.Tags.Add("Deconstructable");
 

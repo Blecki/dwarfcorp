@@ -16,20 +16,19 @@ namespace DwarfCorp.Trade
 
         public void Apply(WorldManager World)
         {
-            if (EnvoyEntity != null)
+            if (EnvoyEntity != null && PlayerEntity != null)
             {
                 EnvoyEntity.AddMoney(-EnvoyMoney);
                 EnvoyEntity.AddMoney(PlayerMoney);
-                var removedResources = EnvoyEntity.RemoveResourcesByType(EnvoyItems);
-                EnvoyEntity.AddResources(removedResources);
-            }
 
-            if (PlayerEntity != null)
-            {
                 PlayerEntity.AddMoney(-PlayerMoney);
                 PlayerEntity.AddMoney(EnvoyMoney);
-                var removedResources = PlayerEntity.RemoveResourcesByType(PlayerItems);
-                PlayerEntity.AddResources(removedResources);
+
+                var envoyRemovedResources = EnvoyEntity.RemoveResourcesByType(EnvoyItems);
+                var playerRemovedResources = PlayerEntity.RemoveResourcesByType(PlayerItems);
+
+                EnvoyEntity.AddResources(playerRemovedResources);
+                PlayerEntity.AddResources(envoyRemovedResources);
             }
         }
     }
