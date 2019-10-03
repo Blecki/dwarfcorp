@@ -32,7 +32,7 @@ namespace DwarfCorp.Play
                 var existingResourceEntries = new List<Widget>(Children);
                 Children.Clear();
 
-                var aggregated = Resources.Enumerate();
+                var aggregated = Resources.AggregateByType();
 
                 foreach (var resource in aggregated)
                 {
@@ -61,7 +61,7 @@ namespace DwarfCorp.Play
                         }
 
                         //string text = resource.ToString();
-                        //icon.Text = text;
+                        icon.Text = resource.Count.ToString();
                         icon.Invalidate();
                     }
                 }

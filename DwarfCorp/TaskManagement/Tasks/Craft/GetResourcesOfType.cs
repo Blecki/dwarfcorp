@@ -11,7 +11,6 @@ namespace DwarfCorp
     public class GetResourcesOfType : CompoundCreatureAct
     {
         public List<ResourceTypeAmount> Resources;
-        public List<KeyValuePair<Stockpile, Resource>> ResourcesToStash;
         public String BlackboardEntry = "ResourcesStashed";
 
         public GetResourcesOfType()
@@ -24,7 +23,6 @@ namespace DwarfCorp
         {
             Name = "Get Resources";
             this.Resources = Resources;
-            ResourcesToStash = agent.World.GetStockpilesContainingResources(agent.Position, Resources).ToList();
         }
 
         public IEnumerable<Status> AlwaysTrue()
@@ -39,35 +37,20 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-            var hasAllResources = true;
+            var needed = new List<ResourceTypeAmount>();
 
-            if (Resources != null)
+            foreach (var resource in Resources)
             {
-                foreach (var resource in Resources)
-                    if (!Creature.Inventory.HasResource(resource))
-                        hasAllResources = false;
-            }
-            else if (ResourcesToStash != null)
-            {
-                foreach (var resource in ResourcesToStash)
-                    if (!Creature.Inventory.Contains(resource.Value))
-                    {
-                        hasAllResources = false;
-                        break;
-                    }
-            }
-            else
-            {
-                Tree = null;
-                return;
+                var count = Creature.Inventory.Resources.Count(i => i.Resource.Type == resource.Type);
+                if (count < resource.Count)
+                    needed.Add(new ResourceTypeAmount(resource.Type, resource.Count - count));
             }
 
-            if(!hasAllResources)
-            { 
-                if(ResourcesToStash == null && Resources != null)
-                    ResourcesToStash = Creature.World.GetStockpilesContainingResources(Resources).ToList();
+            if (needed.Count > 0)
+            {
+                var resourcesToStash = Creature.World.GetStockpilesContainingResources(needed).ToList();
 
-                if(ResourcesToStash != null &&  ResourcesToStash.Count == 0)
+                if (resourcesToStash != null && resourcesToStash.Count == 0)
                 {
                     Tree = null;
                     return;
@@ -75,31 +58,24 @@ namespace DwarfCorp
                 else
                 {
                     var children = new List<Act>();
-                    foreach (var resource in ResourcesToStash.OrderBy(r => (r.Key.GetBoundingBox().Center() - Agent.Position).LengthSquared()))
+                    foreach (var resource in resourcesToStash.OrderBy(r => (r.Key.GetBoundingBox().Center() - Agent.Position).LengthSquared()))
                     {
                         children.Add(new Domain(() => HasResources(Agent, resource), new GoToZoneAct(Agent, resource.Key)));
                         children.Add(new Sequence(new Condition(() => HasResources(Agent, resource)), new StashResourcesAct(Agent, resource.Key, resource.Value)));
                     }
-                    children.Add(new SetBlackboardData<List<Resource>>(Agent, BlackboardEntry, ResourcesToStash.Select(r => r.Value).ToList()));
+                    children.Add(new SetBlackboardData<List<Resource>>(Agent, BlackboardEntry, resourcesToStash.Select(r => r.Value).ToList()));
                     Tree = new Sequence(children.ToArray()) | (new Wrap(Agent.Creature.RestockAll) & false);
                 }
             }
             else
             {
-                if (ResourcesToStash == null && Resources != null)
-                {
-                    // In this case the dwarf already has all the resources. We have to find the resources from the inventory.
-                    var resourcesStashed = new List<Resource>();
-                    foreach (var amount in Resources)
-                        resourcesStashed.AddRange(Creature.Inventory.FindResourcesOfType(amount));
-                    Tree = new SetBlackboardData<List<Resource>>(Agent, BlackboardEntry, resourcesStashed);
-                }
-                else if (ResourcesToStash != null)
-                    Tree = new SetBlackboardData<List<Resource>>(Agent, BlackboardEntry, ResourcesToStash.Select(r => r.Value).ToList());
-                else
-                    Tree = null;
+                // In this case the dwarf already has all the resources. We have to find the resources from the inventory.
+                var resourcesStashed = new List<Resource>();
+                foreach (var amount in Resources)
+                    resourcesStashed.AddRange(Creature.Inventory.FindResourcesOfType(amount));
+                Tree = new SetBlackboardData<List<Resource>>(Agent, BlackboardEntry, resourcesStashed);
             }
-          
+            
             base.Initialize();
         }
     }

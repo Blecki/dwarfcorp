@@ -104,6 +104,8 @@ namespace DwarfCorp
                     {
                         numGot += 1;
                         yield return new KeyValuePair<Stockpile, Resource>(stockpile, resource);
+                        if (numGot >= amount.Count)
+                            break;
                     }
                 }
             }
