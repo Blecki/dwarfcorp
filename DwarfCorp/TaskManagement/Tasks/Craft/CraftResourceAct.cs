@@ -100,8 +100,102 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
+        public IEnumerable<Status> MaybeCreatePreviewBody()
+        {
+            if (RawMaterials == null || RawMaterials.Count == 0)
+            {
+                Agent.SetMessage("Failed to create resources.");
+                yield return Act.Status.Fail;
+                yield break;
+            }
+
+            String ResourceCreated = ItemType.ResourceCreated;
+
+            switch (ItemType.CraftActBehavior)
+            {
+                // Todo: This switch sucks.
+                case CraftItem.CraftActBehaviors.Object:
+                    {
+                        var craft = ItemType.ToResource(Creature.World);
+                        ResourceCreated = craft.Name;
+                    }
+                    break;
+                case CraftItem.CraftActBehaviors.Trinket:
+                    {
+                        if (Library.CreateTrinketResourceType(RawMaterials.ElementAt(0).Type,
+                            (Agent.Stats.Dexterity + Agent.Stats.Intelligence) / 15.0f * MathFunctions.Rand(0.5f, 1.75f)).HasValue(out var craft))
+                            ResourceCreated = craft.Name;
+                    }
+                    break;
+                case CraftItem.CraftActBehaviors.Meal:
+                    {
+                        if (RawMaterials.Count < 2)
+                        {
+                            Agent.SetMessage("Failed to get resources for meal.");
+                            yield return Act.Status.Fail;
+                            yield break;
+                        }
+
+                        if (Library.CreateMealResourceType(RawMaterials.ElementAt(0).Type, RawMaterials.ElementAt(1).Type).HasValue(out var craft))
+                            ResourceCreated = craft.Name;
+                    }
+                    break;
+                case CraftItem.CraftActBehaviors.Ale:
+                    {
+                        if (Library.CreateAleResourceType(RawMaterials.ElementAt(0).Type).HasValue(out var craft))
+                            ResourceCreated = craft.Name;
+                    }
+                    break;
+                case CraftItem.CraftActBehaviors.Bread:
+                    {
+                        if (Library.CreateBreadResourceType(RawMaterials.ElementAt(0).Type).HasValue(out var craft))
+                            ResourceCreated = craft.Name;
+                    }
+                    break;
+                case CraftItem.CraftActBehaviors.GemTrinket:
+                    {
+                        ResourceType gem = null;
+                        ResourceType trinket = null;
+                        foreach (var stashedResource in RawMaterials)
+                        {
+                            if (Library.GetResourceType(stashedResource.Type).HasValue(out var res) && res.Tags.Contains("Craft"))
+                                trinket = res;
+
+                            if (Library.GetResourceType(stashedResource.Type).HasValue(out var _res) && _res.Tags.Contains("Gem"))
+                                gem = _res;
+                        }
+
+
+                        if (gem == null || trinket == null)
+                        {
+                            Agent.SetMessage("Failed to get resources for trinket.");
+                            yield return Status.Fail;
+                            yield break;
+                        }
+
+                        if (Library.CreateEncrustedTrinketResourceType(trinket.Name, gem.Name).HasValue(out var craft))
+                            ResourceCreated = craft.Name;
+                    }
+                    break;
+                case CraftItem.CraftActBehaviors.Normal:
+                default:
+                    break;
+            }
+
+            yield return Status.Success;
+        }
+
         public IEnumerable<Status> CreateResources()
         {
+            foreach (var status in MaybeCreatePreviewBody())
+            {
+                if (status == Status.Fail)
+                {
+                    yield return Status.Fail;
+                    yield break;
+                }
+            }
+
             for (var i = 0; i < ItemType.CraftedResultsCount; ++i)
                 Creature.Inventory.AddResource(new Resource(ItemType.ResourceCreated));
             Creature.AI.AddXP((int)ItemType.BaseCraftTime);

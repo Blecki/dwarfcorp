@@ -26,7 +26,7 @@ namespace DwarfCorp
 
         public CraftItem CraftType { get; set; }
         public GameComponent PreviewBody { get; set; }
-        public Resource SelectedResource;
+        public MaybeNull<Tuple<Stockpile, Resource>> SelectedResource;
         private float Orientation = 0.0f;
         private bool OverrideOrientation = false;
         private bool RightPressed = false;
@@ -55,41 +55,45 @@ namespace DwarfCorp
             {
                 case (InputManager.MouseButton.Left):
                     {
-                        if (ObjectHelper.IsValidPlacement(World.UserInterface.VoxSelector.VoxelUnderMouse, CraftType, World, PreviewBody, "build", "built"))
+                        if (SelectedResource.HasValue(out var selectedRes))
                         {
-                            PreviewBody.SetFlag(GameComponent.Flag.ShouldSerialize, true);
-
-                            Vector3 pos = World.UserInterface.VoxSelector.VoxelUnderMouse.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + CraftType.SpawnOffset;
-                            Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f);
-
-                            var newDesignation = new CraftDesignation()
+                            if (ObjectHelper.IsValidPlacement(World.UserInterface.VoxSelector.VoxelUnderMouse, CraftType, World, PreviewBody, "build", "built"))
                             {
-                                ItemType = CraftType,
-                                Location = World.UserInterface.VoxSelector.VoxelUnderMouse,
-                                Orientation = Orientation,
-                                OverrideOrientation = OverrideOrientation,
-                                Valid = true,
-                                Entity = PreviewBody,
-                                SelectedResource = SelectedResource,
-                                WorkPile = new WorkPile(World.ComponentManager, startPos)
-                            };
+                                PreviewBody.SetFlag(GameComponent.Flag.ShouldSerialize, true);
 
-                            World.ComponentManager.RootComponent.AddChild(newDesignation.WorkPile);
-                            newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), pos));
-                            World.ParticleManager.Trigger("puff", pos, Color.White, 10);
+                                Vector3 pos = World.UserInterface.VoxSelector.VoxelUnderMouse.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + CraftType.SpawnOffset;
+                                Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f);
 
-                            var zone = World.EnumerateZones().OfType<Stockpile>().Where(z => z.Resources.Contains(SelectedResource)).FirstOrDefault();
-                            if (zone != null)
-                                World.TaskManager.AddTask(new CraftItemTask(newDesignation) { ItemSource = zone });
+                                var newDesignation = new CraftDesignation()
+                                {
+                                    ItemType = CraftType,
+                                    Location = World.UserInterface.VoxSelector.VoxelUnderMouse,
+                                    Orientation = Orientation,
+                                    OverrideOrientation = OverrideOrientation,
+                                    Valid = true,
+                                    Entity = PreviewBody,
+                                    SelectedResource = selectedRes.Item2,
+                                    WorkPile = new WorkPile(World.ComponentManager, startPos)
+                                };
 
-                            if (!HandlePlaceExistingUpdate())
-                            {
-                                PreviewBody = null;
-                                World.UserInterface.ShowToolPopup("Unable to place any more.");
-                                World.UserInterface.ChangeTool("SelectUnits");
+                                World.ComponentManager.RootComponent.AddChild(newDesignation.WorkPile);
+                                newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), pos));
+                                World.ParticleManager.Trigger("puff", pos, Color.White, 10);
+                                                               
+                                World.TaskManager.AddTask(new CraftItemTask(newDesignation) { ItemSource = selectedRes.Item1 });
+
+                                if (!HandlePlaceExistingUpdate())
+                                {
+                                    PreviewBody = null;
+                                    World.UserInterface.ShowToolPopup("Unable to place any more.");
+                                    World.UserInterface.ChangeTool("SelectUnits");
+                                }
+                                else
+                                {
+                                    SelectedResource = World.FindResource(CraftType.Name);
+                                    PreviewBody = CreatePreviewBody();
+                                }
                             }
-                            else
-                                PreviewBody = CreatePreviewBody();
                         }
 
                         break;
@@ -131,6 +135,8 @@ namespace DwarfCorp
 
                 if (!HandlePlaceExistingUpdate())
                     World.UserInterface.ShowToolPopup("Unable to place any more.");
+
+            SelectedResource = World.FindResource(CraftType.Name);
 
             PreviewBody = CreatePreviewBody();
             Orientation = 0.0f;
