@@ -2016,10 +2016,7 @@ namespace DwarfCorp.GameStates
                 Icon = new TileReference("tool-icons", 11),
                 Tooltip = "Go Back",
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
-                OnClick = (widget, args) =>
-                {
-                    ChangeTool("SelectUnits");
-                }
+                OnClick = (widget, args) => ChangeTool("SelectUnits")
             };
 
 #region icon_Plant
@@ -2103,12 +2100,7 @@ namespace DwarfCorp.GameStates
                     Rect = new Rectangle(0, 0, 256, 128),
                     TextColor = Color.Black.ToVector4()
                 },
-                OnClick = (sender, args) =>
-                {
-                    ChangeTool("Wrangle");
-                    World.Tutorial("wrangle");
-                    ShowToolPopup("Left click to tell dwarves to catch animals.\nRight click to cancel catching.\nRequires animal pen.");
-                },
+                OnClick = (sender, args) => ChangeTool("Wrangle"),
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
 #endregion
@@ -2228,10 +2220,7 @@ namespace DwarfCorp.GameStates
                 Icon = new TileReference("tool-icons", 11),
                 Tooltip = "Go Back",
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
-                OnClick = (widget, args) =>
-                {
-                    ChangeTool("SelectUnits");
-                }
+                OnClick = (widget, args) => ChangeTool("SelectUnits")
             };
 
             var menu = new FlatToolTray.Tray
@@ -2284,10 +2273,7 @@ namespace DwarfCorp.GameStates
                 Icon = new TileReference("tool-icons", 11),
                 Tooltip = "Go Back",
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
-                OnClick = (widget, args) =>
-                {
-                    ChangeTool("SelectUnits");
-                }
+                OnClick = (widget, args) => ChangeTool("SelectUnits")
             };
 
             var menu = new FlatToolTray.Tray

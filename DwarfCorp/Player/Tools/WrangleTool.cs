@@ -91,7 +91,8 @@ namespace DwarfCorp
 
         public override void OnBegin(Object Arguments)
         {
-
+            World.Tutorial("wrangle");
+            World.UserInterface.ShowToolPopup("Left click to tell dwarves to catch animals.\nRight click to cancel catching.\nRequires animal pen.");
         }
 
         public override void OnEnd()
