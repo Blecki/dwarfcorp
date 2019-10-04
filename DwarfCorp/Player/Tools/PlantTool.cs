@@ -15,8 +15,7 @@ namespace DwarfCorp
             return new PlantTool(World);
         }
 
-        public string PlantType { get; set; }
-        public List<ResourceTypeAmount> RequiredResources { get; set; }
+        public String PlantType;
 
         public PlantTool(WorldManager World)
         {
@@ -111,14 +110,10 @@ namespace DwarfCorp
                         var farmTile = new Farm
                         {
                             Voxel = voxel,
-                            RequiredResources = RequiredResources,
-                            SeedString = PlantType
+                            SeedType = PlantType
                         };
 
-                        var task = new PlantTask(farmTile, PlantType)
-                        {
-                            RequiredResources = RequiredResources
-                        };
+                        var task = new PlantTask(farmTile);
 
                         if (voxel.Type.Name != "TilledSoil")
                             farmTile.TargetProgress = 200.0f; // Planting on untilled soil takes longer.
@@ -151,8 +146,13 @@ namespace DwarfCorp
 
         public override void OnBegin(Object Arguments)
         {
-            World.UserInterface.VoxSelector.DrawBox = true;
-            World.UserInterface.VoxSelector.DrawVoxel = true;
+            if (Arguments == null)
+                throw new InvalidProgramException();
+
+            PlantType = Arguments.ToString();
+
+            World.UserInterface.ShowToolPopup("Click and drag to plant " + PlantType + ".");
+            World.Tutorial("plant");
         }
 
         public override void OnEnd()
@@ -171,7 +171,8 @@ namespace DwarfCorp
             }
 
             World.UserInterface.BodySelector.AllowRightClickSelection = true;
-
+            World.UserInterface.VoxSelector.DrawBox = true;
+            World.UserInterface.VoxSelector.DrawVoxel = true;
             World.UserInterface.VoxSelector.Enabled = true;
             World.UserInterface.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
             World.UserInterface.BodySelector.Enabled = false;

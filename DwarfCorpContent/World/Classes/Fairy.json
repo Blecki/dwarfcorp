@@ -1,5 +1,5 @@
 {
-  "Actions": 112518,
+  "Actions": "Attack, BuildBlock, BuildObject, BuildZone, CraftItem, Cook, TillSoil, Gather, Wrangle, Plant, Brew, Dig, Chop, Harvest, Hunt",
   "AttackMode": "Attacking",
   "RequiresTools": false,
   "TriggersMourning": false,

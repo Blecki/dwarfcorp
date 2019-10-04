@@ -9,28 +9,28 @@ namespace DwarfCorp
 {
     public class PlantAct : CompoundCreatureAct
     {
-        public Farm FarmToWork { get; set; }
-        public List<ResourceTypeAmount> Resources { get; set; }   
+        public Farm Farm;
 
         public PlantAct()
         {
-            Name = "Work a farm";
+            Name = "Work " + Farm.Voxel.Coordinate;
         }
 
-        public PlantAct(CreatureAI agent) :
+        public PlantAct(CreatureAI agent, Farm Farm) :
             base(agent)
         {
-            Name = "Work a farm";
+            this.Farm = Farm;
+            Name = "Work " + Farm.Voxel.Coordinate;
         }
 
         public IEnumerable<Status> FarmATile()
         {
-            if (FarmToWork == null) 
+            if (Farm == null) 
             {
                 yield return Status.Fail;
                 yield break;
             }
-            else if (FarmToWork.Finished)
+            else if (Farm.Finished)
             {
                 yield return Status.Success;
             }
@@ -39,27 +39,27 @@ namespace DwarfCorp
                 Creature.CurrentCharacterMode = Creature.Stats.CurrentClass.AttackMode;
                 Creature.Sprite.ResetAnimations(Creature.Stats.CurrentClass.AttackMode);
                 Creature.Sprite.PlayAnimations(Creature.Stats.CurrentClass.AttackMode);
-                while (FarmToWork.Progress < FarmToWork.TargetProgress && !FarmToWork.Finished)
+                while (Farm.Progress < Farm.TargetProgress && !Farm.Finished)
                 {
                     Creature.Physics.Velocity *= 0.1f;
-                    FarmToWork.Progress += 3 * Creature.Stats.BaseFarmSpeed*DwarfTime.Dt;
+                    Farm.Progress += 3 * Creature.Stats.BaseFarmSpeed*DwarfTime.Dt;
 
                     Drawer2D.DrawLoadBar(Agent.Manager.World.Renderer.Camera, Agent.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4,
-                        FarmToWork.Progress / FarmToWork.TargetProgress);
+                        Farm.Progress / Farm.TargetProgress);
 
-                    if (FarmToWork.Progress >= (FarmToWork.TargetProgress * 0.5f) && FarmToWork.Voxel.Type.Name != "TilledSoil"
+                    if (Farm.Progress >= (Farm.TargetProgress * 0.5f) && Farm.Voxel.Type.Name != "TilledSoil"
                         && Library.GetVoxelType("TilledSoil").HasValue(out VoxelType tilledSoil))
-                        FarmToWork.Voxel.Type = tilledSoil;
+                        Farm.Voxel.Type = tilledSoil;
 
-                    if (FarmToWork.Progress >= FarmToWork.TargetProgress && !FarmToWork.Finished)
+                    if (Farm.Progress >= Farm.TargetProgress && !Farm.Finished)
                     {
-                        if (Library.GetResourceType(FarmToWork.SeedString).HasValue(out var seedType))
+                        if (Library.GetResourceType(Farm.SeedType).HasValue(out var seedType))
                         {
                             var plant = EntityFactory.CreateEntity<Plant>(
                                 seedType.PlantToGenerate,
-                                FarmToWork.Voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f));
+                                Farm.Voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f));
 
-                            plant.Farm = FarmToWork;
+                            plant.Farm = Farm;
 
                             Matrix original = plant.LocalTransform;
                             original.Translation += Vector3.Down;
@@ -68,10 +68,10 @@ namespace DwarfCorp
 
                             Creature.Manager.World.ParticleManager.Trigger("puff", original.Translation, Color.White, 20);
 
-                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, FarmToWork.Voxel.WorldPosition, true);
+                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, Farm.Voxel.WorldPosition, true);
                         }
 
-                        FarmToWork.Finished = true;
+                        Farm.Finished = true;
                         DestroyResources();
                     }
 
@@ -92,14 +92,14 @@ namespace DwarfCorp
 
         private bool Validate()
         {
-            bool tileValid = FarmToWork.Voxel.IsValid && !FarmToWork.Voxel.IsEmpty;
+            bool tileValid = Farm.Voxel.IsValid && !Farm.Voxel.IsEmpty;
 
             if (!tileValid)
             {
                 return false;
             }
 
-            if (FarmToWork.Finished)
+            if (Farm.Finished)
             {
                 return false;
             }
@@ -116,7 +116,7 @@ namespace DwarfCorp
 
         public override void OnCanceled()
         {
-            var tile = FarmToWork;
+            var tile = Farm;
             
             base.OnCanceled();
         }
@@ -130,13 +130,13 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-            if (FarmToWork != null)
+            if (Farm != null)
             {
-                if (FarmToWork.Voxel.IsValid)
+                if (Farm.Voxel.IsValid)
                 {
                     Tree = new Select(new Sequence(
-                        new GetResourcesOfType(Agent, Resources) { BlackboardEntry = "stashed-resources" },
-                        new Domain(Validate, new GoToVoxelAct(FarmToWork.Voxel, PlanAct.PlanType.Adjacent, Creature.AI)),
+                        new GetResourcesOfType(Agent, new List<ResourceTypeAmount> { new ResourceTypeAmount(Farm.SeedType, 1) }) { BlackboardEntry = "stashed-resources" },
+                        new Domain(Validate, new GoToVoxelAct(Farm.Voxel, PlanAct.PlanType.Adjacent, Creature.AI)),
                         new Domain(Validate, new StopAct(Creature.AI)),
                         new Domain(Validate, new Wrap(FarmATile)),
                         new Wrap(Cleanup)), new Wrap(Cleanup));

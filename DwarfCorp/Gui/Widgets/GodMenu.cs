@@ -13,8 +13,7 @@ namespace DwarfCorp.Gui.Widgets
 
         private void ActivateGodTool(String Command)
         {
-            (World.UserInterface.Tools["God"] as GodModeTool).Command = Command;
-            World.UserInterface.ChangeTool("God");
+            World.UserInterface.ChangeTool("God", Command);
         }
 
         public override void Construct()
@@ -166,12 +165,11 @@ namespace DwarfCorp.Gui.Widgets
                                         new HorizontalMenuTray.MenuItem
                                         {
                                             Text = p.Name,
-                                            OnClick = (sender, args) =>
-                                            {
-                                                var railTool = World.UserInterface.Tools["BuildRail"] as Rail.BuildRailTool;
-                                                World.UserInterface.ChangeTool("BuildRail", p);
-                                                railTool.GodModeSwitch = true;
-                                            }
+                                            OnClick = (sender, args) => World.UserInterface.ChangeTool("BuildRail", new Rail.BuildRailTool.Arguments
+                                                {
+                                                    Pattern = p,
+                                                    Mode = Rail.BuildRailTool.Mode.GodMode
+                                                })
                                         })
                                 }
                             },
@@ -179,13 +177,7 @@ namespace DwarfCorp.Gui.Widgets
                             new HorizontalMenuTray.MenuItem
                             {
                                 Text = "PAINT",
-                                OnClick = (sender, args) =>
-                                {
-                                    var railTool = World.UserInterface.Tools["PaintRail"] as Rail.PaintRailTool;
-                                    railTool.SelectedResources = new List<Resource>() { new Resource("Rail") };
-                                    World.UserInterface.ChangeTool("PaintRail");
-                                    railTool.GodModeSwitch = true;
-                                }
+                                OnClick = (sender, args) => World.UserInterface.ChangeTool("PaintRail", Rail.PaintRailTool.Mode.GodMode)
                             }
                         }
                     }

@@ -148,11 +148,11 @@ namespace DwarfCorp.Rail
                     if (!addNewDesignation) break;
                     if (Object.ReferenceEquals(entity, body)) continue;
 
-                    var existingDesignation = World.PersistentData.Designations.EnumerateEntityDesignations(DesignationType.Craft).FirstOrDefault(d => Object.ReferenceEquals(d.Body, entity));
+                    var existingDesignation = World.PersistentData.Designations.EnumerateEntityDesignations(DesignationType.PlaceObject).FirstOrDefault(d => Object.ReferenceEquals(d.Body, entity));
                     if (existingDesignation != null)
                     {
                         (entity as RailEntity).UpdatePiece(piece, actualPosition);
-                        (existingDesignation.Tag as CraftDesignation).Progress = 0.0f;
+                        (existingDesignation.Tag as PlacementDesignation).Progress = 0.0f;
                         body.GetRoot().Delete();
                         addNewDesignation = false;
                         finalEntity = entity as RailEntity;
@@ -174,12 +174,11 @@ namespace DwarfCorp.Rail
                     var railResource = World.FindResource("Rail");
                     if (railResource.HasValue(out var res))
                     {
-                        var designation = new CraftDesignation
+                        var designation = new PlacementDesignation
                         {
                             Entity = body,
                             WorkPile = new WorkPile(World.ComponentManager, startPos),
                             OverrideOrientation = false,
-                            Valid = true,
                             ItemType = RailCraftItem,
                             SelectedResource = res.Item2,
                             Location = new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(body.Position)),
@@ -194,8 +193,8 @@ namespace DwarfCorp.Rail
                         designation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
                         World.ParticleManager.Trigger("puff", endPos, Color.White, 10);
 
-                        var task = new CraftItemTask(designation) { ItemSource = res.Item1 };
-                        World.PersistentData.Designations.AddEntityDesignation(body, DesignationType.Craft, designation, task);
+                        var task = new PlaceObjectTask(designation) { ItemSource = res.Item1 };
+                        World.PersistentData.Designations.AddEntityDesignation(body, DesignationType.PlaceObject, designation, task);
                         assignments.Add(task);
                     }
                 }
@@ -203,13 +202,13 @@ namespace DwarfCorp.Rail
                 if (GodModeSwitch)
                 {
                     // Go ahead and activate the entity and destroy the designation and workpile.
-                    var existingDesignation = World.PersistentData.Designations.EnumerateEntityDesignations(DesignationType.Craft).FirstOrDefault(d => Object.ReferenceEquals(d.Body, finalEntity));
+                    var existingDesignation = World.PersistentData.Designations.EnumerateEntityDesignations(DesignationType.PlaceObject).FirstOrDefault(d => Object.ReferenceEquals(d.Body, finalEntity));
                     if (existingDesignation != null)
                     {
-                        var designation = existingDesignation.Tag as CraftDesignation;
+                        var designation = existingDesignation.Tag as PlacementDesignation;
                         if (designation != null && designation.WorkPile != null)
                             designation.WorkPile.GetRoot().Delete();
-                        World.PersistentData.Designations.RemoveEntityDesignation(finalEntity, DesignationType.Craft);
+                        World.PersistentData.Designations.RemoveEntityDesignation(finalEntity, DesignationType.PlaceObject);
                     }
 
                     finalEntity.SetFlagRecursive(GameComponent.Flag.Active, true);

@@ -15,8 +15,13 @@ namespace DwarfCorp.Rail
             return new PaintRailTool(World);
         }
 
+        public enum Mode
+        {
+            GodMode,
+            Normal
+        }
+
         private List<RailEntity> PreviewBodies = new List<RailEntity>();
-        public List<Resource> SelectedResources;
         public bool GodModeSwitch = false;
         private bool Dragging = false;
         private VoxelHandle DragStartVoxel = VoxelHandle.InvalidHandle;
@@ -59,10 +64,11 @@ namespace DwarfCorp.Rail
         public override void OnBegin(Object Arguments)
         {
             World.Tutorial("paint rail");
-            global::System.Diagnostics.Debug.Assert(SelectedResources != null);
-            GodModeSwitch = false;
             Dragging = false;
             CanPlace = false;
+
+            if ((Arguments as Mode?).HasValue && (Arguments as Mode?).Value == Mode.GodMode)
+                GodModeSwitch = true;
         }
 
         public override void OnEnd()
@@ -71,7 +77,6 @@ namespace DwarfCorp.Rail
                 body.GetRoot().Delete();
             PreviewBodies.Clear();
             PathVoxels.Clear();
-            SelectedResources = null;
             World.UserInterface.VoxSelector.DrawVoxel = true;
             World.UserInterface.VoxSelector.DrawBox = true;
         }

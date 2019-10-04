@@ -8,9 +8,7 @@ namespace DwarfCorp
 {
     public class PlantTask : Task
     {
-        public Farm FarmToWork;
-        public string Plant;
-        public List<ResourceTypeAmount> RequiredResources;
+        public Farm Farm;
 
         public PlantTask()
         {
@@ -20,11 +18,10 @@ namespace DwarfCorp
             EnergyDecrease = GameSettings.Default.Energy_Arduous;
         }
 
-        public PlantTask(Farm farmToWork, String Plant)
+        public PlantTask(Farm Farm)
         {
-            FarmToWork = farmToWork;
-            this.Plant = Plant;
-            Name = "Plant " + Plant + " at " + FarmToWork.Voxel.Coordinate;
+            this.Farm = Farm;
+            Name = "Plant " + Farm.SeedType + " at " + Farm.Voxel.Coordinate;
             Priority = TaskPriority.Medium;
             AutoRetry = true;
             Category = TaskCategory.Plant;
@@ -50,13 +47,13 @@ namespace DwarfCorp
             if (agent.AI.Stats.IsAsleep)
                 return Feasibility.Infeasible;
 
-            if (FarmToWork == null)
+            if (Farm == null)
                 return Feasibility.Infeasible;
 
-            if (FarmToWork.Finished)
+            if (Farm.Finished)
                 return Feasibility.Infeasible;
 
-            if (!agent.World.HasResources(RequiredResources))
+            if (!agent.World.HasResources(new List<ResourceTypeAmount> { new ResourceTypeAmount(Farm.SeedType, 1) }))
                 return Feasibility.Infeasible;
 
             return Feasibility.Feasible;
@@ -64,10 +61,10 @@ namespace DwarfCorp
 
         public override bool IsComplete(WorldManager World)
         {
-            if (FarmToWork == null) return true;
-            if (FarmToWork.Finished) return true;
-            if (FarmToWork.Voxel.IsEmpty) return true;
-            if (!FarmToWork.Voxel.Type.IsSoil) return true;
+            if (Farm == null) return true;
+            if (Farm.Finished) return true;
+            if (Farm.Voxel.IsEmpty) return true;
+            if (!Farm.Voxel.Type.IsSoil) return true;
             return false;
         }
 
@@ -75,11 +72,6 @@ namespace DwarfCorp
         {
             if (creature.Blackboard.GetData<bool>("NoPath", false))
             {
-                //if (creature.Faction == creature.World.PlayerFaction)
-                //{
-                //    creature.World.MakeAnnouncement(String.Format("{0} cancelled farming task because it is unreachable", creature.Stats.FullName));
-                //    creature.World.TaskManager.CancelTask(this);
-                //}
                 creature.SetMessage("Failed to plant. Task was unreachable.");
                 yield return Act.Status.Fail;
                 yield break;
@@ -89,32 +81,32 @@ namespace DwarfCorp
 
         public override MaybeNull<Act> CreateScript(Creature agent)
         {
-            return (new PlantAct(agent.AI) { Resources = RequiredResources, FarmToWork = FarmToWork, Name = "Work " + FarmToWork.Voxel.Coordinate } 
+            return (new PlantAct(agent.AI, Farm) 
             | new Wrap(() => Cleanup(agent.AI))) & new Wrap(() => Cleanup(agent.AI));
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            if (FarmToWork == null) return float.MaxValue;
+            if (Farm == null) return float.MaxValue;
             else
             {
-                return (FarmToWork.Voxel.WorldPosition - agent.AI.Position).LengthSquared();
+                return (Farm.Voxel.WorldPosition - agent.AI.Position).LengthSquared();
             }
         }
 
         public override void OnEnqueued(WorldManager World)
         {
-            World.PersistentData.Designations.AddVoxelDesignation(FarmToWork.Voxel, DesignationType.Plant, FarmToWork, this);
+            World.PersistentData.Designations.AddVoxelDesignation(Farm.Voxel, DesignationType.Plant, Farm, this);
         }
 
         public override void OnDequeued(WorldManager World)
         {
-            World.PersistentData.Designations.RemoveVoxelDesignation(FarmToWork.Voxel, DesignationType.Plant);
+            World.PersistentData.Designations.RemoveVoxelDesignation(Farm.Voxel, DesignationType.Plant);
         }
 
         public override Vector3? GetCameraZoomLocation()
         {
-            return FarmToWork?.Voxel.Center;
+            return Farm?.Voxel.Center;
         }
     }
 }

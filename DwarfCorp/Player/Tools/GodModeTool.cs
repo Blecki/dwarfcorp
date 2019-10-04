@@ -23,6 +23,10 @@ namespace DwarfCorp
 
         public override void OnBegin(Object Arguments)
         {
+            if (Arguments == null)
+                throw new InvalidProgramException();
+
+            Command = Arguments.ToString();
         }
 
         public override void OnEnd()

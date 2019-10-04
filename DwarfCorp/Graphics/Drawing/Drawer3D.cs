@@ -359,7 +359,7 @@ namespace DwarfCorp
                     var props = Library.GetDesignationTypeProperties(entity.Type).Value;
 
                     // Todo: More consistent drawing?
-                    if (entity.Type == DesignationType.Craft)
+                    if (entity.Type == DesignationType.PlaceObject)
                     {
                         entity.Body.SetFlagRecursive(GameComponent.Flag.Visible, true);
                         if (!entity.Body.Active)
@@ -372,7 +372,7 @@ namespace DwarfCorp
                         //entity.Body.SetVertexColorRecursive(props.Color);
                     }
                 }
-                else if (entity.Type == DesignationType.Craft) // Make the ghost object invisible if these designations are turned off.
+                else if (entity.Type == DesignationType.PlaceObject) // Make the ghost object invisible if these designations are turned off.
                     entity.Body.SetFlagRecursive(GameComponent.Flag.Visible, false);
             }
         }

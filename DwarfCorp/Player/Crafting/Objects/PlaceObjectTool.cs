@@ -65,13 +65,12 @@ namespace DwarfCorp
                                 Vector3 pos = World.UserInterface.VoxSelector.VoxelUnderMouse.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + CraftType.SpawnOffset;
                                 Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f);
 
-                                var newDesignation = new CraftDesignation()
+                                var newDesignation = new PlacementDesignation()
                                 {
                                     ItemType = CraftType,
                                     Location = World.UserInterface.VoxSelector.VoxelUnderMouse,
                                     Orientation = Orientation,
                                     OverrideOrientation = OverrideOrientation,
-                                    Valid = true,
                                     Entity = PreviewBody,
                                     SelectedResource = selectedRes.Item2,
                                     WorkPile = new WorkPile(World.ComponentManager, startPos)
@@ -81,7 +80,7 @@ namespace DwarfCorp
                                 newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), pos));
                                 World.ParticleManager.Trigger("puff", pos, Color.White, 10);
                                                                
-                                World.TaskManager.AddTask(new CraftItemTask(newDesignation) { ItemSource = selectedRes.Item1 });
+                                World.TaskManager.AddTask(new PlaceObjectTask(newDesignation) { ItemSource = selectedRes.Item1 });
 
                                 if (!HandlePlaceExistingUpdate())
                                 {
@@ -101,8 +100,8 @@ namespace DwarfCorp
                     }
                 case (InputManager.MouseButton.Right):
                     {
-                        var designation = World.PersistentData.Designations.EnumerateEntityDesignations(DesignationType.Craft).Select(d => d.Tag as CraftDesignation).FirstOrDefault(d => d.Location == World.UserInterface.VoxSelector.VoxelUnderMouse);
-                        if (designation != null && World.PersistentData.Designations.GetEntityDesignation(designation.Entity, DesignationType.Craft).HasValue(out var realDesignation))
+                        var designation = World.PersistentData.Designations.EnumerateEntityDesignations(DesignationType.PlaceObject).Select(d => d.Tag as PlacementDesignation).FirstOrDefault(d => d.Location == World.UserInterface.VoxSelector.VoxelUnderMouse);
+                        if (designation != null && World.PersistentData.Designations.GetEntityDesignation(designation.Entity, DesignationType.PlaceObject).HasValue(out var realDesignation))
                             World.TaskManager.CancelTask(realDesignation.Task);
                         break;
                     }
@@ -113,8 +112,8 @@ namespace DwarfCorp
         {
             var resources = World.ListResources().Where(r => Library.GetResourceType(r.Value.Type).HasValue(out var res) && res.CraftInfo.CraftItemType == CraftType.Name).ToList();
 
-            var toPlace = World.PersistentData.Designations.EnumerateEntityDesignations().Where(designation => designation.Type == DesignationType.Craft &&
-                ((CraftDesignation)designation.Tag).ItemType.Name == CraftType.Name).ToList();
+            var toPlace = World.PersistentData.Designations.EnumerateEntityDesignations().Where(designation => designation.Type == DesignationType.PlaceObject &&
+                ((PlacementDesignation)designation.Tag).ItemType.Name == CraftType.Name).ToList();
 
             if (!resources.Any())
             {
@@ -134,8 +133,8 @@ namespace DwarfCorp
             if (CraftType == null)
                 throw new InvalidOperationException();
 
-                if (!HandlePlaceExistingUpdate())
-                    World.UserInterface.ShowToolPopup("Unable to place any more.");
+            if (!HandlePlaceExistingUpdate())
+                World.UserInterface.ShowToolPopup("Unable to place any more.");
 
             SelectedResource = World.FindResource(CraftType.Name);
 

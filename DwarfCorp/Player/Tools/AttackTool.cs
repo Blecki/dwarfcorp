@@ -34,7 +34,7 @@ namespace DwarfCorp
 
         public override void OnBegin(Object Arguments)
         {
-            
+            World.Tutorial("attack");
         }
 
         public override void OnEnd()

@@ -24,7 +24,7 @@ namespace DwarfCorp
 
         public override void OnBegin(Object Arguments)
         {
-
+            World.Tutorial("chop");
         }
 
         public override void OnEnd()

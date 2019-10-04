@@ -29,7 +29,7 @@ namespace DwarfCorp
 
         public override void OnBegin(Object Arguments)
         {
-
+            World.Tutorial("gather");
         }
 
         public override void OnEnd()

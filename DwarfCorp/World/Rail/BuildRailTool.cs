@@ -19,6 +19,18 @@ namespace DwarfCorp.Rail
             return new BuildRailTool(World);
         }
 
+        public enum Mode
+        {
+            GodMode,
+            Normal
+        }
+
+        public class Arguments
+        {
+            public Mode Mode;
+            public JunctionPattern Pattern;
+        }
+
         public Rail.JunctionPattern Pattern;
         private List<RailEntity> PreviewBodies = new List<RailEntity>();
         private bool RightPressed = false;
@@ -60,10 +72,13 @@ namespace DwarfCorp.Rail
         public override void OnBegin(Object Arguments)
         {
             World.Tutorial("place rail");
-            Pattern = Arguments as Rail.JunctionPattern;
-            GodModeSwitch = false;
 
-            if (Pattern == null) throw new InvalidOperationException();
+            var args = Arguments as Arguments;
+            if (args == null)
+                throw new InvalidProgramException();
+
+            Pattern = args.Pattern;
+            GodModeSwitch = args.Mode == Mode.GodMode;
 
             CreatePreviewBodies(World.ComponentManager, new VoxelHandle(World.ChunkManager, new GlobalVoxelCoordinate(0, 0, 0)));
         }

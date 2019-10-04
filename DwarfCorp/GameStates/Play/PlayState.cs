@@ -1678,14 +1678,11 @@ namespace DwarfCorp.GameStates
                                 Rect = new Rectangle(0, 0, 256, 128),
                                 World = World
                             },
-                            OnClick = (_sender, args) =>
-                            {
-                                ChangeTool("BuildWall", new BuildWallTool.BuildWallToolArguments
+                            OnClick = (_sender, args) => ChangeTool("BuildWall", new BuildWallTool.BuildWallToolArguments
                                 {
                                     VoxelType = (byte)data.ID,
                                     Floor = true
-                                });
-                            },
+                                }),
                             //OnUpdate = (_sender, args) => UpdateBlockWidget(_sender, data),
                             Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
                             OnShown = (_sender) => World.Tutorial("build blocks"),
@@ -1786,7 +1783,7 @@ namespace DwarfCorp.GameStates
                     }
                 });
 
-            var icon_BuildCraft = new FlatToolTray.Icon
+            var icon_Craft = new FlatToolTray.Icon
             {
                 Icon = new TileReference("tool-icons", 39),
                 Text = "Craft",
@@ -1831,7 +1828,7 @@ namespace DwarfCorp.GameStates
                     OnClick = (sender, args) => ChangeTool("PlaceObject", data)
                 });
 
-            var icon_PlaceCraft = new FlatToolTray.Icon
+            var icon_PlaceObject = new FlatToolTray.Icon
             {
                 Icon = new TileReference("tool-icons", 39),
                 Text = "Objects",
@@ -1854,10 +1851,7 @@ namespace DwarfCorp.GameStates
                 Icon = new TileReference("tool-icons", 11),
                 Tooltip = "Go Back",
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
-                OnClick = (widget, args) =>
-                {
-                    ChangeTool("SelectUnits");
-                }
+                OnClick = (widget, args) => ChangeTool("SelectUnits")
             };
 
             var icon_menu_Rail_Paint = new FlatToolTray.Icon
@@ -1868,13 +1862,7 @@ namespace DwarfCorp.GameStates
                 TextVerticalAlign = VerticalAlign.Below,
                 TextColor = Color.White.ToVector4(),
                 Behavior = FlatToolTray.IconBehavior.LeafIcon,
-                OnClick = (widget, args) =>
-                {
-                    VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty; // This should be set by the tool.
-                    var railTool = Tools["PaintRail"] as Rail.PaintRailTool;
-                    railTool.SelectedResources = new List<Resource> { new Resource("Rail") }; // Todo: Use tool argument passing mechanism
-                    ChangeTool("PaintRail");
-                }
+                OnClick = (widget, args) => ChangeTool("PaintRail", Rail.PaintRailTool.Mode.Normal)
             };
 
             var menu_Rail = new FlatToolTray.Tray
@@ -1892,10 +1880,11 @@ namespace DwarfCorp.GameStates
                                 KeepChildVisible = true,
                                 ExpandChildWhenDisabled = true,
                                 Behavior = FlatToolTray.IconBehavior.LeafIcon,
-                                OnClick = (sender, args) =>
+                                OnClick = (sender, args) => ChangeTool("BuildRail", new Rail.BuildRailTool.Arguments
                                 {
-                                    ChangeTool("BuildRail", data);
-                                },
+                                    Pattern = data,
+                                    Mode = Rail.BuildRailTool.Mode.Normal
+                                }),
                                 Hidden = false
                             }))
                 
@@ -1923,10 +1912,7 @@ namespace DwarfCorp.GameStates
                 Icon = new TileReference("tool-icons", 11),
                 Tooltip = "Go Back",
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
-                OnClick = (widget, args) =>
-                {
-                    ChangeTool("SelectUnits");
-                }
+                OnClick = (widget, args) => ChangeTool("SelectUnits")
             };
 
             var menu_BuildTools = new FlatToolTray.Tray
@@ -1938,7 +1924,7 @@ namespace DwarfCorp.GameStates
                         icon_BuildRoom,
                         icon_BuildWall,
                         icon_BuildFloor,
-                        icon_PlaceCraft,
+                        icon_PlaceObject,
                         icon_RailTool,
                     }
             };
@@ -1987,7 +1973,7 @@ namespace DwarfCorp.GameStates
                 TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 6),
                 Tooltip = "Tell dwarves to pick things up.",
-                OnClick = (sender, args) => { ChangeTool("Gather"); World.Tutorial("gather"); },
+                OnClick = (sender, args) => ChangeTool("Gather"),
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
 
@@ -2002,7 +1988,7 @@ namespace DwarfCorp.GameStates
                 TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 1),
                 Tooltip = "Chop trees and harvest plants.",
-                OnClick = (sender, args) => { ChangeTool("Chop"); World.Tutorial("chop"); },
+                OnClick = (sender, args) => ChangeTool("Chop"),
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
 
@@ -2017,7 +2003,7 @@ namespace DwarfCorp.GameStates
                 TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 3),
                 Tooltip = "Attack",
-                OnClick = (sender, args) => { ChangeTool("Attack"); World.Tutorial("attack"); },
+                OnClick = (sender, args) => ChangeTool("Attack"),
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
 
@@ -2067,15 +2053,7 @@ namespace DwarfCorp.GameStates
                             Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
                             Text = resource.Type,
                             TextVerticalAlign = VerticalAlign.Below,
-                            OnClick = (sender, args) =>
-                            {
-                                ShowToolPopup("Click and drag to plant " + resource.Type + ".");
-                                ChangeTool("Plant");
-                                var plantTool = Tools["Plant"] as PlantTool;
-                                plantTool.PlantType = resource.Type;
-                                plantTool.RequiredResources = new List<ResourceTypeAmount>() { new ResourceTypeAmount(resource.Type, 1) };
-                                World.Tutorial("plant");
-                            },
+                            OnClick = (sender, args) => ChangeTool("Plant", resource.Type),
                             PopupChild = new PlantInfo()
                             {
                                 Type = resource.Type,
@@ -2167,7 +2145,7 @@ namespace DwarfCorp.GameStates
                 ItemSource = new Gui.Widget[]
                 {
                     icon_SelectTool,
-                    icon_BuildCraft,
+                    icon_Craft,
                     icon_BuildTool,
                     icon_DigTool,
                     icon_GatherTool,

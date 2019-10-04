@@ -7,13 +7,14 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    internal class CraftItemAct : CompoundCreatureAct
+    internal class PlaceObjectAct : CompoundCreatureAct
     {
-        public CraftDesignation Item { get; set; }
+        public PlacementDesignation Item { get; set; }
         public Stockpile ItemSource;
         public VoxelHandle Voxel { get; set; }
         public string Noise { get; set; }
-        public CraftItemAct()
+
+        public PlaceObjectAct()
         {
             if (Item.ResourcesReservedFor != null && Item.ResourcesReservedFor.IsDead)
             {
@@ -40,12 +41,6 @@ namespace DwarfCorp
             if (Item.ResourcesReservedFor != null && Item.ResourcesReservedFor.IsDead)
             {
                 Item.ResourcesReservedFor = null;
-            }
-
-            if (Item.PreviewResource != null)
-            {
-                Item.PreviewResource.Delete();
-                Item.PreviewResource = null;
             }
 
             foreach (var status in Creature.Unreserve(Item.ItemType.CraftLocation))
@@ -113,7 +108,7 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
-        public CraftItemAct(CreatureAI creature, CraftDesignation type) :
+        public PlaceObjectAct(CreatureAI creature, PlacementDesignation type) :
             base(creature)
         {
             Item = type;
@@ -123,7 +118,7 @@ namespace DwarfCorp
 
         public bool IsNotCancelled()
         {
-            return Creature.World.PersistentData.Designations.IsDesignation(Item.Entity, DesignationType.Craft);
+            return Creature.World.PersistentData.Designations.IsDesignation(Item.Entity, DesignationType.PlaceObject);
         }
 
         public bool ResourceStateValid()
@@ -165,18 +160,43 @@ namespace DwarfCorp
                 getResources,
                 new Sequence(new Domain(ResourceStateValid,
                     new Sequence(
-                        ActHelper.CreateToolCheckAct(Agent, "Hammer"),
                         new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
                         new Wrap(() => DestroyResources(() => Item.Location.WorldPosition)),
                         new Wrap(WaitForResources) { Name = "Wait for resources." },
                         buildAct,
-                        new CreateCraftItemAct(Voxel, Creature.AI, Item)
+                        new Wrap(FinallyPlaceObject) { Name = "Place the object." }
                     )
                 ))
                 )) |
                 new Sequence(new Wrap(Creature.RestockAll), unreserveAct, false);
 
             base.Initialize();
+        }
+
+        private IEnumerable<Status> FinallyPlaceObject()
+        {
+            Item.Finished = true;
+
+            if (Item.WorkPile != null)
+                Item.WorkPile.Die();
+
+            Item.Entity.SetFlagRecursive(GameComponent.Flag.Active, true);
+            Item.Entity.SetVertexColorRecursive(Color.White);
+            Item.Entity.SetFlagRecursive(GameComponent.Flag.Visible, true);
+
+            foreach (var tinter in Item.Entity.EnumerateAll().OfType<Tinter>())
+                tinter.Stipple = false;
+
+            if (Item.ItemType.Deconstructable)
+                Item.Entity.Tags.Add("Deconstructable");
+
+            if (Item.ItemType.AddToOwnedPool)
+                Creature.Faction.OwnedObjects.Add(Item.Entity);
+
+            Creature.Manager.World.ParticleManager.Trigger("puff", Voxel.WorldPosition + Vector3.One * 0.5f, Color.White, 10);
+            Creature.AI.AddXP((int)(5 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.Intelligence)));
+
+            yield return Status.Success;
         }
 
 
@@ -191,12 +211,6 @@ namespace DwarfCorp
             if (Item.ResourcesReservedFor == Agent)
             {
                 Item.ResourcesReservedFor = null;
-            }
-
-            if (Item.PreviewResource != null)
-            {
-                Item.PreviewResource.Delete();
-                Item.PreviewResource = null;
             }
 
             base.OnCanceled();

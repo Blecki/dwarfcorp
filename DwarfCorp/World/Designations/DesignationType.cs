@@ -11,8 +11,8 @@ namespace DwarfCorp
         Chop    = 16,
         Put     = 32,
         Plant   = 64, 
-        Craft   = 128,
+        PlaceObject   = 128,
 
-        _All     = Dig | Gather | Attack | Wrangle | Chop | Put | Plant | Craft,
+        _All     = Dig | Gather | Attack | Wrangle | Chop | Put | Plant | PlaceObject,
     }
 }

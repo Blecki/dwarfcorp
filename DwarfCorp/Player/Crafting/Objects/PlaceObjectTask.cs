@@ -7,12 +7,12 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    internal class CraftItemTask : Task
+    internal class PlaceObjectTask : Task
     {
-        public CraftDesignation CraftDesignation;
+        public PlacementDesignation PlacementDesignation;
         public Stockpile ItemSource;
 
-        public CraftItemTask()
+        public PlaceObjectTask()
         {
             MaxAssignable = 3;
             Priority = TaskPriority.Medium;
@@ -21,52 +21,49 @@ namespace DwarfCorp
             EnergyDecrease = GameSettings.Default.Energy_Tiring;
         }
 
-        public CraftItemTask(CraftDesignation CraftDesignation)
+        public PlaceObjectTask(PlacementDesignation PlacementDesignation)
         {
+            this.PlacementDesignation = PlacementDesignation;
+
             Category = TaskCategory.BuildObject;
             MaxAssignable = 3;
-            Name = Library.GetString("craft-at", CraftDesignation.Entity.GlobalID, CraftDesignation.ItemType.DisplayName, CraftDesignation.Location);
+            Name = Library.GetString("craft-at", PlacementDesignation.Entity.GlobalID, PlacementDesignation.ItemType.DisplayName, PlacementDesignation.Location);
             Priority = TaskPriority.Medium;
             AutoRetry = true;
-            this.CraftDesignation = CraftDesignation;
 
-            foreach (var tinter in CraftDesignation.Entity.EnumerateAll().OfType<Tinter>())
+            foreach (var tinter in PlacementDesignation.Entity.EnumerateAll().OfType<Tinter>())
                 tinter.Stipple = true;
 
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
             EnergyDecrease = GameSettings.Default.Energy_Tiring;
-
-            if (CraftDesignation.ItemType.IsMagical)
-                Category = TaskCategory.Research;
         }
 
         public override void OnEnqueued(WorldManager World)
         {
-            World.PersistentData.Designations.AddEntityDesignation(CraftDesignation.Entity, DesignationType.Craft, CraftDesignation, this);
+            World.PersistentData.Designations.AddEntityDesignation(PlacementDesignation.Entity, DesignationType.PlaceObject, PlacementDesignation, this);
         }
 
         public override void OnDequeued(WorldManager World)
         {
-            if (!CraftDesignation.Finished)
+            if (!PlacementDesignation.Finished)
             {
-                if (CraftDesignation.WorkPile != null) CraftDesignation.WorkPile.GetRoot().Delete();
-                if (CraftDesignation.PreviewResource != null) CraftDesignation.PreviewResource.GetRoot().Delete();
-                var resourceEntity = new ResourceEntity(World.ComponentManager, CraftDesignation.SelectedResource, CraftDesignation.Entity.GlobalTransform.Translation);
+                if (PlacementDesignation.WorkPile != null) PlacementDesignation.WorkPile.GetRoot().Delete();
+                var resourceEntity = new ResourceEntity(World.ComponentManager, PlacementDesignation.SelectedResource, PlacementDesignation.Entity.GlobalTransform.Translation);
                 World.ComponentManager.RootComponent.AddChild(resourceEntity);
-                CraftDesignation.Entity.GetRoot().Delete();
+                PlacementDesignation.Entity.GetRoot().Delete();
             }
 
-            World.PersistentData.Designations.RemoveEntityDesignation(CraftDesignation.Entity, DesignationType.Craft);
+            World.PersistentData.Designations.RemoveEntityDesignation(PlacementDesignation.Entity, DesignationType.PlaceObject);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            return !CraftDesignation.Location.IsValid || !CanBuild(agent) ? 1000 : (agent.AI.Position - CraftDesignation.Location.WorldPosition).LengthSquared();
+            return !PlacementDesignation.Location.IsValid || !CanBuild(agent) ? 1000 : (agent.AI.Position - PlacementDesignation.Location.WorldPosition).LengthSquared();
         }
 
         public override MaybeNull<Act> CreateScript(Creature creature)
         {
-            return new CraftItemAct(creature.AI, CraftDesignation) { ItemSource = ItemSource };
+            return new PlaceObjectAct(creature.AI, PlacementDesignation) { ItemSource = ItemSource };
         }
 
         public override bool ShouldRetry(Creature agent)
@@ -77,12 +74,12 @@ namespace DwarfCorp
 
         public override bool ShouldDelete(Creature agent)
         {
-            return CraftDesignation.Finished;
+            return PlacementDesignation.Finished;
         }
 
         public override bool IsComplete(WorldManager World)
         {
-            return CraftDesignation.Finished;
+            return PlacementDesignation.Finished;
         }
 
         public override Feasibility IsFeasible(Creature agent)
@@ -90,10 +87,10 @@ namespace DwarfCorp
             if (agent.Stats.IsAsleep || agent.IsDead || !agent.Active)
                 return Feasibility.Infeasible;
 
-            if (!CraftDesignation.ItemType.IsMagical && !agent.Stats.IsTaskAllowed(TaskCategory.BuildObject))
+            if (!PlacementDesignation.ItemType.IsMagical && !agent.Stats.IsTaskAllowed(TaskCategory.BuildObject))
                 return Feasibility.Infeasible;
 
-            if (CraftDesignation.ItemType.IsMagical && !agent.Stats.IsTaskAllowed(TaskCategory.Research))
+            if (PlacementDesignation.ItemType.IsMagical && !agent.Stats.IsTaskAllowed(TaskCategory.Research))
                 return Feasibility.Infeasible;
 
             if (agent.AI.Stats.IsAsleep)
