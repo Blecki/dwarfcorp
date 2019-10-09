@@ -15,7 +15,8 @@ namespace DwarfCorp
         //  should ever access this data.
         public byte[] Types;                // Storage per-voxel
         public byte[] Grass;
-        public byte[] _Water;
+        public byte[] Decal;
+        public byte[] Liquid;
         public byte[] RampsSunlightExploredPlayerBuilt;
 
         public int[] LiquidPresent;         // Storage per-slice
@@ -28,8 +29,8 @@ namespace DwarfCorp
             {
                 Types = new byte[VoxelConstants.ChunkVoxelCount],
                 Grass = new byte[VoxelConstants.ChunkVoxelCount],
-                //Decals = new byte[VoxelConstants.ChunkVoxelCount],
-                _Water = new byte[VoxelConstants.ChunkVoxelCount],
+                Decal = new byte[VoxelConstants.ChunkVoxelCount],
+                Liquid = new byte[VoxelConstants.ChunkVoxelCount],
                 RampsSunlightExploredPlayerBuilt = new byte[VoxelConstants.ChunkVoxelCount],
 
                 LiquidPresent = new int[VoxelConstants.ChunkSizeY],

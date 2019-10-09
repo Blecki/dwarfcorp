@@ -280,18 +280,29 @@ namespace DwarfCorp
         }
 
         [JsonIgnore]
-        public LiquidType LiquidType
+        public byte DecalType
         {
-            get { return (LiquidType)((_cache_Chunk.Data._Water[_cache_Index] & VoxelConstants.LiquidTypeMask) >> VoxelConstants.LiquidTypeShift); }
+            get { return (byte)((_cache_Chunk.Data.Decal[_cache_Index] & VoxelConstants.DecalTypeMask) >> VoxelConstants.DecalTypeShift); }
             set
             {
-                var existingLiquid = (LiquidType)((_cache_Chunk.Data._Water[_cache_Index] & VoxelConstants.LiquidTypeMask) >> VoxelConstants.LiquidTypeShift);
+                _cache_Chunk.Data.Decal[_cache_Index] = (byte)((_cache_Chunk.Data.Decal[_cache_Index] & VoxelConstants.InverseDecalTypeMask) | (value & VoxelConstants.DecalTypeMask));
+                InvalidateVoxel(this);
+            }
+        }
+
+        [JsonIgnore]
+        public LiquidType LiquidType
+        {
+            get { return (LiquidType)((_cache_Chunk.Data.Liquid[_cache_Index] & VoxelConstants.LiquidTypeMask) >> VoxelConstants.LiquidTypeShift); }
+            set
+            {
+                var existingLiquid = (LiquidType)((_cache_Chunk.Data.Liquid[_cache_Index] & VoxelConstants.LiquidTypeMask) >> VoxelConstants.LiquidTypeShift);
                 if (existingLiquid != LiquidType.None && value == LiquidType.None)
                     _cache_Chunk.Data.LiquidPresent[_cache_Local_Y] -= 1;
                 if (existingLiquid == LiquidType.None && value != LiquidType.None)
                     _cache_Chunk.Data.LiquidPresent[_cache_Local_Y] += 1;
 
-                _cache_Chunk.Data._Water[_cache_Index] = (byte)((_cache_Chunk.Data._Water[_cache_Index] & VoxelConstants.InverseLiquidTypeMask) 
+                _cache_Chunk.Data.Liquid[_cache_Index] = (byte)((_cache_Chunk.Data.Liquid[_cache_Index] & VoxelConstants.InverseLiquidTypeMask) 
                     | ((byte)value << VoxelConstants.LiquidTypeShift));
             }
         }
@@ -299,9 +310,9 @@ namespace DwarfCorp
         [JsonIgnore]
         public byte LiquidLevel
         {
-            get { return (byte)(_cache_Chunk.Data._Water[_cache_Index] & VoxelConstants.LiquidLevelMask); }
+            get { return (byte)(_cache_Chunk.Data.Liquid[_cache_Index] & VoxelConstants.LiquidLevelMask); }
             set {
-                _cache_Chunk.Data._Water[_cache_Index] = (byte)((_cache_Chunk.Data._Water[_cache_Index] & VoxelConstants.InverseLiquidLevelMask) 
+                _cache_Chunk.Data.Liquid[_cache_Index] = (byte)((_cache_Chunk.Data.Liquid[_cache_Index] & VoxelConstants.InverseLiquidLevelMask) 
                     | (value & VoxelConstants.LiquidLevelMask));
             }
         }
@@ -313,13 +324,13 @@ namespace DwarfCorp
         /// <param name="Level"></param>
         public void QuickSetLiquid(LiquidType Type, byte Level)
         {
-            var existingLiquid = (LiquidType)((_cache_Chunk.Data._Water[_cache_Index] & VoxelConstants.LiquidTypeMask) >> VoxelConstants.LiquidTypeShift);
+            var existingLiquid = (LiquidType)((_cache_Chunk.Data.Liquid[_cache_Index] & VoxelConstants.LiquidTypeMask) >> VoxelConstants.LiquidTypeShift);
             if (existingLiquid != LiquidType.None && Type == LiquidType.None)
                 _cache_Chunk.Data.LiquidPresent[_cache_Local_Y] -= 1;
             if (existingLiquid == LiquidType.None && Type != LiquidType.None)
                 _cache_Chunk.Data.LiquidPresent[_cache_Local_Y] += 1;
 
-            _cache_Chunk.Data._Water[_cache_Index] = (byte)(((byte)Type << VoxelConstants.LiquidTypeShift) | (Level & VoxelConstants.LiquidLevelMask));
+            _cache_Chunk.Data.Liquid[_cache_Index] = (byte)(((byte)Type << VoxelConstants.LiquidTypeShift) | (Level & VoxelConstants.LiquidLevelMask));
         }
         
         #endregion

@@ -138,6 +138,21 @@ namespace DwarfCorp
                     }
                 }
             }
+            else if (Command.Contains("Decal/"))
+            {
+                var type = Library.GetDecalType(Command.Substring(6));
+                if (type != null)
+                {
+                    foreach (var vox in refs.Where(v => v.IsValid))
+                    {
+                        var v = vox;
+                        if (!vox.IsEmpty)
+                        {
+                            v.DecalType = type.ID;
+                        }
+                    }
+                }
+            }
             else if (Command.Contains("Disease"))
             { 
                 foreach (var creature in World.EnumerateIntersectingObjects(VoxelHelpers.GetVoxelBoundingBox(refs), CollisionType.Both).OfType<Creature>())

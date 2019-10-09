@@ -316,6 +316,7 @@ namespace DwarfCorp
             {
                 var x = 5;
             }
+
             if (Library.GetVoxelPrimitive(v.Type).HasValue(out BoxPrimitive primitive))
                 BuildVoxelGeometryFromPrimitive(Into, Chunk, Cache, v, primitive);
             

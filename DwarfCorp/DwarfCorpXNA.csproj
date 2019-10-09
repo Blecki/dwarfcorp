@@ -772,6 +772,8 @@
     <Compile Include="Graphics\Primitives\ExtendedVertex.cs" />
     <Compile Include="Graphics\Primitives\GeometricPrimitive.cs" />
     <Compile Include="Graphics\Primitives\LiquidPrimitive.cs" />
+    <Compile Include="World\Voxels\DecalType.cs" />
+    <Compile Include="World\Voxels\DecalLibrary.cs" />
     <Compile Include="World\Voxels\VoxelHelpers\FindFirstVoxelBelowIncludingWater.cs" />
     <Compile Include="World\Voxels\VoxelHelpers\FindValidVoxelNear.cs" />
     <Compile Include="World\Voxels\VoxelHelpers\GetVoxelBelow.cs" />

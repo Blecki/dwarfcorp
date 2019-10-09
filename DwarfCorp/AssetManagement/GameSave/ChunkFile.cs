@@ -29,6 +29,7 @@ namespace DwarfCorp
 
         public Dictionary<int, String> VoxelTypeMap;
         public Dictionary<int, String> GrassTypeMap;
+        public Dictionary<int, String> DecalTypeMap;
 
         public ChunkFile()
         {
@@ -49,10 +50,11 @@ namespace DwarfCorp
             chunk.Data.Types.CopyTo(r.Types, 0);
             chunk.Data.Grass.CopyTo(r.GrassType, 0);
             chunk.Data.RampsSunlightExploredPlayerBuilt.CopyTo(r.RampsSunlightExplored, 0);
-            chunk.Data._Water.CopyTo(r.Liquid, 0);
+            chunk.Data.Liquid.CopyTo(r.Liquid, 0);
 
             r.VoxelTypeMap = Library.GetVoxelTypeMap();
             r.GrassTypeMap = Library.GetGrassTypeMap();
+            r.DecalTypeMap = Library.GetDecalTypeMap();
 
             return r;
         }
@@ -100,7 +102,7 @@ namespace DwarfCorp
 
             if (Liquid != null)
             {
-                Liquid.CopyTo(c.Data._Water, 0);
+                Liquid.CopyTo(c.Data.Liquid, 0);
                 for (int y = 0; y < VoxelConstants.ChunkSizeY; y++)
                     for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
                         for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
@@ -118,6 +120,10 @@ namespace DwarfCorp
                 (index) => c.Data.Grass[index] >> VoxelConstants.GrassTypeShift,
                 (index, value) => c.Data.Grass[index] = (byte)((c.Data.Grass[index] & VoxelConstants.GrassDecayMask) | (value << VoxelConstants.GrassTypeShift)));
 
+            // Remap decals.
+            Remap(c.Data.Decal.Length, DecalTypeMap, Library.GetDecalTypeMap(),
+                (index) => (c.Data.Decal[index] & VoxelConstants.DecalTypeMask) >> VoxelConstants.DecalTypeShift,
+                (index, value) => c.Data.Decal[index] = (byte)((c.Data.Decal[index] & VoxelConstants.InverseDecalTypeMask) | (value & VoxelConstants.DecalTypeMask)));
 
             return c;
         }
