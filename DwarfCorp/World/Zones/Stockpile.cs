@@ -27,6 +27,16 @@ namespace DwarfCorp
         public int ResourceCapacity { get; private set; }
         public int ResourcesPerVoxel = 32;
         public ResourceSet Resources = new ResourceSet();
+        [JsonProperty] private List<GameComponent> Boxes { get; set; }
+        protected string BoxType = "Crate";
+        public Vector3 BoxOffset = Vector3.Zero;
+        private Timer HandleStockpilesTimer = new Timer(5.5f, false, Timer.TimerMode.Real);
+        // If this is empty, all resources are allowed if and only if whitelist is empty. Otherwise,
+        // all but these resources are allowed.
+        public List<String> BlacklistResources = new List<String>();
+        // If this is empty, all resources are allowed if and only if blacklist is empty. Otherwise,
+        // only these resources are allowed.
+        public List<String> WhitelistResources = new List<String>();
 
         public Stockpile()
         {
@@ -37,6 +47,7 @@ namespace DwarfCorp
             base(Data, World)
         {
             Boxes = new List<GameComponent>();
+
             BlacklistResources = new List<String>()
             {
                 "Corpse",
@@ -44,29 +55,9 @@ namespace DwarfCorp
             };
         }
 
-        private static uint maxID = 0;
-
-        [JsonProperty] private List<GameComponent> Boxes { get; set; }
-        protected string BoxType = "Crate";
-        public Vector3 BoxOffset = Vector3.Zero;
-        private Timer HandleStockpilesTimer = new Timer(5.5f, false, Timer.TimerMode.Real);
-
         public override string GetDescriptionString()
         {
             return ID;
-        }
-
-        // If this is empty, all resources are allowed if and only if whitelist is empty. Otherwise,
-        // all but these resources are allowed.
-        public List<String> BlacklistResources = new List<String>();
-        // If this is empty, all resources are allowed if and only if blacklist is empty. Otherwise,
-        // only these resources are allowed.
-        public List<String> WhitelistResources = new List<String>(); 
-
-        public static uint NextID()
-        {
-            maxID++;
-            return maxID;
         }
 
         public bool IsAllowed(String type)
@@ -100,19 +91,16 @@ namespace DwarfCorp
 
         public void CreateBox(Vector3 pos)
         {
-            //WorldManager.DoLazy(() =>
-            //{
-                Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f) + BoxOffset;
-                Vector3 endPos = pos + new Vector3(0.0f, 1.1f, 0.0f) + BoxOffset;
+                var startPos = pos + new Vector3(0.0f, -0.1f, 0.0f) + BoxOffset;
+                var endPos = pos + new Vector3(0.0f, 1.1f, 0.0f) + BoxOffset;
 
-                GameComponent crate = EntityFactory.CreateEntity<GameComponent>(BoxType, startPos);
+                var crate = EntityFactory.CreateEntity<GameComponent>(BoxType, startPos);
                 crate.AnimationQueue.Add(new EaseMotion(0.8f, crate.LocalTransform, endPos));
                 Boxes.Add(crate);
                 AddBody(crate);
                 SoundManager.PlaySound(ContentPaths.Audio.whoosh, startPos);
                 if (World.ParticleManager != null)
                     World.ParticleManager.Trigger("puff", pos + new Vector3(0.5f, 1.5f, 0.5f), Color.White, 90);
-            //});
         }
 
         private void HandleBoxes()

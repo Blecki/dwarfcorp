@@ -154,8 +154,8 @@ namespace DwarfCorp
             Voxel.IsPlayerBuilt = true;
             Voxels.Add(Voxel);
 
-            if (Library.GetVoxelType(Type.FloorType).HasValue(out VoxelType floor))
-                Voxel.Type = floor;
+            //if (Library.GetVoxelType(Type.FloorType).HasValue(out VoxelType floor))
+            //    Voxel.Type = floor;
         }
 
         public VoxelHandle GetNearestVoxel(Vector3 position)
@@ -203,7 +203,31 @@ namespace DwarfCorp
                 
         public virtual void OnBuilt()
         {
-
+            if (Type.Outline)
+            {
+                List<BoundingBox> boxes = Voxels.Select(voxel => voxel.GetBoundingBox()).ToList();
+                BoundingBox box = MathFunctions.GetBoundingBox(boxes);
+                foreach (var voxel in Voxels)
+                {
+                    var loc = voxel;
+                    if (voxel.Coordinate.X == box.Min.X && voxel.Coordinate.Z == box.Min.Z)
+                        loc.DecalType = Library.GetDecalType("zone-nw").ID;
+                    else if (voxel.Coordinate.X == box.Min.X && voxel.Coordinate.Z == box.Max.Z - 1)
+                        loc.DecalType = Library.GetDecalType("zone-sw").ID;
+                    else if (voxel.Coordinate.X == box.Max.X - 1 && voxel.Coordinate.Z == box.Min.Z)
+                        loc.DecalType = Library.GetDecalType("zone-ne").ID;
+                    else if (voxel.Coordinate.X == box.Max.X - 1 && voxel.Coordinate.Z == box.Max.Z - 1)
+                        loc.DecalType = Library.GetDecalType("zone-se").ID;
+                    else if (voxel.Coordinate.X == box.Min.X)
+                        loc.DecalType = Library.GetDecalType("zone-w").ID;
+                    else if (voxel.Coordinate.X == box.Max.X - 1)
+                        loc.DecalType = Library.GetDecalType("zone-e").ID;
+                    else if (voxel.Coordinate.Z == box.Min.Z)
+                        loc.DecalType = Library.GetDecalType("zone-n").ID;
+                    else if (voxel.Coordinate.Z == box.Max.Z - 1)
+                        loc.DecalType = Library.GetDecalType("zone-s").ID;
+                }
+            }
         }
 
         public virtual void Update(DwarfTime Time)

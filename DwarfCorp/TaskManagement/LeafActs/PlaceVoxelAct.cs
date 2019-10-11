@@ -33,10 +33,9 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            if (!Creature.Inventory.Contains(Agent.Blackboard.GetData<Resource>(ResourceBlackboardName)))
-            {
-                yield return Status.Fail;
-            }
+            foreach (var res in Agent.Blackboard.GetData<List<Resource>>(ResourceBlackboardName))
+                if (!Creature.Inventory.Contains(res))
+                    yield return Status.Fail;
 
             foreach (var status in Creature.HitAndWait(1.0f, true, () => Location.Coordinate.ToVector3() + Vector3.One * 0.5f))
             {
@@ -44,61 +43,58 @@ namespace DwarfCorp
                     yield return status;
             }
 
-            var grabbed = Creature.Inventory.RemoveAndCreate(Agent.Blackboard.GetData<Resource>(ResourceBlackboardName), Inventory.RestockType.Any);
+            foreach (var res in Agent.Blackboard.GetData<List<Resource>>(ResourceBlackboardName))
+            { 
+                var grabbed = Creature.Inventory.RemoveAndCreate(res, Inventory.RestockType.Any);
 
-            if (grabbed == null)
-            {
-                yield return Status.Fail;
-                yield break;
-            }
-            else
-            {
-                // If the creature intersects the box, find a voxel adjacent to it that is free, and jump there to avoid getting crushed.
-                if (Creature.Physics.BoundingBox.Intersects(Location.GetBoundingBox()))
+                if (grabbed == null)
                 {
-                    var neighbors = VoxelHelpers.EnumerateAllNeighbors(Location.Coordinate)
-                        .Select(c => new VoxelHandle(Agent.World.ChunkManager, c));
-
-                    var closest = VoxelHandle.InvalidHandle;
-                    float closestDist = float.MaxValue;
-                    foreach (var voxel in neighbors)
+                    yield return Status.Fail;
+                    yield break;
+                }
+                else
+                {
+                    // If the creature intersects the box, find a voxel adjacent to it that is free, and jump there to avoid getting crushed.
+                    if (Creature.Physics.BoundingBox.Intersects(Location.GetBoundingBox()))
                     {
-                        if (!voxel.IsValid) continue;
+                        var neighbors = VoxelHelpers.EnumerateAllNeighbors(Location.Coordinate)
+                            .Select(c => new VoxelHandle(Agent.World.ChunkManager, c));
 
-                        float dist = (voxel.WorldPosition - Creature.Physics.Position).LengthSquared();
-                        if (dist < closestDist && voxel.IsEmpty)
+                        var closest = VoxelHandle.InvalidHandle;
+                        var closestDist = float.MaxValue;
+                        foreach (var voxel in neighbors)
                         {
-                            closestDist = dist;
-                            closest = voxel;
+                            if (!voxel.IsValid) continue;
+
+                            float dist = (voxel.WorldPosition - Creature.Physics.Position).LengthSquared();
+                            if (dist < closestDist && voxel.IsEmpty)
+                            {
+                                closestDist = dist;
+                                closest = voxel;
+                            }
+                        }
+
+                        if (closest.IsValid)
+                        {
+                            TossMotion teleport = new TossMotion(0.5f, 1.0f, Creature.Physics.GlobalTransform, closest.WorldPosition + Vector3.One * 0.5f);
+                            Creature.Physics.AnimationQueue.Add(teleport);
                         }
                     }
 
-                    if (closest.IsValid)
-                    {
-                        TossMotion teleport = new TossMotion(0.5f, 1.0f, Creature.Physics.GlobalTransform, closest.WorldPosition + Vector3.One * 0.5f);
-                        Creature.Physics.AnimationQueue.Add(teleport);
-                    }
+                    // Todo: Shitbox - what happens if the player saves while this animation is in progress?? How is the OnComplete restored?
+                    var motion = new TossMotion(1.0f, 2.0f, grabbed.LocalTransform, Location.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f));
+                    if (grabbed.GetRoot().GetComponent<Physics>().HasValue(out var grabbedPhysics))
+                        grabbedPhysics.CollideMode = Physics.CollisionMode.None;
+                    grabbed.AnimationQueue.Add(motion);
+
+                    motion.OnComplete += () => grabbed.Die();
                 }
 
-                // Todo: Shitbox - what happens if the player saves while this animation is in progress?? How is the OnComplete restored?
-                TossMotion motion = new TossMotion(1.0f, 2.0f, grabbed.LocalTransform, Location.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f));
-                if (grabbed.GetRoot().GetComponent<Physics>().HasValue(out var grabbedPhysics))
-                    grabbedPhysics.CollideMode = Physics.CollisionMode.None;
-                grabbed.AnimationQueue.Add(motion);
+                if (Library.GetVoxelType(VoxelType).HasValue(out var vType))                
+                    PlaceVoxel(Location, vType, Creature.Manager.World);
 
-                var putType = Library.GetVoxelType(VoxelType);
-                                
-                motion.OnComplete += () =>
-                {
-                    if (putType.HasValue(out VoxelType vType))
-                    {
-                        grabbed.Die();
-                        PlaceVoxel(Location, vType, Creature.Manager.World);
-
-                        Creature.Stats.NumBlocksPlaced++;
-                        Creature.AI.AddXP(1);
-                    }
-                };
+                Creature.Stats.NumBlocksPlaced++;
+                Creature.AI.AddXP(1);
 
                 yield return Status.Success;
                 yield break;

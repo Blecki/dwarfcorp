@@ -2187,6 +2187,38 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>WoodPick</Name>
     </None>
+    <None Include="World\DecalTypes\ZoneN.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>ZoneN</Name>
+    </None>
+    <None Include="World\DecalTypes\ZoneE.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>ZoneE</Name>
+    </None>
+    <None Include="World\DecalTypes\ZoneSE.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>ZoneSE</Name>
+    </None>
+    <None Include="World\DecalTypes\ZoneS.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>ZoneS</Name>
+    </None>
+    <None Include="World\DecalTypes\ZoneW.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>ZoneW</Name>
+    </None>
+    <None Include="World\DecalTypes\ZoneSW.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>ZoneSW</Name>
+    </None>
+    <None Include="World\DecalTypes\ZoneBalloon.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>ZoneBalloon</Name>
+    </None>
+    <None Include="World\DecalTypes\ZoneNE.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>ZoneNE</Name>
+    </None>
     <None Include="World\Designations\default.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>default</Name>
@@ -2199,8 +2231,8 @@
       <Name>Chop</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="World\Designations\Craft.json">
-      <Name>Craft</Name>
+    <None Include="World\Designations\PlaceObject.json">
+      <Name>PlaceObject</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="World\Designations\Dig.json">
@@ -2243,9 +2275,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Tranquil</Name>
     </None>
-    <None Include="World\DecalTypes\Cavemoss.json">
+    <None Include="World\DecalTypes\ZoneNW.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Cavemoss</Name>
+      <Name>ZoneNW</Name>
     </None>
     <None Include="World\DecalTypes\Empty.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -4302,10 +4334,6 @@
     <None Include="World\Voxels\Cobble.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Cobble</Name>
-    </None>
-    <None Include="World\Voxels\Stockpile.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Stockpile</Name>
     </None>
     <None Include="World\Voxels\Granite.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

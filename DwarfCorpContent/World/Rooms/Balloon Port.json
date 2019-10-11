@@ -6,7 +6,6 @@
   "MaxNumRooms": 1,
   "Name": "Balloon Port",
   "DisplayName": "Balloon\nPort",
-  "FloorType": "Stockpile",
   "RequiredResources": {},
   "NewIcon": {
     "Sheet": "rooms",

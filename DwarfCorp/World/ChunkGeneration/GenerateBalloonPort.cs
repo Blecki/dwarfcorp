@@ -80,7 +80,11 @@ namespace DwarfCorp.Generation
                         var v = chunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(baseVoxel.Coordinate.X, y, baseVoxel.Coordinate.Z));
                         if (!v.IsValid) throw new InvalidProgramException("Voxel was invalid while creating a new game's initial zones. This should not happen.");
 
+                        if (y == h - 1)
+                            v.RawSetType(Library.GetVoxelType("Plank"));
+                        else
                             v.RawSetType(Library.GetVoxelType("Scaffold"));
+
                             v.IsPlayerBuilt = true;
                             v.QuickSetLiquid(LiquidType.None, 0);
                             v.Sunlight = false;

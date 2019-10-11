@@ -19,6 +19,8 @@ namespace DwarfCorp
         public int MinimumSideLength = 3;
         public int MinimumSideWidth = 3;
         public int MaxNumRooms = int.MaxValue;
+        public bool RequiresSpecificFloor = false;
+        public bool Outline = true;
 
         public List<ResourceTagAmount> GetRequiredResources(int numVoxels)
         {
@@ -107,6 +109,12 @@ namespace DwarfCorp
                 if (World.IsInZone(voxel) || World.IsBuildDesignation(voxel))
                 {
                     World.UserInterface.ShowTooltip("Room's can't overlap!");
+                    return false;
+                }
+
+                if (RequiresSpecificFloor && voxel.Type.Name != FloorType)
+                {
+                    World.UserInterface.ShowTooltip("Room must be built on " + FloorType);
                     return false;
                 }
             }

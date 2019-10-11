@@ -122,7 +122,10 @@ namespace DwarfCorp
         public static MaybeNull<VoxelType> GetVoxelType(string name)
         {
             InitializeVoxels();
-            return VoxelTypes[name];
+            if (VoxelTypes.ContainsKey(name))
+                return VoxelTypes[name];
+            else
+                return null;
         }
 
         public static MaybeNull<BoxPrimitive> GetVoxelPrimitive(VoxelType type)

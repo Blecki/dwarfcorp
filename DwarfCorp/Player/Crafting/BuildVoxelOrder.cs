@@ -19,12 +19,5 @@ namespace DwarfCorp
             this.ToBuild = ToBuild;
             this.Voxel = Voxel;
         }
-
-        public void Build()
-        {
-            Order.Build();
-        }
-
     }
-
 }

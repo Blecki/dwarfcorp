@@ -5,7 +5,6 @@
   "MinimumSideWidth": 3,
   "MaxNumRooms": 2147483647,
   "Name": "Stockpile",
-  "FloorType": "Stockpile",
   "DisplayName": "Stock\nPile",
   "RequiredResources": {  },
   "NewIcon": {

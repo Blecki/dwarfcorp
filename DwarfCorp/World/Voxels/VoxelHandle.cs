@@ -400,6 +400,9 @@ namespace DwarfCorp
                 // Changing the voxel type clears grass.
                 _cache_Chunk.Data.Grass[_cache_Index] = 0;
 
+                // Changing the voxel type clears decals.
+                _cache_Chunk.Data.Decal[_cache_Index] = 0;
+
                 // Did we go from empty to filled or vice versa? Update filled counter.
                 if (previous == 0 && NewType.ID != 0)
                     _cache_Chunk.Data.VoxelsPresentInSlice[_cache_Local_Y] += 1;

@@ -7,10 +7,11 @@
   "Name": "Animal Pen",
   "DisplayName": "Animal\nPen",
   "FloorType": "Dirt",
+  "RequiresSpecificFloor":  true,
   "RequiredResources": {
-    "Soil": {
-      "Type": "Soil",
-      "Count": 4
+    "Wood": {
+      "Tag": "Wood",
+      "Count": 1
     }
   },
   "NewIcon": {

@@ -25,9 +25,5 @@ namespace DwarfCorp
             base(Data, World)
         {
         }
-
-        public override void OnBuilt()
-        {
-        }
     }
 }
