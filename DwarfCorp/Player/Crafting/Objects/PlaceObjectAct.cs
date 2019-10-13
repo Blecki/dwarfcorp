@@ -22,34 +22,25 @@ namespace DwarfCorp
             }
         }
 
-        public IEnumerable<Status> ReserveResources()
+        public IEnumerable<Status> LocateResources()
         {
-            if (Item.ResourcesReservedFor != null && Item.ResourcesReservedFor.IsDead)
+            var resources = Agent.World.FindUnreservedResource(Item.ItemType.ResourceCreated);
+            if (resources.HasValue(out var res))
             {
-                Item.ResourcesReservedFor = null;
+                res.Item2.ReservedFor = Agent;
+                Item.SelectedResource = res.Item2;
+                ItemSource = res.Item1;
+                yield return Status.Success;
             }
-
-            if (!Item.HasResources && Item.ResourcesReservedFor == null)
-            {
-                Item.ResourcesReservedFor = Agent;
-            }
-            yield return Status.Success;
+            else
+                yield return Status.Fail;
         }
 
         public IEnumerable<Status> UnReserve()
         {
-            if (Item.ResourcesReservedFor != null && Item.ResourcesReservedFor.IsDead)
-            {
-                Item.ResourcesReservedFor = null;
-            }
 
-            foreach (var status in Creature.Unreserve(Item.ItemType.CraftLocation))
-            {
-            
-            }
-
-            if (Item.ResourcesReservedFor == Agent)
-                Item.ResourcesReservedFor = null;
+            if (Item.SelectedResource.ReservedFor == Agent)
+                Item.SelectedResource.ReservedFor = null;
 
             Agent.Physics.Active = true;
             Agent.Physics.IsSleeping = false;
@@ -140,14 +131,15 @@ namespace DwarfCorp
             float time = 3 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.Intelligence);
             Act getResources = null;
 
-            getResources = new Select(new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true),
-                                        new Domain(() => !Item.HasResources && (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
-                                            new Sequence(
-                                                new Wrap(ReserveResources),
-                                                new StashResourcesAct(Agent, ItemSource, Item.SelectedResource))
-                                            | (new Wrap(UnReserve))
+            getResources = new Select(
+                new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true),
+                new Domain(() => !Item.HasResources && (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
+                    new Sequence(
+                        new Wrap(LocateResources),
+                        new StashResourcesAct(Agent, ItemSource, Item.SelectedResource)
+                    ) | (new Wrap(UnReserve))
                                             & false),
-                                        new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true));
+                    new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true));
             Act buildAct = null;
 
             buildAct = new Wrap(() => Creature.HitAndWait(true, () => 1.0f,
@@ -180,21 +172,32 @@ namespace DwarfCorp
             if (Item.WorkPile != null)
                 Item.WorkPile.Die();
 
-            Item.Entity.SetFlagRecursive(GameComponent.Flag.Active, true);
-            Item.Entity.SetVertexColorRecursive(Color.White);
-            Item.Entity.SetFlagRecursive(GameComponent.Flag.Visible, true);
+            var blackboard = new Blackboard();
+                blackboard.SetData("Resource", Item.SelectedResource);
+            blackboard.SetData<string>("CraftType", Item.ItemType.Name); // Todo: Used by anything?
 
-            foreach (var tinter in Item.Entity.EnumerateAll().OfType<Tinter>())
+            var previewBody = EntityFactory.CreateEntity<GameComponent>(
+                Item.ItemType.EntityName,
+                Item.Location.Center, blackboard).GetRoot();
+
+            previewBody.SetFlagRecursive(GameComponent.Flag.Active, true);
+            previewBody.SetVertexColorRecursive(Color.White);
+            previewBody.SetFlagRecursive(GameComponent.Flag.Visible, true);
+
+            foreach (var tinter in previewBody.EnumerateAll().OfType<Tinter>())
                 tinter.Stipple = false;
 
             if (Item.ItemType.Deconstructable)
-                Item.Entity.Tags.Add("Deconstructable");
+                previewBody.Tags.Add("Deconstructable");
 
             if (Item.ItemType.AddToOwnedPool)
-                Creature.Faction.OwnedObjects.Add(Item.Entity);
+                Creature.Faction.OwnedObjects.Add(previewBody);
 
             Creature.Manager.World.ParticleManager.Trigger("puff", Voxel.WorldPosition + Vector3.One * 0.5f, Color.White, 10);
             Creature.AI.AddXP((int)(5 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.Intelligence)));
+
+
+            Item.Entity.Delete();
 
             yield return Status.Success;
         }

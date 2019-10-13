@@ -10,7 +10,6 @@ namespace DwarfCorp
     internal class PlaceObjectTask : Task
     {
         public PlacementDesignation PlacementDesignation;
-        public Stockpile ItemSource;
 
         public PlaceObjectTask()
         {
@@ -63,7 +62,7 @@ namespace DwarfCorp
 
         public override MaybeNull<Act> CreateScript(Creature creature)
         {
-            return new PlaceObjectAct(creature.AI, PlacementDesignation) { ItemSource = ItemSource };
+            return new PlaceObjectAct(creature.AI, PlacementDesignation);
         }
 
         public override bool ShouldRetry(Creature agent)

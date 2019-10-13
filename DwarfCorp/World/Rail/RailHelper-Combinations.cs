@@ -22,6 +22,7 @@ namespace DwarfCorp.Rail
             Name = "Rail",
             Type = CraftItem.CraftType.Object,
             AddToOwnedPool = true,
+            ResourceCreated = "Rail"
         };
 
         public static RailEntity CreatePreviewBody(ComponentManager Manager, VoxelHandle Location, JunctionPiece Piece)
@@ -170,33 +171,27 @@ namespace DwarfCorp.Rail
                     var startPos = body.Position + new Vector3(0.0f, -0.3f, 0.0f);
                     var endPos = body.Position;
 
-                    // Todo: Need to find a rail resource.
-                    var railResource = World.FindResource("Rail");
-                    if (railResource.HasValue(out var res))
+                    var designation = new PlacementDesignation
                     {
-                        var designation = new PlacementDesignation
-                        {
-                            Entity = body,
-                            WorkPile = new WorkPile(World.ComponentManager, startPos),
-                            OverrideOrientation = false,
-                            ItemType = RailCraftItem,
-                            SelectedResource = res.Item2,
-                            Location = new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(body.Position)),
-                            HasResources = hasResources,
-                            ResourcesReservedFor = null,
-                            Orientation = 0.0f,
-                            Progress = 0.0f,
-                        };
+                        Entity = body,
+                        WorkPile = new WorkPile(World.ComponentManager, startPos),
+                        OverrideOrientation = false,
+                        ItemType = RailCraftItem,
+                        Location = new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(body.Position)),
+                        HasResources = hasResources,
+                        ResourcesReservedFor = null,
+                        Orientation = 0.0f,
+                        Progress = 0.0f,
+                    };
 
-                        body.SetFlag(GameComponent.Flag.ShouldSerialize, true);
-                        World.ComponentManager.RootComponent.AddChild(designation.WorkPile);
-                        designation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
-                        World.ParticleManager.Trigger("puff", endPos, Color.White, 10);
+                    body.SetFlag(GameComponent.Flag.ShouldSerialize, true);
+                    World.ComponentManager.RootComponent.AddChild(designation.WorkPile);
+                    designation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
+                    World.ParticleManager.Trigger("puff", endPos, Color.White, 10);
 
-                        var task = new PlaceObjectTask(designation) { ItemSource = res.Item1 };
-                        World.PersistentData.Designations.AddEntityDesignation(body, DesignationType.PlaceObject, designation, task);
-                        assignments.Add(task);
-                    }
+                    var task = new PlaceObjectTask(designation);
+                    World.PersistentData.Designations.AddEntityDesignation(body, DesignationType.PlaceObject, designation, task);
+                    assignments.Add(task);
                 }
 
                 if (GodModeSwitch)

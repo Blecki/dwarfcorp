@@ -26,7 +26,6 @@ namespace DwarfCorp
 
         public CraftItem CraftType { get; set; }
         public GameComponent PreviewBody { get; set; }
-        public MaybeNull<Tuple<Stockpile, Resource>> SelectedResource;
         private float Orientation = 0.0f;
         private bool OverrideOrientation = false;
         private bool RightPressed = false;
@@ -35,8 +34,6 @@ namespace DwarfCorp
         private GameComponent CreatePreviewBody()
         {
             Blackboard blackboard = new Blackboard();
-            if (SelectedResource.HasValue(out var selRes))
-                blackboard.SetData("Resource", selRes.Item2);
 
             blackboard.SetData<string>("CraftType", CraftType.Name);
 
@@ -56,7 +53,7 @@ namespace DwarfCorp
             {
                 case (InputManager.MouseButton.Left):
                     {
-                        if (SelectedResource.HasValue(out var selectedRes))
+                        if (Library.GetResourceType(CraftType.ResourceCreated).HasValue(out var selectedRes))
                         {
                             if (ObjectHelper.IsValidPlacement(World.UserInterface.VoxSelector.VoxelUnderMouse, CraftType, World, PreviewBody, "build", "built"))
                             {
@@ -72,7 +69,6 @@ namespace DwarfCorp
                                     Orientation = Orientation,
                                     OverrideOrientation = OverrideOrientation,
                                     Entity = PreviewBody,
-                                    SelectedResource = selectedRes.Item2,
                                     WorkPile = new WorkPile(World.ComponentManager, startPos)
                                 };
 
@@ -80,7 +76,7 @@ namespace DwarfCorp
                                 newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), pos));
                                 World.ParticleManager.Trigger("puff", pos, Color.White, 10);
                                                                
-                                World.TaskManager.AddTask(new PlaceObjectTask(newDesignation) { ItemSource = selectedRes.Item1 });
+                                World.TaskManager.AddTask(new PlaceObjectTask(newDesignation));
 
                                 if (!HandlePlaceExistingUpdate())
                                 {
@@ -89,10 +85,7 @@ namespace DwarfCorp
                                     World.UserInterface.ChangeTool("SelectUnits");
                                 }
                                 else
-                                {
-                                    SelectedResource = World.FindResource(CraftType.Name);
                                     PreviewBody = CreatePreviewBody();
-                                }
                             }
                         }
 
@@ -116,10 +109,7 @@ namespace DwarfCorp
                 ((PlacementDesignation)designation.Tag).ItemType.Name == CraftType.Name).ToList();
 
             if (!resources.Any())
-            {
-                SelectedResource = null;
                 return false;
-            }
 
             return true;
         }
@@ -135,8 +125,6 @@ namespace DwarfCorp
 
             if (!HandlePlaceExistingUpdate())
                 World.UserInterface.ShowToolPopup("Unable to place any more.");
-
-            SelectedResource = World.FindResource(CraftType.Name);
 
             PreviewBody = CreatePreviewBody();
             Orientation = 0.0f;

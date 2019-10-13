@@ -22,6 +22,7 @@ namespace DwarfCorp
         public List<ResourceTypeAmount> RawMaterials;
         public string Noise { get; set; }
         public ResourceDes Des;
+        public String ResourceCreated;
 
         public CraftResourceAct()
         {
@@ -109,7 +110,7 @@ namespace DwarfCorp
                 yield break;
             }
 
-            String ResourceCreated = ItemType.ResourceCreated;
+            ResourceCreated = ItemType.ResourceCreated;
 
             switch (ItemType.CraftActBehavior)
             {
@@ -197,7 +198,7 @@ namespace DwarfCorp
             }
 
             for (var i = 0; i < ItemType.CraftedResultsCount; ++i)
-                Creature.Inventory.AddResource(new Resource(ItemType.ResourceCreated));
+                Creature.Inventory.AddResource(new Resource(ResourceCreated));
             Creature.AI.AddXP((int)ItemType.BaseCraftTime);
             Des.Finished = true;
             yield return Status.Success;

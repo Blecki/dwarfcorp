@@ -12,6 +12,9 @@ namespace DwarfCorp
         [JsonProperty] private String _Type;
         [JsonIgnore] public String Type => _Type;
 
+        [JsonProperty] public CreatureAI ReservedFor = null;
+
+
         [JsonIgnore] private MaybeNull<ResourceType> _cachedResourceType = null;
         [JsonIgnore] public MaybeNull<ResourceType> ResourceType
         {

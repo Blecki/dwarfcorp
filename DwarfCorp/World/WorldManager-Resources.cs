@@ -146,6 +146,15 @@ namespace DwarfCorp
             return null;
         }
 
+        public MaybeNull<Tuple<Stockpile, Resource>> FindUnreservedResource(String Type)
+        {
+            foreach (var stockpile in EnumerateZones().OfType<Stockpile>())
+                foreach (var resource in stockpile.Resources.Enumerate())
+                    if (resource.Type == Type && resource.ReservedFor == null)
+                        return Tuple.Create(stockpile, resource);
+            return null;
+        }
+
         public bool AddResources(Resource Resource)
         {
             bool added = false;
