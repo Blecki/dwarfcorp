@@ -16,10 +16,6 @@ namespace DwarfCorp
 
         public PlaceObjectAct()
         {
-            if (Item.ResourcesReservedFor != null && Item.ResourcesReservedFor.IsDead)
-            {
-                Item.ResourcesReservedFor = null;
-            }
         }
 
         public IEnumerable<Status> LocateResources()
@@ -50,32 +46,21 @@ namespace DwarfCorp
 
         public IEnumerable<Status> DestroyResources(Func<Vector3> pos)
         {
-            if (!Item.HasResources && Item.ResourcesReservedFor == Agent)
-            {
-                if (Item.SelectedResource != null)
+            if (Item.SelectedResource != null)
+                if (!Creature.Inventory.RemoveAndCreateWithToss(Item.SelectedResource, pos(), Inventory.RestockType.None))
                 {
-                    if (!Creature.Inventory.RemoveAndCreateWithToss(Item.SelectedResource, pos(), Inventory.RestockType.None))
-                    {
-                        Agent.SetMessage("Failed to create resources for item (1).");
-                        yield return Act.Status.Fail;
-                        yield break;
-                    }
-                }
-                else if (!Creature.Inventory.RemoveAndCreateWithToss(Item.SelectedResource, pos(), Inventory.RestockType.None))
-                {
-                    Agent.SetMessage("Failed to create resources for item (2).");
+                    Agent.SetMessage("Failed to create resources for item (1).");
                     yield return Act.Status.Fail;
                     yield break;
                 }
-                
-                Item.HasResources = true;
-            }
+
+            Item.HasResources = true;
             yield return Status.Success;
         }
         
         public IEnumerable<Status> WaitForResources()
         {
-            if (Item.ResourcesReservedFor == Agent)
+            if (Item.HasResources)
             {
                 yield return Act.Status.Success;
                 yield break;
@@ -87,7 +72,7 @@ namespace DwarfCorp
             while (!Item.HasResources)
             {
                 enumerator.MoveNext();
-                if (Item.ResourcesReservedFor == null || Item.ResourcesReservedFor.IsDead)
+                if (Item.SelectedResource.ReservedFor == null || Item.SelectedResource.ReservedFor.IsDead)
                 {
                     Agent.SetMessage("Waiting for resources failed.");
                     yield return Act.Status.Fail;
@@ -114,7 +99,7 @@ namespace DwarfCorp
 
         public bool ResourceStateValid()
         {
-            bool valid =  Item.HasResources || Item.ResourcesReservedFor != null;
+            bool valid =  Item.HasResources || Item.SelectedResource != null;
             if (!valid)
                 Agent.SetMessage("Resource state not valid.");
 
@@ -132,14 +117,14 @@ namespace DwarfCorp
             Act getResources = null;
 
             getResources = new Select(
-                new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true),
-                new Domain(() => !Item.HasResources && (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
+                new Domain(() => Item.HasResources || Item.SelectedResource != null, true),
+                new Domain(() => !Item.HasResources && (Item.SelectedResource.ReservedFor == Agent || Item.SelectedResource.ReservedFor == null),
                     new Sequence(
                         new Wrap(LocateResources),
                         new StashResourcesAct(Agent, ItemSource, Item.SelectedResource)
                     ) | (new Wrap(UnReserve))
                                             & false),
-                    new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true));
+                    new Domain(() => Item.HasResources || Item.SelectedResource.ReservedFor != null, true));
             Act buildAct = null;
 
             buildAct = new Wrap(() => Creature.HitAndWait(true, () => 1.0f,
@@ -211,9 +196,11 @@ namespace DwarfCorp
             {
                 continue;
             }
-            if (Item.ResourcesReservedFor == Agent)
+
+
+            if (Item.SelectedResource != null && Item.SelectedResource.ReservedFor == Agent)
             {
-                Item.ResourcesReservedFor = null;
+                Item.SelectedResource.ReservedFor = null;
             }
 
             base.OnCanceled();

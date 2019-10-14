@@ -63,18 +63,9 @@ namespace DwarfCorp
 
         public override void Die()
         {
-            String type = AI.Stats.FullName + "'s " + "Corpse";
-
-            if (!Library.DoesResourceTypeExist(type))
-                if (Library.CreateResourceType(Library.GetResourceType("Corpse")).HasValue(out var r))
-                {
-                    r.Name = type;
-                    r.ShortName = type;
-                    Library.AddResourceType(r);
-                }
-
-            if (Library.DoesResourceTypeExist(type))
-                Inventory.AddResource(new Resource(type));
+            var corpseResource = new Resource("Corpse");
+            corpseResource.GeneratedName = AI.Stats.FullName + "'s " + "Corpse";
+            Inventory.AddResource(corpseResource);
 
             base.Die();
         }

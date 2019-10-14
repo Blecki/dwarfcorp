@@ -105,35 +105,8 @@ namespace DwarfCorp
                 var inventory = tailPiece.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset)) as Inventory;
                 inventory.SetFlag(Flag.ShouldSerialize, false);
 
-                {
-                    var type = Stats.CurrentClass.Name + " " + "Meat";
-
-                    if (!Library.DoesResourceTypeExist(type))
-                        if (Library.CreateResourceType(Library.GetResourceType("Meat")).HasValue(out var r))
-                        {
-                            r.Name = type;
-                            r.ShortName = type;
-                            Library.AddResourceType(r);
-                        }
-
-                    if (Library.DoesResourceTypeExist(type))
-                        inventory.AddResource(new Resource(type));
-                }
-
-                {
-                    var type = Stats.CurrentClass.Name + " Bone";
-
-                    if (!Library.DoesResourceTypeExist(type))
-                        if (Library.CreateResourceType(Library.GetResourceType("Bone")).HasValue(out var r))
-                        {
-                            r.Name = type;
-                            r.ShortName = type;
-                            Library.AddResourceType(r);
-                        }
-
-                    if (Library.DoesResourceTypeExist(type))
-                        inventory.AddResource(new Resource(type));
-                }
+                inventory.AddResource(new Resource("Meat") { GeneratedName = Stats.CurrentClass.Name + " Meat" });
+                inventory.AddResource(new Resource("Bone") { GeneratedName = Stats.CurrentClass.Name + " Bone" });
             }
 
             #endregion

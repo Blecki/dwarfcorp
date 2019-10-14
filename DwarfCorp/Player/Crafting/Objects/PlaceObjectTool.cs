@@ -103,7 +103,7 @@ namespace DwarfCorp
 
         private bool HandlePlaceExistingUpdate()
         {
-            var resources = World.ListResources().Where(r => Library.GetResourceType(r.Value.Type).HasValue(out var res) && res.CraftInfo.CraftItemType == CraftType.Name).ToList();
+            var resources = World.ListResources().Where(r => Library.GetResourceType(r.Value.Type).HasValue(out var res) && res.CraftItemType == CraftType.Name).ToList();
 
             var toPlace = World.PersistentData.Designations.EnumerateEntityDesignations().Where(designation => designation.Type == DesignationType.PlaceObject &&
                 ((PlacementDesignation)designation.Tag).ItemType.Name == CraftType.Name).ToList();

@@ -97,12 +97,11 @@ namespace DwarfCorp
             }
         }
 
-        public ResourceType ToResource(WorldManager world, string prefix = "")
+        public ResourceType ToResource(WorldManager world)
         {
             var objectName = String.IsNullOrEmpty(ObjectName) ? Name : ObjectName;
-            string resourceName = prefix + objectName;// + " (" + TextGenerator.GetListString(MergeResources(selectedResources).Select(r => (string)r.Type)) + ")";
 
-            if (Library.GetResourceType(resourceName).HasValue(out var existing))
+            if (Library.GetResourceType(objectName).HasValue(out var existing))
                 return existing;
 
             var sheet = world.UserInterface.Gui.RenderData.SourceSheets[Icon.Sheet];
@@ -111,18 +110,16 @@ namespace DwarfCorp
             var numTilesX = tex.Width / sheet.TileWidth;
             var numTilesY = tex.Height / sheet.TileHeight;
             var point = new Point(Icon.Tile % numTilesX, Icon.Tile / numTilesX);
-            var toReturn = Library.CreateResourceType();
-            toReturn.Name = resourceName;
+            var toReturn = new ResourceType();
+            toReturn.Generated = true;
+            toReturn.Name = objectName;
             toReturn.Tags = new List<String>()
                     {
                         "CraftItem",
                         "Craft"
                     };
             toReturn.MoneyValue = MoneyValue;
-            toReturn.CraftInfo = new ResourceType.CraftItemInfo
-            {
-                CraftItemType = objectName
-            };
+            toReturn.CraftItemType = objectName;
             toReturn.ShortName = Name;
             toReturn.Description = Description;
             toReturn.GuiLayers = new List<Gui.TileReference>() { Icon };

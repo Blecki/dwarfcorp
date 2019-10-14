@@ -12,7 +12,24 @@ namespace DwarfCorp
         [JsonProperty] private String _Type;
         [JsonIgnore] public String Type => _Type;
 
-        [JsonProperty] public CreatureAI ReservedFor = null;
+        public CreatureAI ReservedFor = null;
+        public String GeneratedName = null;
+
+        public Blackboard MetaData = null;
+        
+        public void SetMetaData(String Key, Object Value)
+        {
+            if (MetaData == null)
+                MetaData = new Blackboard();
+            MetaData.SetData(Key, Value);
+        }
+
+        public T GetMetaData<T>(String Key, T Default)
+        {
+            if (MetaData == null)
+                return Default;
+            return MetaData.GetData<T>(Key, Default);
+        }
 
 
         [JsonIgnore] private MaybeNull<ResourceType> _cachedResourceType = null;

@@ -48,10 +48,7 @@
     255
   ],
   "AleName": "",
-  "CraftInfo": {
-    "CraftItemType": "Potion Of Health",
-    "Resources": null
-  },
+  "CraftItemType": "Potion Of Health",
   "PotionType": {
     "Name": "Potion Of Health",
     "Description": "Dwarfs drink this potion when they take damage.",

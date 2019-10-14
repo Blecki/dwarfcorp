@@ -22,11 +22,6 @@ namespace DwarfCorp
             public Point Frame;
         }
 
-        public struct CraftItemInfo
-        {
-            public string CraftItemType;
-        }
-
         public string Name;
         public DwarfBux MoneyValue;
         public string Description;
@@ -40,7 +35,7 @@ namespace DwarfCorp
         public string PlantToGenerate;
         public Color Tint;
         public string AleName = "";
-        public CraftItemInfo CraftInfo;
+        public String CraftItemType;
         public Potion PotionType = null;
         public string Category = "";
 

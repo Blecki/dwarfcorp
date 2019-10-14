@@ -48,10 +48,7 @@
     255
   ],
   "AleName": "",
-  "CraftInfo": {
-    "CraftItemType": "Potion Of Learned",
-    "Resources": null
-  },
+  "CraftItemType": "Potion Of Learned",
   "PotionType": {
     "Name": "Potion Of Learned",
     "Description": "Dwarfs drink this potion to get a cognitive boost.",

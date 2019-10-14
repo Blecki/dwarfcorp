@@ -48,10 +48,7 @@
     255
   ],
   "AleName": "",
-  "CraftInfo": {
-    "CraftItemType": "Potion Of Strength",
-    "Resources": null
-  },
+  "CraftItemType": "Potion Of Strength",
   "PotionType": {
     "Name": "Potion Of Strength",
     "Description": "Dwarfs drink this potion to get strong.",

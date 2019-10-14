@@ -24,38 +24,19 @@ namespace DwarfCorp
 
             if (Stats.Species.HasMeat)
             {
-                String type = Stats.CurrentClass.Name + " " + "Meat";
-
-                if (!Library.DoesResourceTypeExist(type))
+                var meatResource = new Resource(Stats.Species.BaseMeatResource);
+                if (meatResource.ResourceType.HasValue(out var res))
                 {
-                    if (Library.CreateResourceType(Library.GetResourceType(Stats.Species.BaseMeatResource)).HasValue(out var r))
-                    {
-                        r.Name = type;
-                        r.ShortName = type;
-                        Library.AddResourceType(r);
-                    }
+                    meatResource.GeneratedName = Stats.CurrentClass.Name + " Meat";
+                    Inventory.AddResource(meatResource);
                 }
-
-                if (Library.DoesResourceTypeExist(type))
-                    Inventory.AddResource(new Resource(type));
             }
 
             if (Stats.Species.HasBones)
             {
-                String type = Stats.CurrentClass.Name + " Bone";
-
-                if (!Library.DoesResourceTypeExist(type))
-                {
-                    if (Library.CreateResourceType(Library.GetResourceType("Bone")).HasValue(out var r))
-                    {
-                        r.Name = type;
-                        r.ShortName = type;
-                        Library.AddResourceType(r);
-                    }
-                }
-
-                if (Library.DoesResourceTypeExist(type))
-                    Inventory.AddResource(new Resource(type));
+                var generatedResource = new Resource("Bone");
+                generatedResource.GeneratedName = Stats.CurrentClass.Name + " Bone";
+                Inventory.AddResource(generatedResource);
             }
 
             base.Die();

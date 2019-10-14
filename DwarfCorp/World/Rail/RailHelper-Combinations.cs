@@ -179,7 +179,6 @@ namespace DwarfCorp.Rail
                         ItemType = RailCraftItem,
                         Location = new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(body.Position)),
                         HasResources = hasResources,
-                        ResourcesReservedFor = null,
                         Orientation = 0.0f,
                         Progress = 0.0f,
                     };

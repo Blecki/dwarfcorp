@@ -13,7 +13,6 @@ namespace DwarfCorp
         public float Progress = 0.0f;
         public bool Finished = false;
         public bool HasResources = false;
-        public CreatureAI ResourcesReservedFor = null;
         public Resource SelectedResource = null;
     }
 }

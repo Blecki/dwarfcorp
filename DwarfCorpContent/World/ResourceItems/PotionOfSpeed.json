@@ -48,10 +48,7 @@
     255
   ],
   "AleName": "",
-  "CraftInfo": {
-    "CraftItemType": "Potion Of Speed",
-    "Resources": null
-  },
+  "CraftItemType": "Potion Of Speed",
   "PotionType": {
     "Name": "Potion Of Speed",
     "Description": "Dwarfs drink this potion to get a bit faster.",

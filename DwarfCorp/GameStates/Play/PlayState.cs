@@ -1808,7 +1808,7 @@ namespace DwarfCorp.GameStates
                     return World.ListResources()
                         .Select(r => Library.GetResourceType(r.Key))
                         .Where(r => r.HasValue())
-                        .Any(r => r.HasValue(out var res) ? res.CraftInfo.CraftItemType == data.Name : false);
+                        .Any(r => r.HasValue(out var res) ? res.CraftItemType == data.Name : false);
                 },
                 (data) => new FlatToolTray.Icon
                 {

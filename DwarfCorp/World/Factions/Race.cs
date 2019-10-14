@@ -66,15 +66,15 @@ namespace DwarfCorp
             {
                 int num = MathFunctions.RandInt(tags.Value, tags.Value + 4);
 
-                var resources = Library.EnumerateResourceTypesWithTag(tags.Key);
+                var resources = Library.EnumerateResourceTypesWithTag(tags.Key).Select(r => new Resource(r.Name));
 
                 if (resources.Count() <= 0) continue;
 
                 for (int i = 0; i < num; i++)
                 {
-                    MaybeNull<ResourceType> randResource = Datastructures.SelectRandom(resources);
+                    MaybeNull<Resource> randResource = Datastructures.SelectRandom(resources);
 
-                    if (!randResource.HasValue(out var res) || res.Tags.Any(blacklistTags.Contains))
+                    if (!randResource.HasValue(out var res) || !res.ResourceType.HasValue(out var resType) || resType.Tags.Any(blacklistTags.Contains))
                         continue;
 
                     if (tags.Key == "Craft")
@@ -83,16 +83,15 @@ namespace DwarfCorp
                         var availableCrafts = Library.EnumerateResourceTypesWithTag(craftTag);
                         if (Library.CreateTrinketResourceType(Datastructures.SelectRandom(availableCrafts).Name, MathFunctions.Rand(0.1f, 3.0f)).HasValue(out var trinket))
                         {
-
                             if (MathFunctions.RandEvent(0.3f) && Encrustings.Count > 0)
-                                randResource = Library.CreateEncrustedTrinketResourceType(trinket.Name, Datastructures.SelectRandom(Library.EnumerateResourceTypesWithTag(Datastructures.SelectRandom(Encrustings))).Name);
+                                randResource = Library.CreateEncrustedTrinketResourceType(trinket, new Resource(Datastructures.SelectRandom(Library.EnumerateResourceTypesWithTag(Datastructures.SelectRandom(Encrustings))).Name));
                             else
                                 randResource = trinket;
                         }
                     }
 
                     if (randResource.HasValue(out res))
-                        toReturn.Add(new Resource(res.Name));
+                        toReturn.Add(res);
                 }
             }
 
@@ -103,7 +102,10 @@ namespace DwarfCorp
                 if (randomObject == null)
                     continue;
 
-                toReturn.Add(new Resource(randomObject.ToResource(world, Posessive + " ").Name));
+                var resourceType = randomObject.ToResource(world);
+                var r = new Resource(resourceType.Name);
+                r.GeneratedName = Posessive + " " + resourceType.Name;
+                toReturn.Add(r);
             }
 
             return toReturn;

@@ -22,7 +22,7 @@ namespace DwarfCorp
         public List<ResourceTypeAmount> RawMaterials;
         public string Noise { get; set; }
         public ResourceDes Des;
-        public String ResourceCreated;
+        public MaybeNull<Resource> ActualCreatedResource = null;
 
         public CraftResourceAct()
         {
@@ -101,7 +101,7 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
-        public IEnumerable<Status> MaybeCreatePreviewBody()
+        public IEnumerable<Status> CreateResource()
         {
             if (RawMaterials == null || RawMaterials.Count == 0)
             {
@@ -110,23 +110,16 @@ namespace DwarfCorp
                 yield break;
             }
 
-            ResourceCreated = ItemType.ResourceCreated;
+            ActualCreatedResource = new Resource(ItemType.ResourceCreated);
 
             switch (ItemType.CraftActBehavior)
             {
                 // Todo: This switch sucks.
                 case CraftItem.CraftActBehaviors.Object:
-                    {
-                        var craft = ItemType.ToResource(Creature.World);
-                        ResourceCreated = craft.Name;
-                    }
+                    ActualCreatedResource = new Resource(ItemType.ToResource(Creature.World).Name);
                     break;
                 case CraftItem.CraftActBehaviors.Trinket:
-                    {
-                        if (Library.CreateTrinketResourceType(RawMaterials.ElementAt(0).Type,
-                            (Agent.Stats.Dexterity + Agent.Stats.Intelligence) / 15.0f * MathFunctions.Rand(0.5f, 1.75f)).HasValue(out var craft))
-                            ResourceCreated = craft.Name;
-                    }
+                    ActualCreatedResource = Library.CreateTrinketResourceType(RawMaterials[0].Type, (Agent.Stats.Dexterity + Agent.Stats.Intelligence) / 15.0f * MathFunctions.Rand(0.5f, 1.75f));
                     break;
                 case CraftItem.CraftActBehaviors.Meal:
                     {
@@ -137,35 +130,27 @@ namespace DwarfCorp
                             yield break;
                         }
 
-                        if (Library.CreateMealResourceType(RawMaterials.ElementAt(0).Type, RawMaterials.ElementAt(1).Type).HasValue(out var craft))
-                            ResourceCreated = craft.Name;
+                        ActualCreatedResource = Library.CreateMealResourceType(RawMaterials.ElementAt(0).Type, RawMaterials.ElementAt(1).Type);
                     }
                     break;
                 case CraftItem.CraftActBehaviors.Ale:
-                    {
-                        if (Library.CreateAleResourceType(RawMaterials.ElementAt(0).Type).HasValue(out var craft))
-                            ResourceCreated = craft.Name;
-                    }
+                    ActualCreatedResource = Library.CreateAleResourceType(RawMaterials.ElementAt(0).Type);
                     break;
                 case CraftItem.CraftActBehaviors.Bread:
-                    {
-                        if (Library.CreateBreadResourceType(RawMaterials.ElementAt(0).Type).HasValue(out var craft))
-                            ResourceCreated = craft.Name;
-                    }
+                    ActualCreatedResource = Library.CreateBreadResourceType(RawMaterials.ElementAt(0).Type);
                     break;
                 case CraftItem.CraftActBehaviors.GemTrinket:
                     {
-                        ResourceType gem = null;
-                        ResourceType trinket = null;
-                        foreach (var stashedResource in RawMaterials)
+                        Resource gem = null;
+                        Resource trinket = null;
+                        foreach (var stashedResource in Agent.Blackboard.GetData<List<Resource>>("stashed-materials"))
                         {
-                            if (Library.GetResourceType(stashedResource.Type).HasValue(out var res) && res.Tags.Contains("Craft"))
-                                trinket = res;
+                            if (stashedResource.ResourceType.HasValue(out var res) && res.Tags.Contains("Craft"))
+                                trinket = stashedResource;
 
-                            if (Library.GetResourceType(stashedResource.Type).HasValue(out var _res) && _res.Tags.Contains("Gem"))
-                                gem = _res;
+                            if (stashedResource.ResourceType.HasValue(out var _res) && _res.Tags.Contains("Gem"))
+                                gem = stashedResource;
                         }
-
 
                         if (gem == null || trinket == null)
                         {
@@ -174,8 +159,7 @@ namespace DwarfCorp
                             yield break;
                         }
 
-                        if (Library.CreateEncrustedTrinketResourceType(trinket.Name, gem.Name).HasValue(out var craft))
-                            ResourceCreated = craft.Name;
+                        ActualCreatedResource = Library.CreateEncrustedTrinketResourceType(trinket, gem);
                     }
                     break;
                 case CraftItem.CraftActBehaviors.Normal:
@@ -188,7 +172,7 @@ namespace DwarfCorp
 
         public IEnumerable<Status> CreateResources()
         {
-            foreach (var status in MaybeCreatePreviewBody())
+            foreach (var status in CreateResource())
             {
                 if (status == Status.Fail)
                 {
@@ -197,8 +181,9 @@ namespace DwarfCorp
                 }
             }
 
-            for (var i = 0; i < ItemType.CraftedResultsCount; ++i)
-                Creature.Inventory.AddResource(new Resource(ResourceCreated));
+            if (ActualCreatedResource.HasValue(out var res))
+                for (var i = 0; i < ItemType.CraftedResultsCount; ++i)
+                    Creature.Inventory.AddResource(res);
             Creature.AI.AddXP((int)ItemType.BaseCraftTime);
             Des.Finished = true;
             yield return Status.Success;

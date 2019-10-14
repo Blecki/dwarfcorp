@@ -48,10 +48,7 @@
     255
   ],
   "AleName": "",
-  "CraftInfo": {
-    "CraftItemType": "Potion Of Glee",
-    "Resources": null
-  },
+  "CraftItemType": "Potion Of Glee",
   "PotionType": {
     "Name": "Potion Of Glee",
     "Description": "Dwarfs drink this potion when they are feeling down.",

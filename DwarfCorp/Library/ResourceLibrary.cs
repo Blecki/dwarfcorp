@@ -78,136 +78,72 @@ namespace DwarfCorp
                 EntityFactory.RegisterEntity(resource.Name + " Resource", (position, data) => new ResourceEntity(EntityFactory.World.ComponentManager, new Resource(resource.Name), position));   
         }
 
-        public static void AddResourceTypeIfNew(ResourceType Resource)
+        public static MaybeNull<Resource> CreateAleResourceType(String type)
         {
             InitializeResources();
-
-            if (!DoesResourceTypeExist(Resource.Name))
-                AddResourceType(Resource);
-        }
-
-        public static MaybeNull<ResourceType> CreateResourceType(MaybeNull<ResourceType> From)
-        {
-            if (From.HasValue(out var from))
-            {
-                var r = CreateResourceType();
-
-                r.Generated = true;
-
-                r.Name = from.Name;
-                r.ShortName = from.ShortName;
-                r.MoneyValue = from.MoneyValue;
-                r.Description = from.Description;
-                r.GuiLayers = new List<TileReference>(from.GuiLayers);
-                r.Tint = from.Tint;
-                r.Tags = new List<String>(from.Tags);
-                r.FoodContent = from.FoodContent;
-                r.PlantToGenerate = from.PlantToGenerate;
-                r.CraftInfo = from.CraftInfo;
-                r.CompositeLayers = from.CompositeLayers == null ? null : new List<ResourceType.CompositeLayer>(from.CompositeLayers);
-                r.TrinketData = from.TrinketData;
-                r.AleName = from.AleName;
-                r.PotionType = from.PotionType;
-                r.Category = from.Category;
-
-                return r;
-            }
-
-            return null;
-        }
-
-        public static ResourceType CreateResourceType()
-        {
-            return new ResourceType()
-            {
-                Generated = true
-            };
-        }
-        
-        public static MaybeNull<ResourceType> CreateAleResourceType(String type)
-        {
-            InitializeResources();
-
+            
+            var r = new Resource("Ale");
             if (GetResourceType(type).HasValue(out var baseResource))
-            {
-                var aleName = String.IsNullOrEmpty(baseResource.AleName) ? type + " Ale" : baseResource.AleName;
-
-                if (!DoesResourceTypeExist(aleName))
-                {
-                    if (CreateResourceType(GetResourceType("Ale")).HasValue(out var r))
-                    {
-                        r.Name = aleName;
-                        r.ShortName = aleName;
-                        AddResourceType(r);
-                    }
-                }
-
-                return GetResourceType(aleName);
-            }
-
-            return null;
+                r.GeneratedName = String.IsNullOrEmpty(baseResource.AleName) ? type + " Ale" : baseResource.AleName;
+            return r;
         }
 
-        public static MaybeNull<ResourceType> CreateMealResourceType(String typeA, String typeB)
+        public static MaybeNull<Resource> CreateMealResourceType(String typeA, String typeB)
         {
             InitializeResources();
+            var r = new Resource("Meal");
 
             var componentA = GetResourceType(typeA);
             var componentB = GetResourceType(typeB);
-            if (componentA.HasValue(out var A) && componentB.HasValue(out var B) && CreateResourceType(GetResourceType("Meal")).HasValue(out var r))
+            if (componentA.HasValue(out var A) && componentB.HasValue(out var B))
             {
-                r.FoodContent = A.FoodContent + B.FoodContent;
-                r.Name = TextGenerator.GenerateRandom(new List<String>() { A.Name, B.Name }, TextGenerator.GetAtoms(ContentPaths.Text.Templates.food));
-                r.MoneyValue = 2m * (A.MoneyValue + B.MoneyValue);
-                r.ShortName = r.Name;
-
-                AddResourceTypeIfNew(r);
-                return GetResourceType(r.Name);
+                r.SetMetaData("Food Content", A.FoodContent + B.FoodContent);
+                r.SetMetaData("Value", 2m * (A.MoneyValue + B.MoneyValue));
+                r.GeneratedName = TextGenerator.GenerateRandom(new List<String>() { A.Name, B.Name }, TextGenerator.GetAtoms(ContentPaths.Text.Templates.food));
             }
 
-            return null;
+            return r;
         }
 
-        public static MaybeNull<ResourceType> CreateEncrustedTrinketResourceType(String resourcetype, String gemType)
+        public static MaybeNull<Resource> CreateEncrustedTrinketResourceType(Resource BaseResource, Resource GemResource)
         {
             InitializeResources();
 
-            var resultName = gemType + "-encrusted " + resourcetype;
-            if (DoesResourceTypeExist(resultName))
-                return GetResourceType(resultName);
+            var r = new Resource("Trinket");
+            r.GeneratedName = GemResource.Type + "-encrusted " + BaseResource.GeneratedName;
 
-            if (GetResourceType(resourcetype).HasValue(out var baseResource) && GetResourceType(gemType).HasValue(out var gemResource))
+            if (GemResource.ResourceType.HasValue(out var gem))
+                r.SetMetaData("Value", BaseResource.GetMetaData<DwarfBux>("Value", 0m) + gem.MoneyValue * 2m);
+
+            var compositeLayers = new List<ResourceType.CompositeLayer>();
+            compositeLayers.AddRange(BaseResource.GetMetaData<List<ResourceType.CompositeLayer>>("Composite Layers", new List<ResourceType.CompositeLayer>()));
+
+            var guiLayers = new List<TileReference>();
+            guiLayers.AddRange(BaseResource.GetMetaData<List<TileReference>>("Gui Layers", new List<TileReference>()));
+
+            var trinketData = BaseResource.GetMetaData<ResourceType.TrinketInfo>("Trinket Data", BaseResource.ResourceType.HasValue(out var baseRes) ? baseRes.TrinketData : new ResourceType.TrinketInfo());
+
+            if (GemResource.ResourceType.HasValue(out var gemRes))
             {
-                if (CreateResourceType(baseResource).HasValue(out var toReturn))
-                {
-                    toReturn.Name = resultName;
-                    toReturn.MoneyValue += gemResource.MoneyValue * 2m;
-                    toReturn.Tags = new List<String>() { "Craft", "Precious" };
-
-                    toReturn.CompositeLayers = new List<ResourceType.CompositeLayer>();
-                    toReturn.CompositeLayers.AddRange(baseResource.CompositeLayers);
-                    if (baseResource.TrinketData.EncrustingAsset != null)
-                        toReturn.CompositeLayers.Add(
+                if (trinketData.EncrustingAsset != null)
+                    compositeLayers.Add(
                             new ResourceType.CompositeLayer
                             {
-                                Asset = baseResource.TrinketData.EncrustingAsset,
+                                Asset = trinketData.EncrustingAsset,
                                 FrameSize = new Point(32, 32),
-                                Frame = new Point(baseResource.TrinketData.SpriteColumn, gemResource.TrinketData.SpriteRow)
+                                Frame = new Point(trinketData.SpriteColumn, gemRes.TrinketData.SpriteRow)
                             });
 
-                    toReturn.GuiLayers = new List<TileReference>();
-                    toReturn.GuiLayers.AddRange(baseResource.GuiLayers);
-                    toReturn.GuiLayers.Add(new TileReference(baseResource.TrinketData.EncrustingAsset, gemResource.TrinketData.SpriteRow * 7 + baseResource.TrinketData.SpriteColumn));
-
-                    AddResourceType(toReturn);
-                    return toReturn;
-                }
+                guiLayers.Add(new TileReference(trinketData.EncrustingAsset, gemRes.TrinketData.SpriteRow * 7 + trinketData.SpriteColumn));
             }
 
-            return null;
+            r.SetMetaData("Composite Layers", compositeLayers);
+            r.SetMetaData("Gui Layers", guiLayers);
+
+            return r;
         }
 
-        public static MaybeNull<ResourceType> CreateTrinketResourceType(String baseMaterial, float quality)
+        public static MaybeNull<Resource> CreateTrinketResourceType(String baseMaterial, float quality)
         {
             InitializeResources();
 
@@ -263,55 +199,48 @@ namespace DwarfCorp
             var item = MathFunctions.Random.Next(names.Count());
             var name = baseMaterial + " " + names[item] + " (" + qualityType + ")";
 
-            if (DoesResourceTypeExist(name))
-                return GetResourceType(name);
-
-            if (GetResourceType(baseMaterial).HasValue(out var material) && CreateResourceType(Resources["Trinket"]).HasValue(out var toReturn))
+            var r = new Resource("Trinket");
+            r.GeneratedName = name;
+            
+            if (GetResourceType(baseMaterial).HasValue(out var material))
             {
-                toReturn.Name = name;
-                toReturn.ShortName = baseMaterial + " " + names[item];
-                toReturn.MoneyValue = values[item] * material.MoneyValue * 3m * quality;
-                toReturn.Tint = material.Tint;
+                r.SetMetaData("Value", values[item] * material.MoneyValue * 3m * quality);
+                r.SetMetaData("Tint", material.Tint);
 
                 var tile = new Point(tiles[item], material.TrinketData.SpriteRow);
 
-                toReturn.CompositeLayers = new List<ResourceType.CompositeLayer>(new ResourceType.CompositeLayer[]
+                r.SetMetaData("Composite Layers", new List<ResourceType.CompositeLayer>(new ResourceType.CompositeLayer[]
                 {
-                new ResourceType.CompositeLayer
+                    new ResourceType.CompositeLayer
+                    {
+                        Asset = material.TrinketData.BaseAsset,
+                        FrameSize = new Point(32, 32),
+                        Frame = tile
+                    }
+                }));
+
+                var trinketInfo = new ResourceType.TrinketInfo
                 {
-                    Asset = material.TrinketData.BaseAsset,
-                    FrameSize = new Point(32, 32),
-                    Frame = tile
-                }
-                });
+                    BaseAsset = material.TrinketData.BaseAsset,
+                    EncrustingAsset = material.TrinketData.EncrustingAsset,
+                    SpriteColumn = tile.X,
+                    SpriteRow = material.TrinketData.SpriteRow
+                };
 
-                var trinketInfo = material.TrinketData;
-                trinketInfo.SpriteColumn = tile.X;
-                toReturn.TrinketData = trinketInfo;
-                toReturn.GuiLayers = new List<TileReference>() { new TileReference(material.TrinketData.BaseAsset, tile.Y * 7 + tile.X) };
+                r.SetMetaData("Trinket Data", trinketInfo);
 
-                AddResourceType(toReturn);
-                return toReturn;
+                r.SetMetaData("Gui Layers", new List<TileReference>() { new TileReference(material.TrinketData.BaseAsset, tile.Y * 7 + tile.X) });
+
+                return r;
             }
 
             return null;
         }
         
-        public static MaybeNull<ResourceType> CreateBreadResourceType(String component)
+        public static MaybeNull<Resource> CreateBreadResourceType(String component)
         {
             InitializeResources();
-
-            if (DoesResourceTypeExist(component + " Bread"))
-                return GetResourceType(component + " Bread");
-
-            if (CreateResourceType(GetResourceType("Bread")).HasValue(out var toReturn))
-            {
-                toReturn.Name = component + " Bread";
-                AddResourceType(toReturn);
-                return toReturn;
-            }
-
-            return null;
+            return new Resource("Bread") { GeneratedName = component + " Bread" };
         }
     }
 
