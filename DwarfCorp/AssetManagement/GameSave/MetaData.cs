@@ -33,13 +33,7 @@ namespace DwarfCorp
                     World.WorldSizeInVoxels.X, World.WorldSizeInVoxels.Z,
                     World.CalculateSupervisedEmployees(), World.CalculateSupervisionCap(),
                     World.PlayerFaction.Economy.Funds.ToString(),
-                    (new DwarfBux(World.ListResourcesInStockpilesPlusMinions().Values.Select(r =>
-                    {
-                        if (Library.GetResourceType(r.First.Type).HasValue(out var res))
-                            return (r.First.Count * res.MoneyValue.Value) + (r.Second.Count * res.MoneyValue.Value);
-                        else
-                            return 0;
-                    }).Sum())).ToString())
+                    World.EnumerateResourcesIncludingMinions().Sum(r => r.GetProperty<DwarfBux>("MoneyValue", 0m)).ToString())
             };
         }
     }

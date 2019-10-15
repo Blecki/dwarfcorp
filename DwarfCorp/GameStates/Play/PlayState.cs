@@ -1750,7 +1750,7 @@ namespace DwarfCorp.GameStates
                     OnShown = (sender) => World.Tutorial("build crafts"),
                     PopupChild = new BuildCraftInfo
                     {
-                        Data = data.ObjectAsCraftableResource(),
+                        Data = data,
                         Rect = new Rectangle(0, 0, 450, 200),
                         World = World,
                         OnShown = (sender) => World.Tutorial(data.Name),
@@ -1761,21 +1761,19 @@ namespace DwarfCorp.GameStates
                                 return;
                             //sender.Hidden = true;
 
-                            var craftableResource = data.ObjectAsCraftableResource();
-
                             var numRepeats = buildInfo.GetNumRepeats();
                             if (numRepeats > 1)
                             {
                                 var subTasks = new List<Task>();
                                 var compositeTask = new CompoundTask(String.Format("Craft {0} {1}", numRepeats, data.PluralDisplayName), TaskCategory.CraftItem, TaskPriority.Medium);
                                 for (var i = 0; i < numRepeats; ++i)
-                                    subTasks.Add(new CraftResourceTask(craftableResource, i + 1, numRepeats, buildInfo.GetSelectedResources()) { Hidden = true });
+                                    subTasks.Add(new CraftResourceTask(data, i + 1, numRepeats, buildInfo.GetSelectedResources()) { Hidden = true });
                                 World.TaskManager.AddTasks(subTasks);
                                 compositeTask.AddSubTasks(subTasks);
                                 World.TaskManager.AddTask(compositeTask);
                             }
                             else
-                                World.TaskManager.AddTask(new CraftResourceTask(craftableResource, 1, 1, buildInfo.GetSelectedResources()));
+                                World.TaskManager.AddTask(new CraftResourceTask(data, 1, 1, buildInfo.GetSelectedResources()));
 
                             ShowToolPopup(data.CurrentVerb + " " + numRepeats.ToString() + " " + (numRepeats == 1 ? data.DisplayName : data.PluralDisplayName));
                             

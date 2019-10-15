@@ -40,14 +40,15 @@ namespace DwarfCorp.Trade
             return 0;
         }
 
-        public DwarfBux ComputeValue(List<ResourceTypeAmount> Resources)
+        public DwarfBux ComputeValue(List<Resource> Resources)
         {
             return 0;
         }
 
-        public List<Resource> RemoveResourcesByType(List<ResourceTypeAmount> ResourceTypes)
+        public void RemoveResources(List<Resource> ResourceTypes)
         {
-            return World.Overworld.PlayerCorporationResources.RemoveByType(ResourceTypes);
+            foreach (var res in ResourceTypes)
+                World.Overworld.PlayerCorporationResources.Remove(res);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace DwarfCorp
                 var meatResource = new Resource(Stats.Species.BaseMeatResource);
                 if (meatResource.ResourceType.HasValue(out var res))
                 {
-                    meatResource.GeneratedName = Stats.CurrentClass.Name + " Meat";
+                    meatResource.SetProperty("Name", Stats.CurrentClass.Name + " Meat");
                     Inventory.AddResource(meatResource);
                 }
             }
@@ -35,7 +35,7 @@ namespace DwarfCorp
             if (Stats.Species.HasBones)
             {
                 var generatedResource = new Resource("Bone");
-                generatedResource.GeneratedName = Stats.CurrentClass.Name + " Bone";
+                generatedResource.SetProperty("Name", Stats.CurrentClass.Name + " Bone");
                 Inventory.AddResource(generatedResource);
             }
 

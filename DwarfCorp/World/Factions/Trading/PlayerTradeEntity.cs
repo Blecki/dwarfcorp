@@ -37,14 +37,14 @@ namespace DwarfCorp.Trade
             return Library.GetResourceType(Resource).HasValue(out var res) ? res.MoneyValue : 0;
         }
 
-        public DwarfBux ComputeValue(List<ResourceTypeAmount> Resources)
+        public DwarfBux ComputeValue(List<Resource> Resources)
         {
-            return Resources.Sum(r => ComputeValue(r.Type) * r.Count);
+            return Resources.Sum(r => r.GetProperty<DwarfBux>("MoneyValue", 0m));
         }
 
-        public List<Resource> RemoveResourcesByType(List<ResourceTypeAmount> Resources)
+        public void RemoveResources(List<Resource> Resources)
         {
-            return Faction.World.RemoveResourcesByType(Resources);
+            Faction.World.RemoveResources(Resources);
         }
     }
 }

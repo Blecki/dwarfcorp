@@ -97,7 +97,7 @@ namespace DwarfCorp
             }
         }
 
-        public ResourceType ToResource(WorldManager world)
+        public ResourceType ToResourceType(WorldManager world)
         {
             var objectName = String.IsNullOrEmpty(ObjectName) ? Name : ObjectName;
 
@@ -120,7 +120,6 @@ namespace DwarfCorp
                     };
             toReturn.MoneyValue = MoneyValue;
             toReturn.CraftItemType = objectName;
-            toReturn.ShortName = Name;
             toReturn.Description = Description;
             toReturn.GuiLayers = new List<Gui.TileReference>() { Icon };
             toReturn.CompositeLayers = new List<ResourceType.CompositeLayer>() { new ResourceType.CompositeLayer() { Asset = sheet.Texture, Frame = point, FrameSize = new Point(sheet.TileWidth, sheet.TileHeight) } };
@@ -128,35 +127,6 @@ namespace DwarfCorp
             Library.AddResourceType(toReturn);
 
             return toReturn;
-        }
-
-        public CraftItem ObjectAsCraftableResource()
-        {
-            //return this; 
-            if (Type == CraftType.Resource)
-                return this;
-
-
-            string resourceName = Name + "...";
-            if (Library.GetCraftable(resourceName).HasValue(out var _r))
-                return _r;
-
-            var r = this.MemberwiseClone() as CraftItem;
-            r.Name = resourceName;
-            r.Type = CraftType.Resource;
-            r.CraftActBehavior = CraftActBehaviors.Object;
-            r.ResourceCreated = Name;
-            r.CraftLocation = /*String.IsNullOrEmpty(CraftLocation) ? "Anvil" :*/ CraftLocation;
-            r.ObjectName = Name;
-            r.AllowUserCrafting = false;
-            r.Category = this.Category;
-            r.CraftTaskCategory = this.CraftTaskCategory;
-            r.CraftNoise = this.CraftNoise;
-            Library.AddCraftable(r);
-
-            // Todo: Obsolete when new building system is in place.
-
-            return r;
         }
     }
 }

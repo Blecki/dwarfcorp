@@ -57,10 +57,10 @@ namespace DwarfCorp.Play
                 ItemSpacing = new Point(2, 2)
             }) as GridPanel;
 
-            List<CheckBox> boxes = new List<CheckBox>();
+            var boxes = new List<CheckBox>();
             foreach (var tagType in blacklistableResources)
             {
-                var resource = Library.FindMedianResourceTypeWithTag(tagType);
+                var resource = Library.EnumerateResourceTypesWithTag(tagType).FirstOrDefault();
                 var resources = Library.EnumerateResourceTypesWithTag(tagType);
                 var lambdaType = tagType;
                 var entry = grid.AddChild(new Widget());

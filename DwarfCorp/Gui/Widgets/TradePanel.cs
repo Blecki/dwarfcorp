@@ -36,20 +36,12 @@ namespace DwarfCorp.Gui.Widgets
         public Widget LeftItems;
         public Widget RightItems;
 
-        private IEnumerable<ResourceTypeAmount> GetTopResources(List<ResourceTypeAmount> resources, int num = 3)
+        private IEnumerable<Resource> GetTopResources(List<Resource> resources, int num = 3)
         {
-            var copy = new List<ResourceTypeAmount>();
-            copy.AddRange(resources);
-
-            copy.Sort((a, b) => a.Count.CompareTo(b.Count));
-            for (int i = 0; i < Math.Min(copy.Count, num); i++)
-            {
-                if (copy[i].Count > 0)
-                    yield return copy[i];
-            }
+            return resources.Take(Math.Max(resources.Count, num));
         }
 
-        public void SetTradeItems(List<ResourceTypeAmount> leftResources, List<ResourceTypeAmount> rightResources, DwarfBux leftMoney, DwarfBux rightMoney)
+        public void SetTradeItems(List<Resource> leftResources, List<Resource> rightResources, DwarfBux leftMoney, DwarfBux rightMoney)
         {
             Update();
             LeftItems.Clear();
@@ -206,46 +198,47 @@ namespace DwarfCorp.Gui.Widgets
         {
             Result = TradeDialogResult.Pending;
             Transaction = null;
-            EnvoyColumns.Reconstruct(Envoy.Resources.AggregateByType(), new List<ResourceTypeAmount>(), (int)Envoy.Money);
-            PlayerColumns.Reconstruct(Player.Resources.AggregateByType(), new List<ResourceTypeAmount>(), (int)Player.Money);
+            EnvoyColumns.Reconstruct(Envoy.Resources.AggregateByType2(), new List<TradeableItem>(), (int)Envoy.Money);
+            PlayerColumns.Reconstruct(Player.Resources.AggregateByType2(), new List<TradeableItem>(), (int)Player.Money);
             UpdateBottomDisplays();
             if (Balance != null)
                 Balance.TradeBalance = 0.0f;
             Layout();
         }
 
-        private DwarfBux ComputeNetValue(List<ResourceTypeAmount> playerResources, DwarfBux playerTradeMoney,
-            List<ResourceTypeAmount> envoyResources, DwarfBux envoyMoney)
+        private DwarfBux ComputeNetValue(List<Resource> playerResources, DwarfBux playerTradeMoney,
+            List<Resource> envoyResources, DwarfBux envoyMoney)
         {
             return (Envoy.ComputeValue(playerResources) + playerTradeMoney) - (Envoy.ComputeValue(envoyResources) + envoyMoney);   
         }
 
         private DwarfBux ComputeNetValue()
         {
-            return ComputeNetValue(PlayerColumns.SelectedResources,
-                PlayerColumns.TradeMoney, EnvoyColumns.SelectedResources, EnvoyColumns.TradeMoney);
+            return ComputeNetValue(PlayerColumns.SelectedResources.SelectMany(i => i.Resources).ToList(),
+                PlayerColumns.TradeMoney, EnvoyColumns.SelectedResources.SelectMany(i => i.Resources).ToList(), EnvoyColumns.TradeMoney);
         }
 
-        private void MoveRandomValue(IEnumerable<ResourceTypeAmount> source, List<ResourceTypeAmount> destination,
+        private void MoveRandomValue(IEnumerable<TradeableItem> source, List<TradeableItem> destination,
             ITradeEntity trader)
         {
             foreach (var amount in source)
             {
-                if (Library.GetResourceType(amount.Type).HasValue(out var r))
+                if (Library.GetResourceType(amount.ResourceType).HasValue(out var r))
                     if (trader.TraderRace.HatedResources.Any(tag => r.Tags.Contains(tag)))
                         continue;
 
                 if (amount.Count == 0) continue;
-                var destAmount = destination.FirstOrDefault(resource => resource.Type == amount.Type);
+                var destAmount = destination.FirstOrDefault(resource => resource.ResourceType == amount.ResourceType);
                 if (destAmount == null)
                 {
-                    destAmount = new ResourceTypeAmount(amount.Type, 0);
+                    destAmount = new TradeableItem { Resources = new List<Resource>(), ResourceType = amount.ResourceType };
                     destination.Add(destAmount);
                 }
 
                 int numToMove = MathFunctions.RandInt(1, amount.Count + 1);
-                amount.Count -= numToMove;
-                destAmount.Count += numToMove;
+                var toMove = amount.Resources.Take(numToMove).ToList();
+                amount.Resources.RemoveRange(0, numToMove);
+                destAmount.Resources.AddRange(toMove);
                 break;
             }
         }
@@ -268,7 +261,7 @@ namespace DwarfCorp.Gui.Widgets
             if (EnvoyColumns.Valid && PlayerColumns.Valid)
             {
                 var net = ComputeNetValue();
-                var envoyOut = Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney;
+                var envoyOut = Envoy.ComputeValue(EnvoyColumns.SelectedResources.SelectMany(i => i.Resources).ToList()) + EnvoyColumns.TradeMoney;
                 var tradeTarget = 1.0m;
 
                 if (IsReasonableTrade(envoyOut, net))
@@ -337,9 +330,9 @@ namespace DwarfCorp.Gui.Widgets
                             MoveRandomValue(selectedResourcesEnvoy, sourceResourcesEnvoy, Player);
                         }
                     }
-                    envoyOut = Envoy.ComputeValue(selectedResourcesEnvoy) + selectedMoneyEnvoy;
+                    envoyOut = Envoy.ComputeValue(selectedResourcesEnvoy.SelectMany(i => i.Resources).ToList()) + selectedMoneyEnvoy;
                     tradeTarget = envoyOut * 0.25;
-                    net = ComputeNetValue(selectedResourcesPlayer, selectedMoneyPlayer, selectedResourcesEnvoy,
+                    net = ComputeNetValue(selectedResourcesPlayer.SelectMany(i => i.Resources).ToList(), selectedMoneyPlayer, selectedResourcesEnvoy.SelectMany(i => i.Resources).ToList(),
                         selectedMoneyEnvoy);
                 }
 
@@ -397,7 +390,7 @@ namespace DwarfCorp.Gui.Widgets
                     if (EnvoyColumns.Valid && PlayerColumns.Valid)
                     {
                         var net = ComputeNetValue();
-                        var envoyOut = Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney;
+                        var envoyOut = Envoy.ComputeValue(EnvoyColumns.SelectedResources.SelectMany(i => i.Resources).ToList()) + EnvoyColumns.TradeMoney;
                         var tradeTarget = 1.0m;
 
                         if (EnvoyColumns.SelectedResources.Count != 0 && Player.AvailableSpace + PlayerColumns.SelectedResources.Count < EnvoyColumns.SelectedResources.Count)
@@ -415,10 +408,10 @@ namespace DwarfCorp.Gui.Widgets
                             Transaction = new TradeTransaction
                             {
                                 EnvoyEntity = Envoy,
-                                EnvoyItems = EnvoyColumns.SelectedResources,
+                                EnvoyItems = EnvoyColumns.SelectedResources.SelectMany(i => i.Resources).ToList(),
                                 EnvoyMoney = EnvoyColumns.TradeMoney,
                                 PlayerEntity = Player,
-                                PlayerItems = PlayerColumns.SelectedResources,
+                                PlayerItems = PlayerColumns.SelectedResources.SelectMany(i => i.Resources).ToList(),
                                 PlayerMoney = PlayerColumns.TradeMoney
                             };
                             Root.SafeCall(OnPlayerAction, this);
@@ -469,8 +462,8 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockRight,
                 OnClick = (sender, args) =>
                 {
-                    EnvoyColumns.Reconstruct(Envoy.Resources.AggregateByType(), new List<ResourceTypeAmount>(), (int)Envoy.Money);
-                    PlayerColumns.Reconstruct(Player.Resources.AggregateByType(), new List<ResourceTypeAmount>(), (int)Player.Money);
+                    EnvoyColumns.Reconstruct(Envoy.Resources.AggregateByType2(), new List<TradeableItem>(), (int)Envoy.Money);
+                    PlayerColumns.Reconstruct(Player.Resources.AggregateByType2(), new List<TradeableItem>(), (int)Player.Money);
                     UpdateBottomDisplays();
                     Layout();
                 }
@@ -566,7 +559,7 @@ namespace DwarfCorp.Gui.Widgets
                     Balance.TradeBalance = net > 0 ? Math.Min(0.01f * (float)(decimal)net, 1.0f) : Math.Max(0.01f * (float)(decimal)net, -1.0f);
                 }
 
-                Balance.SetTradeItems(PlayerColumns.SelectedResources, EnvoyColumns.SelectedResources, PlayerColumns.TradeMoney, EnvoyColumns.TradeMoney);
+                Balance.SetTradeItems(PlayerColumns.SelectedResources.SelectMany(i => i.Resources).ToList(), EnvoyColumns.SelectedResources.SelectMany(i => i.Resources).ToList(), PlayerColumns.TradeMoney, EnvoyColumns.TradeMoney);
                 TotalDisplay.Text = String.Format("Their {1} {0}", net, net >= 0 ? "Profit" : "Loss");
                 TotalDisplay.Tooltip = String.Format("They are {1} with this trade.\nTheir {0} is " + net + ".\nThey need at least " + tradeTarget + " to be happy.", net >= 0 ? "profit" : "loss",
                     net >= 0 ? "happy" : "unhappy");
@@ -597,9 +590,9 @@ namespace DwarfCorp.Gui.Widgets
 
         private void CalculateTradeAmount(out DwarfBux net, out DwarfBux tradeTarget)
         {
-            net = (Envoy.ComputeValue(PlayerColumns.SelectedResources) + PlayerColumns.TradeMoney)
-                - (Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney);
-            var envoyOut = Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney;
+            net = (Envoy.ComputeValue(PlayerColumns.SelectedResources.SelectMany(i => i.Resources).ToList()) + PlayerColumns.TradeMoney)
+                - (Envoy.ComputeValue(EnvoyColumns.SelectedResources.SelectMany(i => i.Resources).ToList()) + EnvoyColumns.TradeMoney);
+            var envoyOut = Envoy.ComputeValue(EnvoyColumns.SelectedResources.SelectMany(i => i.Resources).ToList()) + EnvoyColumns.TradeMoney;
             tradeTarget = 1.0m;
         }
     }

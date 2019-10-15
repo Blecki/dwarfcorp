@@ -102,9 +102,9 @@ namespace DwarfCorp
                 if (randomObject == null)
                     continue;
 
-                var resourceType = randomObject.ToResource(world);
+                var resourceType = randomObject.ToResourceType(world);
                 var r = new Resource(resourceType.Name);
-                r.GeneratedName = Posessive + " " + resourceType.Name;
+                r.SetProperty("Name", Posessive + " " + resourceType.Name);
                 toReturn.Add(r);
             }
 

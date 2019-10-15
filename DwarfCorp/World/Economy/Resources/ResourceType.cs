@@ -23,6 +23,7 @@ namespace DwarfCorp
         }
 
         public string Name;
+
         public DwarfBux MoneyValue;
         public string Description;
         public List<TileReference> GuiLayers; // Todo: Would like to combine the different graphics options
@@ -31,7 +32,6 @@ namespace DwarfCorp
         public List<CompositeLayer> CompositeLayers;
         public TrinketInfo TrinketData;
         public bool Generated = true;
-        public string ShortName;
         public string PlantToGenerate;
         public Color Tint;
         public string AleName = "";

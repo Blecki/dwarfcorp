@@ -62,24 +62,15 @@ namespace DwarfCorp
             return r.Select(p => new ResourceTypeAmount(p.Key, p.Value)).ToList();
         }
 
-        public List<Resource> RemoveByType(List<ResourceTypeAmount> Types)
+        public List<Gui.Widgets.TradeableItem> AggregateByType2()
         {
-            var needed = new Dictionary<String, int>();
-            foreach (var type in Types)
-                needed[type.Type] = type.Count;
-
-            var r = new List<Resource>();
-            foreach (var res in Enumerate())
-                if (needed.ContainsKey(res.Type) && needed[res.Type] > 0)
-                {
-                    needed[res.Type] -= 1;
-                    r.Add(res);
-                }
-
-            foreach (var res in r)
-                Remove(res);
-
-            return r;
+            var r = new Dictionary<String, Gui.Widgets.TradeableItem>();
+            foreach (var res in Resources)
+                if (r.ContainsKey(res.Type))
+                    r[res.Type].Resources.Add(res);
+                else
+                    r.Add(res.Type, new Gui.Widgets.TradeableItem { Resources = new List<Resource> { res }, ResourceType = res.Type });
+            return r.Values.ToList();
         }
 
         public List<Resource> GetByType(List<ResourceTypeAmount> Types)
@@ -95,22 +86,6 @@ namespace DwarfCorp
                     needed[res.Type] -= 1;
                     r.Add(res);
                 }
-
-            return r;
-        }
-
-        public List<Resource> RemoveByType(Dictionary<String, int> NeedToRemove)
-        {
-            var r = new List<Resource>();
-            foreach (var res in Enumerate())
-                if (NeedToRemove.ContainsKey(res.Type) && NeedToRemove[res.Type] > 0)
-                {
-                    NeedToRemove[res.Type] -= 1;
-                    r.Add(res);
-                }
-
-            foreach (var res in r)
-                Remove(res);
 
             return r;
         }

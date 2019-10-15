@@ -31,24 +31,28 @@ namespace DwarfCorp.Trade
         public DwarfBux ComputeValue(String Resource)
         {
             if (Library.GetResourceType(Resource).HasValue(out var resource))
-            {
-                if (SourceEnvoy.OwnerFaction.Race.CommonResources.Any(r => resource.Tags.Contains(r)))
-                    return resource.MoneyValue * 0.75m;
-                if (SourceEnvoy.OwnerFaction.Race.RareResources.Any(r => resource.Tags.Contains(r)))
-                    return resource.MoneyValue * 1.25m;
-                return resource.MoneyValue;
-            }
+                return GetValueMultiplier(resource) * resource.MoneyValue;
             return 0.0m;
         }
 
-        public DwarfBux ComputeValue(List<ResourceTypeAmount> Resources)
+        private float GetValueMultiplier(ResourceType ResourceType)
         {
-            return Resources.Sum(r => ComputeValue(r.Type) * r.Count);
+            if (SourceEnvoy.OwnerFaction.Race.CommonResources.Any(r => ResourceType.Tags.Contains(r)))
+                return 0.75f;
+            if (SourceEnvoy.OwnerFaction.Race.RareResources.Any(r => ResourceType.Tags.Contains(r)))
+                return 1.25f;
+            return 1.0f;
         }
 
-        public List<Resource> RemoveResourcesByType(List<ResourceTypeAmount> Resources)
+        public DwarfBux ComputeValue(List<Resource> Resources)
         {
-            return SourceEnvoy.TradeGoods.RemoveByType(Resources);
+            return Resources.Sum(r => (r.ResourceType.HasValue(out var type) ? GetValueMultiplier(type) : 1.0f) * r.GetProperty<DwarfBux>("MoneyValue", 0m));
+        }
+
+        public void RemoveResources(List<Resource> Resources)
+        {
+            foreach (var res in Resources)
+                SourceEnvoy.TradeGoods.Remove(res);
         }
     }
 }

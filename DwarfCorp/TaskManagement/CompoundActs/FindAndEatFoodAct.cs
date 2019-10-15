@@ -109,7 +109,7 @@ namespace DwarfCorp
                         yield return Act.Status.Running;
                     }
 
-                    if (Library.GetResourceType(resourceAmount.Type).HasValue(out var resource))
+                    if (resourceAmount.ResourceType.HasValue(out var resource))
                     {
                         Agent.Creature.Stats.Hunger.CurrentValue += resource.FoodContent;
 
@@ -122,7 +122,7 @@ namespace DwarfCorp
 
                         if (MustPay)
                         {
-                            var depositAct = new DepositMoney(Agent, resource.MoneyValue);
+                            var depositAct = new DepositMoney(Agent, resourceAmount.GetProperty<DwarfBux>("MoneyValue", 0m));
                             foreach (var result in depositAct.Run())
                                 if (result == Status.Running)
                                     yield return result;

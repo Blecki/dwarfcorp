@@ -42,19 +42,6 @@ namespace DwarfCorp
             return true;
         }
 
-        public List<Resource> RemoveResourcesByType(List<ResourceTypeAmount> Types)
-        {
-            var needed = new Dictionary<String, int>();
-            foreach (var type in Types)
-                needed[type.Type] = type.Count;
-
-            var r = new List<Resource>();
-            foreach (var stockpile in EnumerateZones().OfType<Stockpile>())
-                r.AddRange(stockpile.Resources.RemoveByType(needed));
-
-            return r;
-        }
-
         private void RemoveFromResourceTagCounts(Resource resource)
         {
             if (resource.ResourceType.HasValue(out var resourceType))
@@ -200,6 +187,17 @@ namespace DwarfCorp
             }
 
             return toReturn;
+        }
+
+        public IEnumerable<Resource> EnumerateResourcesIncludingMinions()
+        {
+            foreach (var stockpile in EnumerateZones().OfType<Stockpile>())
+                foreach (var res in stockpile.Resources.Enumerate())
+                    yield return res;
+
+            foreach (var creature in PlayerFaction.Minions)
+                foreach (var i in creature.Creature.Inventory.Resources)
+                    yield return i.Resource;
         }
 
         public void RecomputeCachedVoxelstate()

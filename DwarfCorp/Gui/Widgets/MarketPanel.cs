@@ -30,14 +30,14 @@ namespace DwarfCorp.Gui.Widgets
         {
             Result = MarketDialogResult.Pending;
             Transaction = null;
-            PlayerColumns.Reconstruct(Player.Resources.AggregateByType(), new List<ResourceTypeAmount>(), (int)Player.Money);
+            PlayerColumns.Reconstruct(Player.Resources.AggregateByType2(), new List<TradeableItem>(), (int)Player.Money);
             UpdateBottomDisplays();
             Layout();
         }
 
         private DwarfBux ComputeNetValue()
         {
-            return Player.ComputeValue(PlayerColumns.SelectedResources) * 0.25f;
+            return Player.ComputeValue(PlayerColumns.SelectedResources.SelectMany(i => i.Resources).ToList()) * 0.25f;
         }
 
         public override void Construct()
@@ -72,7 +72,7 @@ namespace DwarfCorp.Gui.Widgets
                             Transaction = new MarketTransaction
                             {
                                 PlayerEntity = Player,
-                                PlayerItems = PlayerColumns.SelectedResources,
+                                PlayerItems = PlayerColumns.SelectedResources.SelectMany(i => i.Resources).ToList(),
                                 PlayerMoney = ComputeNetValue()
                             };
 
@@ -94,7 +94,7 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockRight,
                 OnClick = (sender, args) =>
                 {
-                    PlayerColumns.Reconstruct(Player.Resources.AggregateByType(), new List<ResourceTypeAmount>(), (int)Player.Money);
+                    PlayerColumns.Reconstruct(Player.Resources.AggregateByType2(), new List<TradeableItem>(), (int)Player.Money);
                     UpdateBottomDisplays();
                     Layout();
                 }

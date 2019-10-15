@@ -9,12 +9,19 @@ using DwarfCorp.Trade;
 
 namespace DwarfCorp.Gui.Widgets
 {
+    public class TradeableItem
+    {
+        public List<Resource> Resources = new List<Resource>();
+        public int Count => Resources.Count;
+        public String ResourceType;
+    }
+
     public class ResourceColumns : Columns
     {
         public ITradeEntity TradeEntity;
         public ITradeEntity ValueSourceEntity;
-        public List<ResourceTypeAmount> SourceResources { get; private set; }
-        public List<ResourceTypeAmount> SelectedResources { get; private set; }
+        public List<TradeableItem> SourceResources { get; private set; }
+        public List<TradeableItem> SelectedResources { get; private set; }
         public String LeftHeader;
         public String RightHeader;
         public MoneyEditor MoneyField;
@@ -40,12 +47,12 @@ namespace DwarfCorp.Gui.Widgets
 
         public ResourceColumns()
         {
-            SourceResources = new List<ResourceTypeAmount>();
-            SelectedResources = new List<ResourceTypeAmount>();
+            SourceResources = new List<TradeableItem>();
+            SelectedResources = new List<TradeableItem>();
         }
 
-        public void Reconstruct(IEnumerable<ResourceTypeAmount> sourceResource, 
-                                IEnumerable<ResourceTypeAmount> selectedResources,
+        public void Reconstruct(IEnumerable<TradeableItem> sourceResource, 
+                                IEnumerable<TradeableItem> selectedResources,
                                 int tradeMoney)
         {
             Clear();
@@ -123,16 +130,16 @@ namespace DwarfCorp.Gui.Widgets
             SetupList(rightmostList, leftmostList, SelectedResources, SourceResources);
         }
 
-        private void SetupList(WidgetListView listA, WidgetListView listB, List<ResourceTypeAmount> resourcesA, 
-            List<ResourceTypeAmount> resourcesB)
+        private void SetupList(WidgetListView listA, WidgetListView listB, List<TradeableItem> resourcesA, List<TradeableItem> resourcesB)
         {
             foreach (var resource in resourcesA)
             {
                 var lineItem = CreateLineItem(resource);
-
                 var lambdaResource = resource;
+
                 lineItem.TriggerOnChildClick = true;
                 lineItem.EnableHoverClick();
+
                 lineItem.OnClick = (sender, args) =>
                 {
                     if (lambdaResource.Count <= 0) return;
@@ -141,12 +148,15 @@ namespace DwarfCorp.Gui.Widgets
                     if (args.Shift) toMove = Math.Min(5, lambdaResource.Count);
                     if (lambdaResource.Count - toMove < 0)
                         return;
-                    lambdaResource.Count -= toMove;
+
+                    var movedItems = lambdaResource.Resources.Take(toMove).ToList();
+                    lambdaResource.Resources.RemoveRange(0, toMove);
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_change_selection, 0.1f, MathFunctions.Rand() * 0.25f);
-                    var existingEntry = resourcesB.FirstOrDefault(r => r.Type == lambdaResource.Type);
+
+                    var existingEntry = resourcesB.FirstOrDefault(r => r.ResourceType == lambdaResource.ResourceType);
                     if (existingEntry == null)
                     {
-                        existingEntry = new ResourceTypeAmount(lambdaResource.Type, toMove);
+                        existingEntry = new TradeableItem { Resources = movedItems, ResourceType = lambdaResource.ResourceType };
                         resourcesB.Add(existingEntry);
                         var rightLineItem = CreateLineItem(existingEntry);
                         rightLineItem.EnableHoverClick();
@@ -161,8 +171,11 @@ namespace DwarfCorp.Gui.Widgets
                                 _toMove = Math.Min(5, existingEntry.Count);
                             if (existingEntry.Count - _toMove < 0)
                                 return;
-                            existingEntry.Count -= _toMove;
+
+                            var _movedItems = existingEntry.Resources.Take(_toMove).ToList();
+                            existingEntry.Resources.RemoveRange(0, _toMove);
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_change_selection, 0.1f, MathFunctions.Rand() * 0.25f);
+
                             if (existingEntry.Count == 0)
                             {
                                 var index = resourcesB.IndexOf(existingEntry);
@@ -175,10 +188,9 @@ namespace DwarfCorp.Gui.Widgets
 
                             UpdateColumn(listA, resourcesB);
 
-                            var sourceEntry = resourcesA.FirstOrDefault(
-                                r => r.Type == existingEntry.Type);
+                            var sourceEntry = resourcesA.FirstOrDefault(r => r.ResourceType == existingEntry.ResourceType);
                             int idx = resourcesA.IndexOf(sourceEntry);
-                            sourceEntry.Count += _toMove;
+                            sourceEntry.Resources.AddRange(_movedItems);
                             if (idx >= 0)
                             {
                                 UpdateLineItemText(
@@ -190,7 +202,7 @@ namespace DwarfCorp.Gui.Widgets
                     }
                     else
                     {
-                        existingEntry.Count += toMove;
+                        existingEntry.Resources.AddRange(movedItems);
                     }
 
                     UpdateColumn(listA, resourcesB);
@@ -204,19 +216,31 @@ namespace DwarfCorp.Gui.Widgets
         }
 
 
-        private List<ResourceTypeAmount> Clone(List<ResourceTypeAmount> resources)
+        private List<TradeableItem> Clone(List<TradeableItem> resources)
         {
-            return resources.Select(r => r.CloneResource()).ToList();
+            return resources.Select(r => new TradeableItem { Resources = new List<Resource>(r.Resources), ResourceType = r.ResourceType }).ToList();
+        }
+
+        public List<TradeableItem> AggregateResources(IEnumerable<Resource> Resources)
+        {
+            var d = new Dictionary<String, TradeableItem>();
+            foreach (var r in Resources)
+                if (d.ContainsKey(r.Type))
+                    d[r.Type].Resources.Add(r);
+                else
+                    d.Add(r.Type, new TradeableItem { Resources = new List<Resource> { r }, ResourceType = r.Type });
+
+            return d.Values.ToList();
         }
 
         public override void Construct()
         {
-            SourceResources = TradeEntity.Resources.AggregateByType();
+            SourceResources = AggregateResources(TradeEntity.Resources.Enumerate());
 
             Reconstruct(SourceResources, SelectedResources, 0);
         }
 
-        private void UpdateColumn(Gui.Widgets.WidgetListView ListView, List<ResourceTypeAmount> selectedResources)
+        private void UpdateColumn(Gui.Widgets.WidgetListView ListView, List<TradeableItem> selectedResources)
         {
             for (var i = 0; i < SelectedResources.Count; ++i)
                 UpdateLineItemText(ListView.GetChild(i + 1), selectedResources[i]);
@@ -227,7 +251,7 @@ namespace DwarfCorp.Gui.Widgets
             UpdateColumn(ListView, SelectedResources);
         }
 
-        private Widget CreateLineItem(ResourceTypeAmount Resource)
+        private Widget CreateLineItem(TradeableItem Resource)
         {
             var r = Root.ConstructWidget(new Gui.Widget
             {
@@ -235,7 +259,7 @@ namespace DwarfCorp.Gui.Widgets
                 Background = new TileReference("basic", 0)
             });
 
-            if (Library.GetResourceType(Resource.Type).HasValue(out var res))
+            if (Library.GetResourceType(Resource.ResourceType).HasValue(out var res))
                 r.AddChild(new ResourceIcon()
                 {
                     MinimumSize = new Point(32 + 16, 32 + 16),
@@ -285,15 +309,15 @@ namespace DwarfCorp.Gui.Widgets
             return r;
         }
 
-        private void UpdateLineItemText(Widget LineItem, ResourceTypeAmount Resource)
+        private void UpdateLineItemText(Widget LineItem, TradeableItem Resource)
         {
-            if (Library.GetResourceType(Resource.Type).HasValue(out var resourceInfo))
+            if (Library.GetResourceType(Resource.ResourceType).HasValue(out var resourceInfo))
             {
                 var font = LineItem.Root.GetTileSheet("font10");
-                var label = resourceInfo.ShortName ?? resourceInfo.Name;
+                var label = resourceInfo.Name;
                 if (font != null)
                 {
-                    Point measurements = font.MeasureString(resourceInfo.ShortName ?? resourceInfo.Name);
+                    Point measurements = font.MeasureString(label);
                     label = font.WordWrapString(label, 1.0f, 128 / GameSettings.Default.GuiScale, LineItem.WrapWithinWords);
                     if (128 / GameSettings.Default.GuiScale < measurements.X)
                     {
@@ -302,8 +326,7 @@ namespace DwarfCorp.Gui.Widgets
                 }
                 LineItem.GetChild(1).Text = label;
                 LineItem.GetChild(1).Invalidate();
-                LineItem.GetChild(2).Text = String.Format("{0}",
-                    ValueSourceEntity.ComputeValue(Resource.Type));
+                LineItem.GetChild(2).Text = String.Format("{0}", ValueSourceEntity.ComputeValue(Resource.ResourceType));
                 var counter = LineItem.GetChild(0).Children.Last();
                 counter.Text = Resource.Count.ToString();
                 counter.Invalidate();

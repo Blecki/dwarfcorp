@@ -122,7 +122,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.FloatBottomRight,
                 OnClick = (sender, args) =>
                 {
-                    foreach (var res in Settings.PlayerCorporationResources.GetByType(ResourceColumns.SelectedResources))
+                    foreach (var res in ResourceColumns.SelectedResources.SelectMany(i => i.Resources))
                         Settings.InstanceSettings.InitalEmbarkment.Resources.Add(res);
 
                     var message = "";
@@ -254,15 +254,8 @@ namespace DwarfCorp.GameStates
 
             ResourceColumns = columns.AddChild(new EmbarkmentResourceColumns
             {
-                ComputeValue = (resourceType) =>
-                {
-                    if (Library.GetResourceType(resourceType).HasValue(out var r))
-                        return r.MoneyValue;
-                    else
-                        return 0;
-                },
-                SourceResources = Settings.PlayerCorporationResources.AggregateByType(),
-                SelectedResources = Settings.InstanceSettings.InitalEmbarkment.Resources.AggregateByType(),
+                SourceResources = Settings.PlayerCorporationResources.AggregateByType2(),
+                SelectedResources = Settings.InstanceSettings.InitalEmbarkment.Resources.AggregateByType2(),
                 LeftHeader = "Available",
                 RightHeader = "Taking"
             }) as EmbarkmentResourceColumns;

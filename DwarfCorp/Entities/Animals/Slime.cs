@@ -79,9 +79,8 @@ namespace DwarfCorp
             
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
-            if (Library.GetResourceType(SlimeType).HasValue(out var slime))
-                for (var i = 0; i < MathFunctions.RandInt(1, 3); ++i)
-                    Inventory.AddResource(new Resource(slime.Name));
+            for (var i = 0; i < MathFunctions.RandInt(1, 3); ++i)
+                Inventory.AddResource(new Resource(SlimeType));
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
 

@@ -11,11 +11,11 @@ namespace DwarfCorp.Trade
         ResourceSet Resources { get; }
         DwarfBux Money { get; }
         int AvailableSpace { get; }
-        DwarfBux ComputeValue(List<ResourceTypeAmount> Resources);
+        DwarfBux ComputeValue(List<Resource> Resources);
         DwarfBux ComputeValue(String Resource);
         Race TraderRace { get; }
         Faction TraderFaction { get; }
-        List<Resource> RemoveResourcesByType(List<ResourceTypeAmount> Resources);
+        void RemoveResources(List<Resource> Resources);
         void AddResources(List<Resource> Resources);
         void AddMoney(DwarfBux Money);
     }

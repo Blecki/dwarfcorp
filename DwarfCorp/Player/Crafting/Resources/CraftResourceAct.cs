@@ -116,7 +116,7 @@ namespace DwarfCorp
             {
                 // Todo: This switch sucks.
                 case CraftItem.CraftActBehaviors.Object:
-                    ActualCreatedResource = new Resource(ItemType.ToResource(Creature.World).Name);
+                    ActualCreatedResource = new Resource(ItemType.ToResourceType(Creature.World).Name);
                     break;
                 case CraftItem.CraftActBehaviors.Trinket:
                     ActualCreatedResource = Library.CreateTrinketResourceType(RawMaterials[0].Type, (Agent.Stats.Dexterity + Agent.Stats.Intelligence) / 15.0f * MathFunctions.Rand(0.5f, 1.75f));

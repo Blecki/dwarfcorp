@@ -40,7 +40,7 @@ namespace DwarfCorp.Gui.Widgets
             int k = 0;
             foreach (var ingredient in Data.RequiredResources)
             {
-                var resource = Library.FindMedianResourceTypeWithTag(ingredient.Tag);
+                var resource = Library.EnumerateResourceTypesWithTag(ingredient.Tag).FirstOrDefault();
                 if (resource != null)
                     titleBar.AddChild(new Gui.Widget
                     {

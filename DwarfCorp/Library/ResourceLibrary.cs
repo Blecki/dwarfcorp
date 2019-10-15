@@ -36,15 +36,6 @@ namespace DwarfCorp
             return Resources.Values.Where(resource => resource.Tags.Contains(tag));
         }
 
-        public static ResourceType FindMedianResourceTypeWithTag(String tag)
-        {
-            InitializeResources();
-            var applicable = Resources.Values.Where(resource => resource.Tags.Contains(tag)).ToList();
-            if (applicable.Count == 0) return null;
-            applicable.Sort((a, b) => (int)a.MoneyValue.Value - (int)b.MoneyValue.Value);
-            return applicable[applicable.Count / 2];
-        }
-
         public static MaybeNull<ResourceType> GetResourceType(string name)
         {
             InitializeResources();
@@ -84,7 +75,7 @@ namespace DwarfCorp
             
             var r = new Resource("Ale");
             if (GetResourceType(type).HasValue(out var baseResource))
-                r.GeneratedName = String.IsNullOrEmpty(baseResource.AleName) ? type + " Ale" : baseResource.AleName;
+                r.SetProperty("Name", String.IsNullOrEmpty(baseResource.AleName) ? type + " Ale" : baseResource.AleName);
             return r;
         }
 
@@ -97,9 +88,9 @@ namespace DwarfCorp
             var componentB = GetResourceType(typeB);
             if (componentA.HasValue(out var A) && componentB.HasValue(out var B))
             {
-                r.SetMetaData("Food Content", A.FoodContent + B.FoodContent);
-                r.SetMetaData("Value", 2m * (A.MoneyValue + B.MoneyValue));
-                r.GeneratedName = TextGenerator.GenerateRandom(new List<String>() { A.Name, B.Name }, TextGenerator.GetAtoms(ContentPaths.Text.Templates.food));
+                r.SetProperty("FoodContent", A.FoodContent + B.FoodContent);
+                r.SetProperty("MoneyValue", 2m * (A.MoneyValue + B.MoneyValue));
+                r.SetProperty("Name", TextGenerator.GenerateRandom(new List<String>() { A.Name, B.Name }, TextGenerator.GetAtoms(ContentPaths.Text.Templates.food)));
             }
 
             return r;
@@ -110,18 +101,18 @@ namespace DwarfCorp
             InitializeResources();
 
             var r = new Resource("Trinket");
-            r.GeneratedName = GemResource.Type + "-encrusted " + BaseResource.GeneratedName;
+            r.SetProperty("Name", GemResource.Type + "-encrusted " + BaseResource.GetProperty("Name", "Trinket"));
 
             if (GemResource.ResourceType.HasValue(out var gem))
-                r.SetMetaData("Value", BaseResource.GetMetaData<DwarfBux>("Value", 0m) + gem.MoneyValue * 2m);
+                r.SetProperty("MoneyValue", BaseResource.GetProperty<DwarfBux>("MoneyValue", 0m) + gem.MoneyValue * 2m);
 
             var compositeLayers = new List<ResourceType.CompositeLayer>();
-            compositeLayers.AddRange(BaseResource.GetMetaData<List<ResourceType.CompositeLayer>>("Composite Layers", new List<ResourceType.CompositeLayer>()));
+            compositeLayers.AddRange(BaseResource.GetProperty<List<ResourceType.CompositeLayer>>("CompositeLayers", new List<ResourceType.CompositeLayer>()));
 
             var guiLayers = new List<TileReference>();
-            guiLayers.AddRange(BaseResource.GetMetaData<List<TileReference>>("Gui Layers", new List<TileReference>()));
+            guiLayers.AddRange(BaseResource.GetProperty<List<TileReference>>("GuiLayers", new List<TileReference>()));
 
-            var trinketData = BaseResource.GetMetaData<ResourceType.TrinketInfo>("Trinket Data", BaseResource.ResourceType.HasValue(out var baseRes) ? baseRes.TrinketData : new ResourceType.TrinketInfo());
+            var trinketData = BaseResource.GetProperty<ResourceType.TrinketInfo>("Trinket Data", BaseResource.ResourceType.HasValue(out var baseRes) ? baseRes.TrinketData : new ResourceType.TrinketInfo());
 
             if (GemResource.ResourceType.HasValue(out var gemRes))
             {
@@ -137,8 +128,8 @@ namespace DwarfCorp
                 guiLayers.Add(new TileReference(trinketData.EncrustingAsset, gemRes.TrinketData.SpriteRow * 7 + trinketData.SpriteColumn));
             }
 
-            r.SetMetaData("Composite Layers", compositeLayers);
-            r.SetMetaData("Gui Layers", guiLayers);
+            r.SetProperty("CompositeLayers", compositeLayers);
+            r.SetProperty("GuiLayers", guiLayers);
 
             return r;
         }
@@ -200,16 +191,16 @@ namespace DwarfCorp
             var name = baseMaterial + " " + names[item] + " (" + qualityType + ")";
 
             var r = new Resource("Trinket");
-            r.GeneratedName = name;
+            r.SetProperty("Name", name);
             
             if (GetResourceType(baseMaterial).HasValue(out var material))
             {
-                r.SetMetaData("Value", values[item] * material.MoneyValue * 3m * quality);
-                r.SetMetaData("Tint", material.Tint);
+                r.SetProperty("MoneyValue", values[item] * material.MoneyValue * 3m * quality);
+                r.SetProperty("Tint", material.Tint);
 
                 var tile = new Point(tiles[item], material.TrinketData.SpriteRow);
 
-                r.SetMetaData("Composite Layers", new List<ResourceType.CompositeLayer>(new ResourceType.CompositeLayer[]
+                r.SetProperty("CompositeLayers", new List<ResourceType.CompositeLayer>(new ResourceType.CompositeLayer[]
                 {
                     new ResourceType.CompositeLayer
                     {
@@ -227,9 +218,9 @@ namespace DwarfCorp
                     SpriteRow = material.TrinketData.SpriteRow
                 };
 
-                r.SetMetaData("Trinket Data", trinketInfo);
+                r.SetProperty("TrinketData", trinketInfo);
 
-                r.SetMetaData("Gui Layers", new List<TileReference>() { new TileReference(material.TrinketData.BaseAsset, tile.Y * 7 + tile.X) });
+                r.SetProperty("GuiLayers", new List<TileReference>() { new TileReference(material.TrinketData.BaseAsset, tile.Y * 7 + tile.X) });
 
                 return r;
             }
@@ -240,7 +231,7 @@ namespace DwarfCorp
         public static MaybeNull<Resource> CreateBreadResourceType(String component)
         {
             InitializeResources();
-            return new Resource("Bread") { GeneratedName = component + " Bread" };
+            return new Resource("Bread").SetProperty("Name", component + " Bread");
         }
     }
 
