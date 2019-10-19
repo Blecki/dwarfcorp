@@ -12,7 +12,7 @@ namespace DwarfCorp.Gui.Widgets
         public CraftItem Data;
         public WorldManager World;
         private List<ResourceCombo> ResourceCombos = new List<ResourceCombo>();
-        private Gui.Widgets.ComboBox NumCombo = new ComboBox();
+        private Gui.Widgets.ComboBox NumCombo = null;
         private Widget BottomBar;
         private Widget Button;
         public Action<Gui.Widget, Gui.InputEventArgs> BuildAction = null;
@@ -169,6 +169,7 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "Repeat ",
                     AutoLayout = AutoLayout.DockLeft
                 });
+
                 NumCombo = child2.AddChild(new Gui.Widgets.ComboBox
                 {
                     Font = "font8",
@@ -184,6 +185,7 @@ namespace DwarfCorp.Gui.Widgets
                     MaximumSize = new Point(64, 18),
                     Tooltip = "Craft this many objects."
                 }) as Gui.Widgets.ComboBox;
+
                 NumCombo.SelectedIndex = 0;
             }
 
