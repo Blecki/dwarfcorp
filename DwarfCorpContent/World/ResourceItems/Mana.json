@@ -1,5 +1,5 @@
 {
-  "Name": "Mana",
+  "TypeName": "Mana",
   "MoneyValue": 400.0,
   "Description": "Mysterious properties!",
   "Category": "Ore",
@@ -29,7 +29,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Mana",
+  "DisplayName": "Mana",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

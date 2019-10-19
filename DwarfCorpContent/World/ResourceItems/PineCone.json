@@ -1,5 +1,5 @@
 {
-  "Name": "Pine Cone",
+  "TypeName": "Pine Cone",
   "MoneyValue": 2.0,
   "Description": "Grows pine trees.",
   "Category": "Seeds",
@@ -29,7 +29,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Pine Cone",
+  "DisplayName": "Pine Cone",
   "PlantToGenerate": "Pine Tree Sprout",
   "CanCraft": false,
   "CraftPrerequisites": [],

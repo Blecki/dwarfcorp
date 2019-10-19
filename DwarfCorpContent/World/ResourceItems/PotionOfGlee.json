@@ -1,5 +1,5 @@
 {
-  "Name": "Potion Of Glee",
+  "TypeName": "Potion Of Glee",
   "MoneyValue": 100.0,
   "Description": "Dwarfs drink this potion when they are feeling down.",
   "Category": "Potions",
@@ -27,7 +27,7 @@
     "SpriteColumn": 0
   },
   "Generated": true,
-  "ShortName": "Potion Of Glee",
+  "DisplayName": "Potion Of Glee",
   "MaterialStrength": 5.0,
   "PlantToGenerate": null,
   "CanCraft": true,
@@ -50,7 +50,7 @@
   "AleName": "",
   "CraftItemType": "Potion Of Glee",
   "PotionType": {
-    "Name": "Potion Of Glee",
+    "TypeName": "Potion Of Glee",
     "Description": "Dwarfs drink this potion when they are feeling down.",
     "Effects": {
       "$type": "DwarfCorp.ThoughtBuff, /Content",

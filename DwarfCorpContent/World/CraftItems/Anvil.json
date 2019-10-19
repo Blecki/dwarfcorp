@@ -28,6 +28,6 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.0, 0",
   "AddToOwnedPool": true,
-  "CraftActBehavior": "Normal",
+  "CraftActBehavior": "Object",
   "Tutorial": "Build anvils to let your dwarfs to construct other objects and crafts. Only one dwarf can use an anvil at a time."
 }

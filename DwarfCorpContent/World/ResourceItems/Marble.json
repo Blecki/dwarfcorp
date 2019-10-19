@@ -1,5 +1,5 @@
 {
-  "Name": "Marble",
+  "TypeName": "Marble",
   "MoneyValue": 8.0,
   "MaterialStrength": 30.0,
   "Description": "Marble is created when limestone is compressed deep under ground.",
@@ -30,7 +30,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Marble",
+  "DisplayName": "Marble",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

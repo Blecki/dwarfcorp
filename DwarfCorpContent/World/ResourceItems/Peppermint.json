@@ -1,5 +1,5 @@
 {
-  "Name": "Peppermint",
+  "TypeName": "Peppermint",
   "MoneyValue": 3.0,
   "Description": "Edible candy. Grows candycanes.",
   "Category": "Seeds",
@@ -32,7 +32,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Peppermint",
+  "DisplayName": "Peppermint",
   "PlantToGenerate": "Candycane Sprout",
   "CanCraft": false,
   "CraftPrerequisites": [],

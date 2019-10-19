@@ -314,7 +314,7 @@ namespace DwarfCorp.Gui.Widgets
             if (Library.GetResourceType(Resource.ResourceType).HasValue(out var resourceInfo))
             {
                 var font = LineItem.Root.GetTileSheet("font10");
-                var label = resourceInfo.Name;
+                var label = resourceInfo.TypeName;
                 if (font != null)
                 {
                     Point measurements = font.MeasureString(label);
@@ -331,7 +331,7 @@ namespace DwarfCorp.Gui.Widgets
                 counter.Text = Resource.Count.ToString();
                 counter.Invalidate();
                 LineItem.GetChild(0).Invalidate();
-                LineItem.Tooltip = resourceInfo.Name + "\n" + resourceInfo.Description;
+                LineItem.Tooltip = resourceInfo.TypeName + "\n" + resourceInfo.Description;
                 for (int i = 0; i < 3; i++)
                 {
                     if (i > 0)
@@ -343,7 +343,7 @@ namespace DwarfCorp.Gui.Widgets
                     LineItem.GetChild(i).BackgroundColor = Resource.Count > 0
                         ? resourceInfo.Tint.ToVector4()
                         : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
-                    LineItem.GetChild(i).Tooltip = resourceInfo.Name + "\n" + resourceInfo.Description;
+                    LineItem.GetChild(i).Tooltip = resourceInfo.TypeName + "\n" + resourceInfo.Description;
                     LineItem.GetChild(i).Invalidate();
                 }
             }

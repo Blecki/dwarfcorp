@@ -1,5 +1,5 @@
 {
-  "Name": "Refined Mana",
+  "TypeName": "Refined Mana",
   "MoneyValue": 200.0,
   "Description": "Magic distilled into it's pure form.",
   "GuiLayers": [
@@ -28,7 +28,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Refined Mana",
+  "DisplayName": "Refined Mana",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

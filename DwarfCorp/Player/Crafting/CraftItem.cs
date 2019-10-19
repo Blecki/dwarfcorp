@@ -112,7 +112,8 @@ namespace DwarfCorp
             var point = new Point(Icon.Tile % numTilesX, Icon.Tile / numTilesX);
             var toReturn = new ResourceType();
             toReturn.Generated = true;
-            toReturn.Name = objectName;
+            toReturn.TypeName = objectName;
+            toReturn.DisplayName = toReturn.TypeName;
             toReturn.Tags = new List<String>()
                     {
                         "CraftItem",

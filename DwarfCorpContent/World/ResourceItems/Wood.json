@@ -1,5 +1,5 @@
 {
-  "Name": "Wood",
+  "TypeName": "Wood",
   "MaterialStrength": 5.0,
   "MoneyValue": 5.0,
   "Description": "Sometimes hard to come by! Comes from trees.",
@@ -30,7 +30,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Wood",
+  "DisplayName": "Wood",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

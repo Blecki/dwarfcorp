@@ -22,7 +22,8 @@ namespace DwarfCorp
             public Point Frame;
         }
 
-        public string Name;
+        public string TypeName;
+        public string DisplayName;
 
         public DwarfBux MoneyValue;
         public string Description;

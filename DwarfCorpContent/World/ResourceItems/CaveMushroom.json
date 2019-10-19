@@ -1,5 +1,5 @@
 {
-  "Name": "Cave Mushroom",
+  "TypeName": "Cave Mushroom",
   "MoneyValue": 3.5,
   "Description": "Dwarves can eat these.",
   "Category": "Seeds",
@@ -33,7 +33,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Cave Mushroom",
+  "DisplayName": "Cave Mushroom",
   "PlantToGenerate": "Cave Mushroom Sprout",
   "CanCraft": false,
   "CraftPrerequisites": [],

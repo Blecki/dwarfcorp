@@ -1,5 +1,5 @@
 {
-  "Name": "Copper Hammer",
+  "TypeName": "Copper Hammer",
   "MoneyValue": 200.0,
   "Description": "A hammer made of copper.",
   "Category": "Tools",
@@ -27,7 +27,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Copper Hammer",
+  "DisplayName": "Copper Hammer",
   "PlantToGenerate": "",
   "CanCraft": false,
   "CraftPrerequisites": [],

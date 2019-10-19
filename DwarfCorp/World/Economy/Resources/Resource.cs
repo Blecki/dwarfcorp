@@ -18,8 +18,8 @@ namespace DwarfCorp
 
         public Resource SetProperty<T>(String Name, T Value)
         {
-            var prop = typeof(Resource).GetField(Name);
-            if (prop == null || prop.FieldType != typeof(T))
+            var prop = typeof(ResourceType).GetField(Name);
+            if (prop != null && prop.FieldType != typeof(T))
                 throw new InvalidProgramException("Type mismatch between base ResourceType class and overridden value.");
 
             if (MetaData == null)
@@ -35,8 +35,8 @@ namespace DwarfCorp
                 return MetaData.GetData(Name, Default);
             else if (ResourceType.HasValue(out var res))
             {
-                var prop = typeof(Resource).GetField(Name);
-                if (prop.FieldType == typeof(T))
+                var prop = typeof(ResourceType).GetField(Name);
+                if (prop != null && prop.FieldType == typeof(T))
                     return (T)prop.GetValue(res);
                 else
                     return Default;
@@ -64,6 +64,12 @@ namespace DwarfCorp
         public Resource(String Type)
         {
             _Type = Type;
+        }
+
+        public Resource(ResourceType Type)
+        {
+            _Type = Type.TypeName;
+            _cachedResourceType = Type;
         }
     }
 }

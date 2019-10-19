@@ -77,7 +77,7 @@ namespace DwarfCorp.Play
                 }
 
                 var numResourcesInGroup = resources.Count();
-                var extraTooltip = numResourcesInGroup > 0 ? "\ne.g " + TextGenerator.GetListString(resources.Select(s => (string)s.Name).Take(Math.Min(numResourcesInGroup, 4)).ToList()) : "";
+                var extraTooltip = numResourcesInGroup > 0 ? "\ne.g " + TextGenerator.GetListString(resources.Select(s => (string)s.TypeName).Take(Math.Min(numResourcesInGroup, 4)).ToList()) : "";
 
                 boxes.Add(entry.AddChild(new CheckBox()
                 {

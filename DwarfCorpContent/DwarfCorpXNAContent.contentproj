@@ -2311,13 +2311,13 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>IronHammer</Name>
     </None>
-    <None Include="World\ResourceItems\StoneAxe.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>StoneAxe</Name>
-    </None>
     <None Include="World\ResourceItems\StoneHammer.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>StoneHammer</Name>
+    </None>
+    <None Include="World\ResourceItems\StoneAxe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>StoneAxe</Name>
     </None>
     <None Include="World\ResourceItems\StonePick.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

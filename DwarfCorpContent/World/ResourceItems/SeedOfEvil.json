@@ -1,5 +1,5 @@
 {
-  "Name": "Seed of Evil",
+  "TypeName": "Seed of Evil",
   "MoneyValue": 3.0,
   "Description": "Grows haunted trees.",
   "Category": "Seeds",
@@ -29,7 +29,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Seed of Evil",
+  "DisplayName": "Seed of Evil",
   "PlantToGenerate": "Haunted Tree Sprout",
   "CanCraft": false,
   "CraftPrerequisites": [],

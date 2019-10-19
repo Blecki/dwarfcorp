@@ -1,5 +1,5 @@
 {
-  "Name": "Coins",
+  "TypeName": "Coins",
   "MoneyValue": 64.0,
   "Description": "Dwarfbux container.",
   "GuiLayers": [
@@ -26,7 +26,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Coins",
+  "DisplayName": "Coins",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

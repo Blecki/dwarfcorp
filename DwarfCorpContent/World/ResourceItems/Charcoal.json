@@ -1,5 +1,5 @@
 {
-  "Name": "Charcoal",
+  "TypeName": "Charcoal",
   "MoneyValue": 15.0,
   "Description": "Used as fuel",
   "Category": "Fuel",
@@ -27,7 +27,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Charcoal",
+  "DisplayName": "Charcoal",
   "PlantToGenerate": null,
   "CanCraft": true,
   "CraftPrerequisites": [

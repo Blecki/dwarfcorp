@@ -11,12 +11,12 @@ namespace DwarfCorp.Play.EmployeeInfo
 {
     public class BetterResourceIcon : Widget
     {
-        private String _ResourceType = "";
-        public String ResourceType
+        private Resource _Resource = null;
+        public Resource Resource
         {
             set
             {
-                _ResourceType = value;
+                _Resource = value;
                 Invalidate();
             }
         }
@@ -28,25 +28,21 @@ namespace DwarfCorp.Play.EmployeeInfo
 
         protected override Mesh Redraw()
         {
-            if (String.IsNullOrEmpty(_ResourceType))
+            if (_Resource == null)
                 return base.Redraw();
 
-            if (Library.GetResourceType(_ResourceType).HasValue(out var res))
-            {
-                Tooltip = res.Name;
+            Tooltip = _Resource.GetProperty<String>("DisplayName", "");
+            var layers = _Resource.GetProperty<List<TileReference>>("GuiLayers", new List<TileReference>());
 
-                var r = new List<Mesh>();
-                foreach (var layer in res.GuiLayers)
-                    r.Add(Mesh.Quad()
-                                .Scale(Rect.Width, Rect.Height)
-                                .Translate(Rect.X, Rect.Y)
-                                .Colorize(BackgroundColor)
-                                .Texture(Root.GetTileSheet(layer.Sheet).TileMatrix(layer.Tile)));
-                r.Add(base.Redraw());
-                return Mesh.Merge(r.ToArray());
-            }
-            else
-                return base.Redraw();
+            var r = new List<Mesh>();
+            foreach (var layer in layers)
+                r.Add(Mesh.Quad()
+                            .Scale(Rect.Width, Rect.Height)
+                            .Translate(Rect.X, Rect.Y)
+                            .Colorize(BackgroundColor)
+                            .Texture(Root.GetTileSheet(layer.Sheet).TileMatrix(layer.Tile)));
+            r.Add(base.Redraw());
+            return Mesh.Merge(r.ToArray());
         }
     }
 
@@ -83,14 +79,14 @@ namespace DwarfCorp.Play.EmployeeInfo
                 Hidden = false;
                 Text = "";
 
-                ToolIcon.ResourceType = null;
+                ToolIcon.Resource = null;
 
                 if (Employee.Stats.Equipment == null)
                     Text = "This employee cannot use equipment.";
                 else
                 {
                     if (Employee.Stats.Equipment.GetItemInSlot("tool").HasValue(out var tool))
-                        ToolIcon.ResourceType = tool.Resource.Type;
+                        ToolIcon.Resource = tool.Resource;
                    
                 }
 

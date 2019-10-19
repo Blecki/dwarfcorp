@@ -1,5 +1,5 @@
 {
-  "Name": "Pumpkin",
+  "TypeName": "Pumpkin",
   "MoneyValue": 6.0,
   "Description": "Grows pumpkins.",
   "Category": "Seeds",
@@ -32,7 +32,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Pumpkin",
+  "DisplayName": "Pumpkin",
   "PlantToGenerate": "Pumpkin Sprout",
   "CanCraft": false,
   "CraftPrerequisites": [],

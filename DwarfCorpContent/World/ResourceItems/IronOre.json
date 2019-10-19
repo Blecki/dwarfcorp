@@ -1,5 +1,5 @@
 {
-  "Name": "IronOre",
+  "TypeName": "IronOre",
   "MoneyValue": 40.0,
   "MaterialStrength": 80.0,
   "Description": "Needed to build things.",
@@ -27,7 +27,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Iron Ore",
+  "DisplayName": "Iron Ore",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

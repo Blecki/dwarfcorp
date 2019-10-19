@@ -1,5 +1,5 @@
 {
-  "Name": "Coal",
+  "TypeName": "Coal",
   "MoneyValue": 15.0,
   "Description": "Used as fuel",
   "Category": "Fuel",
@@ -27,7 +27,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Coal",
+  "DisplayName": "Coal",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

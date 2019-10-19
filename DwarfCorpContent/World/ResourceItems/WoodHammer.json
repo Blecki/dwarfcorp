@@ -1,5 +1,5 @@
 {
-  "Name": "Wood Hammer",
+  "TypeName": "Wood Hammer",
   "MoneyValue": 15.0,
   "Description": "A hammer made of wood.",
   "Category": "Tools",
@@ -27,7 +27,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Wood Hammer",
+  "DisplayName": "Wood Hammer",
   "PlantToGenerate": "",
   "CanCraft": false,
   "CraftPrerequisites": [],

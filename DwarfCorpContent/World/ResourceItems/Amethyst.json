@@ -1,5 +1,5 @@
 {
-  "Name": "Amethyst",
+  "TypeName": "Amethyst",
   "MoneyValue": 350.0,
   "Description": "Shiny!",
   "Category": "Gems",
@@ -28,7 +28,7 @@
     "SpriteRow": 5,
     "SpriteColumn": 0
   },
-  "ShortName": "Amethyst",
+  "DisplayName": "Amethyst",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

@@ -1,5 +1,5 @@
 {
-  "Name": "Egg",
+  "TypeName": "Egg",
   "MoneyValue": 5.0,
   "Description": "An egg",
   "Category": "Meat",
@@ -28,7 +28,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Egg",
+  "DisplayName": "Egg",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

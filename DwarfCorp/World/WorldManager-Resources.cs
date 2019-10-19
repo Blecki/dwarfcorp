@@ -36,7 +36,6 @@ namespace DwarfCorp
                 foreach (var stock in EnumerateZones().OfType<Stockpile>())
                     if (RemoveResourcesFromSpecificZone(resource, stock))
                         break;
-                return false;
             }
 
             return true;

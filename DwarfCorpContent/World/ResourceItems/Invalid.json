@@ -1,5 +1,5 @@
 {
-  "Name": "Invalid",
+  "TypeName": "Invalid",
   "MoneyValue": 1.0,
   "Description": "This is an invalid resource. Something must have gone wrong with DwarfCorp.",
   "GuiLayers": [
@@ -23,7 +23,7 @@
     "SpriteRow": 1,
     "SpriteColumn": 0
   },
-  "ShortName": "Invalid",
+  "DisplayName": "Invalid",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

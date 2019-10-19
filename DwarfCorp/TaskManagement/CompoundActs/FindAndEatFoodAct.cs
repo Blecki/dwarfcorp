@@ -111,7 +111,7 @@ namespace DwarfCorp
 
                     if (resourceAmount.ResourceType.HasValue(out var resource))
                     {
-                        Agent.Creature.Stats.Hunger.CurrentValue += resource.FoodContent;
+                        Agent.Creature.Stats.Hunger.CurrentValue += resourceAmount.GetProperty<float>("FoodContent", 0.0f);
 
                         if (resource.Tags.Contains("Alcohol"))
                             Agent.Creature.AddThought("I had good ale recently.", new TimeSpan(0, 8, 0, 0), 10.0f);

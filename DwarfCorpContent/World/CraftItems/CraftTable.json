@@ -19,7 +19,7 @@
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": "",
+  "ResourceCreated": "CraftTable",
   "CraftLocation": "",
   "Verb": "Build",
   "PastTeseVerb": "Built",
@@ -27,6 +27,6 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0, 0",
   "AddToOwnedPool": true,
-  "CraftActBehavior": "Normal",
+  "CraftActBehavior": "Object",
   "Tutorial": "Dwarves create a variety of items at craft tables."
 }

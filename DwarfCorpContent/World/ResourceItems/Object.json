@@ -1,5 +1,5 @@
 {
-  "Name": "Object",
+  "TypeName": "Object",
   "MoneyValue": 100.0,
   "Description": "ERROR. This thing should not exist. It is only a placeholder.",
   "GuiLayers": [
@@ -24,7 +24,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Object",
+  "DisplayName": "Object",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

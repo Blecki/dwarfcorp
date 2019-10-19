@@ -20,19 +20,16 @@ namespace DwarfCorp
             
         }
 
-        public ResourceEntity(ComponentManager manager, Resource resourceType, Vector3 position) :
-            base(manager, resourceType.Type, 
-                Matrix.CreateTranslation(position), new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0))
+        public ResourceEntity(ComponentManager manager, Resource Resource, Vector3 position) :
+            base(manager, Resource.Type, Matrix.CreateTranslation(position), new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0))
         {
-            Resource = resourceType;
-            //if (Resource.Count > 1)
-            //    Name = String.Format("Pile of {0} {1}s", Resource.Count, Resource.Type);
+            this.Resource = Resource;
             Restitution = 0.1f;
             Friction = 0.1f;
 
-            if (Library.GetResourceType(resourceType.Type).HasValue(out var type))
+            if (Library.GetResourceType(Resource.Type).HasValue(out var type))
             {
-                Tags.Add(type.Name);
+                Tags.Add(type.TypeName);
                 Tags.Add("Resource");
 
                 // Todo: Clean this whole thing up
@@ -66,60 +63,49 @@ namespace DwarfCorp
         {
             base.CreateCosmeticChildren(manager);
 
-            var type = Library.GetResourceType(Resource.Type);
+            var compositeLayers = Resource.GetProperty<List<ResourceType.CompositeLayer>>("CompositeLayers", new List<ResourceType.CompositeLayer>());
+            var tint = Resource.GetProperty<Color>("Tint", Color.White);
 
-            if (!type.HasValue())
-                type = Library.GetResourceType("Invalid");
+            Tinter sprite = null;
 
-            if (type.HasValue(out var res))
+            // Minor optimization for single layer resources.
+            if (compositeLayers.Count == 1)
             {
-                Tinter sprite = null;
-
-                int numSprites = 1;// Math.Min(Resource.Count, 3);
-                for (int i = 0; i < numSprites; i++)
+                var layer = compositeLayers[0];
+                sprite = AddChild(new SimpleBobber(Manager, "Sprite",
+                    Matrix.CreateTranslation(Vector3.UnitY * 0.25f),
+                    new SpriteSheet(layer.Asset, layer.FrameSize.X, layer.FrameSize.Y),
+                    layer.Frame, 0.15f, MathFunctions.Rand() + 2.0f, MathFunctions.Rand() * 3.0f)
                 {
-                    // Minor optimization for single layer resources.
-                    if (res.CompositeLayers.Count == 1)
-                    {
-                        var layer = res.CompositeLayers[0];
-                        sprite = AddChild(new SimpleBobber(Manager, "Sprite",
-                            Matrix.CreateTranslation(Vector3.UnitY * 0.25f),
-                            new SpriteSheet(layer.Asset, layer.FrameSize.X, layer.FrameSize.Y),
-                            layer.Frame, 0.15f, MathFunctions.Rand() + 2.0f, MathFunctions.Rand() * 3.0f)
-                        {
-                            OrientationType = SimpleSprite.OrientMode.Spherical,
-                            WorldHeight = 0.75f,
-                            WorldWidth = 0.75f,
-                        }) as Tinter;
-                        sprite.LocalTransform = Matrix.CreateTranslation(Vector3.UnitY * 0.25f + MathFunctions.RandVector3Cube() * 0.1f);
-                    }
-                    else
-                    {
-                        var layers = new List<LayeredSimpleSprite.Layer>();
-
-                        foreach (var layer in res.CompositeLayers)
-                        {
-                            layers.Add(new LayeredSimpleSprite.Layer
-                            {
-                                Sheet = new SpriteSheet(layer.Asset, layer.FrameSize.X, layer.FrameSize.Y),
-                                Frame = layer.Frame
-                            });
-                        }
-
-                        sprite = AddChild(new LayeredBobber(Manager, "Sprite",
-                            Matrix.CreateTranslation(Vector3.UnitY * 0.25f + MathFunctions.RandVector3Cube() * 0.1f),
-                            layers, 0.15f, MathFunctions.Rand() + 2.0f, MathFunctions.Rand() * 3.0f)
-                        {
-                            OrientationType = LayeredSimpleSprite.OrientMode.Spherical,
-                            WorldHeight = 0.75f,
-                            WorldWidth = 0.75f,
-                        }) as Tinter;
-                    }
-
-                    sprite.LightRamp = res.Tint;
-                    sprite.SetFlag(Flag.ShouldSerialize, false);
-                }
+                    OrientationType = SimpleSprite.OrientMode.Spherical,
+                    WorldHeight = 0.75f,
+                    WorldWidth = 0.75f,
+                }) as Tinter;
+                sprite.LocalTransform = Matrix.CreateTranslation(Vector3.UnitY * 0.25f + MathFunctions.RandVector3Cube() * 0.1f);
             }
+            else
+            {
+                var layers = new List<LayeredSimpleSprite.Layer>();
+
+                foreach (var layer in compositeLayers)
+                    layers.Add(new LayeredSimpleSprite.Layer
+                    {
+                        Sheet = new SpriteSheet(layer.Asset, layer.FrameSize.X, layer.FrameSize.Y),
+                        Frame = layer.Frame
+                    });
+
+                sprite = AddChild(new LayeredBobber(Manager, "Sprite",
+                    Matrix.CreateTranslation(Vector3.UnitY * 0.25f + MathFunctions.RandVector3Cube() * 0.1f),
+                    layers, 0.15f, MathFunctions.Rand() + 2.0f, MathFunctions.Rand() * 3.0f)
+                {
+                    OrientationType = LayeredSimpleSprite.OrientMode.Spherical,
+                    WorldHeight = 0.75f,
+                    WorldWidth = 0.75f,
+                }) as Tinter;
+            }
+
+            sprite.LightRamp = tint;
+            sprite.SetFlag(Flag.ShouldSerialize, false);
         }
     }
 }

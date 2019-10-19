@@ -49,7 +49,7 @@ namespace DwarfCorp
             {
                 int num = MathFunctions.RandInt(1, 32 - i);
                 for (int j = 0; j < num; ++j)
-                    Inventory.AddResource(new Resource(Datastructures.SelectRandom(gems).Name));
+                    Inventory.AddResource(new Resource(Datastructures.SelectRandom(gems)));
                 i += num - 1;
             }
 

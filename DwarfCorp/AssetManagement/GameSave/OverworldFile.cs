@@ -110,7 +110,7 @@ namespace DwarfCorp
             MetaData.Overworld.ColonyCells.InitializeCellMap();
 
             foreach (var resource in MetaData.Resources)
-                if (!Library.DoesResourceTypeExist(resource.Name))
+                if (!Library.DoesResourceTypeExist(resource.TypeName))
                     Library.AddResourceType(resource);
 
             var worldFilePath = filePath + global::System.IO.Path.DirectorySeparatorChar + "world.png";

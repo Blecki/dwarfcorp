@@ -1,5 +1,5 @@
 {
-  "Name": "Grain",
+  "TypeName": "Grain",
   "MoneyValue": 2.5,
   "Description": "Dwarves can eat this.",
   "Category": "Seeds",
@@ -33,7 +33,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Grain",
+  "DisplayName": "Grain",
   "PlantToGenerate": "Wheat Sprout",
   "CanCraft": false,
   "CraftPrerequisites": [],

@@ -1,5 +1,5 @@
 {
-  "Name": "Stone Pick",
+  "TypeName": "Stone Pick",
   "MoneyValue": 15.0,
   "Description": "A pick made of stone.",
   "Category": "Tools",
@@ -27,7 +27,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Stone Pick",
+  "DisplayName": "Stone Pick",
   "PlantToGenerate": "",
   "CanCraft": false,
   "CraftPrerequisites": [],

@@ -1,5 +1,5 @@
 {
-  "Name": "Copper",
+  "TypeName": "Copper",
   "MoneyValue": 100.0,
   "MaterialStrength": 80.0,
   "Description": "Needed to build things.",
@@ -31,7 +31,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Copper",
+  "DisplayName": "Copper",
   "PlantToGenerate": null,
   "CanCraft": true,
   "CraftPrerequisites": [

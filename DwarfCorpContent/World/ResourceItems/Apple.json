@@ -1,5 +1,5 @@
 {
-  "Name": "Apple",
+  "TypeName": "Apple",
   "MoneyValue": 3.0,
   "Description": "Grows apple trees.",
   "Category": "Seeds",
@@ -32,7 +32,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Apple",
+  "DisplayName": "Apple",
   "PlantToGenerate": "Apple Tree Sprout",
   "CanCraft": false,
   "CraftPrerequisites": [],

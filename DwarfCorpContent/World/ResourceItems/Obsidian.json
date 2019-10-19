@@ -1,5 +1,5 @@
 {
-  "Name": "Obsidian",
+  "TypeName": "Obsidian",
   "MaterialStrength": 100.0,
   "MoneyValue": 10.0,
   "Description": "Obsidian forms when lava is cooled very quickly.",
@@ -30,7 +30,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Obsidian",
+  "DisplayName": "Obsidian",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

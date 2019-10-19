@@ -32,6 +32,13 @@ namespace DwarfCorp
                 yield return Status.Fail;
         }
 
+        public IEnumerable<Status> AcquireResources()
+        {
+            var stash = new StashResourcesAct(Agent, ItemSource, Item.SelectedResource);
+            foreach (var status in stash.Run())
+                yield return status;
+        }
+
         public IEnumerable<Status> UnReserve()
         {
 
@@ -118,10 +125,10 @@ namespace DwarfCorp
 
             getResources = new Select(
                 new Domain(() => Item.HasResources || Item.SelectedResource != null, true),
-                new Domain(() => !Item.HasResources && (Item.SelectedResource.ReservedFor == Agent || Item.SelectedResource.ReservedFor == null),
+                new Domain(() => !Item.HasResources && (Item.SelectedResource == null || Item.SelectedResource.ReservedFor == Agent || Item.SelectedResource.ReservedFor == null),
                     new Sequence(
                         new Wrap(LocateResources),
-                        new StashResourcesAct(Agent, ItemSource, Item.SelectedResource)
+                        new Wrap(AcquireResources)
                     ) | (new Wrap(UnReserve))
                                             & false),
                     new Domain(() => Item.HasResources || Item.SelectedResource.ReservedFor != null, true));

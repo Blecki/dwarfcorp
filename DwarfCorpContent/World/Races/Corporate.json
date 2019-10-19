@@ -31,20 +31,8 @@
   "CommonResources": [],
   "RareResources": [],
   "HatedResources": [],
-  "TradeGoods": {
-    "Alcohol": 20,
-    "Craft": 5,
-    "Fuel": 1,
-    "Encrustable": 3,
-    "Wood": 1,
-    "Precious": 4,
-    "Fungus": 10,
-    "Stone": 2,
-    "Metal": 2,
-    "Sand": 2,
-    "Glass": 2
-  },
-  "NumFurniture": 4,
+  "TradeGoods": {},
+  "NumFurniture": 0,
   "Crafts": [ "Metal" ],
   "Encrustings": [ "Gem" ],
   "Icon": 0

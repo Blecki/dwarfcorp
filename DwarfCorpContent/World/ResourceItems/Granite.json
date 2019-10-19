@@ -1,5 +1,5 @@
 {
-  "Name": "Granite",
+  "TypeName": "Granite",
   "MaterialStrength": 50.0,
   "MoneyValue": 6.0,
   "Description": "A metamorphic rock, granite is produced when sandstones and shales are compressed deep under ground.",
@@ -30,7 +30,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Granite",
+  "DisplayName": "Granite",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

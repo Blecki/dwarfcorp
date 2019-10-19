@@ -1,5 +1,5 @@
 {
-  "Name": "Mushroom",
+  "TypeName": "Mushroom",
   "MoneyValue": 2.5,
   "Description": "Dwarves can eat these.",
   "Category": "Seeds",
@@ -32,7 +32,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Mushroom",
+  "DisplayName": "Mushroom",
   "PlantToGenerate": "Mushroom Sprout",
   "CanCraft": false,
   "CraftPrerequisites": [],

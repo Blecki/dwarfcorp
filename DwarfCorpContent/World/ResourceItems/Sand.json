@@ -1,5 +1,5 @@
 {
-  "Name": "Sand",
+  "TypeName": "Sand",
   "MoneyValue": 2.0,
   "Description": "Can be used to make glass.",
   "Category": "Ore",
@@ -27,7 +27,7 @@
     "SpriteRow": 3,
     "SpriteColumn": 0
   },
-  "ShortName": "Sand",
+  "DisplayName": "Sand",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

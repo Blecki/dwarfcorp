@@ -1,5 +1,5 @@
 {
-  "Name": "Slate",
+  "TypeName": "Slate",
   "MoneyValue": 5.0,
   "MaterialStrength": 15.0,
   "Description": "A sedimentary rock that forms thin layers.",
@@ -30,7 +30,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Slate",
+  "DisplayName": "Slate",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

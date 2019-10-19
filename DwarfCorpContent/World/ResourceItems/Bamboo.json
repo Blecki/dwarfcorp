@@ -1,5 +1,5 @@
 {
-  "Name": "Bamboo",
+  "TypeName": "Bamboo",
   "MaterialStrength": 5.0,
   "MoneyValue": 5.0,
   "Description": "Bamboo. A fantastic and cheap building material.",
@@ -30,7 +30,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Bamboo",
+  "DisplayName": "Bamboo",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

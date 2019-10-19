@@ -1,5 +1,5 @@
 {
-  "Name": "Wood Axe",
+  "TypeName": "Wood Axe",
   "MoneyValue": 15.0,
   "Description": "An axe made of wood. There's something sadistic about this.",
   "Category": "Tools",
@@ -27,7 +27,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Wood Axe",
+  "DisplayName": "Wood Axe",
   "PlantToGenerate": "",
   "CanCraft": false,
   "CraftPrerequisites": [],

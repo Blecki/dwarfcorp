@@ -1,5 +1,5 @@
 {
-  "Name": "Bird Meat",
+  "TypeName": "Bird Meat",
   "MoneyValue": 25.0,
   "Description": "Came from an animal.",
   "Category": "Meat",
@@ -29,7 +29,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Bird Meat",
+  "DisplayName": "Bird Meat",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

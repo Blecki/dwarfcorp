@@ -1,5 +1,5 @@
 {
-  "Name": "Potion Of Curing",
+  "TypeName": "Potion Of Curing",
   "MoneyValue": 100.0,
   "Description": "Dwarfs drink this potion to cure all disease.",
   "Category": "Potions",
@@ -27,7 +27,7 @@
     "SpriteColumn": 0
   },
   "Generated": true,
-  "ShortName": "Potion Of Curing",
+  "DisplayName": "Potion Of Curing",
   "MaterialStrength": 5.0,
   "PlantToGenerate": null,
   "CanCraft": true,
@@ -50,7 +50,7 @@
   "AleName": "",
   "CraftItemType": "Potion Of Curing",
   "PotionType": {
-    "Name": "Potion Of Curing",
+    "TypeName": "Potion Of Curing",
     "Description": "Dwarfs drink this potion to cure all disease.",
     "Effects": {
       "$type": "DwarfCorp.CureDiseaseBuff, /Content",

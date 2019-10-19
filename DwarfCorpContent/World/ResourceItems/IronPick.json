@@ -1,5 +1,5 @@
 {
-  "Name": "Iron Pick",
+  "TypeName": "Iron Pick",
   "MoneyValue": 100.0,
   "Description": "A pick made of iron.",
   "Category": "Tools",
@@ -27,7 +27,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Iron Pick",
+  "DisplayName": "Iron Pick",
   "PlantToGenerate": "",
   "CanCraft": false,
   "CraftPrerequisites": [],

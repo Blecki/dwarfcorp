@@ -116,10 +116,10 @@ namespace DwarfCorp
             {
                 // Todo: This switch sucks.
                 case CraftItem.CraftActBehaviors.Object:
-                    ActualCreatedResource = new Resource(ItemType.ToResourceType(Creature.World).Name);
+                    ActualCreatedResource = new Resource(ItemType.ToResourceType(Creature.World));
                     break;
                 case CraftItem.CraftActBehaviors.Trinket:
-                    ActualCreatedResource = Library.CreateTrinketResourceType(RawMaterials[0].Type, (Agent.Stats.Dexterity + Agent.Stats.Intelligence) / 15.0f * MathFunctions.Rand(0.5f, 1.75f));
+                    ActualCreatedResource = Library.CreateTrinketResource(RawMaterials[0].Type, (Agent.Stats.Dexterity + Agent.Stats.Intelligence) / 15.0f * MathFunctions.Rand(0.5f, 1.75f));
                     break;
                 case CraftItem.CraftActBehaviors.Meal:
                     {
@@ -130,14 +130,14 @@ namespace DwarfCorp
                             yield break;
                         }
 
-                        ActualCreatedResource = Library.CreateMealResourceType(RawMaterials.ElementAt(0).Type, RawMaterials.ElementAt(1).Type);
+                        ActualCreatedResource = Library.CreateMealResource(RawMaterials.ElementAt(0).Type, RawMaterials.ElementAt(1).Type);
                     }
                     break;
                 case CraftItem.CraftActBehaviors.Ale:
                     ActualCreatedResource = Library.CreateAleResourceType(RawMaterials.ElementAt(0).Type);
                     break;
                 case CraftItem.CraftActBehaviors.Bread:
-                    ActualCreatedResource = Library.CreateBreadResourceType(RawMaterials.ElementAt(0).Type);
+                    ActualCreatedResource = Library.CreateBreadResource(RawMaterials.ElementAt(0).Type);
                     break;
                 case CraftItem.CraftActBehaviors.GemTrinket:
                     {

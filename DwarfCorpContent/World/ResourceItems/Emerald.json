@@ -1,5 +1,5 @@
 {
-  "Name": "Emerald",
+  "TypeName": "Emerald",
   "MoneyValue": 350.0,
   "Description": "Shiny!",
   "Category": "Gems",
@@ -28,7 +28,7 @@
     "SpriteRow": 3,
     "SpriteColumn": 0
   },
-  "ShortName": "Emerald",
+  "DisplayName": "Emerald",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

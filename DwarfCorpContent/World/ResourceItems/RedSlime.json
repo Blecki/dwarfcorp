@@ -1,5 +1,5 @@
 {
-  "Name": "Red Slime",
+  "TypeName": "Red Slime",
   "MaterialStrength": 5.0,
   "MoneyValue": 25.0,
   "Description": "Goop from a red slime.",
@@ -30,7 +30,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Red Slime",
+  "DisplayName": "Red Slime",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

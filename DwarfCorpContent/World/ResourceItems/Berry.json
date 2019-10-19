@@ -1,5 +1,5 @@
 {
-  "Name": "Berry",
+  "TypeName": "Berry",
   "MoneyValue": 5.0,
   "Description": "Dwarves can eat these.",
   "Category": "Seeds",
@@ -31,7 +31,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Berry",
+  "DisplayName": "Berry",
   "PlantToGenerate": "Berry Bush Sprout",
   "CanCraft": false,
   "CraftPrerequisites": [],

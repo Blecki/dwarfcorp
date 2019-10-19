@@ -1,5 +1,5 @@
 {
-  "Name": "Dirt",
+  "TypeName": "Dirt",
   "MoneyValue": 1.0,
   "Description": "Can be used to make bricks.",
   "Category": "Stone",
@@ -27,7 +27,7 @@
     "SpriteRow": 1,
     "SpriteColumn": 0
   },
-  "ShortName": "Dirt",
+  "DisplayName": "Dirt",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

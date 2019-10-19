@@ -1,5 +1,5 @@
 {
-  "Name": "Garnet",
+  "TypeName": "Garnet",
   "MoneyValue": 350.0,
   "Description": "Shiny!",
   "Category": "Gems",
@@ -28,7 +28,7 @@
     "SpriteRow": 1,
     "SpriteColumn": 0
   },
-  "ShortName": "Garnet",
+  "DisplayName": "Garnet",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

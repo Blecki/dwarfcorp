@@ -1,5 +1,5 @@
 {
-  "Name": "Gem-set Trinket",
+  "TypeName": "Gem-set Trinket",
   "MoneyValue": 100.0,
   "Description": "A crafted item.",
   "Category": "Trinkets",
@@ -26,7 +26,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Gem-set Trinket",
+  "DisplayName": "Gem-set Trinket",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

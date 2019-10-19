@@ -1,5 +1,5 @@
 {
-  "Name": "Bread",
+  "TypeName": "Bread",
   "MoneyValue": 5.0,
   "Description": "A nutritious dwarf meal.",
   "Category": "Food",
@@ -28,7 +28,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Bread",
+  "DisplayName": "Bread",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

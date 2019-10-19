@@ -19,7 +19,7 @@ namespace DwarfCorp
 
             Resources = new Dictionary<String, ResourceType>();
 
-            var resourceList = FileUtils.LoadJsonListFromDirectory<ResourceType>("World\\ResourceItems", null, r => r.Name);
+            var resourceList = FileUtils.LoadJsonListFromDirectory<ResourceType>("World\\ResourceItems", null, r => r.TypeName);
 
             foreach (var resource in resourceList)
             {
@@ -58,15 +58,15 @@ namespace DwarfCorp
         {
             InitializeResources();
 
-            Resources[resource.Name] = resource;
+            Resources[resource.TypeName] = resource;
 
             if (resource.Tags.Contains("Money"))
-                EntityFactory.RegisterEntity(resource.Name + " Resource", (position, data) => new CoinPile(EntityFactory.World.ComponentManager, position)
+                EntityFactory.RegisterEntity(resource.TypeName + " Resource", (position, data) => new CoinPile(EntityFactory.World.ComponentManager, position)
                 {
                     Money = data.Has("Money") ? data.GetData<DwarfBux>("Money") : (DwarfBux)64m
                 });
             else
-                EntityFactory.RegisterEntity(resource.Name + " Resource", (position, data) => new ResourceEntity(EntityFactory.World.ComponentManager, new Resource(resource.Name), position));   
+                EntityFactory.RegisterEntity(resource.TypeName + " Resource", (position, data) => new ResourceEntity(EntityFactory.World.ComponentManager, new Resource(resource.TypeName), position));   
         }
 
         public static MaybeNull<Resource> CreateAleResourceType(String type)
@@ -79,7 +79,7 @@ namespace DwarfCorp
             return r;
         }
 
-        public static MaybeNull<Resource> CreateMealResourceType(String typeA, String typeB)
+        public static MaybeNull<Resource> CreateMealResource(String typeA, String typeB)
         {
             InitializeResources();
             var r = new Resource("Meal");
@@ -90,7 +90,7 @@ namespace DwarfCorp
             {
                 r.SetProperty("FoodContent", A.FoodContent + B.FoodContent);
                 r.SetProperty("MoneyValue", 2m * (A.MoneyValue + B.MoneyValue));
-                r.SetProperty("Name", TextGenerator.GenerateRandom(new List<String>() { A.Name, B.Name }, TextGenerator.GetAtoms(ContentPaths.Text.Templates.food)));
+                r.SetProperty("DisplayName", TextGenerator.GenerateRandom(new List<String>() { A.DisplayName, B.DisplayName }, TextGenerator.GetAtoms(ContentPaths.Text.Templates.food)));
             }
 
             return r;
@@ -134,7 +134,7 @@ namespace DwarfCorp
             return r;
         }
 
-        public static MaybeNull<Resource> CreateTrinketResourceType(String baseMaterial, float quality)
+        public static MaybeNull<Resource> CreateTrinketResource(String baseMaterial, float quality)
         {
             InitializeResources();
 
@@ -191,7 +191,7 @@ namespace DwarfCorp
             var name = baseMaterial + " " + names[item] + " (" + qualityType + ")";
 
             var r = new Resource("Trinket");
-            r.SetProperty("Name", name);
+            r.SetProperty("DisplayName", name);
             
             if (GetResourceType(baseMaterial).HasValue(out var material))
             {
@@ -228,10 +228,10 @@ namespace DwarfCorp
             return null;
         }
         
-        public static MaybeNull<Resource> CreateBreadResourceType(String component)
+        public static MaybeNull<Resource> CreateBreadResource(String component)
         {
             InitializeResources();
-            return new Resource("Bread").SetProperty("Name", component + " Bread");
+            return new Resource("Bread").SetProperty("DisplayName", component + " Bread");
         }
     }
 

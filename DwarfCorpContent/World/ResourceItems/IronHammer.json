@@ -1,5 +1,5 @@
 {
-  "Name": "Iron Hammer",
+  "TypeName": "Iron Hammer",
   "MoneyValue": 100.0,
   "Description": "A hammer made of iron.",
   "Category": "Tools",
@@ -27,7 +27,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Iron Hammer",
+  "DisplayName": "Iron Hammer",
   "PlantToGenerate": "",
   "CanCraft": false,
   "CraftPrerequisites": [],

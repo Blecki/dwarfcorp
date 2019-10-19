@@ -1,5 +1,5 @@
 {
-  "Name": "Stone",
+  "TypeName": "Stone",
   "MoneyValue": 4.0,
   "MaterialStrength": 20.0,
   "Description": "Dwarf's favorite material! Comes from the earth.",
@@ -29,7 +29,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Stone",
+  "DisplayName": "Stone",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

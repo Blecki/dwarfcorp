@@ -1,5 +1,5 @@
 {
-  "Name": "Copper Axe",
+  "TypeName": "Copper Axe",
   "MoneyValue": 200.0,
   "Description": "An axe made of copper.",
   "Category": "Tools",
@@ -27,7 +27,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Copper Axe",
+  "DisplayName": "Copper Axe",
   "PlantToGenerate": "",
   "CanCraft": false,
   "CraftPrerequisites": [],

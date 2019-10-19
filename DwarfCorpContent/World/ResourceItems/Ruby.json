@@ -1,5 +1,5 @@
 {
-  "Name": "Ruby",
+  "TypeName": "Ruby",
   "MoneyValue": 350.0,
   "Description": "Shiny!",
   "Category": "Gems",
@@ -28,7 +28,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Ruby",
+  "DisplayName": "Ruby",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

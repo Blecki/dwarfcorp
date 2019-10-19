@@ -1,5 +1,5 @@
 {
-  "Name": "Coconut",
+  "TypeName": "Coconut",
   "MoneyValue": 6.0,
   "Description": "Grows palm trees.",
   "Category": "Seeds",
@@ -31,7 +31,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Coconut",
+  "DisplayName": "Coconut",
   "PlantToGenerate": "Palm Tree Sprout",
   "CanCraft": false,
   "CraftPrerequisites": [],

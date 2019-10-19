@@ -1,5 +1,5 @@
 {
-  "Name": "Potion Of Speed",
+  "TypeName": "Potion Of Speed",
   "MoneyValue": 100.0,
   "Description": "Dwarfs drink this potion to get a bit faster.",
   "Category": "Potions",
@@ -27,7 +27,7 @@
     "SpriteColumn": 0
   },
   "Generated": true,
-  "ShortName": "Potion Of Speed",
+  "DisplayName": "Potion Of Speed",
   "MaterialStrength": 5.0,
   "PlantToGenerate": null,
   "CanCraft": true,
@@ -50,12 +50,12 @@
   "AleName": "",
   "CraftItemType": "Potion Of Speed",
   "PotionType": {
-    "Name": "Potion Of Speed",
+    "TypeName": "Potion Of Speed",
     "Description": "Dwarfs drink this potion to get a bit faster.",
     "Effects": {
       "$type": "DwarfCorp.StatBuff, /Content",
       "Buffs": {
-        "Name": "Potion Of Speed",
+        "TypeName": "Potion Of Speed",
         "Dexterity": 3.0,
         "Constitution": 0.0,
         "Strength": 0.0,

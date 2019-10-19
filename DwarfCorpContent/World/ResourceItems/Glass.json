@@ -1,5 +1,5 @@
 {
-  "Name": "Glass",
+  "TypeName": "Glass",
   "MoneyValue": 8.0,
   "Description": "Made from sand. Allows light to pass through.",
   "GuiLayers": [
@@ -28,7 +28,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Glass",
+  "DisplayName": "Glass",
   "PlantToGenerate": null,
   "CanCraft": true,
   "CraftPrerequisites": [

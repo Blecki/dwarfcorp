@@ -1,5 +1,5 @@
 {
-  "Name": "Yellow Slime",
+  "TypeName": "Yellow Slime",
   "MaterialStrength": 5.0,
   "MoneyValue": 25.0,
   "Description": "Goop from a yellow slime.",
@@ -30,7 +30,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Yellow Slime",
+  "DisplayName": "Yellow Slime",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

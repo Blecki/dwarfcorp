@@ -1,5 +1,5 @@
 {
-  "Name": "Brick",
+  "TypeName": "Brick",
   "MaterialStrength": 10.0,
   "MoneyValue": 4.0,
   "Description": "Made from dirt. Building material.",
@@ -28,7 +28,7 @@
     "SpriteRow": 2,
     "SpriteColumn": 0
   },
-  "ShortName": "Brick",
+  "DisplayName": "Brick",
   "PlantToGenerate": null,
   "CanCraft": true,
   "CraftPrerequisites": [

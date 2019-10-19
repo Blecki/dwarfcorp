@@ -1,5 +1,5 @@
 {
-  "Name": "Citrine",
+  "TypeName": "Citrine",
   "MoneyValue": 350.0,
   "Description": "Shiny!",
   "Category": "Gems",
@@ -28,7 +28,7 @@
     "SpriteRow": 2,
     "SpriteColumn": 0
   },
-  "ShortName": "Citrine",
+  "DisplayName": "Citrine",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

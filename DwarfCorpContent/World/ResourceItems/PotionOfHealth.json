@@ -1,5 +1,5 @@
 {
-  "Name": "Potion Of Health",
+  "TypeName": "Potion Of Health",
   "MoneyValue": 100.0,
   "Description": "Dwarfs drink this potion when they take damage.",
   "Category": "Potions",
@@ -27,7 +27,7 @@
     "SpriteColumn": 0
   },
   "Generated": true,
-  "ShortName": "Potion Of Health",
+  "DisplayName": "Potion Of Health",
   "MaterialStrength": 5.0,
   "PlantToGenerate": null,
   "CanCraft": true,
@@ -50,7 +50,7 @@
   "AleName": "",
   "CraftItemType": "Potion Of Health",
   "PotionType": {
-    "Name": "Potion Of Health",
+    "TypeName": "Potion Of Health",
     "Description": "Dwarfs drink this potion when they take damage.",
     "Effects": {
       "$type": "DwarfCorp.OngoingHealBuff, /Content",

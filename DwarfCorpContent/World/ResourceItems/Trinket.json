@@ -1,5 +1,5 @@
 {
-  "Name": "Trinket",
+  "TypeName": "Trinket",
   "MoneyValue": 100.0,
   "Description": "A crafted item.",
   "Category": "Trinkets",
@@ -27,7 +27,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Trinket",
+  "DisplayName": "Trinket",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

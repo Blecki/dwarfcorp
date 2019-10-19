@@ -1,5 +1,5 @@
 {
-  "Name": "Iron",
+  "TypeName": "Iron",
   "MoneyValue": 50.0,
   "MaterialStrength": 100.0,
   "Description": "Needed to build things.",
@@ -30,7 +30,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Iron",
+  "DisplayName": "Iron",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

@@ -25,7 +25,7 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": false,
-  "CraftActBehavior": "Normal",
+  "CraftActBehavior": "Object",
   "CraftedResultsCount": 4,
   "Tutorial": "Rails are needed to build railways. One metal can be turned into four rails. Dwarfs move faster on railways."
 }

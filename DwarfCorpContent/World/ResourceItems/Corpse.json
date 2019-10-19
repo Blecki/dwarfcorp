@@ -1,5 +1,5 @@
 {
-  "Name": "Corpse",
+  "TypeName": "Corpse",
   "MoneyValue": 0.0,
   "Description": "Dead carcass. Should be buried.",
   "Category": "corpse",
@@ -26,7 +26,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Corpse",
+  "DisplayName": "Corpse",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

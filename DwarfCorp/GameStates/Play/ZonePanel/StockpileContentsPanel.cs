@@ -44,7 +44,7 @@ namespace DwarfCorp.Play
                     {
                         var icon = existingResourceEntries.FirstOrDefault(w => w is ResourceIcon && w.Tag.ToString() == resource.Type);
 
-                        var label = template.Name + "\n" + template.Description;
+                        var label = template.TypeName + "\n" + template.Description; // Resources of the same type will get collapsed won't they?
 
                         if (icon == null)
                             icon = AddChild(new ResourceIcon()

@@ -32,7 +32,7 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": true,
-  "CraftActBehavior": "Normal",
+  "CraftActBehavior": "Object",
   "IsMagical": true,
   "Tutorial": "The tower of life should be built near seedlings. It automatically makes seedlings grow faster. It must be recharged by a wizard."
 }

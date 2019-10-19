@@ -1,22 +1,22 @@
 {
-  "Name": "Stone Axe",
+  "TypeName": "Stone Hammer",
   "MoneyValue": 15.0,
-  "Description": "An axe made of stone.",
+  "Description": "A hammer made of stone.",
   "Category": "Tools",
   "GuiLayers": [
     {
-      "Sheet": "axe-resources",
+      "Sheet": "hammer-resources",
       "Tile": 1
     }
   ],
   "Tags": [
     "Tool",
-    "Axe"
+    "Hammer"
   ],
   "FoodContent": 0.0,
   "CompositeLayers": [
     {
-      "Asset": "Entities/Dwarf/ToolIcons/axe",
+      "Asset": "Entities/Dwarf/ToolIcons/hammer",
       "FrameSize": "32, 32",
       "Frame": "1, 0"
     }
@@ -27,7 +27,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Stone Axe",
+  "DisplayName": "Stone Hammer",
   "PlantToGenerate": "",
   "CanCraft": false,
   "CraftPrerequisites": [],

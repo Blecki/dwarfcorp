@@ -49,7 +49,7 @@ namespace DwarfCorp
             for (int i = 0; i < 16; i++)
             {
                 for (var j = 0; j < MathFunctions.RandInt(1, 32 - i); ++j)
-                    Inventory.AddResource(new Resource(Datastructures.SelectRandom(gems).Name));
+                    Inventory.AddResource(new Resource(Datastructures.SelectRandom(gems)));
             }
 
             Physics.Tags.Add("MudGolem");

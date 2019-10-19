@@ -1,5 +1,5 @@
 {
-  "Name": "Meat",
+  "TypeName": "Meat",
   "MoneyValue": 25.0,
   "Description": "Came from an animal.",
   "Category": "Meat",
@@ -29,7 +29,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Meat",
+  "DisplayName": "Meat",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

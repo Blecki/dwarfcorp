@@ -1,5 +1,5 @@
 {
-  "Name": "Bone",
+  "TypeName": "Bone",
   "MoneyValue": 15.0,
   "Description": "Came from an animal.",
   "Category": "Bone",
@@ -29,7 +29,7 @@
     "SpriteRow": 1,
     "SpriteColumn": 0
   },
-  "ShortName": "Bone",
+  "DisplayName": "Bone",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

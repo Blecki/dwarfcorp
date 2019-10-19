@@ -1,5 +1,5 @@
 {
-  "Name": "Blue Slime",
+  "TypeName": "Blue Slime",
   "MaterialStrength": 5.0,
   "MoneyValue": 25.0,
   "Description": "Goop from a blue slime.",
@@ -30,7 +30,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Blue Slime",
+  "DisplayName": "Blue Slime",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

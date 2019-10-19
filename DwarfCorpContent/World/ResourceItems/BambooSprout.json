@@ -1,5 +1,5 @@
 {
-  "Name": "BambooSprout",
+  "TypeName": "BambooSprout",
   "MoneyValue": 3.0,
   "Description": "Grows Bamboo.",
   "Category": "Seeds",
@@ -32,7 +32,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Bamboo Sprout",
+  "DisplayName": "Bamboo Sprout",
   "PlantToGenerate": "Bamboo Sprout",
   "CanCraft": false,
   "CraftPrerequisites": [],

@@ -1,5 +1,5 @@
 {
-  "Name": "Meal",
+  "TypeName": "Meal",
   "MoneyValue": 10.0,
   "Description": "A nutritious dwarf meal.",
   "Category": "Food",
@@ -28,7 +28,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Meal",
+  "DisplayName": "Meal",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

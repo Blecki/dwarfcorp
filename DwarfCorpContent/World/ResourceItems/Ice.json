@@ -1,5 +1,5 @@
 {
-  "Name": "Ice",
+  "TypeName": "Ice",
   "MoneyValue": 1.0,
   "MaterialStrength": 1.0,
   "Description": "A weak building material found in glaciers.",
@@ -29,7 +29,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Ice",
+  "DisplayName": "Ice",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

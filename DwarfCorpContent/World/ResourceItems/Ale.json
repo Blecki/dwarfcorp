@@ -1,5 +1,6 @@
 {
-  "Name": "Ale",
+  "TypeName": "Ale",
+  "DisplayName": "Ale",
   "MoneyValue": 15.0,
   "Description": "All dwarves need to drink.",
   "GuiLayers": [
@@ -27,7 +28,6 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "ShortName": "Ale",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

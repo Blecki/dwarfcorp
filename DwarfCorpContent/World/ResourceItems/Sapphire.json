@@ -1,5 +1,5 @@
 {
-  "Name": "Sapphire",
+  "TypeName": "Sapphire",
   "MoneyValue": 350.0,
   "Description": "Shiny!",
   "Category": "Gems",
@@ -28,7 +28,7 @@
     "SpriteRow": 4,
     "SpriteColumn": 0
   },
-  "ShortName": "Sapphire",
+  "DisplayName": "Sapphire",
   "PlantToGenerate": null,
   "CanCraft": false,
   "CraftPrerequisites": [],

@@ -1,5 +1,5 @@
 {
-  "Name": "Potion Of Strength",
+  "TypeName": "Potion Of Strength",
   "MoneyValue": 100.0,
   "Description": "Dwarfs drink this potion to get strong.",
   "Category": "Potions",
@@ -27,7 +27,7 @@
     "SpriteColumn": 0
   },
   "Generated": true,
-  "ShortName": "Potion Of Strength",
+  "DisplayName": "Potion Of Strength",
   "MaterialStrength": 5.0,
   "PlantToGenerate": null,
   "CanCraft": true,
@@ -50,12 +50,12 @@
   "AleName": "",
   "CraftItemType": "Potion Of Strength",
   "PotionType": {
-    "Name": "Potion Of Strength",
+    "TypeName": "Potion Of Strength",
     "Description": "Dwarfs drink this potion to get strong.",
     "Effects": {
       "$type": "DwarfCorp.StatBuff, /Content",
       "Buffs": {
-        "Name": "Potion Of Strength",
+        "TypeName": "Potion Of Strength",
         "Dexterity": 0.0,
         "Constitution": 0.0,
         "Strength": 3.0,

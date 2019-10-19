@@ -66,7 +66,7 @@ namespace DwarfCorp
             {
                 int num = MathFunctions.RandInt(tags.Value, tags.Value + 4);
 
-                var resources = Library.EnumerateResourceTypesWithTag(tags.Key).Select(r => new Resource(r.Name));
+                var resources = Library.EnumerateResourceTypesWithTag(tags.Key).Select(r => new Resource(r));
 
                 if (resources.Count() <= 0) continue;
 
@@ -81,10 +81,10 @@ namespace DwarfCorp
                     {
                         var craftTag = Datastructures.SelectRandom(Crafts);
                         var availableCrafts = Library.EnumerateResourceTypesWithTag(craftTag);
-                        if (Library.CreateTrinketResourceType(Datastructures.SelectRandom(availableCrafts).Name, MathFunctions.Rand(0.1f, 3.0f)).HasValue(out var trinket))
+                        if (Library.CreateTrinketResource(Datastructures.SelectRandom(availableCrafts).TypeName, MathFunctions.Rand(0.1f, 3.0f)).HasValue(out var trinket))
                         {
                             if (MathFunctions.RandEvent(0.3f) && Encrustings.Count > 0)
-                                randResource = Library.CreateEncrustedTrinketResourceType(trinket, new Resource(Datastructures.SelectRandom(Library.EnumerateResourceTypesWithTag(Datastructures.SelectRandom(Encrustings))).Name));
+                                randResource = Library.CreateEncrustedTrinketResourceType(trinket, new Resource(Datastructures.SelectRandom(Library.EnumerateResourceTypesWithTag(Datastructures.SelectRandom(Encrustings)))));
                             else
                                 randResource = trinket;
                         }
@@ -103,9 +103,7 @@ namespace DwarfCorp
                     continue;
 
                 var resourceType = randomObject.ToResourceType(world);
-                var r = new Resource(resourceType.Name);
-                r.SetProperty("Name", Posessive + " " + resourceType.Name);
-                toReturn.Add(r);
+                toReturn.Add(new Resource(resourceType).SetProperty("DisplayName", Posessive + " " + resourceType.DisplayName));
             }
 
             return toReturn;

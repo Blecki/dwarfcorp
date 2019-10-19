@@ -228,7 +228,7 @@ namespace DwarfCorp
                 OtherFaction = World.PlayerFaction,
                 ShouldRemove = false,
                 OwnerFaction = this,
-                TradeGoods = Race.GenerateTradeItems(World),
+                TradeGoods = ParentFaction.IsCorporate ? new ResourceSet() : Race.GenerateTradeItems(World),
                 TradeMoney = new DwarfBux((decimal)MathFunctions.Rand(1500.0f, 5500.0f)) // Todo: Make this a setting.
             };
 

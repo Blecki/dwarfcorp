@@ -1,5 +1,5 @@
 {
-  "Name": "Gold",
+  "TypeName": "Gold",
   "MaterialStrength": 15.0,
   "MoneyValue": 800.0,
   "Description": "Shiny!",
@@ -30,7 +30,7 @@
     "SpriteRow": 1,
     "SpriteColumn": 0
   },
-  "ShortName": "Gold",
+  "DisplayName": "Gold",
   "PlantToGenerate": null,
   "CanCraft": true,
   "CraftPrerequisites": [
