@@ -360,7 +360,7 @@ namespace DwarfCorp
             #endregion
 
             SetLoadingMessage("Creating Particles ...");
-            Game.DoLazyAction(new Action(() => ParticleManager = new ParticleManager(ComponentManager)));
+            ParticleManager = new ParticleManager(ComponentManager);
 
             SetLoadingMessage("Creating GameMaster ...");
 

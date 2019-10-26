@@ -13,7 +13,7 @@ namespace DwarfCorp
 
         public PlaceObjectTask()
         {
-            MaxAssignable = 3;
+            MaxAssignable = 1;
             Priority = TaskPriority.Medium;
             AutoRetry = true;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
@@ -25,7 +25,7 @@ namespace DwarfCorp
             this.PlacementDesignation = PlacementDesignation;
 
             Category = TaskCategory.BuildObject;
-            MaxAssignable = 3;
+            MaxAssignable = 1;
             Name = Library.GetString("craft-at", PlacementDesignation.Entity.GlobalID, PlacementDesignation.ItemType.DisplayName, PlacementDesignation.Location);
             Priority = TaskPriority.Medium;
             AutoRetry = true;
