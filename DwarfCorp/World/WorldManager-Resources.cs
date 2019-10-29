@@ -104,10 +104,10 @@ namespace DwarfCorp
                 foreach (var resource in stockpile.Resources.Enumerate())
                 {
 
-                    if (toReturn.ContainsKey(resource.Type))
-                        toReturn[resource.Type].Count += 1;
+                    if (toReturn.ContainsKey(resource.TypeName))
+                        toReturn[resource.TypeName].Count += 1;
                     else
-                        toReturn[resource.Type] = new ResourceTypeAmount(resource.Type, 1);
+                        toReturn[resource.TypeName] = new ResourceTypeAmount(resource.TypeName, 1);
                 }
             }
 
@@ -127,7 +127,7 @@ namespace DwarfCorp
         {
             foreach (var stockpile in EnumerateZones().OfType<Stockpile>())
                 foreach (var resource in stockpile.Resources.Enumerate())
-                    if (resource.Type == Type)
+                    if (resource.TypeName == Type)
                         return Tuple.Create(stockpile, resource);
             return null;
         }
@@ -136,7 +136,7 @@ namespace DwarfCorp
         {
             foreach (var stockpile in EnumerateZones().OfType<Stockpile>())
                 foreach (var resource in stockpile.Resources.Enumerate())
-                    if (resource.Type == Type && resource.ReservedFor == null)
+                    if (resource.TypeName == Type && resource.ReservedFor == null)
                         return Tuple.Create(stockpile, resource);
             return null;
         }
@@ -145,7 +145,7 @@ namespace DwarfCorp
         {
             bool added = false;
 
-            foreach (Stockpile stockpile in EnumerateZones().Where(s => s is Stockpile && (s as Stockpile).IsAllowed(Resource.Type)))
+            foreach (Stockpile stockpile in EnumerateZones().Where(s => s is Stockpile && (s as Stockpile).IsAllowed(Resource.TypeName)))
                 if (!stockpile.IsFull())
                     added = stockpile.AddResource(Resource);
 
@@ -178,10 +178,10 @@ namespace DwarfCorp
                 var inventory = creature.Creature.Inventory;
                 foreach (var i in inventory.Resources)
                 {
-                    if (toReturn.ContainsKey(i.Resource.Type))
-                        toReturn[i.Resource.Type].Second.Count += 1;
+                    if (toReturn.ContainsKey(i.Resource.TypeName))
+                        toReturn[i.Resource.TypeName].Second.Count += 1;
                     else
-                        toReturn[i.Resource.Type] = new Pair<ResourceTypeAmount>(new ResourceTypeAmount(i.Resource.Type, 0), new ResourceTypeAmount(i.Resource.Type, 1));
+                        toReturn[i.Resource.TypeName] = new Pair<ResourceTypeAmount>(new ResourceTypeAmount(i.Resource.TypeName, 0), new ResourceTypeAmount(i.Resource.TypeName, 1));
                 }
             }
 

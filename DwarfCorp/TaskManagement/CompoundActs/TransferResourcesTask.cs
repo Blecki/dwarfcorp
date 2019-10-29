@@ -30,7 +30,7 @@ namespace DwarfCorp
             Priority = TaskPriority.Medium;
             this.Stockpile = Stockpile;
             this.Resource = Resource;
-            Name = String.Format("Transfer {0} from {1}", Resource.Type, Stockpile);
+            Name = String.Format("Transfer {0} from {1}", Resource.TypeName, Stockpile);
             AutoRetry = true;
             ReassignOnDeath = true;
         }

@@ -225,10 +225,10 @@ namespace DwarfCorp.Gui.Widgets
         {
             var d = new Dictionary<String, TradeableItem>();
             foreach (var r in Resources)
-                if (d.ContainsKey(r.Type))
-                    d[r.Type].Resources.Add(r);
+                if (d.ContainsKey(r.TypeName))
+                    d[r.TypeName].Resources.Add(r);
                 else
-                    d.Add(r.Type, new TradeableItem { Resources = new List<Resource> { r }, ResourceType = r.Type });
+                    d.Add(r.TypeName, new TradeableItem { Resources = new List<Resource> { r }, ResourceType = r.TypeName });
 
             return d.Values.ToList();
         }
@@ -260,7 +260,7 @@ namespace DwarfCorp.Gui.Widgets
             });
 
             if (Library.GetResourceType(Resource.ResourceType).HasValue(out var res))
-                r.AddChild(new ResourceIcon()
+                r.AddChild(new Play.ResourceIcon()
                 {
                     MinimumSize = new Point(32 + 16, 32 + 16),
                     MaximumSize = new Point(32 + 16, 32 + 16),

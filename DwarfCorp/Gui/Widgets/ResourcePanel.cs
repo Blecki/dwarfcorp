@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Gui.Widgets
 {
+    /*
     public class ResourceIcon : Widget
     {
         public IEnumerable<TileReference> Layers = null;
@@ -60,96 +61,137 @@ namespace DwarfCorp.Gui.Widgets
             }
             return true;
         }
-    }
+    }*/
 
     public class ResourcePanel : GridPanel
     {
         public WorldManager World;
         
-        private class AggregatedResource
+        private class AggregatedCategory
         {
             public string Category;
-            public ResourceTypeAmount InStockpile;
-            public ResourceTypeAmount InBackpacks;
-            public List<string> Members = new List<string>(); 
+            public int InStockpile = 0;
+            public int InBackpacks = 0;
+            public List<AggregatedResource> Members = new List<AggregatedResource>(); 
         }
 
-        // Aggregates resources by tags so that there aren't as many to display.
-        private List<AggregatedResource> AggregateResources(IEnumerable<KeyValuePair<string, Pair<ResourceTypeAmount>>> resources)
+        private class AggregatedResource
         {
-            List<AggregatedResource> aggregated = new List<AggregatedResource>();
-            foreach (var pair in resources)
-                if (Library.GetResourceType(pair.Value.First.Type).HasValue(out var resource))
-                    if (String.IsNullOrEmpty(resource.Category))
-                        aggregated.Add(new AggregatedResource()
-                        {
-                            InStockpile = pair.Value.First,
-                            InBackpacks = pair.Value.Second,
-                            Members = new List<string>() { String.Format("{0}x {1}", pair.Value.First.Count, pair.Value.First.Type) }
-                        });
-                    else
-                    {
-                        var existing = aggregated.FirstOrDefault(a => !String.IsNullOrEmpty(a.Category) && a.Category == resource.Category);
-
-                        if (existing != null)
-                        {
-                            existing.InStockpile.Count += pair.Value.First.Count;
-                            existing.InBackpacks.Count += pair.Value.Second.Count;
-                            existing.Members.Add(String.Format("{0}x {1} - {2}", pair.Value.First.Count, pair.Value.First.Type, resource.Description));
-                        }
-                        else
-                            aggregated.Add(new AggregatedResource()
-                            {
-                                Category = resource.Category,
-                                InStockpile = pair.Value.First, // Todo: Hijack category name?
-                                InBackpacks = pair.Value.Second,
-                                Members = new List<string>() { String.Format("{0}x {1} - {2}", pair.Value.First.Count, pair.Value.First.Type, resource.Description) }
-                            });
-                    }
-
-            return aggregated;
+            public Resource Sample;
+            public int Count;
         }
 
+
+        private IEnumerable<Resource> EnumerateStockpileResources()
+        {
+            foreach (var stockpile in World.EnumerateZones().OfType<Stockpile>())
+                foreach (var res in stockpile.Resources.Enumerate())
+                    yield return res;
+        }
+
+        private IEnumerable<Resource> EnumerateMinionResources()
+        {
+            foreach (var creature in World.PlayerFaction.Minions)
+                foreach (var i in creature.Creature.Inventory.Resources)
+                    yield return i.Resource;
+        }
+
+        private IEnumerable<AggregatedResource> AggregateResourcesByType(IEnumerable<Resource> Source)
+        {
+            var dict = new Dictionary<String, AggregatedResource>();
+            var unstacked = new List<Resource>();
+            foreach (var res in Source)
+            {
+                if (!res.Aggregate)
+                    unstacked.Add(res);
+                else if (dict.ContainsKey(res.TypeName))
+                    dict[res.TypeName].Count += 1;
+                else
+                    dict.Add(res.TypeName, new AggregatedResource { Sample = res, Count = 1 });
+            }
+            return dict.Values.Concat(unstacked.Select(r => new AggregatedResource { Sample = r, Count = 1 }));
+        }
+
+        private AggregatedCategory GetOrAddCategory(Dictionary<String, AggregatedCategory> Dict, String Category)
+        {
+            if (!Dict.ContainsKey(Category))
+                Dict.Add(Category, new AggregatedCategory { Category = Category });
+
+            return Dict[Category];
+        }
+
+        private IEnumerable<AggregatedCategory> AggregateResourcesByCategory(IEnumerable<AggregatedResource> Stockpile, IEnumerable<AggregatedResource> Minion)
+        {
+            var dict = new Dictionary<String, AggregatedCategory>();
+
+            foreach (var res in Stockpile)
+            {
+                var entry = GetOrAddCategory(dict, res.Sample.Category);
+                entry.InStockpile += res.Count;
+                entry.Members.Add(res);
+            }
+
+            foreach (var res in Minion)
+            {
+                var entry = GetOrAddCategory(dict, res.Sample.Category);
+                entry.InBackpacks += res.Count;
+                entry.Members.Add(res);
+            }
+
+            return dict.Values;
+        }
+
+        private IEnumerable<AggregatedCategory> AggregateResources()
+        {
+            return AggregateResourcesByCategory(AggregateResourcesByType(EnumerateStockpileResources()), AggregateResourcesByType(EnumerateMinionResources()));
+        }
+
+        private String MakeDescriptionString(AggregatedResource Of)
+        {
+            return String.Format("{0}x {1} - {2}", Of.Count, Of.Sample.DisplayName, Of.Sample.Description);
+        }
+      
         public override void Construct()
         {
             ItemSize = new Point(32, 64);
             Root.RegisterForUpdate(this);
             Background = new TileReference("basic", 0);
             BackgroundColor = new Vector4(0, 0, 0, 0.5f);
+
             OnUpdate = (sender, time) =>
             {
                 var existingResourceEntries = new List<Widget>(Children);
                 Children.Clear();
 
-                var aggregated = AggregateResources(World.ListResourcesInStockpilesPlusMinions().Where(p => p.Value.First.Count > 0 || p.Value.Second.Count > 0));
+                var aggregated = AggregateResources();
 
                 foreach (var resource in aggregated)
-                    if (Library.GetResourceType(resource.InStockpile.Type).HasValue(out var resourceTemplate))
-                    {
-                        var icon = existingResourceEntries.FirstOrDefault(w => w is ResourceIcon && w.Tag.ToString() == resource.InStockpile.Type);
-                        var label = String.Join("\n", resource.Members);
+                {
+                    var label = String.Join("\n", resource.Members.Select(r => MakeDescriptionString(r)));
 
-                        if (icon == null)
-                            icon = AddChild(new ResourceIcon()
-                            {
-                                Layers = resourceTemplate.GuiLayers,
-                                Tooltip = label.ToString(),
-                                Tag = resource.InStockpile.Type
-                            });
-                        else
+                    var icon = existingResourceEntries.FirstOrDefault(w => w is Play.ResourceIcon && w.Tag.ToString() == resource.Category);
+
+                    if (icon == null)
+                        icon = AddChild(new Play.ResourceIcon()
                         {
-                            icon.Tooltip = label.ToString();
-                            if (!Children.Contains(icon))
-                                AddChild(icon);
-                        }
-
-                        var text = "S" + resource.InStockpile.Count.ToString() + "\n";
-                        if (resource.InBackpacks.Count > 0)
-                            text += "I" + resource.InBackpacks.Count.ToString();
-
-                        icon.Text = text;
-                        icon.Invalidate();
+                            Layers = resource.Members[0].Sample.GuiLayers,
+                            Tooltip = label,
+                            Tag = resource.Category
+                        });
+                    else
+                    {
+                        icon.Tooltip = label;
+                        if (!Children.Contains(icon))
+                            AddChild(icon);
                     }
+
+                    var text = "S" + resource.InStockpile + "\n";
+                    if (resource.InBackpacks > 0)
+                        text += "I" + resource.InBackpacks;
+
+                    icon.Text = text;
+                    icon.Invalidate();
+                }
 
                 var width = Root.RenderData.VirtualScreen.Width - ItemSpacing.X;
                 var itemsThatFit = width / (ItemSize.X + ItemSpacing.X);

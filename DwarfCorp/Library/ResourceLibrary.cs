@@ -101,7 +101,7 @@ namespace DwarfCorp
             InitializeResources();
 
             var r = new Resource("Trinket");
-            r.SetProperty("Name", GemResource.Type + "-encrusted " + BaseResource.GetProperty("Name", "Trinket"));
+            r.SetProperty("Name", GemResource.TypeName + "-encrusted " + BaseResource.GetProperty("Name", "Trinket"));
 
             if (GemResource.ResourceType.HasValue(out var gem))
                 r.SetProperty("MoneyValue", BaseResource.GetProperty<DwarfBux>("MoneyValue", 0m) + gem.MoneyValue * 2m);

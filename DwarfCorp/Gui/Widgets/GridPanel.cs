@@ -34,14 +34,5 @@ namespace DwarfCorp.Gui.Widgets
             }
             Invalidate();
         }
-
-        public int ItemsThatFit
-        {
-            get
-            {
-                return (GetDrawableInterior().Width / (ItemSize.X + ItemSpacing.X)) *
-                    (GetDrawableInterior().Height / (ItemSize.Y + ItemSpacing.Y));
-            }
-        }
     }
 }

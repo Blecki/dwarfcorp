@@ -39,6 +39,7 @@ namespace DwarfCorp
         public String CraftItemType;
         public Potion PotionType = null;
         public string Category = "";
+        public bool Aggregate = true; // Can this type be combined into a single unit for display purposes?
 
         public ResourceType()
         {

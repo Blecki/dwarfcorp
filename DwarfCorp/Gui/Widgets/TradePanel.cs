@@ -53,8 +53,8 @@ namespace DwarfCorp.Gui.Widgets
             int k = 0;
             foreach (var resource in left)
             {
-                if (Library.GetResourceType(resource.Type).HasValue(out var resourceType))
-                    LeftItems.AddChild(new ResourceIcon()
+                if (Library.GetResourceType(resource.TypeName).HasValue(out var resourceType))
+                    LeftItems.AddChild(new Play.ResourceIcon()
                     {
                         Layers = resourceType.GuiLayers,
                         MinimumSize = new Point(32, 32),
@@ -80,8 +80,8 @@ namespace DwarfCorp.Gui.Widgets
             k = 0;
             foreach (var resource in GetTopResources(rightResources))
             {
-                if (Library.GetResourceType(resource.Type).HasValue(out var resourceType))
-                    RightItems.AddChild(new ResourceIcon()
+                if (Library.GetResourceType(resource.TypeName).HasValue(out var resourceType))
+                    RightItems.AddChild(new Play.ResourceIcon()
                     {
                         Layers = resourceType.GuiLayers,
                         MinimumSize = new Point(32, 32),

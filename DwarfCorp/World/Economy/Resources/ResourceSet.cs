@@ -18,7 +18,7 @@ namespace DwarfCorp
 
         public bool Has(ResourceTypeAmount ResourceType)
         {
-            return Resources.Count(r => r.Type == ResourceType.Type) >= ResourceType.Count;
+            return Resources.Count(r => r.TypeName == ResourceType.Type) >= ResourceType.Count;
         }
 
         public bool Contains(Resource Resource)
@@ -43,7 +43,7 @@ namespace DwarfCorp
 
         public int Count(String Type)
         {
-            return Resources.Count(r => r.Type == Type);
+            return Resources.Count(r => r.TypeName == Type);
         }
 
         public int CountWithTag(String Tag)
@@ -51,25 +51,16 @@ namespace DwarfCorp
             return Resources.Count(r => r.ResourceType.HasValue(out var res) && res.Tags.Contains(Tag));
         }
 
-        public List<ResourceTypeAmount> AggregateByType()
-        {
-            var r = new Dictionary<String, int>();
-            foreach (var res in Resources)
-                if (r.ContainsKey(res.Type))
-                    r[res.Type] += 1;
-                else
-                    r.Add(res.Type, 1);
-            return r.Select(p => new ResourceTypeAmount(p.Key, p.Value)).ToList();
-        }
+       
 
         public List<Gui.Widgets.TradeableItem> AggregateByType2()
         {
             var r = new Dictionary<String, Gui.Widgets.TradeableItem>();
             foreach (var res in Resources)
-                if (r.ContainsKey(res.Type))
-                    r[res.Type].Resources.Add(res);
+                if (r.ContainsKey(res.TypeName))
+                    r[res.TypeName].Resources.Add(res);
                 else
-                    r.Add(res.Type, new Gui.Widgets.TradeableItem { Resources = new List<Resource> { res }, ResourceType = res.Type });
+                    r.Add(res.TypeName, new Gui.Widgets.TradeableItem { Resources = new List<Resource> { res }, ResourceType = res.TypeName });
             return r.Values.ToList();
         }
 
@@ -81,9 +72,9 @@ namespace DwarfCorp
 
             var r = new List<Resource>();
             foreach (var res in Enumerate())
-                if (needed.ContainsKey(res.Type) && needed[res.Type] > 0)
+                if (needed.ContainsKey(res.TypeName) && needed[res.TypeName] > 0)
                 {
-                    needed[res.Type] -= 1;
+                    needed[res.TypeName] -= 1;
                     r.Add(res);
                 }
 
@@ -94,10 +85,10 @@ namespace DwarfCorp
         {
             var r = new Dictionary<String, int>();
             foreach (var res in Resources)
-                if (r.ContainsKey(res.Type))
-                    r[res.Type] += 1;
+                if (r.ContainsKey(res.TypeName))
+                    r[res.TypeName] += 1;
                 else
-                    r.Add(res.Type, 1);
+                    r.Add(res.TypeName, 1);
             return r.Select(p => new ResourceTypeAmount(p.Key, p.Value)).ToList();
         }
     }

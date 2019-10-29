@@ -9,8 +9,8 @@ namespace DwarfCorp
 {
     public class Resource
     {
-        [JsonProperty] private String _Type;
-        [JsonIgnore] public String Type => _Type;
+        [JsonProperty] private String _TypeName;
+        [JsonIgnore] public String TypeName => _TypeName;
 
         public CreatureAI ReservedFor = null;
 
@@ -24,7 +24,7 @@ namespace DwarfCorp
 
             if (MetaData == null)
                 MetaData = new Blackboard();
-            MetaData.SetData(Name, Value);
+            MetaData.SetData<T>(Name, Value);
 
             return this;
         }
@@ -32,7 +32,7 @@ namespace DwarfCorp
         public T GetProperty<T>(String Name, T Default)
         {
             if (MetaData != null && MetaData.Has(Name))
-                return MetaData.GetData(Name, Default);
+                return MetaData.GetData<T>(Name, Default);
             else if (ResourceType.HasValue(out var res))
             {
                 var prop = typeof(ResourceType).GetField(Name);
@@ -51,25 +51,33 @@ namespace DwarfCorp
             get
             {
                 if (!_cachedResourceType.HasValue())
-                    _cachedResourceType = Library.GetResourceType(_Type);
+                    _cachedResourceType = Library.GetResourceType(_TypeName);
                 return _cachedResourceType;
             }
         }
 
         public Resource()
         {
-            _Type = "invalid";
+            _TypeName = "invalid";
         }
 
         public Resource(String Type)
         {
-            _Type = Type;
+            _TypeName = Type;
         }
 
         public Resource(ResourceType Type)
         {
-            _Type = Type.TypeName;
+            _TypeName = Type.TypeName;
             _cachedResourceType = Type;
         }
+
+        #region Property Accessors.
+        public String DisplayName { get { return GetProperty<String>("DisplayName", TypeName); } set { SetProperty<String>("DisplayName", value); } }
+        public bool Aggregate { get { return GetProperty<bool>("Aggregate", true); } set { SetProperty<bool>("Aggregate", value); } }
+        public String Category { get { return GetProperty<String>("Category", ""); } set { SetProperty<String>("Category", value); } }
+        public List<Gui.TileReference> GuiLayers { get => GetProperty<List<Gui.TileReference>>("GuiLayers", null); set => SetProperty<List<Gui.TileReference>>("GuiLayers", value); }
+        public String Description { get => GetProperty<String>("Description", ""); set => SetProperty<String>("Description", value); }
+        #endregion
     }
 }

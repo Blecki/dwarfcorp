@@ -203,7 +203,7 @@ namespace DwarfCorp.GameStates
             });
 
             if (Library.GetResourceType(Resource.ResourceType).HasValue(out var res))
-                r.AddChild(new ResourceIcon()
+                r.AddChild(new Play.ResourceIcon()
                 {
                     MinimumSize = new Point(32 + 16, 32 + 16),
                     MaximumSize = new Point(32 + 16, 32 + 16),
@@ -242,35 +242,30 @@ namespace DwarfCorp.GameStates
             if (Library.GetResourceType(Resource.ResourceType).HasValue(out var resourceInfo))
             {
                 var font = LineItem.Root.GetTileSheet("font10");
-                var label = resourceInfo.TypeName; // Todo: This should use the display name somehow.
+                var label = Resource.Resources[0].GetProperty<String>("DisplayName", resourceInfo.TypeName);
                 if (font != null)
                 {
-                    Point measurements = font.MeasureString(label);
+                    var measurements = font.MeasureString(label);
                     label = font.WordWrapString(label, 1.0f, 128 / GameSettings.Default.GuiScale, LineItem.WrapWithinWords);
                     if (128 / GameSettings.Default.GuiScale < measurements.X)
-                    {
                         LineItem.MinimumSize.Y = font.TileHeight * label.Split('\n').Length;
-                    }
                 }
                 LineItem.GetChild(1).Text = label;
                 LineItem.GetChild(1).Invalidate();
+
                 var counter = LineItem.GetChild(0).Children.Last();
                 counter.Text = Resource.Count.ToString();
                 counter.Invalidate();
+
                 LineItem.GetChild(0).Invalidate();
                 LineItem.Tooltip = resourceInfo.TypeName + "\n" + resourceInfo.Description;
+
                 for (int i = 0; i < 3; i++)
                 {
                     if (i > 0)
-                    {
-                        LineItem.GetChild(i).TextColor = Resource.Count > 0
-                            ? Color.Black.ToVector4()
-                            : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
-                    }
-                    LineItem.GetChild(i).BackgroundColor = Resource.Count > 0
-                        ? resourceInfo.Tint.ToVector4()
-                        : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
-                    LineItem.GetChild(i).Tooltip = resourceInfo.TypeName + "\n" + resourceInfo.Description;
+                        LineItem.GetChild(i).TextColor = Resource.Count > 0 ? Color.Black.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
+                    LineItem.GetChild(i).BackgroundColor = Resource.Count > 0 ? resourceInfo.Tint.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
+                    LineItem.GetChild(i).Tooltip = LineItem.Tooltip;
                     LineItem.GetChild(i).Invalidate();
                 }
             }

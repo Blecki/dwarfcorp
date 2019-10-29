@@ -113,7 +113,11 @@ namespace DwarfCorp
             var toReturn = new ResourceType();
             toReturn.Generated = true;
             toReturn.TypeName = objectName;
-            toReturn.DisplayName = toReturn.TypeName;
+            if (String.IsNullOrEmpty(DisplayName))
+                toReturn.DisplayName = toReturn.TypeName;
+            else
+                toReturn.DisplayName = DisplayName;
+
             toReturn.Tags = new List<String>()
                     {
                         "CraftItem",

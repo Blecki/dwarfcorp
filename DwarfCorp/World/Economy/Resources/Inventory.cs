@@ -71,7 +71,7 @@ namespace DwarfCorp
 
                     return false;
                 })
-                .Where(r => r.Resource.Type == OfType)
+                .Where(r => r.Resource.TypeName == OfType)
                 .Select(r => r.Resource)
                 .FirstOrDefault();
         }
@@ -151,7 +151,7 @@ namespace DwarfCorp
             if(!Remove(Resource, RestockType))
                 return null;
 
-            return EntityFactory.CreateEntity<GameComponent>(Resource.Type + " Resource", pos + MathFunctions.RandVector3Cube() * 0.5f,
+            return EntityFactory.CreateEntity<GameComponent>(Resource.TypeName + " Resource", pos + MathFunctions.RandVector3Cube() * 0.5f,
                 Blackboard.Create("resource", Resource));
         }
 
@@ -160,10 +160,10 @@ namespace DwarfCorp
             var toReturn = new Dictionary<string, ResourceTypeAmount>();
             foreach(var resource in Resources)
             {
-                if (toReturn.ContainsKey(resource.Resource.Type))
-                    toReturn[resource.Resource.Type].Count++;
+                if (toReturn.ContainsKey(resource.Resource.TypeName))
+                    toReturn[resource.Resource.TypeName].Count++;
                 else
-                    toReturn.Add(resource.Resource.Type, new ResourceTypeAmount(resource.Resource.Type, 1));
+                    toReturn.Add(resource.Resource.TypeName, new ResourceTypeAmount(resource.Resource.TypeName, 1));
             }
             return toReturn;
         }
@@ -207,7 +207,7 @@ namespace DwarfCorp
 
         public bool HasResource(ResourceTypeAmount itemToStock)
         {
-            return Resources.Count(resource => resource.Resource.Type == itemToStock.Type) >= itemToStock.Count;
+            return Resources.Count(resource => resource.Resource.TypeName == itemToStock.Type) >= itemToStock.Count;
         }
 
         public bool HasResource(ResourceTagAmount itemToStock)
@@ -217,9 +217,9 @@ namespace DwarfCorp
             foreach (var resource in Resources)
                 if (resource.Resource.ResourceType.HasValue(out var res) && res.Tags.Contains(itemToStock.Tag))
                 {
-                    if (!resourceCounts.ContainsKey(resource.Resource.Type))
-                        resourceCounts[resource.Resource.Type] = 0;
-                    resourceCounts[resource.Resource.Type]++;
+                    if (!resourceCounts.ContainsKey(resource.Resource.TypeName))
+                        resourceCounts[resource.Resource.TypeName] = 0;
+                    resourceCounts[resource.Resource.TypeName]++;
                 }
 
             return resourceCounts.Count > 0 && resourceCounts.Max(r => r.Value >= itemToStock.Count);
@@ -253,7 +253,7 @@ namespace DwarfCorp
             var r = new List<Resource>();
             foreach (var res in Resources)
             {
-                if (res.Resource.Type == amount.Type && count < amount.Count)
+                if (res.Resource.TypeName == amount.Type && count < amount.Count)
                 {
                     r.Add(res.Resource);
                     count += 1;

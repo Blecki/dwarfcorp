@@ -81,7 +81,7 @@ namespace DwarfCorp
                     if (numGot >= amount.Count)
                         break;
 
-                    foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => sResource.Type == amount.Type))
+                    foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => sResource.TypeName == amount.Type))
                     {
                         numGot += 1;
                         yield return new KeyValuePair<Stockpile, Resource>(stockpile, resource);
@@ -100,7 +100,7 @@ namespace DwarfCorp
                     if (numGot >= amount.Count)
                         break;
 
-                    foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => sResource.Type == amount.Type))
+                    foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => sResource.TypeName == amount.Type))
                     {
                         numGot += 1;
                         yield return new KeyValuePair<Stockpile, Resource>(stockpile, resource);
@@ -121,7 +121,7 @@ namespace DwarfCorp
                     if (numGot >= tag.Count)
                         break;
 
-                    foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => Library.GetResourceType(sResource.Type).HasValue(out var res) && res.Tags.Contains(tag.Tag)))
+                    foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => Library.GetResourceType(sResource.TypeName).HasValue(out var res) && res.Tags.Contains(tag.Tag)))
                     {
                         numGot += 1;
                         yield return new KeyValuePair<Stockpile, Resource>(stockpile, resource);
@@ -134,7 +134,7 @@ namespace DwarfCorp
         {
             foreach (var stockpile in EnumerateZones().OfType<Stockpile>())
             {
-                foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => Library.GetResourceType(sResource.Type).HasValue(out var res) && res.Tags.Any(t => Tags.Contains(t))))
+                foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => Library.GetResourceType(sResource.TypeName).HasValue(out var res) && res.Tags.Any(t => Tags.Contains(t))))
                     return new KeyValuePair<Stockpile, Resource>(stockpile, resource);
             }
 

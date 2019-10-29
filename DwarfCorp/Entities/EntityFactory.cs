@@ -115,7 +115,7 @@ namespace DwarfCorp
                     blackboard.SetData("resource", resource);
 
                     Physics body = EntityFactory.CreateEntity<Physics>(
-                        resource.Type + " Resource",
+                        resource.TypeName + " Resource",
                         pos,
                         //Blackboard.Create<int>("num", Math.Min(numRemaining, maxPileSize))) as Physics;
                         blackboard) as Physics;

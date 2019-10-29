@@ -14,7 +14,37 @@ namespace DwarfCorp.Play
         public ResourceSet Resources;
 
         // Todo: What if there are more resources than fit on the screen? Need scrolling!
-        
+
+        private class AggregatedResource
+        {
+            public Resource Sample;
+            public int Count;
+        }
+
+        private List<AggregatedResource> AggregateByType()
+        {
+            var r = new Dictionary<String, AggregatedResource>();
+            var nonStackables = new List<Resource>();
+            foreach (var res in Resources.Enumerate())
+            {
+                if (res.Aggregate == false)
+                    nonStackables.Add(res);
+                else
+                {
+                    if (r.ContainsKey(res.TypeName))
+                        r[res.TypeName].Count += 1;
+                    else
+                        r.Add(res.TypeName, new AggregatedResource
+                        {
+                            Sample = res,
+                            Count = 1
+                        });
+                }
+            }
+
+            return r.Values.Concat(nonStackables.Select(n => new AggregatedResource { Sample = n, Count = 1 })).ToList();
+        }
+
         public override void Construct()
         {
             ItemSize = new Point(32, 48);
@@ -32,38 +62,28 @@ namespace DwarfCorp.Play
                 var existingResourceEntries = new List<Widget>(Children);
                 Children.Clear();
 
-                var aggregated = Resources.AggregateByType();
-
-                foreach (var resource in aggregated)
+                foreach (var resource in AggregateByType())
                 {
-                    var resourceTemplate = Library.GetResourceType(resource.Type);
-                    if (!resourceTemplate.HasValue())
-                        resourceTemplate = Library.GetResourceType("Invalid");
+                    var icon = existingResourceEntries.FirstOrDefault(w => w is ResourceIcon && Object.ReferenceEquals(w.Tag, resource.Sample));
 
-                    if (resourceTemplate.HasValue(out var template))
-                    {
-                        var icon = existingResourceEntries.FirstOrDefault(w => w is ResourceIcon && w.Tag.ToString() == resource.Type);
+                    var label = resource.Sample.DisplayName + "\n" + resource.Sample.Description; // Resources of the same type will get collapsed won't they?
 
-                        var label = template.TypeName + "\n" + template.Description; // Resources of the same type will get collapsed won't they?
-
-                        if (icon == null)
-                            icon = AddChild(new ResourceIcon()
-                            {
-                                Layers = template.GuiLayers,
-                                Tooltip = label,
-                                Tag = resource.Type
-                            });
-                        else
+                    if (icon == null)
+                        icon = AddChild(new ResourceIcon()
                         {
-                            icon.Tooltip = label;
-                            if (!Children.Contains(icon))
-                                AddChild(icon);
-                        }
-
-                        //string text = resource.ToString();
-                        icon.Text = resource.Count.ToString();
-                        icon.Invalidate();
+                            Layers = resource.Sample.GuiLayers,
+                            Tooltip = label,
+                            Tag = resource.Sample
+                        });
+                    else
+                    {
+                        icon.Tooltip = label;
+                        if (!Children.Contains(icon))
+                            AddChild(icon);
                     }
+
+                    icon.Text = resource.Count.ToString();
+                    icon.Invalidate();
                 }
 
                 Layout();

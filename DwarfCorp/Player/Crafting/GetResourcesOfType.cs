@@ -41,7 +41,7 @@ namespace DwarfCorp
 
             foreach (var resource in Resources)
             {
-                var count = Creature.Inventory.Resources.Count(i => i.Resource.Type == resource.Type);
+                var count = Creature.Inventory.Resources.Count(i => i.Resource.TypeName == resource.Type);
                 if (count < resource.Count)
                     needed.Add(new ResourceTypeAmount(resource.Type, resource.Count - count));
             }

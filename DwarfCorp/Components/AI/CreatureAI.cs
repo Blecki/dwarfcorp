@@ -334,7 +334,7 @@ namespace DwarfCorp
 
                 foreach (var body in World.EnumerateIntersectingObjects(Physics.BoundingBox.Expand(3.0f)).OfType<ResourceEntity>().Where(r => r.Active && r.AnimationQueue.Count == 0))
                 {
-                    if (Library.GetResourceType(body.Resource.Type).HasValue(out var resource) && resource.Tags.Contains("Edible"))
+                    if (Library.GetResourceType(body.Resource.TypeName).HasValue(out var resource) && resource.Tags.Contains("Edible"))
                     {
                         if ((Faction.Race.EatsMeat && resource.Tags.Contains("AnimalProduct")) ||
                             (Faction.Race.EatsPlants && !resource.Tags.Contains("AnimalProduct")))

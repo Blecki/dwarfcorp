@@ -25,7 +25,7 @@ namespace DwarfCorp
         {
             Category = TaskCategory.Gather;
             this.ResourceToStock = ResourceToStock;
-            Name = "Stock Entity: " + ResourceToStock.Type;
+            Name = "Stock Entity: " + ResourceToStock.TypeName;
             Priority = TaskPriority.Medium;
             ReassignOnDeath = false;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
@@ -49,7 +49,7 @@ namespace DwarfCorp
             if (agent.AI.Stats.IsAsleep)
                 return Feasibility.Infeasible;
 
-            return agent.World.HasFreeStockpile(new ResourceTypeAmount(ResourceToStock.Type, 1)) && 
+            return agent.World.HasFreeStockpile(new ResourceTypeAmount(ResourceToStock.TypeName, 1)) && 
                 !agent.AI.Movement.IsSessile && agent.Inventory.Contains(ResourceToStock) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 

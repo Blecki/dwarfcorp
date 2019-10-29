@@ -25,7 +25,7 @@ namespace DwarfCorp
         {
             Zone = zone;
             this.Resource = Resource;
-            Name = "Stash " + Resource.Type;
+            Name = "Stash " + Resource.TypeName;
         }
 
         public override IEnumerable<Status> Run()
@@ -33,7 +33,7 @@ namespace DwarfCorp
             Creature.IsCloaked = false;
             if (Zone != null)
             {
-                var resourcesToStock = Creature.Inventory.Resources.Where(a => a.MarkedForRestock && Zone is Stockpile && (Zone as Stockpile).IsAllowed(a.Resource.Type)).ToList();
+                var resourcesToStock = Creature.Inventory.Resources.Where(a => a.MarkedForRestock && Zone is Stockpile && (Zone as Stockpile).IsAllowed(a.Resource.TypeName)).ToList();
 
                 foreach (var resource in resourcesToStock)
                 {
@@ -74,7 +74,7 @@ namespace DwarfCorp
                 yield return Status.Fail;
             else
             {
-                var newEntity = EntityFactory.CreateEntity<GameComponent>(Resource.Type + " Resource", Zone.GetBoundingBox().Center() + new Vector3(0.0f, 1.0f, 0.0f));
+                var newEntity = EntityFactory.CreateEntity<GameComponent>(Resource.TypeName + " Resource", Zone.GetBoundingBox().Center() + new Vector3(0.0f, 1.0f, 0.0f));
 
                 if (newEntity.GetRoot().GetComponent<Physics>().HasValue(out var newPhysics))
                     newPhysics.CollideMode = Physics.CollisionMode.None;

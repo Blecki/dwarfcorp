@@ -21,13 +21,13 @@ namespace DwarfCorp
         }
 
         public ResourceEntity(ComponentManager manager, Resource Resource, Vector3 position) :
-            base(manager, Resource.Type, Matrix.CreateTranslation(position), new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0))
+            base(manager, Resource.TypeName, Matrix.CreateTranslation(position), new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0))
         {
             this.Resource = Resource;
             Restitution = 0.1f;
             Friction = 0.1f;
 
-            if (Library.GetResourceType(Resource.Type).HasValue(out var type))
+            if (Library.GetResourceType(Resource.TypeName).HasValue(out var type))
             {
                 Tags.Add(type.TypeName);
                 Tags.Add("Resource");
@@ -54,7 +54,7 @@ namespace DwarfCorp
             {
                 Die();
             }
-            var tint = Library.GetResourceType(this.Resource.Type).HasValue(out var res) ? res.Tint : Color.White;
+            var tint = Library.GetResourceType(this.Resource.TypeName).HasValue(out var res) ? res.Tint : Color.White;
             if (tint != Color.White)
                 this.SetVertexColorRecursive(tint);
         }

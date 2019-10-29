@@ -170,7 +170,7 @@ namespace DwarfCorp
             }
 
             foreach (var resource in Resources.Enumerate())
-                if (Library.GetResourceType(resource.Type).HasValue(out var resourceType))
+                if (Library.GetResourceType(resource.TypeName).HasValue(out var resourceType))
                     foreach (var tag in resourceType.Tags)
                         if (World.PersistentData.CachedResourceTagCounts.ContainsKey(tag)) // Todo: Move to World Manager.
                         {

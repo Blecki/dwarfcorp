@@ -57,11 +57,11 @@ namespace DwarfCorp.Scripting.Factions.Trading
                     Memory.SetValue("$trade_result", new Yarn.Value("cancelled"));
                 else if (tradeResult == Gui.Widgets.TradeDialogResult.RejectProfit)
                     Memory.SetValue("$trade_result", new Yarn.Value("unprofitable"));
-                else if (transaction.PlayerItems.Select(i => Library.GetResourceType(i.Type))
+                else if (transaction.PlayerItems.Select(i => Library.GetResourceType(i.TypeName))
                     .SelectMany(i => { if (i.HasValue(out var t)) return t.Tags; return new List<String>(); })
                     .Any(tag => envoy.OwnerFaction.Race.HatedResources.Contains(tag)))
                     Memory.SetValue("$trade_result", new Yarn.Value("hated"));
-                else if (transaction.PlayerItems.Select(i => Library.GetResourceType(i.Type))
+                else if (transaction.PlayerItems.Select(i => Library.GetResourceType(i.TypeName))
                     .SelectMany(i => { if (i.HasValue(out var t)) return t.Tags; return new List<String>(); })
                     .Any(tag => envoy.OwnerFaction.Race.LikedResources.Contains(tag)))
                     Memory.SetValue("$trade_result", new Yarn.Value("liked"));
