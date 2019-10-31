@@ -67,12 +67,12 @@ namespace DwarfCorp.Gui.Widgets
                 numrows = 0;
                 InfoWidget.Clear();
                 AddRow("Corporate Liquid Assets:", World.Overworld.PlayerCorporationFunds.ToString());
-                AddRow("Corporate Material Assets:", new DwarfBux(World.Overworld.PlayerCorporationResources.Enumerate().Sum(r => r.GetProperty<DwarfBux>("MoneyValue", 0m))).ToString());
+                AddRow("Corporate Material Assets:", new DwarfBux(World.Overworld.PlayerCorporationResources.Enumerate().Sum(r => r.MoneyValue)).ToString());
                 AddRow("Liquid assets:", Faction.Economy.Funds.ToString());
                 var resources = World.EnumerateResourcesIncludingMinions();
                 AddRow("Material assets:", String.Format("{0} goods valued at ${1}",
                     resources.Count(),
-                    resources.Sum(r => r.GetProperty<DwarfBux>("MoneyValue", 0m))));
+                    resources.Sum(r => r.MoneyValue)));
                 var payPerDay = (DwarfBux)Faction.Minions.Select(m => m.Stats.CurrentLevel.Pay.Value).Sum();
                 AddRow("Employees:", String.Format("{0} at {1} per day.", Faction.Minions.Count, payPerDay));
                 AddRow("Runway:", String.Format("{0} day(s).\n", (int)(Faction.Economy.Funds / Math.Max(payPerDay, (decimal)0.01))));

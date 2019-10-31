@@ -63,10 +63,7 @@ namespace DwarfCorp
 
         public override void Die()
         {
-            var corpseResource = new Resource("Corpse");
-            corpseResource.SetProperty("Name", AI.Stats.FullName + "'s " + "Corpse");
-            Inventory.AddResource(corpseResource);
-
+            Inventory.AddResource(new Resource("Corpse") { DisplayName = AI.Stats.FullName + "'s Corpse" });
             base.Die();
         }
 

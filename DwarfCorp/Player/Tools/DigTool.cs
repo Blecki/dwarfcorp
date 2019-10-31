@@ -89,8 +89,7 @@ namespace DwarfCorp
                 {
                     if (r.IsValid)
                     {
-                        if (World.PersistentData.Designations.GetVoxelDesignation(r, DesignationType.Dig).HasValue(out var designation)
-                            && designation.Task != null) // Todo: Is this necessary?
+                        if (World.PersistentData.Designations.GetVoxelDesignation(r, DesignationType.Dig).HasValue(out var designation) && designation.Task != null) // Todo: Is this necessary?
                             World.TaskManager.CancelTask(designation.Task);
                     }
                 }

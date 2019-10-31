@@ -97,13 +97,14 @@ namespace DwarfCorp
 
             for (int i = 0; i < NumFurniture; i++)
             {
+                // Todo: Use tag - at some point CraftType.Object will be removed.
                 var randomObject = Datastructures.SelectRandom(Library.EnumerateCraftables().Where(type => type.Type == CraftItem.CraftType.Object && type.RequiredResources.All((tags) =>
                     TradeGoods.Any(good => good.Key == tags.Tag))));
                 if (randomObject == null)
                     continue;
 
                 var resourceType = randomObject.ToResourceType(world);
-                toReturn.Add(new Resource(resourceType).SetProperty("DisplayName", Posessive + " " + resourceType.DisplayName));
+                toReturn.Add(new Resource(resourceType) { DisplayName = Posessive + " " + resourceType.DisplayName });
             }
 
             return toReturn;

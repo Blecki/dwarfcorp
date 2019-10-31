@@ -111,7 +111,7 @@ namespace DwarfCorp
 
                     if (resourceAmount.ResourceType.HasValue(out var resource))
                     {
-                        Agent.Creature.Stats.Hunger.CurrentValue += resourceAmount.GetProperty<float>("FoodContent", 0.0f);
+                        Agent.Creature.Stats.Hunger.CurrentValue += resourceAmount.FoodContent;
 
                         if (resource.Tags.Contains("Alcohol"))
                             Agent.Creature.AddThought("I had good ale recently.", new TimeSpan(0, 8, 0, 0), 10.0f);
@@ -122,7 +122,7 @@ namespace DwarfCorp
 
                         if (MustPay)
                         {
-                            var depositAct = new DepositMoney(Agent, resourceAmount.GetProperty<DwarfBux>("MoneyValue", 0m));
+                            var depositAct = new DepositMoney(Agent, resourceAmount.MoneyValue);
                             foreach (var result in depositAct.Run())
                                 if (result == Status.Running)
                                     yield return result;

@@ -46,7 +46,7 @@ namespace DwarfCorp.Trade
 
         public DwarfBux ComputeValue(List<Resource> Resources)
         {
-            return Resources.Sum(r => (r.ResourceType.HasValue(out var type) ? GetValueMultiplier(type) : 1.0f) * r.GetProperty<DwarfBux>("MoneyValue", 0m));
+            return Resources.Sum(r => (r.ResourceType.HasValue(out var type) ? GetValueMultiplier(type) : 1.0f) * r.MoneyValue);
         }
 
         public void RemoveResources(List<Resource> Resources)

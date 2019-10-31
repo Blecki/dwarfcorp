@@ -242,7 +242,7 @@ namespace DwarfCorp.GameStates
             if (Library.GetResourceType(Resource.ResourceType).HasValue(out var resourceInfo))
             {
                 var font = LineItem.Root.GetTileSheet("font10");
-                var label = Resource.Resources[0].GetProperty<String>("DisplayName", resourceInfo.TypeName);
+                var label = Resource.Resources[0].DisplayName;
                 if (font != null)
                 {
                     var measurements = font.MeasureString(label);

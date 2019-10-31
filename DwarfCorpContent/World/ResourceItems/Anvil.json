@@ -1,0 +1,40 @@
+{
+  "TypeName": "Anvil",
+  "MoneyValue": 250.0,
+  "Description": "Needed for crafting metal objects.",
+  "Category": "Furniture",
+  "GuiLayers": [
+    {
+      "Sheet": "furniture",
+      "Tile": 24
+    }
+  ],
+  "Tags": [
+    "Anvil"
+  ],
+  "FoodContent": 0.0,
+  "CompositeLayers": [
+    {
+      "Asset": "entities\\Furniture\\interior_furniture",
+      "FrameSize": "32, 32",
+      "Frame": "0, 3"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": null,
+    "EncrustingAsset": null,
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "DisplayName": "Anvil",
+  "PlantToGenerate": null,
+  "CanCraft": true,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": null
+}

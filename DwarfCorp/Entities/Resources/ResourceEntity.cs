@@ -63,8 +63,8 @@ namespace DwarfCorp
         {
             base.CreateCosmeticChildren(manager);
 
-            var compositeLayers = Resource.GetProperty<List<ResourceType.CompositeLayer>>("CompositeLayers", new List<ResourceType.CompositeLayer>());
-            var tint = Resource.GetProperty<Color>("Tint", Color.White);
+            var compositeLayers = Resource.CompositeLayers;
+            var tint = Resource.Tint;
 
             Tinter sprite = null;
 

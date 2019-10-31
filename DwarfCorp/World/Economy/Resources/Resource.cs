@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -16,7 +17,7 @@ namespace DwarfCorp
 
         public Blackboard MetaData = null;
 
-        public Resource SetProperty<T>(String Name, T Value)
+        private Resource SetProperty<T>(String Name, T Value)
         {
             var prop = typeof(ResourceType).GetField(Name);
             if (prop != null && prop.FieldType != typeof(T))
@@ -29,7 +30,7 @@ namespace DwarfCorp
             return this;
         }
 
-        public T GetProperty<T>(String Name, T Default)
+        private T GetProperty<T>(String Name, T Default)
         {
             if (MetaData != null && MetaData.Has(Name))
                 return MetaData.GetData<T>(Name, Default);
@@ -77,7 +78,12 @@ namespace DwarfCorp
         public bool Aggregate { get { return GetProperty<bool>("Aggregate", true); } set { SetProperty<bool>("Aggregate", value); } }
         public String Category { get { return GetProperty<String>("Category", ""); } set { SetProperty<String>("Category", value); } }
         public List<Gui.TileReference> GuiLayers { get => GetProperty<List<Gui.TileReference>>("GuiLayers", null); set => SetProperty<List<Gui.TileReference>>("GuiLayers", value); }
+        public List<ResourceType.CompositeLayer> CompositeLayers { get => GetProperty<List<ResourceType.CompositeLayer>>("CompositeLayers", new List<ResourceType.CompositeLayer>()); set => SetProperty<List<ResourceType.CompositeLayer>>("CompositeLayers", value); }
         public String Description { get => GetProperty<String>("Description", ""); set => SetProperty<String>("Description", value); }
+        public float FoodContent { get => GetProperty<float>("FoodContent", 0.0f); set => SetProperty<float>("FoodContent", value); }
+        public DwarfBux MoneyValue { get => GetProperty<DwarfBux>("MoneyValue", 0u); set => SetProperty<DwarfBux>("MoneyValue", value); }
+        public ResourceType.TrinketInfo TrinketData { get => GetProperty<ResourceType.TrinketInfo>("TrinketData", new ResourceType.TrinketInfo()); set => SetProperty<ResourceType.TrinketInfo>("TrinketData", value); }
+        public Color Tint { get => GetProperty<Color>("Tint", new Color(1.0f, 1.0f, 1.0f, 1.0f)); set => SetProperty<Color>("Tint", value); }
         #endregion
     }
 }

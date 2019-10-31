@@ -72,11 +72,10 @@ namespace DwarfCorp
         public static MaybeNull<Resource> CreateAleResourceType(String type)
         {
             InitializeResources();
-            
-            var r = new Resource("Ale");
-            if (GetResourceType(type).HasValue(out var baseResource))
-                r.SetProperty("Name", String.IsNullOrEmpty(baseResource.AleName) ? type + " Ale" : baseResource.AleName);
-            return r;
+            if (GetResourceType(type).HasValue(out var baseResource) && !String.IsNullOrEmpty(baseResource.AleName))
+                return new Resource("Ale") { DisplayName = baseResource.AleName };
+            else
+                return new Resource("Ale") { DisplayName = type + " Ale" };
         }
 
         public static MaybeNull<Resource> CreateMealResource(String typeA, String typeB)
@@ -88,9 +87,9 @@ namespace DwarfCorp
             var componentB = GetResourceType(typeB);
             if (componentA.HasValue(out var A) && componentB.HasValue(out var B))
             {
-                r.SetProperty("FoodContent", A.FoodContent + B.FoodContent);
-                r.SetProperty("MoneyValue", 2m * (A.MoneyValue + B.MoneyValue));
-                r.SetProperty("DisplayName", TextGenerator.GenerateRandom(new List<String>() { A.DisplayName, B.DisplayName }, TextGenerator.GetAtoms(ContentPaths.Text.Templates.food)));
+                r.FoodContent = A.FoodContent + B.FoodContent;
+                r.MoneyValue = 2m * (A.MoneyValue + B.MoneyValue);
+                r.DisplayName = TextGenerator.GenerateRandom(new List<String>() { A.DisplayName, B.DisplayName }, TextGenerator.GetAtoms(ContentPaths.Text.Templates.food));
             }
 
             return r;
@@ -101,18 +100,18 @@ namespace DwarfCorp
             InitializeResources();
 
             var r = new Resource("Trinket");
-            r.SetProperty("Name", GemResource.TypeName + "-encrusted " + BaseResource.GetProperty("Name", "Trinket"));
+            r.DisplayName = GemResource.TypeName + "-encrusted " + BaseResource.DisplayName;
 
             if (GemResource.ResourceType.HasValue(out var gem))
-                r.SetProperty("MoneyValue", BaseResource.GetProperty<DwarfBux>("MoneyValue", 0m) + gem.MoneyValue * 2m);
+                r.MoneyValue = BaseResource.MoneyValue + gem.MoneyValue * 2m;
 
             var compositeLayers = new List<ResourceType.CompositeLayer>();
-            compositeLayers.AddRange(BaseResource.GetProperty<List<ResourceType.CompositeLayer>>("CompositeLayers", new List<ResourceType.CompositeLayer>()));
+            compositeLayers.AddRange(BaseResource.CompositeLayers);
 
             var guiLayers = new List<TileReference>();
-            guiLayers.AddRange(BaseResource.GetProperty<List<TileReference>>("GuiLayers", new List<TileReference>()));
+            guiLayers.AddRange(BaseResource.GuiLayers);
 
-            var trinketData = BaseResource.GetProperty<ResourceType.TrinketInfo>("Trinket Data", BaseResource.ResourceType.HasValue(out var baseRes) ? baseRes.TrinketData : new ResourceType.TrinketInfo());
+            var trinketData = BaseResource.TrinketData;
 
             if (GemResource.ResourceType.HasValue(out var gemRes))
             {
@@ -128,8 +127,8 @@ namespace DwarfCorp
                 guiLayers.Add(new TileReference(trinketData.EncrustingAsset, gemRes.TrinketData.SpriteRow * 7 + trinketData.SpriteColumn));
             }
 
-            r.SetProperty("CompositeLayers", compositeLayers);
-            r.SetProperty("GuiLayers", guiLayers);
+            r.CompositeLayers = compositeLayers;
+            r.GuiLayers = guiLayers;
 
             return r;
         }
@@ -191,16 +190,16 @@ namespace DwarfCorp
             var name = baseMaterial + " " + names[item] + " (" + qualityType + ")";
 
             var r = new Resource("Trinket");
-            r.SetProperty("DisplayName", name);
+            r.DisplayName = name;
             
             if (GetResourceType(baseMaterial).HasValue(out var material))
             {
-                r.SetProperty("MoneyValue", values[item] * material.MoneyValue * 3m * quality);
-                r.SetProperty("Tint", material.Tint);
+                r.MoneyValue = values[item] * material.MoneyValue * 3m * quality;
+                r.Tint = material.Tint;
 
                 var tile = new Point(tiles[item], material.TrinketData.SpriteRow);
 
-                r.SetProperty("CompositeLayers", new List<ResourceType.CompositeLayer>(new ResourceType.CompositeLayer[]
+                r.CompositeLayers = new List<ResourceType.CompositeLayer>(new ResourceType.CompositeLayer[]
                 {
                     new ResourceType.CompositeLayer
                     {
@@ -208,7 +207,7 @@ namespace DwarfCorp
                         FrameSize = new Point(32, 32),
                         Frame = tile
                     }
-                }));
+                });
 
                 var trinketInfo = new ResourceType.TrinketInfo
                 {
@@ -218,9 +217,9 @@ namespace DwarfCorp
                     SpriteRow = material.TrinketData.SpriteRow
                 };
 
-                r.SetProperty("TrinketData", trinketInfo);
+                r.TrinketData = trinketInfo;
 
-                r.SetProperty("GuiLayers", new List<TileReference>() { new TileReference(material.TrinketData.BaseAsset, tile.Y * 7 + tile.X) });
+                r.GuiLayers = new List<TileReference>() { new TileReference(material.TrinketData.BaseAsset, tile.Y * 7 + tile.X) };
 
                 return r;
             }
@@ -231,7 +230,7 @@ namespace DwarfCorp
         public static MaybeNull<Resource> CreateBreadResource(String component)
         {
             InitializeResources();
-            return new Resource("Bread").SetProperty("DisplayName", component + " Bread");
+            return new Resource("Bread") { DisplayName = component + " Bread" };
         }
     }
 

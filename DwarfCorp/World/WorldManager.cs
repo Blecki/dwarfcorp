@@ -173,7 +173,7 @@ namespace DwarfCorp
 
             var resources = EnumerateResourcesIncludingMinions();
             LogStat("Resources", resources.Count());
-            LogStat("Resource Value", (float)resources.Sum(r => r.GetProperty<DwarfBux>("MoneyValue", 0m)));
+            LogStat("Resource Value", (float)resources.Sum(r => r.MoneyValue));
             LogStat("Employees", PlayerFaction.Minions.Count);
             LogStat("Employee Pay", (float)PlayerFaction.Minions.Select(m => m.Stats.CurrentLevel.Pay.Value).Sum());
             LogStat("Furniture",  PlayerFaction.OwnedObjects.Count);

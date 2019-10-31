@@ -2287,6 +2287,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Corporate</Name>
     </None>
+    <None Include="World\ResourceItems\Anvil.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Anvil</Name>
+    </None>
     <None Include="World\ResourceItems\BambooSprout.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>BambooSprout</Name>

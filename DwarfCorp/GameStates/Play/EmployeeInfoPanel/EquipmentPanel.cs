@@ -31,8 +31,8 @@ namespace DwarfCorp.Play.EmployeeInfo
             if (_Resource == null)
                 return base.Redraw();
 
-            Tooltip = _Resource.GetProperty<String>("DisplayName", "");
-            var layers = _Resource.GetProperty<List<TileReference>>("GuiLayers", new List<TileReference>());
+            Tooltip = _Resource.DisplayName;
+            var layers = _Resource.GuiLayers;
 
             var r = new List<Mesh>();
             foreach (var layer in layers)
