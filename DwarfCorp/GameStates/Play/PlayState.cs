@@ -2222,7 +2222,7 @@ namespace DwarfCorp.GameStates
             {
                 OnRefresh = (sender) =>
                 {
-                    (sender as IconTray).ItemSource = (new Widget[] { returnIcon }).Concat(icons.Where(icon => Filter(icon.Tag as CraftItem))).ToList();
+                    (sender as IconTray).ItemSource = (new Widget[] { returnIcon }).Concat(icons.Where(icon => Filter(icon.Tag as CraftableRecord))).ToList();
                     (sender as IconTray).ResetItemsFromSource();
                 }
             };
@@ -2282,7 +2282,7 @@ namespace DwarfCorp.GameStates
                 var placeRootObjects = new List<FlatToolTray.Icon>();
 
                 foreach (var item in icons.Where(data => Filter(data.Tag as CraftableRecord)))
-                    if (item.Tag is CraftItem craft)
+                    if (item.Tag is CraftableRecord craft)
                         if (string.IsNullOrEmpty(craft.Category) || !placeCategoryExists.ContainsKey(craft.Category))
                         {
                             placeRootObjects.Add(item);

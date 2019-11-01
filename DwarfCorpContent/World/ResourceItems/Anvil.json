@@ -37,5 +37,12 @@
     255
   ],
   "AleName": null,
-  "PlaceableEntityName": "Anvil"
+  "Placement_Placeable": true,
+  "Placement_EntityToCreate": "Anvil",
+  "Placement_AllowRotation": true,
+  "Placement_PlaceTime": 5.0,
+  "Placement_SpawnOffset": "0, 0, 0",
+  "Placement_AddToOwnedPool": true,
+  "Placement_MarkDestructable": true,
+  "Placement_PlacementRequirement": "OnGround"
 }
