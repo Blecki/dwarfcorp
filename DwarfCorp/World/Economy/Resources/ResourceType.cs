@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace DwarfCorp
 {
-    public class ResourceType
+    public class ResourceType : CraftableRecord
     {
         public struct TrinketInfo
         {
@@ -23,7 +23,8 @@ namespace DwarfCorp
         }
 
         public string TypeName;
-        public string DisplayName;
+        public string DisplayName { get; set; }
+        public Gui.TileReference Icon { get => GuiLayers[0]; }
 
         public DwarfBux MoneyValue;
         public string Description;
@@ -38,8 +39,26 @@ namespace DwarfCorp
         public string AleName = "";
         public String CraftItemType;
         public Potion PotionType = null;
-        public string Category = "";
+        public string Category { get; set; }
         public bool Aggregate = true; // Can this type be combined into a single unit for display purposes?
+
+        // Properties controlling placement.
+        public bool Placement_Placeable = false;
+        public String Placement_EntityToCreate = null;
+        public bool Placement_AllowRotation = false;
+        public float Placement_PlaceTime = 10.0f;
+        public Vector3 Placement_SpawnOffset = Vector3.Zero;
+        public bool Placement_AddToOwnedPool = true;
+        public bool Placement_MarkDestructable = true;
+
+        public enum PlacementRequirement
+        {
+            OnGround,
+            NearWall
+        }
+
+        public PlacementRequirement Placement_PlacementRequirement = PlacementRequirement.OnGround;
+
 
         public ResourceType()
         {

@@ -4,7 +4,7 @@ namespace DwarfCorp
 {
     public class PlacementDesignation
     {
-        public CraftItem ItemType;
+        public ResourceType ItemType;
         public VoxelHandle Location;
         public GameComponent WorkPile;
         public bool OverrideOrientation;

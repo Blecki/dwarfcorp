@@ -4,7 +4,7 @@ namespace DwarfCorp.Gui.Widgets
 {
     public class PlaceCraftInfo : Widget
     {
-        public CraftItem Data;
+        public ResourceType Data;
         public WorldManager World;
 
         public override void Construct()
@@ -25,20 +25,7 @@ namespace DwarfCorp.Gui.Widgets
 
                 titleBar.AddChild(new Gui.Widget
                 {
-                    MinimumSize = new Point(32, 32),
-                    MaximumSize = new Point(32, 32),
-                    Background = Data.Icon,
-                    AutoLayout = Gui.AutoLayout.DockLeft,
-                    Text = Data.CraftedResultsCount.ToString(),
-                    Font = "font10-outline-numsonly",
-                    TextHorizontalAlign = HorizontalAlign.Right,
-                    TextVerticalAlign = VerticalAlign.Bottom,
-                    TextColor = Color.White.ToVector4()
-
-                });
-                titleBar.AddChild(new Gui.Widget
-                {
-                    Text = " " + Data.Name,
+                    Text = Data.DisplayName,
                     Font = "font16",
                     AutoLayout = Gui.AutoLayout.DockLeft,
                     TextVerticalAlign = VerticalAlign.Center,

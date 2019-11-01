@@ -86,10 +86,7 @@ namespace DwarfCorp
             if (agent.Stats.IsAsleep || agent.IsDead || !agent.Active)
                 return Feasibility.Infeasible;
 
-            if (!PlacementDesignation.ItemType.IsMagical && !agent.Stats.IsTaskAllowed(TaskCategory.BuildObject))
-                return Feasibility.Infeasible;
-
-            if (PlacementDesignation.ItemType.IsMagical && !agent.Stats.IsTaskAllowed(TaskCategory.Research))
+            if (!agent.Stats.IsTaskAllowed(TaskCategory.BuildObject))
                 return Feasibility.Infeasible;
 
             if (agent.AI.Stats.IsAsleep)

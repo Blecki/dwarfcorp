@@ -14,11 +14,11 @@
   },
   "BaseCraftTime": 20.0,
   "Description": "Dwarves use the still to brew ale.",
-  "Type": "Object",
+  "Type": "Resource",
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": "",
+  "ResourceCreated": "Barrel",
   "CraftLocation": "Craft Table",
   "Verb": "Build",
   "PastTeseVerb": "Built",
@@ -26,6 +26,6 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": true,
-  "CraftActBehavior": "Object",
+  "CraftActBehavior": "Normal",
   "Tutorial": "Use the Barrel to brew ale from grain, fruits or mushrooms. Only one craftsdwarf may use a Barrel at a time."
 }

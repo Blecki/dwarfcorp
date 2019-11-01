@@ -16,54 +16,42 @@ namespace DwarfCorp
     {
         public static bool IsValidPlacement(
             VoxelHandle Location, 
-            CraftItem CraftType, 
+            ResourceType CraftType, 
             WorldManager World, 
             GameComponent PreviewBody,
             String Verb,
             String PastParticple)
         {            
             if (CraftType == null)
-            {
                 return false;
-            }
 
-            //if (!String.IsNullOrEmpty(CraftType.CraftLocation) 
-            //    && World.PlayerFaction.FindNearestItemWithTags(CraftType.CraftLocation, Location.WorldPosition, false, null) == null)
-            //{
-            //    World.UserInterface.ShowTooltip("Can't " + Verb + ", need " + CraftType.CraftLocation);
-            //    return false;
-            //}
-
-            foreach (var req in CraftType.Prerequisites)
+            switch (CraftType.Placement_PlacementRequirement)
             {
-                switch (req)
-                {
-                    case CraftItem.CraftPrereq.NearWall:
+                case ResourceType.PlacementRequirement.NearWall:
+                    {
+                        var neighborFound = VoxelHelpers.EnumerateManhattanNeighbors2D(Location.Coordinate)
+                                .Select(c => new VoxelHandle(World.ChunkManager, c))
+                                .Any(v => v.IsValid && !v.IsEmpty);
+
+                        if (!neighborFound)
                         {
-                            var neighborFound = VoxelHelpers.EnumerateManhattanNeighbors2D(Location.Coordinate)
-                                    .Select(c => new VoxelHandle(World.ChunkManager, c))
-                                    .Any(v => v.IsValid && !v.IsEmpty);
-
-                            if (!neighborFound)
-                            {
-                                World.UserInterface.ShowTooltip("Must be " + PastParticple + " next to wall!");
-                                return false;
-                            }
-
-                            break;
+                            World.UserInterface.ShowTooltip("Must be " + PastParticple + " next to wall!");
+                            return false;
                         }
-                    case CraftItem.CraftPrereq.OnGround:
+
+                        break;
+                    }
+                case ResourceType.PlacementRequirement.OnGround:
+                    {
+                        var below = VoxelHelpers.GetNeighbor(Location, new GlobalVoxelOffset(0, -1, 0));
+
+                        if (!below.IsValid || below.IsEmpty)
                         {
-                            var below = VoxelHelpers.GetNeighbor(Location, new GlobalVoxelOffset(0, -1, 0));
-
-                            if (!below.IsValid || below.IsEmpty)
-                            {
-                                World.UserInterface.ShowTooltip("Must be " + PastParticple + " on solid ground!");
-                                return false;
-                            }
-                            break;
+                            World.UserInterface.ShowTooltip("Must be " + PastParticple + " on solid ground!");
+                            return false;
                         }
-                }
+                        break;
+                    }
             }
 
             if (PreviewBody != null)
@@ -101,14 +89,17 @@ namespace DwarfCorp
                         var tvh = new VoxelHandle(World.ChunkManager, v);
                         return tvh.IsValid && !tvh.IsEmpty;
                     });
+
                 var current = new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(PreviewBody.Position));
                 bool underwater = current.IsValid && current.LiquidType != LiquidType.None;
+
                 if (underwater)
                 {
                     World.UserInterface.ShowTooltip("Can't " + Verb + " here: underwater or in lava.");
                     return false;
                 }
-                if (intersectsWall && !CraftType.Prerequisites.Contains(CraftItem.CraftPrereq.NearWall))
+
+                if (intersectsWall && CraftType.Placement_PlacementRequirement != ResourceType.PlacementRequirement.NearWall)
                 {
                     World.UserInterface.ShowTooltip("Can't " + Verb + " here: intersects wall.");
                     return false;

@@ -170,13 +170,15 @@ namespace DwarfCorp.Rail
                 {
                     var startPos = body.Position + new Vector3(0.0f, -0.3f, 0.0f);
                     var endPos = body.Position;
-
+                    ResourceType railRes = null;
+                    Library.GetResourceType("Rail").HasValue(out railRes); // Todo: Actually check if it's null.
+                   
                     var designation = new PlacementDesignation
                     {
                         Entity = body,
                         WorkPile = new WorkPile(World.ComponentManager, startPos),
                         OverrideOrientation = false,
-                        ItemType = RailCraftItem,
+                        ItemType = railRes,
                         Location = new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(body.Position)),
                         HasResources = hasResources,
                         Orientation = 0.0f,

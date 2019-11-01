@@ -7,7 +7,14 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    public class CraftItem
+    public interface CraftableRecord // Todo: This is horrible.
+    {
+        String DisplayName { get; }
+        Gui.TileReference Icon { get; } 
+        String Category { get; }
+    }
+
+    public class CraftItem : CraftableRecord
     {
         public enum CraftType
         {
@@ -36,12 +43,12 @@ namespace DwarfCorp
         public string EntityName = "";
         public string ObjectName = "";
 
-        public String DisplayName = null;
+        public String DisplayName { get; set; }
         public String ShortDisplayName = null;
         public String PluralDisplayName = null;
 
         public List<ResourceTagAmount> RequiredResources = new List<ResourceTagAmount>();
-        public Gui.TileReference Icon = null;
+        public Gui.TileReference Icon { get; set; }
         public float BaseCraftTime = 0.0f;
         public string Description = "";
         public CraftType Type = CraftType.Object;
@@ -58,7 +65,7 @@ namespace DwarfCorp
         public bool Deconstructable = true;
         public CraftActBehaviors CraftActBehavior = CraftActBehaviors.Normal;
         public bool AllowRotation = false;
-        public string Category = "";
+        public string Category { get; set; }
         public bool IsMagical = false;
         public string Tutorial = "";
         public bool AllowUserCrafting = true;

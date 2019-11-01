@@ -1744,16 +1744,16 @@ namespace DwarfCorp.GameStates
                     KeepChildVisible = true, // So the player can interact with the popup.
                     ExpandChildWhenDisabled = true,
                     Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
-                    Text = objectNameToLabel(data.ShortDisplayName),
+                    Text = objectNameToLabel(data.DisplayName),
                     TextVerticalAlign = VerticalAlign.Below,
                     TextColor = Color.White.ToVector4(),
                     OnShown = (sender) => World.Tutorial("build crafts"),
                     PopupChild = new BuildCraftInfo
                     {
-                        Data = data,
+                        Data = data as CraftItem,
                         Rect = new Rectangle(0, 0, 450, 200),
                         World = World,
-                        OnShown = (sender) => World.Tutorial(data.Name),
+                        OnShown = (sender) => World.Tutorial((data as CraftItem).Name),
                         BuildAction = (sender, args) =>
                         {
                             var buildInfo = (sender as Gui.Widgets.BuildCraftInfo);
@@ -1765,17 +1765,17 @@ namespace DwarfCorp.GameStates
                             if (numRepeats > 1)
                             {
                                 var subTasks = new List<Task>();
-                                var compositeTask = new CompoundTask(String.Format("Craft {0} {1}", numRepeats, data.PluralDisplayName), TaskCategory.CraftItem, TaskPriority.Medium);
+                                var compositeTask = new CompoundTask(String.Format("Craft {0} {1}", numRepeats, (data as CraftItem).PluralDisplayName), TaskCategory.CraftItem, TaskPriority.Medium);
                                 for (var i = 0; i < numRepeats; ++i)
-                                    subTasks.Add(new CraftResourceTask(data, i + 1, numRepeats, buildInfo.GetSelectedResources()) { Hidden = true });
+                                    subTasks.Add(new CraftResourceTask((data as CraftItem), i + 1, numRepeats, buildInfo.GetSelectedResources()) { Hidden = true });
                                 World.TaskManager.AddTasks(subTasks);
                                 compositeTask.AddSubTasks(subTasks);
                                 World.TaskManager.AddTask(compositeTask);
                             }
                             else
-                                World.TaskManager.AddTask(new CraftResourceTask(data, 1, 1, buildInfo.GetSelectedResources()));
+                                World.TaskManager.AddTask(new CraftResourceTask((data as CraftItem), 1, 1, buildInfo.GetSelectedResources()));
 
-                            ShowToolPopup(data.CurrentVerb + " " + numRepeats.ToString() + " " + (numRepeats == 1 ? data.DisplayName : data.PluralDisplayName));
+                            ShowToolPopup((data as CraftItem).CurrentVerb + " " + numRepeats.ToString() + " " + (numRepeats == 1 ? data.DisplayName : (data as CraftItem).PluralDisplayName));
                             
                         }
                     }
@@ -1800,13 +1800,10 @@ namespace DwarfCorp.GameStates
 #region icon_PlaceObject
 
             var menu_PlaceTypes = CreateCategoryMenu(
-                Library.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Object && item.AllowUserCrafting),
+                Library.EnumerateResourceTypes().Where(r => r.Placement_Placeable),
                 (data) =>
                 {
-                    return World.ListResources()
-                        .Select(r => Library.GetResourceType(r.Key))
-                        .Where(r => r.HasValue())
-                        .Any(r => r.HasValue(out var res) ? res.CraftItemType == data.Name : false);
+                    return World.ListResources().Any(r => r.Key == (data as ResourceType).TypeName);
                 },
                 (data) => new FlatToolTray.Icon
                 {
@@ -1814,12 +1811,12 @@ namespace DwarfCorp.GameStates
                     Tooltip = Library.GetString("craft", data.DisplayName),
                     ExpandChildWhenDisabled = true,
                     Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
-                    Text = objectNameToLabel(data.ShortDisplayName),
+                    Text = objectNameToLabel(data.DisplayName),
                     TextVerticalAlign = VerticalAlign.Below,
                     TextColor = Color.White.ToVector4(),
                     PopupChild = new PlaceCraftInfo
                     {
-                        Data = data,
+                        Data = data as ResourceType,
                         Rect = new Rectangle(0, 0, 256, 164),
                         World = World,
                     },
@@ -2201,10 +2198,10 @@ namespace DwarfCorp.GameStates
         }
 
         private SubCategoryMenuCreationResult CreateCategorySubMenu(
-            IEnumerable<CraftItem> Crafts, 
-            Func<CraftItem, bool> Filter,
+            IEnumerable<CraftableRecord> Crafts, 
+            Func<CraftableRecord, bool> Filter,
             String Category,
-            Func<CraftItem, FlatToolTray.Icon> IconFactory)
+            Func<CraftableRecord, FlatToolTray.Icon> IconFactory)
         {
             var icons = Crafts.Where(item => item.Category == Category).Select(data =>
             {
@@ -2257,7 +2254,7 @@ namespace DwarfCorp.GameStates
             };
         }
 
-        private CategoryMenuCreationResult CreateCategoryMenu(IEnumerable<CraftItem> Crafts, Func<CraftItem, bool> Filter, Func<CraftItem, FlatToolTray.Icon> IconFactory)
+        private CategoryMenuCreationResult CreateCategoryMenu(IEnumerable<CraftableRecord> Crafts, Func<CraftableRecord, bool> Filter, Func<CraftableRecord, FlatToolTray.Icon> IconFactory)
         {
             var icons = Crafts.Select(data =>
             {
@@ -2284,7 +2281,7 @@ namespace DwarfCorp.GameStates
                 Dictionary<string, bool> placeCategoryExists = new Dictionary<string, bool>();
                 var placeRootObjects = new List<FlatToolTray.Icon>();
 
-                foreach (var item in icons.Where(data => Filter(data.Tag as CraftItem)))
+                foreach (var item in icons.Where(data => Filter(data.Tag as CraftableRecord)))
                     if (item.Tag is CraftItem craft)
                         if (string.IsNullOrEmpty(craft.Category) || !placeCategoryExists.ContainsKey(craft.Category))
                         {
@@ -2295,7 +2292,7 @@ namespace DwarfCorp.GameStates
 
                     (sender as IconTray).ItemSource = (new Widget[] { returnIcon }).Concat(placeRootObjects.Select(data =>
                     {
-                        if (data.Tag is CraftItem craft)
+                        if (data.Tag is CraftableRecord craft)
                         {
                             if (string.IsNullOrEmpty(craft.Category))
                                 return data;

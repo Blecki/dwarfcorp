@@ -20,7 +20,7 @@ namespace DwarfCorp
 
         public IEnumerable<Status> LocateResources()
         {
-            var resources = Agent.World.FindUnreservedResource(Item.ItemType.ResourceCreated);
+            var resources = Agent.World.FindUnreservedResource(Item.ItemType.TypeName);
             if (resources.HasValue(out var res))
             {
                 res.Item2.ReservedFor = Agent;
@@ -110,17 +110,13 @@ namespace DwarfCorp
             if (!valid)
                 Agent.SetMessage("Resource state not valid.");
 
-            var location = Creature.AI.Blackboard.GetData<GameComponent>(Item.ItemType.CraftLocation);
-            if (location != null && location.IsDead)
-                return false;
-
             return valid;
         }
 
         public override void Initialize()
         {
             Act unreserveAct = new Wrap(UnReserve);
-            float time = 3 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.Intelligence);
+            float time = 3 * (Item.ItemType.Placement_PlaceTime / Creature.AI.Stats.Intelligence);
             Act getResources = null;
 
             getResources = new Select(
@@ -135,7 +131,7 @@ namespace DwarfCorp
             Act buildAct = null;
 
             buildAct = new Wrap(() => Creature.HitAndWait(true, () => 1.0f,
-                                () => Item.Progress, () => Item.Progress += (Creature.Stats.BuildSpeed * 8) / Item.ItemType.BaseCraftTime, // Todo: Account for creature debuffs, environment buffs
+                                () => Item.Progress, () => Item.Progress += (Creature.Stats.BuildSpeed * 8) / Item.ItemType.Placement_PlaceTime, // Todo: Account for creature debuffs, environment buffs
                                 () => Item.Location.WorldPosition + Vector3.One * 0.5f, "Craft"))
             { Name = "Construct object." };
 
@@ -165,11 +161,10 @@ namespace DwarfCorp
                 Item.WorkPile.Die();
 
             var blackboard = new Blackboard();
-                blackboard.SetData("Resource", Item.SelectedResource);
-            blackboard.SetData<string>("CraftType", Item.ItemType.Name); // Todo: Used by anything?
+            blackboard.SetData("Resource", Item.SelectedResource);
 
             var previewBody = EntityFactory.CreateEntity<GameComponent>(
-                Item.ItemType.EntityName,
+                Item.ItemType.Placement_EntityToCreate,
                 Item.Location.Center, blackboard).GetRoot();
 
             previewBody.SetFlagRecursive(GameComponent.Flag.Active, true);
@@ -179,14 +174,14 @@ namespace DwarfCorp
             foreach (var tinter in previewBody.EnumerateAll().OfType<Tinter>())
                 tinter.Stipple = false;
 
-            if (Item.ItemType.Deconstructable)
+            if (Item.ItemType.Placement_MarkDestructable)
                 previewBody.Tags.Add("Deconstructable");
 
-            if (Item.ItemType.AddToOwnedPool)
+            if (Item.ItemType.Placement_AddToOwnedPool)
                 Creature.Faction.OwnedObjects.Add(previewBody);
 
             Creature.Manager.World.ParticleManager.Trigger("puff", Voxel.WorldPosition + Vector3.One * 0.5f, Color.White, 10);
-            Creature.AI.AddXP((int)(5 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.Intelligence)));
+            Creature.AI.AddXP((int)(5 * (Item.ItemType.Placement_PlaceTime / Creature.AI.Stats.Intelligence)));
 
 
             Item.Entity.Delete();
@@ -199,16 +194,9 @@ namespace DwarfCorp
         {
             Creature.Physics.Active = true;
             Creature.Physics.IsSleeping = false;
-            foreach (var statuses in Creature.Unreserve(Item.ItemType.CraftLocation))
-            {
-                continue;
-            }
-
 
             if (Item.SelectedResource != null && Item.SelectedResource.ReservedFor == Agent)
-            {
                 Item.SelectedResource.ReservedFor = null;
-            }
 
             base.OnCanceled();
         }       
