@@ -14,11 +14,11 @@
   },
   "BaseCraftTime": 10.0,
   "Description": "Dwarves need to see sometimes too!",
-  "Type": "Object",
+  "Type": "Resource",
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": "",
+  "ResourceCreated": "Mana Lamp",
   "CraftLocation": "",
   "Verb": "Build",
   "PastTeseVerb": "Built",

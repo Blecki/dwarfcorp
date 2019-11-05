@@ -55,6 +55,9 @@
     <None Include="World\CraftItems\ManaLamp.json" />
     <None Include="meta.json" />
     <None Include="newgui\sheets.json" />
+    <None Include="World\ResourceItems\ManaLamp.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="mana-lamp.png" />

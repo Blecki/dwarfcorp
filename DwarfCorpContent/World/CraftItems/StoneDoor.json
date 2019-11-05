@@ -15,11 +15,11 @@
   },
   "BaseCraftTime": 30.0,
   "Description": "Keep monsters out, and dwarves in.",
-  "Type": "Object",
+  "Type": "Resource",
   "Prerequisites": [
     "NearWall"
   ],
-  "ResourceCreated": "",
+  "ResourceCreated": "Stone Door",
   "CraftLocation": "Craft Table",
   "Verb": "Build",
   "PastTeseVerb": "Built",
@@ -27,6 +27,6 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": true,
-  "CraftActBehavior": "Object",
+  "CraftActBehavior": "Normal",
   "Tutorial": "Doors allow travel for your dwarfs while preventing travel for any other creature. Enemy creatures will attack your doors to try to destroy them. Doors must be placed next to walls."
 }

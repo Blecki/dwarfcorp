@@ -1,0 +1,48 @@
+{
+  "TypeName": "Stove",
+  "MoneyValue": 15.0,
+  "Description": "Fill your home with the smell of fresh baked bread.",
+  "Category": "Furniture",
+  "GuiLayers": [
+    {
+      "Sheet": "furniture",
+      "Tile": 35
+    }
+  ],
+  "Tags": [
+    "Stove"
+  ],
+  "FoodContent": 0.0,
+  "CompositeLayers": [
+    {
+      "Asset": "entities\\Furniture\\interior_furniture",
+      "FrameSize": "32, 32",
+      "Frame": "4, 3"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": null,
+    "EncrustingAsset": null,
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "DisplayName": "Stove",
+  "PlantToGenerate": null,
+  "CanCraft": true,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": null,
+  "Placement_Placeable": true,
+  "Placement_EntityToCreate": "Stove",
+  "Placement_AllowRotation": true,
+  "Placement_PlaceTime": 5.0,
+  "Placement_SpawnOffset": "0, 0.5, 0",
+  "Placement_AddToOwnedPool": true,
+  "Placement_MarkDestructable": true,
+  "Placement_PlacementRequirement": "OnGround"
+}

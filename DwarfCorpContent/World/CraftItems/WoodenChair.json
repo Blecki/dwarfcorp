@@ -14,11 +14,11 @@
   },
   "BaseCraftTime": 6.0,
   "Description": "Dwarves sit here and relax. Place next to tables for eating.",
-  "Type": "Object",
+  "Type": "Resource",
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": "",
+  "ResourceCreated": "Wooden Chair",
   "CraftLocation": "Craft Table",
   "Verb": "Build",
   "PastTeseVerb": "Built",
@@ -26,5 +26,5 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.45, 0",
   "AddToOwnedPool": true,
-  "CraftActBehavior": "Object"
+  "CraftActBehavior": "Normal"
 }

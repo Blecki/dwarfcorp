@@ -3,7 +3,6 @@
   "Plural": "Elves",
   "Posessive": "Elvish",
   "DiplomacyConversation": "World/elf.conv",
-  "NumFurniture": 2,
   "CreatureTypes": [
     "Elf"
   ],

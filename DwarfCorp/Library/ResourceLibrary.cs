@@ -23,8 +23,15 @@ namespace DwarfCorp
 
             foreach (var resource in resourceList)
             {
-                resource.Generated = false;
-                AddResourceType(resource);
+                Resources[resource.TypeName] = resource;
+
+                if (resource.Tags.Contains("Money"))
+                    EntityFactory.RegisterEntity(resource.TypeName + " Resource", (position, data) => new CoinPile(EntityFactory.World.ComponentManager, position)
+                    {
+                        Money = data.Has("Money") ? data.GetData<DwarfBux>("Money") : (DwarfBux)64m
+                    });
+                else
+                    EntityFactory.RegisterEntity(resource.TypeName + " Resource", (position, data) => new ResourceEntity(EntityFactory.World.ComponentManager, new Resource(resource.TypeName), position));
             }
 
             Console.WriteLine("Loaded Resource Library.");
@@ -54,28 +61,50 @@ namespace DwarfCorp
             return Resources.Values;
         }
 
-        public static void AddResourceType(ResourceType resource)
+        [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
+        public class MetaResourceFactoryAttribute : Attribute
         {
-            InitializeResources();
+            public String Name;
 
-            Resources[resource.TypeName] = resource;
-
-            if (resource.Tags.Contains("Money"))
-                EntityFactory.RegisterEntity(resource.TypeName + " Resource", (position, data) => new CoinPile(EntityFactory.World.ComponentManager, position)
-                {
-                    Money = data.Has("Money") ? data.GetData<DwarfBux>("Money") : (DwarfBux)64m
-                });
-            else
-                EntityFactory.RegisterEntity(resource.TypeName + " Resource", (position, data) => new ResourceEntity(EntityFactory.World.ComponentManager, new Resource(resource.TypeName), position));   
+            public MetaResourceFactoryAttribute(String Name)
+            {
+                this.Name = Name;
+            }
         }
 
-        public static MaybeNull<Resource> CreateAleResourceType(String type)
+        private static Dictionary<String, Func<Blackboard, MaybeNull<Resource>>> MetaResourceFactories;
+
+        private static void InitializeMetaResourceFactories()
+        {
+            if (MetaResourceFactories != null)
+                return;
+
+            MetaResourceFactories = new Dictionary<string, Func<Blackboard, MaybeNull<Resource>>>();
+            foreach (var method in AssetManager.EnumerateModHooks(typeof(MetaResourceFactoryAttribute), typeof(MaybeNull<Resource>), new Type[]
+            {
+                typeof(Blackboard)
+            }))
+            {
+                var attribute = method.GetCustomAttributes(false).FirstOrDefault(a => a is MetaResourceFactoryAttribute) as MetaResourceFactoryAttribute;
+                if (attribute == null) continue;
+                MetaResourceFactories[attribute.Name] = (data) =>
+                {
+                    var r = method.Invoke(null, new Object[] { data }) as MaybeNull<Resource>?;
+                    if (r.HasValue)
+                        return r.Value;
+                    else
+                        return null;
+                };
+            }
+        }
+
+        public static MaybeNull<Resource> CreateAleResource(Resource BaseResource)
         {
             InitializeResources();
-            if (GetResourceType(type).HasValue(out var baseResource) && !String.IsNullOrEmpty(baseResource.AleName))
-                return new Resource("Ale") { DisplayName = baseResource.AleName };
+            if (BaseResource.ResourceType.HasValue(out var baseType) && !String.IsNullOrEmpty(baseType.AleName))
+                return new Resource("Ale") { DisplayName = baseType.AleName }; // Todo: Just require all brewable resources to set their alename.
             else
-                return new Resource("Ale") { DisplayName = type + " Ale" };
+                return new Resource("Ale") { DisplayName = BaseResource.DisplayName + " Ale" };
         }
 
         public static MaybeNull<Resource> CreateMealResource(String typeA, String typeB)
@@ -227,10 +256,10 @@ namespace DwarfCorp
             return null;
         }
         
-        public static MaybeNull<Resource> CreateBreadResource(String component)
+        public static MaybeNull<Resource> CreateBreadResource(Resource BaseResource)
         {
             InitializeResources();
-            return new Resource("Bread") { DisplayName = component + " Bread" };
+            return new Resource("Bread") { DisplayName = BaseResource.DisplayName + " Bread" };
         }
     }
 

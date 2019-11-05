@@ -24,6 +24,8 @@ namespace DwarfCorp
         public ResourceDes Des;
         public MaybeNull<Resource> ActualCreatedResource = null;
 
+        
+
         public CraftResourceAct()
         {
             if (Des.ResourcesReservedFor != null && Des.ResourcesReservedFor.IsDead)
@@ -114,10 +116,9 @@ namespace DwarfCorp
 
             switch (ItemType.CraftActBehavior)
             {
+                
                 // Todo: This switch sucks.
-                case CraftItem.CraftActBehaviors.Object:
-                    ActualCreatedResource = new Resource(ItemType.ToResourceType(Creature.World));
-                    break;
+                // Transform into mod hook functions
                 case CraftItem.CraftActBehaviors.Trinket:
                     ActualCreatedResource = Library.CreateTrinketResource(RawMaterials[0].Type, (Agent.Stats.Dexterity + Agent.Stats.Intelligence) / 15.0f * MathFunctions.Rand(0.5f, 1.75f));
                     break;
@@ -134,10 +135,22 @@ namespace DwarfCorp
                     }
                     break;
                 case CraftItem.CraftActBehaviors.Ale:
-                    ActualCreatedResource = Library.CreateAleResourceType(RawMaterials.ElementAt(0).Type);
+                    {
+                        Resource _base = null;
+                        foreach (var stashedResource in Agent.Blackboard.GetData<List<Resource>>("stashed-materials"))
+                            if (stashedResource.TypeName == RawMaterials.ElementAt(0).Type)
+                                _base = stashedResource;
+                        ActualCreatedResource = Library.CreateAleResource(_base);
+                    }
                     break;
                 case CraftItem.CraftActBehaviors.Bread:
-                    ActualCreatedResource = Library.CreateBreadResource(RawMaterials.ElementAt(0).Type);
+                    {
+                        Resource _base = null;
+                        foreach (var stashedResource in Agent.Blackboard.GetData<List<Resource>>("stashed-materials"))
+                            if (stashedResource.TypeName == RawMaterials.ElementAt(0).Type)
+                                _base = stashedResource;
+                        ActualCreatedResource = Library.CreateBreadResource(_base);
+                    }
                     break;
                 case CraftItem.CraftActBehaviors.GemTrinket:
                     {

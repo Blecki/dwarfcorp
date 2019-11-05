@@ -58,7 +58,7 @@ namespace DwarfCorp
 
             for (int i = 0; i < maxIters; i++)
             {
-                var item = Datastructures.SelectRandom(CraftItems.Where(k => k.Value.Type == CraftItem.CraftType.Resource));
+                var item = Datastructures.SelectRandom(CraftItems);
                 if (!World.HasResourcesWithTags(item.Value.RequiredResources))
                     continue;
                 if (!faction.OwnedObjects.Any(o => o.Tags.Contains(item.Value.CraftLocation)))

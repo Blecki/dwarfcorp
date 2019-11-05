@@ -33,13 +33,13 @@ namespace DwarfCorp
         public float FoodContent;
         public List<CompositeLayer> CompositeLayers;
         public TrinketInfo TrinketData;
-        public bool Generated = true;
         public string PlantToGenerate;
         public Color Tint;
         public string AleName = "";
         public String CraftItemType;
         public Potion PotionType = null;
-        public string Category { get; set; }
+        public string Category = "";
+        public String GetCategory => Category;
         public bool Aggregate = true; // Can this type be combined into a single unit for display purposes?
 
         // Properties controlling placement.

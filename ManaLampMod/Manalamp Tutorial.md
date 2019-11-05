@@ -19,6 +19,9 @@ To allow dwarves to build mana lamps, we need an entry in craft-items.json. Json
 ```json
 <<craft-items.json>>
 [
+
+/// THIS IS OBSOLETE.
+
   {
     "Name": "Mana Lamp",
     "EntityName": "Mana Lamp",

@@ -155,8 +155,6 @@ namespace DwarfCorp.Gui.Widgets
                 });
             }
 
-            if (Data.Type == CraftItem.CraftType.Resource)
-            {
                 var child2 = AddChild(new Widget()
                 {
                     AutoLayout = AutoLayout.DockTop,
@@ -187,7 +185,6 @@ namespace DwarfCorp.Gui.Widgets
                 }) as Gui.Widgets.ComboBox;
 
                 NumCombo.SelectedIndex = 0;
-            }
 
             BottomBar = AddChild(new Widget()
             {
@@ -254,7 +251,7 @@ namespace DwarfCorp.Gui.Widgets
                 Button.Hidden = true;
                 if (minion == null)
                     BottomBar.Text = String.Format("Needs {0} to {1}!", Data.IsMagical ? "Wizard" : "CraftsDwarf", Data.Verb); // Todo: Required minion should be data
-                else if (!String.IsNullOrEmpty(Data.CraftLocation) && Data.Type == CraftItem.CraftType.Resource && nearestBuildLocation == null)
+                else if (!String.IsNullOrEmpty(Data.CraftLocation) && nearestBuildLocation == null)
                     BottomBar.Text = String.Format("Needs {0} to {1}!", Data.CraftLocation, Data.Verb);
                 else if (notEnoughResources)
                     BottomBar.Text = "You don't have enough resources.";

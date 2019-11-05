@@ -38,21 +38,6 @@ namespace DwarfCorp.Rail
         public bool GodModeSwitch = false;
         public bool CanPlace = false;
 
-        private static CraftItem RailCraftItem = new CraftItem
-        {
-            Description = Library.GetString("rail-description"),
-            RequiredResources = new List<ResourceTagAmount> { new ResourceTagAmount("Rail", 1) },
-            Icon = new Gui.TileReference("resources", 38),
-            BaseCraftTime = 10,
-            Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround },
-            CraftLocation = "",
-            Name = "Rail",
-            DisplayName = Library.GetString("rail"),
-            ShortDisplayName = Library.GetString("rail"),
-            Type = CraftItem.CraftType.Object,
-            AddToOwnedPool = true,
-        };
-
         public BuildRailTool(WorldManager World)
         {
             this.World = World;

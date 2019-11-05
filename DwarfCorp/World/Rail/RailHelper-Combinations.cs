@@ -11,20 +11,6 @@ namespace DwarfCorp.Rail
 {
     public partial class RailHelper
     {
-        private static CraftItem RailCraftItem = new CraftItem
-        {
-            Description = "Rail.",
-            RequiredResources = new List<ResourceTagAmount> { new ResourceTagAmount("Rail", 1) },
-            Icon = new Gui.TileReference("resources", 38),
-            BaseCraftTime = 10,
-            Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround },
-            CraftLocation = "",
-            Name = "Rail",
-            Type = CraftItem.CraftType.Object,
-            AddToOwnedPool = true,
-            ResourceCreated = "Rail"
-        };
-
         public static RailEntity CreatePreviewBody(ComponentManager Manager, VoxelHandle Location, JunctionPiece Piece)
         {
             var r = new RailEntity(Manager, Location, Piece);

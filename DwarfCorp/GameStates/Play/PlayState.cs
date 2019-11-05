@@ -2203,7 +2203,7 @@ namespace DwarfCorp.GameStates
             String Category,
             Func<CraftableRecord, FlatToolTray.Icon> IconFactory)
         {
-            var icons = Crafts.Where(item => item.Category == Category).Select(data =>
+            var icons = Crafts.Where(item => item.GetCategory == Category).Select(data =>
             {
                 var icon = IconFactory(data);
                 icon.Tag = data;
@@ -2232,7 +2232,7 @@ namespace DwarfCorp.GameStates
                 categoryInfo = new CategoryIcon
                 {
                     Label = Category,
-                    Icon = Crafts.Where(item => item.Category == Category).First().Icon,
+                    Icon = Crafts.Where(item => item.GetCategory == Category).First().Icon,
                     Tooltip = "Craft items in the " + Category + " category."
                 };
 
@@ -2283,21 +2283,21 @@ namespace DwarfCorp.GameStates
 
                 foreach (var item in icons.Where(data => Filter(data.Tag as CraftableRecord)))
                     if (item.Tag is CraftableRecord craft)
-                        if (string.IsNullOrEmpty(craft.Category) || !placeCategoryExists.ContainsKey(craft.Category))
+                        if (string.IsNullOrEmpty(craft.GetCategory) || !placeCategoryExists.ContainsKey(craft.GetCategory))
                         {
                             placeRootObjects.Add(item);
-                            if (!string.IsNullOrEmpty(craft.Category))
-                                placeCategoryExists[craft.Category] = true;
+                            if (!string.IsNullOrEmpty(craft.GetCategory))
+                                placeCategoryExists[craft.GetCategory] = true;
                         }
 
                     (sender as IconTray).ItemSource = (new Widget[] { returnIcon }).Concat(placeRootObjects.Select(data =>
                     {
                         if (data.Tag is CraftableRecord craft)
                         {
-                            if (string.IsNullOrEmpty(craft.Category))
+                            if (string.IsNullOrEmpty(craft.GetCategory))
                                 return data;
 
-                            var r = CreateCategorySubMenu(Crafts, Filter, craft.Category, IconFactory);
+                            var r = CreateCategorySubMenu(Crafts, Filter, craft.GetCategory, IconFactory);
                             r.ReturnIcon.ReplacementMenu = menu;
                             return r.MenuIcon;
                         }

@@ -11,17 +11,11 @@ namespace DwarfCorp
     {
         String DisplayName { get; }
         Gui.TileReference Icon { get; } 
-        String Category { get; }
+        String GetCategory { get; }
     }
 
     public class CraftItem : CraftableRecord
     {
-        public enum CraftType
-        {
-            Object,
-            Resource
-        }
-
         public enum CraftPrereq
         {
             OnGround,
@@ -36,7 +30,6 @@ namespace DwarfCorp
             Ale,
             Bread,
             GemTrinket,
-            Object
         }
 
         public string Name = "";
@@ -51,7 +44,6 @@ namespace DwarfCorp
         public Gui.TileReference Icon { get; set; }
         public float BaseCraftTime = 0.0f;
         public string Description = "";
-        public CraftType Type = CraftType.Object;
         public List<CraftPrereq> Prerequisites = new List<CraftPrereq>();
         public int CraftedResultsCount = 1;
         public String ResourceCreated = "";
@@ -65,7 +57,8 @@ namespace DwarfCorp
         public bool Deconstructable = true;
         public CraftActBehaviors CraftActBehavior = CraftActBehaviors.Normal;
         public bool AllowRotation = false;
-        public string Category { get; set; }
+        public string Category = "";
+        public String GetCategory => Category;
         public bool IsMagical = false;
         public string Tutorial = "";
         public bool AllowUserCrafting = true;
@@ -102,43 +95,6 @@ namespace DwarfCorp
             {
                 yield return new ResourceTypeAmount(count.Key, count.Value);
             }
-        }
-
-        public ResourceType ToResourceType(WorldManager world)
-        {
-            var objectName = String.IsNullOrEmpty(ObjectName) ? Name : ObjectName;
-
-            if (Library.GetResourceType(objectName).HasValue(out var existing))
-                return existing;
-
-            var sheet = world.UserInterface.Gui.RenderData.SourceSheets[Icon.Sheet];
-
-            var tex = AssetManager.GetContentTexture(sheet.Texture);
-            var numTilesX = tex.Width / sheet.TileWidth;
-            var numTilesY = tex.Height / sheet.TileHeight;
-            var point = new Point(Icon.Tile % numTilesX, Icon.Tile / numTilesX);
-            var toReturn = new ResourceType();
-            toReturn.Generated = true;
-            toReturn.TypeName = objectName;
-            if (String.IsNullOrEmpty(DisplayName))
-                toReturn.DisplayName = toReturn.TypeName;
-            else
-                toReturn.DisplayName = DisplayName;
-
-            toReturn.Tags = new List<String>()
-                    {
-                        "CraftItem",
-                        "Craft"
-                    };
-            toReturn.MoneyValue = MoneyValue;
-            toReturn.CraftItemType = objectName;
-            toReturn.Description = Description;
-            toReturn.GuiLayers = new List<Gui.TileReference>() { Icon };
-            toReturn.CompositeLayers = new List<ResourceType.CompositeLayer>() { new ResourceType.CompositeLayer() { Asset = sheet.Texture, Frame = point, FrameSize = new Point(sheet.TileWidth, sheet.TileHeight) } };
-            toReturn.Tint = Color.White;
-            Library.AddResourceType(toReturn);
-
-            return toReturn;
         }
     }
 }

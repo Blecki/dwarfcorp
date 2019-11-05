@@ -1,0 +1,48 @@
+{
+  "TypeName": "Wooden Table",
+  "MoneyValue": 15.0,
+  "Description": "Flat. Wood. Etc.",
+  "Category": "Furniture",
+  "GuiLayers": [
+    {
+      "Sheet": "furniture",
+      "Tile": 68
+    }
+  ],
+  "Tags": [
+    "Table"
+  ],
+  "FoodContent": 0.0,
+  "CompositeLayers": [
+    {
+      "Asset": "entities\\Furniture\\interior_furniture",
+      "FrameSize": "32, 32",
+      "Frame": "8, 4"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": null,
+    "EncrustingAsset": null,
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "DisplayName": "Wooden Table",
+  "PlantToGenerate": null,
+  "CanCraft": true,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": null,
+  "Placement_Placeable": true,
+  "Placement_EntityToCreate": "Wooden Table",
+  "Placement_AllowRotation": true,
+  "Placement_PlaceTime": 5.0,
+  "Placement_SpawnOffset": "0, 0.5, 0",
+  "Placement_AddToOwnedPool": true,
+  "Placement_MarkDestructable": true,
+  "Placement_PlacementRequirement": "OnGround"
+}

@@ -20,11 +20,11 @@
   },
   "BaseCraftTime": 20.0,
   "Description": "Heals your dwarfs when they are feeling ill.",
-  "Type": "Object",
+  "Type": "Resource",
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": "",
+  "ResourceCreated": "Tower of Health",
   "CraftLocation": "Craft Table",
   "Verb": "Build",
   "PastTeseVerb": "Built",
@@ -32,7 +32,7 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": true,
-  "CraftActBehavior": "Object",
+  "CraftActBehavior": "Normal",
   "IsMagical": true,
   "Tutorial": "The tower of health automatically heals nearby dwarfs. It must be recharged from time to time by wizards."
 }

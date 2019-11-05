@@ -14,11 +14,11 @@
   },
   "BaseCraftTime": 10.0,
   "Description": "Dwarves can train by hitting the Target.",
-  "Type": "Object",
+  "Type": "Resource",
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": "",
+  "ResourceCreated": "Target",
   "CraftLocation": "Craft Table",
   "Verb": "Build",
   "PastTeseVerb": "Built",
@@ -26,6 +26,6 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": true,
-  "CraftActBehavior": "Object",
+  "CraftActBehavior": "Normal",
   "Tutorial": "Musket dwarfs train and earn XP by attacking targets. The target is destroyed by the musket dwarf."
 }

@@ -16,11 +16,11 @@
   },
   "BaseCraftTime": 50.0,
   "Description": "Dwarves can do magical research here.",
-  "Type": "Object",
+  "Type": "Resource",
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": "",
+  "ResourceCreated": "Bookshelf",
   "CraftLocation": "Craft Table",
   "Verb": "Build",
   "PastTeseVerb": "Built",
@@ -28,7 +28,7 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0, 0",
   "AddToOwnedPool": true,
-  "CraftActBehavior": "Object",
+  "CraftActBehavior": "Normal",
   "IsMagical": true,
   "Tutorial": "Bookshelves are used by wizards to do magical research. This increases their XP and allows them to level up. When wizards level up, they automatically learn new spells."
 }

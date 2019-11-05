@@ -14,11 +14,11 @@
   },
   "BaseCraftTime": 10.0,
   "Description": "Allows dwarves to climb up and down",
-  "Type": "Object",
+  "Type": "Resource",
   "Prerequisites": [
     "NearWall"
   ],
-  "ResourceCreated": "",
+  "ResourceCreated": "Iron Ladder",
   "CraftLocation": "Anvil",
   "Verb": "Build",
   "PastTeseVerb": "Built",
@@ -26,6 +26,6 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": true,
-  "CraftActBehavior": "Object",
+  "CraftActBehavior": "Normal",
   "Tutorial": "Ladders can be used to climb up or down one block. Dwarfs climb much faster on ladders than on stone walls."
 }

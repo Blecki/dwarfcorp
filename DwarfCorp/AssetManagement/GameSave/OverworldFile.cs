@@ -109,10 +109,6 @@ namespace DwarfCorp
             MetaData = FileUtils.LoadJsonFromAbsolutePath<OverworldMetaData>(metaFilePath);
             MetaData.Overworld.ColonyCells.InitializeCellMap();
 
-            foreach (var resource in MetaData.Resources)
-                if (!Library.DoesResourceTypeExist(resource.TypeName))
-                    Library.AddResourceType(resource);
-
             var worldFilePath = filePath + global::System.IO.Path.DirectorySeparatorChar + "world.png";
             var worldTexture = AssetManager.LoadUnbuiltTextureFromAbsolutePath(worldFilePath);
 

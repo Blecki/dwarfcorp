@@ -1,0 +1,48 @@
+{
+  "TypeName": "Apothecary",
+  "MoneyValue": 400.0,
+  "Description": "A place for the brewing of potions.",
+  "Category": "Furniture",
+  "GuiLayers": [
+    {
+      "Sheet": "furniture",
+      "Tile": 33
+    }
+  ],
+  "Tags": [
+    "Apothecary"
+  ],
+  "FoodContent": 0.0,
+  "CompositeLayers": [
+    {
+      "Asset": "entities\\Furniture\\interior_furniture",
+      "FrameSize": "32, 32",
+      "Frame": "1, 4"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": null,
+    "EncrustingAsset": null,
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "DisplayName": "Apothecary",
+  "PlantToGenerate": null,
+  "CanCraft": true,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": null,
+  "Placement_Placeable": true,
+  "Placement_EntityToCreate": "Apothecary",
+  "Placement_AllowRotation": false,
+  "Placement_PlaceTime": 5.0,
+  "Placement_SpawnOffset": "0, 0, 0",
+  "Placement_AddToOwnedPool": true,
+  "Placement_MarkDestructable": true,
+  "Placement_PlacementRequirement": "OnGround"
+}

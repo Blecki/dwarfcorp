@@ -11,7 +11,7 @@ namespace DwarfCorp
 {
     public class CraftTable : CraftedBody
     {
-        [EntityFactory("CraftTable")]
+        [EntityFactory("Craft Table")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new CraftTable(Manager, Position, Data.GetData<Resource>("Resource", null));

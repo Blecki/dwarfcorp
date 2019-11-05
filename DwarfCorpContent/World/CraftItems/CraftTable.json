@@ -1,6 +1,6 @@
 {
-  "Name": "CraftTable",
-  "EntityName": "CraftTable",
+  "Name": "Craft Table",
+  "EntityName": "Craft Table",
   "Category": "Furniture",
   "RequiredResources": [
     {
@@ -15,11 +15,11 @@
   },
   "BaseCraftTime": 30.0,
   "Description": "Dwarves use the craft table as a workspace.",
-  "Type": "Object",
+  "Type": "Resource",
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": "CraftTable",
+  "ResourceCreated": "Craft Table",
   "CraftLocation": "",
   "Verb": "Build",
   "PastTeseVerb": "Built",
@@ -27,6 +27,6 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0, 0",
   "AddToOwnedPool": true,
-  "CraftActBehavior": "Object",
+  "CraftActBehavior": "Normal",
   "Tutorial": "Dwarves create a variety of items at craft tables."
 }

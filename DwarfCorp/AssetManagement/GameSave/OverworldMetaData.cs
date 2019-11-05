@@ -14,9 +14,7 @@ namespace DwarfCorp
     {
         public string Version;
         public Overworld Overworld;
-
         public Dictionary<int, String> BiomeTypeMap;
-        public List<ResourceType> Resources; // Dislike the way resources are generated on the fly.
 
         public OverworldMetaData()
         {
@@ -25,9 +23,7 @@ namespace DwarfCorp
         public OverworldMetaData(GraphicsDevice device, Overworld Overworld)
         {
             this.Overworld = Overworld;
-
             BiomeTypeMap = Library.GetBiomeTypeMap(); // This may need to be saved in branch meta data.
-            Resources = Library.EnumerateResourceTypes().Where(r => r.Generated).ToList();
         }
     }
 }

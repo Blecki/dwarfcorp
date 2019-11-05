@@ -15,11 +15,11 @@
   },
   "BaseCraftTime": 40.0,
   "Description": "Wizards can brew potions here.",
-  "Type": "Object",
+  "Type": "Resource",
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": "",
+  "ResourceCreated": "Apothecary",
   "CraftLocation": "Craft Table",
   "Verb": "Build",
   "PastTeseVerb": "Built",
@@ -27,7 +27,7 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": true,
-  "CraftActBehavior": "Object",
+  "CraftActBehavior": "Normal",
   "IsMagical": true,
   "Tutorial": "Use the Apothecary to brew potions. Only one wizard may use an Apothecary at a time. They require magic (mana rocks or refined mana) to build."
 }

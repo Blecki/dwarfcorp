@@ -17,11 +17,11 @@
   },
   "BaseCraftTime": 30.0,
   "Description": "Dwarfs can teleport to the summoning circle when in need.",
-  "Type": "Object",
+  "Type": "Resource",
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": "",
+  "ResourceCreated": "Summoning Circle",
   "CraftLocation": "Bookshelf",
   "Verb": "Build",
   "PastTeseVerb": "Built",
@@ -29,7 +29,7 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": true,
-  "CraftActBehavior": "Object",
+  "CraftActBehavior": "Normal",
   "IsMagical": true,
   "Tutorial": "Wizards can build summoning circles. Dwarfs can use the summoning circles to teleport from one place to another. They can teleport from anywhere within 10 blocks to a summoning circle. The circle has to be recharged by wizards from time to time."
 }

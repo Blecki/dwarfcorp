@@ -3,7 +3,6 @@
   "Plural": "Undead",
   "Posessive": "Undead",
   "DiplomacyConversation": "World/undead.conv",
-  "NumFurniture": 2,
   "CreatureTypes": [
     "Necromancer",
     "Skeleton"

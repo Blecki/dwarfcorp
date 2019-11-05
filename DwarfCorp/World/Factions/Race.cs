@@ -43,7 +43,6 @@ namespace DwarfCorp
         public Dictionary<String, String> Biomes = new Dictionary<string, string>();
         public int Icon { get; set; }
         public string Posessive = "";
-        public int NumFurniture = 0;
 
         public bool EatsPlants { get; set; }
         public bool EatsMeat { get; set; }
@@ -93,18 +92,6 @@ namespace DwarfCorp
                     if (randResource.HasValue(out res))
                         toReturn.Add(res);
                 }
-            }
-
-            for (int i = 0; i < NumFurniture; i++)
-            {
-                // Todo: Use tag - at some point CraftType.Object will be removed.
-                var randomObject = Datastructures.SelectRandom(Library.EnumerateCraftables().Where(type => type.Type == CraftItem.CraftType.Object && type.RequiredResources.All((tags) =>
-                    TradeGoods.Any(good => good.Key == tags.Tag))));
-                if (randomObject == null)
-                    continue;
-
-                var resourceType = randomObject.ToResourceType(world);
-                toReturn.Add(new Resource(resourceType) { DisplayName = Posessive + " " + resourceType.DisplayName });
             }
 
             return toReturn;

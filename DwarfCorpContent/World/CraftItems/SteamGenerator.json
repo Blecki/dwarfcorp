@@ -20,11 +20,11 @@
   },
   "BaseCraftTime": 30.0,
   "Description": "@d-anvil",
-  "Type": "Object",
+  "Type": "Resource",
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": "",
+  "ResourceCreated": "Steam Generator",
   "CraftLocation": "Anvil",
   "Verb": "@build",
   "PastTeseVerb": "@built",
@@ -32,6 +32,6 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": true,
-  "CraftActBehavior": "Object",
+  "CraftActBehavior": "Normal",
   "Tutorial": "Build anvils to let your dwarfs to construct other objects and crafts. Only one dwarf can use an anvil at a time."
 }

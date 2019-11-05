@@ -2287,6 +2287,26 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Corporate</Name>
     </None>
+    <None Include="World\ResourceItems\Apothecary.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Apothecary</Name>
+    </None>
+    <None Include="World\ResourceItems\Bookshelf.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Bookshelf</Name>
+    </None>
+    <None Include="World\ResourceItems\CandyChair.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>CandyChair</Name>
+    </None>
+    <None Include="World\ResourceItems\Bed.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Bed</Name>
+    </None>
+    <None Include="World\ResourceItems\BearTrap.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>BearTrap</Name>
+    </None>
     <None Include="World\ResourceItems\Barrel.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Barrel</Name>
@@ -2299,6 +2319,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>BambooSprout</Name>
     </None>
+    <None Include="World\ResourceItems\CandyTable.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>CandyTable</Name>
+    </None>
+    <None Include="World\ResourceItems\CraftTable.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>CraftTable</Name>
+    </None>
+    <None Include="World\ResourceItems\CheckValve.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>CheckValve</Name>
+    </None>
     <None Include="World\ResourceItems\CopperAxe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>CopperAxe</Name>
@@ -2306,6 +2338,34 @@
     <None Include="World\ResourceItems\CopperHammer.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>CopperHammer</Name>
+    </None>
+    <None Include="World\ResourceItems\CuttingBoard.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>CuttingBoard</Name>
+    </None>
+    <None Include="World\ResourceItems\ElevatorShaft.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>ElevatorShaft</Name>
+    </None>
+    <None Include="World\ResourceItems\Explosive.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Explosive</Name>
+    </None>
+    <None Include="World\ResourceItems\Fairy.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Fairy</Name>
+    </None>
+    <None Include="World\ResourceItems\Flag.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Flag</Name>
+    </None>
+    <None Include="World\ResourceItems\Forge.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Forge</Name>
+    </None>
+    <None Include="World\ResourceItems\IronChair.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>IronChair</Name>
     </None>
     <None Include="World\ResourceItems\GoldOre.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2315,9 +2375,57 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>IronAxe</Name>
     </None>
+    <None Include="World\ResourceItems\IronDoor.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>IronDoor</Name>
+    </None>
+    <None Include="World\ResourceItems\IronLadder.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>IronLadder</Name>
+    </None>
     <None Include="World\ResourceItems\IronHammer.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>IronHammer</Name>
+    </None>
+    <None Include="World\ResourceItems\IronTable.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>IronTable</Name>
+    </None>
+    <None Include="World\ResourceItems\Lamp.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Lamp</Name>
+    </None>
+    <None Include="World\ResourceItems\Palisade.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Palisade</Name>
+    </None>
+    <None Include="World\ResourceItems\PowerAnvil.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>PowerAnvil</Name>
+    </None>
+    <None Include="World\ResourceItems\PunchingBag.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>PunchingBag</Name>
+    </None>
+    <None Include="World\ResourceItems\SteamGenerator.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>SteamGenerator</Name>
+    </None>
+    <None Include="World\ResourceItems\SteamPipe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>SteamPipe</Name>
+    </None>
+    <None Include="World\ResourceItems\StoneChair.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>StoneChair</Name>
+    </None>
+    <None Include="World\ResourceItems\StoneDoor.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>StoneDoor</Name>
+    </None>
+    <None Include="World\ResourceItems\StoneLadder.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>StoneLadder</Name>
     </None>
     <None Include="World\ResourceItems\StoneHammer.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2326,6 +2434,10 @@
     <None Include="World\ResourceItems\StoneAxe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>StoneAxe</Name>
+    </None>
+    <None Include="World\ResourceItems\StoneTable.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>StoneTable</Name>
     </None>
     <None Include="World\ResourceItems\StonePick.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2343,9 +2455,57 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Bamboo</Name>
     </None>
+    <None Include="World\ResourceItems\Stove.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Stove</Name>
+    </None>
+    <None Include="World\ResourceItems\Strawman.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Strawman</Name>
+    </None>
+    <None Include="World\ResourceItems\SummoningCircle.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>SummoningCircle</Name>
+    </None>
+    <None Include="World\ResourceItems\Target.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Target</Name>
+    </None>
+    <None Include="World\ResourceItems\TowerOfHealth.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>TowerOfHealth</Name>
+    </None>
+    <None Include="World\ResourceItems\TowerOfLife.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>TowerOfLife</Name>
+    </None>
+    <None Include="World\ResourceItems\Turret.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Turret</Name>
+    </None>
+    <None Include="World\ResourceItems\Weights.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Weights</Name>
+    </None>
+    <None Include="World\ResourceItems\WoodenChair.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>WoodenChair</Name>
+    </None>
     <None Include="World\ResourceItems\WoodAxe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>WoodAxe</Name>
+    </None>
+    <None Include="World\ResourceItems\WoodenDoor.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>WoodenDoor</Name>
+    </None>
+    <None Include="World\ResourceItems\WoodenLadder.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>WoodenLadder</Name>
+    </None>
+    <None Include="World\ResourceItems\WoodenTable.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>WoodenTable</Name>
     </None>
     <None Include="World\ResourceItems\WoodHammer.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -3739,9 +3899,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>PunchingBag</Name>
     </None>
-    <None Include="World\CraftItems\Apocethary.json">
+    <None Include="World\CraftItems\Apothecary.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Apocethary</Name>
+      <Name>Apothecary</Name>
     </None>
     <None Include="World\CraftItems\Bookshelf.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

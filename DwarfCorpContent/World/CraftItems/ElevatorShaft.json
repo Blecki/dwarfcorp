@@ -19,11 +19,11 @@
   },
   "BaseCraftTime": 30.0,
   "Description": "Elevators run inside these shafts. Moves dwarves vertically quickly.",
-  "Type": "Object",
+  "Type": "Resource",
   "Prerequisites": [
     "NearWall"
   ],
-  "ResourceCreated": "",
+  "ResourceCreated": "Elevator Shaft",
   "CraftLocation": "Anvil",
   "Verb": "@build",
   "PastTeseVerb": "@built",
@@ -31,6 +31,6 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": true,
-  "CraftActBehavior": "Object",
+  "CraftActBehavior": "Normal",
   "Tutorial": "Elevators allow rapid vertical movement."
 }

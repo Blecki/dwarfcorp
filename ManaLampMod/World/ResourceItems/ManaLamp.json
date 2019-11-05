@@ -1,0 +1,48 @@
+{
+  "TypeName": "Mana Lamp",
+  "MoneyValue": 15.0,
+  "Description": "Provides illumination. And a stat boost!",
+  "Category": "Magic",
+  "GuiLayers": [
+    {
+      "Sheet": "mana-lamp",
+      "Tile": 0
+    }
+  ],
+  "Tags": [
+    "Lamp"
+  ],
+  "FoodContent": 0.0,
+  "CompositeLayers": [
+    {
+      "Asset": "mana-lamp",
+      "FrameSize": "32, 32",
+      "Frame": "0, 0"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": null,
+    "EncrustingAsset": null,
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "DisplayName": "Mana Lamp",
+  "PlantToGenerate": null,
+  "CanCraft": true,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": null,
+  "Placement_Placeable": true,
+  "Placement_EntityToCreate": "Mana Lamp",
+  "Placement_AllowRotation": true,
+  "Placement_PlaceTime": 5.0,
+  "Placement_SpawnOffset": "0, 0.5, 0",
+  "Placement_AddToOwnedPool": true,
+  "Placement_MarkDestructable": true,
+  "Placement_PlacementRequirement": "OnGround"
+}

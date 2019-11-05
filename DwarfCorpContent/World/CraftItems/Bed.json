@@ -15,11 +15,11 @@
   },
   "BaseCraftTime": 30.0,
   "Description": "Dwarves use the bed to sleep.",
-  "Type": "Object",
+  "Type": "Resource",
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": "",
+  "ResourceCreated": "Bed",
   "CraftLocation": "Craft Table",
   "Verb": "Build",
   "PastTeseVerb": "Built",
@@ -27,6 +27,6 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0, 0",
   "AddToOwnedPool": true,
-  "CraftActBehavior": "Object",
+  "CraftActBehavior": "Normal",
   "Tutorial": "Dwarfs sleep in beds. Only one dwarf can sleep in a bed at a time. Sleeping in beds makes dwarfs happier than sleeping on the ground. Dwarfs heal from damage more quickly while sleeping in a bed as well."
 }

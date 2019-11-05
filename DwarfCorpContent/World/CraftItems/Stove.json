@@ -15,11 +15,11 @@
   },
   "BaseCraftTime": 30.0,
   "Description": "Dwarves use the stove to cook meals.",
-  "Type": "Object",
+  "Type": "Resource",
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": "",
+  "ResourceCreated": "Stove",
   "CraftLocation": "Anvil",
   "Verb": "Build",
   "PastTeseVerb": "Built",
@@ -27,6 +27,6 @@
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": true,
-  "CraftActBehavior": "Object",
+  "CraftActBehavior": "Normal",
   "Tutorial": "Stoves can be used to bake grain into bread. Bread is more nutritious than raw grain."
 }

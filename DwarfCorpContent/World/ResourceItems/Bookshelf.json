@@ -1,0 +1,48 @@
+{
+  "TypeName": "Bookshelf",
+  "MoneyValue": 200.0,
+  "Description": "Dwarves research magic here.",
+  "Category": "Furniture",
+  "GuiLayers": [
+    {
+      "Sheet": "furniture",
+      "Tile": 32
+    }
+  ],
+  "Tags": [
+    "Bookshelf"
+  ],
+  "FoodContent": 0.0,
+  "CompositeLayers": [
+    {
+      "Asset": "entities\\Furniture\\interior_furniture",
+      "FrameSize": "32, 32",
+      "Frame": "0, 4"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": null,
+    "EncrustingAsset": null,
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "DisplayName": "Bookshelf",
+  "PlantToGenerate": null,
+  "CanCraft": true,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": null,
+  "Placement_Placeable": true,
+  "Placement_EntityToCreate": "Bookshelf",
+  "Placement_AllowRotation": true,
+  "Placement_PlaceTime": 5.0,
+  "Placement_SpawnOffset": "0, 0, 0",
+  "Placement_AddToOwnedPool": true,
+  "Placement_MarkDestructable": true,
+  "Placement_PlacementRequirement": "OnGround"
+}

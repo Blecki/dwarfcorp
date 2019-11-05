@@ -14,15 +14,15 @@
   },
   "BaseCraftTime": 1.0,
   "Description": "Dwarfs gather at flags when they have nothing else to do.",
-  "Type": "Object",
+  "Type": "Resource",
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": "",
+  "ResourceCreated": "Flag",
   "CraftLocation": "Craft Table",
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": true,
-  "CraftActBehavior": "Object",
+  "CraftActBehavior": "Normal",
   "Tutorial": "Flags display the insignia of your company. Dwarfs gather at flags when they have nothing else to do."
 }
