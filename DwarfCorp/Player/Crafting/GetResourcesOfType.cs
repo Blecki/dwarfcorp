@@ -35,11 +35,25 @@ namespace DwarfCorp
             return resource.Key.Resources.Contains(resource.Value);
         }
 
+        private List<ResourceTypeAmount> Aggregate()
+        {
+            var r = new Dictionary<String, int>();
+            foreach (var res in Resources)
+            {
+                if (!r.ContainsKey(res.Type))
+                    r.Add(res.Type, 0);
+                r[res.Type] += res.Count;
+            }
+            return r.Select(k => new ResourceTypeAmount(k.Key, k.Value)).ToList();
+        }
+
         public override void Initialize()
         {
             var needed = new List<ResourceTypeAmount>();
 
-            foreach (var resource in Resources)
+            // Todo: Need to collapse duplicate entries in needed resources or this won't work.
+            
+            foreach (var resource in Aggregate())
             {
                 var count = Creature.Inventory.Resources.Count(i => i.Resource.TypeName == resource.Type);
                 if (count < resource.Count)
@@ -71,7 +85,7 @@ namespace DwarfCorp
             {
                 // In this case the dwarf already has all the resources. We have to find the resources from the inventory.
                 var resourcesStashed = new List<Resource>();
-                foreach (var amount in Resources)
+                foreach (var amount in Aggregate())
                     resourcesStashed.AddRange(Creature.Inventory.FindResourcesOfType(amount));
                 Tree = new SetBlackboardData<List<Resource>>(Agent, BlackboardEntry, resourcesStashed);
             }

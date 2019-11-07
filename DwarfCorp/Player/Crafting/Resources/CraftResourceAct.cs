@@ -112,75 +112,15 @@ namespace DwarfCorp
                 yield break;
             }
 
-            ActualCreatedResource = new Resource(ItemType.ResourceCreated);
-
-            switch (ItemType.CraftActBehavior)
+            ActualCreatedResource = Library.CreateMetaResource(ItemType.CraftActBehavior, Agent, new Resource(ItemType.ResourceCreated), Agent.Blackboard.GetData<List<Resource>>("stashed-materials"));
+            
+            if (ActualCreatedResource.HasValue(out var res))
+                yield return Status.Success;
+            else
             {
-                
-                // Todo: This switch sucks.
-                // Transform into mod hook functions
-                case CraftItem.CraftActBehaviors.Trinket:
-                    ActualCreatedResource = Library.CreateTrinketResource(RawMaterials[0].Type, (Agent.Stats.Dexterity + Agent.Stats.Intelligence) / 15.0f * MathFunctions.Rand(0.5f, 1.75f));
-                    break;
-                case CraftItem.CraftActBehaviors.Meal:
-                    {
-                        if (RawMaterials.Count < 2)
-                        {
-                            Agent.SetMessage("Failed to get resources for meal.");
-                            yield return Act.Status.Fail;
-                            yield break;
-                        }
-
-                        ActualCreatedResource = Library.CreateMealResource(RawMaterials.ElementAt(0).Type, RawMaterials.ElementAt(1).Type);
-                    }
-                    break;
-                case CraftItem.CraftActBehaviors.Ale:
-                    {
-                        Resource _base = null;
-                        foreach (var stashedResource in Agent.Blackboard.GetData<List<Resource>>("stashed-materials"))
-                            if (stashedResource.TypeName == RawMaterials.ElementAt(0).Type)
-                                _base = stashedResource;
-                        ActualCreatedResource = Library.CreateAleResource(_base);
-                    }
-                    break;
-                case CraftItem.CraftActBehaviors.Bread:
-                    {
-                        Resource _base = null;
-                        foreach (var stashedResource in Agent.Blackboard.GetData<List<Resource>>("stashed-materials"))
-                            if (stashedResource.TypeName == RawMaterials.ElementAt(0).Type)
-                                _base = stashedResource;
-                        ActualCreatedResource = Library.CreateBreadResource(_base);
-                    }
-                    break;
-                case CraftItem.CraftActBehaviors.GemTrinket:
-                    {
-                        Resource gem = null;
-                        Resource trinket = null;
-                        foreach (var stashedResource in Agent.Blackboard.GetData<List<Resource>>("stashed-materials"))
-                        {
-                            if (stashedResource.ResourceType.HasValue(out var res) && res.Tags.Contains("Craft"))
-                                trinket = stashedResource;
-
-                            if (stashedResource.ResourceType.HasValue(out var _res) && _res.Tags.Contains("Gem"))
-                                gem = stashedResource;
-                        }
-
-                        if (gem == null || trinket == null)
-                        {
-                            Agent.SetMessage("Failed to get resources for trinket.");
-                            yield return Status.Fail;
-                            yield break;
-                        }
-
-                        ActualCreatedResource = Library.CreateEncrustedTrinketResourceType(trinket, gem);
-                    }
-                    break;
-                case CraftItem.CraftActBehaviors.Normal:
-                default:
-                    break;
+                Agent.SetMessage("Failed to create meta resource.");
+                yield return Act.Status.Fail;
             }
-
-            yield return Status.Success;
         }
 
         public IEnumerable<Status> CreateResources()
@@ -195,11 +135,19 @@ namespace DwarfCorp
             }
 
             if (ActualCreatedResource.HasValue(out var res))
+            {
                 for (var i = 0; i < ItemType.CraftedResultsCount; ++i)
                     Creature.Inventory.AddResource(res);
-            Creature.AI.AddXP((int)ItemType.BaseCraftTime);
-            Des.Finished = true;
-            yield return Status.Success;
+                Creature.AI.AddXP((int)ItemType.BaseCraftTime);
+                Des.Finished = true;
+                yield return Status.Success;
+            }
+            else
+            {
+                Agent.SetMessage("Invalid meta resource");
+                yield return Act.Status.Fail;
+                yield break;
+            }
         }
 
 

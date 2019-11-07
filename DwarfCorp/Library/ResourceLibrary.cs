@@ -49,12 +49,6 @@ namespace DwarfCorp
             return Resources.ContainsKey((String) name) ? Resources[name] : null;
         }
 
-        public static bool DoesResourceTypeExist(String Name)
-        {
-            InitializeResources();
-            return Resources.ContainsKey(Name);
-        }
-
         public static IEnumerable<ResourceType> EnumerateResourceTypes()
         {
             InitializeResources();
@@ -72,24 +66,26 @@ namespace DwarfCorp
             }
         }
 
-        private static Dictionary<String, Func<Blackboard, MaybeNull<Resource>>> MetaResourceFactories;
+        private static Dictionary<String, Func<CreatureAI, Resource, List<Resource>, MaybeNull<Resource>>> MetaResourceFactories;
 
         private static void InitializeMetaResourceFactories()
         {
             if (MetaResourceFactories != null)
                 return;
 
-            MetaResourceFactories = new Dictionary<string, Func<Blackboard, MaybeNull<Resource>>>();
+            MetaResourceFactories = new Dictionary<string, Func<CreatureAI, Resource, List<Resource>, MaybeNull<Resource>>>();
             foreach (var method in AssetManager.EnumerateModHooks(typeof(MetaResourceFactoryAttribute), typeof(MaybeNull<Resource>), new Type[]
             {
-                typeof(Blackboard)
+                typeof(CreatureAI),
+                typeof(Resource),
+                typeof(List<Resource>)
             }))
             {
                 var attribute = method.GetCustomAttributes(false).FirstOrDefault(a => a is MetaResourceFactoryAttribute) as MetaResourceFactoryAttribute;
                 if (attribute == null) continue;
-                MetaResourceFactories[attribute.Name] = (data) =>
+                MetaResourceFactories[attribute.Name] = (agent, @base, ingredients) =>
                 {
-                    var r = method.Invoke(null, new Object[] { data }) as MaybeNull<Resource>?;
+                    var r = method.Invoke(null, new Object[] { agent, @base, ingredients }) as MaybeNull<Resource>?;
                     if (r.HasValue)
                         return r.Value;
                     else
@@ -98,51 +94,85 @@ namespace DwarfCorp
             }
         }
 
-        public static MaybeNull<Resource> CreateAleResource(Resource BaseResource)
+        public static MaybeNull<Resource> CreateMetaResource(String FactoryName, CreatureAI Agent, Resource Base, List<Resource> Ingredients)
         {
-            InitializeResources();
-            if (BaseResource.ResourceType.HasValue(out var baseType) && !String.IsNullOrEmpty(baseType.AleName))
-                return new Resource("Ale") { DisplayName = baseType.AleName }; // Todo: Just require all brewable resources to set their alename.
+            InitializeMetaResourceFactories();
+            if (MetaResourceFactories.ContainsKey(FactoryName))
+                return MetaResourceFactories[FactoryName](Agent, Base, Ingredients);
             else
-                return new Resource("Ale") { DisplayName = BaseResource.DisplayName + " Ale" };
+                return null;
         }
 
-        public static MaybeNull<Resource> CreateMealResource(String typeA, String typeB)
-        {
-            InitializeResources();
-            var r = new Resource("Meal");
-
-            var componentA = GetResourceType(typeA);
-            var componentB = GetResourceType(typeB);
-            if (componentA.HasValue(out var A) && componentB.HasValue(out var B))
-            {
-                r.FoodContent = A.FoodContent + B.FoodContent;
-                r.MoneyValue = 2m * (A.MoneyValue + B.MoneyValue);
-                r.DisplayName = TextGenerator.GenerateRandom(new List<String>() { A.DisplayName, B.DisplayName }, TextGenerator.GetAtoms(ContentPaths.Text.Templates.food));
-            }
-
-            return r;
-        }
-
-        public static MaybeNull<Resource> CreateEncrustedTrinketResourceType(Resource BaseResource, Resource GemResource)
+        [MetaResourceFactory("Ale")]
+        private static MaybeNull<Resource> _makeAle(CreatureAI Agent, Resource Base, List<Resource> Ingredients)
         {
             InitializeResources();
 
-            var r = new Resource("Trinket");
-            r.DisplayName = GemResource.TypeName + "-encrusted " + BaseResource.DisplayName;
+            if (Ingredients.Count == 0)
+                return null;
 
-            if (GemResource.ResourceType.HasValue(out var gem))
-                r.MoneyValue = BaseResource.MoneyValue + gem.MoneyValue * 2m;
+            if (Ingredients[0].ResourceType.HasValue(out var baseType) && !String.IsNullOrEmpty(baseType.AleName))
+                return new Resource(Base.TypeName) { DisplayName = baseType.AleName }; // Todo: Just require all brewable resources to set their alename.
+            else
+                return new Resource(Base.TypeName) { DisplayName = Ingredients[0].DisplayName + " Ale" };
+        }
+
+        [MetaResourceFactory("Meal")]
+        private static MaybeNull<Resource> _makeMeal(CreatureAI Agent, Resource Base, List<Resource> Ingredients)
+        {
+            InitializeResources();
+
+            if (Ingredients.Count < 2)
+                return null;
+
+            if (Ingredients[0].ResourceType.HasValue(out var a) && Ingredients[1].ResourceType.HasValue(out var b))
+                return new Resource(Base.TypeName)
+                {
+                    FoodContent = a.FoodContent + b.FoodContent,
+                    MoneyValue = 2m * (a.MoneyValue + b.MoneyValue),
+                    DisplayName = TextGenerator.GenerateRandom(new List<String>() { a.DisplayName, b.DisplayName }, TextGenerator.GetAtoms(ContentPaths.Text.Templates.food))
+                };
+            else
+                return null;
+        }
+
+        [MetaResourceFactory("GemTrinket")]
+        private static MaybeNull<Resource> _makeEncrustedTrinket(CreatureAI Agent, Resource Base, List<Resource> Ingredients)
+        {
+            InitializeResources();
+
+            if (Ingredients.Count < 2)
+                return null;
+
+            Resource baseResource = null;
+            Resource gemResource = null;
+            foreach (var ingredient in Ingredients)
+                if (ingredient.ResourceType.HasValue(out var res))
+                {
+                    if (res.Tags.Contains("Craft"))
+                        baseResource = ingredient;
+                    else if (res.Tags.Contains("Gem"))
+                        gemResource = ingredient;
+                }
+
+            if (baseResource == null || gemResource == null)
+                return null;
+
+            var r = new Resource(Base.TypeName);
+            r.DisplayName = gemResource.TypeName + "-encrusted " + baseResource.DisplayName;
+
+            if (gemResource.ResourceType.HasValue(out var gem))
+                r.MoneyValue = baseResource.MoneyValue + gem.MoneyValue * 2m;
 
             var compositeLayers = new List<ResourceType.CompositeLayer>();
-            compositeLayers.AddRange(BaseResource.CompositeLayers);
+            compositeLayers.AddRange(baseResource.CompositeLayers);
 
             var guiLayers = new List<TileReference>();
-            guiLayers.AddRange(BaseResource.GuiLayers);
+            guiLayers.AddRange(baseResource.GuiLayers);
 
-            var trinketData = BaseResource.TrinketData;
+            var trinketData = baseResource.TrinketData;
 
-            if (GemResource.ResourceType.HasValue(out var gemRes))
+            if (gemResource.ResourceType.HasValue(out var gemRes))
             {
                 if (trinketData.EncrustingAsset != null)
                     compositeLayers.Add(
@@ -162,9 +192,15 @@ namespace DwarfCorp
             return r;
         }
 
-        public static MaybeNull<Resource> CreateTrinketResource(String baseMaterial, float quality)
+        [MetaResourceFactory("Trinket")]
+        private static MaybeNull<Resource> _makeTrinket(CreatureAI Agent, Resource Base, List<Resource> Ingredients)
         {
             InitializeResources();
+
+            if (Ingredients.Count == 0)
+                return null;
+
+            var quality = Agent != null ? (Agent.Stats.Dexterity + Agent.Stats.Intelligence) / 15.0f * MathFunctions.Rand(0.5f, 1.75f) : MathFunctions.Rand(0.1f, 3.0f);
 
             string[] names =
             {
@@ -177,27 +213,9 @@ namespace DwarfCorp
                 "Crown"
             };
 
-            int[] tiles =
-            {
-                0,
-                1,
-                2,
-                3,
-                4,
-                5,
-                6
-            };
+            int[] tiles = { 0, 1, 2, 3, 4, 5, 6 };
 
-            float[] values =
-            {
-                1.5f,
-                1.8f,
-                1.6f,
-                3.0f,
-                2.0f,
-                3.5f,
-                4.0f
-            };
+            float[] values = { 1.5f, 1.8f, 1.6f, 3.0f, 2.0f, 3.5f, 4.0f };
 
             string qualityType = "";
             if (quality < 0.5f)
@@ -206,61 +224,70 @@ namespace DwarfCorp
                 qualityType = "Poor";
             else if (quality < 1.0f)
                 qualityType = "Mediocre";
-           else if (quality < 1.25f)
+            else if (quality < 1.25f)
                 qualityType = "Good";
             else if (quality < 1.75f)
                 qualityType = "Excellent";
-            else if(quality < 2.0f)
+            else if (quality < 2.0f)
                 qualityType = "Masterwork";
             else
                 qualityType = "Legendary";
 
             var item = MathFunctions.Random.Next(names.Count());
-            var name = baseMaterial + " " + names[item] + " (" + qualityType + ")";
 
-            var r = new Resource("Trinket");
-            r.DisplayName = name;
-            
-            if (GetResourceType(baseMaterial).HasValue(out var material))
+            var r = new Resource(Base.TypeName);
+            r.DisplayName = Ingredients[0].DisplayName + " " + names[item] + " (" + qualityType + ")";
+
+            r.MoneyValue = values[item] * Ingredients[0].MoneyValue * 3m * quality;
+            r.Tint = Ingredients[0].Tint;
+
+            var tile = new Point(tiles[item], Ingredients[0].TrinketData.SpriteRow);
+
+            r.CompositeLayers = new List<ResourceType.CompositeLayer>(new ResourceType.CompositeLayer[]
             {
-                r.MoneyValue = values[item] * material.MoneyValue * 3m * quality;
-                r.Tint = material.Tint;
-
-                var tile = new Point(tiles[item], material.TrinketData.SpriteRow);
-
-                r.CompositeLayers = new List<ResourceType.CompositeLayer>(new ResourceType.CompositeLayer[]
-                {
                     new ResourceType.CompositeLayer
                     {
-                        Asset = material.TrinketData.BaseAsset,
+                        Asset = Ingredients[0].TrinketData.BaseAsset,
                         FrameSize = new Point(32, 32),
                         Frame = tile
                     }
-                });
+            });
 
-                var trinketInfo = new ResourceType.TrinketInfo
-                {
-                    BaseAsset = material.TrinketData.BaseAsset,
-                    EncrustingAsset = material.TrinketData.EncrustingAsset,
-                    SpriteColumn = tile.X,
-                    SpriteRow = material.TrinketData.SpriteRow
-                };
+            var trinketInfo = new ResourceType.TrinketInfo
+            {
+                BaseAsset = Ingredients[0].TrinketData.BaseAsset,
+                EncrustingAsset = Ingredients[0].TrinketData.EncrustingAsset,
+                SpriteColumn = tile.X,
+                SpriteRow = Ingredients[0].TrinketData.SpriteRow
+            };
 
-                r.TrinketData = trinketInfo;
+            r.TrinketData = trinketInfo;
 
-                r.GuiLayers = new List<TileReference>() { new TileReference(material.TrinketData.BaseAsset, tile.Y * 7 + tile.X) };
+            r.GuiLayers = new List<TileReference>() { new TileReference(Ingredients[0].TrinketData.BaseAsset, tile.Y * 7 + tile.X) };
 
-                return r;
-            }
-
-            return null;
+            return r;
         }
-        
-        public static MaybeNull<Resource> CreateBreadResource(Resource BaseResource)
+
+        [MetaResourceFactory("Bread")]
+        private static MaybeNull<Resource> _makeBread(CreatureAI Agent, Resource Base, List<Resource> Ingredients)
         {
             InitializeResources();
-            return new Resource("Bread") { DisplayName = BaseResource.DisplayName + " Bread" };
+
+            if (Ingredients.Count == 0)
+                return null;
+
+            return new Resource(Base.TypeName) { DisplayName = Ingredients[0].DisplayName + " Bread" };
+        }
+
+        [MetaResourceFactory("Normal")]
+        private static MaybeNull<Resource> _metaResourcePassThroughFactory(CreatureAI Agent, Resource Base, List<Resource> Ingredients)
+        {
+            InitializeResources();
+
+            if (Ingredients.Count == 0)
+                return null;
+
+            return Base;
         }
     }
-
 }

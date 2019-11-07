@@ -3,7 +3,6 @@
   "MoneyValue": 100.0,
   "Description": "A crafted item.",
   "Category": "Trinkets",
-  "Aggregate": false,
   "GuiLayers": [
     {
       "Sheet": "crafts",

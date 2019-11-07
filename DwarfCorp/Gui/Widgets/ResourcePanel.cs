@@ -17,7 +17,8 @@ namespace DwarfCorp.Gui.Widgets
             public string Category;
             public int InStockpile = 0;
             public int InBackpacks = 0;
-            public List<AggregatedResource> Members = new List<AggregatedResource>(); 
+            public List<AggregatedResource> StockpileMembers = new List<AggregatedResource>();
+            public AggregatedResource Sample = null;
         }
 
         private class AggregatedResource
@@ -47,12 +48,10 @@ namespace DwarfCorp.Gui.Widgets
             var unstacked = new List<Resource>();
             foreach (var res in Source)
             {
-                if (!res.Aggregate)
-                    unstacked.Add(res);
-                else if (dict.ContainsKey(res.TypeName))
-                    dict[res.TypeName].Count += 1;
+                if (dict.ContainsKey(res.DisplayName))
+                    dict[res.DisplayName].Count += 1;
                 else
-                    dict.Add(res.TypeName, new AggregatedResource { Sample = res, Count = 1 });
+                    dict.Add(res.DisplayName, new AggregatedResource { Sample = res, Count = 1 });
             }
             return dict.Values.Concat(unstacked.Select(r => new AggregatedResource { Sample = r, Count = 1 }));
         }
@@ -73,14 +72,17 @@ namespace DwarfCorp.Gui.Widgets
             {
                 var entry = GetOrAddCategory(dict, res.Sample.Category);
                 entry.InStockpile += res.Count;
-                entry.Members.Add(res);
+                entry.StockpileMembers.Add(res);
+                if (entry.Sample == null)
+                    entry.Sample = res;
             }
 
             foreach (var res in Minion)
             {
                 var entry = GetOrAddCategory(dict, res.Sample.Category);
                 entry.InBackpacks += res.Count;
-                entry.Members.Add(res);
+                if (entry.Sample == null)
+                    entry.Sample = res;
             }
 
             return dict.Values;
@@ -112,14 +114,14 @@ namespace DwarfCorp.Gui.Widgets
 
                 foreach (var resource in aggregated)
                 {
-                    var label = String.Join("\n", resource.Members.Select(r => MakeDescriptionString(r)));
+                    var label = String.Join("\n", resource.StockpileMembers.Select(r => MakeDescriptionString(r)));
 
                     var icon = existingResourceEntries.FirstOrDefault(w => w is Play.ResourceIcon && w.Tag.ToString() == resource.Category);
 
                     if (icon == null)
                         icon = AddChild(new Play.ResourceIcon()
                         {
-                            Layers = resource.Members[0].Sample.GuiLayers,
+                            Layers = resource.Sample.Sample.GuiLayers,
                             Tooltip = label,
                             Tag = resource.Category
                         });
@@ -128,6 +130,7 @@ namespace DwarfCorp.Gui.Widgets
                         icon.Tooltip = label;
                         if (!Children.Contains(icon))
                             AddChild(icon);
+                        existingResourceEntries.Remove(icon);
                     }
 
                     var text = "S" + resource.InStockpile + "\n";

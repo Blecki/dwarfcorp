@@ -14,10 +14,17 @@ namespace DwarfCorp
         [EntityFactory("RandTrinket")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            if (Library.CreateTrinketResource(Datastructures.SelectRandom(Library.EnumerateResourceTypes().Where(r => r.Tags.Contains("Material"))).TypeName, MathFunctions.Rand(0.1f, 3.5f)).HasValue(out var randResource))
-                if (MathFunctions.RandEvent(0.5f))
-                    if (Library.CreateEncrustedTrinketResourceType(randResource, new Resource(Datastructures.SelectRandom(Library.EnumerateResourceTypes().Where(r => r.Tags.Contains("Gem"))).TypeName)).HasValue(out var _rr))
-                        return new ResourceEntity(Manager, _rr, Position);
+            var materialResource = new Resource(Datastructures.SelectRandom(Library.EnumerateResourceTypesWithTag("Material")));
+            var trinketResource = Library.CreateMetaResource("Trinket", null, new Resource("Trinket"), new List<Resource> { materialResource });
+
+            if (trinketResource.HasValue(out var _trinketResource) && MathFunctions.RandEvent(0.5f))
+            {
+                var gemResource = new Resource(Datastructures.SelectRandom(Library.EnumerateResourceTypesWithTag("Gem")));
+                trinketResource = Library.CreateMetaResource("GemTrinket", null, new Resource("Gem-set Trinket"), new List<Resource> { _trinketResource, gemResource });
+            }
+
+            if (trinketResource.HasValue(out var _trinketResource2))
+                return new ResourceEntity(Manager, _trinketResource2, Position);
 
             return null;
         }
@@ -26,7 +33,10 @@ namespace DwarfCorp
         private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             var foods = Library.EnumerateResourceTypesWithTag("RawFood");
-            if (Library.CreateMealResource(Datastructures.SelectRandom(foods).TypeName, Datastructures.SelectRandom(foods).TypeName).HasValue(out var randResource))
+            if (Library.CreateMetaResource("Meal", null, new Resource("Meal"), new List<Resource> {
+                new Resource(Datastructures.SelectRandom(foods).TypeName),
+                new Resource(Datastructures.SelectRandom(foods).TypeName)
+                }).HasValue(out var randResource))
                 return new ResourceEntity(Manager, randResource, Position);
             return null;
         }

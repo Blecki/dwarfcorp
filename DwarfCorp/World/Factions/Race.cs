@@ -80,10 +80,14 @@ namespace DwarfCorp
                     {
                         var craftTag = Datastructures.SelectRandom(Crafts);
                         var availableCrafts = Library.EnumerateResourceTypesWithTag(craftTag);
-                        if (Library.CreateTrinketResource(Datastructures.SelectRandom(availableCrafts).TypeName, MathFunctions.Rand(0.1f, 3.0f)).HasValue(out var trinket))
+                        if (Library.CreateMetaResource("Trinket", null, new Resource("Trinket"), new List<Resource> { new Resource(Datastructures.SelectRandom(availableCrafts)) }).HasValue(out var trinket))
                         {
                             if (MathFunctions.RandEvent(0.3f) && Encrustings.Count > 0)
-                                randResource = Library.CreateEncrustedTrinketResourceType(trinket, new Resource(Datastructures.SelectRandom(Library.EnumerateResourceTypesWithTag(Datastructures.SelectRandom(Encrustings)))));
+                                randResource = Library.CreateMetaResource("GemTrinket", null, new Resource("Gem-set Trinket"), new List<Resource>
+                                {
+                                    trinket,
+                                    new Resource(Datastructures.SelectRandom(Library.EnumerateResourceTypesWithTag(Datastructures.SelectRandom(Encrustings))))
+                                });
                             else
                                 randResource = trinket;
                         }
