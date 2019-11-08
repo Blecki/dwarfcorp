@@ -29,5 +29,5 @@
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": false,
   "CraftActBehavior": "Ale",
-  "Tutorial": "Ale can be brewed from mushrooms, grain"
+  "Tutorial": "Ale can be brewed from mushrooms, grain, and many other foodstuffs."
 }

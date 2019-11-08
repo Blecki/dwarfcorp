@@ -36,12 +36,11 @@ namespace DwarfCorp
         public string PlantToGenerate;
         public Color Tint;
         public string AleName = "";
-        public String CraftItemType;
         public Potion PotionType = null;
         public string Category = "";
         public String GetCategory => Category;
 
-        // Properties controlling placement.
+        #region Placement
         public bool Placement_Placeable = false;
         public String Placement_EntityToCreate = null;
         public bool Placement_AllowRotation = false;
@@ -57,7 +56,12 @@ namespace DwarfCorp
         }
 
         public PlacementRequirement Placement_PlacementRequirement = PlacementRequirement.OnGround;
+        #endregion
 
+        #region Crafting
+        public bool Craft_Craftable = false;
+
+        #endregion
 
         public ResourceType()
         {

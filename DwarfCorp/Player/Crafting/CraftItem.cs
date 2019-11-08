@@ -23,11 +23,8 @@ namespace DwarfCorp
         }
 
         public string Name = "";
-        public string EntityName = "";
-        public string ObjectName = "";
 
         public String DisplayName { get; set; }
-        public String ShortDisplayName = null;
         public String PluralDisplayName = null;
 
         public List<ResourceTagAmount> RequiredResources = new List<ResourceTagAmount>();
@@ -38,22 +35,18 @@ namespace DwarfCorp
         public int CraftedResultsCount = 1;
         public String ResourceCreated = "";
         public string CraftLocation = "Anvil";
-        public string Verb = null;
-        public string PastTeseVerb = null;
+        public string Verb = null; // Todo: Need 'verb' abstraction to handle tenses
+        public string PastTeseVerb = null; // Ugh
         public string CurrentVerb = null;
-        public bool AllowHeterogenous = false;
-        public Vector3 SpawnOffset = new Vector3(0.0f, 0.5f, 0.0f);
+        public Vector3 SpawnOffset = new Vector3(0.0f, 0.5f, 0.0f); // Only used by god mode tool apparently
         public bool AddToOwnedPool = false;
         public bool Deconstructable = true;
         public String CraftActBehavior = "Normal";
-        public bool AllowRotation = false;
         public string Category = "";
         public String GetCategory => Category;
         public string Tutorial = "";
-        public bool AllowUserCrafting = true;
         public TaskCategory CraftTaskCategory = TaskCategory.CraftItem;
         public string CraftNoise = "Craft";
-        public DwarfBux MoneyValue = 20.0m;
 
         public bool Disable = false;
 
@@ -61,8 +54,7 @@ namespace DwarfCorp
         {
             DisplayName = Library.TransformDataString(DisplayName, Name);
             PluralDisplayName = Library.TransformDataString(PluralDisplayName, DisplayName + "s"); // Default to appending an s if the plural name is not specified.
-            ShortDisplayName = Library.TransformDataString(ShortDisplayName, DisplayName);
-            Verb = Library.TransformDataString(Verb, Library.GetString("build"));
+            Verb = Library.TransformDataString(Verb, Library.GetString("build")); // Todo: Don't like this. Translate by changing the individual data files?
             PastTeseVerb = Library.TransformDataString(PastTeseVerb, Library.GetString("built"));
             CurrentVerb = Library.TransformDataString(CurrentVerb, Library.GetString("building"));
             Description = Library.TransformDataString(Description, Description);

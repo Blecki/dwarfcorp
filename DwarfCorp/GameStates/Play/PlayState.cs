@@ -1735,7 +1735,7 @@ namespace DwarfCorp.GameStates
             };
 
             var menu_CraftTypes = CreateCategoryMenu(
-                Library.EnumerateCraftables().Where(item => item.AllowUserCrafting).ToList(),
+                Library.EnumerateCraftables().ToList(),
                 (data) => true,
                 (data) => new FlatToolTray.Icon
                 {

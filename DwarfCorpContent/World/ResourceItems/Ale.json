@@ -29,8 +29,6 @@
     "SpriteColumn": 0
   },
   "PlantToGenerate": null,
-  "CanCraft": false,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,
