@@ -28,8 +28,8 @@ rail-description: Rail.
 cancelled-crafting-unreachable: {0} cancelled crafting {1} because crafting station was unreachable.
 place-existing: Place Existing
 place-existing-tooltip: Place an existing {0} from our stockpiles.
-place-new: {0} New
-place-new-tooltip: {0} a new {1} using the selected resources.
+craft-new: {0} New
+craft-new-tooltip: {0} a new {1} using the selected resources.
 build: Build
 built: Built
 building: Building

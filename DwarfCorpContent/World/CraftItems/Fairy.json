@@ -29,6 +29,5 @@
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": false,
   "CraftActBehavior": "Normal",
-  "IsMagical": true,
   "Tutorial": "Wizards can spawn a magic helper using the Summoning Circle. The fairy is a temporary employee that lasts for 24 hours. The fairy has very low health, but is quite fast."
 }

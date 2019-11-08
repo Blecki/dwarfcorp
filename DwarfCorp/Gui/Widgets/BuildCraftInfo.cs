@@ -1,9 +1,7 @@
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using DwarfCorp.Gui;
-using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Gui.Widgets
 {
@@ -12,10 +10,10 @@ namespace DwarfCorp.Gui.Widgets
         public CraftItem Data;
         public WorldManager World;
         private List<ResourceCombo> ResourceCombos = new List<ResourceCombo>();
-        private Gui.Widgets.ComboBox NumCombo = null;
+        private ComboBox NumCombo = null;
         private Widget BottomBar;
         private Widget Button;
-        public Action<Gui.Widget, Gui.InputEventArgs> BuildAction = null;
+        public Action<Widget, InputEventArgs> BuildAction = null;
 
         private class ResourceCombo
         {
@@ -31,34 +29,33 @@ namespace DwarfCorp.Gui.Widgets
             TextColor = new Vector4(0, 0, 0, 1);
             InteriorMargin = new Margin(16, 16, 16, 16);
 
-            var titleBar = AddChild(new Gui.Widget()
+            var titleBar = AddChild(new Widget()
             {
-                    AutoLayout = Gui.AutoLayout.DockTop,
-                    MinimumSize = new Point(0, 34),
-                });
+                AutoLayout = AutoLayout.DockTop,
+                MinimumSize = new Point(0, 34),
+            });
 
-            int k = 0;
-            foreach (var ingredient in Data.RequiredResources)
-            {
-                var resource = Library.EnumerateResourceTypesWithTag(ingredient.Tag).FirstOrDefault();
+            for (var i = 0; i < Data.RequiredResources.Count; ++i)
+            { 
+                var resource = Library.EnumerateResourceTypesWithTag(Data.RequiredResources[i].Tag).FirstOrDefault();
                 if (resource != null)
-                    titleBar.AddChild(new Gui.Widget
+                    titleBar.AddChild(new Widget
                     {
                         MinimumSize = new Point(32, 32),
                         MaximumSize = new Point(32, 32),
                         Background = resource.GuiLayers[0],
                         AutoLayout = AutoLayout.DockLeft,
-                        Text = ingredient.Count.ToString(),
+                        Text = Data.RequiredResources[i].Count.ToString(),
                         TextHorizontalAlign = HorizontalAlign.Right,
                         TextVerticalAlign = VerticalAlign.Bottom,
                         Font = "font10-outline-numsonly",
                         TextColor = Color.White.ToVector4(),
-                        Tooltip = ingredient.Tag.ToString()
+                        Tooltip = Data.RequiredResources[i].Tag
                     });
 
-                if (k < Data.RequiredResources.Count - 1)
+                if (i < Data.RequiredResources.Count - 1)
                 {
-                    titleBar.AddChild(new Gui.Widget
+                    titleBar.AddChild(new Widget
                     {
                         MinimumSize = new Point(16, 32),
                         MaximumSize = new Point(16, 32),
@@ -71,7 +68,7 @@ namespace DwarfCorp.Gui.Widgets
                 }
                 else
                 {
-                    titleBar.AddChild(new Gui.Widget
+                    titleBar.AddChild(new Widget
                     {
                         MinimumSize = new Point(16, 32),
                         MaximumSize = new Point(16, 32),
@@ -82,15 +79,14 @@ namespace DwarfCorp.Gui.Widgets
                         Font = "font10"
                     });
                 }
-                k++;
             }
 
-            titleBar.AddChild(new Gui.Widget
+            titleBar.AddChild(new Widget
             {
                 MinimumSize = new Point(32, 32),
                 MaximumSize = new Point(32, 32),
                 Background = Data.Icon,
-                AutoLayout = Gui.AutoLayout.DockLeft,
+                AutoLayout = AutoLayout.DockLeft,
                 Text = Data.CraftedResultsCount.ToString(),
                 Font = "font10-outline-numsonly",
                 TextHorizontalAlign = HorizontalAlign.Right,
@@ -98,20 +94,20 @@ namespace DwarfCorp.Gui.Widgets
                 TextColor = Color.White.ToVector4()
             });
 
-            titleBar.AddChild(new Gui.Widget
+            titleBar.AddChild(new Widget
             {
                 Text = " " + Data.Name,
                 Font = "font16",
-                AutoLayout = Gui.AutoLayout.DockLeft,
+                AutoLayout = AutoLayout.DockLeft,
                 TextVerticalAlign = VerticalAlign.Center,
                 MinimumSize = new Point(0, 34),
                 Padding = new Margin(0, 0, 16, 0)
             });
 
-            AddChild(new Gui.Widget
+            AddChild(new Widget
             {
                 Text = Data.Description + "\n",
-                AutoLayout = Gui.AutoLayout.DockTop,
+                AutoLayout = AutoLayout.DockTop,
                 AutoResizeToTextHeight = true
             });
 
@@ -123,7 +119,7 @@ namespace DwarfCorp.Gui.Widgets
                     MinimumSize = new Point(200, 18)
                 });
 
-                child.AddChild(new Gui.Widget()
+                child.AddChild(new Widget()
                 {
                     Font = "font8",
                     Text = String.Format("{0} {1}: ", resourceAmount.Count, resourceAmount.Tag),
@@ -132,14 +128,14 @@ namespace DwarfCorp.Gui.Widgets
 
                 child.Layout();
 
-                var resourceSelector = child.AddChild(new Gui.Widgets.ComboBox
+                var resourceSelector = child.AddChild(new ComboBox
                 {
                     Font = "font8",
                     Items = new List<string> { "<Not enough!>" },
                     AutoLayout = AutoLayout.DockLeft,
                     MinimumSize = new Point(200, 18),
                     Tooltip = String.Format("Type of {0} to use.", resourceAmount.Tag)
-                }) as Gui.Widgets.ComboBox;
+                }) as ComboBox;
 
                 var resourceCountIndicator = child.AddChild(new Widget
                 {
@@ -155,36 +151,36 @@ namespace DwarfCorp.Gui.Widgets
                 });
             }
 
-                var child2 = AddChild(new Widget()
-                {
-                    AutoLayout = AutoLayout.DockTop,
-                    MinimumSize = new Point(100, 18)
-                });
+            var child2 = AddChild(new Widget()
+            {
+                AutoLayout = AutoLayout.DockTop,
+                MinimumSize = new Point(100, 18)
+            });
 
-                child2.AddChild(new Gui.Widget()
-                {
-                    Font = "font8",
-                    Text = "Repeat ",
-                    AutoLayout = AutoLayout.DockLeft
-                });
+            child2.AddChild(new Widget()
+            {
+                Font = "font8",
+                Text = "Repeat ",
+                AutoLayout = AutoLayout.DockLeft
+            });
 
-                NumCombo = child2.AddChild(new Gui.Widgets.ComboBox
-                {
-                    Font = "font8",
-                    Items = new List<string>()
+            NumCombo = child2.AddChild(new ComboBox
+            {
+                Font = "font8",
+                Items = new List<string>()
                                 {
                                     "1x",
                                     "5x",
                                     "10x",
                                     "100x"
                                 },
-                    AutoLayout = AutoLayout.DockLeft,
-                    MinimumSize = new Point(64, 18),
-                    MaximumSize = new Point(64, 18),
-                    Tooltip = "Craft this many objects."
-                }) as Gui.Widgets.ComboBox;
+                AutoLayout = AutoLayout.DockLeft,
+                MinimumSize = new Point(64, 18),
+                MaximumSize = new Point(64, 18),
+                Tooltip = "Craft this many objects."
+            }) as ComboBox;
 
-                NumCombo.SelectedIndex = 0;
+            NumCombo.SelectedIndex = 0;
 
             BottomBar = AddChild(new Widget()
             {
@@ -195,8 +191,8 @@ namespace DwarfCorp.Gui.Widgets
 
             Button = BottomBar.AddChild(new Button()
             {
-                Text = Library.GetString("place-new", Data.Verb),
-                Tooltip = Library.GetString("place-new-tooltip", Data.Verb, Data.DisplayName),
+                Text = Library.GetString("craft-new", Data.Verb),
+                Tooltip = Library.GetString("craft-new-tooltip", Data.Verb, Data.DisplayName),
                 OnClick = (widget, args) =>
                 {
                     if (Button.Hidden) return;
@@ -208,10 +204,10 @@ namespace DwarfCorp.Gui.Widgets
 
             OnUpdate += (sender, time) =>
             {
-                if (Hidden) return;
+                if (Hidden)
+                    return;
 
-                bool notEnoughResources = false;
-
+                var notEnoughResources = false;
                 var availableResources = World.ListResources();
 
                 foreach (var combo in ResourceCombos)
@@ -244,21 +240,26 @@ namespace DwarfCorp.Gui.Widgets
                     combo.Combo.Invalidate();
                     combo.Count.Invalidate();
                 }
-                               
-                var minion = World.PlayerFaction.Minions.FirstOrDefault(m => Data.IsMagical ? m.Stats.IsTaskAllowed(TaskCategory.Research) : m.Stats.IsTaskAllowed(TaskCategory.BuildObject));
 
-                var nearestBuildLocation = World.PlayerFaction.FindNearestItemWithTags(Data.CraftLocation, Vector3.Zero, false, null);
                 Button.Hidden = true;
-                if (minion == null)
-                    BottomBar.Text = String.Format("Needs {0} to {1}!", Data.IsMagical ? "Wizard" : "CraftsDwarf", Data.Verb); // Todo: Required minion should be data
-                else if (!String.IsNullOrEmpty(Data.CraftLocation) && nearestBuildLocation == null)
-                    BottomBar.Text = String.Format("Needs {0} to {1}!", Data.CraftLocation, Data.Verb);
-                else if (notEnoughResources)
+
+                if (notEnoughResources)
                     BottomBar.Text = "You don't have enough resources.";
                 else
                 {
-                    Button.Hidden = false;
-                    BottomBar.Text = "";
+                    if (!World.PlayerFaction.Minions.Any(m => m.Stats.IsTaskAllowed(Data.CraftTaskCategory)))
+                        BottomBar.Text = String.Format("You need a minion capable of {0} tasks to {1} this.", Data.CraftTaskCategory, Data.Verb);
+                    else
+                    {
+                        var nearestBuildLocation = World.PlayerFaction.FindNearestItemWithTags(Data.CraftLocation, Vector3.Zero, false, null);
+                        if (!String.IsNullOrEmpty(Data.CraftLocation) && nearestBuildLocation == null)
+                            BottomBar.Text = String.Format("Needs {0} to {1}!", Data.CraftLocation, Data.Verb);
+                        else
+                        {
+                            Button.Hidden = false;
+                            BottomBar.Text = "";
+                        }
+                    }
                 }
             };
 
@@ -269,9 +270,7 @@ namespace DwarfCorp.Gui.Widgets
         public int GetNumRepeats()
         {
             if (NumCombo == null)
-            {
                 return 1;
-            }
 
             switch (NumCombo.SelectedIndex)
             {
@@ -284,20 +283,14 @@ namespace DwarfCorp.Gui.Widgets
                 case 3:
                     return 100;
             }
+
             return 1;
         }
 
         public bool CanBuild()
         {
             if (!String.IsNullOrEmpty(Data.CraftLocation))
-            { 
-                var nearestBuildLocation = World.PlayerFaction.FindNearestItemWithTags(Data.CraftLocation, Vector3.Zero, false, null);
-
-                if (nearestBuildLocation == null)
-                {
-                    return false;
-                }
-            }
+                return World.PlayerFaction.FindNearestItemWithTags(Data.CraftLocation, Vector3.Zero, false, null) != null;
             
             return true;
         }
@@ -306,11 +299,7 @@ namespace DwarfCorp.Gui.Widgets
         {
             var r = new List<ResourceTypeAmount>();
             for (var i = 0; i < Data.RequiredResources.Count && i < ResourceCombos.Count; ++i)
-            {
-                //if (ResourceCombos[i].SelectedItem == null) continue;
-                //if (ResourceCombos[i].SelectedItem == "<Not enough!>") continue;
                 r.Add(new ResourceTypeAmount(ResourceCombos[i].Combo.SelectedItem, Data.RequiredResources[i].Count));
-            }
             return r;
         }
 

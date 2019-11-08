@@ -48,7 +48,7 @@ namespace DwarfCorp
                 zone.CompleteRoomImmediately(roomVoxels.StockpileVoxels);
 
                 var box = zone.GetBoundingBox();
-                var at = new Vector3((box.Min.X + box.Max.X - 1) / 2, box.Max.Y, (box.Min.Z + box.Max.Z - 1) / 2);
+                var at = new Vector3((box.Min.X + box.Max.X) / 2, box.Max.Y + 0.5f, (box.Min.Z + box.Max.Z) / 2);
                 var flag = new Flag(Settings.World.ComponentManager, at, Settings.World.PlayerFaction.Economy.Information, new Resource("Flag"));
                 Settings.World.PlayerFaction.OwnedObjects.Add(flag);
                 flag.Tags.Add("Deconstructable");

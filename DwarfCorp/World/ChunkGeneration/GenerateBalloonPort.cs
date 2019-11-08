@@ -15,12 +15,12 @@ namespace DwarfCorp.Generation
         {
             var centerCoordinate = GlobalVoxelCoordinate.FromVector3(new Vector3(x, (Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY) - 1, z));
 
-            var averageHeight = (int)GetAverageHeight(centerCoordinate.X - size, centerCoordinate.Y - size, size * 2 + 1, size * 2 + 1, Settings);
+            var stockpileYPosition = (int)Math.Ceiling(GetAverageHeight(centerCoordinate.X - size, centerCoordinate.Y - size, size * 2 + 1, size * 2 + 1, Settings));
 
             // Next, create the balloon port by deciding which voxels to fill.
             var balloonPortDesignations = new List<VoxelHandle>();
+
             for (int dx = -size; dx <= size; dx++)
-            {
                 for (int dz = -size; dz <= size; dz++)
                 {
                     var worldPos = new Vector3(centerCoordinate.X + dx, centerCoordinate.Y, centerCoordinate.Z + dz);
@@ -30,9 +30,9 @@ namespace DwarfCorp.Generation
                     if (!baseVoxel.IsValid)
                         continue;
 
-                    var h = baseVoxel.Coordinate.Y + 1;
+                    var groundYPosition = baseVoxel.Coordinate.Y + 1;
 
-                    for (int y = averageHeight; y < h && y < chunkManager.World.WorldSizeInVoxels.Y; y++)
+                    for (int y = stockpileYPosition; y < groundYPosition && y < chunkManager.World.WorldSizeInVoxels.Y; y++)
                     {
                         var v = chunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(baseVoxel.Coordinate.X, y, baseVoxel.Coordinate.Z));
                         v.RawSetType(Library.EmptyVoxelType);
@@ -40,65 +40,56 @@ namespace DwarfCorp.Generation
                         v.QuickSetLiquid(LiquidType.None, 0);
                     }
 
-                    if (averageHeight < h)
+                    if (stockpileYPosition < groundYPosition)
+                        groundYPosition = stockpileYPosition;
+
+                    var ladderOffset = Vector3.Zero;
+                    var hasLadder = false;
+
+                    if (dx == size && dz == 0)
                     {
-                        h = averageHeight;
+                        hasLadder = true;
+                        ladderOffset = Vector3.UnitX;
                     }
-
-                    bool isPosX = (dx == size && dz == 0);
-                    bool isPosZ = (dz == size & dx == 0);
-                    bool isNegX = (dx == -size && dz == 0);
-                    bool isNegZ = (dz == -size && dz == 0);
-                    bool isSide = (isPosX || isNegX || isPosZ || isNegZ);
-
-                    Vector3 offset = Vector3.Zero;
-
-                    if (isSide)
+                    else if (dz == size & dx == 0)
                     {
-                        if (isPosX)
-                        {
-                            offset = Vector3.UnitX;
-                        }
-                        else if (isPosZ)
-                        {
-                            offset = Vector3.UnitZ;
-                        }
-                        else if (isNegX)
-                        {
-                            offset = -Vector3.UnitX;
-                        }
-                        else if (isNegZ)
-                        {
-                            offset = -Vector3.UnitZ;
-                        }
+                        hasLadder = true;
+                        ladderOffset = Vector3.UnitZ;
+                    }
+                    else if (dx == -size && dz == 0)
+                    {
+                        hasLadder = true;
+                        ladderOffset = -Vector3.UnitX;
+                    }
+                    else if (dz == -size && dz == 0)
+                    {
+                        hasLadder = true;
+                        ladderOffset = -Vector3.UnitZ;
                     }
 
                     // Fill from the top height down to the bottom.
 
-                    for (int y = Math.Max(0, h - 1); y < averageHeight && y < chunkManager.World.WorldSizeInVoxels.Y; y++)
+                    for (int y = Math.Max(0, groundYPosition - 1); y < stockpileYPosition && y < chunkManager.World.WorldSizeInVoxels.Y; y++)
                     {
                         var v = chunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(baseVoxel.Coordinate.X, y, baseVoxel.Coordinate.Z));
                         if (!v.IsValid) throw new InvalidProgramException("Voxel was invalid while creating a new game's initial zones. This should not happen.");
 
-                        if (y == h - 1)
+                        if (y == stockpileYPosition - 1)
+                        {
                             v.RawSetType(Library.GetVoxelType("Plank"));
+                            v.RawSetIsExplored();
+                            balloonPortDesignations.Add(v);
+                        }
                         else
                             v.RawSetType(Library.GetVoxelType("Scaffold"));
 
-                            v.IsPlayerBuilt = true;
-                            v.QuickSetLiquid(LiquidType.None, 0);
-                            v.Sunlight = false;
+                        v.IsPlayerBuilt = true;
+                        v.QuickSetLiquid(LiquidType.None, 0);
+                        v.Sunlight = false;
 
-                            if (y == averageHeight - 1)
-                            {
-                                v.RawSetIsExplored();
-
-                                balloonPortDesignations.Add(v);
-                            }
-
-                        if (isSide)
+                        if (hasLadder)
                         {
-                            var ladderPos = new Vector3(worldPos.X, y, worldPos.Z) + offset + Vector3.One * 0.5f;
+                            var ladderPos = new Vector3(worldPos.X, y, worldPos.Z) + ladderOffset + Vector3.One * 0.5f;
                             var ladderVox = chunkManager.CreateVoxelHandle(GlobalVoxelCoordinate.FromVector3(ladderPos));
                             if (ladderVox.IsValid && ladderVox.IsEmpty)
                             {
@@ -112,11 +103,10 @@ namespace DwarfCorp.Generation
 
                     CastSunlightColumn(baseVoxel.Coordinate.X, baseVoxel.Coordinate.Z, Settings);
                 }
-            }
 
             return new BalloonPortVoxelSets
             {
-                StockpileVoxels = balloonPortDesignations,
+                StockpileVoxels = balloonPortDesignations
             };
         }
     }

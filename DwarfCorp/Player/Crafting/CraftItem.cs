@@ -49,7 +49,6 @@ namespace DwarfCorp
         public bool AllowRotation = false;
         public string Category = "";
         public String GetCategory => Category;
-        public bool IsMagical = false;
         public string Tutorial = "";
         public bool AllowUserCrafting = true;
         public TaskCategory CraftTaskCategory = TaskCategory.CraftItem;

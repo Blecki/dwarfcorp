@@ -29,6 +29,6 @@
   "SpawnOffset": "0, 0, 0",
   "AddToOwnedPool": true,
   "CraftActBehavior": "Normal",
-  "IsMagical": true,
-  "Tutorial": "Bookshelves are used by wizards to do magical research. This increases their XP and allows them to level up. When wizards level up, they automatically learn new spells."
+  "Tutorial": "Bookshelves are used by wizards to do magical research. This increases their XP and allows them to level up. When wizards level up, they automatically learn new spells.",
+  "CraftTaskCategory": "Research"
 }
