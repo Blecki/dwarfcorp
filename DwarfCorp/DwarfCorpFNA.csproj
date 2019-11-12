@@ -583,7 +583,7 @@
     <Compile Include=".\Gui\Widgets\FlatToolTray.cs" />
     <Compile Include=".\Gui\Widgets\FramedIcon.cs" />
     <Compile Include=".\Gui\Widgets\GameSpeedControls.cs" />
-    <Compile Include=".\Gui\Widgets\GodMenu.cs" />
+    <Compile Include="GameStates\Play\GodMenu.cs" />
     <Compile Include=".\Gui\Widgets\Graph.cs" />
     <Compile Include=".\Gui\Widgets\GridChooser.cs" />
     <Compile Include=".\Gui\Widgets\GridPanel.cs" />

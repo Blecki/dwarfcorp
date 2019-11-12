@@ -4,16 +4,33 @@ using System.Linq;
 using System.Text;
 using DwarfCorp.Gui;
 using Microsoft.Xna.Framework;
+using DwarfCorp.Gui.Widgets;
 
-namespace DwarfCorp.Gui.Widgets
+namespace DwarfCorp.Play
 {
-    public class GodMenu : HorizontalMenuTray.Tray
+    public class GodMenu : Gui.Widgets.HorizontalMenuTray.Tray
     {
         public WorldManager World;
 
         private void ActivateGodTool(String Command)
         {
             World.UserInterface.ChangeTool("God", Command);
+        }
+
+        private Dictionary<String, List<String>> AggregateSpawnables(IEnumerable<String> Input)
+        {
+            var r = new Dictionary<String, List<String>>();
+            foreach (var item in Input)
+            {
+                var firstLetter = (new String(item[0], 1)).ToUpperInvariant();
+                if (r.ContainsKey(firstLetter))
+                    r[firstLetter].Add(item);
+                else
+                    r.Add(firstLetter, new List<String> { item });
+            }
+
+
+            return r;
         }
 
         public override void Construct()
@@ -44,7 +61,7 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "CRASH",
                     OnClick = (sender, args) => throw new InvalidProgramException()
                 },
-            
+
                 new HorizontalMenuTray.MenuItem
                 {
                     Text = "ZONES",
@@ -64,16 +81,26 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "SPAWN",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
-                        Columns = 10,
-                        AutoSizeColumns = false,
-                        ItemSize = new Point(110, 28),
-                        ItemSource = EntityFactory.EnumerateEntityTypes()
-                            .OrderBy(s => s).Select(s =>
+                        Columns = 1,
+                        AutoSizeColumns = true,
+                        ItemSource = AggregateSpawnables(EntityFactory.EnumerateEntityTypes().OrderBy(s => s)).Select(s =>
                             new HorizontalMenuTray.MenuItem
                             {
-                                Text = s,
-                                OnClick = (sender, args) => ActivateGodTool("Spawn/" + s),
-                            })
+                                Text = s.Key,
+                                ExpansionChild = new HorizontalMenuTray.Tray
+                                {
+                                    Columns = 5,
+                                    AutoSizeColumns = true,
+                                    ItemSize = new Point(110, 28),
+                                    ItemSource = s.Value.Select(_s =>
+                                        new HorizontalMenuTray.MenuItem
+                                        {
+                                            Text = _s,
+                                            OnClick = (sender, args) => ActivateGodTool("Spawn/" + _s)
+                                        })
+                                }
+                            }
+                        )
                     }
                 },
                 

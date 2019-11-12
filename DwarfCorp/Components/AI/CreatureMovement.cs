@@ -366,7 +366,7 @@ namespace DwarfCorp
             {
 #if DEBUG
                 if (!v.DestinationVoxel.IsValid)
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException(String.Format("Attempt to move to invalid voxel. Dest: {0} Creature: {1}", v.DestinationVoxel.Coordinate, Creature.Name));
 #endif
 
                 var n = v.DestinationVoxel.IsValid ? v.DestinationVoxel : Storage.Neighborhood[(int)v.Diff.X, (int)v.Diff.Y, (int)v.Diff.Z];

@@ -198,6 +198,7 @@
     <Compile Include="Entities\Fixtures\WoodenDoor.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\DebugPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\TaskListPanel.cs" />
+    <Compile Include="GameStates\Play\GodMenu.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ResourceIcon.cs" />
     <Compile Include="Library\ClassLibrary.cs" />
     <Compile Include="Components\AI\Creature-Indicators.cs" />
@@ -885,7 +886,6 @@
     <Compile Include="Gui\Widgets\BuildRoomInfo.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\ApplicantInfo.cs" />
     <Compile Include="Gui\Widgets\HorizontalMenuTray.cs" />
-    <Compile Include="Gui\Widgets\GodMenu.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGenerationSettingsDialog.cs" />
     <Compile Include="Gui\Widgets\FinancePanel.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\EmployeePanel.cs" />

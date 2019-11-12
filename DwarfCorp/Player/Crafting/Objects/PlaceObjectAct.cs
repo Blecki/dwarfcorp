@@ -165,7 +165,8 @@ namespace DwarfCorp
 
             var previewBody = EntityFactory.CreateEntity<GameComponent>(
                 Item.ItemType.Placement_EntityToCreate,
-                Item.Location.Center, blackboard).GetRoot();
+                Item.Location.WorldPosition, blackboard).GetRoot();
+            previewBody.LocalTransform = Item.Entity.LocalTransform;
 
             previewBody.SetFlagRecursive(GameComponent.Flag.Active, true);
             previewBody.SetVertexColorRecursive(Color.White);

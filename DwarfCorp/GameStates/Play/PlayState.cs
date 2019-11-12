@@ -68,7 +68,7 @@ namespace DwarfCorp.GameStates
         private Gui.Widgets.ToggleTray BrushTray;
         private Gui.Widgets.ToggleTray CameraTray;
         private Gui.Widgets.CheckBox Xray;
-        private Gui.Widgets.GodMenu GodMenu;
+        private Play.GodMenu GodMenu;
         private AnnouncementPopup Announcer;
         private FramedIcon EconomyIcon;
         private Timer AutoSaveTimer;
@@ -2164,11 +2164,11 @@ namespace DwarfCorp.GameStates
 
 #region GOD MODE
 
-            GodMenu = Gui.RootItem.AddChild(new Gui.Widgets.GodMenu
+            GodMenu = Gui.RootItem.AddChild(new Play.GodMenu
             {
                 World = World,
                 AutoLayout = AutoLayout.FloatTopLeft
-            }) as Gui.Widgets.GodMenu;
+            }) as Play.GodMenu;
 
             GodMenu.Hidden = true;
 
