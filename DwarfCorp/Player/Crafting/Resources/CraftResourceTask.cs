@@ -37,8 +37,7 @@ namespace DwarfCorp
             this.RawMaterials = RawMaterials;
             this.ItemType = ItemType;
 
-            string verb = ItemType.Verb;
-            Name = String.Format("{4} order {0}: {1}/{2} {3}", TaskID, CurrentRepeat, NumRepeats, ItemType.PluralDisplayName, verb);
+            Name = String.Format("{4} order {0}: {1}/{2} {3}", TaskID, CurrentRepeat, NumRepeats, ItemType.PluralDisplayName, ItemType.Verb.Base);
             Priority = TaskPriority.Medium;
 
             Category = ItemType.CraftTaskCategory;

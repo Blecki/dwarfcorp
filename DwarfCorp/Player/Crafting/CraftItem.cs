@@ -35,9 +35,7 @@ namespace DwarfCorp
         public int CraftedResultsCount = 1;
         public String ResourceCreated = "";
         public string CraftLocation = "Anvil";
-        public string Verb = null; // Todo: Need 'verb' abstraction to handle tenses
-        public string PastTeseVerb = null; // Ugh
-        public string CurrentVerb = null;
+        public Verb Verb = new Verb { Base = "Craft", PastTense = "Crafted", PresentTense = "Crafting" };
         public Vector3 SpawnOffset = new Vector3(0.0f, 0.5f, 0.0f); // Only used by god mode tool apparently
         public bool AddToOwnedPool = false;
         public bool Deconstructable = true;
@@ -54,9 +52,6 @@ namespace DwarfCorp
         {
             DisplayName = Library.TransformDataString(DisplayName, Name);
             PluralDisplayName = Library.TransformDataString(PluralDisplayName, DisplayName + "s"); // Default to appending an s if the plural name is not specified.
-            Verb = Library.TransformDataString(Verb, Library.GetString("build")); // Todo: Don't like this. Translate by changing the individual data files?
-            PastTeseVerb = Library.TransformDataString(PastTeseVerb, Library.GetString("built"));
-            CurrentVerb = Library.TransformDataString(CurrentVerb, Library.GetString("building"));
             Description = Library.TransformDataString(Description, Description);
         }
 

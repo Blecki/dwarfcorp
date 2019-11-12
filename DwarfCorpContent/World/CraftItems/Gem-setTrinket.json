@@ -23,9 +23,11 @@
   "Prerequisites": [],
   "ResourceCreated": "Gem-set Trinket",
   "CraftLocation": "Anvil",
-  "Verb": "Encrust",
-  "PastTeseVerb": "Encrusted",
-  "CurrentVerb": "Encrusting",
+  "Verb": {
+    "Base": "encrust",
+    "PastTense": "encrusted",
+    "PresentTense": "encrusting"
+  }, 
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": false,

@@ -180,7 +180,7 @@ namespace DwarfCorp
             if (Item.ItemType.Placement_AddToOwnedPool)
                 Creature.Faction.OwnedObjects.Add(previewBody);
 
-            Creature.Manager.World.ParticleManager.Trigger("puff", Voxel.WorldPosition + Vector3.One * 0.5f, Color.White, 10);
+            Creature.Manager.World.ParticleManager.Trigger("puff", Voxel.WorldPosition, Color.White, 10);
             Creature.AI.AddXP((int)(5 * (Item.ItemType.Placement_PlaceTime / Creature.AI.Stats.Intelligence)));
 
 

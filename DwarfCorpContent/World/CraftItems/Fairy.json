@@ -21,9 +21,11 @@
     "OnGround"
   ],
   "ResourceCreated": "Fairy",
-  "Verb": "Summon",
-  "PastTeseVerb": "Summoned",
-  "CurrentVerb": "Summoning",
+  "Verb": {
+    "Base": "summon",
+    "PastTense": "summoned",
+    "PresentTense": "sommoning"
+  },
   "CraftLocation": "Teleporter",
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",

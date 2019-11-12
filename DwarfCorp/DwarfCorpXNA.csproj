@@ -479,6 +479,7 @@
     <Compile Include="World\Gambling\GambleAct.cs" />
     <Compile Include="World\Gambling\GambleTask.cs" />
     <Compile Include="World\Gambling\Gambling.cs" />
+    <Compile Include="World\LanguageGenerator\Verb.cs" />
     <Compile Include="World\Overworld\BiomeData.cs" />
     <Compile Include="World\Overworld\ColonyCell.cs" />
     <Compile Include="GameStates\WorldGeneration\GenerationPanel.cs" />

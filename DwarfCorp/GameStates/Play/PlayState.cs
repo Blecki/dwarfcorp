@@ -1775,7 +1775,7 @@ namespace DwarfCorp.GameStates
                             else
                                 World.TaskManager.AddTask(new CraftResourceTask((data as CraftItem), 1, 1, buildInfo.GetSelectedResources()));
 
-                            ShowToolPopup((data as CraftItem).CurrentVerb + " " + numRepeats.ToString() + " " + (numRepeats == 1 ? data.DisplayName : (data as CraftItem).PluralDisplayName));
+                            ShowToolPopup((data as CraftItem).Verb.PresentTense + " " + numRepeats.ToString() + " " + (numRepeats == 1 ? data.DisplayName : (data as CraftItem).PluralDisplayName));
                             
                         }
                     }

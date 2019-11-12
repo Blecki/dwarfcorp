@@ -18,9 +18,11 @@
   "Prerequisites": [],
   "ResourceCreated": "Copper",
   "CraftLocation": "Forge",
-  "Verb": "Smelt",
-  "PastTeseVerb": "Smelt",
-  "CurrentVerb": "Smelting",
+  "Verb": {
+    "Base": "smelt",
+    "PastTense": "smelt",
+    "PresentTense": "smelting"
+  },
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": false,

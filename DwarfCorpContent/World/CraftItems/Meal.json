@@ -24,9 +24,11 @@
   "Prerequisites": [],
   "ResourceCreated": "Meal",
   "CraftLocation": "Cutting Board",
-  "Verb": "Cook",
-  "PastTeseVerb": "Cooked",
-  "CurrentVerb": "Cooking",
+  "Verb": {
+    "Base": "cook",
+    "PastTense": "cooked",
+    "PresentTense": "cooking"
+  },
   "AllowHeterogenous": true,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": false,

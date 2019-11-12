@@ -22,9 +22,11 @@
   "Prerequisites": [],
   "ResourceCreated": "Ale",
   "CraftLocation": "Barrel",
-  "Verb": "@brew",
-  "PastTeseVerb": "@brewed",
-  "CurrentVerb": "@brewing",
+  "Verb": {
+    "Base": "brew",
+    "PastTense": "brewed",
+    "PresentTense": "brewing"
+  },
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": false,

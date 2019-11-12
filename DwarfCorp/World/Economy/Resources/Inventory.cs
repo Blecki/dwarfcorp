@@ -92,7 +92,7 @@ namespace DwarfCorp
                 Resources.RemoveAt(index);
                 return true;
             }
-            throw new InvalidOperationException();
+            throw new InvalidOperationException("Attempted to remove item from inventory, but it wasn't in inventory.");
             return false;
         }
         

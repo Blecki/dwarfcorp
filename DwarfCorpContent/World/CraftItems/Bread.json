@@ -20,9 +20,11 @@
   "Prerequisites": [],
   "ResourceCreated": "Bread",
   "CraftLocation": "Stove",
-  "Verb": "Bake",
-  "PastTeseVerb": "Baked",
-  "CurrentVerb": "Baking",
+  "Verb": {
+    "Base": "bake",
+    "PastTense": "baked",
+    "PresentTense": "baking"
+  },
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": false,

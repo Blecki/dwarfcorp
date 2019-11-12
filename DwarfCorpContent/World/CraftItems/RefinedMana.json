@@ -20,9 +20,11 @@
   "Prerequisites": [],
   "ResourceCreated": "Refined Mana",
   "CraftLocation": "Apothecary",
-  "Verb": "Refine",
-  "PastTeseVerb": "Built",
-  "CurrentVerb": "Building",
+  "Verb": {
+    "Base": "refine",
+    "PastTense": "refined",
+    "PresentTense": "refining"
+  },
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": false,
