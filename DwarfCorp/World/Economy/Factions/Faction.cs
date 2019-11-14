@@ -23,7 +23,7 @@ namespace DwarfCorp
         public Timer HandleThreatsTimer = new Timer(1.0f, false, Timer.TimerMode.Real);
         public List<Creature> Threats = new List<Creature>();
 
-        [JsonIgnore] public MaybeNull<Race> Race => Library.GetRace(ParentFaction.Race); // Todo: Make this a MaybeNull.
+        [JsonIgnore] public MaybeNull<Race> Race => Library.GetRace(ParentFaction.Race);
         [JsonIgnore] public WorldManager World;
 
         [OnDeserialized]
@@ -76,10 +76,7 @@ namespace DwarfCorp
             TradeEnvoys.RemoveAll(t => t == null || t.ShouldRemove);
 
             if (hadFactions && TradeEnvoys.Count == 0)
-            {
-                var music = World.Time.IsDay() ? "main_theme_day" : "main_theme_night";
-                SoundManager.PlayMusic(music);
-            }
+                SoundManager.PlayMusic(World.Time.IsDay() ? "main_theme_day" : "main_theme_night");
 
             foreach (var party in WarParties)
                 party.Update(World);
@@ -95,7 +92,7 @@ namespace DwarfCorp
             CreatureAI closestMinion = null;
             foreach (CreatureAI minion in Minions)
             {
-                float dist = (minion.Position - location).LengthSquared();
+                var dist = (minion.Position - location).LengthSquared();
                 if (!(dist < closestDist)) continue;
                 closestDist = dist;
                 closestMinion = minion;
@@ -106,30 +103,17 @@ namespace DwarfCorp
 
         public void HandleThreats()
         {
-            List<Task> tasks = new List<Task>();
-            List<Creature> threatsToRemove = new List<Creature>();
-            foreach (Creature threat in Threats)
+            var tasks = new List<Task>();
+            var threatsToRemove = new List<Creature>();
+            foreach (var threat in Threats)
             {
                 if (threat != null && !threat.IsDead)
-                {
-//                    if (!Designations.IsDesignation(threat.Physics, DesignationType.Attack))
-                    {
-                        var g = new KillEntityTask(threat.Physics, KillEntityTask.KillType.Auto);
-                        //Designations.AddEntityDesignation(threat.Physics, DesignationType.Attack, null, g);
-                        tasks.Add(g);
-                    }
-  //                  else
-                    {
-                        //threatsToRemove.Add(threat);
-                    }
-                }
+                    tasks.Add(new KillEntityTask(threat.Physics, KillEntityTask.KillType.Auto));
                 else
-                {
                     threatsToRemove.Add(threat);
-                }
             }
 
-            foreach (Creature threat in threatsToRemove)
+            foreach (var threat in threatsToRemove)
                 Threats.Remove(threat);
 
             TaskManager.AssignTasksGreedy(tasks, Minions);
@@ -143,7 +127,7 @@ namespace DwarfCorp
             if (OwnedObjects == null)
                 return null;
 
-            foreach (GameComponent i in OwnedObjects)
+            foreach (var i in OwnedObjects)
             {
                 if (i == null) continue;
                 if (i.IsDead) continue;
@@ -255,7 +239,7 @@ namespace DwarfCorp
 
                 if (rooms.Count != 0)
                 {
-                    Vector3 pos = rooms.First().GetBoundingBox().Center();
+                    var pos = rooms.First().GetBoundingBox().Center();
                     balloon = Balloon.CreateBalloon(pos + new Vector3(0, 1000, 0), pos + Vector3.UnitY * 15, World.ComponentManager, this);
                 }
 
@@ -263,7 +247,7 @@ namespace DwarfCorp
                 {
                     foreach (CreatureAI creature in creatures)
                     {
-                        Matrix tf = creature.Physics.LocalTransform;
+                        var tf = creature.Physics.LocalTransform;
                         tf.Translation = balloon.LocalTransform.Translation;
                         creature.Physics.LocalTransform = tf;
                     }
@@ -271,12 +255,10 @@ namespace DwarfCorp
                 else
                 {
                     if (Economy == null)
-                    {
                         Economy = new Company(this, 1000.0m, new CompanyInformation()
                         {
                             Name = ParentFaction.Name
                         });
-                    }
 
                     foreach (CreatureAI creature in envoy.Creatures)
                     {
@@ -304,10 +286,7 @@ namespace DwarfCorp
                             envoy.Creatures.First().Physics, -10);
                     }
                 },
-                ShouldKeep = () =>
-                {
-                    return envoy.ExpiditionState == Expedition.State.Arriving;
-                }
+                ShouldKeep = () => envoy.ExpiditionState == Expedition.State.Arriving
             });
 
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
@@ -324,10 +303,10 @@ namespace DwarfCorp
         {
             World.Tutorial("war");
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
-            Politics politics = World.Overworld.GetPolitics(ParentFaction, World.PlayerFaction.ParentFaction);
+            var politics = World.Overworld.GetPolitics(ParentFaction, World.PlayerFaction.ParentFaction);
             politics.IsAtWar = true;
             
-            List<CreatureAI> creatures = World.MonsterSpawner.Spawn(World.MonsterSpawner.GenerateSpawnEvent(this, World.PlayerFaction, MathFunctions.Random.Next(World.Overworld.Difficulty.CombatModifier) + 1, false));
+            var creatures = World.MonsterSpawner.Spawn(World.MonsterSpawner.GenerateSpawnEvent(this, World.PlayerFaction, MathFunctions.Random.Next(World.Overworld.Difficulty.CombatModifier) + 1, false));
 
             var party = new WarParty(World.Time.CurrentDate)
             {
@@ -336,6 +315,7 @@ namespace DwarfCorp
                 ShouldRemove = false,
                 OwnerFaction = this
             };
+
             WarParties.Add(party);
 
             World.MakeAnnouncement(new Gui.Widgets.QueuedAnnouncement()
@@ -368,8 +348,8 @@ namespace DwarfCorp
 
                 creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, Economy.Information, new Resource("Flag")));
             }
+
             return party;
         }
-
     }
 }
