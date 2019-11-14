@@ -145,6 +145,9 @@
     <Compile Include="GameStates\Play\EmployeeInfoPanel\StatsPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\TaskListPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\TaskPanel.cs" />
+    <Compile Include="GameStates\Play\TradeState\Balance.cs" />
+    <Compile Include="GameStates\Play\TradeState\TradeHelper.cs" />
+    <Compile Include="GameStates\Play\TradeState\TradePanel.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ResourceFilterPanel.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ResourceIcon.cs" />
     <Compile Include="GameStates\Play\ZonePanel\StockpileContentsPanel.cs" />
@@ -610,7 +613,6 @@
     <Compile Include=".\Gui\Widgets\ToggleTray.cs" />
     <Compile Include=".\Gui\Widgets\ToolPopup.cs" />
     <Compile Include=".\Gui\Widgets\ToolTray.cs" />
-    <Compile Include=".\Gui\Widgets\TradePanel.cs" />
     <Compile Include=".\Gui\Widgets\TrayBackground.cs" />
     <Compile Include=".\Gui\Widgets\TutorialPopup.cs" />
     <Compile Include=".\Gui\Widgets\VerticalScrollBar.cs" />

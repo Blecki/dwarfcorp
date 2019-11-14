@@ -199,6 +199,8 @@
     <Compile Include="GameStates\Play\EmployeeInfoPanel\DebugPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\TaskListPanel.cs" />
     <Compile Include="GameStates\Play\GodMenu.cs" />
+    <Compile Include="GameStates\Play\TradeState\Balance.cs" />
+    <Compile Include="GameStates\Play\TradeState\TradeHelper.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ResourceIcon.cs" />
     <Compile Include="Library\ClassLibrary.cs" />
     <Compile Include="Components\AI\Creature-Indicators.cs" />
@@ -898,7 +900,7 @@
     <Compile Include="Gui\Widgets\KeyEditor.cs" />
     <Compile Include="Gui\Widgets\ResourcePanel.cs" />
     <Compile Include="Gui\Widgets\Columns.cs" />
-    <Compile Include="Gui\Widgets\TradePanel.cs" />
+    <Compile Include="GameStates\Play\TradeState\TradePanel.cs" />
     <Compile Include="Gui\Widgets\ResourceColumns.cs" />
     <Compile Include="Gui\Widgets\ToolPopup.cs" />
     <Compile Include="Gui\Widgets\ToolTray.cs" />

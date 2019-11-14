@@ -53,9 +53,9 @@ namespace DwarfCorp.Scripting.Factions.Trading
             State.Pause();
             State.PlayerInterface.WaitForTrade((tradeResult, transaction) =>
             {
-                if (tradeResult == Gui.Widgets.TradeDialogResult.Cancel)
+                if (tradeResult == Play.Trading.TradeDialogResult.Cancel)
                     Memory.SetValue("$trade_result", new Yarn.Value("cancelled"));
-                else if (tradeResult == Gui.Widgets.TradeDialogResult.RejectProfit)
+                else if (tradeResult == Play.Trading.TradeDialogResult.RejectProfit)
                     Memory.SetValue("$trade_result", new Yarn.Value("unprofitable"));
                 else if (transaction.PlayerItems.Select(i => Library.GetResourceType(i.TypeName))
                     .SelectMany(i => { if (i.HasValue(out var t)) return t.Tags; return new List<String>(); })

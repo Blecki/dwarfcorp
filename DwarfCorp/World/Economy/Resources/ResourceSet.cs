@@ -50,20 +50,7 @@ namespace DwarfCorp
         {
             return Resources.Count(r => r.ResourceType.HasValue(out var res) && res.Tags.Contains(Tag));
         }
-
-       
-
-        public List<Gui.Widgets.TradeableItem> AggregateByType2()
-        {
-            var r = new Dictionary<String, Gui.Widgets.TradeableItem>();
-            foreach (var res in Resources)
-                if (r.ContainsKey(res.TypeName))
-                    r[res.TypeName].Resources.Add(res);
-                else
-                    r.Add(res.TypeName, new Gui.Widgets.TradeableItem { Resources = new List<Resource> { res }, ResourceType = res.TypeName });
-            return r.Values.ToList();
-        }
-
+        
         public List<Resource> GetByType(List<ResourceTypeAmount> Types)
         {
             var needed = new Dictionary<String, int>();

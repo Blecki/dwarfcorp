@@ -24,7 +24,7 @@ namespace DwarfCorp
         private SpeechSynthesizer Language;
         private IEnumerator<String> CurrentSpeach;
         public bool SkipNextLine = false;
-        private Gui.Widgets.TradePanel TradePanel;
+        private Play.Trading.TradePanel TradePanel;
         private Gui.Widgets.MarketPanel MarketPanel;
         private bool AutoHideBubble = false;
         private float TimeSinceOutput = 0.0f;
@@ -346,12 +346,12 @@ namespace DwarfCorp
         public void BeginTrade(TradeEnvoy Envoy, Faction PlayerFaction)
         {
             PlayerFaction.World.Tutorial("trade_screen");
-            TradePanel = GuiRoot.ConstructWidget(new Gui.Widgets.TradePanel
+            TradePanel = GuiRoot.ConstructWidget(new Play.Trading.TradePanel
             {
                 Rect = GuiRoot.RenderData.VirtualScreen,
                 Envoy = Envoy.OwnerFaction.ParentFaction.CreateTradeEntity(Envoy),
                 Player = new Trade.PlayerTradeEntity(PlayerFaction),
-            }) as Gui.Widgets.TradePanel;
+            }) as Play.Trading.TradePanel;
 
             TradePanel.Layout();
 
@@ -402,7 +402,7 @@ namespace DwarfCorp
             PositionItems();
         }
 
-        public void WaitForTrade(Action<Gui.Widgets.TradeDialogResult, Trade.TradeTransaction> Callback)
+        public void WaitForTrade(Action<Play.Trading.TradeDialogResult, Trade.TradeTransaction> Callback)
         {
             TradePanel.Reset();
             TradePanel.OnPlayerAction = (sender) => Callback(TradePanel.Result, TradePanel.Transaction);
