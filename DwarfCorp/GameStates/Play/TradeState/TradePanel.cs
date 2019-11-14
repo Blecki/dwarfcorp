@@ -37,8 +37,8 @@ namespace DwarfCorp.Play.Trading
         {
             Result = TradeDialogResult.Pending;
             Transaction = null;
-            EnvoyColumns.Reconstruct(Helper.AggregateResourcesIntoTradeableItems(Envoy.Resources.Enumerate()), new List<TradeableItem>(), (int)Envoy.Money);
-            PlayerColumns.Reconstruct(Helper.AggregateResourcesIntoTradeableItems(Player.Resources.Enumerate()), new List<TradeableItem>(), (int)Player.Money);
+            EnvoyColumns.Reconstruct(Helper.AggregateResourcesIntoTradeableItems(Envoy.Resources), new List<TradeableItem>(), (int)Envoy.Money);
+            PlayerColumns.Reconstruct(Helper.AggregateResourcesIntoTradeableItems(Player.Resources), new List<TradeableItem>(), (int)Player.Money);
             UpdateBottomDisplays();
             if (Balance != null)
                 Balance.TradeBalance = 0.0f;
@@ -301,8 +301,8 @@ namespace DwarfCorp.Play.Trading
                 AutoLayout = AutoLayout.DockRight,
                 OnClick = (sender, args) =>
                 {
-                    EnvoyColumns.Reconstruct(Helper.AggregateResourcesIntoTradeableItems(Envoy.Resources.Enumerate()), new List<TradeableItem>(), (int)Envoy.Money);
-                    PlayerColumns.Reconstruct(Helper.AggregateResourcesIntoTradeableItems(Player.Resources.Enumerate()), new List<TradeableItem>(), (int)Player.Money);
+                    EnvoyColumns.Reconstruct(Helper.AggregateResourcesIntoTradeableItems(Envoy.Resources), new List<TradeableItem>(), (int)Envoy.Money);
+                    PlayerColumns.Reconstruct(Helper.AggregateResourcesIntoTradeableItems(Player.Resources), new List<TradeableItem>(), (int)Player.Money);
                     UpdateBottomDisplays();
                     Layout();
                 }

@@ -11,10 +11,10 @@ namespace DwarfCorp.Play.Trading
 {
     public static class Helper
     {
-        public static List<Gui.Widgets.TradeableItem> AggregateResourcesIntoTradeableItems(IEnumerable<Resource> Resources)
+        public static List<Gui.Widgets.TradeableItem> AggregateResourcesIntoTradeableItems(ResourceSet Resources)
         {
             var r = new Dictionary<String, Gui.Widgets.TradeableItem>();
-            foreach (var res in Resources)
+            foreach (var res in Resources.Enumerate())
                 if (r.ContainsKey(res.DisplayName))
                     r[res.DisplayName].Resources.Add(res);
                 else

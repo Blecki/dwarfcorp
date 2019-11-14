@@ -254,8 +254,8 @@ namespace DwarfCorp.GameStates
 
             ResourceColumns = columns.AddChild(new EmbarkmentResourceColumns
             {
-                SourceResources = Play.Trading.Helper.AggregateResourcesIntoTradeableItems(Settings.PlayerCorporationResources.Enumerate()),
-                SelectedResources = Play.Trading.Helper.AggregateResourcesIntoTradeableItems(Settings.InstanceSettings.InitalEmbarkment.Resources.Enumerate()),
+                SourceResources = Play.Trading.Helper.AggregateResourcesIntoTradeableItems(Settings.PlayerCorporationResources),
+                SelectedResources = Play.Trading.Helper.AggregateResourcesIntoTradeableItems(Settings.InstanceSettings.InitalEmbarkment.Resources),
                 LeftHeader = "Available",
                 RightHeader = "Taking"
             }) as EmbarkmentResourceColumns;

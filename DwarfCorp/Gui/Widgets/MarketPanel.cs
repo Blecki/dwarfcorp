@@ -30,7 +30,7 @@ namespace DwarfCorp.Gui.Widgets
         {
             Result = MarketDialogResult.Pending;
             Transaction = null;
-            PlayerColumns.Reconstruct(Play.Trading.Helper.AggregateResourcesIntoTradeableItems(Player.Resources.Enumerate()), new List<TradeableItem>(), (int)Player.Money);
+            PlayerColumns.Reconstruct(Play.Trading.Helper.AggregateResourcesIntoTradeableItems(Player.Resources), new List<TradeableItem>(), (int)Player.Money);
             UpdateBottomDisplays();
             Layout();
         }
@@ -94,7 +94,7 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockRight,
                 OnClick = (sender, args) =>
                 {
-                    PlayerColumns.Reconstruct(Play.Trading.Helper.AggregateResourcesIntoTradeableItems(Player.Resources.Enumerate()), new List<TradeableItem>(), (int)Player.Money);
+                    PlayerColumns.Reconstruct(Play.Trading.Helper.AggregateResourcesIntoTradeableItems(Player.Resources), new List<TradeableItem>(), (int)Player.Money);
                     UpdateBottomDisplays();
                     Layout();
                 }
