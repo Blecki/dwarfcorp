@@ -158,7 +158,7 @@ namespace DwarfCorp
             }
 
             // In case we kill it - this tells the inventory who to give the loot to.
-            if (Agent.Faction.Race.IsIntelligent && Target.GetRoot().GetComponent<Inventory>().HasValue(out var targetInventory))
+            if (Agent.Faction.Race.HasValue(out var race) && race.IsIntelligent && Target.GetRoot().GetComponent<Inventory>().HasValue(out var targetInventory))
                 targetInventory.SetLastAttacker(Agent);
 
             CharacterMode defaultCharachterMode = Creature.AI.Movement.CanFly ? CharacterMode.Flying : CharacterMode.Walking;

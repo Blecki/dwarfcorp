@@ -21,10 +21,9 @@ namespace DwarfCorp
         public List<GameComponent> OwnedObjects = new List<GameComponent>();
         public List<CreatureAI> Minions = new List<CreatureAI>();
         public Timer HandleThreatsTimer = new Timer(1.0f, false, Timer.TimerMode.Real);
-        public Dictionary<ulong, VoxelHandle> GuardedVoxels = new Dictionary<ulong, VoxelHandle>();
         public List<Creature> Threats = new List<Creature>();
 
-        [JsonIgnore] public Race Race => Library.GetRace(ParentFaction.Race).HasValue(out var race) ? race : null; // Todo: Make this a MaybeNull.
+        [JsonIgnore] public MaybeNull<Race> Race => Library.GetRace(ParentFaction.Race); // Todo: Make this a MaybeNull.
         [JsonIgnore] public WorldManager World;
 
         [OnDeserialized]
@@ -167,37 +166,37 @@ namespace DwarfCorp
 
         public List<GameComponent> GenerateRandomSpawn(int numCreatures, Vector3 position)
         {
-            if (Race.CreatureTypes.Count == 0)
-            {
-                return new List<GameComponent>();
-            }
+            var r = new List<GameComponent>();
 
-            List<GameComponent> toReturn = new List<GameComponent>();
-            for (int i = 0; i < numCreatures; i++)
+            if (Race.HasValue(out var race))
             {
-                string creature = Race.CreatureTypes[MathFunctions.Random.Next(Race.CreatureTypes.Count)];
-                Vector3 offset = MathFunctions.RandVector3Cube() * 2;
+                if (race.CreatureTypes.Count == 0)
+                    return r;
 
-                var voxelUnder = VoxelHelpers.FindFirstVoxelBelowIncludingWater(new VoxelHandle(
-                    World.ChunkManager, GlobalVoxelCoordinate.FromVector3(position + offset)));
-                if (voxelUnder.IsValid)
+                for (int i = 0; i < numCreatures; i++)
                 {
-                    var body = EntityFactory.CreateEntity<GameComponent>(creature, voxelUnder.WorldPosition + new Vector3(0.5f, 1, 0.5f));
-                    var ai = body.EnumerateAll().OfType<CreatureAI>().FirstOrDefault();
+                    var creature = race.CreatureTypes.SelectRandom();
+                    var offset = MathFunctions.RandVector3Cube() * 2;
 
-                    if (ai != null)
+                    var voxelUnder = VoxelHelpers.FindFirstVoxelBelowIncludingWater(World.ChunkManager.CreateVoxelHandle(GlobalVoxelCoordinate.FromVector3(position + offset)));
+                    if (voxelUnder.IsValid)
                     {
-                        ai.Faction.Minions.Remove(ai);
+                        var body = EntityFactory.CreateEntity<GameComponent>(creature, voxelUnder.WorldPosition + new Vector3(0.5f, 1, 0.5f));
+                        var ai = body.EnumerateAll().OfType<CreatureAI>().FirstOrDefault();
 
-                        Minions.Add(ai);
-                        ai.Creature.Faction = this;
+                        if (ai != null)
+                        {
+                            ai.Faction.Minions.Remove(ai);
+                            Minions.Add(ai);
+                            ai.Creature.Faction = this;
+                        }
+
+                        r.Add(body);
                     }
-
-                    toReturn.Add(body);
                 }
             }
 
-            return toReturn;
+            return r;
         }
 
         public void AddMoney(DwarfBux money)
@@ -228,11 +227,11 @@ namespace DwarfCorp
                 OtherFaction = World.PlayerFaction,
                 ShouldRemove = false,
                 OwnerFaction = this,
-                TradeGoods = ParentFaction.IsCorporate ? new ResourceSet() : Race.GenerateTradeItems(World),
+                TradeGoods = ParentFaction.IsCorporate ? new ResourceSet() : (Race.HasValue(out var _race) ? _race.GenerateTradeItems(World) : new ResourceSet()),
                 TradeMoney = new DwarfBux((decimal)MathFunctions.Rand(1500.0f, 5500.0f)) // Todo: Make this a setting.
             };
 
-            if (Race.IsNative)
+            if (Race.HasValue(out var race) && race.IsNative)
             {
                 if (Economy == null)
                 {
@@ -301,7 +300,7 @@ namespace DwarfCorp
                     if (envoy.Creatures.Count > 0)
                     {
                         envoy.Creatures.First().ZoomToMe();
-                        World.UserInterface.MakeWorldPopup(String.Format("Traders from {0} ({1}) have entered our territory.\nThey will try to get to our balloon port to trade with us.", ParentFaction.Name, Race.Name),
+                        World.UserInterface.MakeWorldPopup(String.Format("Traders from {0} ({1}) have entered our territory.\nThey will try to get to our balloon port to trade with us.", ParentFaction.Name, (Race.HasValue(out var __race) ? __race.Name : "???")),
                             envoy.Creatures.First().Physics, -10);
                     }
                 },
@@ -314,8 +313,9 @@ namespace DwarfCorp
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
 
             World.Tutorial("trade");
-            if (!String.IsNullOrEmpty(Race.TradeMusic))
-                SoundManager.PlayMusic(Race.TradeMusic);
+
+            if (Race.HasValue(out var ___race) && !String.IsNullOrEmpty(___race.TradeMusic))
+                SoundManager.PlayMusic(___race.TradeMusic);
 
             return envoy;
         }
@@ -347,7 +347,7 @@ namespace DwarfCorp
                     if (party.Creatures.Count > 0)
                     {
                         party.Creatures.First().ZoomToMe();
-                        World.UserInterface.MakeWorldPopup(String.Format("Warriors from {0} ({1}) have entered our territory. They will prepare for a while and then attack us.", ParentFaction.Name, Race.Name), party.Creatures.First().Physics, -10);
+                        World.UserInterface.MakeWorldPopup(String.Format("Warriors from {0} ({1}) have entered our territory. They will prepare for a while and then attack us.", ParentFaction.Name, (Race.HasValue(out var race) ? race.Name : "???")), party.Creatures.First().Physics, -10);
                     }
                 },
                 ShouldKeep = () =>

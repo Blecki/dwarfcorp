@@ -62,9 +62,10 @@ namespace DwarfCorp.Play.Trading
         {
             foreach (var amount in source)
             {
-                if (Library.GetResourceType(amount.ResourceType).HasValue(out var r))
-                    if (trader.TraderRace.HatedResources.Any(tag => r.Tags.Contains(tag)))
-                        continue;
+                if (Library.GetResourceType(amount.ResourceType).HasValue(out var r)
+                    && trader.TraderFaction.Race.HasValue(out var race)
+                    && race.HatedResources.Any(tag => r.Tags.Contains(tag)))
+                    continue;
 
                 if (amount.Count == 0) continue;
                 var destAmount = destination.FirstOrDefault(resource => resource.ResourceType == amount.ResourceType);

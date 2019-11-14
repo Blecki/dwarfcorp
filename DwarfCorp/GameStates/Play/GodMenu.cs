@@ -310,16 +310,13 @@ namespace DwarfCorp.Play
                     Text = "TRADE ENVOY",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
-
-                            ItemSource = World.Factions.Factions.Values.Where(f => f.Race.IsIntelligent && f != World.PlayerFaction).Select(s =>
+                        ItemSource = World.Factions.Factions.Values.Where(f => f.Race.HasValue(out var race) && race.IsIntelligent && f != World.PlayerFaction).Select(s =>
+                            new HorizontalMenuTray.MenuItem
                             {
-                                return new HorizontalMenuTray.MenuItem
-                                {
-                                    Text = s.ParentFaction.Name,
-                                    OnClick = (sender, args) => s.SendTradeEnvoy()
-                                };
-
-                            }),
+                                Text = s.ParentFaction.Name,
+                                OnClick = (sender, args) => s.SendTradeEnvoy()
+                            }
+                        ),
                     }
                 },
                 new HorizontalMenuTray.MenuItem
@@ -343,16 +340,13 @@ namespace DwarfCorp.Play
                     Text = "WAR PARTY",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
-
-                            ItemSource = World.Factions.Factions.Values.Where(f => f.Race.IsIntelligent && f != World.PlayerFaction).Select(s =>
+                        ItemSource = World.Factions.Factions.Values.Where(f => f.Race.HasValue(out var race) && race.IsIntelligent && f != World.PlayerFaction).Select(s =>
+                            new HorizontalMenuTray.MenuItem
                             {
-                                return new HorizontalMenuTray.MenuItem
-                                {
-                                    Text = s.ParentFaction.Name,
-                                    OnClick = (sender, args) => s.SendWarParty()
-                                };
-
-                            }),
+                                Text = s.ParentFaction.Name,
+                                OnClick = (sender, args) => s.SendWarParty()
+                            }
+                        ),
                     }
                 },
 

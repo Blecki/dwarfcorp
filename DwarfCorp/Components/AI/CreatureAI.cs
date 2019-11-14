@@ -20,7 +20,7 @@ namespace DwarfCorp
         public CreatureMovement Movement { get; set; }
         [JsonProperty] private String LastMesage = "";
         [JsonIgnore] public PlanSubscriber PlanSubscriber = null;
-        private Timer AutoGatherTimer = new Timer(MathFunctions.Rand() * 5 + 3, false);
+        private Timer BehaviorTimer = new Timer(MathFunctions.Rand() * 5 + 3, false);
         private Timer _preEmptTimer = new Timer(4.0f, false);
         [JsonIgnore] public Blackboard Blackboard = new Blackboard(); // Todo: Does not serializing this break all tasks?
         public string Biography = "";
@@ -315,32 +315,35 @@ namespace DwarfCorp
             // Non-dwarves are always at full energy.
             Stats.Energy.CurrentValue = 100.0f;
 
-            AutoGatherTimer.Update(gameTime);
+            BehaviorTimer.Update(gameTime);
 
-            if (AutoGatherTimer.HasTriggered)
+            if (BehaviorTimer.HasTriggered)
             {
-                if (!String.IsNullOrEmpty(Faction.Race.BecomeWhenEvil) && MathFunctions.RandEvent(0.01f))
+                if (Faction.Race.HasValue(out var race))
                 {
-                    Faction.Minions.Remove(this);
-                    Faction = World.Factions.Factions[Faction.Race.BecomeWhenEvil];
-                    Faction.AddMinion(this);
-                }
-                else if (!String.IsNullOrEmpty(Faction.Race.BecomeWhenNotEvil) && MathFunctions.RandEvent(0.01f))
-                {
-                    Faction.Minions.Remove(this);
-                    Faction = World.Factions.Factions[Faction.Race.BecomeWhenNotEvil];
-                    Faction.AddMinion(this);
-                }
-
-                foreach (var body in World.EnumerateIntersectingObjects(Physics.BoundingBox.Expand(3.0f)).OfType<ResourceEntity>().Where(r => r.Active && r.AnimationQueue.Count == 0))
-                {
-                    if (Library.GetResourceType(body.Resource.TypeName).HasValue(out var resource) && resource.Tags.Contains("Edible"))
+                    if (!String.IsNullOrEmpty(race.BecomeWhenEvil) && MathFunctions.RandEvent(0.01f))
                     {
-                        if ((Faction.Race.EatsMeat && resource.Tags.Contains("AnimalProduct")) ||
-                            (Faction.Race.EatsPlants && !resource.Tags.Contains("AnimalProduct")))
+                        Faction.Minions.Remove(this);
+                        Faction = World.Factions.Factions[race.BecomeWhenEvil];
+                        Faction.AddMinion(this);
+                    }
+                    else if (!String.IsNullOrEmpty(race.BecomeWhenNotEvil) && MathFunctions.RandEvent(0.01f))
+                    {
+                        Faction.Minions.Remove(this);
+                        Faction = World.Factions.Factions[race.BecomeWhenNotEvil];
+                        Faction.AddMinion(this);
+                    }
+
+                    foreach (var body in World.EnumerateIntersectingObjects(Physics.BoundingBox.Expand(3.0f)).OfType<ResourceEntity>().Where(r => r.Active && r.AnimationQueue.Count == 0))
+                    {
+                        if (Library.GetResourceType(body.Resource.TypeName).HasValue(out var resource) && resource.Tags.Contains("Edible"))
                         {
-                            Creature.GatherImmediately(body);
-                            AssignTask(new ActWrapperTask(new EatFoodAct(this, false)));
+                            if ((race.EatsMeat && resource.Tags.Contains("AnimalProduct")) ||
+                                (race.EatsPlants && !resource.Tags.Contains("AnimalProduct")))
+                            {
+                                Creature.GatherImmediately(body);
+                                AssignTask(new ActWrapperTask(new EatFoodAct(this, false)));
+                            }
                         }
                     }
                 }

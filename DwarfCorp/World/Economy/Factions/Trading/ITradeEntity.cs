@@ -13,7 +13,6 @@ namespace DwarfCorp.Trade
         int AvailableSpace { get; }
         DwarfBux ComputeValue(List<Resource> Resources);
         DwarfBux ComputeValue(String Resource);
-        Race TraderRace { get; }
         Faction TraderFaction { get; }
         void RemoveResources(List<Resource> Resources);
         void AddResources(List<Resource> Resources);

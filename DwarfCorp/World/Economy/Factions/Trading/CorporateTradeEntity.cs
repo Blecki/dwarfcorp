@@ -32,7 +32,6 @@ namespace DwarfCorp.Trade
                 World.Overworld.PlayerCorporationResources.Add(resource);
         }
 
-        public Race TraderRace { get { return SourceEnvoy.OwnerFaction.Race; } }
         public Faction TraderFaction { get { return SourceEnvoy.OwnerFaction; } }
 
         public DwarfBux ComputeValue(String Resource)

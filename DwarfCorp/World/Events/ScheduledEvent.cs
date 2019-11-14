@@ -145,7 +145,7 @@ namespace DwarfCorp.Events
 
         public string GetFaction(WorldManager world, string EntityFaction, FactionFilter EntityFactionFilter)
         {
-            var factions = world.Factions.Factions.Where(f => f.Value.Race.IsIntelligent && f.Value.ParentFaction.InteractiveFaction &&
+            var factions = world.Factions.Factions.Where(f => f.Value.Race.HasValue(out var race) && race.IsIntelligent && f.Value.ParentFaction.InteractiveFaction &&
                 CanSpawnFaction(world, f.Value, EntityFaction, EntityFactionFilter)).Select(f => f.Value).ToList();
 
             if (factions.Count == 0)

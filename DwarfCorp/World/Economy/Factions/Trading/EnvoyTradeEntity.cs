@@ -25,7 +25,7 @@ namespace DwarfCorp.Trade
             foreach (var res in Resources)
                 SourceEnvoy.TradeGoods.Add(res);
         }
-        public Race TraderRace { get { return SourceEnvoy.OwnerFaction.Race; } }
+
         public Faction TraderFaction { get { return SourceEnvoy.OwnerFaction; } }
 
         public DwarfBux ComputeValue(String Resource)
@@ -37,10 +37,13 @@ namespace DwarfCorp.Trade
 
         private float GetValueMultiplier(ResourceType ResourceType)
         {
-            if (SourceEnvoy.OwnerFaction.Race.CommonResources.Any(r => ResourceType.Tags.Contains(r)))
-                return 0.75f;
-            if (SourceEnvoy.OwnerFaction.Race.RareResources.Any(r => ResourceType.Tags.Contains(r)))
-                return 1.25f;
+            if (SourceEnvoy.OwnerFaction.Race.HasValue(out var race))
+            {
+                if (race.CommonResources.Any(r => ResourceType.Tags.Contains(r)))
+                    return 0.75f;
+                else if (race.RareResources.Any(r => ResourceType.Tags.Contains(r)))
+                    return 1.25f;
+            }
             return 1.0f;
         }
 

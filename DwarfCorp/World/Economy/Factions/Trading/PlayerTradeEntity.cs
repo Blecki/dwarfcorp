@@ -15,7 +15,6 @@ namespace DwarfCorp.Trade
             this.Faction = Faction;
         }
 
-        public Race TraderRace { get { return Faction.Race; } }
         public Faction TraderFaction { get { return Faction; } }
         public int AvailableSpace { get { return Faction.World.ComputeRemainingStockpileSpace(); } }
         public DwarfBux Money { get { return Faction.Economy.Funds; } }

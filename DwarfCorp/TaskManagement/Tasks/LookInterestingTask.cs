@@ -56,7 +56,7 @@ namespace DwarfCorp
             if (creature.Stats.IsAsleep)
                 return null;
 
-            if (!creature.Faction.Race.IsIntelligent || !creature.IsOnGround)
+            if (!creature.Faction.Race.HasValue(out var race) || !race.IsIntelligent || !creature.IsOnGround)
                 return creature.AI.ActOnWander();
             
             var rooms = creature.World.EnumerateZones();
