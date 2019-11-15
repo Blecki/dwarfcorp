@@ -74,16 +74,16 @@ namespace DwarfCorp
         }
 
         #region Property Accessors.
-        public String DisplayName { get { return GetProperty<String>("DisplayName", TypeName); } set { SetProperty<String>("DisplayName", value); } }
-        public bool Aggregate { get { return GetProperty<bool>("Aggregate", true); } set { SetProperty<bool>("Aggregate", value); } }
-        public String Category { get { return GetProperty<String>("Category", ""); } set { SetProperty<String>("Category", value); } }
-        public List<Gui.TileReference> GuiLayers { get => GetProperty<List<Gui.TileReference>>("GuiLayers", null); set => SetProperty<List<Gui.TileReference>>("GuiLayers", value); }
-        public List<ResourceType.CompositeLayer> CompositeLayers { get => GetProperty<List<ResourceType.CompositeLayer>>("CompositeLayers", new List<ResourceType.CompositeLayer>()); set => SetProperty<List<ResourceType.CompositeLayer>>("CompositeLayers", value); }
-        public String Description { get => GetProperty<String>("Description", ""); set => SetProperty<String>("Description", value); }
-        public float FoodContent { get => GetProperty<float>("FoodContent", 0.0f); set => SetProperty<float>("FoodContent", value); }
-        public DwarfBux MoneyValue { get => GetProperty<DwarfBux>("MoneyValue", 0u); set => SetProperty<DwarfBux>("MoneyValue", value); }
-        public ResourceType.TrinketInfo TrinketData { get => GetProperty<ResourceType.TrinketInfo>("TrinketData", new ResourceType.TrinketInfo()); set => SetProperty<ResourceType.TrinketInfo>("TrinketData", value); }
-        public Color Tint { get => GetProperty<Color>("Tint", new Color(1.0f, 1.0f, 1.0f, 1.0f)); set => SetProperty<Color>("Tint", value); }
+        [JsonIgnore] public String DisplayName { get { return GetProperty<String>("DisplayName", TypeName); } set { SetProperty<String>("DisplayName", value); } }
+        [JsonIgnore] public bool Aggregate { get { return GetProperty<bool>("Aggregate", true); } set { SetProperty<bool>("Aggregate", value); } }
+        [JsonIgnore] public String Category { get { return GetProperty<String>("Category", ""); } set { SetProperty<String>("Category", value); } }
+        [JsonIgnore] public List<Gui.TileReference> GuiLayers { get => GetProperty<List<Gui.TileReference>>("GuiLayers", null); set => SetProperty<List<Gui.TileReference>>("GuiLayers", value); }
+        [JsonIgnore] public List<ResourceType.CompositeLayer> CompositeLayers { get => GetProperty<List<ResourceType.CompositeLayer>>("CompositeLayers", new List<ResourceType.CompositeLayer>()); set => SetProperty<List<ResourceType.CompositeLayer>>("CompositeLayers", value); }
+        [JsonIgnore] public String Description { get => GetProperty<String>("Description", ""); set => SetProperty<String>("Description", value); }
+        [JsonIgnore] public float FoodContent { get => GetProperty<float>("FoodContent", 0.0f); set => SetProperty<float>("FoodContent", value); }
+        [JsonIgnore] public DwarfBux MoneyValue { get => GetProperty<DwarfBux>("MoneyValue", 0u); set => SetProperty<DwarfBux>("MoneyValue", value); }
+        [JsonIgnore] public ResourceType.TrinketInfo TrinketData { get => GetProperty<ResourceType.TrinketInfo>("TrinketData", new ResourceType.TrinketInfo()); set => SetProperty<ResourceType.TrinketInfo>("TrinketData", value); }
+        [JsonIgnore] public Color Tint { get => GetProperty<Color>("Tint", new Color(1.0f, 1.0f, 1.0f, 1.0f)); set => SetProperty<Color>("Tint", value); }
         #endregion
     }
 }

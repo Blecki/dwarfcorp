@@ -7,7 +7,7 @@ namespace DwarfCorp
     public static partial class Library
     {
         private static List<ZoneType> ZoneTypes = null;
-        private static Dictionary<string, Func<ZoneType, WorldManager, Zone>> ZoneFactoryFunctions = null;
+        private static Dictionary<string, Func<String, WorldManager, Zone>> ZoneFactoryFunctions = null;
         private static bool ZoneTypesInitialized = false;
 
         private static void InitializeZoneTypes()
@@ -17,11 +17,11 @@ namespace DwarfCorp
             ZoneTypesInitialized = true;
 
             ZoneTypes = FileUtils.LoadJsonListFromDirectory<ZoneType>(ContentPaths.room_types, null, d => d.Name);
-            ZoneFactoryFunctions = new Dictionary<string, Func<ZoneType, WorldManager, Zone>>();
+            ZoneFactoryFunctions = new Dictionary<string, Func<String, WorldManager, Zone>>();
 
             foreach (var method in AssetManager.EnumerateModHooks(typeof(ZoneFactoryAttribute), typeof(Zone), new Type[]
             {
-                typeof(ZoneType),
+                typeof(String),
                 typeof(WorldManager)
             }))
             {
@@ -40,8 +40,8 @@ namespace DwarfCorp
         public static MaybeNull<Zone> CreateZone(string name, WorldManager world)
         {
             InitializeZoneTypes();
-            if (ZoneFactoryFunctions.ContainsKey(name) && GetZoneType(name).HasValue(out var zoneType))
-                return ZoneFactoryFunctions[name](zoneType, world);
+            if (ZoneFactoryFunctions.ContainsKey(name))
+                return ZoneFactoryFunctions[name](name, world);
             return null;
         }
 

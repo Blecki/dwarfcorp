@@ -11,9 +11,9 @@ namespace DwarfCorp
     public class AnimalPen : Zone
     {
         [ZoneFactory("Animal Pen")]
-        private static Zone _factory(ZoneType Data, WorldManager World)
+        private static Zone _factory(String ZoneTypeName, WorldManager World)
         {
-            return new AnimalPen(Data, World);
+            return new AnimalPen(ZoneTypeName, World);
         }
 
         public List<GameComponent> Animals = new List<GameComponent>();
@@ -25,8 +25,8 @@ namespace DwarfCorp
 
         }
         
-        private AnimalPen(ZoneType Data, WorldManager World) :
-            base(Data, World)
+        private AnimalPen(String ZoneTypeName, WorldManager World) :
+            base(ZoneTypeName, World)
         {
         }
 

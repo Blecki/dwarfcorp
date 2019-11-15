@@ -26,6 +26,7 @@ namespace DwarfCorp
         public byte[] Types;
         public byte[] GrassType;
         public byte[] RampsSunlightExplored;
+        public byte[] Decals;
 
         public Dictionary<int, String> VoxelTypeMap;
         public Dictionary<int, String> GrassTypeMap;
@@ -44,6 +45,7 @@ namespace DwarfCorp
                 Liquid = new byte[VoxelConstants.ChunkVoxelCount],
                 GrassType = new byte[VoxelConstants.ChunkVoxelCount],
                 RampsSunlightExplored = new byte[VoxelConstants.ChunkVoxelCount],
+                Decals = new byte[VoxelConstants.ChunkVoxelCount],
                 Origin = chunk.Origin
             };
 
@@ -51,6 +53,7 @@ namespace DwarfCorp
             chunk.Data.Grass.CopyTo(r.GrassType, 0);
             chunk.Data.RampsSunlightExploredPlayerBuilt.CopyTo(r.RampsSunlightExplored, 0);
             chunk.Data.Liquid.CopyTo(r.Liquid, 0);
+            chunk.Data.Decal.CopyTo(r.Decals, 0);
 
             r.VoxelTypeMap = Library.GetVoxelTypeMap();
             r.GrassTypeMap = Library.GetGrassTypeMap();
@@ -114,6 +117,9 @@ namespace DwarfCorp
 
             if (GrassType != null)
                 GrassType.CopyTo(c.Data.Grass, 0);
+
+            if (Decals != null)
+                Decals.CopyTo(c.Data.Decal, 0);
 
             // Remap grass.
             Remap(c.Data.Grass.Length, GrassTypeMap, Library.GetGrassTypeMap(),

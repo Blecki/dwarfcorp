@@ -11,9 +11,9 @@ namespace DwarfCorp
     public class BalloonPort : Stockpile
     {
         [ZoneFactory("Balloon Port")]
-        private static Zone _factory(ZoneType Data, WorldManager World)
+        private static Zone _factory(String ZoneTypeName, WorldManager World)
         {
-            return new BalloonPort(Data, World);
+            return new BalloonPort(ZoneTypeName, World);
         }
 
         public BalloonPort()
@@ -21,8 +21,8 @@ namespace DwarfCorp
 
         }
 
-        private BalloonPort(ZoneType Data, WorldManager World) :
-            base(Data, World)
+        private BalloonPort(String ZoneTypeName, WorldManager World) :
+            base(ZoneTypeName, World)
         {
         }
     }

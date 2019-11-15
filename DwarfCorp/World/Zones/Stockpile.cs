@@ -18,9 +18,9 @@ namespace DwarfCorp
     public class Stockpile : Zone
     {
         [ZoneFactory("Stockpile")]
-        private static Zone _factory(ZoneType Data, WorldManager World)
+        private static Zone _factory(String ZoneTypeName, WorldManager World)
         {
-            return new Stockpile(Data, World);
+            return new Stockpile(ZoneTypeName, World);
         }
 
         public bool SupportsFilters = true;
@@ -40,11 +40,11 @@ namespace DwarfCorp
 
         public Stockpile()
         {
-            RecalculateMaxResources();
+            //RecalculateMaxResources();
         }
 
-        protected Stockpile(ZoneType Data, WorldManager World) :
-            base(Data, World)
+        protected Stockpile(String ZoneTypeName, WorldManager World) :
+            base(ZoneTypeName, World)
         {
             Boxes = new List<GameComponent>();
 

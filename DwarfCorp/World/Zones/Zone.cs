@@ -14,7 +14,19 @@ namespace DwarfCorp
         public string ID = "";
         public List<VoxelHandle> Voxels = new List<VoxelHandle>();
         public List<GameComponent> ZoneBodies = new List<GameComponent>();
-        public ZoneType Type;
+
+        [JsonProperty] private String TypeName;
+        [JsonIgnore] private ZoneType _cachedType;
+        [JsonIgnore] public ZoneType Type
+        {
+            get
+            {
+                if (_cachedType == null && Library.GetZoneType(TypeName).HasValue(out var type))
+                    _cachedType = type;
+                return _cachedType;
+            }
+        }
+
         public bool IsBuilt;
         public virtual String GetDescriptionString() { return Library.GetString("generic-room-description"); }
 
@@ -32,12 +44,12 @@ namespace DwarfCorp
             }
         }
 
-        public Zone(ZoneType Type, WorldManager World)
+        public Zone(String TypeName, WorldManager World)
         {
             this.World = World;
-            this.Type = Type;
+            this.TypeName = TypeName;
 
-            ID = World.PersistentData.NextRoomID + ". " + Type.Name;
+            ID = World.PersistentData.NextRoomID + ". " + TypeName;
             ++World.PersistentData.NextRoomID;
         }
 
