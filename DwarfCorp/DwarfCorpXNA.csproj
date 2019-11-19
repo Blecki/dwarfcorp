@@ -199,6 +199,7 @@
     <Compile Include="GameStates\Play\EmployeeInfoPanel\DebugPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\TaskListPanel.cs" />
     <Compile Include="GameStates\Play\GodMenu.cs" />
+    <Compile Include="TaskManagement\ActHelper-ApplyWearToTool.cs" />
     <Compile Include="World\Economy\Factions\Trading\TradeState\Balance.cs" />
     <Compile Include="World\Economy\Factions\Trading\TradeState\TradeHelper.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ResourceIcon.cs" />
@@ -334,7 +335,7 @@
     <Compile Include="Player\Tools\WrangleTool.cs" />
     <Compile Include="Player\VoxelSelectionType.cs" />
     <Compile Include="Player\VoxelSelector.cs" />
-    <Compile Include="TaskManagement\ActHelper.cs" />
+    <Compile Include="TaskManagement\ActHelper-CreateToolCheckAct.cs" />
     <Compile Include="TaskManagement\Act.cs" />
     <Compile Include="TaskManagement\ActData.cs" />
     <Compile Include="TaskManagement\BehaviorExtensions.cs" />

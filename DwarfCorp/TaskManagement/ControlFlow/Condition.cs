@@ -44,7 +44,7 @@ namespace DwarfCorp
         }
     }
 
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    // Child only runs while condition is true.
     public class Domain : Act
     {
         private Func<bool> Function { get; set; }

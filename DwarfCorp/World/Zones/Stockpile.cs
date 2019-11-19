@@ -24,7 +24,7 @@ namespace DwarfCorp
         }
 
         public bool SupportsFilters = true;
-        public int ResourceCapacity { get; private set; }
+        public int ResourceCapacity = 0;
         public int ResourcesPerVoxel = 32;
         public ResourceSet Resources = new ResourceSet();
         [JsonProperty] private List<GameComponent> Boxes { get; set; }

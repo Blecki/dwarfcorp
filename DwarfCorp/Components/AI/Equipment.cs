@@ -9,23 +9,18 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class EquippedItem
-    {
-        public Resource Resource;
-    }
-
     public class Equipment
     {
-        public Dictionary<String, EquippedItem> EquippedItems = new Dictionary<String, EquippedItem>();
+        public Dictionary<String, Resource> EquippedItems = new Dictionary<String, Resource>();
 
-        public MaybeNull<EquippedItem> GetItemInSlot(String Slot)
+        public MaybeNull<Resource> GetItemInSlot(String Slot)
         {
             if (EquippedItems.ContainsKey(Slot))
                 return EquippedItems[Slot];
             return null;
         }
 
-        public void EquipItem(String Slot, EquippedItem Item)
+        public void EquipItem(String Slot, Resource Item)
         {
             EquippedItems[Slot] = Item;
         }
@@ -34,6 +29,5 @@ namespace DwarfCorp
         {
             EquippedItems.Remove(Slot);
         }
-
     }
 }

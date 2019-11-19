@@ -84,6 +84,8 @@ namespace DwarfCorp
         [JsonIgnore] public DwarfBux MoneyValue { get => GetProperty<DwarfBux>("MoneyValue", 0u); set => SetProperty<DwarfBux>("MoneyValue", value); }
         [JsonIgnore] public ResourceType.TrinketInfo TrinketData { get => GetProperty<ResourceType.TrinketInfo>("TrinketData", new ResourceType.TrinketInfo()); set => SetProperty<ResourceType.TrinketInfo>("TrinketData", value); }
         [JsonIgnore] public Color Tint { get => GetProperty<Color>("Tint", new Color(1.0f, 1.0f, 1.0f, 1.0f)); set => SetProperty<Color>("Tint", value); }
+        [JsonIgnore] public float Durability { get => GetProperty<float>("Durability", 1.0f); set => SetProperty<float>("Durability", value); }
+        [JsonIgnore] public float Wear { get => GetProperty<float>("Wear", 0.0f); set => SetProperty<float>("Wear", value); }
         #endregion
     }
 }

@@ -39,6 +39,8 @@ namespace DwarfCorp
         public Potion PotionType = null;
         public string Category = "";
         public String GetCategory => Category;
+        public float Durability = 1.0f;     // How much wear an item can take.
+        public float Wear = 0.0f;
 
         #region Placement
         public bool Placement_Placeable = false;

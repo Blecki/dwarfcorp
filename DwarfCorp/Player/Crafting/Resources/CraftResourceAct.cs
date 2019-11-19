@@ -194,7 +194,7 @@ namespace DwarfCorp
                     getResources,
                     new Domain(ResourceStateValid,
                         new Sequence(
-                            ActHelper.CreateToolCheckAct(Agent, "Hammer"),
+                            ActHelper.CreateToolCheckAct(Agent, false, "Hammer"),
                             new GoToTaggedObjectAct(Agent)
                             {
                                 Teleport = true,
@@ -246,7 +246,7 @@ namespace DwarfCorp
                     new ClearBlackboardData(Agent, "ResourcesStashed"),
                     getResources,
                     new Domain(ResourceStateValid, new Sequence(
-                        ActHelper.CreateToolCheckAct(Agent, "Hammer"),
+                        ActHelper.CreateToolCheckAct(Agent, false, "Hammer"),
                         new Wrap(() => DestroyResources(() => Creature.Physics.Position + MathFunctions.RandVector3Cube() * 0.5f)),
                         new Wrap(WaitForResources) { Name = "Wait for resources." },
                         new Wrap(() => Creature.HitAndWait(time, true, () => Creature.Physics.Position)) { Name = "Construct object." },

@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp.Play.EmployeeInfo
 {
-    public class BetterResourceIcon : Widget
+    public class EquippedResourceIcon : Widget
     {
         private Resource _Resource = null;
         public Resource Resource
@@ -31,7 +31,7 @@ namespace DwarfCorp.Play.EmployeeInfo
             if (_Resource == null)
                 return base.Redraw();
 
-            Tooltip = _Resource.DisplayName;
+            Tooltip = String.Format("{0}\nWear: {1:##.##}%", _Resource.DisplayName, (_Resource.Wear / _Resource.Durability) * 100.0f);
             var layers = _Resource.GuiLayers;
 
             var r = new List<Mesh>();
@@ -54,15 +54,15 @@ namespace DwarfCorp.Play.EmployeeInfo
             get { return FetchEmployee?.Invoke(); }
         }
 
-        private BetterResourceIcon ToolIcon;
+        private EquippedResourceIcon ToolIcon;
 
         public override void Construct()
         {
             Font = "font8";
 
-            ToolIcon = AddChild(new BetterResourceIcon {
+            ToolIcon = AddChild(new EquippedResourceIcon {
                 
-            }) as BetterResourceIcon;
+            }) as EquippedResourceIcon;
 
             base.Construct();
 
@@ -86,10 +86,8 @@ namespace DwarfCorp.Play.EmployeeInfo
                 else
                 {
                     if (Employee.Stats.Equipment.GetItemInSlot("tool").HasValue(out var tool))
-                        ToolIcon.Resource = tool.Resource;
-                   
+                        ToolIcon.Resource = tool;
                 }
-
             }
             else
                 Hidden = true;

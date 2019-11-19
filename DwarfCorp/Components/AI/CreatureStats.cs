@@ -147,7 +147,7 @@ namespace DwarfCorp
             Title = CurrentLevel.Name;
 
             if (!String.IsNullOrEmpty(CurrentClass.DefaultTool) && Library.GetResourceType(CurrentClass.DefaultTool).HasValue())
-                Equipment.EquipItem("tool", new EquippedItem { Resource = new Resource(CurrentClass.DefaultTool) });
+                Equipment.EquipItem("tool", new Resource(CurrentClass.DefaultTool));
         }
 
         public void LevelUp(Creature Creature)

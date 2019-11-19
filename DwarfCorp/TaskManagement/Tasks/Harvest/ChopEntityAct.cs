@@ -36,7 +36,7 @@ namespace DwarfCorp
 
             Tree = new Domain(Verify(Agent),
                 new Sequence(
-                    ActHelper.CreateToolCheckAct(Creature, "Axe", "Pick"),
+                    ActHelper.CreateToolCheckAct(Creature, false, "Axe", "Pick"),
                     new GoToEntityAct(Entity, Creature)
                     {
                         MovingTarget = false,

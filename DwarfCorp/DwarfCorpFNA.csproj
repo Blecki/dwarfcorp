@@ -202,7 +202,8 @@
     <Compile Include="Player\Tutorial\TutorialSaveData.cs" />
     <Compile Include="TaskManagement\Act.cs" />
     <Compile Include="TaskManagement\ActData.cs" />
-    <Compile Include="TaskManagement\ActHelper.cs" />
+    <Compile Include="TaskManagement\ActHelper-ApplyWearToTool.cs" />
+    <Compile Include="TaskManagement\ActHelper-CreateToolCheckAct.cs" />
     <Compile Include="TaskManagement\ActWrapperTask.cs" />
     <Compile Include="TaskManagement\BehaviorExtensions.cs" />
     <Compile Include="TaskManagement\Blackboard.cs" />

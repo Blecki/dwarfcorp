@@ -35,11 +35,36 @@ namespace DwarfCorp
             if (Agent.Stats.Equipment.GetItemInSlot("tool").HasValue(out var existingTool))
             {
                 Agent.Stats.Equipment.UnequipItem("tool");
-                Creature.Inventory.AddResource(existingTool.Resource);
+                Creature.Inventory.AddResource(existingTool);
             }
 
-            Agent.Stats.Equipment.EquipItem("tool", new EquippedItem { Resource = toolResource });
+            Agent.Stats.Equipment.EquipItem("tool", toolResource);
             Creature.Inventory.Remove(toolResource, Inventory.RestockType.Any);
+            yield return Status.Success;
+        }
+    }
+
+    public class UnequipToolAct : CreatureAct
+    {
+        public UnequipToolAct()
+        {
+
+        }
+
+        public UnequipToolAct(CreatureAI Agent) :
+            base(Agent)
+        {
+            Name = "Unequip Tool";
+        }
+
+        public override IEnumerable<Status> Run()
+        {
+            if (Agent.Stats.Equipment.GetItemInSlot("tool").HasValue(out var existingTool))
+            {
+                Agent.Stats.Equipment.UnequipItem("tool");
+                Creature.Inventory.AddResource(existingTool);
+            }
+
             yield return Status.Success;
         }
     }

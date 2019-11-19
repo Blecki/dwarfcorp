@@ -59,6 +59,7 @@ namespace DwarfCorp
                 }
 
                 DigAct.VoxelHealth -= (Weapon.DamageAmount + bonus);
+                ActHelper.ApplyWearToTool(performer.AI, 1.0f);
 
                 DigAct.Voxel.Type.HitSound.Play(DigAct.Voxel.WorldPosition);
                 if (!String.IsNullOrEmpty(Weapon.HitParticles))

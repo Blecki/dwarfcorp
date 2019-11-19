@@ -146,7 +146,7 @@ namespace DwarfCorp
                                            new Domain(buildRoom.MeetsBuildRequirements() || buildRoom.ResourcesReservedFor != null, true)),
                 new Domain(() => IsRoomBuildOrder(buildRoom) && !buildRoom.IsBuilt && !buildRoom.IsDestroyed && ValidResourceState(), 
                 new Sequence(
-                    ActHelper.CreateToolCheckAct(agent, "Hammer"),
+                    ActHelper.CreateToolCheckAct(agent, false, "Hammer"),
                     SetTargetVoxelFromRoomAct(buildRoom, "ActionVoxel"),
                     new GoToNamedVoxelAct("ActionVoxel", PlanAct.PlanType.Adjacent, Agent),
                     new Wrap(PutResources),
