@@ -31,7 +31,7 @@ namespace DwarfCorp.Play.EmployeeInfo
             if (_Resource == null)
                 return base.Redraw();
 
-            Tooltip = String.Format("{0}\nWear: {1:##.##}%", _Resource.DisplayName, (_Resource.Wear / _Resource.Durability) * 100.0f);
+            Tooltip = String.Format("{0}\nWear: {1:##.##}%", _Resource.DisplayName, (_Resource.Tool_Wear / _Resource.Tool_Durability) * 100.0f);
             var layers = _Resource.GuiLayers;
 
             var r = new List<Mesh>();

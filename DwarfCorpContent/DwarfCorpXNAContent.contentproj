@@ -2387,6 +2387,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>IronHammer</Name>
     </None>
+    <None Include="World\ResourceItems\DwarfHands.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>DwarfHands</Name>
+    </None>
     <None Include="World\ResourceItems\IronTable.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>IronTable</Name>

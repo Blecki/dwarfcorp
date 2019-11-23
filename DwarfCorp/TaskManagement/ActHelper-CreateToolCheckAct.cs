@@ -14,7 +14,7 @@ namespace DwarfCorp
                             return !res.Tags.Any(t => ToolType.Contains(t));
                         return true;
                     },
-                    new UnequipToolAct())),
+                    new UnequipToolAct(Creature))),
                 new Select(
                     new Condition(() =>
                     {

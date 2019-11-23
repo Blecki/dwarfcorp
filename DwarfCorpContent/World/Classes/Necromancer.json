@@ -27,7 +27,7 @@
       "ProjectileType": "",
       "LaunchSpeed": 0.0,
       "HasTriggered": false,
-      "TriggerMode": "Timer",
+      "TriggerMode": "Animation",
       "TriggerFrame": 0,
       "DiseaseToSpread": null,
       "ShootLaser": false

@@ -8,7 +8,15 @@ namespace DwarfCorp
         public static void ApplyWearToTool(CreatureAI Creature, float Wear)
         {
             if (Creature.Stats.Equipment.GetItemInSlot("tool").HasValue(out var tool))
-                tool.Wear += Wear;
+                if (tool.Tool_Breakable)
+                {
+                    tool.Tool_Wear += Wear;
+                    if (tool.Tool_Wear > tool.Tool_Durability)
+                    {
+                        Creature.World.MakeAnnouncement("Tool broke!", Microsoft.Xna.Framework.Color.Red);
+                        Creature.Stats.Equipment.UnequipItem("tool");
+                    }
+                }
         }
     }
 }

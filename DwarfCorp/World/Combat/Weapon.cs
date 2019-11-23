@@ -21,12 +21,6 @@ namespace DwarfCorp
             Dogfight
         }
 
-        public enum AttackTrigger
-        {
-            Timer,
-            Animation
-        }
-
         public float DamageAmount;
 
         public float RechargeRate;
@@ -53,7 +47,6 @@ namespace DwarfCorp
         public string ProjectileType = "";
         public float LaunchSpeed;
         public bool HasTriggered;
-        public AttackTrigger TriggerMode;
         public int TriggerFrame;
 
         public string DiseaseToSpread = null;
@@ -62,26 +55,6 @@ namespace DwarfCorp
         public Weapon()
         {
             
-        }
-
-        public Weapon(Weapon other)
-        {
-            Name = other.Name;
-            DamageAmount = other.DamageAmount;
-            Range = other.Range;
-            HitNoise = other.HitNoise;
-            Mode = other.Mode;
-            Knockback = other.Knockback;
-            HitParticles = other.HitParticles;
-            HitColor = other.HitColor;
-            ProjectileType = other.ProjectileType;
-            LaunchSpeed = other.LaunchSpeed;
-            AnimationAsset = other.AnimationAsset;
-            TriggerMode = other.TriggerMode;
-            TriggerFrame = other.TriggerFrame;
-            HasTriggered = false;
-            DiseaseToSpread = other.DiseaseToSpread;
-            ShootLaser = other.ShootLaser;
         }
 
         public Weapon(string name, float damage, float time, float range, SoundSource noise, string animation)

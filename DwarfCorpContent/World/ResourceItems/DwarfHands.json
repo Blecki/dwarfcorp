@@ -1,7 +1,7 @@
 {
-  "TypeName": "Iron Pick",
-  "MoneyValue": 100.0,
-  "Description": "A pick made of iron.",
+  "TypeName": "Dwarf Hands",
+  "MoneyValue": 0.0,
+  "Description": "A set of fleshy dwarven hands",
   "Category": "Tools",
   "GuiLayers": [
     {
@@ -10,8 +10,7 @@
     }
   ],
   "Tags": [
-    "Tool",
-    "Pick"
+    "Tool"
   ],
   "FoodContent": 0.0,
   "CompositeLayers": [
@@ -27,7 +26,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "DisplayName": "Iron Pick",
+  "DisplayName": "Dwarf Hands",
   "PlantToGenerate": "",
   "CanCraft": false,
   "CraftPrerequisites": [],
@@ -39,10 +38,10 @@
   ],
   "AleName": "",
 
-  "Tool_Breakable": true,
-  "Tool_Durability": 50,
+  "Tool_Breakable": false,
+  "Tool_Durability": 1,
   "Tool_Wear": 0,
-  "Tool_Effectiveness": 1.0,
+  "Tool_Effectiveness": 0.5,
   "Tool_SpriteSheet": "make this the dwarf hands sheet",
   "Tool_AttackAnimation": "Attacking",
   "Tool_AttackTriggerFrame": 2,

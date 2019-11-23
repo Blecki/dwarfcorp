@@ -36,30 +36,15 @@ namespace DwarfCorp
 
                 Drawer2D.DrawLoadBar(performer.World.Renderer.Camera, DigAct.Voxel.WorldPosition + Vector3.One * 0.5f, Color.White, Color.Black, 32, 1, (float)DigAct.VoxelHealth / DigAct.Voxel.Type.StartingHealth);
 
-                switch (Weapon.TriggerMode)
+                while (!performer.Sprite.AnimPlayer.HasValidAnimation() ||
+                    performer.Sprite.AnimPlayer.CurrentFrame < Weapon.TriggerFrame)
                 {
-                    case Weapon.AttackTrigger.Timer:
-                        RechargeTimer.Update(time);
-                        if (!RechargeTimer.HasTriggered)
-                        {
-                            yield return Act.Status.Running;
-                            continue;
-                        }
-                        break;
-                    case Weapon.AttackTrigger.Animation:
-                        if (!performer.Sprite.AnimPlayer.HasValidAnimation() ||
-                            performer.Sprite.AnimPlayer.CurrentFrame < Weapon.TriggerFrame)
-                        {
-                            if (performer.Sprite.AnimPlayer.HasValidAnimation())
-                                performer.Sprite.AnimPlayer.Play();
-                            yield return Act.Status.Running;
-                            continue;
-                        }
-                        break;
+                    if (performer.Sprite.AnimPlayer.HasValidAnimation())
+                        performer.Sprite.AnimPlayer.Play();
+                    yield return Act.Status.Running;
                 }
 
                 DigAct.VoxelHealth -= (Weapon.DamageAmount + bonus);
-                ActHelper.ApplyWearToTool(performer.AI, 1.0f);
 
                 DigAct.Voxel.Type.HitSound.Play(DigAct.Voxel.WorldPosition);
                 if (!String.IsNullOrEmpty(Weapon.HitParticles))
@@ -79,7 +64,7 @@ namespace DwarfCorp
             Vector3 velocity = (end - start);
             float dist = velocity.Length();
             float T = dist / Weapon.LaunchSpeed;
-            velocity = 1.0f/T*(end - start) - 0.5f*Vector3.Down*10*T;
+            velocity = 1.0f / T * (end - start) - 0.5f * Vector3.Down * 10 * T;
             Blackboard data = new Blackboard();
             data.SetData("Velocity", velocity);
             data.SetData("Target", target);
@@ -88,25 +73,13 @@ namespace DwarfCorp
 
         public bool PerformNoDamage(Creature performer, DwarfTime time, Vector3 pos)
         {
-            switch (Weapon.TriggerMode)
+            if (!performer.Sprite.AnimPlayer.HasValidAnimation() ||
+                performer.Sprite.AnimPlayer.CurrentFrame != Weapon.TriggerFrame)
             {
-                case Weapon.AttackTrigger.Timer:
-                    RechargeTimer.Update(time);
-                    if (!RechargeTimer.HasTriggered)
-                    {
-                        HasTriggered = false;
-                        return false;
-                    }
-                    break;
-                case Weapon.AttackTrigger.Animation:
-                    if (!performer.Sprite.AnimPlayer.HasValidAnimation() ||
-                        performer.Sprite.AnimPlayer.CurrentFrame != Weapon.TriggerFrame)
-                    {
-                        HasTriggered = false;
-                        return false;
-                    }
-                    break;
+                HasTriggered = false;
+                return false;
             }
+
             if (Weapon.Mode == Weapon.AttackMode.Melee)
             {
                 if (Weapon.HitParticles != "")
@@ -188,24 +161,11 @@ namespace DwarfCorp
         public bool Perform(Creature performer, GameComponent other, DwarfTime time, float bonus, Vector3 pos, string faction)
         {
 
-            switch (Weapon.TriggerMode)
+            if (!performer.Sprite.AnimPlayer.HasValidAnimation() ||
+                performer.Sprite.AnimPlayer.CurrentFrame != Weapon.TriggerFrame)
             {
-                case Weapon.AttackTrigger.Timer:
-                    RechargeTimer.Update(time);
-                    if (!RechargeTimer.HasTriggered)
-                    {
-                        HasTriggered = false;
-                        return false;
-                    }
-                    break;
-                case Weapon.AttackTrigger.Animation:
-                    if (!performer.Sprite.AnimPlayer.HasValidAnimation() ||
-                        performer.Sprite.AnimPlayer.CurrentFrame != Weapon.TriggerFrame)
-                    {
-                        HasTriggered = false;
-                        return false;
-                    }
-                    break;
+                HasTriggered = false;
+                return false;
             }
 
             if (HasTriggered)
@@ -216,15 +176,15 @@ namespace DwarfCorp
             {
                 case Weapon.AttackMode.Melee:
                 case Weapon.AttackMode.Dogfight:
-                {
+                    {
                         DoDamage(performer, other, bonus);
                         break;
-                }
+                    }
                 case Weapon.AttackMode.Area:
-                {
+                    {
                         var box = new BoundingBox(performer.AI.Position - Vector3.One * Weapon.Range, performer.AI.Position + Vector3.One * Weapon.Range);
 
-                        foreach(var body in performer.World.EnumerateIntersectingObjects(box, CollisionType.Both).Where(b => b.IsRoot()))
+                        foreach (var body in performer.World.EnumerateIntersectingObjects(box, CollisionType.Both).Where(b => b.IsRoot()))
                         {
                             if (body.GetRoot().GetComponent<CreatureAI>().HasValue(out var creature))
                             {
@@ -242,22 +202,22 @@ namespace DwarfCorp
                                     DoDamage(performer, body, bonus);
 
                                 continue;
-                            }                            
+                            }
                         }
                         break;
-                }
+                    }
                 case Weapon.AttackMode.Ranged:
-                {
-                    PlayNoise(other.GlobalTransform.Translation);
-                    LaunchProjectile(pos, other.Position, other);
+                    {
+                        PlayNoise(other.GlobalTransform.Translation);
+                        LaunchProjectile(pos, other.Position, other);
 
-                    var injury = DiseaseLibrary.GetRandomInjury();
+                        var injury = DiseaseLibrary.GetRandomInjury();
 
-                    if (MathFunctions.RandEvent(injury.LikelihoodOfSpread))
-                        if (other.GetRoot().GetComponent<Creature>().HasValue(out var creature))
-                            creature.Stats.AcquireDisease(injury);
-                    break;
-                }
+                        if (MathFunctions.RandEvent(injury.LikelihoodOfSpread))
+                            if (other.GetRoot().GetComponent<Creature>().HasValue(out var creature))
+                                creature.Stats.AcquireDisease(injury);
+                        break;
+                    }
             }
 
             return true;
@@ -268,5 +228,4 @@ namespace DwarfCorp
             Weapon.HitNoise.Play(position);
         }
     }
-
 }

@@ -14,7 +14,6 @@ namespace DwarfCorp
         public float EnergyLoss { get; set; }
         public KillVoxelTask OwnerTask;
         public bool CheckOwnership = true;
-        public Attack Attack;
 
         public DigAct(CreatureAI creature, KillVoxelTask OwnerTask) :
             base(creature)
@@ -23,7 +22,58 @@ namespace DwarfCorp
             EnergyLoss = 10.0f;
 
             this.OwnerTask = OwnerTask;
-            Attack = creature.Creature.Attacks[0];
+        }
+
+        private Resource GetEquippedTool(CreatureAI Creature)
+        {
+            if (Creature.Stats.Equipment.GetItemInSlot("tool").HasValue(out var resource))
+                return resource;
+            else if (!String.IsNullOrEmpty(Creature.Stats.CurrentClass.FallbackTool))
+                return new Resource(Creature.Stats.CurrentClass.FallbackTool);
+            else
+                return new Resource("Dwarf Hands");
+        }
+
+        private IEnumerable<Act.Status> PerformOnVoxel(Creature performer, Vector3 pos, KillVoxelTask DigAct, DwarfTime time, float bonus, string faction)
+        {
+            var tool = GetEquippedTool(performer.AI);
+
+            // Play the attack animations.
+            Creature.CurrentCharacterMode = tool.Tool_AttackAnimation;
+            Creature.OverrideCharacterMode = true;
+            Creature.Sprite.ResetAnimations(Creature.CurrentCharacterMode);
+            Creature.Sprite.PlayAnimations(Creature.CurrentCharacterMode);
+
+            while (true)
+            {
+                if (!DigAct.Voxel.IsValid)
+                {
+                    performer.AI.SetMessage("Failed to dig. Voxel was not valid.");
+                    yield return Act.Status.Fail;
+                    yield break;
+                }
+
+                Drawer2D.DrawLoadBar(performer.World.Renderer.Camera, DigAct.Voxel.WorldPosition + Vector3.One * 0.5f, Color.White, Color.Black, 32, 1, (float)DigAct.VoxelHealth / DigAct.Voxel.Type.StartingHealth);
+
+                while (!performer.Sprite.AnimPlayer.HasValidAnimation() || performer.Sprite.AnimPlayer.CurrentFrame < tool.Tool_AttackTriggerFrame)
+                {
+                    if (performer.Sprite.AnimPlayer.HasValidAnimation())
+                        performer.Sprite.AnimPlayer.Play();
+                    yield return Act.Status.Running;
+                }
+
+                DigAct.VoxelHealth -= (tool.Tool_AttackDamage + bonus);
+                DigAct.Voxel.Type.HitSound.Play(DigAct.Voxel.WorldPosition);
+                if (!String.IsNullOrEmpty(tool.Tool_AttackHitParticles))
+                    performer.Manager.World.ParticleManager.Trigger(tool.Tool_AttackHitParticles, DigAct.Voxel.WorldPosition, Color.White, 5);
+
+                if (!String.IsNullOrEmpty(tool.Tool_AttackHitEffect))
+                    IndicatorManager.DrawIndicator(Library.CreateSimpleAnimation(tool.Tool_AttackHitEffect), DigAct.Voxel.WorldPosition + Vector3.One * 0.5f,
+                        10.0f, 1.0f, MathFunctions.RandVector2Circle() * 10, tool.Tool_AttackHitColor, MathFunctions.Rand() > 0.5f);
+
+                yield return Act.Status.Success;
+                yield break;
+            }
         }
 
         public override IEnumerable<Status> Run()
@@ -64,7 +114,7 @@ namespace DwarfCorp
 
                 // Wait until an attack was successful...
                 foreach (var status in
-                    Attack.PerformOnVoxel(Creature,
+                    PerformOnVoxel(Creature,
                             Creature.Physics.Position,
                             OwnerTask, DwarfTime.LastTime,
                             Creature.Stats.BaseDigSpeed,
@@ -74,10 +124,6 @@ namespace DwarfCorp
                     {
                         Creature.Physics.Face(vox.WorldPosition + Vector3.One * 0.5f);
                         Creature.Physics.Velocity *= 0.01f;
-
-                        // Debug drawing.
-                        //if (agent.AI.DrawPath)
-                        //    Drawer3D.DrawLine(vox.WorldPosition, agent.AI.Position, Color.Green, 0.25f);
                         yield return Act.Status.Running;
                     }
                 }
@@ -89,9 +135,9 @@ namespace DwarfCorp
                 {
                     if (Library.GetVoxelType(vox.Type.Name).HasValue(out VoxelType voxelType))
                     {
-                        if (MathFunctions.RandEvent(0.5f))
-                            Creature.AI.AddXP(Math.Max((int)(voxelType.StartingHealth / 4), 1));
+                        Creature.AI.AddXP(Math.Max((int)(voxelType.StartingHealth / 4), 1));
                         Creature.Stats.NumBlocksDestroyed++;
+                        ActHelper.ApplyWearToTool(Creature.AI, 1.0f);
 
                         var items = VoxelHelpers.KillVoxel(Creature.World, vox);
 
@@ -113,17 +159,6 @@ namespace DwarfCorp
 
                 // Pause the animation and wait for a recharge timer.
                 Creature.Sprite.PauseAnimations(Creature.CurrentCharacterMode);
-
-
-                // Wait for a recharge timer to trigger.
-                Attack.RechargeTimer.Reset();
-                while (!Attack.RechargeTimer.HasTriggered)
-                {
-                    Attack.RechargeTimer.Update(DwarfTime.LastTime);
-                    Creature.Physics.Face(vox.WorldPosition + Vector3.One * 0.5f);
-                    Creature.Physics.Velocity *= 0.01f;
-                    yield return Act.Status.Running;
-                }
 
                 Creature.CurrentCharacterMode = CharacterMode.Idle;
                 yield return Act.Status.Running;
