@@ -413,17 +413,12 @@ namespace DwarfCorp
         {
             if (Minecart == null)
                 Minecart = EntityFactory.CreateEntity<Cart>("Cart", Agent.Position);
-
-            //if (Agent.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>().HasValue(out var layers) && layers.GetLayers().GetLayer("minecart") == null)
-            //    layers.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("minecart").FirstOrDefault(), LayeredSprites.LayerLibrary.BaseDwarfPalette);
         }
 
         private void CleanupMinecart()
         {
             if (Minecart != null)
                 Minecart.Delete();
-            if (Agent.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>().HasValue(out var layers))
-                layers.RemoveLayer("minecart");
         }
 
         public override IEnumerable<Status> Run()

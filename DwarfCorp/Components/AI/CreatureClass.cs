@@ -33,6 +33,8 @@ namespace DwarfCorp
         public string JobDescription = "There is no description for this class.";
         public bool RequiresTools = true;
         public bool TriggersMourning = true;
+        public string BodyLayer = "worker";
+        public string HatLayer = null;
 
         // Todo: Should just include name of attack animation. Kinda what the AttackMode is.
 

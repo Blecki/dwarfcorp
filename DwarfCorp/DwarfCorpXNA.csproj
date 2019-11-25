@@ -184,11 +184,13 @@
     <Compile Include="AssetManagement\ModMetaData.cs" />
     <Compile Include="AssetManagement\ObjLoader.cs" />
     <Compile Include="AssetManagement\StringLibrary.cs" />
+    <Compile Include="AssetManagement\TextureTool-LoadPSD.cs" />
     <Compile Include="Components\AI\Creature-Death.cs" />
     <Compile Include="Components\AI\FairyAI.cs" />
     <Compile Include="Components\AI\DwarfAI.cs" />
     <Compile Include="Components\AI\Equipment.cs" />
     <Compile Include="Components\AI\SpeciesLibrary.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\DwarfBuilder.cs" />
     <Compile Include="Components\Systems\ConsoleCommands.cs" />
     <Compile Include="Entities\Fixtures\IronLadder.cs" />
     <Compile Include="Entities\Fixtures\StoneLadder.cs" />
@@ -1041,6 +1043,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\PSD\PhotoShop.csproj">
+      <Project>{a04eedd9-e164-4941-9846-722acf2fcca1}</Project>
+      <Name>PhotoShop</Name>
+    </ProjectReference>
     <ProjectReference Include="..\YarnSpinner\YarnSpinner.csproj">
       <Project>{6c3b03d2-2e89-4ec3-a022-e84053a7b17f}</Project>
       <Name>YarnSpinner</Name>

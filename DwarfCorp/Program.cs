@@ -40,6 +40,10 @@ namespace DwarfCorp
 
             GameSettings.Load();
 
+
+
+            TextureTool.LoadPSD(System.IO.File.OpenRead("Content\\Entities\\Dwarf\\Layers\\dwarf-gfx.psd"));
+
 #if !DEBUG
             try
             {

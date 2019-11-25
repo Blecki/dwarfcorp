@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    public static class TextureTool
+    public static partial class TextureTool
     {
         public static MemoryTexture MemoryTextureFromTexture2D(Texture2D Source)
         {

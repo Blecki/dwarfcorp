@@ -150,44 +150,7 @@ namespace DwarfCorp
                     return;
             }
 
-            var sprite = Physics.AddChild(new LayeredSprites.LayeredCharacterSprite(manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)))) as LayeredSprites.LayeredCharacterSprite;
-
-            var random = new Random(Stats.RandomSeed);
-
-            var hairPalette = LayeredSprites.LayerLibrary.EnumeratePalettes().Where(p => p.Layer.Contains("hair")).SelectRandom(random);
-            var skinPalette = LayeredSprites.LayerLibrary.EnumeratePalettes().Where(p => p.Layer.Contains("face")).SelectRandom(random);
-            AddLayerOrDefault(sprite, random, "body", skinPalette);
-            AddLayerOrDefault(sprite, random, "face", skinPalette);
-            AddLayerOrDefault(sprite, random, "nose", skinPalette);
-            AddLayerOrDefault(sprite, random, "beard", hairPalette);
-            AddLayerOrDefault(sprite, random, "hair", hairPalette);
-            AddLayerOrDefault(sprite, random, "tool");
-            AddLayerOrDefault(sprite, random, "hat", hairPalette);
-
-            sprite.SetAnimations(Library.LoadNewLayeredAnimationFormat(ContentPaths.dwarf_animations));
-
-            sprite.SetFlag(Flag.ShouldSerialize, false);
-        }
-
-        private void AddLayerOrDefault(LayeredSprites.LayeredCharacterSprite Sprite, Random Random, String Layer, LayeredSprites.Palette Palette = null)
-        {
-            var layers = LayeredSprites.LayerLibrary.EnumerateLayers(Layer).Where(l => !l.DefaultLayer && l.PassesFilter(this.Stats));
-            if (layers.Count() > 0)
-            {
-                var newLayer = layers.SelectRandom(Random);
-                Sprite.AddLayer(newLayer, Palette);
-                // Do not allow hats and hair on the same head.
-                if (newLayer.Asset != "Entities/Dwarf/Layers/blank" && Layer == "hat")
-                {
-                    Sprite.RemoveLayer("hair");
-                }
-            }
-            else
-            {
-                var defaultLayer = LayeredSprites.LayerLibrary.EnumerateLayers(Layer).Where(l => l.DefaultLayer).FirstOrDefault();
-                if (defaultLayer != null)
-                    Sprite.AddLayer(defaultLayer, Palette);
-            }
+            Physics.AddChild(LayeredSprites.DwarfBuilder.CreateDwarfCharacterSprite(manager, Stats));
         }
     }
 }

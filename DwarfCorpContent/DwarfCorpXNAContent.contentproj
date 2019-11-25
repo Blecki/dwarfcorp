@@ -2091,6 +2091,10 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <None Include="Entities\Dwarf\Layers\dwarf-gfx.psd">
+      <Name>dwarf-gfx</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Entities\Furniture\sm_anvil.obj">
       <Name>sm_anvil</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

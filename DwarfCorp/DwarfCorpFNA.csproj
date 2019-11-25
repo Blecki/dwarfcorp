@@ -57,6 +57,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Management.Instrumentation" />
   </ItemGroup>
@@ -115,9 +116,11 @@
     <Compile Include="AssetManagement\JsonConverters\RectangleConverter.cs" />
     <Compile Include="AssetManagement\JsonConverters\TextureContentConverter.cs" />
     <Compile Include="AssetManagement\ObjLoader.cs" />
+    <Compile Include="AssetManagement\TextureTool-LoadPSD.cs" />
     <Compile Include="Components\AI\DwarfAI.cs" />
     <Compile Include="Components\AI\Equipment.cs" />
     <Compile Include="Components\AI\FairyAI.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\DwarfBuilder.cs" />
     <Compile Include="Components\Graphics\MeshComponent.cs" />
     <Compile Include="Components\Physics\Fire.cs" />
     <Compile Include="Components\Systems\ConsoleCommands.cs" />
@@ -928,6 +931,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\PSD\PhotoShop.csproj">
+      <Project>{a04eedd9-e164-4941-9846-722acf2fcca1}</Project>
+      <Name>PhotoShop</Name>
+    </ProjectReference>
     <ProjectReference Include="..\YarnSpinner\YarnSpinner.csproj">
       <Project>{6c3b03d2-2e89-4ec3-a022-e84053a7b17f}</Project>
       <Name>YarnSpinner</Name>

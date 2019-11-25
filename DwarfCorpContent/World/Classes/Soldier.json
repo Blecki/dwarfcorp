@@ -5,6 +5,8 @@
   "Actions": "Attack, Chop, Harvest, Hunt, Gather, Guard, BuildObject",
   "AttackMode": "Attacking",
   "JobDescription": "Soldiers are best at looking tough. They are devestating warriors, and also pretty good lumberjacks and cooks.",
+  "BodyLayer": "soldier",
+  "HatLayer": "soldier-hat",
   "Weapons": [
     {
       "DamageAmount": 4.0,

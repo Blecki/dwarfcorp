@@ -91,25 +91,13 @@ namespace DwarfCorp
 
         public LayeredSprites.LayerStack GetLayers()
         {
-            var random = new Random(RandomSeed);
-
-            var hairPalette = LayeredSprites.LayerLibrary.EnumeratePalettes().Where(p => p.Layer.Contains("hair")).SelectRandom(random);
-            var skinPalette = LayeredSprites.LayerLibrary.EnumeratePalettes().Where(p => p.Layer.Contains("face")).SelectRandom(random);
-            LayeredSprites.LayerStack sprite = new LayeredSprites.LayerStack();
-
             CreatureStats stats = new CreatureStats("Dwarf", ClassName, LevelIndex)
             {
-                Gender = this.Gender
+                Gender = this.Gender,
+                RandomSeed = RandomSeed
             };
-            
-            AddLayerOrDefault(sprite, random, "body", stats, skinPalette);
-            AddLayerOrDefault(sprite, random, "face", stats, skinPalette);
-            AddLayerOrDefault(sprite, random, "nose", stats, skinPalette);
-            AddLayerOrDefault(sprite, random, "beard", stats, hairPalette);
-            AddLayerOrDefault(sprite, random, "hair", stats, hairPalette);
-            AddLayerOrDefault(sprite, random, "tool", stats);
-            AddLayerOrDefault(sprite, random, "hat", stats, hairPalette);
-            return sprite;
+
+            return LayeredSprites.DwarfBuilder.CreateDwarfLayerStack(stats);
         }
 
         public AnimationPlayer GetAnimationPlayer(LayeredSprites.LayerStack stack, String Anim = "IdleFORWARD")
@@ -118,29 +106,6 @@ namespace DwarfCorp
                 if (animation.Key == Anim)
                     return new AnimationPlayer(stack.ProxyAnimation(animation.Value));
             return null;
-        }
-
-
-        private void AddLayerOrDefault(LayeredSprites.LayerStack stack, Random Random, String Layer, CreatureStats stats, LayeredSprites.Palette Palette = null)
-        {
-            var layers = LayeredSprites.LayerLibrary.EnumerateLayers(Layer).Where(l => !l.DefaultLayer && l.PassesFilter(stats));
-
-            if (layers.Count() > 0)
-            {
-                var newLayer = layers.SelectRandom(Random);
-                stack.AddLayer(newLayer, Palette);
-                // Do not allow hats and hair on the same head.
-                if (newLayer.Asset != "Entities/Dwarf/Layers/blank" && Layer == "hat")
-                {
-                    stack.RemoveLayer("hair");
-                }
-            }
-            else
-            {
-                var defaultLayer = LayeredSprites.LayerLibrary.EnumerateLayers(Layer).Where(l => l.DefaultLayer).FirstOrDefault();
-                if (defaultLayer != null)
-                    stack.AddLayer(defaultLayer, Palette);
-            }
         }
     }
 }
