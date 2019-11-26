@@ -32,15 +32,20 @@ namespace DwarfCorp
                 yield break;
             }
 
-            if (Agent.Stats.Equipment.GetItemInSlot("tool").HasValue(out var existingTool))
+            if (Agent.Creature.Equipment.HasValue(out var equipment))
             {
-                Agent.Stats.Equipment.UnequipItem("tool");
-                Creature.Inventory.AddResource(existingTool);
-            }
+                if (equipment.GetItemInSlot("tool").HasValue(out var existingTool))
+                {
+                    equipment.UnequipItem("tool");
+                    Creature.Inventory.AddResource(existingTool);
+                }
 
-            Agent.Stats.Equipment.EquipItem("tool", toolResource);
-            Creature.Inventory.Remove(toolResource, Inventory.RestockType.Any);
-            yield return Status.Success;
+                equipment.EquipItem("tool", toolResource);
+                Creature.Inventory.Remove(toolResource, Inventory.RestockType.Any);
+                yield return Status.Success;
+            }
+            else
+                yield return Status.Fail;
         }
     }
 
@@ -59,9 +64,9 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            if (Agent.Stats.Equipment.GetItemInSlot("tool").HasValue(out var existingTool))
+            if (Agent.Creature.Equipment.HasValue(out var equipment) && equipment.GetItemInSlot("tool").HasValue(out var existingTool))
             {
-                Agent.Stats.Equipment.UnequipItem("tool");
+                equipment.UnequipItem("tool");
                 Creature.Inventory.AddResource(existingTool);
             }
 

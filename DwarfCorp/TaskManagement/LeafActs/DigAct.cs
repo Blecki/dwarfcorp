@@ -24,12 +24,12 @@ namespace DwarfCorp
             this.OwnerTask = OwnerTask;
         }
 
-        private Resource GetEquippedTool(CreatureAI Creature)
+        private Resource GetEquippedTool(CreatureAI Agent)
         {
-            if (Creature.Stats.Equipment.GetItemInSlot("tool").HasValue(out var resource))
+            if (Agent.Creature.Equipment.HasValue(out var equipment) && equipment.GetItemInSlot("tool").HasValue(out var resource))
                 return resource;
-            else if (!String.IsNullOrEmpty(Creature.Stats.CurrentClass.FallbackTool))
-                return new Resource(Creature.Stats.CurrentClass.FallbackTool);
+            else if (!String.IsNullOrEmpty(Agent.Stats.CurrentClass.FallbackTool))
+                return new Resource(Agent.Stats.CurrentClass.FallbackTool);
             else
                 return new Resource("Dwarf Hands");
         }

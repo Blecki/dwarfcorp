@@ -13,7 +13,7 @@ namespace DwarfCorp.LayeredSprites
     {
         [JsonIgnore] public IndexedTexture CachedTexture = null;
 
-        public LayerLibrary.LayerType Type;
+        public LayerType Type;
         public List<String> Names = new List<string>();
     }
 }

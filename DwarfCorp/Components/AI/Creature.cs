@@ -31,6 +31,10 @@ namespace DwarfCorp
         public Timer DrawLifeTimer = new Timer(0.25f, true, Timer.TimerMode.Real);
         public bool IsOnGround { get; set; }
         public bool IsHeadClear { get; set; }
+
+        [JsonIgnore] private Equipment _Equipment = null;
+        [JsonIgnore] public MaybeNull<Equipment> Equipment => _get(ref _Equipment);
+
         /// <summary>
         /// If true, the character mode will not be updated automatically by the creature's movement.
         /// This is used to make the character animate in a certain way without interference.

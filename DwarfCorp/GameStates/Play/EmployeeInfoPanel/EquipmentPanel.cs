@@ -81,13 +81,13 @@ namespace DwarfCorp.Play.EmployeeInfo
 
                 ToolIcon.Resource = null;
 
-                if (Employee.Stats.Equipment == null)
-                    Text = "This employee cannot use equipment.";
-                else
+                if (Employee.Creature.Equipment.HasValue(out var equipment))
                 {
-                    if (Employee.Stats.Equipment.GetItemInSlot("tool").HasValue(out var tool))
+                    if (equipment.GetItemInSlot("tool").HasValue(out var tool))
                         ToolIcon.Resource = tool;
                 }
+                else
+                    Text = "This employee cannot use equipment.";
             }
             else
                 Hidden = true;

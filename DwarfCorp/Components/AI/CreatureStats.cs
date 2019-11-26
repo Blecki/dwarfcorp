@@ -102,8 +102,6 @@ namespace DwarfCorp
         public DwarfBux Money = 0;
         public bool IsFleeing = false;
 
-        public Equipment Equipment = new Equipment();
-
         public bool IsTaskAllowed(TaskCategory TaskCategory)
         {
             return (AllowedTasks & TaskCategory) == TaskCategory;
@@ -145,9 +143,6 @@ namespace DwarfCorp
             BaseWisdom = CurrentLevel.BaseStats.Wisdom;
 
             Title = CurrentLevel.Name;
-
-            if (!String.IsNullOrEmpty(CurrentClass.DefaultTool) && Library.GetResourceType(CurrentClass.DefaultTool).HasValue())
-                Equipment.EquipItem("tool", new Resource(CurrentClass.DefaultTool));
         }
 
         public void LevelUp(Creature Creature)

@@ -40,10 +40,10 @@
   "AleName": "",
 
   "Tool_Breakable": true,
-  "Tool_Durability": 50,
+  "Tool_Durability": 4,
   "Tool_Wear": 0,
   "Tool_Effectiveness": 1.0,
-  "Tool_SpriteSheet": "make this the dwarf hands sheet",
+  "Equipment_LayerName": "pick",
   "Tool_AttackAnimation": "Attacking",
   "Tool_AttackTriggerFrame": 2,
   "Tool_AttackDamage": 1,

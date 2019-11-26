@@ -89,11 +89,14 @@ namespace DwarfCorp
         [JsonIgnore] public float Tool_Wear { get => GetProperty<float>("Tool_Wear", 0.0f); set => SetProperty<float>("Tool_Wear", value); }
         [JsonIgnore] public bool Tool_Breakable { get => GetProperty<bool>("Tool_Breakable", false); set => SetProperty<bool>("Tool_Breakable", value); }
         [JsonIgnore] public CharacterMode Tool_AttackAnimation { get => GetProperty<CharacterMode>("Tool_AttackAnimation", CharacterMode.Attacking); set => SetProperty<CharacterMode>("Tool_AttackAnimation", value); }
-        [JsonIgnore] public int Tool_AttackTriggerFrame { get => GetProperty<int>("Tool_AttackTriggerFrame", 1); set => GetProperty<int>("Tool_AttackTriggerFrame", value); }
-        [JsonIgnore] public float Tool_AttackDamage { get => GetProperty<float>("Tool_AttackDamage", 1); set => GetProperty<float>("Tool_AttackDamage", value); }
-        [JsonIgnore] public String Tool_AttackHitParticles { get => GetProperty<String>("Tool_AttackHitParticles", ""); set => GetProperty<String>("Tool_AttackHitParticles", value); }
-        [JsonIgnore] public String Tool_AttackHitEffect { get => GetProperty<String>("Tool_AttackHitEffect", ""); set => GetProperty<String>("Tool_AttackHitEffect", value); }
-        [JsonIgnore] public Color Tool_AttackHitColor { get => GetProperty<Color>("Tool_AttackHitColor", Color.White); set => GetProperty<Color>("Tool_AttackHitColor", value); }
+        [JsonIgnore] public int Tool_AttackTriggerFrame { get => GetProperty<int>("Tool_AttackTriggerFrame", 1); set => SetProperty<int>("Tool_AttackTriggerFrame", value); }
+        [JsonIgnore] public float Tool_AttackDamage { get => GetProperty<float>("Tool_AttackDamage", 1); set => SetProperty<float>("Tool_AttackDamage", value); }
+        [JsonIgnore] public String Tool_AttackHitParticles { get => GetProperty<String>("Tool_AttackHitParticles", ""); set => SetProperty<String>("Tool_AttackHitParticles", value); }
+        [JsonIgnore] public String Tool_AttackHitEffect { get => GetProperty<String>("Tool_AttackHitEffect", ""); set => SetProperty<String>("Tool_AttackHitEffect", value); }
+        [JsonIgnore] public Color Tool_AttackHitColor { get => GetProperty<Color>("Tool_AttackHitColor", Color.White); set => SetProperty<Color>("Tool_AttackHitColor", value); }
+
+        [JsonIgnore] public String Equipment_LayerName { get => GetProperty<String>("Equipment_LayerName", ""); set => SetProperty<String>("Equipment_LayerName", value); }
+        [JsonIgnore] public LayerType Equipment_LayerType { get => GetProperty<LayerType>("Equipment_LayerType", LayerType.TOOL); set => SetProperty<LayerType>("Equipment_LayerType", value); }
         #endregion
     }
 }

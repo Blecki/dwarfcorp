@@ -63,7 +63,7 @@ namespace DwarfCorp.LayeredSprites
             CompositeValid = false;
         }
 
-        public void RemoveLayer(LayerLibrary.LayerType Type)
+        public void RemoveLayer(LayerType Type)
         {
             if (Layers.RemoveAll(l => l.Layer.Type == Type) != 0)
                 CompositeValid = false;
@@ -106,7 +106,7 @@ namespace DwarfCorp.LayeredSprites
             }
         }
 
-        internal object GetLayer(LayerLibrary.LayerType v)
+        internal object GetLayer(LayerType v)
         {
             return Layers.Where(l => l.Layer.Type == v).FirstOrDefault();
         }

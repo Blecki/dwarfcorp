@@ -7,6 +7,19 @@ using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
+namespace DwarfCorp
+{
+    public enum LayerType
+    {
+        BODY = 0,
+        FACE = 1,
+        NOSE = 2,
+        BEARD = 3,
+        HAIR = 4,
+        TOOL = 5
+    }
+}
+
 namespace DwarfCorp.LayeredSprites
 {
     public class LayerLibrary
@@ -15,15 +28,7 @@ namespace DwarfCorp.LayeredSprites
         private static List<Palette> Palettes;
         private static Palette _BaseDwarfPalette = null;
 
-        public enum LayerType
-        {
-            BODY = 0,
-            FACE = 1,
-            NOSE = 2,
-            BEARD = 3,
-            HAIR = 4,
-            TOOL = 5
-        }
+        
 
         public static void Cleanup()
         {

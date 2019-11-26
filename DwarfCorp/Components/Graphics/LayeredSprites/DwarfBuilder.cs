@@ -13,7 +13,7 @@ namespace DwarfCorp.LayeredSprites
     {
         private static bool __pass(Layer Layer) { return true; }
 
-        private static Layer SelectRandomLayer(CreatureStats Stats, Random Random, LayerLibrary.LayerType Layer, Func<Layer, bool> Filter = null)
+        private static Layer SelectRandomLayer(CreatureStats Stats, Random Random, LayerType Layer, Func<Layer, bool> Filter = null)
         {
             if (Filter == null) Filter = __pass;
 
@@ -24,7 +24,7 @@ namespace DwarfCorp.LayeredSprites
                 return LayerLibrary.EnumerateLayers(Layer).Where(l => l.Names.Contains("default")).FirstOrDefault();
         }
 
-        private static Layer FindLayerOrDefault(LayerLibrary.LayerType Layer, String Name)
+        private static Layer FindLayerOrDefault(LayerType Layer, String Name)
         {
             var r = LayerLibrary.EnumerateLayers(Layer).Where(l => l.Names.Contains(Name)).FirstOrDefault();
             if (r == null)
@@ -32,32 +32,32 @@ namespace DwarfCorp.LayeredSprites
             return r;
         }
 
-        public static Dictionary<LayerLibrary.LayerType, Layer> BuildDwarfLayers(CreatureStats Stats, Random Random)
+        public static Dictionary<LayerType, Layer> BuildDwarfLayers(CreatureStats Stats, Random Random)
         {
-            var r = new Dictionary<LayerLibrary.LayerType, Layer>();
+            var r = new Dictionary<LayerType, Layer>();
 
-            r.Add(LayerLibrary.LayerType.BODY, FindLayerOrDefault(LayerLibrary.LayerType.BODY, Stats.CurrentClass.BodyLayer));
+            r.Add(LayerType.BODY, FindLayerOrDefault(LayerType.BODY, Stats.CurrentClass.BodyLayer));
 
             switch (Stats.Gender)
             {
                 case Gender.Female:
-                    r.Add(LayerLibrary.LayerType.FACE, FindLayerOrDefault(LayerLibrary.LayerType.FACE, "female"));
+                    r.Add(LayerType.FACE, FindLayerOrDefault(LayerType.FACE, "female"));
                     break;
                 case Gender.Male:
-                    r.Add(LayerLibrary.LayerType.FACE, FindLayerOrDefault(LayerLibrary.LayerType.FACE, "male"));
+                    r.Add(LayerType.FACE, FindLayerOrDefault(LayerType.FACE, "male"));
                     break;
                 default:
-                    r.Add(LayerLibrary.LayerType.FACE, SelectRandomLayer(Stats, Random, LayerLibrary.LayerType.FACE));
+                    r.Add(LayerType.FACE, SelectRandomLayer(Stats, Random, LayerType.FACE));
                     break;
             }
 
-            r.Add(LayerLibrary.LayerType.NOSE, SelectRandomLayer(Stats, Random, LayerLibrary.LayerType.NOSE));
-            r.Add(LayerLibrary.LayerType.BEARD, SelectRandomLayer(Stats, Random, LayerLibrary.LayerType.BEARD));
+            r.Add(LayerType.NOSE, SelectRandomLayer(Stats, Random, LayerType.NOSE));
+            r.Add(LayerType.BEARD, SelectRandomLayer(Stats, Random, LayerType.BEARD));
 
             if (!String.IsNullOrEmpty(Stats.CurrentClass.HatLayer))
-                r.Add(LayerLibrary.LayerType.HAIR, FindLayerOrDefault(LayerLibrary.LayerType.HAIR, Stats.CurrentClass.HatLayer));
+                r.Add(LayerType.HAIR, FindLayerOrDefault(LayerType.HAIR, Stats.CurrentClass.HatLayer));
             else
-                r.Add(LayerLibrary.LayerType.HAIR, SelectRandomLayer(Stats, Random, LayerLibrary.LayerType.HAIR, l => !l.Names.Contains("hat")));
+                r.Add(LayerType.HAIR, SelectRandomLayer(Stats, Random, LayerType.HAIR, l => !l.Names.Contains("hat")));
 
             return r;
         }
@@ -72,11 +72,11 @@ namespace DwarfCorp.LayeredSprites
             var skinPalette = LayerLibrary.EnumeratePalettes().Where(p => p.Layer.Contains("face")).SelectRandom(random);
 
             var layers = BuildDwarfLayers(Stats, random);
-            if (layers[LayerLibrary.LayerType.BODY] != null) sprite.AddLayer(layers[LayerLibrary.LayerType.BODY], skinPalette);
-            if (layers[LayerLibrary.LayerType.FACE] != null) sprite.AddLayer(layers[LayerLibrary.LayerType.FACE], skinPalette);
-            if (layers[LayerLibrary.LayerType.NOSE] != null) sprite.AddLayer(layers[LayerLibrary.LayerType.NOSE], skinPalette);
-            if (layers[LayerLibrary.LayerType.BEARD] != null) sprite.AddLayer(layers[LayerLibrary.LayerType.BEARD], hairPalette);
-            if (layers[LayerLibrary.LayerType.HAIR] != null) sprite.AddLayer(layers[LayerLibrary.LayerType.HAIR], hairPalette);
+            if (layers[LayerType.BODY] != null) sprite.AddLayer(layers[LayerType.BODY], skinPalette);
+            if (layers[LayerType.FACE] != null) sprite.AddLayer(layers[LayerType.FACE], skinPalette);
+            if (layers[LayerType.NOSE] != null) sprite.AddLayer(layers[LayerType.NOSE], skinPalette);
+            if (layers[LayerType.BEARD] != null) sprite.AddLayer(layers[LayerType.BEARD], hairPalette);
+            if (layers[LayerType.HAIR] != null) sprite.AddLayer(layers[LayerType.HAIR], hairPalette);
 
             sprite.SetAnimations(Library.LoadNewLayeredAnimationFormat(ContentPaths.dwarf_animations));
 
@@ -95,11 +95,11 @@ namespace DwarfCorp.LayeredSprites
             var skinPalette = LayerLibrary.EnumeratePalettes().Where(p => p.Layer.Contains("face")).SelectRandom(random);
 
             var layers = BuildDwarfLayers(Stats, random);
-            if (layers[LayerLibrary.LayerType.BODY] != null) sprite.AddLayer(layers[LayerLibrary.LayerType.BODY], skinPalette);
-            if (layers[LayerLibrary.LayerType.FACE] != null) sprite.AddLayer(layers[LayerLibrary.LayerType.FACE], skinPalette);
-            if (layers[LayerLibrary.LayerType.NOSE] != null) sprite.AddLayer(layers[LayerLibrary.LayerType.NOSE], skinPalette);
-            if (layers[LayerLibrary.LayerType.BEARD] != null) sprite.AddLayer(layers[LayerLibrary.LayerType.BEARD], hairPalette);
-            if (layers[LayerLibrary.LayerType.HAIR] != null) sprite.AddLayer(layers[LayerLibrary.LayerType.HAIR], hairPalette);
+            if (layers[LayerType.BODY] != null) sprite.AddLayer(layers[LayerType.BODY], skinPalette);
+            if (layers[LayerType.FACE] != null) sprite.AddLayer(layers[LayerType.FACE], skinPalette);
+            if (layers[LayerType.NOSE] != null) sprite.AddLayer(layers[LayerType.NOSE], skinPalette);
+            if (layers[LayerType.BEARD] != null) sprite.AddLayer(layers[LayerType.BEARD], hairPalette);
+            if (layers[LayerType.HAIR] != null) sprite.AddLayer(layers[LayerType.HAIR], hairPalette);
 
             return sprite;
         }
