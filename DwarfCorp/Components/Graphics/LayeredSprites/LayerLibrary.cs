@@ -94,7 +94,7 @@ namespace DwarfCorp.LayeredSprites
                 {
                     Asset = f,
                     Layer = paletteType,
-                    CachedPalette = TextureTool.RawPaletteFromTexture2D(AssetManager.GetContentTexture(f))
+                    CachedPalette = TextureTool.RawPaletteFromTexture2D(AssetManager.RawLoadTexture(f))
                 };
             }).ToList();
         }

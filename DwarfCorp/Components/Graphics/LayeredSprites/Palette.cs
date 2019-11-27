@@ -12,7 +12,8 @@ namespace DwarfCorp.LayeredSprites
     public enum PaletteType
     {
         Hair,
-        Skin
+        Skin,
+        Base
     }
 
     public class Palette
