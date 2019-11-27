@@ -120,7 +120,14 @@
     <Compile Include="Components\AI\DwarfAI.cs" />
     <Compile Include="Components\AI\Equipment.cs" />
     <Compile Include="Components\AI\FairyAI.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\DwarfAnimationProxy.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfBuilder.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\DwarfCharacterSprite.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\DwarfLayer.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\DwarfLayerLibrary.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\DwarfLayerStack.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\DwarfPalette.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\DwarfPaletteType.cs" />
     <Compile Include="Components\Graphics\MeshComponent.cs" />
     <Compile Include="Components\Physics\Fire.cs" />
     <Compile Include="Components\Systems\ConsoleCommands.cs" />
@@ -278,12 +285,6 @@
     <Compile Include=".\Components\Graphics\Follower.cs" />
     <Compile Include=".\Components\Graphics\InstanceMesh.cs" />
     <Compile Include=".\Components\Graphics\LayeredSimpleSprite.cs" />
-    <Compile Include=".\Components\Graphics\LayeredSprites\Layer.cs" />
-    <Compile Include=".\Components\Graphics\LayeredSprites\LayeredAnimationProxy.cs" />
-    <Compile Include=".\Components\Graphics\LayeredSprites\LayeredCharacterSprite.cs" />
-    <Compile Include=".\Components\Graphics\LayeredSprites\LayerLibrary.cs" />
-    <Compile Include=".\Components\Graphics\LayeredSprites\LayerStack.cs" />
-    <Compile Include=".\Components\Graphics\LayeredSprites\Palette.cs" />
     <Compile Include=".\Components\Graphics\LightEmitter.cs" />
     <Compile Include=".\Components\Graphics\OrientedAnimatedSprite.cs" />
     <Compile Include=".\Components\Graphics\RenderBobber.cs" />

@@ -7,15 +7,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace DwarfCorp.LayeredSprites
+namespace DwarfCorp.DwarfSprites
 {
-    public enum PaletteType
-    {
-        Hair,
-        Skin,
-        Base
-    }
-
     public class Palette
     {
         [JsonIgnore]

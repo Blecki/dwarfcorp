@@ -89,7 +89,7 @@ namespace DwarfCorp
             Biography = GenerateBiography(Name, Gender);
         }
 
-        public LayeredSprites.LayerStack GetLayers()
+        public DwarfSprites.LayerStack GetLayers()
         {
             CreatureStats stats = new CreatureStats("Dwarf", ClassName, LevelIndex)
             {
@@ -97,10 +97,10 @@ namespace DwarfCorp
                 RandomSeed = RandomSeed
             };
 
-            return LayeredSprites.DwarfBuilder.CreateDwarfLayerStack(stats);
+            return DwarfSprites.DwarfBuilder.CreateDwarfLayerStack(stats);
         }
 
-        public AnimationPlayer GetAnimationPlayer(LayeredSprites.LayerStack stack, String Anim = "IdleFORWARD")
+        public AnimationPlayer GetAnimationPlayer(DwarfSprites.LayerStack stack, String Anim = "IdleFORWARD")
         {
             foreach (var animation in Library.LoadNewLayeredAnimationFormat(ContentPaths.dwarf_animations))
                 if (animation.Key == Anim)

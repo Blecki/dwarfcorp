@@ -1558,7 +1558,7 @@ namespace DwarfCorp.GameStates
                 OnClick = (sender, args) =>
                 {
                     ShowToolPopup("Left click objects to destroy them.");
-                    ChangeTool("DeconstructObjects");
+                    ChangeTool("DeconstructObject");
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };

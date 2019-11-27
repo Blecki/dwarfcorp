@@ -12,7 +12,7 @@ namespace DwarfCorp
 {
     public class DeconstructObjectTool : PlayerTool
     {
-        [ToolFactory("DeconstructObjects")] // Todo: Normalize name
+        [ToolFactory("DeconstructObject")]
         private static PlayerTool _factory(WorldManager World)
         {
             return new DeconstructObjectTool(World);

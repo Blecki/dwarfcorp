@@ -39,7 +39,7 @@ namespace DwarfCorp.Generation
 
         public static void GenerateRuin(VoxelChunk Chunk, ChunkGeneratorSettings Settings)
         {
-            // Support ruins deep underground - empty out their interiors.
+            // Todo: Support ruins deep underground - empty out their interiors.
 
             LoadRuinTemplates();
 

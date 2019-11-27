@@ -171,7 +171,6 @@ namespace DwarfCorp.Gui.Widgets
                 Layout();
                 return Gui.Mesh.Merge(base.Redraw(), Gui.Mesh.Merge(meshes.ToArray()));
             }
-            return base.Redraw();
         }
 
         private String ModString(String S)

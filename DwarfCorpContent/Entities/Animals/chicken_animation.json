@@ -204,7 +204,7 @@
          "AssetName" : "Entities\\Animals\\chicken",
          "FrameHeight" : 32,
          "FrameWidth" : 32
-      },
+      }
    ],
    "Tints" : [ "255, 255, 255, 255"]
 }

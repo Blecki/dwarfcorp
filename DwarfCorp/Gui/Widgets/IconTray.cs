@@ -20,7 +20,6 @@ namespace DwarfCorp.Gui.Widgets
         public Action<Widget> OnRefresh;
         public bool AlwaysPerfectSize = false;
         private int SavedWidth = 0;
-        private bool FirstLayout = false;
 
         public IEnumerable<Widget> ItemSource;
 

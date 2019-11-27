@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    // Todo: Convert all anims to the new format so this can be removed.
     public class CompositeAnimation : Animation
     {
         [OnSerializing]

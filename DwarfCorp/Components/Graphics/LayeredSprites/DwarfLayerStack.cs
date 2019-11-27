@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace DwarfCorp.LayeredSprites
+namespace DwarfCorp.DwarfSprites
 { 
     public class LayerStack
     {
@@ -22,10 +22,10 @@ namespace DwarfCorp.LayeredSprites
             return Composite;
         }
 
-        public LayeredAnimationProxy ProxyAnimation(Animation animation)
+        public DwarfAnimationProxy ProxyAnimation(Animation animation)
         {
             var comp = animation as CompositeAnimation;
-            var proxyAnim = new LayeredAnimationProxy(this)
+            var proxyAnim = new DwarfAnimationProxy(this)
             {
                 Frames = comp == null ? animation.Frames : comp.CompositeFrames.Select(c => c.Cells[0].Tile).ToList(),
                 Name = animation.Name,

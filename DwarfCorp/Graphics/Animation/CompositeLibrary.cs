@@ -19,9 +19,7 @@ namespace DwarfCorp
         {
             Composite r = null;
             if (Composites.TryGetValue(Name, out r))
-            {
                 return r;
-            }
             r = new Composite();
             r.Init(FrameSize, new Point(16, 16));
             Composites.Add(Name, r);

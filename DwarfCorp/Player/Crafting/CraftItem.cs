@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    public interface CraftableRecord // Todo: This is horrible.
+    public interface CraftableRecord // Todo: This is horrible. To eleminate - need to get rid of craft items. Everything crafted is a resource.
     {
         String DisplayName { get; }
         Gui.TileReference Icon { get; } 

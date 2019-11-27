@@ -7,13 +7,12 @@ using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace DwarfCorp.LayeredSprites
+namespace DwarfCorp.DwarfSprites
 {
-    public class Layer
+    public enum PaletteType
     {
-        [JsonIgnore] public IndexedTexture CachedTexture = null;
-
-        public LayerType Type;
-        public List<String> Names = new List<string>();
+        Hair,
+        Skin,
+        Base
     }
 }

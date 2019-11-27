@@ -92,8 +92,11 @@ namespace DwarfCorp
                 Resources.RemoveAt(index);
                 return true;
             }
+#if DEBUG
             throw new InvalidOperationException("Attempted to remove item from inventory, but it wasn't in inventory.");
+#else
             return false;
+#endif
         }
         
         public bool Pickup(GameComponent item, RestockType restockType)

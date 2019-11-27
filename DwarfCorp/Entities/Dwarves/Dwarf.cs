@@ -138,7 +138,7 @@ namespace DwarfCorp
                     return;
             }
 
-            Physics.AddChild(LayeredSprites.DwarfBuilder.CreateDwarfCharacterSprite(manager, Stats));
+            Physics.AddChild(DwarfSprites.DwarfBuilder.CreateDwarfCharacterSprite(manager, Stats));
         }
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)

@@ -137,7 +137,6 @@ namespace DwarfCorp
             return handle.IsValid && handle.LiquidLevel > 0 && handle.Coordinate.Y <= (PersistentSettings.MaxViewingLevel >= World.WorldSizeInVoxels.Y ? 1000.0f : PersistentSettings.MaxViewingLevel + 0.25f);
         }
 
-        private int _prevHour = 0;
         /// <summary>
         /// Called every frame
         /// </summary>

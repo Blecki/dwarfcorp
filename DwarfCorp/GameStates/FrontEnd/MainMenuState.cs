@@ -126,7 +126,6 @@ namespace DwarfCorp.GameStates
             ParticleEmitter.Cleanup();
             PlayState.Input = null;
             InputManager.Cleanup();
-            LayeredSprites.LayerLibrary.Cleanup();
 
             base.OnEnter();
 

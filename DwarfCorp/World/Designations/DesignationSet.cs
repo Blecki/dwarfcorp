@@ -230,7 +230,6 @@ namespace DwarfCorp
             }
         }
 
-        // Todo: Good spot for MaybeNull
         public MaybeNull<EntityDesignation> GetEntityDesignation(GameComponent Entity, DesignationType Type)
         {
             foreach (var des in EnumerateEntityDesignations(Type))

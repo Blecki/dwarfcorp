@@ -150,7 +150,7 @@ namespace DwarfCorp
                     return;
             }
 
-            Physics.AddChild(LayeredSprites.DwarfBuilder.CreateDwarfCharacterSprite(manager, Stats));
+            Physics.AddChild(DwarfSprites.DwarfBuilder.CreateDwarfCharacterSprite(manager, Stats));
         }
     }
 }

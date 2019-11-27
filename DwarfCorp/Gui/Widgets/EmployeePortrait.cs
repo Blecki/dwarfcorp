@@ -10,7 +10,7 @@ namespace DwarfCorp.Gui.Widgets
     public class EmployeePortrait : Widget
     {
         private Gui.Mesh SpriteMesh;
-        public DwarfCorp.LayeredSprites.LayerStack Sprite;
+        public DwarfSprites.LayerStack Sprite;
         public AnimationPlayer AnimationPlayer;
 
         public override void Construct()

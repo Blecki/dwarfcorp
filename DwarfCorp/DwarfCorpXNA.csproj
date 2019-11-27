@@ -191,6 +191,7 @@
     <Compile Include="Components\AI\Equipment.cs" />
     <Compile Include="Components\AI\SpeciesLibrary.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfBuilder.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\DwarfPaletteType.cs" />
     <Compile Include="Components\Systems\ConsoleCommands.cs" />
     <Compile Include="Entities\Fixtures\IronLadder.cs" />
     <Compile Include="Entities\Fixtures\StoneLadder.cs" />
@@ -533,12 +534,12 @@
     <Compile Include="World\Economy\Factions\FactionSet.cs" />
     <Compile Include="World\Economy\Factions\Trading\EnvoyTradeEntity.cs" />
     <Compile Include="World\Economy\Factions\Trading\PlayerTradeEntity.cs" />
-    <Compile Include="Components\Graphics\LayeredSprites\Palette.cs" />
-    <Compile Include="Components\Graphics\LayeredSprites\Layer.cs" />
-    <Compile Include="Components\Graphics\LayeredSprites\LayeredAnimationProxy.cs" />
-    <Compile Include="Components\Graphics\LayeredSprites\LayerStack.cs" />
-    <Compile Include="Components\Graphics\LayeredSprites\LayerLibrary.cs" />
-    <Compile Include="Components\Graphics\LayeredSprites\LayeredCharacterSprite.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\DwarfPalette.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\DwarfLayer.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\DwarfAnimationProxy.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\DwarfLayerStack.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\DwarfLayerLibrary.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\DwarfCharacterSprite.cs" />
     <Compile Include="ConsoleCommandHandlerAttribute.cs" />
     <Compile Include="Entities\Fixtures\Conveyor.cs" />
     <Compile Include="Entities\Fixtures\HealingTower.cs" />

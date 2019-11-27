@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace DwarfCorp
+namespace DwarfCorp.DwarfSprites
 {
     public enum LayerType
     {
@@ -20,22 +20,14 @@ namespace DwarfCorp
     }
 }
 
-namespace DwarfCorp.LayeredSprites
+namespace DwarfCorp.DwarfSprites
 {
+    // Todo: Want to make this not dwarf specific.
     public class LayerLibrary
     {
         private static List<Layer> Layers;
         private static List<Palette> Palettes;
         private static Palette _BaseDwarfPalette = null;
-
-        
-
-        public static void Cleanup()
-        {
-            Layers = null;
-            Palettes = null;
-            _BaseDwarfPalette = null;
-        }
 
         public static Palette BaseDwarfPalette
         {
@@ -58,14 +50,10 @@ namespace DwarfCorp.LayeredSprites
         {
             if (Layers != null && Palettes != null) return;
 
-            var layerFiles = AssetManager.EnumerateAllFiles("Entities/Dwarf/Layers").Where(filename => System.IO.Path.GetExtension(filename) == ".psd");
-
             Layers = new List<Layer>();
 
-            foreach (var file in layerFiles)
-            {
-                var psd = TextureTool.LoadPSD(System.IO.File.OpenRead(file));
-                foreach (var sheet in psd)
+            foreach (var file in AssetManager.EnumerateAllFiles("Entities/Dwarf/Layers").Where(filename => System.IO.Path.GetExtension(filename) == ".psd"))
+                foreach (var sheet in TextureTool.LoadPSD(System.IO.File.OpenRead(file)))
                 {
                     var tags = sheet.LayerName.Split(' ');
                     if (tags.Length < 2) continue;
@@ -82,7 +70,6 @@ namespace DwarfCorp.LayeredSprites
                     l.Names.AddRange(tags.Skip(1));
                     Layers.Add(l);
                 }
-            }
 
             Palettes = AssetManager.EnumerateAllFiles("Entities/Dwarf/Layers").Where(filename => filename.Contains("palette")).Select(f =>
             {

@@ -7,8 +7,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace DwarfCorp.LayeredSprites
+namespace DwarfCorp.DwarfSprites
 {
+    // Todo: Move to a dwarf specific folder full of all the stuff to make dwarf entities
     public static class DwarfBuilder
     {
         private static bool __pass(Layer Layer) { return true; }
@@ -64,7 +65,7 @@ namespace DwarfCorp.LayeredSprites
 
         public static LayeredCharacterSprite CreateDwarfCharacterSprite(ComponentManager Manager, CreatureStats Stats)
         {
-            var sprite = new LayeredSprites.LayeredCharacterSprite(Manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)));
+            var sprite = new DwarfSprites.LayeredCharacterSprite(Manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)));
 
             var random = new Random(Stats.RandomSeed);
 

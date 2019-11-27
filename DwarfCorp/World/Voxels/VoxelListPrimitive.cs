@@ -143,11 +143,6 @@ namespace DwarfCorp
                         return false;
 
                     return true;
-                    return neighbor.Type.CanRamp
-                        && neighbor.RampType != RampType.None
-                        && IsSideFace(face)
-                        && ShouldDrawFace(face, neighbor.RampType, voxel.RampType)
-                        && neighbor.IsExplored;
                 }
                 else
                 {

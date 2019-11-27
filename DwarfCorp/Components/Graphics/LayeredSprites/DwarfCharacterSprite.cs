@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace DwarfCorp.LayeredSprites
+namespace DwarfCorp.DwarfSprites
 {
     public class LayeredCharacterSprite : CharacterSprite
     {
