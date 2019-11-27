@@ -43,9 +43,11 @@
   "Tool_Durability": 4,
   "Tool_Wear": 0,
   "Tool_Effectiveness": 1.0,
-  "Equipment_LayerName": "pick",
   "Tool_AttackAnimation": "Attacking",
   "Tool_AttackTriggerFrame": 2,
   "Tool_AttackDamage": 1,
-  "Tool_AttackHitEffect": "Effects\\hit"
+  "Tool_AttackHitEffect": "Effects\\hit",
+
+  "Equipment_LayerName": "pick",
+  "Equipment_Slot": "Tool"
 }

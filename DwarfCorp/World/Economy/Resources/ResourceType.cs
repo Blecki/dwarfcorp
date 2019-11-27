@@ -55,7 +55,8 @@ namespace DwarfCorp
 
         #region Equipment
         public String Equipment_LayerName = "";
-        public LayerType Equipment_LayerType = LayerType.TOOL;
+        public LayerType Equipment_LayerType = LayerType.Tool;
+        public EquipmentSlot Equipment_Slot = EquipmentSlot.None;
         #endregion
 
         #region Placement

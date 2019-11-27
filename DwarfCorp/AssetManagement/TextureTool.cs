@@ -64,9 +64,7 @@ namespace DwarfCorp
         {
             var r = new IndexedDecomposition();
             if (Source == null)
-            {
                 return r;
-            }
             r.Palette = OptimizedPaletteFromMemoryTexture(Source);
             r.IndexedTexture = new IndexedTexture(Source.Width, Source.Height);
             for (var i = 0; i < Source.Data.Length; ++i)
@@ -94,9 +92,7 @@ namespace DwarfCorp
         public static MemoryTexture ComposeTexture(IndexedTexture Source, Palette Palette)
         {
             if (Source == null)
-            {
                 return null;
-            }
             var r = new MemoryTexture(Source.Width, Source.Height);
             for (var i = 0; i < Source.Data.Length; ++i)
                 r.Data[i] = Palette[Source.Data[i]];

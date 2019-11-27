@@ -7,7 +7,7 @@ namespace DwarfCorp
     /// <summary>
     /// Equip the item stored on the blackboard.
     /// </summary>
-    public class EquipToolAct : CreatureAct
+    public class EquipToolAct : CreatureAct // Todo: Change to generic 'equip item' act.
     {
         public String BlackboardEntry = "ResourcesStashed";
 
@@ -34,13 +34,14 @@ namespace DwarfCorp
 
             if (Agent.Creature.Equipment.HasValue(out var equipment))
             {
-                if (equipment.GetItemInSlot("tool").HasValue(out var existingTool))
+                // Kinda assumes the new item will go in the tool slot, no? Also that an existing item should be removed.
+                if (equipment.GetItemInSlot(EquipmentSlot.Tool).HasValue(out var existingTool))
                 {
-                    equipment.UnequipItem("tool");
+                    equipment.UnequipItem(existingTool);
                     Creature.Inventory.AddResource(existingTool);
                 }
 
-                equipment.EquipItem("tool", toolResource);
+                equipment.EquipItem(toolResource);
                 Creature.Inventory.Remove(toolResource, Inventory.RestockType.Any);
                 yield return Status.Success;
             }
@@ -64,9 +65,9 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            if (Agent.Creature.Equipment.HasValue(out var equipment) && equipment.GetItemInSlot("tool").HasValue(out var existingTool))
+            if (Agent.Creature.Equipment.HasValue(out var equipment) && equipment.GetItemInSlot(EquipmentSlot.Tool).HasValue(out var existingTool))
             {
-                equipment.UnequipItem("tool");
+                equipment.UnequipItem(existingTool);
                 Creature.Inventory.AddResource(existingTool);
             }
 

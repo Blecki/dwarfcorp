@@ -9,37 +9,56 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    public enum EquipmentSlot
+    {
+        None,
+        Tool,
+    }
+
     public class Equipment : GameComponent
     {
         public Equipment() { }
         public Equipment(ComponentManager Manager) : base(Manager) { }
 
-        public Dictionary<String, Resource> EquippedItems = new Dictionary<String, Resource>();
+        public Dictionary<EquipmentSlot, Resource> EquippedItems = new Dictionary<EquipmentSlot, Resource>();
 
-        public MaybeNull<Resource> GetItemInSlot(String Slot)
+        public MaybeNull<Resource> GetItemInSlot(EquipmentSlot Slot)
         {
             if (EquippedItems.ContainsKey(Slot))
                 return EquippedItems[Slot];
             return null;
         }
 
-        public void EquipItem(String Slot, Resource Item)
+        public void EquipItem(Resource Item)
         {
-            EquippedItems[Slot] = Item;
+            if (Item.Equipment_Slot == EquipmentSlot.None) return;
 
-            if (!String.IsNullOrEmpty(Item.Equipment_LayerName) && GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>().HasValue(out var sprite))
+            UnequipItem(Item.Equipment_Slot);
+
+            EquippedItems[Item.Equipment_Slot] = Item;
+
+            if (!String.IsNullOrEmpty(Item.Equipment_LayerName) 
+                && GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>().HasValue(out var sprite))
             {
                 sprite.RemoveLayer(Item.Equipment_LayerType);
                 sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers(Item.Equipment_LayerType).Where(l => l.Names.Contains(Item.Equipment_LayerName)).FirstOrDefault(), LayeredSprites.LayerLibrary.BaseDwarfPalette);
             }
         }
 
-        public void UnequipItem(String Slot)
+        public void UnequipItem(EquipmentSlot Slot)
         {
-            if (GetItemInSlot(Slot).HasValue(out var existing) && !String.IsNullOrEmpty(existing.Equipment_LayerName) && GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>().HasValue(out var sprite))
+            if (GetItemInSlot(Slot).HasValue(out var existing) 
+                && !String.IsNullOrEmpty(existing.Equipment_LayerName) 
+                && GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>().HasValue(out var sprite))
                 sprite.RemoveLayer(existing.Equipment_LayerType);
 
             EquippedItems.Remove(Slot);
+        }
+
+        public void UnequipItem(Resource Item)
+        {
+            if (GetItemInSlot(Item.Equipment_Slot).HasValue(out var res) && Object.ReferenceEquals(res, Item))
+                UnequipItem(Item.Equipment_Slot);
         }
     }
 }

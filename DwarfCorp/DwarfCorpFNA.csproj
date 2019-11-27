@@ -206,6 +206,7 @@
     <Compile Include="TaskManagement\Act.cs" />
     <Compile Include="TaskManagement\ActData.cs" />
     <Compile Include="TaskManagement\ActHelper-ApplyWearToTool.cs" />
+    <Compile Include="TaskManagement\ActHelper-GetEquippedTool.cs" />
     <Compile Include="TaskManagement\ActHelper-CreateToolCheckAct.cs" />
     <Compile Include="TaskManagement\ActWrapperTask.cs" />
     <Compile Include="TaskManagement\BehaviorExtensions.cs" />

@@ -96,7 +96,9 @@ namespace DwarfCorp
         [JsonIgnore] public Color Tool_AttackHitColor { get => GetProperty<Color>("Tool_AttackHitColor", Color.White); set => SetProperty<Color>("Tool_AttackHitColor", value); }
 
         [JsonIgnore] public String Equipment_LayerName { get => GetProperty<String>("Equipment_LayerName", ""); set => SetProperty<String>("Equipment_LayerName", value); }
-        [JsonIgnore] public LayerType Equipment_LayerType { get => GetProperty<LayerType>("Equipment_LayerType", LayerType.TOOL); set => SetProperty<LayerType>("Equipment_LayerType", value); }
+        [JsonIgnore] public LayerType Equipment_LayerType { get => GetProperty<LayerType>("Equipment_LayerType", LayerType.Tool); set => SetProperty<LayerType>("Equipment_LayerType", value); }
+        [JsonIgnore] public EquipmentSlot Equipment_Slot { get => GetProperty<EquipmentSlot>("Equipment_Slot", EquipmentSlot.None); set => SetProperty<EquipmentSlot>("Equipment_Slot", value); }
+
         #endregion
     }
 }

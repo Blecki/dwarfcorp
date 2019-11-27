@@ -24,19 +24,9 @@ namespace DwarfCorp
             this.OwnerTask = OwnerTask;
         }
 
-        private Resource GetEquippedTool(CreatureAI Agent)
-        {
-            if (Agent.Creature.Equipment.HasValue(out var equipment) && equipment.GetItemInSlot("tool").HasValue(out var resource))
-                return resource;
-            else if (!String.IsNullOrEmpty(Agent.Stats.CurrentClass.FallbackTool))
-                return new Resource(Agent.Stats.CurrentClass.FallbackTool);
-            else
-                return new Resource("Dwarf Hands");
-        }
-
         private IEnumerable<Act.Status> PerformOnVoxel(Creature performer, Vector3 pos, KillVoxelTask DigAct, DwarfTime time, float bonus, string faction)
         {
-            var tool = GetEquippedTool(performer.AI);
+            var tool = ActHelper.GetEquippedTool(performer);
 
             // Play the attack animations.
             Creature.CurrentCharacterMode = tool.Tool_AttackAnimation;

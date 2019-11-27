@@ -58,7 +58,7 @@ namespace DwarfCorp
             toReturn.AddThought("I just arrived to this new land.", new TimeSpan(3, 0, 0, 0), 20.0f);
 
             if (toReturn.Equipment.HasValue(out var equipment) && !String.IsNullOrEmpty(toReturn.Stats.CurrentClass.DefaultTool) && Library.GetResourceType(toReturn.Stats.CurrentClass.DefaultTool).HasValue())
-                equipment.EquipItem("tool", new Resource(toReturn.Stats.CurrentClass.DefaultTool));
+                equipment.EquipItem(new Resource(toReturn.Stats.CurrentClass.DefaultTool));
 
             return toReturn.Physics;
         }

@@ -11,12 +11,12 @@ namespace DwarfCorp
 {
     public enum LayerType
     {
-        BODY = 0,
-        FACE = 1,
-        NOSE = 2,
-        BEARD = 3,
-        HAIR = 4,
-        TOOL = 5
+        Body = 0,
+        Face = 1,
+        Nose = 2,
+        Beard = 3,
+        Hair = 4,
+        Tool = 5
     }
 }
 
@@ -43,11 +43,11 @@ namespace DwarfCorp.LayeredSprites
             {
                 if (_BaseDwarfPalette == null)
                 {
-                    var rawTexture = AssetManager.GetContentTexture(ContentPaths.dwarf_base_palette);
+                    var rawTexture = AssetManager.GetContentTexture("Entities/Dwarf/Layers/base palette");
                     _BaseDwarfPalette = new Palette
                     {
                         CachedPalette = TextureTool.RawPaletteFromTexture2D(rawTexture),
-                        Asset = ContentPaths.dwarf_base_palette
+                        Asset = "Entities/Dwarf/Layers/base palette"
                     };
                 }
                 return _BaseDwarfPalette;
@@ -69,34 +69,34 @@ namespace DwarfCorp.LayeredSprites
                 {
                     var tags = sheet.LayerName.Split(' ');
                     if (tags.Length < 2) continue;
-                    var type = tags[0].ToUpper();
-                    var enumType = (LayerType)Enum.Parse(typeof(LayerType), type);
-                    var l = new Layer();
-                    l.CachedTexture = TextureTool.DecomposeTexture(sheet.Data, BaseDwarfPalette.CachedPalette);
-                    l.Type = enumType;
+
+                    if (!Enum.TryParse<LayerType>(tags[0], true, out var layerType))
+                        throw new InvalidOperationException("Malformed dwarf layer - unknown layer type.");
+
+                    var l = new Layer()
+                    {
+                        CachedTexture = TextureTool.DecomposeTexture(sheet.Data, BaseDwarfPalette.CachedPalette),
+                        Type = layerType
+                    };
+
                     l.Names.AddRange(tags.Skip(1));
                     Layers.Add(l);
                 }
             }
 
-            //Layers = FileUtils.LoadJsonListFromMultipleSources<Layer>(ContentPaths.dwarf_layers, null, l => l.Type + "&" + l.Asset);
-
-            //foreach (var layer in Layers)
-            //{
-            //    var rawTexture = AssetManager.GetContentTexture(layer.Asset);
-            //    var memTexture = TextureTool.MemoryTextureFromTexture2D(rawTexture);
-            //    if (memTexture == null)
-            //        continue;
-            //    layer.CachedTexture = TextureTool.DecomposeTexture(memTexture, BaseDwarfPalette.CachedPalette);
-            //}
-
-            Palettes = FileUtils.LoadJsonListFromMultipleSources<Palette>(ContentPaths.dwarf_palettes, null, l => l.Asset);
-
-            foreach (var palette in Palettes)
+            Palettes = AssetManager.EnumerateAllFiles("Entities/Dwarf/Layers").Where(filename => filename.Contains("palette")).Select(f =>
             {
-                var rawTexture = AssetManager.GetContentTexture(palette.Asset);
-                palette.CachedPalette = TextureTool.RawPaletteFromTexture2D(rawTexture);
-            }
+                var tags = System.IO.Path.GetFileNameWithoutExtension(f).Split(' ');
+                if (!Enum.TryParse<PaletteType>(tags[0], true, out var paletteType))
+                    throw new InvalidOperationException("Malformed dwarf palette - unknown palette type when processing " + f);
+
+                return new Palette
+                {
+                    Asset = f,
+                    Layer = paletteType,
+                    CachedPalette = TextureTool.RawPaletteFromTexture2D(AssetManager.GetContentTexture(f))
+                };
+            }).ToList();
         }
 
         public static IEnumerable<Layer> EnumerateLayers(LayerType LayerType)

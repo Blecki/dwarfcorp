@@ -32,8 +32,6 @@ namespace DwarfCorp
         public static string rail_tiles = ProgramData.CreatePath("Entities", "Rail", "rail");
         public static string tutorials = ProgramData.CreatePath("tutorial.json");
         public static string events = ProgramData.CreatePath("World", "Events");
-        public static string dwarf_layers = ProgramData.CreatePath("Entities", "Dwarf", "Layers", "dwarf-layers.json");
-        public static string dwarf_palettes = ProgramData.CreatePath("Entities", "Dwarf", "Layers", "dwarf-palettes.json");
         public static string dwarf_animations = ProgramData.CreatePath("Entities", "Dwarf", "Layers", "dwarf-animations.json");
         public static string dwarf_base_palette = ProgramData.CreatePath("Entities", "Dwarf", "Layers", "base-palette");
         public static string employee_conversation = ProgramData.CreatePath("employee.conv");

@@ -83,7 +83,7 @@ namespace DwarfCorp.Play.EmployeeInfo
 
                 if (Employee.Creature.Equipment.HasValue(out var equipment))
                 {
-                    if (equipment.GetItemInSlot("tool").HasValue(out var tool))
+                    if (equipment.GetItemInSlot(EquipmentSlot.Tool).HasValue(out var tool))
                         ToolIcon.Resource = tool;
                 }
                 else
