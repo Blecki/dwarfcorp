@@ -201,58 +201,24 @@ namespace DwarfCorp
                 return null;
             }
 
-            TradeEnvoy envoy = null;
-
-            var creatures = World.MonsterSpawner.Spawn(World.MonsterSpawner.GenerateSpawnEvent(this, World.PlayerFaction, MathFunctions.Random.Next(4) + 1, false));
-
-            envoy = new TradeEnvoy(World.Time.CurrentDate)
+            if (Race.HasValue(out var race))
             {
-                Creatures = creatures,
-                OtherFaction = World.PlayerFaction,
-                ShouldRemove = false,
-                OwnerFaction = this,
-                TradeGoods = ParentFaction.IsCorporate ? new ResourceSet() : (Race.HasValue(out var _race) ? _race.GenerateTradeItems(World) : new ResourceSet()),
-                TradeMoney = new DwarfBux((decimal)MathFunctions.Rand(1500.0f, 5500.0f)) // Todo: Make this a setting.
-            };
+                TradeEnvoy envoy = null;
 
-            if (Race.HasValue(out var race) && race.IsNative)
-            {
-                if (Economy == null)
+                var creatures = World.MonsterSpawner.Spawn(World.MonsterSpawner.GenerateSpawnEvent(this, World.PlayerFaction, MathFunctions.Random.Next(4) + 1, false));
+
+
+                envoy = new TradeEnvoy(World.Time.CurrentDate)
                 {
-                    Economy = new Company(this, 1000.0m, new CompanyInformation()
-                    {
-                        Name = ParentFaction.Name
-                    });
-                }
+                    Creatures = creatures,
+                    OtherFaction = World.PlayerFaction,
+                    ShouldRemove = false,
+                    OwnerFaction = this,
+                    TradeGoods = ParentFaction.IsCorporate ? new ResourceSet() : (Race.HasValue(out var _race) ? _race.GenerateTradeItems(World) : new ResourceSet()),
+                    TradeMoney = new DwarfBux((decimal)MathFunctions.Rand(race.MinCash, race.MaxCash))
+                };
 
-                foreach (CreatureAI creature in envoy.Creatures)
-                {
-                    creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
-                    creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, Economy.Information, new Resource("Flag")));
-                }
-            }
-            else
-            {
-                GameComponent balloon = null;
-
-                var rooms = World.EnumerateZones().Where(room => room.Type.Name == "Balloon Port").ToList();
-
-                if (rooms.Count != 0)
-                {
-                    var pos = rooms.First().GetBoundingBox().Center();
-                    balloon = Balloon.CreateBalloon(pos + new Vector3(0, 1000, 0), pos + Vector3.UnitY * 15, World.ComponentManager, this);
-                }
-
-                if (balloon != null)
-                {
-                    foreach (CreatureAI creature in creatures)
-                    {
-                        var tf = creature.Physics.LocalTransform;
-                        tf.Translation = balloon.LocalTransform.Translation;
-                        creature.Physics.LocalTransform = tf;
-                    }
-                }
-                else
+                if (race.IsNative)
                 {
                     if (Economy == null)
                         Economy = new Company(this, 1000.0m, new CompanyInformation()
@@ -266,37 +232,75 @@ namespace DwarfCorp
                         creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, Economy.Information, new Resource("Flag")));
                     }
                 }
-            }
-
-            foreach (CreatureAI creature in envoy.Creatures)
-                creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
-
-            envoy.DistributeGoods();
-            TradeEnvoys.Add(envoy);
-
-            World.MakeAnnouncement(new DwarfCorp.Gui.Widgets.QueuedAnnouncement
-            {
-                Text = String.Format("Trade envoy from {0} has arrived!", ParentFaction.Name),
-                ClickAction = (gui, sender) =>
+                else
                 {
-                    if (envoy.Creatures.Count > 0)
+                    GameComponent balloon = null;
+
+                    var rooms = World.EnumerateZones().Where(room => room.Type.Name == "Balloon Port").ToList();
+
+                    if (rooms.Count != 0)
                     {
-                        envoy.Creatures.First().ZoomToMe();
-                        World.UserInterface.MakeWorldPopup(String.Format("Traders from {0} ({1}) have entered our territory.\nThey will try to get to our balloon port to trade with us.", ParentFaction.Name, (Race.HasValue(out var __race) ? __race.Name : "???")),
-                            envoy.Creatures.First().Physics, -10);
+                        var pos = rooms.First().GetBoundingBox().Center();
+                        balloon = Balloon.CreateBalloon(pos + new Vector3(0, 1000, 0), pos + Vector3.UnitY * 15, World.ComponentManager, this);
                     }
-                },
-                ShouldKeep = () => envoy.ExpiditionState == Expedition.State.Arriving
-            });
 
-            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
+                    if (balloon != null)
+                    {
+                        foreach (CreatureAI creature in creatures)
+                        {
+                            var tf = creature.Physics.LocalTransform;
+                            tf.Translation = balloon.LocalTransform.Translation;
+                            creature.Physics.LocalTransform = tf;
+                        }
+                    }
+                    else
+                    {
+                        if (Economy == null)
+                            Economy = new Company(this, 1000.0m, new CompanyInformation()
+                            {
+                                Name = ParentFaction.Name
+                            });
 
-            World.Tutorial("trade");
+                        foreach (CreatureAI creature in envoy.Creatures)
+                        {
+                            creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
+                            creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, Economy.Information, new Resource("Flag")));
+                        }
+                    }
+                }
 
-            if (Race.HasValue(out var ___race) && !String.IsNullOrEmpty(___race.TradeMusic))
-                SoundManager.PlayMusic(___race.TradeMusic);
+                foreach (CreatureAI creature in envoy.Creatures)
+                    creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
 
-            return envoy;
+                envoy.DistributeGoods();
+                TradeEnvoys.Add(envoy);
+
+                World.MakeAnnouncement(new DwarfCorp.Gui.Widgets.QueuedAnnouncement
+                {
+                    Text = String.Format("Trade envoy from {0} has arrived!", ParentFaction.Name),
+                    ClickAction = (gui, sender) =>
+                    {
+                        if (envoy.Creatures.Count > 0)
+                        {
+                            envoy.Creatures.First().ZoomToMe();
+                            World.UserInterface.MakeWorldPopup(String.Format("Traders from {0} ({1}) have entered our territory.\nThey will try to get to our balloon port to trade with us.", ParentFaction.Name, race.Name),
+                                envoy.Creatures.First().Physics, -10);
+                        }
+                    },
+                    ShouldKeep = () => envoy.ExpiditionState == Expedition.State.Arriving
+                });
+
+                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
+
+                World.Tutorial("trade");
+
+                if (!String.IsNullOrEmpty(race.TradeMusic))
+                    SoundManager.PlayMusic(race.TradeMusic);
+
+                return envoy;
+            }
+            else
+                return null;
         }
 
         public WarParty SendWarParty()

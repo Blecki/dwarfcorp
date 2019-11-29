@@ -48,6 +48,8 @@ namespace DwarfCorp
         public bool EatsMeat { get; set; }
         public string BecomeWhenEvil { get; set; }
         public string BecomeWhenNotEvil { get; set; }
+        public int MinCash = 1500;
+        public int MaxCash = 5500;
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)

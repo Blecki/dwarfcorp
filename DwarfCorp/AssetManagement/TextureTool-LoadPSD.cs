@@ -52,7 +52,10 @@ namespace DwarfCorp
             var r = new MemoryTexture(Layer.Rect.Width, Layer.Rect.Height);
 
             for (var index = 0; index < Layer.Rect.Width * Layer.Rect.Height; ++index)
-                r.Data[index] = new Color(channels[0].ImageData[index], channels[1].ImageData[index], channels[2].ImageData[index], channels[3].ImageData[index]);
+                if (channels[3].ImageData[index] == 0)
+                    r.Data[index] = new Color(0, 0, 0, 0);
+                else
+                    r.Data[index] = new Color(channels[0].ImageData[index], channels[1].ImageData[index], channels[2].ImageData[index], channels[3].ImageData[index]);
 
             return r;
         }

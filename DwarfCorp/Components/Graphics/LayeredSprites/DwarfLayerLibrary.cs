@@ -25,34 +25,97 @@ namespace DwarfCorp.DwarfSprites
     // Todo: Want to make this not dwarf specific.
     public class LayerLibrary
     {
-        private static List<Layer> Layers;
         private static List<Palette> Palettes;
         private static Palette _BaseDwarfPalette = null;
+        private static bool PalettesInitialized = false;
+
+        private static List<Layer> Layers;
+        private static bool LayersInitialized = false;
 
         public static Palette BaseDwarfPalette
         {
             get
             {
-                if (_BaseDwarfPalette == null)
-                {
-                    var rawTexture = AssetManager.GetContentTexture("Entities/Dwarf/Layers/base palette");
-                    _BaseDwarfPalette = new Palette
-                    {
-                        CachedPalette = TextureTool.RawPaletteFromTexture2D(rawTexture),
-                        Asset = "Entities/Dwarf/Layers/base palette"
-                    };
-                }
+                InitializePalettes();
                 return _BaseDwarfPalette;
             }
         }
 
-        private static void Initialize()
+        #region Palettes
+
+        private static void InitializePalettes()
         {
-            if (Layers != null && Palettes != null) return;
+            if (PalettesInitialized) return;
+            PalettesInitialized = true;
+
+            Palettes = new List<Palette>();
+            foreach (var file in AssetManager.EnumerateAllFiles("Entities/Dwarf/Layers").Where(filename => System.IO.Path.GetExtension(filename) == ".psd" && filename.Contains("palette")))
+                foreach (var sheet in TextureTool.LoadPSD(System.IO.File.OpenRead(file)))
+                    for (var r = 0; r < sheet.Data.Height; ++r)
+                        Palettes.Add(new Palette
+                        {
+                            CachedPalette = new DwarfCorp.Palette(TextureTool.RawPaletteFromMemoryTextureRow(sheet.Data, r).Skip(1)),
+                            Asset = GetPaletteTypeFromColor(sheet.Data.Data[sheet.Data.Index(0, r)]).ToString() + " " + r.ToString(),
+                            Layer = GetPaletteTypeFromColor(sheet.Data.Data[sheet.Data.Index(0, r)])
+                        });
+
+            Palettes.RemoveAll(p => p.Layer == PaletteType.Discard);
+            if (Palettes.Count == 0)
+                throw new InvalidProgramException("No palettes?");
+            _BaseDwarfPalette = Palettes.FirstOrDefault(p => p.Layer == PaletteType.Base);
+
+            if (_BaseDwarfPalette == null)
+                _BaseDwarfPalette = Palettes[0];
+        }
+
+        private static PaletteType GetPaletteTypeFromColor(Color C)
+        {
+            if (C == new Color(0, 0, 0, 255))
+                return PaletteType.Base;
+            if (C == new Color(255, 0, 0, 255))
+                return PaletteType.Skin;
+            if (C == new Color(0, 255, 0, 255))
+                return PaletteType.Hair;
+            return PaletteType.Discard;
+        }
+
+        public static void SaveCombinedPalette(GraphicsDevice Device)
+        {
+            var composedPalette = new MemoryTexture(Palettes[0].CachedPalette.Count + 1, Palettes.Count);
+            for (var r = 0; r < Palettes.Count; ++r)
+            {
+                if (Palettes[r].Layer == PaletteType.Base)
+                    composedPalette.Data[composedPalette.Index(0, r)] = new Color(0, 0, 0, 255);
+                else if (Palettes[r].Layer == PaletteType.Skin)
+                    composedPalette.Data[composedPalette.Index(0, r)] = new Color(255, 0, 0, 255);
+                else if (Palettes[r].Layer == PaletteType.Hair)
+                    composedPalette.Data[composedPalette.Index(0, r)] = new Color(0, 255, 0, 255);
+
+                for (var c = 0; c < composedPalette.Width && c < Palettes[r].CachedPalette.Count; ++c)
+                    composedPalette.Data[composedPalette.Index(c + 1, r)] = Palettes[r].CachedPalette[c];
+            }
+            var realTex = TextureTool.Texture2DFromMemoryTexture(Device, composedPalette);
+            realTex.SaveAsPng(System.IO.File.OpenWrite("combined-palette.png"), composedPalette.Width, composedPalette.Height);
+        }
+
+        public static IEnumerable<Palette> EnumeratePalettes()
+        {
+            InitializePalettes();
+            return Palettes;
+        }
+
+        #endregion
+
+        #region Layers
+
+        private static void InitializeLayers()
+        {
+            if (LayersInitialized) return;
+            LayersInitialized = true;
 
             Layers = new List<Layer>();
 
-            foreach (var file in AssetManager.EnumerateAllFiles("Entities/Dwarf/Layers").Where(filename => System.IO.Path.GetExtension(filename) == ".psd"))
+            foreach (var file in AssetManager.EnumerateAllFiles("Entities/Dwarf/Layers").Where(filename => System.IO.Path.GetExtension(filename) == ".psd" && filename.Contains("layer")))
                 foreach (var sheet in TextureTool.LoadPSD(System.IO.File.OpenRead(file)))
                 {
                     var tags = sheet.LayerName.Split(' ');
@@ -70,40 +133,14 @@ namespace DwarfCorp.DwarfSprites
                     l.Names.AddRange(tags.Skip(1));
                     Layers.Add(l);
                 }
-
-            Palettes = AssetManager.EnumerateAllFiles("Entities/Dwarf/Layers").Where(filename => filename.Contains("palette")).Select(f =>
-            {
-                var tags = System.IO.Path.GetFileNameWithoutExtension(f).Split(' ');
-                if (!Enum.TryParse<PaletteType>(tags[0], true, out var paletteType))
-                    throw new InvalidOperationException("Malformed dwarf palette - unknown palette type when processing " + f);
-
-                return new Palette
-                {
-                    Asset = f,
-                    Layer = paletteType,
-                    CachedPalette = TextureTool.RawPaletteFromTexture2D(AssetManager.RawLoadTexture(f))
-                };
-            }).ToList();
         }
 
         public static IEnumerable<Layer> EnumerateLayers(LayerType LayerType)
         {
-            Initialize();
-
-            if (Palettes == null)
-                throw new Exception("Dwarf Layers failed to load.");
-
+            InitializeLayers();
             return Layers.Where(l => l.Type == LayerType);
         }
 
-        public static IEnumerable<Palette> EnumeratePalettes()
-        {
-            Initialize();
-
-            if (Palettes == null)
-                throw new Exception("Dwarf Layers failed to load.");
-
-            return Palettes;
-        }
+        #endregion
     }
 }

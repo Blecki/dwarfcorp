@@ -49,10 +49,15 @@ namespace DwarfCorp
         public static Palette RawPaletteFromMemoryTexture(MemoryTexture Source)
         {
             if (Source == null)
-            {
                 return null;
-            }
             return new Palette(Source.Data);
+        }
+
+        public static Palette RawPaletteFromMemoryTextureRow(MemoryTexture Source, int Row)
+        {
+            if (Source == null)
+                return null;
+            return new Palette(Source.Data.Skip(Source.Index(0, Row)).Take(Source.Width));
         }
 
         public static Palette RawPaletteFromTexture2D(Texture2D Source)

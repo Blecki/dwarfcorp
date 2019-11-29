@@ -13,6 +13,7 @@ namespace DwarfCorp.DwarfSprites
     {
         Hair,
         Skin,
-        Base
+        Base,
+        Discard
     }
 }

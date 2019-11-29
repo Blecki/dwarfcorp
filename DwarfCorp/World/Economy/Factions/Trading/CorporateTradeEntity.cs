@@ -19,7 +19,7 @@ namespace DwarfCorp.Trade
 
         public int AvailableSpace => 0;
         public DwarfBux Money => World.Overworld.PlayerCorporationFunds;
-        public ResourceSet Resources => World.Overworld.PlayerCorporationResources; // Todo: Makes add/remove obsolete?
+        public ResourceSet Resources => World.Overworld.PlayerCorporationResources;
 
         public void AddMoney(DwarfBux Money)
         {
