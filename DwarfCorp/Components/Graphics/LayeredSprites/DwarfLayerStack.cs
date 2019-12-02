@@ -45,7 +45,7 @@ namespace DwarfCorp.DwarfSprites
         public void AddLayer(Layer Layer, Palette Palette)
         {
             if (Palette == null)
-                Palette = LayerLibrary.BaseDwarfPalette;
+                Palette = LayerLibrary.BasePalette;
 
             var existing = Layers.FirstOrDefault(l => l.Layer.Type == Layer.Type);
             if (existing == null)
@@ -63,10 +63,17 @@ namespace DwarfCorp.DwarfSprites
             CompositeValid = false;
         }
 
-        public void RemoveLayer(LayerType Type)
+        public void RemoveLayer(String Type)
         {
             if (Layers.RemoveAll(l => l.Layer.Type == Type) != 0)
                 CompositeValid = false;
+        }
+
+        private int GetLayerPrecedence(Layer Layer)
+        {
+            if (LayerLibrary.GetLayerType(Layer.Type).HasValue(out var type))
+                return type.Precedence;
+            return 0;
         }
 
         public void Update(GraphicsDevice Device)
@@ -82,7 +89,7 @@ namespace DwarfCorp.DwarfSprites
                     Composite.Dispose();
 
                 CompositeValid = true;
-                Layers.Sort((a, b) => (int)a.Layer.Type - (int)b.Layer.Type);
+                Layers.Sort((a, b) => GetLayerPrecedence(a.Layer) - GetLayerPrecedence(b.Layer));
 
                 // Render the composite texture
                 var maxSize = new Point(0, 0);
@@ -106,7 +113,7 @@ namespace DwarfCorp.DwarfSprites
             }
         }
 
-        internal object GetLayer(LayerType v)
+        internal object GetLayer(String v)
         {
             return Layers.Where(l => l.Layer.Type == v).FirstOrDefault();
         }

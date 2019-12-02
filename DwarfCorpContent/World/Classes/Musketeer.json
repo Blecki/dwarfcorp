@@ -4,8 +4,16 @@
   "Actions": "Attack, Hunt, Gather, BuildObject",
   "AttackMode": "Attacking02",
   "JobDescription": "Musketeers are highly trained in the use of their weapon. They are powerful defenders and ranged attackers, but they aren't going to soil their hands with such mundane things as digging holes or building things.",
-  "BodyLayer": "musketeer",
-  "HatLayer": "musketeer-hat",
+  "PresetLayers": [
+    {
+      "LayerType": "Body",
+      "LayerName": "musketeer"
+    },
+    {
+      "LayerType": "Hat",
+      "LayerName": "musketeer-hat"
+    }
+  ],
   "Weapons": [
     {
       "DamageAmount": 20.0,

@@ -14,51 +14,52 @@ namespace DwarfCorp.DwarfSprites
     {
         private static bool __pass(Layer Layer) { return true; }
 
-        private static Layer SelectRandomLayer(CreatureStats Stats, Random Random, LayerType Layer, Func<Layer, bool> Filter = null)
+        private static Layer SelectRandomLayer(CreatureStats Stats, Random Random, String Type, Func<Layer, bool> Filter = null)
         {
             if (Filter == null) Filter = __pass;
 
-            var layers = LayerLibrary.EnumerateLayers(Layer).Where(l => Filter(l));
+            var layers = LayerLibrary.EnumerateLayersOfType(Type).Where(l => Filter(l));
             if (layers.Count() > 0)
                 return layers.SelectRandom(Random);
             else
-                return LayerLibrary.EnumerateLayers(Layer).Where(l => l.Names.Contains("default")).FirstOrDefault();
+                return LayerLibrary.EnumerateLayersOfType(Type).Where(l => l.Names.Contains("default")).FirstOrDefault();
         }
 
-        private static Layer FindLayerOrDefault(LayerType Layer, String Name)
+        private static Layer FindLayerOrDefault(String Type, String Name)
         {
-            var r = LayerLibrary.EnumerateLayers(Layer).Where(l => l.Names.Contains(Name)).FirstOrDefault();
+            var r = LayerLibrary.EnumerateLayersOfType(Type).Where(l => l.Names.Contains(Name)).FirstOrDefault();
             if (r == null)
-                r = LayerLibrary.EnumerateLayers(Layer).Where(l => l.Names.Contains("default")).FirstOrDefault();
+                r = LayerLibrary.EnumerateLayersOfType(Type).Where(l => l.Names.Contains("default")).FirstOrDefault();
             return r;
         }
 
-        public static Dictionary<LayerType, Layer> BuildDwarfLayers(CreatureStats Stats, Random Random)
+        private static Layer FindLayer(String Type, String Name)
         {
-            var r = new Dictionary<LayerType, Layer>();
+            return LayerLibrary.EnumerateLayersOfType(Type).Where(l => l.Names.Contains(Name)).FirstOrDefault();
+        }
 
-            r.Add(LayerType.Body, FindLayerOrDefault(LayerType.Body, Stats.CurrentClass.BodyLayer));
+        public static List<Layer> BuildDwarfLayers(CreatureStats Stats, Random Random)
+        {
+            var r = new List<Layer>();
 
-            switch (Stats.Gender)
+            foreach (var preset in Stats.CurrentClass.PresetLayers)
             {
-                case Gender.Female:
-                    r.Add(LayerType.Face, FindLayerOrDefault(LayerType.Face, "female"));
-                    break;
-                case Gender.Male:
-                    r.Add(LayerType.Face, FindLayerOrDefault(LayerType.Face, "male"));
-                    break;
-                default:
-                    r.Add(LayerType.Face, SelectRandomLayer(Stats, Random, LayerType.Face));
-                    break;
+                var l = FindLayer(preset.LayerType, preset.LayerName);
+                if (l != null)
+                    r.Add(l);
             }
 
-            r.Add(LayerType.Nose, SelectRandomLayer(Stats, Random, LayerType.Nose));
-            r.Add(LayerType.Beard, SelectRandomLayer(Stats, Random, LayerType.Beard));
+            foreach (var layerType in LayerLibrary.EnumerateLayerTypes())
+                if (layerType.Fundamental)
+                {
+                    if (r.Any(l => l.Type == layerType.Name))
+                        continue;
 
-            if (!String.IsNullOrEmpty(Stats.CurrentClass.HatLayer))
-                r.Add(LayerType.Hair, FindLayerOrDefault(LayerType.Hair, Stats.CurrentClass.HatLayer));
-            else
-                r.Add(LayerType.Hair, SelectRandomLayer(Stats, Random, LayerType.Hair, l => !l.Names.Contains("hat")));
+                    if (layerType.Gendered && Stats.Gender != Gender.Nonbinary)
+                        r.Add(SelectRandomLayer(Stats, Random, layerType.Name, l => l.Names.Contains(Stats.Gender.ToString())));
+                    else
+                        r.Add(SelectRandomLayer(Stats, Random, layerType.Name));
+                }
 
             return r;
         }
@@ -69,20 +70,22 @@ namespace DwarfCorp.DwarfSprites
 
             var random = new Random(Stats.RandomSeed);
 
-            var hairPalette = LayerLibrary.EnumeratePalettes().Where(p => p.Layer == PaletteType.Hair).SelectRandom(random);
-            var skinPalette = LayerLibrary.EnumeratePalettes().Where(p => p.Layer == PaletteType.Skin).SelectRandom(random);
+            var chosenPalettes = new Dictionary<String, Palette>();
+            foreach (var paletteType in LayerLibrary.EnumeratePaletteTypes())
+                chosenPalettes.Add(paletteType.Name, LayerLibrary.EnumeratePalettes().Where(p => p.Type == paletteType.Name).SelectRandom(random));
 
             var layers = BuildDwarfLayers(Stats, random);
-            if (layers[LayerType.Body] != null) sprite.AddLayer(layers[LayerType.Body], skinPalette);
-            if (layers[LayerType.Face] != null) sprite.AddLayer(layers[LayerType.Face], skinPalette);
-            if (layers[LayerType.Nose] != null) sprite.AddLayer(layers[LayerType.Nose], skinPalette);
-            if (layers[LayerType.Beard] != null) sprite.AddLayer(layers[LayerType.Beard], hairPalette);
-            if (layers[LayerType.Hair] != null) sprite.AddLayer(layers[LayerType.Hair], hairPalette);
+            foreach (var layer in layers)
+                if (LayerLibrary.GetLayerType(layer.Type).HasValue(out var layerType))
+                {
+                    if (chosenPalettes.ContainsKey(layerType.PaletteType))
+                        sprite.AddLayer(layer, chosenPalettes[layerType.PaletteType]);
+                    else
+                        sprite.AddLayer(layer, LayerLibrary.BasePalette);
+                }
 
             sprite.SetAnimations(Library.LoadNewLayeredAnimationFormat(ContentPaths.dwarf_animations));
-
             sprite.SetFlag(GameComponent.Flag.ShouldSerialize, false);
-
             return sprite;
         }
 
@@ -92,18 +95,21 @@ namespace DwarfCorp.DwarfSprites
 
             var random = new Random(Stats.RandomSeed);
 
-            var hairPalette = LayerLibrary.EnumeratePalettes().Where(p => p.Layer == PaletteType.Hair).SelectRandom(random);
-            var skinPalette = LayerLibrary.EnumeratePalettes().Where(p => p.Layer == PaletteType.Skin).SelectRandom(random);
+            var chosenPalettes = new Dictionary<String, Palette>();
+            foreach (var paletteType in LayerLibrary.EnumeratePaletteTypes())
+                chosenPalettes.Add(paletteType.Name, LayerLibrary.EnumeratePalettes().Where(p => p.Type == paletteType.Name).SelectRandom(random));
 
             var layers = BuildDwarfLayers(Stats, random);
-            if (layers[LayerType.Body] != null) sprite.AddLayer(layers[LayerType.Body], skinPalette);
-            if (layers[LayerType.Face] != null) sprite.AddLayer(layers[LayerType.Face], skinPalette);
-            if (layers[LayerType.Nose] != null) sprite.AddLayer(layers[LayerType.Nose], skinPalette);
-            if (layers[LayerType.Beard] != null) sprite.AddLayer(layers[LayerType.Beard], hairPalette);
-            if (layers[LayerType.Hair] != null) sprite.AddLayer(layers[LayerType.Hair], hairPalette);
+            foreach (var layer in layers)
+                if (LayerLibrary.GetLayerType(layer.Type).HasValue(out var layerType))
+                {
+                    if (chosenPalettes.ContainsKey(layerType.PaletteType))
+                        sprite.AddLayer(layer, chosenPalettes[layerType.PaletteType]);
+                    else
+                        sprite.AddLayer(layer, LayerLibrary.BasePalette);
+                }
 
             return sprite;
         }
-
     }
 }

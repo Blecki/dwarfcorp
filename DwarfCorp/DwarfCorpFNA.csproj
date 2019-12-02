@@ -126,6 +126,7 @@
     <Compile Include="Components\Graphics\LayeredSprites\DwarfLayer.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfLayerLibrary.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfLayerStack.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\DwarfLayerType.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfPalette.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfPaletteType.cs" />
     <Compile Include="Components\Graphics\MeshComponent.cs" />

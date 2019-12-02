@@ -35,7 +35,7 @@ namespace DwarfCorp.DwarfSprites
             Layers.AddLayer(Layer, Palette);
         }
 
-        public void RemoveLayer(LayerType Type)
+        public void RemoveLayer(String Type)
         {
             Layers.RemoveLayer(Type);
         }

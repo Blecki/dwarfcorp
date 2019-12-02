@@ -2086,12 +2086,20 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <None Include="Entities\Dwarf\Layers\layer-types.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>layer-types</Name>
+    </None>
+    <None Include="Entities\Dwarf\Layers\palettes.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>palettes</Name>
+    </None>
+    <None Include="Entities\Dwarf\Layers\palette-types.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>palette-types</Name>
+    </None>
     <None Include="Entities\Dwarf\Layers\dwarf-layers.psd">
       <Name>dwarf-layers</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Entities\Dwarf\Layers\dwarf-palettes.psd">
-      <Name>dwarf-palettes</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Entities\Furniture\sm_anvil.obj">
@@ -5193,6 +5201,13 @@
   <ItemGroup>
     <Compile Include="Entities\Dwarf\ToolIcons\axe.png">
       <Name>axe</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\Dwarf\Layers\dwarf-palettes.png">
+      <Name>dwarf-palettes</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

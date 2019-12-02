@@ -55,7 +55,8 @@ namespace DwarfCorp
 
         #region Equipment
         public String Equipment_LayerName = "";
-        public DwarfSprites.LayerType Equipment_LayerType = DwarfSprites.LayerType.Tool;
+        public String Equipment_LayerType = "Tool";
+        public String Equipment_Palette = "Base";
         public EquipmentSlot Equipment_Slot = EquipmentSlot.None;
         #endregion
 

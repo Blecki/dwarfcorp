@@ -9,35 +9,24 @@ using System.Runtime.Serialization;
 
 namespace DwarfCorp.DwarfSprites
 {
-    public enum LayerType
-    {
-        Body = 0,
-        Face = 1,
-        Nose = 2,
-        Beard = 3,
-        Hair = 4,
-        Tool = 5
-    }
-}
-
-namespace DwarfCorp.DwarfSprites
-{
     // Todo: Want to make this not dwarf specific.
     public class LayerLibrary
     {
+        private static List<PaletteType> PaletteTypes;
         private static List<Palette> Palettes;
-        private static Palette _BaseDwarfPalette = null;
+        private static Palette _BasePalette = null;
         private static bool PalettesInitialized = false;
 
+        public static List<LayerType> LayerTypes;
         private static List<Layer> Layers;
         private static bool LayersInitialized = false;
 
-        public static Palette BaseDwarfPalette
+        public static Palette BasePalette
         {
             get
             {
                 InitializePalettes();
-                return _BaseDwarfPalette;
+                return _BasePalette;
             }
         }
 
@@ -48,60 +37,38 @@ namespace DwarfCorp.DwarfSprites
             if (PalettesInitialized) return;
             PalettesInitialized = true;
 
-            Palettes = new List<Palette>();
-            foreach (var file in AssetManager.EnumerateAllFiles("Entities/Dwarf/Layers").Where(filename => System.IO.Path.GetExtension(filename) == ".psd" && filename.Contains("palette")))
-                foreach (var sheet in TextureTool.LoadPSD(System.IO.File.OpenRead(file)))
-                    for (var r = 0; r < sheet.Data.Height; ++r)
-                        Palettes.Add(new Palette
-                        {
-                            CachedPalette = new DwarfCorp.Palette(TextureTool.RawPaletteFromMemoryTextureRow(sheet.Data, r).Skip(1)),
-                            Asset = GetPaletteTypeFromColor(sheet.Data.Data[sheet.Data.Index(0, r)]).ToString() + " " + r.ToString(),
-                            Layer = GetPaletteTypeFromColor(sheet.Data.Data[sheet.Data.Index(0, r)])
-                        });
+            PaletteTypes = FileUtils.LoadJsonListFromMultipleSources<PaletteType>("Entities/Dwarf/Layers/palette-types.json", null, p => p.Name);
+            Palettes = FileUtils.LoadJsonListFromMultipleSources<Palette>("Entities/Dwarf/Layers/palettes.json", null, p => p.Name);
 
-            Palettes.RemoveAll(p => p.Layer == PaletteType.Discard);
+            foreach (var palette in Palettes)
+            {
+                var asset = AssetManager.GetContentTexture(palette.Asset);
+                palette.CachedPalette = new DwarfCorp.Palette(TextureTool.RawPaletteFromMemoryTextureRow(TextureTool.MemoryTextureFromTexture2D(asset), palette.Row));
+            }
+
             if (Palettes.Count == 0)
                 throw new InvalidProgramException("No palettes?");
-            _BaseDwarfPalette = Palettes.FirstOrDefault(p => p.Layer == PaletteType.Base);
+            _BasePalette = Palettes.FirstOrDefault(p => p.Type == "Base");
 
-            if (_BaseDwarfPalette == null)
-                _BaseDwarfPalette = Palettes[0];
-        }
-
-        private static PaletteType GetPaletteTypeFromColor(Color C)
-        {
-            if (C == new Color(0, 0, 0, 255))
-                return PaletteType.Base;
-            if (C == new Color(255, 0, 0, 255))
-                return PaletteType.Skin;
-            if (C == new Color(0, 255, 0, 255))
-                return PaletteType.Hair;
-            return PaletteType.Discard;
-        }
-
-        public static void SaveCombinedPalette(GraphicsDevice Device)
-        {
-            var composedPalette = new MemoryTexture(Palettes[0].CachedPalette.Count + 1, Palettes.Count);
-            for (var r = 0; r < Palettes.Count; ++r)
-            {
-                if (Palettes[r].Layer == PaletteType.Base)
-                    composedPalette.Data[composedPalette.Index(0, r)] = new Color(0, 0, 0, 255);
-                else if (Palettes[r].Layer == PaletteType.Skin)
-                    composedPalette.Data[composedPalette.Index(0, r)] = new Color(255, 0, 0, 255);
-                else if (Palettes[r].Layer == PaletteType.Hair)
-                    composedPalette.Data[composedPalette.Index(0, r)] = new Color(0, 255, 0, 255);
-
-                for (var c = 0; c < composedPalette.Width && c < Palettes[r].CachedPalette.Count; ++c)
-                    composedPalette.Data[composedPalette.Index(c + 1, r)] = Palettes[r].CachedPalette[c];
-            }
-            var realTex = TextureTool.Texture2DFromMemoryTexture(Device, composedPalette);
-            realTex.SaveAsPng(System.IO.File.OpenWrite("combined-palette.png"), composedPalette.Width, composedPalette.Height);
+            if (_BasePalette == null)
+                _BasePalette = Palettes[0];
         }
 
         public static IEnumerable<Palette> EnumeratePalettes()
         {
             InitializePalettes();
             return Palettes;
+        }
+
+        public static IEnumerable<PaletteType> EnumeratePaletteTypes()
+        {
+            InitializePalettes();
+            return PaletteTypes;
+        }
+
+        public static MaybeNull<Palette> FindPalette(String Name)
+        {
+            return Palettes.FirstOrDefault(p => p.Name == Name);
         }
 
         #endregion
@@ -113,6 +80,7 @@ namespace DwarfCorp.DwarfSprites
             if (LayersInitialized) return;
             LayersInitialized = true;
 
+            LayerTypes = FileUtils.LoadJsonListFromMultipleSources<LayerType>("Entities/Dwarf/Layers/layer-types.json", null, p => p.Name);
             Layers = new List<Layer>();
 
             foreach (var file in AssetManager.EnumerateAllFiles("Entities/Dwarf/Layers").Where(filename => System.IO.Path.GetExtension(filename) == ".psd" && filename.Contains("layer")))
@@ -121,13 +89,10 @@ namespace DwarfCorp.DwarfSprites
                     var tags = sheet.LayerName.Split(' ');
                     if (tags.Length < 2) continue;
 
-                    if (!Enum.TryParse<LayerType>(tags[0], true, out var layerType))
-                        throw new InvalidOperationException("Malformed dwarf layer - unknown layer type.");
-
                     var l = new Layer()
                     {
-                        CachedTexture = TextureTool.DecomposeTexture(sheet.Data, BaseDwarfPalette.CachedPalette),
-                        Type = layerType
+                        CachedTexture = TextureTool.DecomposeTexture(sheet.Data, BasePalette.CachedPalette),
+                        Type = tags[0]
                     };
 
                     l.Names.AddRange(tags.Skip(1));
@@ -135,10 +100,27 @@ namespace DwarfCorp.DwarfSprites
                 }
         }
 
-        public static IEnumerable<Layer> EnumerateLayers(LayerType LayerType)
+        public static IEnumerable<Layer> EnumerateLayersOfType(String LayerType)
         {
             InitializeLayers();
             return Layers.Where(l => l.Type == LayerType);
+        }
+
+        public static IEnumerable<LayerType> EnumerateLayerTypes()
+        {
+            InitializeLayers();
+            return LayerTypes;
+        }
+
+        public static MaybeNull<LayerType> GetLayerType(String Name)
+        {
+            InitializeLayers();
+            return LayerTypes.FirstOrDefault(l => l.Name == Name);
+        }
+
+        public static MaybeNull<Layer> FindLayerWithName(String Type, String Name)
+        {
+            return EnumerateLayersOfType(Type).Where(l => l.Names.Contains(Name)).FirstOrDefault();
         }
 
         #endregion

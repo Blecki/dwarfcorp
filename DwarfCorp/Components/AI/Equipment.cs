@@ -37,12 +37,14 @@ namespace DwarfCorp
 
             EquippedItems[Item.Equipment_Slot] = Item;
 
-            if (!String.IsNullOrEmpty(Item.Equipment_LayerName) 
-                && GetRoot().GetComponent<DwarfSprites.LayeredCharacterSprite>().HasValue(out var sprite))
-            {
-                sprite.RemoveLayer(Item.Equipment_LayerType);
-                sprite.AddLayer(DwarfSprites.LayerLibrary.EnumerateLayers(Item.Equipment_LayerType).Where(l => l.Names.Contains(Item.Equipment_LayerName)).FirstOrDefault(), DwarfSprites.LayerLibrary.BaseDwarfPalette);
-            }
+            if (!String.IsNullOrEmpty(Item.Equipment_LayerName) && GetRoot().GetComponent<DwarfSprites.LayeredCharacterSprite>().HasValue(out var sprite))
+                if (DwarfSprites.LayerLibrary.FindLayerWithName(Item.Equipment_LayerType, Item.Equipment_LayerName).HasValue(out var layer))
+                {
+                    if (DwarfSprites.LayerLibrary.FindPalette(Item.Equipment_Palette).HasValue(out var palette))
+                        sprite.AddLayer(layer, palette);
+                    else
+                        sprite.AddLayer(layer, DwarfSprites.LayerLibrary.BasePalette);
+                }
         }
 
         public void UnequipItem(EquipmentSlot Slot)

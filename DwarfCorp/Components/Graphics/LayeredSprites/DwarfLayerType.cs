@@ -9,14 +9,12 @@ using System.Runtime.Serialization;
 
 namespace DwarfCorp.DwarfSprites
 {
-    public class Palette
+    public class LayerType
     {
-        [JsonIgnore]
-        public DwarfCorp.Palette CachedPalette = null;
-
         public String Name;
-        public String Asset;
-        public int Row;
-        public String Type;
+        public int Precedence;
+        public bool Fundamental = true;
+        public String PaletteType = "Skin";
+        public bool Gendered = false;
     }
 }

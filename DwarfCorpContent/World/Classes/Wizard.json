@@ -5,8 +5,16 @@
   "DefaultTool": "Iron Hammer",
   "AttackMode": "Attacking01",
   "JobDescription": "Wizards excel in the archaic arts. They can cast powerful offensive magic, and also are excellent healers.",
-  "BodyLayer": "wizard",
-  "HatLayer": "wizard-hat",
+  "PresetLayers": [
+    {
+      "LayerType": "Body",
+      "LayerName": "wizard"
+    },
+    {
+      "LayerType": "Hat",
+      "LayerName": "wizard-hat"
+    }
+  ],
   "Weapons": [
     {
       "DamageAmount": 1.0,

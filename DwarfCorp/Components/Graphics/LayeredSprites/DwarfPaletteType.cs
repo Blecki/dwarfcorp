@@ -9,11 +9,9 @@ using System.Runtime.Serialization;
 
 namespace DwarfCorp.DwarfSprites
 {
-    public enum PaletteType
+    public class PaletteType
     {
-        Hair,
-        Skin,
-        Base,
-        Discard
+        public Color RowLabelColor;
+        public String Name;
     }
 }

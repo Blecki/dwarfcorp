@@ -5,8 +5,16 @@
   "DefaultTool": "Iron Pick",
   "AttackMode": "Attacking",
   "JobDescription": "Miners are the workforce of any dwarf settlement. Miners did holes. They can cut trees too, but they prefer to be underground digging through stone.",
-  "BodyLayer": "miner",
-  "HatLayer": "miner-hat",
+  "PresetLayers": [
+    {
+      "LayerType": "Body",
+      "LayerName": "miner"
+    },
+    {
+      "LayerType": "Hat",
+      "LayerName": "miner-hat"
+    }
+  ],
   "Weapons": [
     {
       "DamageAmount": 1.5,

@@ -6,8 +6,16 @@
   "Actions": "Attack, Guard, Gather, BuildObject",
   "AttackMode": "Attacking",
   "JobDescription": "Managers help keep your employees on task. You need them to pass on your instructions to the other dwarves, and without them, you won't be able to hire new employees. They might not look like they do much, but managers are absolutely vital to keeping your enterprise running smoothly.",
-  "BodyLayer": "manager",
-  "HatLayer": "manager-hat",
+  "PresetLayers": [
+    {
+      "LayerType": "Body",
+      "LayerName": "manager"
+    },
+    {
+      "LayerType": "Hat",
+      "LayerName": "manager-hat"
+    }
+  ],
   "Weapons": [
     {
       "DamageAmount": 0.5,

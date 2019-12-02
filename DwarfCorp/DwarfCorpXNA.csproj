@@ -191,6 +191,7 @@
     <Compile Include="Components\AI\Equipment.cs" />
     <Compile Include="Components\AI\SpeciesLibrary.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfBuilder.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\DwarfLayerType.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfPaletteType.cs" />
     <Compile Include="Components\Systems\ConsoleCommands.cs" />
     <Compile Include="Entities\Fixtures\IronLadder.cs" />
