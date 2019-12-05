@@ -69,66 +69,67 @@
   },
 
   {
-    "Name": "Skin 01",
-    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
-    "Row": 11,
-    "Type": "Skin"
-  },
-
-  {
-    "Name": "Skin 02",
-    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
-    "Row": 12,
-    "Type": "Skin"
-  },
-
-  {
-    "Name": "Skin 03",
-    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
-    "Row": 13,
-    "Type": "Skin"
-  },
-
-  {
-    "Name": "Skin 04",
-    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
-    "Row": 14,
-    "Type": "Skin"
-  },
-
-  {
-    "Name": "Skin 05",
-    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
-    "Row": 15,
-    "Type": "Skin"
-  },
-
-  {
-    "Name": "Skin 06",
-    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
-    "Row": 16,
-    "Type": "Skin"
-  },
-
-  {
     "Name": "Hair 10",
     "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
-    "Row": 17,
+    "Row": 11,
     "Type": "Hair"
   },
 
   {
     "Name": "Hair 11",
     "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
-    "Row": 18,
+    "Row": 12,
     "Type": "Hair"
   },
 
   {
     "Name": "Hair 12",
     "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
-    "Row": 19,
+    "Row": 13,
     "Type": "Hair"
+  },
+
+
+  {
+    "Name": "Skin 01",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 14,
+    "Type": "Skin"
+  },
+
+  {
+    "Name": "Skin 02",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 15,
+    "Type": "Skin"
+  },
+
+  {
+    "Name": "Skin 03",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 16,
+    "Type": "Skin"
+  },
+
+  {
+    "Name": "Skin 04",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 17,
+    "Type": "Skin"
+  },
+
+  {
+    "Name": "Skin 05",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 18,
+    "Type": "Skin"
+  },
+
+  {
+    "Name": "Skin 06",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 19,
+    "Type": "Skin"
   },
 
   {

@@ -68,6 +68,7 @@ namespace DwarfCorp.DwarfSprites
 
         public static MaybeNull<Palette> FindPalette(String Name)
         {
+            InitializePalettes();
             return Palettes.FirstOrDefault(p => p.Name == Name);
         }
 
@@ -124,5 +125,74 @@ namespace DwarfCorp.DwarfSprites
         }
 
         #endregion
+
+        public static void ProcessImage(MemoryTexture MemTex, String Filename, GraphicsDevice Device)
+        {
+            var palette = TextureTool.OptimizedPaletteFromMemoryTexture(MemTex);
+            palette.Sort((a, b) => (a.R + a.G + a.B) - (b.R + b.G + b.B));
+
+            for (var r = 0; r < MemTex.Height; ++r)
+                for (var c = 0; c < MemTex.Width; ++c)
+                {
+                    var index = MemTex.Index(c, r);
+                    var color = MemTex.Data[index];
+                    var paletteIndex = palette.IndexOf(color);
+                    MemTex.Data[index] = new Color(32 * paletteIndex, 32 * paletteIndex, 32 * paletteIndex);
+                }
+
+            for (var c = 0; c < palette.Count; ++c)
+                MemTex.Data[MemTex.Index(c, 0)] = palette[c];
+
+            TextureTool.Texture2DFromMemoryTexture(Device, MemTex).SaveAsPng(System.IO.File.OpenWrite(Filename), MemTex.Width, MemTex.Height);
+        }
+
+        public static void ConvertTestPSD()
+        {
+            var stream = System.IO.File.OpenRead("Content/Entities/Dwarf/Layers/test.psd");
+            var psd = new PhotoshopFile.PsdFile(stream, new PhotoshopFile.LoadContext());
+
+            if (FindPalette("Hair 02").HasValue(out var conversionPalette))
+            {
+                foreach (var layer in psd.Layers)
+                {
+                    var channels = new List<PhotoshopFile.Channel>();
+                    channels.Add(layer.Channels.Where(c => c.ID == 0).FirstOrDefault());
+                    channels.Add(layer.Channels.Where(c => c.ID == 1).FirstOrDefault());
+                    channels.Add(layer.Channels.Where(c => c.ID == 2).FirstOrDefault());
+                    channels.Add(layer.AlphaChannel);
+
+                    var rawMemText = new MemoryTexture(layer.Rect.Width, layer.Rect.Height);
+
+                    for (var index = 0; index < layer.Rect.Width * layer.Rect.Height; ++index)
+                        if (channels[3].ImageData[index] == 0)
+                            rawMemText.Data[index] = new Color(0, 0, 0, 0);
+                        else
+                            rawMemText.Data[index] = new Color(channels[0].ImageData[index], channels[1].ImageData[index], channels[2].ImageData[index], channels[3].ImageData[index]);
+
+                    var memTex = new MemoryTexture(psd.ColumnCount, psd.RowCount);
+                    TextureTool.Blit(rawMemText, new Rectangle(0, 0, layer.Rect.Width, layer.Rect.Height), memTex, new Point(layer.Rect.X, layer.Rect.Y));
+
+                    var decomposed = TextureTool.DecomposeTexture(memTex, conversionPalette.CachedPalette);
+                    var composed = TextureTool.ComposeTexture(decomposed, BasePalette.CachedPalette);
+
+                    TextureTool.Blit(composed, new Rectangle(layer.Rect.X, layer.Rect.Y, layer.Rect.Width, layer.Rect.Height), rawMemText, new Rectangle(0, 0, rawMemText.Width, rawMemText.Height));
+
+                    for (var index = 0; index < rawMemText.Width * rawMemText.Height; ++index)
+                    {
+                        channels[0].ImageData[index] = rawMemText.Data[index].R;
+                        channels[1].ImageData[index] = rawMemText.Data[index].G;
+                        channels[2].ImageData[index] = rawMemText.Data[index].B;
+                        channels[3].ImageData[index] = rawMemText.Data[index].A;
+                    }
+
+                    foreach (var channel in layer.Channels)
+                        channel.ImageDataRaw = null;
+                }
+            }
+
+            psd.PrepareSave();
+            psd.Save("processed.psd", Encoding.Unicode);
+        }
+
     }
 }

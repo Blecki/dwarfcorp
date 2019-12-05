@@ -213,6 +213,10 @@ namespace DwarfCorp
             LogSentryBreadcrumb("Loading", "LoadContent was called.", BreadcrumbLevel.Info);
             AssetManager.Initialize(Content, GraphicsDevice, GameSettings.Default);
 
+
+            //DwarfSprites.LayerLibrary.ConvertTestPSD();
+
+
             // Prepare GemGui
             if (GumInputMapper == null)
             {

@@ -41,7 +41,7 @@ namespace DwarfCorp
             return r;
         }
 
-        private static MemoryTexture PSDLayerToMemoryTexture(PhotoshopFile.Layer Layer)
+        public static MemoryTexture PSDLayerToMemoryTexture(PhotoshopFile.Layer Layer)
         {
             var channels = new List<PhotoshopFile.Channel>();
             channels.Add(Layer.Channels.Where(c => c.ID == 0).FirstOrDefault());

@@ -185,6 +185,24 @@ namespace DwarfCorp
             }
         }
 
+        public static void Blit(MemoryTexture From, Rectangle SourceRect, MemoryTexture To, Rectangle DestRect)
+        {
+            if (From == null || To == null)
+                return;
+
+            for (var y = 0; y < SourceRect.Height; ++y)
+            {
+                if (y + DestRect.Y < 0 || y + DestRect.Y >= To.Height || y + DestRect.Y >= DestRect.Bottom) continue; // This is ineffecient as all hell.
+                if (y + SourceRect.Y < 0 || y + SourceRect.Y >= From.Height) continue;
+                for (var x = 0; x < SourceRect.Width; ++x) // Actually can anyone even read this on the stream? All 1 of you lol
+                {
+                    if (x + DestRect.X < 0 || x + DestRect.X >= To.Width || x + DestRect.X >= DestRect.Right) continue;
+                    if (x + SourceRect.X < 0 || x + SourceRect.X >= From.Width) continue;
+                    To.Data[To.Index(x + DestRect.X, y + DestRect.Y)] = From.Data[From.Index(x + SourceRect.X, y + SourceRect.Y)];
+                }
+            }
+        }
+
         public static MemoryTexture RotatedCopy(MemoryTexture Of)
         {
             var r = new MemoryTexture(Of.Width, Of.Height);

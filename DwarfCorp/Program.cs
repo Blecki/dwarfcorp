@@ -40,6 +40,7 @@ namespace DwarfCorp
 
             GameSettings.Load();
 
+
 #if !DEBUG
             try
             {
