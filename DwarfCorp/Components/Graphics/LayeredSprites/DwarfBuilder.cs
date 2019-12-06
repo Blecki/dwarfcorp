@@ -38,30 +38,61 @@ namespace DwarfCorp.DwarfSprites
             return LayerLibrary.EnumerateLayersOfType(Type).Where(l => l.Names.Contains(Name)).FirstOrDefault();
         }
 
-        public static List<Layer> BuildDwarfLayers(CreatureStats Stats, Random Random)
+        public class LayerPalettePair
         {
-            var r = new List<Layer>();
+            public Layer Layer;
+            public Palette Palette;
+        }
+
+        public static List<LayerPalettePair> BuildDwarfLayers(CreatureStats Stats, Random Random)
+        {
+            var r = new List<LayerPalettePair>();
 
             foreach (var preset in Stats.CurrentClass.PresetLayers)
             {
                 var l = FindLayer(preset.LayerType, preset.LayerName);
                 if (l != null)
-                    r.Add(l);
+                {
+                    if (!String.IsNullOrEmpty(preset.Palette) && LayerLibrary.FindPalette(preset.Palette).HasValue(out var palette))
+                        r.Add(new LayerPalettePair { Layer = l, Palette = palette });
+                    else
+                        r.Add(new LayerPalettePair { Layer = l, Palette = null });
+                }
             }
 
             foreach (var layerType in LayerLibrary.EnumerateLayerTypes())
                 if (layerType.Fundamental)
                 {
-                    if (r.Any(l => l.Type == layerType.Name))
+                    if (r.Any(l => l.Layer.Type == layerType.Name))
                         continue;
 
                     if (layerType.Gendered && Stats.Gender != Gender.Nonbinary)
-                        r.Add(SelectRandomLayer(Stats, Random, layerType.Name, l => l.Names.Contains(Stats.Gender.ToString())));
+                        r.Add(new LayerPalettePair { Layer = SelectRandomLayer(Stats, Random, layerType.Name, l => l.Names.Contains(Stats.Gender.ToString())), Palette = null });
                     else
-                        r.Add(SelectRandomLayer(Stats, Random, layerType.Name));
+                        r.Add(new LayerPalettePair { Layer = SelectRandomLayer(Stats, Random, layerType.Name), Palette = null });
                 }
 
             return r;
+        }
+
+        public static void AssignPalettes(Dictionary<String, Palette> ChosenPalettes, List<LayerPalettePair> Layers)
+        {
+            foreach (var layer in Layers)
+                if (layer.Palette == null)
+                {
+                    if (LayerLibrary.GetLayerType(layer.Layer.Type).HasValue(out var layerType) && ChosenPalettes.ContainsKey(layerType.PaletteType))
+                        layer.Palette = ChosenPalettes[layerType.PaletteType];
+                    else
+                        layer.Palette = LayerLibrary.BasePalette;
+                }
+        }
+
+        public static Dictionary<String, Palette> ChoosePalettes(Random Random)
+        {
+            var chosenPalettes = new Dictionary<String, Palette>();
+            foreach (var paletteType in LayerLibrary.EnumeratePaletteTypes())
+                chosenPalettes.Add(paletteType.Name, LayerLibrary.EnumeratePalettes().Where(p => p.Type == paletteType.Name).SelectRandom(Random));
+            return chosenPalettes;
         }
 
         public static LayeredCharacterSprite CreateDwarfCharacterSprite(ComponentManager Manager, CreatureStats Stats)
@@ -70,19 +101,12 @@ namespace DwarfCorp.DwarfSprites
 
             var random = new Random(Stats.RandomSeed);
 
-            var chosenPalettes = new Dictionary<String, Palette>();
-            foreach (var paletteType in LayerLibrary.EnumeratePaletteTypes())
-                chosenPalettes.Add(paletteType.Name, LayerLibrary.EnumeratePalettes().Where(p => p.Type == paletteType.Name).SelectRandom(random));
-
+            var chosenPalettes = ChoosePalettes(random);
             var layers = BuildDwarfLayers(Stats, random);
+            AssignPalettes(chosenPalettes, layers);
+
             foreach (var layer in layers)
-                if (LayerLibrary.GetLayerType(layer.Type).HasValue(out var layerType))
-                {
-                    if (chosenPalettes.ContainsKey(layerType.PaletteType))
-                        sprite.AddLayer(layer, chosenPalettes[layerType.PaletteType]);
-                    else
-                        sprite.AddLayer(layer, LayerLibrary.BasePalette);
-                }
+                sprite.AddLayer(layer.Layer, layer.Palette);
 
             sprite.SetAnimations(Library.LoadNewLayeredAnimationFormat(ContentPaths.dwarf_animations));
             sprite.SetFlag(GameComponent.Flag.ShouldSerialize, false);
@@ -95,19 +119,12 @@ namespace DwarfCorp.DwarfSprites
 
             var random = new Random(Stats.RandomSeed);
 
-            var chosenPalettes = new Dictionary<String, Palette>();
-            foreach (var paletteType in LayerLibrary.EnumeratePaletteTypes())
-                chosenPalettes.Add(paletteType.Name, LayerLibrary.EnumeratePalettes().Where(p => p.Type == paletteType.Name).SelectRandom(random));
-
+            var chosenPalettes = ChoosePalettes(random);
             var layers = BuildDwarfLayers(Stats, random);
+            AssignPalettes(chosenPalettes, layers);
+
             foreach (var layer in layers)
-                if (LayerLibrary.GetLayerType(layer.Type).HasValue(out var layerType))
-                {
-                    if (chosenPalettes.ContainsKey(layerType.PaletteType))
-                        sprite.AddLayer(layer, chosenPalettes[layerType.PaletteType]);
-                    else
-                        sprite.AddLayer(layer, LayerLibrary.BasePalette);
-                }
+                sprite.AddLayer(layer.Layer, layer.Palette);
 
             return sprite;
         }

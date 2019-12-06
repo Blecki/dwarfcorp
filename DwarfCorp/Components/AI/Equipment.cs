@@ -9,20 +9,14 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public enum EquipmentSlot
-    {
-        None,
-        Tool,
-    }
-
     public class Equipment : GameComponent
     {
         public Equipment() { }
         public Equipment(ComponentManager Manager) : base(Manager) { }
 
-        public Dictionary<EquipmentSlot, Resource> EquippedItems = new Dictionary<EquipmentSlot, Resource>();
+        public Dictionary<String, Resource> EquippedItems = new Dictionary<String, Resource>();
 
-        public MaybeNull<Resource> GetItemInSlot(EquipmentSlot Slot)
+        public MaybeNull<Resource> GetItemInSlot(String Slot)
         {
             if (EquippedItems.ContainsKey(Slot))
                 return EquippedItems[Slot];
@@ -31,7 +25,8 @@ namespace DwarfCorp
 
         public void EquipItem(Resource Item)
         {
-            if (Item.Equipment_Slot == EquipmentSlot.None) return;
+            if (!Item.Equipable) return;
+            if (String.IsNullOrEmpty(Item.Equipment_Slot)) return;
 
             UnequipItem(Item.Equipment_Slot);
 
@@ -47,7 +42,7 @@ namespace DwarfCorp
                 }
         }
 
-        public void UnequipItem(EquipmentSlot Slot)
+        public void UnequipItem(String Slot)
         {
             if (GetItemInSlot(Slot).HasValue(out var existing) 
                 && !String.IsNullOrEmpty(existing.Equipment_LayerName) 

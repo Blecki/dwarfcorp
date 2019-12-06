@@ -26,7 +26,7 @@ namespace DwarfCorp
 
         private IEnumerable<Act.Status> PerformOnVoxel(Creature performer, Vector3 pos, KillVoxelTask DigAct, DwarfTime time, float bonus, string faction)
         {
-            var tool = ActHelper.GetEquippedTool(performer);
+            var tool = ActHelper.GetEquippedItem(performer, "Tool");
 
             // Play the attack animations.
             Creature.CurrentCharacterMode = tool.Tool_AttackAnimation;

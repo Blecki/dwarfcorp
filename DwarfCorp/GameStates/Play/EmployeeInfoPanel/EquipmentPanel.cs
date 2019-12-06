@@ -74,6 +74,7 @@ namespace DwarfCorp.Play.EmployeeInfo
 
         protected override Gui.Mesh Redraw()
         {
+            // Todo: Generic placement of equipment icons
             if (Employee != null && !Employee.IsDead)
             {
                 Hidden = false;
@@ -83,7 +84,7 @@ namespace DwarfCorp.Play.EmployeeInfo
 
                 if (Employee.Creature.Equipment.HasValue(out var equipment))
                 {
-                    if (equipment.GetItemInSlot(EquipmentSlot.Tool).HasValue(out var tool))
+                    if (equipment.GetItemInSlot("Tool").HasValue(out var tool))
                         ToolIcon.Resource = tool;
                 }
                 else

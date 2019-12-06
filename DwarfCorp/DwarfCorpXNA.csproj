@@ -186,6 +186,8 @@
     <Compile Include="AssetManagement\StringLibrary.cs" />
     <Compile Include="AssetManagement\TextureTool-LoadPSD.cs" />
     <Compile Include="Components\AI\Creature-Death.cs" />
+    <Compile Include="Library\EquipmentLibrary.cs" />
+    <Compile Include="Components\AI\EquipmentSlotType.cs" />
     <Compile Include="Components\AI\FairyAI.cs" />
     <Compile Include="Components\AI\DwarfAI.cs" />
     <Compile Include="Components\AI\Equipment.cs" />
@@ -204,7 +206,7 @@
     <Compile Include="GameStates\Play\EmployeeInfoPanel\TaskListPanel.cs" />
     <Compile Include="GameStates\Play\GodMenu.cs" />
     <Compile Include="TaskManagement\ActHelper-ApplyWearToTool.cs" />
-    <Compile Include="TaskManagement\ActHelper-GetEquippedTool.cs" />
+    <Compile Include="TaskManagement\ActHelper-GetEquippedItem.cs" />
     <Compile Include="World\Economy\Factions\Trading\TradeState\Balance.cs" />
     <Compile Include="World\Economy\Factions\Trading\TradeState\TradeHelper.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ResourceIcon.cs" />

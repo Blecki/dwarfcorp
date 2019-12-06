@@ -54,10 +54,11 @@ namespace DwarfCorp
         #endregion
 
         #region Equipment
+        public bool Equipable = false;
         public String Equipment_LayerName = "";
         public String Equipment_LayerType = "Tool";
         public String Equipment_Palette = "Base";
-        public EquipmentSlot Equipment_Slot = EquipmentSlot.None;
+        public String Equipment_Slot = "";
         #endregion
 
         #region Placement

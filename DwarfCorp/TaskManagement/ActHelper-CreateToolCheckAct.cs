@@ -23,11 +23,11 @@ namespace DwarfCorp
                             if (!Agent.Stats.CurrentClass.RequiresTools) return true;
 
                             // If hands are allowed, we do not already have a tool, and no tool is available - use hands.
-                            if (AllowHands && !equipment.GetItemInSlot(EquipmentSlot.Tool).HasValue())
+                            if (AllowHands && !equipment.GetItemInSlot("Tool").HasValue()) // Todo: Needs to be generic - not a hardcoded slot.
                                 if (!Agent.World.GetFirstStockpileContainingResourceWithMatchingTag(ToolType.ToList()).HasValue)
                                     return true;
 
-                            if (equipment.GetItemInSlot(EquipmentSlot.Tool).HasValue(out var tool) && tool.ResourceType.HasValue(out var res))
+                            if (equipment.GetItemInSlot("Tool").HasValue(out var tool) && tool.ResourceType.HasValue(out var res))
                                 return res.Tags.Any(t => ToolType.Contains(t));
 
                             return false;

@@ -57,8 +57,9 @@ namespace DwarfCorp
             var toReturn = new Dwarf(Manager, new CreatureStats("Dwarf", DwarfClass, Level) { Gender = gender, RandomSeed = seed, VoicePitch  = GetRandomVoicePitch(gender) }, Manager.World.PlayerFaction, "Dwarf", Position);
             toReturn.AddThought("I just arrived to this new land.", new TimeSpan(3, 0, 0, 0), 20.0f);
 
-            if (toReturn.Equipment.HasValue(out var equipment) && !String.IsNullOrEmpty(toReturn.Stats.CurrentClass.DefaultTool) && Library.GetResourceType(toReturn.Stats.CurrentClass.DefaultTool).HasValue())
-                equipment.EquipItem(new Resource(toReturn.Stats.CurrentClass.DefaultTool));
+            if (toReturn.Equipment.HasValue(out var equipment))
+                foreach (var equippedItem in toReturn.Stats.CurrentClass.StartingEquipment)
+                    equipment.EquipItem(new Resource(equippedItem.TypeName));
 
             return toReturn.Physics;
         }

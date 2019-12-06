@@ -182,6 +182,12 @@
     "TileHeight": 32
   },
   {
+    "Name": "unknown-resource",
+    "Texture": "Entities/Dwarf/ToolIcons/unknown",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
     "Name": "pick-resources",
     "Texture": "Entities/Dwarf/ToolIcons/pick",
     "TileWidth": 32,

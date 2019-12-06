@@ -7,7 +7,7 @@
   "JobDescription": "Soldiers are best at looking tough. They are devestating warriors, and also pretty good lumberjacks and cooks.",
   "PresetLayers": [
     {
-      "LayerType": "Body",
+      "LayerType": "Clothing",
       "LayerName": "soldier"
     },
     {

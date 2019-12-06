@@ -119,6 +119,7 @@
     <Compile Include="AssetManagement\TextureTool-LoadPSD.cs" />
     <Compile Include="Components\AI\DwarfAI.cs" />
     <Compile Include="Components\AI\Equipment.cs" />
+    <Compile Include="Components\AI\EquipmentSlotType.cs" />
     <Compile Include="Components\AI\FairyAI.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfAnimationProxy.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfBuilder.cs" />
@@ -175,6 +176,7 @@
     <Compile Include="Library\ClassLibrary.cs" />
     <Compile Include="Library\CraftLibrary.cs" />
     <Compile Include="Library\DesignationLibrary.cs" />
+    <Compile Include="Library\EquipmentLibrary.cs" />
     <Compile Include="Library\EventLibrary.cs" />
     <Compile Include="Library\RaceLibrary.cs" />
     <Compile Include="Library\ResourceLibrary.cs" />
@@ -214,7 +216,7 @@
     <Compile Include="TaskManagement\Act.cs" />
     <Compile Include="TaskManagement\ActData.cs" />
     <Compile Include="TaskManagement\ActHelper-ApplyWearToTool.cs" />
-    <Compile Include="TaskManagement\ActHelper-GetEquippedTool.cs" />
+    <Compile Include="TaskManagement\ActHelper-GetEquippedItem.cs" />
     <Compile Include="TaskManagement\ActHelper-CreateToolCheckAct.cs" />
     <Compile Include="TaskManagement\ActWrapperTask.cs" />
     <Compile Include="TaskManagement\BehaviorExtensions.cs" />

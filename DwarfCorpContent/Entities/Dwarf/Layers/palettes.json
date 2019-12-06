@@ -126,14 +126,14 @@
   },
 
   {
-    "Name": "Skin 06",
+    "Name": "Equipment",
     "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
     "Row": 19,
-    "Type": "Skin"
+    "Type": "Equipment"
   },
 
   {
-    "Name": "Wood Tool",
+    "Name": "Purple Equipment",
     "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
     "Row": 20,
     "Type": "Equipment"

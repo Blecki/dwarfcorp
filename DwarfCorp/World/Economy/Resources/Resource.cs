@@ -95,9 +95,10 @@ namespace DwarfCorp
         [JsonIgnore] public String Tool_AttackHitEffect { get => GetProperty<String>("Tool_AttackHitEffect", ""); set => SetProperty<String>("Tool_AttackHitEffect", value); }
         [JsonIgnore] public Color Tool_AttackHitColor { get => GetProperty<Color>("Tool_AttackHitColor", Color.White); set => SetProperty<Color>("Tool_AttackHitColor", value); }
 
+        [JsonIgnore] public bool Equipable { get => GetProperty<bool>("Equipable", false); set => SetProperty<bool>("Equipable", value); }
         [JsonIgnore] public String Equipment_LayerName { get => GetProperty<String>("Equipment_LayerName", ""); set => SetProperty<String>("Equipment_LayerName", value); }
         [JsonIgnore] public String Equipment_LayerType { get => GetProperty<String>("Equipment_LayerType", "Default"); set => SetProperty<String>("Equipment_LayerType", value); }
-        [JsonIgnore] public EquipmentSlot Equipment_Slot { get => GetProperty<EquipmentSlot>("Equipment_Slot", EquipmentSlot.None); set => SetProperty<EquipmentSlot>("Equipment_Slot", value); }
+        [JsonIgnore] public String Equipment_Slot { get => GetProperty<String>("Equipment_Slot", ""); set => SetProperty<String>("Equipment_Slot", value); }
         [JsonIgnore] public String Equipment_Palette { get => GetProperty<String>("Equipment_Palette", "Base"); set => SetProperty<String>("Equipment_Palette", value); }
 
         #endregion

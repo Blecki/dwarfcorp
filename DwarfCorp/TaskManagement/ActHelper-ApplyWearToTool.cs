@@ -7,7 +7,7 @@ namespace DwarfCorp
     {
         public static void ApplyWearToTool(CreatureAI Agent, float Wear)
         {
-            if (Agent.Creature.Equipment.HasValue(out var equipment) && equipment.GetItemInSlot(EquipmentSlot.Tool).HasValue(out var tool))
+            if (Agent.Creature.Equipment.HasValue(out var equipment) && equipment.GetItemInSlot("Tool").HasValue(out var tool))
                 if (tool.Tool_Breakable)
                 {
                     tool.Tool_Wear += Wear;

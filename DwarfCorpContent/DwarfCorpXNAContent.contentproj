@@ -2090,6 +2090,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>layer-types</Name>
     </None>
+    <None Include="Entities\Dwarf\ToolIcons\slot-types.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>slot-types</Name>
+    </None>
     <None Include="Entities\Dwarf\Layers\palettes.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>palettes</Name>
@@ -2405,6 +2409,10 @@
     <None Include="World\ResourceItems\DwarfHands.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>DwarfHands</Name>
+    </None>
+    <None Include="World\ResourceItems\WizardRobe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>WizardRobe</Name>
     </None>
     <None Include="World\ResourceItems\IronTable.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -5212,6 +5220,13 @@
   <ItemGroup>
     <Compile Include="Entities\Dwarf\Layers\dwarf-palettes.png">
       <Name>dwarf-palettes</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\Dwarf\ToolIcons\unknown.png">
+      <Name>unknown</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

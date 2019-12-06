@@ -38,9 +38,12 @@ namespace DwarfCorp
         {
             public string LayerType;
             public string LayerName;
+            public string Palette;
         }
 
         public List<PresetLayer> PresetLayers = new List<PresetLayer>();
+
+        public List<Resource> StartingEquipment = new List<Resource>();
 
         // Todo: Should just include name of attack animation. Kinda what the AttackMode is.
 

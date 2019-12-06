@@ -35,7 +35,7 @@ namespace DwarfCorp
             if (Agent.Creature.Equipment.HasValue(out var equipment))
             {
                 // Kinda assumes the new item will go in the tool slot, no? Also that an existing item should be removed.
-                if (equipment.GetItemInSlot(EquipmentSlot.Tool).HasValue(out var existingTool))
+                if (equipment.GetItemInSlot("Tool").HasValue(out var existingTool))
                 {
                     equipment.UnequipItem(existingTool);
                     Creature.Inventory.AddResource(existingTool);
@@ -65,7 +65,7 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            if (Agent.Creature.Equipment.HasValue(out var equipment) && equipment.GetItemInSlot(EquipmentSlot.Tool).HasValue(out var existingTool))
+            if (Agent.Creature.Equipment.HasValue(out var equipment) && equipment.GetItemInSlot("Tool").HasValue(out var existingTool))
             {
                 equipment.UnequipItem(existingTool);
                 Creature.Inventory.AddResource(existingTool);
