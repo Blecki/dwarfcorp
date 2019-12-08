@@ -48,18 +48,6 @@ namespace DwarfCorp.DwarfSprites
         {
             var r = new List<LayerPalettePair>();
 
-            foreach (var preset in Stats.CurrentClass.PresetLayers)
-            {
-                var l = FindLayer(preset.LayerType, preset.LayerName);
-                if (l != null)
-                {
-                    if (!String.IsNullOrEmpty(preset.Palette) && LayerLibrary.FindPalette(preset.Palette).HasValue(out var palette))
-                        r.Add(new LayerPalettePair { Layer = l, Palette = palette });
-                    else
-                        r.Add(new LayerPalettePair { Layer = l, Palette = null });
-                }
-            }
-
             foreach (var layerType in LayerLibrary.EnumerateLayerTypes())
                 if (layerType.Fundamental)
                 {

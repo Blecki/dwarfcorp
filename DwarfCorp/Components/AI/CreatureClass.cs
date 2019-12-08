@@ -28,21 +28,10 @@ namespace DwarfCorp
         public bool PlayerClass = false;
         public bool Managerial = false;
         public bool RequiresSupervision = true;
-        public string DefaultTool = "";
         public string FallbackTool = "";
         public string JobDescription = "There is no description for this class.";
         public bool RequiresTools = true;
         public bool TriggersMourning = true;
-
-        public class PresetLayer
-        {
-            public string LayerType;
-            public string LayerName;
-            public string Palette;
-        }
-
-        public List<PresetLayer> PresetLayers = new List<PresetLayer>();
-
         public List<Resource> StartingEquipment = new List<Resource>();
 
         // Todo: Should just include name of attack animation. Kinda what the AttackMode is.

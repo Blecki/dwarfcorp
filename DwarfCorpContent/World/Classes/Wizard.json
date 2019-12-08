@@ -2,18 +2,17 @@
   "Name": "Wizard",
   "PlayerClass": true,
   "Actions": "Attack, Hunt, Research, Brew, BuildObject",
-  "DefaultTool": "Iron Hammer",
   "AttackMode": "Attacking01",
   "JobDescription": "Wizards excel in the archaic arts. They can cast powerful offensive magic, and also are excellent healers.",
-  "PresetLayers": [
-    {
-      "LayerType": "Hat",
-      "LayerName": "wizard-hat"
-    }
-  ],
   "StartingEquipment": [
     {
+      "_TypeName": "Boots"
+    },
+    {
       "_TypeName": "Wizard Robe"
+    },
+    {
+      "_TypeName": "Wizard Hat"
     }
   ],
   "Weapons": [

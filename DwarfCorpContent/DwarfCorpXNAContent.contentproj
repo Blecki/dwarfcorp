@@ -2410,6 +2410,50 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>DwarfHands</Name>
     </None>
+    <None Include="World\ResourceItems\Boots.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Boots</Name>
+    </None>
+    <None Include="World\ResourceItems\CowboyHat.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>CowboyHat</Name>
+    </None>
+    <None Include="World\ResourceItems\Helmet.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Helmet</Name>
+    </None>
+    <None Include="World\ResourceItems\Morion.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Morion</Name>
+    </None>
+    <None Include="World\ResourceItems\Coat.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Coat</Name>
+    </None>
+    <None Include="World\ResourceItems\WizardHat.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>WizardHat</Name>
+    </None>
+    <None Include="World\ResourceItems\Overalls.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Overalls</Name>
+    </None>
+    <None Include="World\ResourceItems\Apron.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Apron</Name>
+    </None>
+    <None Include="World\ResourceItems\Hardhat.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Hardhat</Name>
+    </None>
+    <None Include="World\ResourceItems\Shirt.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Shirt</Name>
+    </None>
+    <None Include="World\ResourceItems\Tabard.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Tabard</Name>
+    </None>
     <None Include="World\ResourceItems\WizardRobe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>WizardRobe</Name>

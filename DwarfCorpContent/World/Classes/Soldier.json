@@ -1,18 +1,21 @@
 {
   "Name": "Soldier",
   "PlayerClass": true,
-  "DefaultTool": "Iron Axe",
   "Actions": "Attack, Chop, Harvest, Hunt, Gather, Guard, BuildObject",
   "AttackMode": "Attacking",
   "JobDescription": "Soldiers are best at looking tough. They are devestating warriors, and also pretty good lumberjacks and cooks.",
-  "PresetLayers": [
+  "StartingEquipment": [
     {
-      "LayerType": "Clothing",
-      "LayerName": "soldier"
+      "_TypeName": "Boots"
     },
     {
-      "LayerType": "Hat",
-      "LayerName": "soldier-hat"
+      "_TypeName": "Iron Axe"
+    },
+    {
+      "_TypeName": "Overalls"
+    },
+    {
+      "_TypeName": "Hardhat"
     }
   ],
   "Weapons": [

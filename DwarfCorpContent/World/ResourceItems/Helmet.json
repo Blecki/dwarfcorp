@@ -1,0 +1,55 @@
+{
+  "TypeName": "Helmet",
+  "MoneyValue": 100.0,
+  "Description": "Soldiering helmet, for soldiering.",
+  "Category": "Clothing",
+  "GuiLayers": [
+    {
+      "Sheet": "unknown-resource",
+      "Tile": 0
+    }
+  ],
+  "Tags": [
+    "Clothing"
+  ],
+  "FoodContent": 0.0,
+  "CompositeLayers": [
+    {
+      "Asset": "Entities/Dwarf/ToolIcons/unknown",
+      "FrameSize": "32, 32",
+      "Frame": "0, 0"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": null,
+    "EncrustingAsset": null,
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "DisplayName": "Helmet",
+  "PlantToGenerate": "",
+  "CanCraft": false,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "",
+
+  "Tool_Breakable": false,
+  "Tool_Durability": 4,
+  "Tool_Wear": 0,
+  "Tool_Effectiveness": 1.0,
+  "Tool_AttackAnimation": "Attacking",
+  "Tool_AttackTriggerFrame": 2,
+  "Tool_AttackDamage": 1,
+  "Tool_AttackHitEffect": "Effects\\hit",
+
+  "Equipable": true,
+  "Equipment_LayerType": "Hat",
+  "Equipment_LayerName": "helmet",
+  "Equipment_Slot": "Hat",
+  "Equipment_Palette": "Base"
+}
