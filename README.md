@@ -2,7 +2,7 @@
 
 ![](https://github.com/CompletelyFairGames/dwarfcorp/blob/master/DwarfCorp/DwarfCorpContent/Logos/gamelogo.png)
 
-[DwarfCorp](www.dwarfcorp.com) from [Completely Fair Games](www.completelyfairgames.com) is a single player tycoon/strategy game for PC. In the game, the player manages a corporate colony of dwarves. The dwarves must mine resources, build structures, and contend with the natives to survive.
+[DwarfCorp](http://www.dwarfcorp.com/) from Completely Fair Games is a single player tycoon/strategy game for PC. In the game, the player manages a corporate colony of dwarves. The dwarves must mine resources, build structures, and contend with the natives to survive.
 
 ![](https://user-images.githubusercontent.com/241184/46921044-8a8f8000-cfc4-11e8-92bf-5431b3e41d3d.gif)
 
