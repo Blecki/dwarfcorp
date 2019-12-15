@@ -125,6 +125,12 @@ namespace TodoList
                 Console.WriteLine("Tags: " + String.Join(" ", Entry.Tags));
             }
 
+            if (Entry.Preregs.Count > 0)
+            {
+                Presentation.FillLine();
+                Console.WriteLine("Preregs: " + String.Join(" ", Entry.Preregs.Select(p => String.Format("{0:X4}", p))));
+            }
+
             if (!String.IsNullOrEmpty(Entry.Notes))
             {
                 Presentation.FillLine();

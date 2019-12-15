@@ -39,7 +39,7 @@
   ],
   "AleName": "",
 
-  "Tool_Breakable": true,
+  "Tool_Breakable": false,
   "Tool_Durability": 4,
   "Tool_Wear": 0,
   "Tool_Effectiveness": 1.0,
@@ -48,8 +48,9 @@
   "Tool_AttackDamage": 1,
   "Tool_AttackHitEffect": "Effects\\hit",
 
+  "Equipable": true,
   "Equipment_LayerType": "Tool",
+  "Equipment_Palette": "Wood Equipment",
   "Equipment_LayerName": "pick",
-  "Equipment_Slot": "Tool",
-  "Equipment_Palette": "Wood Tool"
+  "Equipment_Slot": "Tool"
 }

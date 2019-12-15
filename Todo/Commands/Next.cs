@@ -19,7 +19,7 @@ namespace TodoList
         public string file = "todo.txt";
         public bool all = false;
 
-        public void Invoke()
+        public void Invoke(Dictionary<String, Object> PipedArguments)
         {
             if (String.IsNullOrEmpty(file))
             {

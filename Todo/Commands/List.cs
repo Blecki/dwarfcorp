@@ -32,7 +32,7 @@ namespace TodoList
         [SwitchDocumentation("Path to task file.")]
         public string file = "todo.txt";
 
-        public void Invoke()
+        public void Invoke(Dictionary<String, Object> PipedArguments)
         {
             if (String.IsNullOrEmpty(file))
             {

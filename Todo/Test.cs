@@ -17,7 +17,7 @@ namespace TodoList
     {
         [DefaultSwitch] [SwitchDocumentation("The value of this switch will be echoed to the console.")] public int foo = 2;
 
-        public void Invoke()
+        public void Invoke(Dictionary<String, Object> PipedArguments)
         {
             Console.WriteLine(foo);
         }

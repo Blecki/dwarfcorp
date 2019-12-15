@@ -54,6 +54,7 @@
     <Compile Include="Commands\Details.cs" />
     <Compile Include="Commands\Matcher.cs" />
     <Compile Include="Commands\Presentation.cs" />
+    <Compile Include="Commands\Prereg.cs" />
     <Compile Include="Help.cs" />
     <Compile Include="Commands\Entry.cs" />
     <Compile Include="Commands\EntryList.cs" />

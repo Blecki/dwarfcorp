@@ -11,7 +11,7 @@ namespace TodoList
 
         public String Peek()
         {
-            return Arguments[Place];
+            return Arguments[Place].ToLower();
         }
 
         public CommandLineIterator(String[] Arguments, int Place)

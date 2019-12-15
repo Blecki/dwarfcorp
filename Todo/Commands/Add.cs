@@ -20,7 +20,7 @@ namespace TodoList
         [SwitchDocumentation("Path to task file.")]
         public string file = "todo.txt";
 
-        public void Invoke()
+        public void Invoke(Dictionary<String, Object> PipedArguments)
         {
             if (String.IsNullOrEmpty(file))
             {
@@ -49,6 +49,9 @@ namespace TodoList
             };
 
             parent.Children.Add(entry);
+
+            PipedArguments["id"] = entry.ID;
+
             list.NextID += 1;
 
             EntryList.SaveFile(file, list);

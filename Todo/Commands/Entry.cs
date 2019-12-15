@@ -24,6 +24,7 @@ namespace TodoList
         public String Description = "ROOT";
         public List<String> Tags = new List<String>();
         public List<Entry> Children = new List<Entry>();
+        public List<UInt32> Preregs = new List<UInt32>();
         public DateTime CreationTime = DateTime.Now;
         public DateTime CompletionTime = DateTime.Now;
         public String Notes = "";

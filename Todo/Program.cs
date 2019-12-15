@@ -6,13 +6,20 @@ namespace TodoList
 {
     public class Program
     {
-        private static CommandLineIterator ParseCommand(Tuple<CommandAttribute, Type> Command, CommandLineIterator Iterator)
+        private static CommandLineIterator ParseCommand(Tuple<CommandAttribute, Type> Command, CommandLineIterator Iterator, Dictionary<String, Object> PipedArguments)
         {
             var commandObject = Activator.CreateInstance(Command.Item2) as ICommand;
 
             try
-            {                   
+            {
                 Iterator = Iterator.Advance(); // Skip the command name.
+
+                // Set the piped arguments.
+                foreach (var pipedArgument in PipedArguments)
+                    foreach (var member in commandObject.GetType().GetFields())
+                        if (member.Name == pipedArgument.Key && member.FieldType == pipedArgument.Value.GetType())
+                            member.SetValue(Command, pipedArgument.Value);
+            
 
                 var defaultList = new List<Tuple<DefaultSwitchAttribute, System.Reflection.FieldInfo>>();
 
@@ -31,7 +38,7 @@ namespace TodoList
 
                 defaultList = defaultList.OrderBy(t => t.Item1.Order).ToList();
 
-                while (!Iterator.AtEnd())
+                while (!Iterator.AtEnd() && !Iterator.Peek().StartsWith("+"))
                 {
                     if (Iterator.Peek().StartsWith("-"))
                     {
@@ -104,7 +111,8 @@ namespace TodoList
                     }
                 }
 
-                commandObject.Invoke();
+                commandObject.Invoke(PipedArguments);
+
                 return Iterator;
             }
             catch (Exception e)
@@ -138,7 +146,7 @@ namespace TodoList
         {
             try
             {
-                var commands = new Dictionary<String, Tuple<CommandAttribute, Type>>(); // Todo: Dictionary might be obsolete.
+                var commands = new Dictionary<String, Tuple<CommandAttribute, Type>>();
                 foreach (var type in System.Reflection.Assembly.GetExecutingAssembly().GetTypes())
                 {
                     var commandAttribute = type.GetCustomAttributes(true).FirstOrDefault(a => a is CommandAttribute) as CommandAttribute;
@@ -146,15 +154,16 @@ namespace TodoList
                         commands[commandAttribute.Name] = Tuple.Create(commandAttribute, type);
                 }
 
+                var pipedArguments = new Dictionary<String, Object>();
                 var iterator = new CommandLineIterator(args, 0);
                 while (!iterator.AtEnd())
                 {
-                    var commandName = iterator.Peek();
+                    var commandName = iterator.Peek().Replace("+", "");
                     var command = commands.Values.FirstOrDefault(c => c.Item1.Name == commandName || c.Item1.Synonyms.Contains(commandName));
                     if (command == null)
                         throw new InvalidOperationException("Unknown command " + iterator.Peek());
 
-                    iterator = ParseCommand(command, iterator);
+                    iterator = ParseCommand(command, iterator, pipedArguments);
                 }
             }
             catch (Exception e)

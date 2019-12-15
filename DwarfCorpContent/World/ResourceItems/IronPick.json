@@ -48,6 +48,9 @@
   "Tool_AttackDamage": 1,
   "Tool_AttackHitEffect": "Effects\\hit",
 
+  "Equipable": true,
+  "Equipment_LayerType": "Tool",
+  "Equipment_Palette": "Iron Equipment",
   "Equipment_LayerName": "pick",
   "Equipment_Slot": "Tool"
 }

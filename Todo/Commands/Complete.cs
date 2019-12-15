@@ -21,7 +21,7 @@ namespace TodoList
         [SwitchDocumentation("Path to task file.")]
         public string file = "todo.txt";
 
-        public void Invoke()
+        public void Invoke(Dictionary<String, Object> PipedArguments)
         {
             if (String.IsNullOrEmpty(file))
             {
@@ -42,6 +42,16 @@ namespace TodoList
             {
                 Console.WriteLine("Could not find entry with ID{0}.", id);
                 return;
+            }
+
+            foreach (var pre in entry.Preregs)
+            {
+                var check = list.Root.FindChildWithID(pre);
+                if (check != null && check.Status != "✓")
+                {
+                    Console.WriteLine("Could not mark this item complete as prereg {0:X4} is not complete.", pre);
+                    return;
+                }
             }
 
             entry.Status = "✓";

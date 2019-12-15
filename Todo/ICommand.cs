@@ -6,6 +6,6 @@ namespace TodoList
 {
     internal interface ICommand
     {
-        void Invoke();
+        void Invoke(Dictionary<String, Object> PipedArguments);
     }
 }

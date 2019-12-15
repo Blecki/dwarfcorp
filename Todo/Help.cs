@@ -14,7 +14,7 @@ namespace TodoList
     {
         [DefaultSwitch(0)] public string topic = null;
 
-        public void Invoke()
+        public void Invoke(Dictionary<String, Object> PipedArguments)
         {
             if (String.IsNullOrEmpty(topic))
             {
