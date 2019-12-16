@@ -54,22 +54,40 @@ namespace DwarfCorp.Play.EmployeeInfo
             get { return FetchEmployee?.Invoke(); }
         }
 
-        private EquippedResourceIcon ToolIcon;
+        private Dictionary<String, EquippedResourceIcon> ResourceIcons = new Dictionary<string, EquippedResourceIcon>();
+        private StockpileContentsPanel ContentsPanel = null;
 
         public override void Construct()
         {
             Font = "font8";
 
-            ToolIcon = AddChild(new EquippedResourceIcon {
-                
-            }) as EquippedResourceIcon;
+            var background = AddChild(new Widget
+            {
+                Background = new TileReference("equipment", 0),
+                MinimumSize = new Point(128, 128),
+                AutoLayout = AutoLayout.FloatLeft
+            });
+
+            var bgTile = Root.GetTileSheet("equipment");
+            var scale = 128 / bgTile.TileWidth;
+
+            foreach (var slot in Library.EnumerateEquipmentSlotTypes())
+            {
+                var slotIcon = AddChild(new EquippedResourceIcon
+                {
+                    OnLayout = (_) => _.Rect = new Rectangle(background.Rect.X + slot.GuiOffset.X * scale, background.Rect.Y + slot.GuiOffset.Y * scale, 16 * scale, 16 * scale)
+                }) as EquippedResourceIcon;
+
+                ResourceIcons.Add(slot.Name, slotIcon);
+            }
+
+            ContentsPanel = AddChild(new StockpileContentsPanel
+            {
+                AutoLayout = AutoLayout.DockRight,
+                MinimumSize = new Point(256, 0)
+            }) as StockpileContentsPanel;
 
             base.Construct();
-
-            OnLayout += (sender) =>
-            {
-                ToolIcon.Rect = new Rectangle(this.Rect.X + 64, this.Rect.Y + 64, 32, 32);
-            };
         }
 
         protected override Gui.Mesh Redraw()
@@ -80,12 +98,26 @@ namespace DwarfCorp.Play.EmployeeInfo
                 Hidden = false;
                 Text = "";
 
-                ToolIcon.Resource = null;
-
+                foreach (var icon in ResourceIcons)
+                    icon.Value.Resource = null;
+                   
                 if (Employee.Creature.Equipment.HasValue(out var equipment))
                 {
-                    if (equipment.GetItemInSlot("Tool").HasValue(out var tool))
-                        ToolIcon.Resource = tool;
+                    foreach (var slot in ResourceIcons)
+                        if (equipment.GetItemInSlot(slot.Key).HasValue(out var tool))
+                            slot.Value.Resource = tool;
+
+                    if (Employee.GetRoot().GetComponent<Inventory>().HasValue(out var inventory))
+                    {
+                        ContentsPanel.Hidden = false;
+                        ContentsPanel.Resources = inventory.ContentsAsResourceSet();
+                        ContentsPanel.Invalidate();
+                    }
+                    else
+                    {
+                        ContentsPanel.Hidden = true;
+                        ContentsPanel.Resources = null;
+                    }
                 }
                 else
                     Text = "This employee cannot use equipment.";

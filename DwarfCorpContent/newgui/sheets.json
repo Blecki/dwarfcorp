@@ -176,6 +176,12 @@
     "TileHeight": 40
   },
   {
+    "Name": "equipment",
+    "Texture": "newgui/equipment",
+    "TileWidth": 64,
+    "TileHeight": 64
+  },
+  {
     "Name": "tool-icons",
     "Texture": "newgui/icons",
     "TileWidth": 32,

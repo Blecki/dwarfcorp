@@ -12,5 +12,6 @@ namespace DwarfCorp
     public class EquipmentSlotType
     {
         public String Name;
+        public Point GuiOffset = new Point(0, 0);
     }
 }

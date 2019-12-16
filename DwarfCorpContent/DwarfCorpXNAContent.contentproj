@@ -4311,6 +4311,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>default</Name>
     </None>
+    <None Include="World\Voxels\Stucco.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Stucco</Name>
+    </None>
     <None Include="World\Voxels\CopperBlock.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>CopperBlock</Name>
@@ -5271,6 +5275,13 @@
   <ItemGroup>
     <Compile Include="Entities\Dwarf\ToolIcons\unknown.png">
       <Name>unknown</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="newgui\equipment.png">
+      <Name>equipment</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
