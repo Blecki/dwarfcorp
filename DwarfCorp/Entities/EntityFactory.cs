@@ -110,15 +110,7 @@ namespace DwarfCorp
                         if ((!voxel.IsValid) || !voxel.IsEmpty)
                             continue;
 
-                    var blackboard = new Blackboard();
-                    blackboard.SetData("num", 1);
-                    blackboard.SetData("resource", resource);
-
-                    Physics body = EntityFactory.CreateEntity<Physics>(
-                        resource.TypeName + " Resource",
-                        pos,
-                        //Blackboard.Create<int>("num", Math.Min(numRemaining, maxPileSize))) as Physics;
-                        blackboard) as Physics;
+                    var body = new ResourceEntity(World.ComponentManager, resource, pos) as Physics;
                     
                         if (body != null)
                         {

@@ -29,7 +29,6 @@ namespace DwarfCorp.Play
                     r.Add(firstLetter, new List<String> { item });
             }
 
-
             return r;
         }
 
@@ -103,7 +102,35 @@ namespace DwarfCorp.Play
                         )
                     }
                 },
-                
+
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "RESOURCE",
+                    ExpansionChild = new HorizontalMenuTray.Tray
+                    {
+                        Columns = 1,
+                        AutoSizeColumns = true,
+                        ItemSource = AggregateSpawnables(Library.EnumerateResourceTypes().OrderBy(s => s.TypeName).Select(s => s.TypeName)).Select(s =>
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = s.Key,
+                                ExpansionChild = new HorizontalMenuTray.Tray
+                                {
+                                    Columns = 5,
+                                    AutoSizeColumns = true,
+                                    ItemSize = new Point(110, 28),
+                                    ItemSource = s.Value.Select(_s =>
+                                        new HorizontalMenuTray.MenuItem
+                                        {
+                                            Text = _s,
+                                            OnClick = (sender, args) => ActivateGodTool("Resource/" + _s)
+                                        })
+                                }
+                            }
+                        )
+                    }
+                },
+
                 new HorizontalMenuTray.MenuItem
                 {
                     Text = "PLACE BLOCK",

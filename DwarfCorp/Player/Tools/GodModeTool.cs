@@ -97,10 +97,19 @@ namespace DwarfCorp
                                     World.PlayerFaction.OwnedObjects.Add(body);
 
                                 if (craftItem.Deconstructable)
-                                    body.Tags.Add("Deconstructable");
+                                    body.Tags.Add("Deconstructable"); // Todo: Should not need to set tag every time item is created. Inherint?
                             }
                         }
                     }
+                }
+            }
+            else if (Command.Contains("Resource/"))
+            {
+                string type = Command.Substring("Resource/".Length);
+                foreach (var vox in refs.Where(vox => vox.IsValid))
+                {
+                    var body = new ResourceEntity(World.ComponentManager, new Resource(type), vox.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f));
+                    body.PropogateTransforms();
                 }
             }
             else if (Command.Contains("Rail/"))
@@ -154,7 +163,7 @@ namespace DwarfCorp
                 }
             }
             else if (Command.Contains("Disease"))
-            { 
+            {
                 foreach (var creature in World.EnumerateIntersectingObjects(VoxelHelpers.GetVoxelBoundingBox(refs), CollisionType.Both).OfType<Creature>())
                     creature.Stats.AcquireDisease(DiseaseLibrary.GetRandomDisease());
             }
@@ -230,7 +239,7 @@ namespace DwarfCorp
                                         flam2.Heat = flam2.Flashpoint + 1;
                                 }
                                 break;
-                                                            
+
                             default:
                                 break;
                         }

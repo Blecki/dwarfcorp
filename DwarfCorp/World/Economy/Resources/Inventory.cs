@@ -148,14 +148,12 @@ namespace DwarfCorp
 
         public GameComponent RemoveAndCreate(Resource Resource, RestockType RestockType) // todo: Kill
         {
-            var parentBody = GetRoot();
-            var pos = parentBody.Position;
+            var pos = GetRoot().Position;
 
             if(!Remove(Resource, RestockType))
                 return null;
 
-            return EntityFactory.CreateEntity<GameComponent>(Resource.TypeName + " Resource", pos + MathFunctions.RandVector3Cube() * 0.5f,
-                Blackboard.Create("resource", Resource));
+            return new ResourceEntity(Manager, Resource, pos + MathFunctions.RandVector3Cube() * 0.5f);
         }
 
         internal Dictionary<string, ResourceTypeAmount> Aggregate()

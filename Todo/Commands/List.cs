@@ -28,6 +28,7 @@ namespace TodoList
         public UInt32 days = 0;
         public UInt32 cdays = 0;
         public SortOrder order = SortOrder.DEFAULT;
+        public UInt32 d = 0;
 
         [SwitchDocumentation("Path to task file.")]
         public string file = "todo.txt";
@@ -56,7 +57,7 @@ namespace TodoList
             if (days > 0) matcher = Presentation.ComposeMatchers(matcher, new CreatedTimespanMatcher { Days = days });
             if (cdays > 0) matcher = Presentation.ComposeMatchers(matcher, new CompletedTimespanMatcher { Days = cdays });
 
-            var completeList = Presentation.SearchEntries(entry, matcher, 0).Where(l => l.Depth >= 0).ToList();
+            var completeList = Presentation.SearchEntries(entry, matcher, 0).Where(l => (d == 0 || l.Depth <= d) && l.Depth >= 0).ToList();
 
             if (order == SortOrder.COMPLETION)
                 completeList.Sort((a, b) => (int)(a.Entry.CompletionTime - b.Entry.CompletionTime).TotalMilliseconds);

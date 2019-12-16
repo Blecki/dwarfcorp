@@ -25,13 +25,13 @@ namespace DwarfCorp
             {
                 Resources[resource.TypeName] = resource;
 
-                if (resource.Tags.Contains("Money"))
-                    EntityFactory.RegisterEntity(resource.TypeName + " Resource", (position, data) => new CoinPile(EntityFactory.World.ComponentManager, position)
-                    {
-                        Money = data.Has("Money") ? data.GetData<DwarfBux>("Money") : (DwarfBux)64m
-                    });
-                else
-                    EntityFactory.RegisterEntity(resource.TypeName + " Resource", (position, data) => new ResourceEntity(EntityFactory.World.ComponentManager, new Resource(resource.TypeName), position));
+                //if (resource.Tags.Contains("Money"))
+                //    EntityFactory.RegisterEntity(resource.TypeName + " Resource", (position, data) => new CoinPile(EntityFactory.World.ComponentManager, position)
+                //    {
+                //        Money = data.Has("Money") ? data.GetData<DwarfBux>("Money") : (DwarfBux)64m
+                //    });
+                //else
+                //    EntityFactory.RegisterEntity(resource.TypeName + " Resource", (position, data) => new ResourceEntity(EntityFactory.World.ComponentManager, new Resource(resource.TypeName), position));
             }
 
             Console.WriteLine("Loaded Resource Library.");
