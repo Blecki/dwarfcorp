@@ -19,6 +19,7 @@ namespace DwarfCorp.Play.EmployeeInfo
 
         private Dictionary<String, ResourceIcon> ResourceIcons = new Dictionary<string, ResourceIcon>();
         private ContentsPanel ContentsPanel = null;
+        private EquipmentSlotType SelectedSlot = null;
 
         public override void Construct()
         {
@@ -39,34 +40,9 @@ namespace DwarfCorp.Play.EmployeeInfo
                 var slotIcon = AddChild(new ResourceIcon
                 {
                     OnLayout = (_) => _.Rect = new Rectangle(background.Rect.X + slot.GuiOffset.X * scale, background.Rect.Y + slot.GuiOffset.Y * scale, 16 * scale, 16 * scale),
-                    EnableDragAndDrop = true,
-                    CreateDraggableItem = (sender) =>
-                    {
-                        if (Employee == null)
-                            return null;
-
-                        var resource = (sender as ResourceIcon).Resource;
-                        if (resource == null)
-                            return null;
-
-                        // Remove from equipment.
-                        if (Employee.Creature.Equipment.HasValue(out var equipment))
-                            equipment.UnequipItem(resource);
-
-                        return new DraggedResourceIcon
-                        {
-                            Resource = resource,
-                            MinimumSize = new Point(32, 32),
-                            CanDropHere = CanDropHere,
-                            OnDropCancelled = (dragItem) => 
-                            {
-                                if (Employee.Creature.Equipment.HasValue(out var _equipment))
-                                    _equipment.EquipItem((dragItem as DraggedResourceIcon).Resource);
-                            },
-                            OnDropped = OnDropped
-                        };
-                    },                    
-                    Tag = slot
+                    EnableDragAndDrop = false,
+                    Tag = slot,
+                    OnClick = (sender, args) => SelectedSlot = sender.Tag as EquipmentSlotType
                 }) as ResourceIcon;
 
                 ResourceIcons.Add(slot.Name, slotIcon);
@@ -76,64 +52,12 @@ namespace DwarfCorp.Play.EmployeeInfo
             {
                 AutoLayout = AutoLayout.DockRight,
                 MinimumSize = new Point(256, 0),
-                EnableDragAndDrop = true,
-                CreateDraggableItem = (sender) =>
-                {
-                    if (Employee == null)
-                        return null;
-
-                    var resource = (sender as ResourceIcon).Resource;
-                    if (resource == null)
-                        return null;
-
-                    // Remove from inventory.
-                    Employee.Creature.Inventory.Remove(resource, Inventory.RestockType.None);
-
-                    return new DraggedResourceIcon
-                    {
-                        Resource = resource,
-                        MinimumSize = new Point(32, 32),
-                        CanDropHere = CanDropHere,
-                        OnDropCancelled = (dragItem) => Employee.Creature.Inventory.AddResource(resource, Inventory.RestockType.None),
-                        OnDropped = OnDropped
-                    };
-                }
+                EnableDragAndDrop = false,
+                Resources = new ResourceSet()
+                
             }) as ContentsPanel;
 
             base.Construct();
-        }
-
-        private bool CanDropHere(Widget Dragged, Widget Target)
-        {
-            if (Target is ContentsPanel)
-                return true;
-            else if (Target is ResourceIcon icon && icon.Tag is EquipmentSlotType slot)
-            {
-                if (Dragged is DraggedResourceIcon res && res.Resource.Equipment_Slot == slot.Name)
-                    return true;
-            }
-
-            return false;
-        }
-
-        private void OnDropped(Widget Dragged, Widget Target)
-        {
-            if (Target is ContentsPanel contents)
-                contents.Resources.Add((Dragged as DraggedResourceIcon).Resource);
-            else if (Target is ResourceIcon icon && icon.Tag is EquipmentSlotType slot)
-            {
-                var resource = (Dragged as DraggedResourceIcon).Resource;
-                if (resource.Equipment_Slot != slot.Name)
-                    throw new InvalidProgramException();
-
-                if (Employee.Creature.Equipment.HasValue(out var equipment))
-                {
-                    if (equipment.GetItemInSlot(slot.Name).HasValue(out var existing))
-                        Employee.Creature.Inventory.AddResource(existing, Inventory.RestockType.None);
-
-                    equipment.EquipItem(resource);
-                }
-            }
         }
         
         protected override Gui.Mesh Redraw()
@@ -153,17 +77,24 @@ namespace DwarfCorp.Play.EmployeeInfo
                         if (equipment.GetItemInSlot(slot.Key).HasValue(out var tool))
                             slot.Value.Resource = tool;
 
+                    ContentsPanel.Resources.Clear();
+
                     if (Employee.GetRoot().GetComponent<Inventory>().HasValue(out var inventory))
                     {
                         ContentsPanel.Hidden = false;
-                        ContentsPanel.Resources = inventory.ContentsAsResourceSet();
+
+                        if (SelectedSlot != null)
+                        {
+                            foreach (var res in Employee.World.EnumerateResourcesInStockpiles().Where(r => r.Equipment_Slot == SelectedSlot.Name))
+                                ContentsPanel.Resources.Add(res);
+                            foreach (var res in inventory.Resources.Where(r => r.Resource.Equipment_Slot == SelectedSlot.Name))
+                                ContentsPanel.Resources.Add(res.Resource);
+                        }
+
                         ContentsPanel.Invalidate();
                     }
                     else
-                    {
                         ContentsPanel.Hidden = true;
-                        ContentsPanel.Resources = null;
-                    }
                 }
                 else
                     Text = "This employee cannot use equipment.";

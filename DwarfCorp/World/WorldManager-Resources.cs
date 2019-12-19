@@ -199,6 +199,13 @@ namespace DwarfCorp
                     yield return i.Resource;
         }
 
+        public IEnumerable<Resource> EnumerateResourcesInStockpiles()
+        {
+            foreach (var stockpile in EnumerateZones().OfType<Stockpile>())
+                foreach (var res in stockpile.Resources.Enumerate())
+                    yield return res;
+        }
+
         public void RecomputeCachedVoxelstate()
         {
             foreach (var type in Library.EnumerateVoxelTypes())

@@ -14,6 +14,7 @@ namespace DwarfCorp.Play
         public ResourceSet Resources;
         public bool EnableDragAndDrop = false;
         public Func<Widget, DragAndDrop.DraggedItem> CreateDraggableItem = null;
+        public Action<Widget, InputEventArgs> OnIconClicked = null;
 
         // Todo: What if there are more resources than fit on the screen? Need scrolling!
 
@@ -74,7 +75,8 @@ namespace DwarfCorp.Play
                         {
                             Resource = resource.Sample,
                             EnableDragAndDrop = EnableDragAndDrop,
-                            CreateDraggableItem = CreateDraggableItem
+                            CreateDraggableItem = CreateDraggableItem,
+                            OnClick = OnIconClicked
                         });
 
                     }

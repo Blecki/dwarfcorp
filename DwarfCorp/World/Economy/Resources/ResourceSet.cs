@@ -16,6 +16,11 @@ namespace DwarfCorp
 
         [JsonIgnore] public int TotalCount => Resources.Count;
 
+        public void Clear()
+        {
+            Resources.Clear();
+        }
+
         public bool Has(ResourceTypeAmount ResourceType)
         {
             return Resources.Count(r => r.TypeName == ResourceType.Type) >= ResourceType.Count;
