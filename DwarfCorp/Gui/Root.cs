@@ -40,6 +40,7 @@ namespace DwarfCorp.Gui
         public float CursorBlinkTime = 0.3f;
         internal double RunTime = 0.0f;
         private List<Widget> PopupStack = new List<Widget>();
+        public bool Dragging = false;
 
         private MousePointer SpecialIndicator = null;
         public String SpecialHiliteWidgetName = "";

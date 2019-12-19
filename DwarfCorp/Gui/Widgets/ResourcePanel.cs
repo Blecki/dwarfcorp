@@ -121,9 +121,10 @@ namespace DwarfCorp.Gui.Widgets
                     if (icon == null)
                         icon = AddChild(new Play.ResourceIcon()
                         {
-                            Layers = resource.Sample.Sample.GuiLayers,
+                            Resource = resource.Sample.Sample,
                             Tooltip = label,
-                            Tag = resource.Category
+                            Tag = resource.Category,
+                            OverrideTooltip = true
                         });
                     else
                     {

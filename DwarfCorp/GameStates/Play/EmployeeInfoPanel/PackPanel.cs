@@ -17,16 +17,16 @@ namespace DwarfCorp.Play.EmployeeInfo
             get { return FetchEmployee?.Invoke(); }
         }
 
-        StockpileContentsPanel ContentsPanel = null;
+        ContentsPanel ContentsPanel = null;
 
         public override void Construct()
         {
             Font = "font10";
 
-            ContentsPanel = AddChild(new StockpileContentsPanel
+            ContentsPanel = AddChild(new ContentsPanel
             {
                 AutoLayout = AutoLayout.DockFill,
-            }) as StockpileContentsPanel;
+            }) as ContentsPanel;
 
             base.Construct();
         }

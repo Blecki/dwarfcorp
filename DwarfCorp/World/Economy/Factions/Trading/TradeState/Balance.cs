@@ -47,7 +47,7 @@ namespace DwarfCorp.Play.Trading
                 if (Library.GetResourceType(resource.TypeName).HasValue(out var resourceType))
                     LeftItems.AddChild(new Play.ResourceIcon()
                     {
-                        Layers = resourceType.GuiLayers,
+                        Resource = resource,
                         MinimumSize = new Point(32, 32),
                         MaximumSize = new Point(32, 32),
                         Rect = new Rectangle(LeftWidget.Rect.X + 16 + k * 4 - leftCount * 2, LeftWidget.Rect.Y + 5, 32, 32)
@@ -74,7 +74,7 @@ namespace DwarfCorp.Play.Trading
                 if (Library.GetResourceType(resource.TypeName).HasValue(out var resourceType))
                     RightItems.AddChild(new Play.ResourceIcon()
                     {
-                        Layers = resourceType.GuiLayers,
+                        Resource = resource,
                         MinimumSize = new Point(32, 32),
                         MaximumSize = new Point(32, 32),
                         Rect = new Rectangle(RightWidget.Rect.X + 16 + k * 4 - rightCount * 2, RightWidget.Rect.Y + 5, 32, 32)

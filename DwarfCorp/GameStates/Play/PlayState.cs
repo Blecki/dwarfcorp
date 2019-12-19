@@ -179,7 +179,7 @@ namespace DwarfCorp.GameStates
         {
             get
             {
-                return Gui.HoverItem != null;
+                return Gui.HoverItem != null || Gui.Dragging;
                 // Don't detect tooltips and tool popups.
             }
         }

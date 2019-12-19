@@ -20,7 +20,10 @@ namespace DwarfCorp
             NoiseMaker.MakeNoise("Die", Physics.Position, true);
 
             if (AI.Stats.Money > 0)
-                EntityFactory.CreateEntity<CoinPile>("Coins Resource", AI.Position, Blackboard.Create("Money", AI.Stats.Money));
+                new CoinPile(Manager, AI.Position) // I don't like how it's implictly added to manager.
+                {
+                    Money = AI.Stats.Money
+                };
 
             if (Stats.Species.HasMeat)
             {

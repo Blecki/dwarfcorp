@@ -8,12 +8,8 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Play
 {
-    public class ResourceIcon : Widget
+    public class DraggedResourceIcon : DragAndDrop.DraggedItem
     {
-        public bool OverrideTooltip = false;
-        public bool EnableDragAndDrop = false;
-        public Func<Widget, DragAndDrop.DraggedItem> CreateDraggableItem = null;
-
         private Resource _Resource = null;
         public Resource Resource
         {
@@ -29,26 +25,10 @@ namespace DwarfCorp.Play
             }
         }
 
-        public override void Construct()
-        {
-            if (EnableDragAndDrop && CreateDraggableItem != null)
-                OnMouseDown = (sender, args) =>
-                {
-                    var draggedItem = CreateDraggableItem(this);
-                    if (draggedItem != null)
-                        DragAndDrop.BeginDrag(Root, draggedItem);
-                };
-
-            base.Construct();
-        }
-
         protected override Mesh Redraw()
         {
             if (_Resource == null)
                 return base.Redraw();
-
-            if (OverrideTooltip)
-                Tooltip = String.Format("{0}\n{1}\nWear: {2:##.##}%", _Resource.DisplayName, _Resource.Description, (_Resource.Tool_Wear / _Resource.Tool_Durability) * 100.0f);
 
             var r = new List<Mesh>();
             foreach (var layer in _Resource.GuiLayers)

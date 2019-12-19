@@ -9,43 +9,6 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp.Play.EmployeeInfo
 {
-    public class EquippedResourceIcon : Widget
-    {
-        private Resource _Resource = null;
-        public Resource Resource
-        {
-            set
-            {
-                _Resource = value;
-                Invalidate();
-            }
-        }
-
-        public override void Construct()
-        {
-            base.Construct();
-        }
-
-        protected override Mesh Redraw()
-        {
-            if (_Resource == null)
-                return base.Redraw();
-
-            Tooltip = String.Format("{0}\nWear: {1:##.##}%", _Resource.DisplayName, (_Resource.Tool_Wear / _Resource.Tool_Durability) * 100.0f);
-            var layers = _Resource.GuiLayers;
-
-            var r = new List<Mesh>();
-            foreach (var layer in layers)
-                r.Add(Mesh.Quad()
-                            .Scale(Rect.Width, Rect.Height)
-                            .Translate(Rect.X, Rect.Y)
-                            .Colorize(BackgroundColor)
-                            .Texture(Root.GetTileSheet(layer.Sheet).TileMatrix(layer.Tile)));
-            r.Add(base.Redraw());
-            return Mesh.Merge(r.ToArray());
-        }
-    }
-
     public class EquipmentPanel : Widget
     {
         public Func<CreatureAI> FetchEmployee = null;
@@ -54,8 +17,8 @@ namespace DwarfCorp.Play.EmployeeInfo
             get { return FetchEmployee?.Invoke(); }
         }
 
-        private Dictionary<String, EquippedResourceIcon> ResourceIcons = new Dictionary<string, EquippedResourceIcon>();
-        private StockpileContentsPanel ContentsPanel = null;
+        private Dictionary<String, ResourceIcon> ResourceIcons = new Dictionary<string, ResourceIcon>();
+        private ContentsPanel ContentsPanel = null;
 
         public override void Construct()
         {
@@ -73,23 +36,106 @@ namespace DwarfCorp.Play.EmployeeInfo
 
             foreach (var slot in Library.EnumerateEquipmentSlotTypes())
             {
-                var slotIcon = AddChild(new EquippedResourceIcon
+                var slotIcon = AddChild(new ResourceIcon
                 {
-                    OnLayout = (_) => _.Rect = new Rectangle(background.Rect.X + slot.GuiOffset.X * scale, background.Rect.Y + slot.GuiOffset.Y * scale, 16 * scale, 16 * scale)
-                }) as EquippedResourceIcon;
+                    OnLayout = (_) => _.Rect = new Rectangle(background.Rect.X + slot.GuiOffset.X * scale, background.Rect.Y + slot.GuiOffset.Y * scale, 16 * scale, 16 * scale),
+                    EnableDragAndDrop = true,
+                    CreateDraggableItem = (sender) =>
+                    {
+                        if (Employee == null)
+                            return null;
+
+                        var resource = (sender as ResourceIcon).Resource;
+                        if (resource == null)
+                            return null;
+
+                        // Remove from equipment.
+                        if (Employee.Creature.Equipment.HasValue(out var equipment))
+                            equipment.UnequipItem(resource);
+
+                        return new DraggedResourceIcon
+                        {
+                            Resource = resource,
+                            MinimumSize = new Point(32, 32),
+                            CanDropHere = CanDropHere,
+                            OnDropCancelled = (dragItem) => 
+                            {
+                                if (Employee.Creature.Equipment.HasValue(out var _equipment))
+                                    _equipment.EquipItem((dragItem as DraggedResourceIcon).Resource);
+                            },
+                            OnDropped = OnDropped
+                        };
+                    },                    
+                    Tag = slot
+                }) as ResourceIcon;
 
                 ResourceIcons.Add(slot.Name, slotIcon);
             }
 
-            ContentsPanel = AddChild(new StockpileContentsPanel
+            ContentsPanel = AddChild(new ContentsPanel
             {
                 AutoLayout = AutoLayout.DockRight,
-                MinimumSize = new Point(256, 0)
-            }) as StockpileContentsPanel;
+                MinimumSize = new Point(256, 0),
+                EnableDragAndDrop = true,
+                CreateDraggableItem = (sender) =>
+                {
+                    if (Employee == null)
+                        return null;
+
+                    var resource = (sender as ResourceIcon).Resource;
+                    if (resource == null)
+                        return null;
+
+                    // Remove from inventory.
+                    Employee.Creature.Inventory.Remove(resource, Inventory.RestockType.None);
+
+                    return new DraggedResourceIcon
+                    {
+                        Resource = resource,
+                        MinimumSize = new Point(32, 32),
+                        CanDropHere = CanDropHere,
+                        OnDropCancelled = (dragItem) => Employee.Creature.Inventory.AddResource(resource, Inventory.RestockType.None),
+                        OnDropped = OnDropped
+                    };
+                }
+            }) as ContentsPanel;
 
             base.Construct();
         }
 
+        private bool CanDropHere(Widget Dragged, Widget Target)
+        {
+            if (Target is ContentsPanel)
+                return true;
+            else if (Target is ResourceIcon icon && icon.Tag is EquipmentSlotType slot)
+            {
+                if (Dragged is DraggedResourceIcon res && res.Resource.Equipment_Slot == slot.Name)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private void OnDropped(Widget Dragged, Widget Target)
+        {
+            if (Target is ContentsPanel contents)
+                contents.Resources.Add((Dragged as DraggedResourceIcon).Resource);
+            else if (Target is ResourceIcon icon && icon.Tag is EquipmentSlotType slot)
+            {
+                var resource = (Dragged as DraggedResourceIcon).Resource;
+                if (resource.Equipment_Slot != slot.Name)
+                    throw new InvalidProgramException();
+
+                if (Employee.Creature.Equipment.HasValue(out var equipment))
+                {
+                    if (equipment.GetItemInSlot(slot.Name).HasValue(out var existing))
+                        Employee.Creature.Inventory.AddResource(existing, Inventory.RestockType.None);
+
+                    equipment.EquipItem(resource);
+                }
+            }
+        }
+        
         protected override Gui.Mesh Redraw()
         {
             // Todo: Generic placement of equipment icons

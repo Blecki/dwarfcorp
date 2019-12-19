@@ -8,10 +8,12 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Play
 {
-    public class StockpileContentsPanel : Gui.Widgets.GridPanel
+    public class ContentsPanel : Gui.Widgets.GridPanel
     {
         public WorldManager World;
         public ResourceSet Resources;
+        public bool EnableDragAndDrop = false;
+        public Func<Widget, DragAndDrop.DraggedItem> CreateDraggableItem = null;
 
         // Todo: What if there are more resources than fit on the screen? Need scrolling!
 
@@ -64,20 +66,20 @@ namespace DwarfCorp.Play
 
                 foreach (var resource in AggregateByType())
                 {
-                    var icon = existingResourceEntries.FirstOrDefault(w => w is ResourceIcon && Object.ReferenceEquals(w.Tag, resource.Sample));
-
-                    var label = resource.Sample.DisplayName + "\n" + resource.Sample.Description; // Resources of the same type will get collapsed won't they?
+                    var icon = existingResourceEntries.FirstOrDefault(w => w is ResourceIcon  resIcon && Object.ReferenceEquals(resIcon.Resource, resource.Sample));
 
                     if (icon == null)
+                    {
                         icon = AddChild(new ResourceIcon()
                         {
-                            Layers = resource.Sample.GuiLayers,
-                            Tooltip = label,
-                            Tag = resource.Sample
+                            Resource = resource.Sample,
+                            EnableDragAndDrop = EnableDragAndDrop,
+                            CreateDraggableItem = CreateDraggableItem
                         });
+
+                    }
                     else
                     {
-                        icon.Tooltip = label;
                         if (!Children.Contains(icon))
                             AddChild(icon);
                     }
@@ -88,6 +90,6 @@ namespace DwarfCorp.Play
 
                 Layout();
             };
-        }        
+        }
     }
 }

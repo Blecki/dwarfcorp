@@ -71,7 +71,7 @@ namespace DwarfCorp.Play
                     {
                         MinimumSize = new Point(32, 32),
                         MaximumSize = new Point(32, 32),
-                        Layers = resource.GuiLayers,
+                        Resource = new Resource(resource),
                         AutoLayout = AutoLayout.DockLeft
                     });
                 }

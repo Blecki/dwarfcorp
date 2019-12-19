@@ -264,7 +264,7 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     MinimumSize = new Point(32 + 16, 32 + 16),
                     MaximumSize = new Point(32 + 16, 32 + 16),
-                    Layers = res.GuiLayers,
+                    Resource = new Resource(res),
                     AutoLayout = AutoLayout.DockLeft,
                     BackgroundColor = Resource.Count > 0 ? res.Tint.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
                     TextColor = Color.White.ToVector4(),

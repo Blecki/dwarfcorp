@@ -145,6 +145,7 @@
     <Compile Include="Entities\Fixtures\StoneLadder.cs" />
     <Compile Include="Entities\Fixtures\WoodenLadder.cs" />
     <Compile Include="Entities\Plants\CandyCane.cs" />
+    <Compile Include="GameStates\Play\ContentsPanel.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\ApplicantInfo.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\EconomyState.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\EmployeePanel.cs" />
@@ -157,9 +158,9 @@
     <Compile Include="GameStates\Play\EmployeeInfoPanel\StatsPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\TaskListPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\TaskPanel.cs" />
+    <Compile Include="GameStates\Play\ZonePanel\DraggedResourceIcon.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ResourceFilterPanel.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ResourceIcon.cs" />
-    <Compile Include="GameStates\Play\ZonePanel\StockpileContentsPanel.cs" />
     <Compile Include="GameStates\Play\ZonePanel\StockpilePropertiesDialog.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ZoneListPanel.cs" />
     <Compile Include="GameStates\WorldGeneration\EmbarkmentEditor.cs" />
@@ -168,6 +169,7 @@
     <Compile Include="GameStates\WorldGeneration\OverworldTextureGenerator.cs" />
     <Compile Include="GameStates\WorldGeneration\SimpleOrbitCamera.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldPreviewMesh.cs" />
+    <Compile Include="Gui\DragAndDrop.cs" />
     <Compile Include="Gui\Widgets\SliderCombo.cs" />
     <Compile Include="Gui\Widgets\PlaceCraftInfo.cs" />
     <Compile Include="Gui\Widgets\DefaultTaskPriority.cs" />

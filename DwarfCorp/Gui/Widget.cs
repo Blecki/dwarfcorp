@@ -273,6 +273,15 @@ namespace DwarfCorp.Gui
             return null;
         }
 
+        public IEnumerable<Widget> EnumerateWidgetsAt(int X, int Y)
+        {
+            foreach (var child in Children.Reverse<Widget>().Where(c => !c.Hidden && !c.IsFloater))
+                foreach (var item in child.EnumerateWidgetsAt(X, Y))
+                    yield return item;
+            if (!Transparent && Rect.Contains(X, Y))
+                yield return this;
+        }
+
         public void Invalidate()
         {
             CachedRenderMesh = null;

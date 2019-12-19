@@ -186,6 +186,8 @@
     <Compile Include="AssetManagement\StringLibrary.cs" />
     <Compile Include="AssetManagement\TextureTool-LoadPSD.cs" />
     <Compile Include="Components\AI\Creature-Death.cs" />
+    <Compile Include="GameStates\Play\ZonePanel\DraggedResourceIcon.cs" />
+    <Compile Include="Gui\DragAndDrop.cs" />
     <Compile Include="Library\EquipmentLibrary.cs" />
     <Compile Include="Components\AI\EquipmentSlotType.cs" />
     <Compile Include="Components\AI\FairyAI.cs" />
@@ -284,7 +286,7 @@
     <Compile Include="GameStates\Play\EmployeeInfoPanel\PackPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\StatsPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\TaskPanel.cs" />
-    <Compile Include="GameStates\Play\ZonePanel\StockpileContentsPanel.cs" />
+    <Compile Include="GameStates\Play\ContentsPanel.cs" />
     <Compile Include="GameStates\Play\ZonePanel\StockpilePropertiesDialog.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ResourceFilterPanel.cs" />
     <Compile Include="GameStates\WorldGeneration\ChooseEmployeeTypeDialog.cs" />
