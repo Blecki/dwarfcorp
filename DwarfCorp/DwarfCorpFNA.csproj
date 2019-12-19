@@ -231,6 +231,7 @@
     <Compile Include="TaskManagement\LeafActs\LongWanderAct.cs" />
     <Compile Include="TaskManagement\SequentialTask.cs" />
     <Compile Include="TaskManagement\Tasks\DestroyObjectTask.cs" />
+    <Compile Include="TaskManagement\Tasks\FindAndEquipTask.cs" />
     <Compile Include="TaskManagement\Tasks\GoToZoneTask.cs" />
     <Compile Include="TaskManagement\Tasks\GetHealedTask.cs" />
     <Compile Include="TaskManagement\Tasks\KillVoxel\KillVoxelAct.cs" />

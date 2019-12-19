@@ -209,6 +209,7 @@
     <Compile Include="GameStates\Play\GodMenu.cs" />
     <Compile Include="TaskManagement\ActHelper-ApplyWearToTool.cs" />
     <Compile Include="TaskManagement\ActHelper-GetEquippedItem.cs" />
+    <Compile Include="TaskManagement\Tasks\FindAndEquipTask.cs" />
     <Compile Include="World\Economy\Factions\Trading\TradeState\Balance.cs" />
     <Compile Include="World\Economy\Factions\Trading\TradeState\TradeHelper.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ResourceIcon.cs" />

@@ -42,7 +42,8 @@ namespace DwarfCorp.Play.EmployeeInfo
                     OnLayout = (_) => _.Rect = new Rectangle(background.Rect.X + slot.GuiOffset.X * scale, background.Rect.Y + slot.GuiOffset.Y * scale, 16 * scale, 16 * scale),
                     EnableDragAndDrop = false,
                     Tag = slot,
-                    OnClick = (sender, args) => SelectedSlot = sender.Tag as EquipmentSlotType
+                    OnClick = (sender, args) => SelectedSlot = sender.Tag as EquipmentSlotType,
+                    OverrideTooltip = true
                 }) as ResourceIcon;
 
                 ResourceIcons.Add(slot.Name, slotIcon);
@@ -53,7 +54,11 @@ namespace DwarfCorp.Play.EmployeeInfo
                 AutoLayout = AutoLayout.DockRight,
                 MinimumSize = new Point(256, 0),
                 EnableDragAndDrop = false,
-                Resources = new ResourceSet()
+                Resources = new ResourceSet(),
+                OnIconClicked = (sender, args) =>
+                {
+                    Employee.AssignTask(new FindAndEquipTask((sender as ResourceIcon).Resource.TypeName));
+                }
                 
             }) as ContentsPanel;
 

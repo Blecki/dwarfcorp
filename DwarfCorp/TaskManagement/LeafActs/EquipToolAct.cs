@@ -24,31 +24,42 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            var toolResource = Agent.Blackboard.GetData<Resource>(BlackboardEntry);
-
-            if (toolResource == null)
+            var list = Agent.Blackboard.GetData<List<Resource>>(BlackboardEntry);
+            if (list != null)
+                foreach (var item in list)
+                    EquipHeldItem(item);
+            else
             {
-                yield return Status.Fail;
-                yield break;
-            }
+                var toolResource = Agent.Blackboard.GetData<Resource>(BlackboardEntry);
 
+                if (toolResource == null)
+                {
+                    yield return Status.Fail;
+                    yield break;
+                }
+
+                EquipHeldItem(toolResource);
+            }
+            yield return Status.Success;
+        }
+
+        private void EquipHeldItem(Resource Item)
+        {
             if (Agent.Creature.Equipment.HasValue(out var equipment))
             {
-                // Kinda assumes the new item will go in the tool slot, no? Also that an existing item should be removed.
-                if (equipment.GetItemInSlot("Tool").HasValue(out var existingTool))
+                if (equipment.GetItemInSlot(Item.Equipment_Slot).HasValue(out var existingTool))
                 {
                     equipment.UnequipItem(existingTool);
                     Creature.Inventory.AddResource(existingTool);
                 }
 
-                equipment.EquipItem(toolResource);
-                Creature.Inventory.Remove(toolResource, Inventory.RestockType.Any);
-                yield return Status.Success;
+                equipment.EquipItem(Item);
+                Creature.Inventory.Remove(Item, Inventory.RestockType.Any);
             }
-            else
-                yield return Status.Fail;
         }
     }
+
+    
 
     public class UnequipToolAct : CreatureAct
     {
