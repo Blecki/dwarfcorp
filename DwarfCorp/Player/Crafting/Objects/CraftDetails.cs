@@ -21,7 +21,7 @@
             {
                 var bounds = this.GetRoot().GetBoundingBox();
                 var pos = MathFunctions.RandVector3Box(bounds);
-                new ResourceEntity(Manager, Resource, pos);
+                Manager.RootComponent.AddChild(new ResourceEntity(Manager, Resource, pos));
             }
 
             base.Die();

@@ -153,7 +153,7 @@ namespace DwarfCorp
             if(!Remove(Resource, RestockType))
                 return null;
 
-            return new ResourceEntity(Manager, Resource, pos + MathFunctions.RandVector3Cube() * 0.5f);
+            return Manager.RootComponent.AddChild(new ResourceEntity(Manager, Resource, pos + MathFunctions.RandVector3Cube() * 0.5f));
         }
 
         internal Dictionary<string, ResourceTypeAmount> Aggregate()
@@ -187,7 +187,7 @@ namespace DwarfCorp
             var box = parentBody == null ? GetBoundingBox() : new BoundingBox(myBox.Min - myBox.Center() + parentBody.Position, myBox.Max - myBox.Center() + parentBody.Position);
             //var aggregatedResources = resourceCounts.Select(c => new ResourceTypeAmount(c.Key, c.Value.Count));
             //var piles = EntityFactory.CreateResourcePiles(aggregatedResources, box).ToList();
-            var piles = EntityFactory.CreateResourcePiles(Resources.Select(r => r.Resource), box).ToList();
+            var piles = EntityFactory.CreateResourcePiles(Manager, Resources.Select(r => r.Resource), box).ToList();
 
             if (Attacker != null && !Attacker.IsDead)
                 foreach (var item in piles)

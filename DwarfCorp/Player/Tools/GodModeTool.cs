@@ -108,7 +108,7 @@ namespace DwarfCorp
                 string type = Command.Substring("Resource/".Length);
                 foreach (var vox in refs.Where(vox => vox.IsValid))
                 {
-                    var body = new ResourceEntity(World.ComponentManager, new Resource(type), vox.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f));
+                    var body = World.ComponentManager.RootComponent.AddChild(new ResourceEntity(World.ComponentManager, new Resource(type), vox.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f)));
                     body.PropogateTransforms();
                 }
             }

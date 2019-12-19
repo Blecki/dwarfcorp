@@ -74,7 +74,7 @@ namespace DwarfCorp
                 yield return Status.Fail;
             else
             {
-                var newEntity = new ResourceEntity(Agent.Manager, Resource, Zone.GetBoundingBox().Center() + new Vector3(0.0f, 1.0f, 0.0f));
+                var newEntity = Agent.Manager.RootComponent.AddChild(new ResourceEntity(Agent.Manager, Resource, Zone.GetBoundingBox().Center() + new Vector3(0.0f, 1.0f, 0.0f)));
 
                 if (newEntity.GetRoot().GetComponent<Physics>().HasValue(out var newPhysics))
                     newPhysics.CollideMode = Physics.CollisionMode.None;

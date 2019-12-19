@@ -164,7 +164,7 @@ namespace DwarfCorp
             box.Min += Vector3.Up;
             box.Max += Vector3.Up;
 
-            foreach(var resource in EntityFactory.CreateResourcePiles(Resources.Enumerate(), box))
+            foreach(var resource in EntityFactory.CreateResourcePiles(World.ComponentManager, Resources.Enumerate(), box))
             {
 
             }

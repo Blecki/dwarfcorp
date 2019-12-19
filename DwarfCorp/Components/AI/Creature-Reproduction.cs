@@ -17,7 +17,7 @@ namespace DwarfCorp
         {
             NoiseMaker.MakeNoise("Lay Egg", AI.Position, true, 1.0f);
             var eggResource = new Resource("Egg") { DisplayName = Stats.CurrentClass.Name + " Egg" };
-            var resourceEntity = new ResourceEntity(Manager, eggResource, Physics.Position);
+            var resourceEntity = Manager.RootComponent.AddChild(new ResourceEntity(Manager, eggResource, Physics.Position));
             resourceEntity.AddChild(new Egg(resourceEntity, Stats.Species.BabyType, Manager, Physics.Position, AI.PositionConstraint));
         }
 

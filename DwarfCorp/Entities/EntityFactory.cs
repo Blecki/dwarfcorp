@@ -94,7 +94,7 @@ namespace DwarfCorp
             }
         }
 
-        public static IEnumerable<GameComponent> CreateResourcePiles(IEnumerable<Resource> resources, BoundingBox box)
+        public static IEnumerable<GameComponent> CreateResourcePiles(ComponentManager Manager, IEnumerable<Resource> resources, BoundingBox box)
         {
             //const int maxPileSize = 64;
             foreach (var resource in resources)
@@ -110,7 +110,7 @@ namespace DwarfCorp
                         if ((!voxel.IsValid) || !voxel.IsEmpty)
                             continue;
 
-                    var body = new ResourceEntity(World.ComponentManager, resource, pos) as Physics;
+                    var body = Manager.RootComponent.AddChild(new ResourceEntity(World.ComponentManager, resource, pos)) as Physics;
                     
                         if (body != null)
                         {

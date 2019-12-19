@@ -39,6 +39,13 @@ namespace DwarfCorp.Play
                         DragAndDrop.BeginDrag(Root, draggedItem);
                 };
 
+
+            Font = "font10-outline-numsonly";
+            TextHorizontalAlign = HorizontalAlign.Center;
+            TextVerticalAlign = VerticalAlign.Bottom;
+            TextColor = new Vector4(1, 1, 1, 1);
+            WrapText = false;
+
             base.Construct();
         }
 
@@ -53,7 +60,7 @@ namespace DwarfCorp.Play
             var r = new List<Mesh>();
             foreach (var layer in _Resource.GuiLayers)
                 r.Add(Mesh.Quad()
-                            .Scale(Rect.Width, Rect.Height)
+                            .Scale(32, 32)
                             .Translate(Rect.X, Rect.Y)
                             .Colorize(BackgroundColor)
                             .Texture(Root.GetTileSheet(layer.Sheet).TileMatrix(layer.Tile)));

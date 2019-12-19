@@ -40,8 +40,8 @@ namespace DwarfCorp
                 {
                     emittedResources = new List<GameComponent>
                     {
-                        new ResourceEntity(World.ComponentManager, new Resource(Voxel.Type.ResourceToRelease),
-                            Voxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f))
+                        World.ComponentManager.RootComponent.AddChild(new ResourceEntity(World.ComponentManager, new Resource(Voxel.Type.ResourceToRelease),
+                            Voxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f)))
                     };
                 }
             }
