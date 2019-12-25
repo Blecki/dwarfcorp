@@ -20,16 +20,74 @@ namespace DwarfCorp.Play.EmployeeInfo
         private Dictionary<String, ResourceIcon> ResourceIcons = new Dictionary<string, ResourceIcon>();
         private ContentsPanel ContentsPanel = null;
         private EquipmentSlotType SelectedSlot = null;
+        private ResourceIcon SelectedSlotIcon = null;
+        private ResourceIcon SelectedEquipIcon = null;
+        private Widget RemoveButton = null;
+        private Widget EquipButton = null;
 
         public override void Construct()
         {
             Font = "font8";
 
+            ContentsPanel = AddChild(new ContentsPanel
+            {
+                AutoLayout = AutoLayout.DockRight,
+                MinimumSize = new Point(256, 0),
+                EnableDragAndDrop = false,
+                Resources = new ResourceSet(),
+                OnIconClicked = (sender, args) =>
+                {
+                    SelectedEquipIcon.Resource = (sender as ResourceIcon).Resource;
+                    EquipButton.Hidden = false;
+                    EquipButton.Invalidate();
+                }
+
+            }) as ContentsPanel;
+
             var background = AddChild(new Widget
             {
                 Background = new TileReference("equipment", 0),
                 MinimumSize = new Point(128, 128),
-                AutoLayout = AutoLayout.FloatLeft
+                AutoLayout = AutoLayout.DockTop
+            });
+
+            var comparisonPanel = AddChild(new Widget
+            {
+                AutoLayout = AutoLayout.DockFill
+            });
+
+            var bottomBar = comparisonPanel.AddChild(new Widget
+            {
+                AutoLayout = AutoLayout.DockBottom,
+                MinimumSize = new Point(0, 32)
+            });
+
+            RemoveButton = bottomBar.AddChild(new Widget
+            {
+                Text = "REMOVE",
+                OnLayout = (_) => _.Rect = new Rectangle(bottomBar.Rect.X, bottomBar.Rect.Y, bottomBar.Rect.Width / 2, bottomBar.Rect.Height),
+                TextVerticalAlign = VerticalAlign.Center,
+                ChangeColorOnHover = true,
+                OnClick = (_sender, args) =>
+                {
+                    if (SelectedSlotIcon.Resource != null)
+                        Employee.AssignTask(new UnequipTask(SelectedSlotIcon.Resource));
+                },
+                Hidden = true
+            });
+
+            EquipButton = bottomBar.AddChild(new Widget
+            {
+                Text = "EQUIP",
+                OnLayout = (_) => _.Rect = new Rectangle(bottomBar.Rect.X + bottomBar.Rect.Width / 2, bottomBar.Rect.Y, bottomBar.Rect.Width / 2, bottomBar.Rect.Height),
+                TextVerticalAlign = VerticalAlign.Center,
+                ChangeColorOnHover = true,
+                OnClick = (_sender, args) =>
+                {
+                    if (SelectedEquipIcon.Resource != null)
+                        Employee.AssignTask(new FindAndEquipTask(SelectedEquipIcon.Resource.TypeName));
+                },
+                Hidden = true
             });
 
             var bgTile = Root.GetTileSheet("equipment");
@@ -42,32 +100,34 @@ namespace DwarfCorp.Play.EmployeeInfo
                     OnLayout = (_) => _.Rect = new Rectangle(background.Rect.X + slot.GuiOffset.X * scale, background.Rect.Y + slot.GuiOffset.Y * scale, 16 * scale, 16 * scale),
                     EnableDragAndDrop = false,
                     Tag = slot,
-                    OnClick = (sender, args) => SelectedSlot = sender.Tag as EquipmentSlotType,
+                    OnClick = (sender, args) =>
+                    {
+                        SelectedSlot = sender.Tag as EquipmentSlotType;
+                        SelectedEquipIcon.Resource = null;
+                        EquipButton.Hidden = true;
+                    },
                     OverrideTooltip = true
                 }) as ResourceIcon;
 
                 ResourceIcons.Add(slot.Name, slotIcon);
             }
 
-            ContentsPanel = AddChild(new ContentsPanel
+            SelectedSlotIcon = comparisonPanel.AddChild(new ResourceIcon
             {
-                AutoLayout = AutoLayout.DockRight,
-                MinimumSize = new Point(256, 0),
-                EnableDragAndDrop = false,
-                Resources = new ResourceSet(),
-                OnIconClicked = (sender, args) =>
-                {
-                    Employee.AssignTask(new FindAndEquipTask((sender as ResourceIcon).Resource.TypeName));
-                }
-                
-            }) as ContentsPanel;
+                AutoLayout = AutoLayout.FloatTopLeft
+            }) as ResourceIcon;
+
+            SelectedEquipIcon = comparisonPanel.AddChild(new ResourceIcon
+            {
+                AutoLayout = AutoLayout.FloatTopRight
+            }) as ResourceIcon;
+
 
             base.Construct();
         }
         
         protected override Gui.Mesh Redraw()
         {
-            // Todo: Generic placement of equipment icons
             if (Employee != null && !Employee.IsDead)
             {
                 Hidden = false;
@@ -78,9 +138,22 @@ namespace DwarfCorp.Play.EmployeeInfo
                    
                 if (Employee.Creature.Equipment.HasValue(out var equipment))
                 {
+                    SelectedSlotIcon.Resource = null;
+                    RemoveButton.Hidden = true;
+
                     foreach (var slot in ResourceIcons)
                         if (equipment.GetItemInSlot(slot.Key).HasValue(out var tool))
+                        {
                             slot.Value.Resource = tool;
+                            if (SelectedSlot != null && SelectedSlot.Name == slot.Key)
+                            {
+                                SelectedSlotIcon.Resource = tool;
+                                RemoveButton.Hidden = false;
+                                RemoveButton.Invalidate();
+                            }
+                        }
+
+                  
 
                     ContentsPanel.Resources.Clear();
 
