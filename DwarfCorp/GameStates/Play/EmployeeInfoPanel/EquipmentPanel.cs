@@ -32,7 +32,7 @@ namespace DwarfCorp.Play.EmployeeInfo
             ContentsPanel = AddChild(new ContentsPanel
             {
                 AutoLayout = AutoLayout.DockRight,
-                MinimumSize = new Point(256, 0),
+                MinimumSize = new Point(200, 0),
                 EnableDragAndDrop = false,
                 Resources = new ResourceSet(),
                 OnIconClicked = (sender, args) =>
@@ -134,7 +134,10 @@ namespace DwarfCorp.Play.EmployeeInfo
                 Text = "";
 
                 foreach (var icon in ResourceIcons)
+                {
+                    icon.Value.Hilite = null;
                     icon.Value.Resource = null;
+                }
                    
                 if (Employee.Creature.Equipment.HasValue(out var equipment))
                 {
@@ -147,6 +150,7 @@ namespace DwarfCorp.Play.EmployeeInfo
                             slot.Value.Resource = tool;
                             if (SelectedSlot != null && SelectedSlot.Name == slot.Key)
                             {
+                                slot.Value.Hilite = "selected-slot";
                                 SelectedSlotIcon.Resource = tool;
                                 RemoveButton.Hidden = false;
                                 RemoveButton.Invalidate();

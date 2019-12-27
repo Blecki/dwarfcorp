@@ -13,6 +13,7 @@ namespace DwarfCorp.Play
         public bool OverrideTooltip = false;
         public bool EnableDragAndDrop = false;
         public Func<Widget, DragAndDrop.DraggedItem> CreateDraggableItem = null;
+        public String Hilite = null;
 
         private Resource _Resource = null;
         public Resource Resource
@@ -58,6 +59,12 @@ namespace DwarfCorp.Play
                 Tooltip = String.Format("{0}\n{1}\nWear: {2:##.##}%", _Resource.DisplayName, _Resource.Description, (_Resource.Tool_Wear / _Resource.Tool_Durability) * 100.0f);
 
             var r = new List<Mesh>();
+            if (!String.IsNullOrEmpty(Hilite))
+                r.Add(Mesh.Quad()
+                    .Scale(32, 32)
+                    .Translate(Rect.X, Rect.Y)
+                    .Texture(Root.GetTileSheet(Hilite).TileMatrix(0)));
+
             foreach (var layer in _Resource.GuiLayers)
                 r.Add(Mesh.Quad()
                             .Scale(32, 32)

@@ -612,7 +612,7 @@ namespace DwarfCorp.Gui
         {
             if (Hidden) return Mesh.EmptyMesh();
 
-            if (CachedRenderMesh == null)
+            //if (CachedRenderMesh == null)
             {
                 var r = new Mesh[1 + Children.Count];
                 r[0] = Redraw();

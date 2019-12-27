@@ -182,6 +182,12 @@
     "TileHeight": 64
   },
   {
+    "Name": "selected-slot",
+    "Texture": "newgui/selected-slot",
+    "TileWidth": 16,
+    "TileHeight": 16
+  },
+  {
     "Name": "tool-icons",
     "Texture": "newgui/icons",
     "TileWidth": 32,
