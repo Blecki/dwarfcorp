@@ -10,7 +10,7 @@ namespace DwarfCorp.Play
 {
     public class ResourceIcon : Widget
     {
-        public bool OverrideTooltip = false;
+        public bool OverrideTooltip = true;
         public bool EnableDragAndDrop = false;
         public Func<Widget, DragAndDrop.DraggedItem> CreateDraggableItem = null;
         public String Hilite = null;

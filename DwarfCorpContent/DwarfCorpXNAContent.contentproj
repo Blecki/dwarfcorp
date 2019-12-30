@@ -2310,9 +2310,21 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Apothecary</Name>
     </None>
+    <None Include="World\ResourceItems\GreenApron.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>GreenApron</Name>
+    </None>
     <None Include="World\ResourceItems\Bookshelf.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Bookshelf</Name>
+    </None>
+    <None Include="World\ResourceItems\Shoes.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Shoes</Name>
+    </None>
+    <None Include="World\ResourceItems\GreenOveralls.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>GreenOveralls</Name>
     </None>
     <None Include="World\ResourceItems\CandyChair.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2430,6 +2442,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Coat</Name>
     </None>
+    <None Include="World\ResourceItems\BrownOveralls.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>BrownOveralls</Name>
+    </None>
+    <None Include="World\ResourceItems\PurpleShirt.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>PurpleShirt</Name>
+    </None>
     <None Include="World\ResourceItems\WizardHat.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>WizardHat</Name>
@@ -2453,6 +2473,10 @@
     <None Include="World\ResourceItems\Tabard.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Tabard</Name>
+    </None>
+    <None Include="World\ResourceItems\OrangeRobe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>OrangeRobe</Name>
     </None>
     <None Include="World\ResourceItems\WizardRobe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

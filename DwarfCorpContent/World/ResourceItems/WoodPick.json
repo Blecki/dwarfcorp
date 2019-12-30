@@ -39,8 +39,8 @@
   ],
   "AleName": "",
 
-  "Tool_Breakable": false,
-  "Tool_Durability": 4,
+  "Tool_Breakable": true,
+  "Tool_Durability": 64,
   "Tool_Wear": 0,
   "Tool_Effectiveness": 1.0,
   "Tool_AttackAnimation": "Attacking",

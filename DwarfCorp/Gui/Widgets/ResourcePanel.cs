@@ -124,7 +124,7 @@ namespace DwarfCorp.Gui.Widgets
                             Resource = resource.Sample.Sample,
                             Tooltip = label,
                             Tag = resource.Category,
-                            OverrideTooltip = true
+                            OverrideTooltip = false
                         });
                     else
                     {

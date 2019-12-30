@@ -1,22 +1,21 @@
 {
-  "TypeName": "Wood Axe",
-  "MoneyValue": 15.0,
-  "Description": "An axe made of wood. There's something sadistic about this.",
-  "Category": "Tools",
+  "TypeName": "Orange Robe",
+  "MoneyValue": 100.0,
+  "Description": "Elegant robe of a wizard with no taste.",
+  "Category": "Clothing",
   "GuiLayers": [
     {
-      "Sheet": "axe-resources",
+      "Sheet": "unknown-resource",
       "Tile": 0
     }
   ],
   "Tags": [
-    "Tool",
-    "Axe"
+    "Clothing"
   ],
   "FoodContent": 0.0,
   "CompositeLayers": [
     {
-      "Asset": "Entities/Dwarf/ToolIcons/axe",
+      "Asset": "Entities/Dwarf/ToolIcons/unknown",
       "FrameSize": "32, 32",
       "Frame": "0, 0"
     }
@@ -27,7 +26,7 @@
     "SpriteRow": 0,
     "SpriteColumn": 0
   },
-  "DisplayName": "Wood Axe",
+  "DisplayName": "Orange Robe",
   "PlantToGenerate": "",
   "CanCraft": false,
   "CraftPrerequisites": [],
@@ -39,8 +38,8 @@
   ],
   "AleName": "",
 
-  "Tool_Breakable": true,
-  "Tool_Durability": 64,
+  "Tool_Breakable": false,
+  "Tool_Durability": 4,
   "Tool_Wear": 0,
   "Tool_Effectiveness": 1.0,
   "Tool_AttackAnimation": "Attacking",
@@ -49,8 +48,8 @@
   "Tool_AttackHitEffect": "Effects\\hit",
 
   "Equipable": true,
-  "Equipment_LayerType": "Tool",
-  "Equipment_Palette": "Wood Equipment",
-  "Equipment_LayerName": "axe",
-  "Equipment_Slot": "Tool"
+  "Equipment_LayerType": "Clothing",
+  "Equipment_LayerName": "wizard-robe",
+  "Equipment_Slot": "Clothing",
+  "Equipment_Palette": "Orange Equipment"
 }

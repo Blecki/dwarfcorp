@@ -33,6 +33,7 @@ namespace DwarfCorp.Play.EmployeeInfo
             {
                 AutoLayout = AutoLayout.DockRight,
                 MinimumSize = new Point(200, 0),
+                Border = "border-thin",
                 EnableDragAndDrop = false,
                 Resources = new ResourceSet(),
                 OnIconClicked = (sender, args) =>
@@ -48,6 +49,7 @@ namespace DwarfCorp.Play.EmployeeInfo
             {
                 Background = new TileReference("equipment", 0),
                 MinimumSize = new Point(128, 128),
+                MaximumSize = new Point(128, 128),
                 AutoLayout = AutoLayout.DockTop
             });
 

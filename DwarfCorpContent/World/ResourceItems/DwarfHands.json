@@ -42,7 +42,6 @@
   "Tool_Durability": 1,
   "Tool_Wear": 0,
   "Tool_Effectiveness": 0.5,
-  "Tool_SpriteSheet": "make this the dwarf hands sheet",
   "Tool_AttackAnimation": "Attacking",
   "Tool_AttackTriggerFrame": 2,
   "Tool_AttackDamage": 1,
