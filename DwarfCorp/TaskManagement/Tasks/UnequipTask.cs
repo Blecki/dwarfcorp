@@ -29,7 +29,7 @@ namespace DwarfCorp
 
         public override MaybeNull<Act> CreateScript(Creature Agent)
         {
-            return new UnequipToolAct(Agent.AI, Resource);
+            return new UnequipAct(Agent.AI, Resource);
         }
 
         public override bool ShouldDelete(Creature agent)

@@ -114,6 +114,16 @@ namespace DwarfCorp.DwarfSprites
             foreach (var layer in layers)
                 sprite.AddLayer(layer.Layer, layer.Palette);
 
+            foreach (var item in Stats.CurrentClass.StartingEquipment)
+                if (!String.IsNullOrEmpty(item.Equipment_LayerName))
+                    if (LayerLibrary.FindLayerWithName(item.Equipment_LayerType, item.Equipment_LayerName).HasValue(out var layer))
+                    {
+                        if (LayerLibrary.FindPalette(item.Equipment_Palette).HasValue(out var palette))
+                            sprite.AddLayer(layer, palette);
+                        else
+                            sprite.AddLayer(layer, LayerLibrary.BasePalette);
+                    }
+
             return sprite;
         }
     }

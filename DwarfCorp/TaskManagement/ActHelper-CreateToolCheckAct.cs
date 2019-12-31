@@ -34,7 +34,7 @@ namespace DwarfCorp
                         }),
                         new Sequence(
                             new GetAnySingleMatchingResourceAct(Agent, ToolType.ToList()) { BlackboardEntry = "tool-stashed" },
-                            new EquipToolAct(Agent) { BlackboardEntry = "tool-stashed" }
+                            new EquipAct(Agent) { BlackboardEntry = "tool-stashed" }
                         )));
             else
             {

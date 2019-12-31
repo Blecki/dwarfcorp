@@ -139,9 +139,7 @@ namespace DwarfCorp
             var colorSettings = new ColorSettings();
             colorSettings.Colors.Clear();
             foreach(var setting in Colors)
-            {
                 colorSettings.Colors.Add(setting.Key, setting.Value);
-            }
             return colorSettings;
         }
 
@@ -149,9 +147,7 @@ namespace DwarfCorp
         {
             Microsoft.Xna.Framework.Color outColor;
             if(Colors.TryGetValue(color, out outColor))
-            {
                 return outColor;
-            }
             return def;
         }
 
@@ -258,7 +254,8 @@ namespace DwarfCorp
             [AutoResetFloat(2.0f)] public float IdleBehavior_Heal = 2.0f;
             [AutoResetFloat(32.0f)] public float IdleBehavior_Restock = 32.0f;
 
-
+            [AutoResetFloat(0.5f)] public float Wear_Attack = 0.5f;
+            [AutoResetFloat(0.5f)] public float Wear_Dig = 1.0f;
 
             public int MaxVoxelDesignations = 1024;
             public int NumPathingThreads = 2;

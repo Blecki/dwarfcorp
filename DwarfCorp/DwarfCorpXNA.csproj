@@ -209,6 +209,7 @@
     <Compile Include="GameStates\Play\GodMenu.cs" />
     <Compile Include="TaskManagement\ActHelper-ApplyWearToTool.cs" />
     <Compile Include="TaskManagement\ActHelper-GetEquippedItem.cs" />
+    <Compile Include="TaskManagement\LeafActs\UnequipAct.cs" />
     <Compile Include="TaskManagement\Tasks\UnequipTask.cs" />
     <Compile Include="TaskManagement\Tasks\FindAndEquipTask.cs" />
     <Compile Include="World\Economy\Factions\Trading\TradeState\Balance.cs" />
@@ -384,7 +385,7 @@
     <Compile Include="TaskManagement\CompoundActs\TransferResourcesAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\TransferResourcesTask.cs" />
     <Compile Include="TaskManagement\LeafActs\AttackAct.cs" />
-    <Compile Include="TaskManagement\LeafActs\EquipToolAct.cs" />
+    <Compile Include="TaskManagement\LeafActs\EquipAct.cs" />
     <Compile Include="TaskManagement\LeafActs\GreedyPathAct.cs" />
     <Compile Include="TaskManagement\SequentialTask.cs" />
     <Compile Include="TaskManagement\CompoundTask.cs" />

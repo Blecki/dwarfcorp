@@ -31,7 +31,7 @@ namespace DwarfCorp
         {
             return new Sequence(
                             new GetResourcesOfType(Agent.AI, new List<ResourceTypeAmount> { new ResourceTypeAmount(ResourceType, 1) }) { BlackboardEntry = "tool-stashed" },
-                            new EquipToolAct(Agent.AI) { BlackboardEntry = "tool-stashed" }
+                            new EquipAct(Agent.AI) { BlackboardEntry = "tool-stashed" }
                         );
         }
 
