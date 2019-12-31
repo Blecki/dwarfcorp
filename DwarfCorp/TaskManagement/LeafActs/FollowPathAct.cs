@@ -391,14 +391,30 @@ namespace DwarfCorp
                     Agent.World.ParticleManager.Trigger("green_flame", (Step.InteractObject as GameComponent).Position, Color.White, 1);
                     //Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
 
-                    foreach (var bit in Translate(GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel), actionSpeed))
                     {
-                        Agent.World.ParticleManager.Trigger("star_particle", Agent.Position, Color.White, 1);
-                        yield return Status.Running;
+                        var source = GetPathPoint(Step.SourceVoxel);
+                        var dest = GetPathPoint(Step.DestinationVoxel);
+                        var delta = dest - source;
+                        var steps = delta.Length() * 2.0f;
+                        delta.Normalize();
+                        delta *= 0.5f;
+
+                        for (var i = 0; i <= steps; ++i)
+                        {
+                            Agent.World.ParticleManager.Trigger("star_particle", source, Color.White, 1);
+                            source += delta;
+                        }
                     }
+
+                    //foreach (var bit in Translate(GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel), actionSpeed))
+                    //{
+                    //    Agent.World.ParticleManager.Trigger("star_particle", Agent.Position, Color.White, 1);
+                    //    yield return Status.Running;
+                    //}
 
                     SetAgentTranslation(GetPathPoint(Step.DestinationVoxel));
                     //Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
+                    yield return Status.Running;
                         break;
             }
         }
