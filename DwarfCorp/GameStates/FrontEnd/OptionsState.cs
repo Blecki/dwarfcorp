@@ -213,7 +213,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockTop,
                 Padding = new Margin(0,0,4,4),
                 ChangeColorOnHover = true,
-                HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4()
+                HoverTextColor = GameSettings.Current.Colors.GetColor("Highlight", Color.DarkRed).ToVector4()
             });
 
             var label = new Widget
@@ -228,7 +228,7 @@ namespace DwarfCorp.GameStates
             r.AddChild(Widget);
             Widget.OnMouseEnter += (sender, args) =>
             {
-                label.TextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4();
+                label.TextColor = GameSettings.Current.Colors.GetColor("Highlight", Color.DarkRed).ToVector4();
                 label.Invalidate();
             };
 
@@ -265,7 +265,7 @@ namespace DwarfCorp.GameStates
                         {
                             if ((confirm as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
                             {
-                                GameSettings.Default = new GameSettings.Settings();
+                                GameSettings.Current = new GameSettings.Settings();
                                 RebuildGui();
                                 ConfirmSettings();
                             }
@@ -360,7 +360,7 @@ namespace DwarfCorp.GameStates
 
             var guiScaleItems = new List<String>();
             for (int i = 1; i < 10; ++i)
-                if (i * 480 <= GameSettings.Default.ResolutionY)
+                if (i * 480 <= GameSettings.Current.ResolutionY)
                     guiScaleItems.Add(i.ToString());
 
             GuiScale = rightPanel.AddChild(LabelAndDockWidget("Gui Scale", new ComboBox
@@ -444,7 +444,7 @@ namespace DwarfCorp.GameStates
                 {
                     GuiRoot.ShowModalPopup(new ColorOptionsEditor()
                     {
-                        Settings = GameSettings.Default,
+                        Settings = GameSettings.Current,
                         Border = "border-fancy",
                         AutoLayout = AutoLayout.DockFill,
                         MinimumSize = new Point(640, 480),
@@ -526,7 +526,7 @@ namespace DwarfCorp.GameStates
                 panel.AddChild(new Widget()
                 {
                     Text = String.Format("ERROR. SOUND IS DISABLED: {0}", SoundManager.AudioError),
-                    TextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4(),
+                    TextColor = GameSettings.Current.Colors.GetColor("Highlight", Color.DarkRed).ToVector4(),
                     Font = "font16",
                     AutoLayout = AutoLayout.DockTop
                 });
@@ -777,79 +777,79 @@ namespace DwarfCorp.GameStates
                             case "Custom":
                                 break;
                             case "Lowest":
-                                GameSettings.Default.AmbientOcclusion = false;
-                                GameSettings.Default.AntiAliasing = 0;
-                                GameSettings.Default.CalculateRamps = false;
-                                GameSettings.Default.CursorLightEnabled = false;
-                                GameSettings.Default.DrawChunksReflected = false;
-                                GameSettings.Default.DrawEntityReflected = false;
-                                GameSettings.Default.DrawSkyReflected = false;
-                                GameSettings.Default.EntityLighting = false;
-                                GameSettings.Default.EnableGlow = false;
-                                GameSettings.Default.SelfIlluminationEnabled = false;
-                                GameSettings.Default.NumMotes = 100;
-                                GameSettings.Default.GrassMotes = false;
-                                GameSettings.Default.ParticlePhysics = false;
+                                GameSettings.Current.AmbientOcclusion = false;
+                                GameSettings.Current.AntiAliasing = 0;
+                                GameSettings.Current.CalculateRamps = false;
+                                GameSettings.Current.CursorLightEnabled = false;
+                                GameSettings.Current.DrawChunksReflected = false;
+                                GameSettings.Current.DrawEntityReflected = false;
+                                GameSettings.Current.DrawSkyReflected = false;
+                                GameSettings.Current.EntityLighting = false;
+                                GameSettings.Current.EnableGlow = false;
+                                GameSettings.Current.SelfIlluminationEnabled = false;
+                                GameSettings.Current.NumMotes = 100;
+                                GameSettings.Current.GrassMotes = false;
+                                GameSettings.Current.ParticlePhysics = false;
                                 break;
                             case "Low":
-                                GameSettings.Default.AmbientOcclusion = false;
-                                GameSettings.Default.AntiAliasing = 0;
-                                GameSettings.Default.CalculateRamps = true;
-                                GameSettings.Default.CursorLightEnabled = false;
-                                GameSettings.Default.DrawChunksReflected = false;
-                                GameSettings.Default.DrawEntityReflected = false;
-                                GameSettings.Default.DrawSkyReflected = true;
-                                GameSettings.Default.EntityLighting = true;
-                                GameSettings.Default.EnableGlow = false;
-                                GameSettings.Default.SelfIlluminationEnabled = false;
-                                GameSettings.Default.NumMotes = 300;
-                                GameSettings.Default.GrassMotes = false;
-                                GameSettings.Default.ParticlePhysics = false;
+                                GameSettings.Current.AmbientOcclusion = false;
+                                GameSettings.Current.AntiAliasing = 0;
+                                GameSettings.Current.CalculateRamps = true;
+                                GameSettings.Current.CursorLightEnabled = false;
+                                GameSettings.Current.DrawChunksReflected = false;
+                                GameSettings.Current.DrawEntityReflected = false;
+                                GameSettings.Current.DrawSkyReflected = true;
+                                GameSettings.Current.EntityLighting = true;
+                                GameSettings.Current.EnableGlow = false;
+                                GameSettings.Current.SelfIlluminationEnabled = false;
+                                GameSettings.Current.NumMotes = 300;
+                                GameSettings.Current.GrassMotes = false;
+                                GameSettings.Current.ParticlePhysics = false;
                                 break;
                             case "Medium":
-                                GameSettings.Default.AmbientOcclusion = true;
-                                GameSettings.Default.AntiAliasing = 4;
-                                GameSettings.Default.CalculateRamps = true;
-                                GameSettings.Default.CursorLightEnabled = true;
-                                GameSettings.Default.DrawChunksReflected = true;
-                                GameSettings.Default.DrawEntityReflected = false;
-                                GameSettings.Default.DrawSkyReflected = true;
-                                GameSettings.Default.EntityLighting = true;
-                                GameSettings.Default.EnableGlow = false;
-                                GameSettings.Default.SelfIlluminationEnabled = true;
-                                GameSettings.Default.NumMotes = 500;
-                                GameSettings.Default.GrassMotes = true;
-                                GameSettings.Default.ParticlePhysics = true;
+                                GameSettings.Current.AmbientOcclusion = true;
+                                GameSettings.Current.AntiAliasing = 4;
+                                GameSettings.Current.CalculateRamps = true;
+                                GameSettings.Current.CursorLightEnabled = true;
+                                GameSettings.Current.DrawChunksReflected = true;
+                                GameSettings.Current.DrawEntityReflected = false;
+                                GameSettings.Current.DrawSkyReflected = true;
+                                GameSettings.Current.EntityLighting = true;
+                                GameSettings.Current.EnableGlow = false;
+                                GameSettings.Current.SelfIlluminationEnabled = true;
+                                GameSettings.Current.NumMotes = 500;
+                                GameSettings.Current.GrassMotes = true;
+                                GameSettings.Current.ParticlePhysics = true;
                                 break;
                             case "High":
-                                GameSettings.Default.AmbientOcclusion = true;
-                                GameSettings.Default.AntiAliasing = 16;
-                                GameSettings.Default.CalculateRamps = true;
-                                GameSettings.Default.CursorLightEnabled = true;
-                                GameSettings.Default.DrawChunksReflected = true;
-                                GameSettings.Default.DrawEntityReflected = true;
-                                GameSettings.Default.DrawSkyReflected = true;
-                                GameSettings.Default.EntityLighting = true;
-                                GameSettings.Default.EnableGlow = true;
-                                GameSettings.Default.SelfIlluminationEnabled = true;
-                                GameSettings.Default.NumMotes = 1500;
-                                GameSettings.Default.GrassMotes = true;
-                                GameSettings.Default.ParticlePhysics = true;
+                                GameSettings.Current.AmbientOcclusion = true;
+                                GameSettings.Current.AntiAliasing = 16;
+                                GameSettings.Current.CalculateRamps = true;
+                                GameSettings.Current.CursorLightEnabled = true;
+                                GameSettings.Current.DrawChunksReflected = true;
+                                GameSettings.Current.DrawEntityReflected = true;
+                                GameSettings.Current.DrawSkyReflected = true;
+                                GameSettings.Current.EntityLighting = true;
+                                GameSettings.Current.EnableGlow = true;
+                                GameSettings.Current.SelfIlluminationEnabled = true;
+                                GameSettings.Current.NumMotes = 1500;
+                                GameSettings.Current.GrassMotes = true;
+                                GameSettings.Current.ParticlePhysics = true;
                                 break;
                             case "Highest":
-                                GameSettings.Default.AmbientOcclusion = true;
-                                GameSettings.Default.AntiAliasing = -1;
-                                GameSettings.Default.CalculateRamps = true;
-                                GameSettings.Default.CursorLightEnabled = true;
-                                GameSettings.Default.DrawChunksReflected = true;
-                                GameSettings.Default.DrawEntityReflected = false;
-                                GameSettings.Default.DrawSkyReflected = true;
-                                GameSettings.Default.EntityLighting = true;
-                                GameSettings.Default.EnableGlow = true;
-                                GameSettings.Default.SelfIlluminationEnabled = true;
-                                GameSettings.Default.NumMotes = 2048;
-                                GameSettings.Default.GrassMotes = true;
-                                GameSettings.Default.ParticlePhysics = true;
+                                GameSettings.Current.AmbientOcclusion = true;
+                                GameSettings.Current.AntiAliasing = -1;
+                                GameSettings.Current.CalculateRamps = true;
+                                GameSettings.Current.CursorLightEnabled = true;
+                                GameSettings.Current.DrawChunksReflected = true;
+                                GameSettings.Current.DrawEntityReflected = false;
+                                GameSettings.Current.DrawSkyReflected = true;
+                                GameSettings.Current.EntityLighting = true;
+                                GameSettings.Current.EnableGlow = true;
+                                GameSettings.Current.SelfIlluminationEnabled = true;
+                                GameSettings.Current.NumMotes = 2048;
+                                GameSettings.Current.GrassMotes = true;
+                                GameSettings.Current.ParticlePhysics = true;
                                 break;
                         }
 
@@ -865,7 +865,7 @@ namespace DwarfCorp.GameStates
         public void SetBestResolution()
         {
             this.Resolution.SelectedIndex = this.Resolution.Items.IndexOf(string.Format("{0} x {1}",
-                GameSettings.Default.ResolutionX, GameSettings.Default.ResolutionY));
+                GameSettings.Current.ResolutionX, GameSettings.Current.ResolutionY));
 
             if (this.Resolution.SelectedIndex != -1) return;
 
@@ -873,8 +873,8 @@ namespace DwarfCorp.GameStates
             int bestScore = int.MaxValue;
             foreach (var mode in DisplayModes)
             {
-                int score = global::System.Math.Abs(mode.Value.Width - GameSettings.Default.ResolutionX) +
-                            global::System.Math.Abs(mode.Value.Height - GameSettings.Default.ResolutionY);
+                int score = global::System.Math.Abs(mode.Value.Width - GameSettings.Current.ResolutionX) +
+                            global::System.Math.Abs(mode.Value.Height - GameSettings.Current.ResolutionY);
 
                 if (score < bestScore)
                 {
@@ -921,7 +921,7 @@ namespace DwarfCorp.GameStates
 
         public GameSettings.Settings GetNewSettings()
         {
-            GameSettings.Settings toReturn = GameSettings.Default.Clone();
+            GameSettings.Settings toReturn = GameSettings.Current.Clone();
             // Copy all the states from widgets to game settings.
             // Gameplay settings
             toReturn.CameraScrollSpeed = this.MoveSpeed.ScrollPosition;
@@ -976,7 +976,7 @@ namespace DwarfCorp.GameStates
 
         public void ConfirmSettings()
         {
-            var prevSettings = GameSettings.Default.Clone();
+            var prevSettings = GameSettings.Current.Clone();
             ApplySettings(GetNewSettings());
             OnEnter();
             var popup = new SettingsApplier()
@@ -995,63 +995,63 @@ namespace DwarfCorp.GameStates
             // Graphics settings
             var preResolutionX = GameState.Game.Graphics.PreferredBackBufferWidth;
             var preResolutionY = GameState.Game.Graphics.PreferredBackBufferHeight;
-            var preFullscreen = GameSettings.Default.Fullscreen;
-            var preGuiScale = GameSettings.Default.GuiScale;
-            var preVsync = GameSettings.Default.VSync;
-            var prevAutoScale = GameSettings.Default.AutoSave;
+            var preFullscreen = GameSettings.Current.Fullscreen;
+            var preGuiScale = GameSettings.Current.GuiScale;
+            var preVsync = GameSettings.Current.VSync;
+            var prevAutoScale = GameSettings.Current.AutoSave;
 
-            GameSettings.Default = settings.Clone();
+            GameSettings.Current = settings.Clone();
 
-            GameSettings.Default.ResolutionX = settings.ResolutionX;
-            GameSettings.Default.ResolutionY = settings.ResolutionY;
+            GameSettings.Current.ResolutionX = settings.ResolutionX;
+            GameSettings.Current.ResolutionY = settings.ResolutionY;
 
-            GameSettings.Default.Fullscreen = this.Fullscreen.CheckState;
-            GameSettings.Default.ChunkDrawDistance = this.ChunkDrawDistance.ScrollPosition;
-            GameSettings.Default.EntityUpdateDistance = this.EntityUpdateDistance.ScrollPosition;
+            GameSettings.Current.Fullscreen = this.Fullscreen.CheckState;
+            GameSettings.Current.ChunkDrawDistance = this.ChunkDrawDistance.ScrollPosition;
+            GameSettings.Current.EntityUpdateDistance = this.EntityUpdateDistance.ScrollPosition;
             //GameSettings.Default.VertexCullDistance = this.VertexCullDistance.ScrollPosition + 0.1f;
             //GameSettings.Default.ChunkGenerateDistance = this.GenerateDistance.ScrollPosition + 1.0f;
-            GameSettings.Default.EnableGlow = this.Glow.CheckState;
-            GameSettings.Default.AntiAliasing = AntialiasingOptions[this.Antialiasing.SelectedItem];
-            GameSettings.Default.DrawChunksReflected = this.ReflectTerrain.CheckState;
-            GameSettings.Default.DrawEntityReflected = this.ReflectEntities.CheckState;
+            GameSettings.Current.EnableGlow = this.Glow.CheckState;
+            GameSettings.Current.AntiAliasing = AntialiasingOptions[this.Antialiasing.SelectedItem];
+            GameSettings.Current.DrawChunksReflected = this.ReflectTerrain.CheckState;
+            GameSettings.Current.DrawEntityReflected = this.ReflectEntities.CheckState;
             //GameSettings.Default.CalculateSunlight = this.Sunlight.CheckState;
-            GameSettings.Default.AmbientOcclusion = this.AmbientOcclusion.CheckState;
+            GameSettings.Current.AmbientOcclusion = this.AmbientOcclusion.CheckState;
             //GameSettings.Default.CalculateRamps = this.Ramps.CheckState;
-            GameSettings.Default.CursorLightEnabled = this.CursorLight.CheckState;
-            GameSettings.Default.EntityLighting = this.EntityLight.CheckState;
-            GameSettings.Default.SelfIlluminationEnabled = this.SelfIllumination.CheckState;
-            GameSettings.Default.ParticlePhysics = this.ParticlePhysics.CheckState;
-            GameSettings.Default.GrassMotes = this.Motes.CheckState;
-            GameSettings.Default.VSync = this.VSync.CheckState;
+            GameSettings.Current.CursorLightEnabled = this.CursorLight.CheckState;
+            GameSettings.Current.EntityLighting = this.EntityLight.CheckState;
+            GameSettings.Current.SelfIlluminationEnabled = this.SelfIllumination.CheckState;
+            GameSettings.Current.ParticlePhysics = this.ParticlePhysics.CheckState;
+            GameSettings.Current.GrassMotes = this.Motes.CheckState;
+            GameSettings.Current.VSync = this.VSync.CheckState;
             //GameSettings.Default.NumMotes = (int)this.NumMotes.ScrollPosition + 100;
             //GameSettings.Default.UseLightmaps = this.LightMap.CheckState;
             //GameSettings.Default.UseDynamicShadows = this.DynamicShadows.CheckState;
-            GameSettings.Default.TutorialDisabledGlobally = this.DisableTutorialForAllGames.CheckState;
-            GameSettings.Default.SaveLocation = settings.SaveLocation;
+            GameSettings.Current.TutorialDisabledGlobally = this.DisableTutorialForAllGames.CheckState;
+            GameSettings.Current.SaveLocation = settings.SaveLocation;
 
-            GameSettings.Default.GuiScale = GuiScale.SelectedIndex + 1;
-            GameSettings.Default.SpeciesLimitAdjust = (float)SpeciesLimitAdjust.ScrollPosition / 100.0f;
+            GameSettings.Current.GuiScale = GuiScale.SelectedIndex + 1;
+            GameSettings.Current.SpeciesLimitAdjust = (float)SpeciesLimitAdjust.ScrollPosition / 100.0f;
             
-            if (preResolutionX != GameSettings.Default.ResolutionX || 
-                preResolutionY != GameSettings.Default.ResolutionY ||
-                preFullscreen != GameSettings.Default.Fullscreen ||
-                preVsync != GameSettings.Default.VSync)
+            if (preResolutionX != GameSettings.Current.ResolutionX || 
+                preResolutionY != GameSettings.Current.ResolutionY ||
+                preFullscreen != GameSettings.Current.Fullscreen ||
+                preVsync != GameSettings.Current.VSync)
             {
-                Game.Graphics.PreferredBackBufferWidth = GameSettings.Default.ResolutionX;
-                Game.Graphics.PreferredBackBufferHeight = GameSettings.Default.ResolutionY;
-                Game.Graphics.IsFullScreen = GameSettings.Default.Fullscreen;
-                Game.Graphics.SynchronizeWithVerticalRetrace = GameSettings.Default.VSync;
+                Game.Graphics.PreferredBackBufferWidth = GameSettings.Current.ResolutionX;
+                Game.Graphics.PreferredBackBufferHeight = GameSettings.Current.ResolutionY;
+                Game.Graphics.IsFullScreen = GameSettings.Current.Fullscreen;
+                Game.Graphics.SynchronizeWithVerticalRetrace = GameSettings.Current.VSync;
                 try
                 {
                     Game.Graphics.ApplyChanges();
                 }
                 catch (NoSuitableGraphicsDeviceException)
                 {
-                    GameSettings.Default.ResolutionX = preResolutionX;
-                    GameSettings.Default.ResolutionY = preResolutionY;
-                    GameSettings.Default.Fullscreen = preFullscreen;
+                    GameSettings.Current.ResolutionX = preResolutionX;
+                    GameSettings.Current.ResolutionY = preResolutionY;
+                    GameSettings.Current.Fullscreen = preFullscreen;
                     SetBestResolution();
-                    this.Fullscreen.CheckState = GameSettings.Default.Fullscreen;
+                    this.Fullscreen.CheckState = GameSettings.Current.Fullscreen;
                     GuiRoot.ShowModalPopup(new Gui.Widgets.Popup
                         {
                             Text = "Could not change display mode. Previous settings restored.",
@@ -1061,10 +1061,10 @@ namespace DwarfCorp.GameStates
                 }               
             }
 
-            if (preResolutionX != GameSettings.Default.ResolutionX ||
-                preResolutionY != GameSettings.Default.ResolutionY ||
-                preGuiScale != GameSettings.Default.GuiScale ||
-                prevAutoScale != GameSettings.Default.GuiAutoScale)
+            if (preResolutionX != GameSettings.Current.ResolutionX ||
+                preResolutionY != GameSettings.Current.ResolutionY ||
+                preGuiScale != GameSettings.Current.GuiScale ||
+                prevAutoScale != GameSettings.Current.GuiAutoScale)
             {
                 GuiRoot.RenderData.CalculateScreenSize();
                 RebuildGui();
@@ -1086,64 +1086,64 @@ namespace DwarfCorp.GameStates
             // Set all the widget states based on game settings.
 
             // Gameplay settings
-            this.MoveSpeed.ScrollPosition = GameSettings.Default.CameraScrollSpeed;
-            this.ZoomSpeed.ScrollPosition = GameSettings.Default.CameraZoomSpeed;
-            this.EdgeScrolling.CheckState = GameSettings.Default.EnableEdgeScroll;
-            this.FollowSurface.CheckState = GameSettings.Default.CameraFollowSurface;
+            this.MoveSpeed.ScrollPosition = GameSettings.Current.CameraScrollSpeed;
+            this.ZoomSpeed.ScrollPosition = GameSettings.Current.CameraZoomSpeed;
+            this.EdgeScrolling.CheckState = GameSettings.Current.EnableEdgeScroll;
+            this.FollowSurface.CheckState = GameSettings.Current.CameraFollowSurface;
             //this.FogOfWar.CheckState = GameSettings.Default.FogofWar;
-            this.AutoFarming.CheckState = GameSettings.Default.AllowAutoFarming;
-            this.AutoDigging.CheckState = GameSettings.Default.AllowAutoDigging;
-            this.IdleCrafting.CheckState = GameSettings.Default.AllowIdleCrafting;
-            this.InvertZoom.CheckState = GameSettings.Default.InvertZoom;
-            this.ZoomTowardMouse.CheckState = GameSettings.Default.ZoomCameraTowardMouse;
-            this.PlayIntro.CheckState = GameSettings.Default.DisplayIntro;
-            this.AllowReporting.CheckState = GameSettings.Default.AllowReporting;
-            this.Autosave.CheckState = GameSettings.Default.AutoSave;
-            (this.AutoSaveFrequency.GetChild(1) as SliderCombo).ScrollPosition = GameSettings.Default.AutoSaveTimeMinutes;
-            this.MaxSaves.SelectedIndex = this.MaxSaves.Items.IndexOf(GameSettings.Default.MaxSaves.ToString());
-            this.DisableTutorialForAllGames.CheckState = GameSettings.Default.TutorialDisabledGlobally;
-            this.SaveLocation.Text = String.IsNullOrEmpty(GameSettings.Default.SaveLocation) ? "" : GameSettings.Default.SaveLocation;
+            this.AutoFarming.CheckState = GameSettings.Current.AllowAutoFarming;
+            this.AutoDigging.CheckState = GameSettings.Current.AllowAutoDigging;
+            this.IdleCrafting.CheckState = GameSettings.Current.AllowIdleCrafting;
+            this.InvertZoom.CheckState = GameSettings.Current.InvertZoom;
+            this.ZoomTowardMouse.CheckState = GameSettings.Current.ZoomCameraTowardMouse;
+            this.PlayIntro.CheckState = GameSettings.Current.DisplayIntro;
+            this.AllowReporting.CheckState = GameSettings.Current.AllowReporting;
+            this.Autosave.CheckState = GameSettings.Current.AutoSave;
+            (this.AutoSaveFrequency.GetChild(1) as SliderCombo).ScrollPosition = GameSettings.Current.AutoSaveTimeMinutes;
+            this.MaxSaves.SelectedIndex = this.MaxSaves.Items.IndexOf(GameSettings.Current.MaxSaves.ToString());
+            this.DisableTutorialForAllGames.CheckState = GameSettings.Current.TutorialDisabledGlobally;
+            this.SaveLocation.Text = String.IsNullOrEmpty(GameSettings.Current.SaveLocation) ? "" : GameSettings.Current.SaveLocation;
 
             // Audio settings
-            this.MasterVolume.ScrollPosition = GameSettings.Default.MasterVolume;
-            this.SFXVolume.ScrollPosition = GameSettings.Default.SoundEffectVolume;
-            this.MusicVolume.ScrollPosition = GameSettings.Default.MusicVolume;
+            this.MasterVolume.ScrollPosition = GameSettings.Current.MasterVolume;
+            this.SFXVolume.ScrollPosition = GameSettings.Current.SoundEffectVolume;
+            this.MusicVolume.ScrollPosition = GameSettings.Current.MusicVolume;
 
             // Graphics settings
             this.EasyGraphicsSetting.SelectedIndex = 5;
             SetBestResolution();
-            this.Fullscreen.CheckState = GameSettings.Default.Fullscreen;
-            this.ChunkDrawDistance.ScrollPosition = GameSettings.Default.ChunkDrawDistance;
-            this.EntityUpdateDistance.ScrollPosition = GameSettings.Default.EntityUpdateDistance;
+            this.Fullscreen.CheckState = GameSettings.Current.Fullscreen;
+            this.ChunkDrawDistance.ScrollPosition = GameSettings.Current.ChunkDrawDistance;
+            this.EntityUpdateDistance.ScrollPosition = GameSettings.Current.EntityUpdateDistance;
             //this.VertexCullDistance.ScrollPosition = GameSettings.Default.VertexCullDistance - 0.1f;
             //this.GenerateDistance.ScrollPosition = GameSettings.Default.ChunkGenerateDistance - 1.0f;
-            this.Glow.CheckState = GameSettings.Default.EnableGlow;
+            this.Glow.CheckState = GameSettings.Current.EnableGlow;
             
             var antialiasingIndex = 0;
             foreach (var option in AntialiasingOptions)
             {
-                if (option.Value == GameSettings.Default.AntiAliasing)
+                if (option.Value == GameSettings.Current.AntiAliasing)
                     this.Antialiasing.SelectedIndex = antialiasingIndex;
                 antialiasingIndex += 1;
             }
 
-            this.ReflectTerrain.CheckState = GameSettings.Default.DrawChunksReflected;
-            this.ReflectEntities.CheckState = GameSettings.Default.DrawEntityReflected;
-            this.AmbientOcclusion.CheckState = GameSettings.Default.AmbientOcclusion;
-            this.CursorLight.CheckState = GameSettings.Default.CursorLightEnabled;
-            this.EntityLight.CheckState = GameSettings.Default.EntityLighting;
-            this.SelfIllumination.CheckState = GameSettings.Default.SelfIlluminationEnabled;
-            this.ParticlePhysics.CheckState = GameSettings.Default.ParticlePhysics;
-            this.Motes.CheckState = GameSettings.Default.GrassMotes;
+            this.ReflectTerrain.CheckState = GameSettings.Current.DrawChunksReflected;
+            this.ReflectEntities.CheckState = GameSettings.Current.DrawEntityReflected;
+            this.AmbientOcclusion.CheckState = GameSettings.Current.AmbientOcclusion;
+            this.CursorLight.CheckState = GameSettings.Current.CursorLightEnabled;
+            this.EntityLight.CheckState = GameSettings.Current.EntityLighting;
+            this.SelfIllumination.CheckState = GameSettings.Current.SelfIlluminationEnabled;
+            this.ParticlePhysics.CheckState = GameSettings.Current.ParticlePhysics;
+            this.Motes.CheckState = GameSettings.Current.GrassMotes;
             //this.NumMotes.ScrollPosition = GameSettings.Default.NumMotes - 100;
             //this.LightMap.CheckState = GameSettings.Default.UseLightmaps;
             //this.DynamicShadows.CheckState = GameSettings.Default.UseDynamicShadows;
 
-            GuiScale.SelectedIndex = GameSettings.Default.GuiScale - 1;
-            GuiAutoScale.CheckState = GameSettings.Default.GuiAutoScale;
-            VSync.CheckState = GameSettings.Default.VSync;
+            GuiScale.SelectedIndex = GameSettings.Current.GuiScale - 1;
+            GuiAutoScale.CheckState = GameSettings.Current.GuiAutoScale;
+            VSync.CheckState = GameSettings.Current.VSync;
 
-            SpeciesLimitAdjust.ScrollPosition = (int)(GameSettings.Default.SpeciesLimitAdjust * 100.0f);
+            SpeciesLimitAdjust.ScrollPosition = (int)(GameSettings.Current.SpeciesLimitAdjust * 100.0f);
 
             if (World != null && EnableTutorial != null)
                 EnableTutorial.CheckState = World.TutorialManager.TutorialEnabled;

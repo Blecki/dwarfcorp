@@ -18,8 +18,8 @@ namespace DwarfCorp
         public WrangleAnimalTask()
         {
             Category = TaskCategory.Wrangle;
-            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
-            EnergyDecrease = GameSettings.Default.Energy_Arduous;
+            BoredomIncrease = GameSettings.Current.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Current.Energy_Arduous;
             Priority = TaskPriority.Medium;
         }
 
@@ -29,8 +29,8 @@ namespace DwarfCorp
             Animal = animal;
             Name = "Wrangle animal" + animal.GlobalID;
             AutoRetry = true;
-            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
-            EnergyDecrease = GameSettings.Default.Energy_Arduous;
+            BoredomIncrease = GameSettings.Current.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Current.Energy_Arduous;
             Priority = TaskPriority.Medium;
         }
 

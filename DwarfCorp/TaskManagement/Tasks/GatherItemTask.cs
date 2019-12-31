@@ -18,8 +18,8 @@ namespace DwarfCorp
         {
             Priority = TaskPriority.Medium;
             Category = TaskCategory.Gather;
-            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
-            EnergyDecrease = GameSettings.Default.Energy_Tiring;
+            BoredomIncrease = GameSettings.Current.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Current.Energy_Tiring;
         }
 
         public GatherItemTask(GameComponent entity)
@@ -28,8 +28,8 @@ namespace DwarfCorp
             Name = "Gather Entity: " + entity.Name + " " + entity.GlobalID;
             Priority = TaskPriority.Medium;
             Category = TaskCategory.Gather;
-            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
-            EnergyDecrease = GameSettings.Default.Energy_Tiring;
+            BoredomIncrease = GameSettings.Current.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Current.Energy_Tiring;
         }
 
         public override MaybeNull<Act> CreateScript(Creature creature)

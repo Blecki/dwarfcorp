@@ -189,7 +189,7 @@ namespace DwarfCorp.Gui.Input
                 }
                 else
                 {
-                    if (PressedTime.ContainsKey(key) && (now - PressedTime[key]).TotalSeconds > GameSettings.Default.FNAONLY_KeyRepeatRate)
+                    if (PressedTime.ContainsKey(key) && (now - PressedTime[key]).TotalSeconds > GameSettings.Current.FNAONLY_KeyRepeatRate)
                     {
                         PressedTime[key] = now;
 

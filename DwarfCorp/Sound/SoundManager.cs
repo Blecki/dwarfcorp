@@ -414,7 +414,7 @@ namespace DwarfCorp
         public static void PlayMusic(string name)
         {
             if (!HasAudioDevice) return;
-            AudioEngine.GetCategory("Music").SetVolume(GameSettings.Default.MusicVolume * GameSettings.Default.MasterVolume);
+            AudioEngine.GetCategory("Music").SetVolume(GameSettings.Current.MusicVolume * GameSettings.Current.MasterVolume);
             CurrentMusic.PlayTrack(name);
             /*
             if(GameSettings.Default.MasterVolume < 0.001f || GameSettings.Default.MusicVolume < 0.001f)
@@ -515,11 +515,11 @@ namespace DwarfCorp
             }
             SFXMixer.Levels levels = Mixer.GetOrCreateLevels(name);
             SoundEffectInstance instance = effect.CreateInstance();
-            instance.Volume = GameSettings.Default.MasterVolume*GameSettings.Default.SoundEffectVolume*volume*levels.Volume;
+            instance.Volume = GameSettings.Current.MasterVolume*GameSettings.Current.SoundEffectVolume*volume*levels.Volume;
             instance.Pitch = MathFunctions.Clamp(pitch, -1.0f, 1.0f);
             instance.Play();
             instance.Pan = MathFunctions.Rand(-0.25f, 0.25f);
-            instance.Volume = GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume * volume * levels.Volume;
+            instance.Volume = GameSettings.Current.MasterVolume * GameSettings.Current.SoundEffectVolume * volume * levels.Volume;
             instance.Pitch = MathFunctions.Clamp(pitch, -1.0f, 1.0f);
             
             ActiveSounds2D.Add(instance);
@@ -541,8 +541,8 @@ namespace DwarfCorp
             {
                 AudioEngine.SetGlobalVariable("TimeofDay", worldTime.GetTimeOfDay());
             }
-            AudioEngine.GetCategory("Ambience").SetVolume(GameSettings.Default.SoundEffectVolume * 0.1f * GameSettings.Default.MasterVolume);
-            AudioEngine.GetCategory("Music").SetVolume(GameSettings.Default.MusicVolume * GameSettings.Default.MasterVolume);
+            AudioEngine.GetCategory("Ambience").SetVolume(GameSettings.Current.SoundEffectVolume * 0.1f * GameSettings.Current.MasterVolume);
+            AudioEngine.GetCategory("Music").SetVolume(GameSettings.Current.MusicVolume * GameSettings.Current.MasterVolume);
             CurrentMusic.Update();
             List<Sound3D> toRemove = new List<Sound3D>();
 
@@ -572,7 +572,7 @@ namespace DwarfCorp
                     {
                         instance.Position = Vector3.Zero;
                     }
-                    instance.EffectInstance.Volume *= (GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume * instance.VolumeMultiplier);
+                    instance.EffectInstance.Volume *= (GameSettings.Current.MasterVolume * GameSettings.Current.SoundEffectVolume * instance.VolumeMultiplier);
                     Emitter.Position = instance.Position;
                     instance.EffectInstance.Apply3D(Listener, Emitter);
                     instance.EffectInstance.Play();

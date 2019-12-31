@@ -258,7 +258,7 @@ namespace DwarfCorp
                         continue;
 
                     if (minion.Stats.IsTaskAllowed(TaskCategory.Dig))
-                        minion.Movement.SetCan(MoveType.Dig, GameSettings.Default.AllowAutoDigging);
+                        minion.Movement.SetCan(MoveType.Dig, GameSettings.Current.AllowAutoDigging);
 
                     minion.ResetPositionConstraint();
                 }

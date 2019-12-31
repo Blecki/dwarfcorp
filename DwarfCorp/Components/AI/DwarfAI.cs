@@ -70,7 +70,7 @@ namespace DwarfCorp
                 {
                     Name = "Go on a walk",
                     PreferWhenBored = true,
-                    Chance = () => GameSettings.Default.IdleBehavior_Walk,
+                    Chance = () => GameSettings.Current.IdleBehavior_Walk,
                     Create = (AI) =>
                     {
                         return new ActWrapperTask(new LongWanderAct(AI)
@@ -85,8 +85,8 @@ namespace DwarfCorp
                             AutoRetry = false,
                             Name = "Go on a walk.",
                             Priority = TaskPriority.High,
-                            BoredomIncrease = GameSettings.Default.Boredom_Walk,
-                            EnergyDecrease = GameSettings.Default.Energy_Refreshing,
+                            BoredomIncrease = GameSettings.Current.Boredom_Walk,
+                            EnergyDecrease = GameSettings.Current.Energy_Refreshing,
                         };
                     }
                 });
@@ -95,7 +95,7 @@ namespace DwarfCorp
                 {
                     Name = "Binge drink",
                     PreferWhenBored = true,
-                    Chance = () => GameSettings.Default.IdleBehavior_Binge,
+                    Chance = () => GameSettings.Current.IdleBehavior_Binge,
                     Create = (AI) =>
                     {
                         return new ActWrapperTask(
@@ -112,8 +112,8 @@ namespace DwarfCorp
                         {
                             Name = "Binge drink.",
                             Priority = TaskPriority.High,
-                            BoredomIncrease = GameSettings.Default.Boredom_Eat,
-                            EnergyDecrease = GameSettings.Default.Energy_Restful,
+                            BoredomIncrease = GameSettings.Current.Boredom_Eat,
+                            EnergyDecrease = GameSettings.Current.Energy_Restful,
                         };
                     },
                     Available = (AI, World) => World.GetResourcesWithTag("Alcohol").Count > 0
@@ -123,7 +123,7 @@ namespace DwarfCorp
                 {
                     Name = "Binge eat",
                     PreferWhenBored = true,
-                    Chance = () => GameSettings.Default.IdleBehavior_Binge,
+                    Chance = () => GameSettings.Current.IdleBehavior_Binge,
                     Create = (AI) =>
                     {
                         return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(AI, true), 3, false)
@@ -133,8 +133,8 @@ namespace DwarfCorp
                         {
                             Name = "Binge eat.",
                             Priority = TaskPriority.High,
-                            BoredomIncrease = GameSettings.Default.Boredom_Eat,
-                            EnergyDecrease = GameSettings.Default.Energy_Restful,
+                            BoredomIncrease = GameSettings.Current.Boredom_Eat,
+                            EnergyDecrease = GameSettings.Current.Energy_Restful,
                         };
                     },
                     Available = (AI, World) => !AI.Stats.Hunger.IsSatisfied()
@@ -144,7 +144,7 @@ namespace DwarfCorp
                 {
                     Name = "Relax",
                     PreferWhenBored = true,
-                    Chance = () => GameSettings.Default.IdleBehavior_Relax,
+                    Chance = () => GameSettings.Current.IdleBehavior_Relax,
                     Create = (AI) =>
                     {
                         return new ActWrapperTask(new GoToChairAndSitAct(AI)
@@ -155,8 +155,8 @@ namespace DwarfCorp
                         {
                             Name = "Relax.",
                             Priority = TaskPriority.High,
-                            BoredomIncrease = GameSettings.Default.Boredom_Sleep,
-                            EnergyDecrease = GameSettings.Default.Energy_Restful
+                            BoredomIncrease = GameSettings.Current.Boredom_Sleep,
+                            EnergyDecrease = GameSettings.Current.Energy_Restful
                         };
                     }
                 });
@@ -165,7 +165,7 @@ namespace DwarfCorp
                 {
                     Name = "Start Dice Game",
                     PreferWhenBored = true,
-                    Chance = () => GameSettings.Default.IdleBehavior_Gamble,
+                    Chance = () => GameSettings.Current.IdleBehavior_Gamble,
                     Create = (AI) =>
                     {
                         var task = new Scripting.GambleTask() { Priority = TaskPriority.High };
@@ -180,7 +180,7 @@ namespace DwarfCorp
                 {
                     Name = "Heal Allies",
                     PreferWhenBored = true,
-                    Chance = () => GameSettings.Default.IdleBehavior_Heal,
+                    Chance = () => GameSettings.Current.IdleBehavior_Heal,
                     Create = (AI) =>
                     {
                         var minion = AI.Faction.Minions.FirstOrDefault(m => m != AI && !m.Stats.Health.IsSatisfied());
@@ -195,7 +195,7 @@ namespace DwarfCorp
                 {
                     Name = "Craft",
                     PreferWhenBored = true,
-                    Chance = () => GameSettings.Default.IdleBehavior_Craft,
+                    Chance = () => GameSettings.Current.IdleBehavior_Craft,
                     Create = (AI) =>
                     {
                         if (Library.GetRandomApplicableCraftable(AI.Faction, AI.World).HasValue(out var item))
@@ -217,14 +217,14 @@ namespace DwarfCorp
 
                         return null;
                     },
-                    Available = (AI, World) => GameSettings.Default.AllowIdleCrafting && AI.Stats.IsTaskAllowed(TaskCategory.CraftItem)
+                    Available = (AI, World) => GameSettings.Current.AllowIdleCrafting && AI.Stats.IsTaskAllowed(TaskCategory.CraftItem)
                 });
 
                 IdleTasks.Add(new IdleTask
                 {
                     Name = "Train",
                     PreferWhenBored = true,
-                    Chance = () => GameSettings.Default.IdleBehavior_Train,
+                    Chance = () => GameSettings.Current.IdleBehavior_Train,
                     Create = (AI) =>
                     {
                         var closestTraining = AI.Faction.FindNearestItemWithTags("Train", AI.Position, true, AI);
@@ -239,7 +239,7 @@ namespace DwarfCorp
                 {
                     Name = "Research",
                     PreferWhenBored = true,
-                    Chance = () => GameSettings.Default.IdleBehavior_Research,
+                    Chance = () => GameSettings.Current.IdleBehavior_Research,
                     Create = (AI) =>
                     {
                         var closestTraining = AI.Faction.FindNearestItemWithTags("Research", AI.Position, true, AI);
@@ -254,7 +254,7 @@ namespace DwarfCorp
                 {
                     Name = "Mourn",
                     PreferWhenBored = false,
-                    Chance = () => GameSettings.Default.IdleBehavior_Mourn,
+                    Chance = () => GameSettings.Current.IdleBehavior_Mourn,
                     Create = (AI) =>
                     {
                         return new ActWrapperTask(new MournGraves(AI))
@@ -269,7 +269,7 @@ namespace DwarfCorp
                 {
                     Name = "Gather Potions",
                     PreferWhenBored = true,
-                    Chance = () => GameSettings.Default.IdleBehavior_Potions,
+                    Chance = () => GameSettings.Current.IdleBehavior_Potions,
                     Create = (AI) =>
                     {
                         return new GatherPotionsTask();
@@ -281,7 +281,7 @@ namespace DwarfCorp
                 {
                     Name = "Restock",
                     PreferWhenBored = true,
-                    Chance = () => GameSettings.Default.IdleBehavior_Restock,
+                    Chance = () => GameSettings.Current.IdleBehavior_Restock,
                     Create = (AI) =>
                     {
                         AI.Creature.AssignRestockAllTasks(TaskPriority.Medium, true);
@@ -296,7 +296,7 @@ namespace DwarfCorp
                 {
                     Name = "Default",
                     PreferWhenBored = false,
-                    Chance = () => GameSettings.Default.IdleBehavior_Loiter,
+                    Chance = () => GameSettings.Current.IdleBehavior_Loiter,
                     Create = (AI) => new LookInterestingTask()
                 });
             }
@@ -454,7 +454,7 @@ namespace DwarfCorp
                 if (Stats.IsOnStrike) // We're on strike, so track how long this job has sucked.
                 {
                     UnhappinessTime += gameTime.ElapsedGameTime.TotalMinutes;
-                    if (UnhappinessTime > GameSettings.Default.HoursUnhappyBeforeQuitting) // If we've been unhappy long enough, quit.
+                    if (UnhappinessTime > GameSettings.Current.HoursUnhappyBeforeQuitting) // If we've been unhappy long enough, quit.
                     {
                         if (GetRoot().GetComponent<DwarfThoughts>().HasValue(out var thoughts))
                         {
@@ -545,7 +545,7 @@ namespace DwarfCorp
             string sign = XP > 0 ? "+" : "";
 
             IndicatorManager.DrawIndicator(sign + XP + " XP",
-                Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, XP > 0 ? GameSettings.Default.Colors.GetColor("Positive", Color.Green) : GameSettings.Default.Colors.GetColor("Negative", Color.Red));
+                Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, XP > 0 ? GameSettings.Current.Colors.GetColor("Positive", Color.Green) : GameSettings.Current.Colors.GetColor("Negative", Color.Red));
 
             if (Stats.IsOverQualified && lastXPAnnouncement != Stats.LevelIndex && Faction == Manager.World.PlayerFaction)
             {

@@ -92,7 +92,7 @@ namespace DwarfCorp
             {
                 var room = World.GetZoneThatContainsVoxel(v);
                 if (room != null)
-                    Drawer3D.DrawBox(room.GetBoundingBox(), GameSettings.Default.Colors.GetColor("Positive", Color.Green), 0.2f, true);
+                    Drawer3D.DrawBox(room.GetBoundingBox(), GameSettings.Current.Colors.GetColor("Positive", Color.Green), 0.2f, true);
             }
         }
 
@@ -116,15 +116,15 @@ namespace DwarfCorp
                     return;
 
                 if (!order.Order.IsBuilt)
-                    order.Order.SetTint(GameSettings.Default.Colors.GetColor("Negative", Color.Red));
+                    order.Order.SetTint(GameSettings.Current.Colors.GetColor("Negative", Color.Red));
                 else
-                    order.ToBuild.SetTint(GameSettings.Default.Colors.GetColor("Negative", Color.Red));
+                    order.ToBuild.SetTint(GameSettings.Current.Colors.GetColor("Negative", Color.Red));
             }
             else if (World.IsInZone(v))
             {
                 var existingRoom = World.GetMostLikelyZone(v);
                 if (existingRoom != null)
-                    existingRoom.SetTint(GameSettings.Default.Colors.GetColor("Negative", Color.Red));
+                    existingRoom.SetTint(GameSettings.Current.Colors.GetColor("Negative", Color.Red));
             }
         }        
     }

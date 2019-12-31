@@ -54,7 +54,7 @@ namespace DwarfCorp
                     if (entities.OfType<IVoxelListener>().Any())
                         continue;
 
-                    if (count >= GameSettings.Default.MaxVoxelDesignations)
+                    if (count >= GameSettings.Current.MaxVoxelDesignations)
                     {
                         World.UserInterface.ShowToolPopup("Too many dig designations!");
                         break;

@@ -16,8 +16,8 @@ namespace DwarfCorp
             MaxAssignable = 1;
             Priority = TaskPriority.Medium;
             AutoRetry = true;
-            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
-            EnergyDecrease = GameSettings.Default.Energy_Tiring;
+            BoredomIncrease = GameSettings.Current.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Current.Energy_Tiring;
         }
 
         public PlaceObjectTask(PlacementDesignation PlacementDesignation)
@@ -33,8 +33,8 @@ namespace DwarfCorp
             foreach (var tinter in PlacementDesignation.Entity.EnumerateAll().OfType<Tinter>())
                 tinter.Stipple = true;
 
-            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
-            EnergyDecrease = GameSettings.Default.Energy_Tiring;
+            BoredomIncrease = GameSettings.Current.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Current.Energy_Tiring;
         }
 
         public override void OnEnqueued(WorldManager World)

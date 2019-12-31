@@ -154,7 +154,7 @@ namespace DwarfCorp
                 {
                     var room = World.GetZoneThatContainsVoxel(v);
                     if (room != null)
-                        Drawer3D.DrawBox(room.GetBoundingBox(), GameSettings.Default.Colors.GetColor("Positive", Color.Green), 0.2f, true);
+                        Drawer3D.DrawBox(room.GetBoundingBox(), GameSettings.Current.Colors.GetColor("Positive", Color.Green), 0.2f, true);
                 }
             }
         }

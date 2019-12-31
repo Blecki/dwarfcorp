@@ -404,9 +404,9 @@ namespace DwarfCorp.Play.Trading
                 TotalDisplay.Tooltip = String.Format("They are {1} with this trade.\nTheir {0} is " + net + ".\nThey need at least " + tradeTarget + " to be happy.", net >= 0 ? "profit" : "loss",
                     net >= 0 ? "happy" : "unhappy");
                 if (net >= tradeTarget)
-                    TotalDisplay.TextColor = GameSettings.Default.Colors.GetColor("Positive", GameSettings.Default.Colors.GetColor("Positive", Color.Green)).ToVector4();
+                    TotalDisplay.TextColor = GameSettings.Current.Colors.GetColor("Positive", GameSettings.Current.Colors.GetColor("Positive", Color.Green)).ToVector4();
                 else
-                    TotalDisplay.TextColor = GameSettings.Default.Colors.GetColor("Negative", GameSettings.Default.Colors.GetColor("Negative", Color.Red)).ToVector4();
+                    TotalDisplay.TextColor = GameSettings.Current.Colors.GetColor("Negative", GameSettings.Current.Colors.GetColor("Negative", Color.Red)).ToVector4();
 
                 TotalDisplay.Invalidate();
             }
@@ -417,7 +417,7 @@ namespace DwarfCorp.Play.Trading
 
             if (EnvoyColumns.TotalSelectedItems - PlayerColumns.TotalSelectedItems > Player.AvailableSpace)
             {
-                SpaceDisplay.TextColor = GameSettings.Default.Colors.GetColor("Negative", Color.Red).ToVector4();
+                SpaceDisplay.TextColor = GameSettings.Current.Colors.GetColor("Negative", Color.Red).ToVector4();
             }
             else
             {

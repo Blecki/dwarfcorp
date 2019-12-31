@@ -48,8 +48,8 @@ namespace DwarfCorp
         public RechargeObjectTask()
         {
             MaxAssignable = 3;
-            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
-            EnergyDecrease = GameSettings.Default.Energy_Tiring;
+            BoredomIncrease = GameSettings.Current.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Current.Energy_Tiring;
         }
 
         public RechargeObjectTask(MagicalObject entity)
@@ -60,8 +60,8 @@ namespace DwarfCorp
             Priority = TaskPriority.Medium;
             AutoRetry = true;
             Category = TaskCategory.Research;
-            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
-            EnergyDecrease = GameSettings.Default.Energy_Tiring;
+            BoredomIncrease = GameSettings.Current.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Current.Energy_Tiring;
         }
 
 

@@ -14,8 +14,8 @@ namespace DwarfCorp
             ReassignOnDeath = false;
             Name = "Satisfy Hunger";
             Priority = TaskPriority.Medium;
-            BoredomIncrease = GameSettings.Default.Boredom_Eat;
-            EnergyDecrease = GameSettings.Default.Energy_Restful;
+            BoredomIncrease = GameSettings.Current.Boredom_Eat;
+            EnergyDecrease = GameSettings.Current.Energy_Restful;
         }
 
         public override MaybeNull<Act> CreateScript(Creature agent)

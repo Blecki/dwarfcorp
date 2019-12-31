@@ -25,8 +25,8 @@ namespace DwarfCorp
             AutoRetry = true;
                 Category = TaskCategory.Other;
             this.Distance = Distance;
-            BoredomIncrease = GameSettings.Default.Boredom_ExcitingTask;
-            EnergyDecrease = GameSettings.Default.Energy_Arduous;
+            BoredomIncrease = GameSettings.Current.Boredom_ExcitingTask;
+            EnergyDecrease = GameSettings.Current.Energy_Arduous;
         }
 
         public override MaybeNull<Act> CreateScript(Creature creature)

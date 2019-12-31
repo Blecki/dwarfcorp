@@ -276,7 +276,7 @@ namespace DwarfCorp.GameStates
                 };
 
                 World.UnpauseThreads();
-                AutoSaveTimer = new Timer(GameSettings.Default.AutoSaveTimeMinutes * 60.0f, false, Timer.TimerMode.Real);
+                AutoSaveTimer = new Timer(GameSettings.Current.AutoSaveTimeMinutes * 60.0f, false, Timer.TimerMode.Real);
 
                 foreach (var contextCommandFactory in AssetManager.EnumerateModHooks(typeof(ContextCommandAttribute), typeof(ContextCommands.ContextCommand), new Type[] { }))
                     ContextCommands.Add(contextCommandFactory.Invoke(null, new Object[] { }) as ContextCommands.ContextCommand);
@@ -689,7 +689,7 @@ namespace DwarfCorp.GameStates
 
             AutoSaveTimer.Update(gameTime);
 
-            if (GameSettings.Default.AutoSave && AutoSaveTimer.HasTriggered)
+            if (GameSettings.Current.AutoSave && AutoSaveTimer.HasTriggered)
                 AutoSave();
 
             #region select employee
@@ -1026,7 +1026,7 @@ namespace DwarfCorp.GameStates
                 EnablePosession = true,
                 Tag = "selected-employee-info",
                 AutoLayout = AutoLayout.FloatBottomLeft,
-                MinimumSize = new Point(450, 500 - (50 * (GameSettings.Default.GuiScale - 1))),
+                MinimumSize = new Point(450, 500 - (50 * (GameSettings.Current.GuiScale - 1))),
             }) as Play.EmployeeInfo.OverviewPanel;
 
             var markerFilter = Gui.RootItem.AddChild(new DesignationFilter
@@ -2372,7 +2372,7 @@ namespace DwarfCorp.GameStates
                 Tooltip = Tooltip,
                 TextHorizontalAlign = DwarfCorp.Gui.HorizontalAlign.Center,
                 TextVerticalAlign = DwarfCorp.Gui.VerticalAlign.Center,
-                HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4(),
+                HoverTextColor = GameSettings.Current.Colors.GetColor("Highlight", Color.DarkRed).ToVector4(),
                 ChangeColorOnHover = true
             });
         }

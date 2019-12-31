@@ -181,7 +181,7 @@ namespace DwarfCorp
             int maxVertex = 0;
             int maxIndex = 0;
             int totalFaces = 6;
-            bool fogOfWar = GameSettings.Default.FogofWar;
+            bool fogOfWar = GameSettings.Current.FogofWar;
 
             for (int globalY = chunk.Origin.Y; globalY < Math.Min(chunk.Manager.World.Renderer.PersistentSettings.MaxViewingLevel + 1, chunk.Origin.Y + VoxelConstants.ChunkSizeY); globalY++)
             {

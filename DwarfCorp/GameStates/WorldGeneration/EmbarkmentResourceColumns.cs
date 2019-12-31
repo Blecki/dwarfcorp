@@ -69,7 +69,7 @@ namespace DwarfCorp.GameStates
                 SelectedItemBackgroundColor = new Vector4(0, 0, 0, 0),
                 ItemBackgroundColor2 = new Vector4(0, 0, 0, 0.1f),
                 ItemBackgroundColor1 = new Vector4(0, 0, 0, 0),
-                Font = GameSettings.Default.GuiScale == 1 ? "font10" : "font8"
+                Font = GameSettings.Current.GuiScale == 1 ? "font10" : "font8"
             }) as Gui.Widgets.WidgetListView;
 
             var leftmostList = leftmostPanel.AddChild(new Gui.Widgets.WidgetListView
@@ -79,7 +79,7 @@ namespace DwarfCorp.GameStates
                 SelectedItemBackgroundColor = new Vector4(0, 0, 0, 0),
                 ItemBackgroundColor2 = new Vector4(0, 0, 0, 0.1f),
                 ItemBackgroundColor1 = new Vector4(0, 0, 0, 0),
-                Font = GameSettings.Default.GuiScale == 1 ? "font10" : "font8"
+                Font = GameSettings.Current.GuiScale == 1 ? "font10" : "font8"
             }) as Gui.Widgets.WidgetListView;
 
             // Lists should have bidirectional properties.
@@ -220,13 +220,13 @@ namespace DwarfCorp.GameStates
             r.AddChild(new Gui.Widget
             {
                 AutoLayout = AutoLayout.DockLeft,
-                MinimumSize = new Point(128 / GameSettings.Default.GuiScale, 0),
-                MaximumSize = new Point(128 / GameSettings.Default.GuiScale, 32),
+                MinimumSize = new Point(128 / GameSettings.Current.GuiScale, 0),
+                MaximumSize = new Point(128 / GameSettings.Current.GuiScale, 32),
                 TextColor = Resource.Count > 0 ? Color.Black.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
                 TextVerticalAlign = VerticalAlign.Center,
                 TextHorizontalAlign = HorizontalAlign.Left,
-                HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4(),
-                Font = GameSettings.Default.GuiScale == 1 ? "font10" : "font8",
+                HoverTextColor = GameSettings.Current.Colors.GetColor("Highlight", Color.DarkRed).ToVector4(),
+                Font = GameSettings.Current.GuiScale == 1 ? "font10" : "font8",
                 ChangeColorOnHover = true,
                 WrapText = true
             });
@@ -246,8 +246,8 @@ namespace DwarfCorp.GameStates
                 if (font != null)
                 {
                     var measurements = font.MeasureString(label);
-                    label = font.WordWrapString(label, 1.0f, 128 / GameSettings.Default.GuiScale, LineItem.WrapWithinWords);
-                    if (128 / GameSettings.Default.GuiScale < measurements.X)
+                    label = font.WordWrapString(label, 1.0f, 128 / GameSettings.Current.GuiScale, LineItem.WrapWithinWords);
+                    if (128 / GameSettings.Current.GuiScale < measurements.X)
                         LineItem.MinimumSize.Y = font.TileHeight * label.Split('\n').Length;
                 }
                 LineItem.GetChild(1).Text = label;

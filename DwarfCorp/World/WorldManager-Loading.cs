@@ -37,7 +37,7 @@ namespace DwarfCorp
         public void StartLoad()
         {
             Renderer.Screenshots = new List<WorldRenderer.Screenshot>(); // Todo: ?? Why is this updated every single frame?
-            Game.Graphics.PreferMultiSampling = GameSettings.Default.AntiAliasing > 1;
+            Game.Graphics.PreferMultiSampling = GameSettings.Current.AntiAliasing > 1;
           
             try
             {
@@ -315,7 +315,7 @@ namespace DwarfCorp
                     VoxelConstants.ChunkSizeZ) +
                 Vector3.Up * 10.0f + Vector3.Backward * 10,
                 MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 0.1f,
-                GameSettings.Default.VertexCullDistance);
+                GameSettings.Current.VertexCullDistance);
 
             PersistentData = new PersistentWorldData();
             ChunkManager = new ChunkManager(Content, this);
@@ -346,7 +346,7 @@ namespace DwarfCorp
             EventScheduler = new Events.Scheduler();
 
             TutorialManager = new Tutorial.TutorialManager();
-            TutorialManager.TutorialEnabled = !GameSettings.Default.TutorialDisabledGlobally;
+            TutorialManager.TutorialEnabled = !GameSettings.Current.TutorialDisabledGlobally;
             Tutorial("new game start");
 
             foreach (var item in Library.EnumerateCraftables())

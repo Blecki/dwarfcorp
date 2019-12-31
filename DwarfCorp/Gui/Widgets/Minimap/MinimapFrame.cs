@@ -77,7 +77,7 @@ namespace DwarfCorp.Gui.Widgets.Minimap
 
             OnScroll = (sender, args) =>
             {
-                float multiplier = GameSettings.Default.InvertZoom ? 0.001f : -0.001f;
+                float multiplier = GameSettings.Current.InvertZoom ? 0.001f : -0.001f;
                 Renderer.Zoom(args.ScrollValue * multiplier);
             };
 

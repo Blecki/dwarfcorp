@@ -321,7 +321,7 @@ namespace DwarfCorp
                     }
 
                     Agent.AddXP(2); // Gain XP for attacking.
-                    ActHelper.ApplyWearToTool(Creature.AI, GameSettings.Default.Wear_Attack);
+                    ActHelper.ApplyWearToTool(Creature.AI, GameSettings.Current.Wear_Attack);
 
                     timeout.Reset();
 

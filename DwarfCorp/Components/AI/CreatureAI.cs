@@ -422,7 +422,7 @@ namespace DwarfCorp
             }
 
             // With a small probability, the creature will drown if its under water.
-            if (MathFunctions.RandEvent(GameSettings.Default.DrownChance))
+            if (MathFunctions.RandEvent(GameSettings.Current.DrownChance))
             {
                 var above = VoxelHelpers.GetVoxelAbove(Physics.CurrentVoxel);
                 var below = VoxelHelpers.GetVoxelBelow(Physics.CurrentVoxel);
@@ -517,7 +517,7 @@ namespace DwarfCorp
         {
             Stats.Money += pay;
             bool good = pay > 0;
-            Color textColor = good ? GameSettings.Default.Colors.GetColor("Positive", Color.Green) : GameSettings.Default.Colors.GetColor("Negative", Color.Red);
+            Color textColor = good ? GameSettings.Current.Colors.GetColor("Positive", Color.Green) : GameSettings.Current.Colors.GetColor("Negative", Color.Red);
             string prefix = good ? "+" : "";
             IndicatorManager.DrawIndicator(prefix + pay,
                 Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 1.0f, textColor);

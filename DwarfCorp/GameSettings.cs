@@ -193,7 +193,7 @@ namespace DwarfCorp
             public int NumMotes = 512;
             public bool InvertZoom = false;
             public float VisibilityUpdateTime = 0.1f;
-            public bool FogofWar = true;
+            [AutoResetBool(true)] public bool FogofWar = true;
             public bool AutoSave = true;
             public int AutoSaveTimeMinutes = 20;
             public string SaveLocation = null;
@@ -271,7 +271,7 @@ namespace DwarfCorp
             }
         }
 
-        public static Settings Default { get; set; }
+        public static Settings Current { get; set; }
 
         /// <summary>
         /// Use this attribute to flag a float setting that can be tweaked during execution, but 
@@ -299,7 +299,7 @@ namespace DwarfCorp
 
         public static void Reset()
         {
-            Default = new Settings();
+            Current = new Settings();
         }
 
         public static void Save()
@@ -316,8 +316,8 @@ namespace DwarfCorp
         {
             try
             {
-                FileUtils.SaveJSON(Default, file);
-                Console.Out.WriteLine("Saving settings to {0} : {1}", file, GameSettings.Default.ToString());
+                FileUtils.SaveJSON(Current, file);
+                Console.Out.WriteLine("Saving settings to {0} : {1}", file, GameSettings.Current.ToString());
             }
             catch (Exception exception)
             {
@@ -333,20 +333,20 @@ namespace DwarfCorp
         {
             try
             {
-                Default = FileUtils.LoadJsonFromAbsolutePath<Settings>(file);
+                Current = FileUtils.LoadJsonFromAbsolutePath<Settings>(file);
 
-                foreach (var member in Default.GetType().GetFields())
+                foreach (var member in Current.GetType().GetFields())
                     foreach (var attribute in member.GetCustomAttributes(false))
                     {
                         if (attribute is AutoResetFloatAttribute resetFloat)
                         {
-                            member.SetValue(Default, resetFloat.Value);
+                            member.SetValue(Current, resetFloat.Value);
                             Console.Out.WriteLine("Auto Reset Float Setting: {0} to {1}", member.Name, resetFloat.Value);
                         }
 
                         if (attribute is AutoResetBoolAttribute resetBool)
                         {
-                            member.SetValue(Default, resetBool.Value);
+                            member.SetValue(Current, resetBool.Value);
                             Console.Out.WriteLine("Auto Reset Bool Setting: {0} to {1}", member.Name, resetBool.Value);
                         }
                     }
@@ -356,21 +356,17 @@ namespace DwarfCorp
             catch (FileNotFoundException)
             {
 				Console.Error.WriteLine("Settings file {0} does not exist. Using default settings.", file);
-                Default = new Settings();
+                Current = new Settings();
                 Save();
             }
             catch (Exception otherException)
             { 
                 Console.Error.WriteLine("Failed to load settings file {0} : {1}", file, otherException.ToString());
                 if (otherException.InnerException != null)
-                {
                     Console.Error.WriteLine("Inner exception: {0}", otherException.InnerException.ToString());
-                }
-                Default = new Settings();
+                Current = new Settings();
                 Save();
             }
-            // mklingen (I have made it impossible to disable fog of war for performance reasons).
-            Default.FogofWar = true; // Todo: Check on this - autoreset?
         }
 
         [ConsoleCommandHandler("SHOW")]
@@ -379,7 +375,7 @@ namespace DwarfCorp
             var member = typeof(Settings).GetFields().FirstOrDefault(f => f.Name == Name);
             if (member == null)
                 return "No such setting.";
-            var value = member.GetValue(Default);
+            var value = member.GetValue(Current);
             if (value == null)
                 return "NULL";
             return value.ToString();
@@ -421,7 +417,7 @@ namespace DwarfCorp
 
             try
             {
-                member.SetValue(GameSettings.Default, Convert.ChangeType(value, member.FieldType));
+                member.SetValue(GameSettings.Current, Convert.ChangeType(value, member.FieldType));
             }
             catch (Exception e)
             {

@@ -92,7 +92,7 @@ namespace DwarfCorp.Play.EmployeeInfo
                         },
                         OnMouseEnter = (_sender, args) =>
                         {
-                            _sender.BackgroundColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4();
+                            _sender.BackgroundColor = GameSettings.Current.Colors.GetColor("Highlight", Color.DarkRed).ToVector4();
                             _sender.Invalidate();
                         },
                         OnMouseLeave = (_sender, args) =>
@@ -125,7 +125,7 @@ namespace DwarfCorp.Play.EmployeeInfo
                         },
                         OnMouseEnter = (_sender, args) =>
                         {
-                            _sender.BackgroundColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4();
+                            _sender.BackgroundColor = GameSettings.Current.Colors.GetColor("Highlight", Color.DarkRed).ToVector4();
                             _sender.Invalidate();
                         },
                         OnMouseLeave = (_sender, args) =>

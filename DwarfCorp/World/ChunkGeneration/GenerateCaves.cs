@@ -126,7 +126,7 @@ namespace DwarfCorp.Generation
                 var plantSize = MathFunctions.Rand() * floraType.SizeVariance + floraType.MeanSize;
                 var lambdaFloraType = floraType;
 
-                    if (!GameSettings.Default.FogofWar)
+                    if (!GameSettings.Current.FogofWar)
                         EntityFactory.CreateEntity<GameComponent>(
                             lambdaFloraType.Name,
                             CaveFloor.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
@@ -154,7 +154,7 @@ namespace DwarfCorp.Generation
 
                 var lambdaAnimalType = animalType;
 
-                    if (!GameSettings.Default.FogofWar)
+                    if (!GameSettings.Current.FogofWar)
                         EntityFactory.CreateEntity<GameComponent>(lambdaAnimalType.Name, CaveFloor.WorldPosition + new Vector3(0.5f, 1.5f, 0.5f));
                     else
                         Settings.World.ComponentManager.RootComponent.AddChild(new SpawnOnExploredTrigger(Settings.World.ComponentManager, CaveFloor)

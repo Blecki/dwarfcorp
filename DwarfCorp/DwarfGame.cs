@@ -65,14 +65,14 @@ namespace DwarfCorp
             GameSettings.Load();
 
             // Check GUI scale - if the settings are bad, fix.
-            if (GameSettings.Default.GuiScale * 480 > GameSettings.Default.ResolutionY)
-                GameSettings.Default.GuiScale = 1;
+            if (GameSettings.Current.GuiScale * 480 > GameSettings.Current.ResolutionY)
+                GameSettings.Current.GuiScale = 1;
 
-            Graphics.IsFullScreen = GameSettings.Default.Fullscreen;
-            Graphics.PreferredBackBufferWidth = GameSettings.Default.Fullscreen ? GameSettings.Default.ResolutionX : Math.Min(GameSettings.Default.ResolutionX, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width);
-            Graphics.PreferredBackBufferHeight = GameSettings.Default.Fullscreen ? GameSettings.Default.ResolutionY : Math.Min(GameSettings.Default.ResolutionY,
+            Graphics.IsFullScreen = GameSettings.Current.Fullscreen;
+            Graphics.PreferredBackBufferWidth = GameSettings.Current.Fullscreen ? GameSettings.Current.ResolutionX : Math.Min(GameSettings.Current.ResolutionX, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width);
+            Graphics.PreferredBackBufferHeight = GameSettings.Current.Fullscreen ? GameSettings.Current.ResolutionY : Math.Min(GameSettings.Current.ResolutionY,
                 GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
-            Graphics.SynchronizeWithVerticalRetrace = GameSettings.Default.VSync;
+            Graphics.SynchronizeWithVerticalRetrace = GameSettings.Current.VSync;
             MathFunctions.Random = new ThreadSafeRandom(new Random().Next());
             Graphics.PreparingDeviceSettings += WorldRenderer.GraphicsPreparingDeviceSettings;
             Graphics.PreferMultiSampling = false;
@@ -127,18 +127,18 @@ namespace DwarfCorp
 
         public static string GetSaveDirectory()
         {
-            if (String.IsNullOrEmpty(GameSettings.Default.SaveLocation))
+            if (String.IsNullOrEmpty(GameSettings.Current.SaveLocation))
                 return DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves";
             else
-                return GameSettings.Default.SaveLocation + Path.DirectorySeparatorChar + "Saves";
+                return GameSettings.Current.SaveLocation + Path.DirectorySeparatorChar + "Saves";
         }
 
         public static string GetWorldDirectory()
         {
-            if (String.IsNullOrEmpty(GameSettings.Default.SaveLocation))
+            if (String.IsNullOrEmpty(GameSettings.Current.SaveLocation))
                 return DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Worlds";
             else
-                return GameSettings.Default.SaveLocation + Path.DirectorySeparatorChar + "Worlds";
+                return GameSettings.Current.SaveLocation + Path.DirectorySeparatorChar + "Worlds";
         }
 
 
@@ -211,7 +211,7 @@ namespace DwarfCorp
         protected override void LoadContent()
         {
             LogSentryBreadcrumb("Loading", "LoadContent was called.", BreadcrumbLevel.Info);
-            AssetManager.Initialize(Content, GraphicsDevice, GameSettings.Default);
+            AssetManager.Initialize(Content, GraphicsDevice, GameSettings.Current);
 
 
             //DwarfSprites.LayerLibrary.ConvertTestPSD();
@@ -250,7 +250,7 @@ namespace DwarfCorp
             if (GameStateManager.StateStackIsEmpty)
             {
                 LogSentryBreadcrumb("GameState", "There was nothing in the state stack. Starting over.");
-                if (GameSettings.Default.DisplayIntro)
+                if (GameSettings.Current.DisplayIntro)
                     GameStateManager.PushState(new IntroState(this));
                 else
                     GameStateManager.PushState(new MainMenuState(this));

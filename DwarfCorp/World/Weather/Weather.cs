@@ -34,7 +34,7 @@ namespace DwarfCorp
             CurrentWind = new Vector3((float)Math.Sin(world.Time.GetTotalSeconds() * 0.001f), 0, (float)Math.Cos(world.Time.GetTotalSeconds() * 0.0015f));
             CurrentWind.Normalize();
 
-            if (GameSettings.Default.DisableWeather)
+            if (GameSettings.Current.DisableWeather)
                 return;
 
             foreach (Storm storm in Forecast)

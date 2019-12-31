@@ -100,7 +100,7 @@ namespace DwarfCorp
                         SeedType = Farm.SeedType,
                     };
 
-                    if (GameSettings.Default.AllowAutoFarming)
+                    if (GameSettings.Current.AllowAutoFarming)
                     {
                         var task = new PlantTask(farmTile);
                         World.TaskManager.AddTask(task);

@@ -87,7 +87,7 @@ namespace DwarfCorp
             if (Farm != null)
             {
                 adult.Farm = Farm;
-                if (GameSettings.Default.AllowAutoFarming)
+                if (GameSettings.Current.AllowAutoFarming)
                 {
                     var task = new ChopEntityTask(adult) { Priority = TaskPriority.Low };
                     World.TaskManager.AddTask(task);

@@ -44,7 +44,7 @@ namespace DwarfCorp.Gui.Widgets
 
             OnGainFocus += (sender) =>
             {
-                TextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4();
+                TextColor = GameSettings.Current.Colors.GetColor("Highlight", Color.DarkRed).ToVector4();
                 this.Invalidate();
             };
             OnLoseFocus += (sender) =>

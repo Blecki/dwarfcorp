@@ -14,8 +14,8 @@ namespace DwarfCorp
         public DestroyObjectTask()
         {
             MaxAssignable = 1;
-            BoredomIncrease = GameSettings.Default.Boredom_ExcitingTask;
-            EnergyDecrease = GameSettings.Default.Energy_Arduous;
+            BoredomIncrease = GameSettings.Current.Boredom_ExcitingTask;
+            EnergyDecrease = GameSettings.Current.Energy_Arduous;
         }
 
         public DestroyObjectTask(GameComponent entity)
@@ -26,8 +26,8 @@ namespace DwarfCorp
             Priority = TaskPriority.Medium;
             AutoRetry = true;
             Category = TaskCategory.CraftItem;
-            BoredomIncrease = GameSettings.Default.Boredom_ExcitingTask;
-            EnergyDecrease = GameSettings.Default.Energy_Arduous;
+            BoredomIncrease = GameSettings.Current.Boredom_ExcitingTask;
+            EnergyDecrease = GameSettings.Current.Energy_Arduous;
         }
 
         public override MaybeNull<Act> CreateScript(Creature creature)

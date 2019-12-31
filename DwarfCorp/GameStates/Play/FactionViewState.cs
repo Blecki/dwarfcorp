@@ -99,11 +99,11 @@ namespace DwarfCorp.GameStates
                 var relationshipColor = Color.Black.ToVector4();
                 if (relation == Relationship.Loving)
                 {
-                    relationshipColor = GameSettings.Default.Colors.GetColor("Positive", Color.DarkGreen).ToVector4();
+                    relationshipColor = GameSettings.Current.Colors.GetColor("Positive", Color.DarkGreen).ToVector4();
                 }
                 else if (relation == Relationship.Hateful)
                 {
-                    relationshipColor = GameSettings.Default.Colors.GetColor("Negative", Color.Red).ToVector4();
+                    relationshipColor = GameSettings.Current.Colors.GetColor("Negative", Color.Red).ToVector4();
                 }
                 entry.AddChild(new Widget()
                 {

@@ -153,7 +153,7 @@ namespace DwarfCorp
             if (!DrawLifeTimer.HasTriggered)
             {
                 float val = Hp / MaxHealth;
-                Color color = val < 0.75f ? (val < 0.5f ? GameSettings.Default.Colors.GetColor("Low Health", Color.Red) : GameSettings.Default.Colors.GetColor("Medium Health", Color.Orange)) : GameSettings.Default.Colors.GetColor("High Health", Color.LightGreen);
+                Color color = val < 0.75f ? (val < 0.5f ? GameSettings.Current.Colors.GetColor("Low Health", Color.Red) : GameSettings.Current.Colors.GetColor("Medium Health", Color.Orange)) : GameSettings.Current.Colors.GetColor("High Health", Color.LightGreen);
                 Drawer2D.DrawLoadBar(Manager.World.Renderer.Camera, AI.Position - Vector3.Up * 0.5f, color, Color.Black, 32, 2, Hp / MaxHealth);
             }
         }
@@ -418,7 +418,7 @@ namespace DwarfCorp
             float damage = base.Damage(amount, type);
 
             string prefix = damage > 0 ? "-" : "+";
-            Color color = damage > 0 ? GameSettings.Default.Colors.GetColor("Negative", Color.Red) : GameSettings.Default.Colors.GetColor("Positive", Color.Green);
+            Color color = damage > 0 ? GameSettings.Current.Colors.GetColor("Negative", Color.Red) : GameSettings.Current.Colors.GetColor("Positive", Color.Green);
 
             if (AI != null)
             {

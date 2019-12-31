@@ -73,7 +73,7 @@ namespace DwarfCorp.Gui.Widgets
                 Text = "<<",
                 TextColor = Color.White.ToVector4(),
                 Tooltip = "Decrease Speed",
-                HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4(),
+                HoverTextColor = GameSettings.Current.Colors.GetColor("Highlight", Color.DarkRed).ToVector4(),
                 ChangeColorOnHover = true,
                 OnClick = (sender, args) =>
                 {
@@ -89,7 +89,7 @@ namespace DwarfCorp.Gui.Widgets
                 TextColor = Color.White.ToVector4(),
                 Text = "||",
                 Tooltip = "Pause",
-                HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4(),
+                HoverTextColor = GameSettings.Current.Colors.GetColor("Highlight", Color.DarkRed).ToVector4(),
                 ChangeColorOnHover = true,
                 OnClick = (sender, args) =>
                 {
@@ -113,7 +113,7 @@ namespace DwarfCorp.Gui.Widgets
                 Text = ">>",
                 TextColor = Color.White.ToVector4(),
                 Tooltip = "Increase Speed",
-                HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4(),
+                HoverTextColor = GameSettings.Current.Colors.GetColor("Highlight", Color.DarkRed).ToVector4(),
                 ChangeColorOnHover = true,
                 OnClick = (sender, args) =>
                 {

@@ -35,8 +35,8 @@ namespace DwarfCorp
         public OrbitCamera Camera;
         public static int MultiSamples
         {
-            get { return GameSettings.Default.AntiAliasing; }
-            set { GameSettings.Default.AntiAliasing = value; }
+            get { return GameSettings.Current.AntiAliasing; }
+            set { GameSettings.Current.AntiAliasing = value; }
         }
 
         public bool UseFXAA
@@ -245,24 +245,24 @@ namespace DwarfCorp
                 return dA.CompareTo(dB);
             });
 
-            if (!GameSettings.Default.CursorLightEnabled)
+            if (!GameSettings.Current.CursorLightEnabled)
                 LightPositions[0] = new Vector3(-99999, -99999, -99999);
             else
                 LightPositions[0] = CursorLightPos;
 
-            int numLights = GameSettings.Default.CursorLightEnabled ? Math.Min(16, positions.Count + 1) : Math.Min(16, positions.Count);
-            for (int i = GameSettings.Default.CursorLightEnabled ? 1 : 0; i < numLights; i++)
+            int numLights = GameSettings.Current.CursorLightEnabled ? Math.Min(16, positions.Count + 1) : Math.Min(16, positions.Count);
+            for (int i = GameSettings.Current.CursorLightEnabled ? 1 : 0; i < numLights; i++)
             {
                 if (i > positions.Count)
                     LightPositions[i] = new Vector3(-99999, -99999, -99999);
                 else
-                    LightPositions[i] = GameSettings.Default.CursorLightEnabled ? positions[i - 1] : positions[i];
+                    LightPositions[i] = GameSettings.Current.CursorLightEnabled ? positions[i - 1] : positions[i];
             }
 
             for (int j = numLights; j < 16; j++)
                 LightPositions[j] = new Vector3(0, 0, 0);
 
-            DefaultShader.CurrentNumLights = Math.Max(Math.Min(GameSettings.Default.CursorLightEnabled ? numLights - 1 : numLights, 15), 0);
+            DefaultShader.CurrentNumLights = Math.Max(Math.Min(GameSettings.Current.CursorLightEnabled ? numLights - 1 : numLights, 15), 0);
             DynamicLight.TempLights.Clear();
         }
 
@@ -369,7 +369,7 @@ namespace DwarfCorp
 
 
             // Start drawing the bloom effect
-            if (GameSettings.Default.EnableGlow)
+            if (GameSettings.Current.EnableGlow)
             {
                 bloom.BeginDraw();
             }
@@ -380,8 +380,8 @@ namespace DwarfCorp
 
 
 
-            DefaultShader.FogEnd = GameSettings.Default.ChunkDrawDistance;
-            DefaultShader.FogStart = GameSettings.Default.ChunkDrawDistance * 0.8f;
+            DefaultShader.FogEnd = GameSettings.Current.ChunkDrawDistance;
+            DefaultShader.FogStart = GameSettings.Current.ChunkDrawDistance * 0.8f;
 
             CaveView = CaveView * 0.9f + TargetCaveView * 0.1f;
             DefaultShader.WindDirection = World.Weather.CurrentWind;
@@ -448,7 +448,7 @@ namespace DwarfCorp
                 fxaa.Initialize();
             }
 
-            if (GameSettings.Default.EnableGlow)
+            if (GameSettings.Current.EnableGlow)
             {
                 if (UseFXAA)
                 {

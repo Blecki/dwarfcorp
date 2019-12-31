@@ -35,7 +35,7 @@ namespace DwarfCorp
         {
             if (!PersistentData.SpeciesCounts.ContainsKey(Species.Name))
                 return true;
-            var effectiveLimit = Math.Round(Species.SpeciesLimit * GameSettings.Default.SpeciesLimitAdjust);
+            var effectiveLimit = Math.Round(Species.SpeciesLimit * GameSettings.Current.SpeciesLimitAdjust);
             return PersistentData.SpeciesCounts[Species.Name] < effectiveLimit;
         }
     }

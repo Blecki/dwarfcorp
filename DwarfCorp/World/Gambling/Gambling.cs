@@ -187,7 +187,7 @@ namespace DwarfCorp.Scripting
                     participant.Stats.Money += potDistribution;
                     IndicatorManager.DrawIndicator((potDistribution).ToString(),
                      participant.AI.Position + Microsoft.Xna.Framework.Vector3.Up + Microsoft.Xna.Framework.Vector3.Forward * 0.1f, 10.0f,
-                        GameSettings.Default.Colors.GetColor("Positive", Microsoft.Xna.Framework.Color.Green));
+                        GameSettings.Current.Colors.GetColor("Positive", Microsoft.Xna.Framework.Color.Green));
                 }
                 Pot = 0.0m;
             }
@@ -230,7 +230,7 @@ namespace DwarfCorp.Scripting
 
                 IndicatorManager.DrawIndicator((-(DwarfBux)bet).ToString(),
                     participant.AI.Position + Microsoft.Xna.Framework.Vector3.Up , 4.0f, 
-                    GameSettings.Default.Colors.GetColor("Negative", Microsoft.Xna.Framework.Color.Red));
+                    GameSettings.Current.Colors.GetColor("Negative", Microsoft.Xna.Framework.Color.Red));
             }
             Participants[0].World.LogEvent(String.Format("Dice: Entering round {0}/{1}. The Pot is {2}.", CurrentRound, MaxRounds, Pot.ToString()));
 
@@ -268,7 +268,7 @@ namespace DwarfCorp.Scripting
                 maxParticipant.NoiseMaker.MakeNoise("Pleased", maxParticipant.AI.Position, true, 0.5f);
                 IndicatorManager.DrawIndicator((Pot).ToString(),
                  maxParticipant.AI.Position + Microsoft.Xna.Framework.Vector3.Up + Microsoft.Xna.Framework.Vector3.Forward * 0.1f, 10.0f,
-                    GameSettings.Default.Colors.GetColor("Positive", Microsoft.Xna.Framework.Color.Green));
+                    GameSettings.Current.Colors.GetColor("Positive", Microsoft.Xna.Framework.Color.Green));
                 Pot = 0.0m;
                 maxParticipant.AddThought("I won a game of dice!", new TimeSpan(1, 0, 0, 0), 10.0f);
             }

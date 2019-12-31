@@ -45,7 +45,7 @@ namespace DwarfCorp.Generation
 
             var noiseVector = Chunk.Origin.ToVector3() * Settings.CaveNoiseScale;
             var ruinsNoise = Settings.CaveNoise.GetValue(noiseVector.X, noiseVector.Y, noiseVector.Z);
-            if (Math.Abs(ruinsNoise) > GameSettings.Default.GenerationRuinsRate) return;
+            if (Math.Abs(ruinsNoise) > GameSettings.Current.GenerationRuinsRate) return;
 
 
             var avgHeight = GetAverageHeight(Chunk.Origin.X, Chunk.Origin.Z, 16, 16, Settings);

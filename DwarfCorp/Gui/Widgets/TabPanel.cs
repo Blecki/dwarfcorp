@@ -208,7 +208,7 @@ namespace DwarfCorp.Gui.Widgets
                 TextColor = TextColor,
                 OnMouseEnter = (widget, action) =>
                 {
-                    widget.TextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4();
+                    widget.TextColor = GameSettings.Current.Colors.GetColor("Highlight", Color.DarkRed).ToVector4();
                     widget.Invalidate();
                 },
                 OnMouseLeave = (widget, action) =>

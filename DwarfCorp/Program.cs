@@ -44,7 +44,7 @@ namespace DwarfCorp
 #if !DEBUG
             try
             {
-                if (GameSettings.Default.AllowReporting)
+                if (GameSettings.Current.AllowReporting)
                 {
                     ravenClient = new RavenClient("https://af78a676a448474dacee4c72a9197dd2:0dd0a01a9d4e4fa4abc6e89ac7538346@sentry.io/192119");
                     ravenClient.Tags["Version"] = Program.Version;
@@ -84,7 +84,7 @@ namespace DwarfCorp
             {
                 CaptureException(exception);
                 WriteExceptionLog(exception);
-                var report = GameSettings.Default.AllowReporting ? "This was automatically reported to the devs to help us debug!" : "You have opted out of automatic crash reporting.";
+                var report = GameSettings.Current.AllowReporting ? "This was automatically reported to the devs to help us debug!" : "You have opted out of automatic crash reporting.";
                 System.Windows.Forms.MessageBox.Show(String.Format("An unhandled exception occurred in DwarfCorp. {1} \n {0}", exception.ToString(), report), "ERROR");
             }
 #endif
@@ -106,7 +106,7 @@ namespace DwarfCorp
 
         public static bool ShowErrorDialog(String Message)
         {
-            var report = GameSettings.Default.AllowReporting ? "This was automatically reported to the devs to help us debug!" : "You have opted out of automatic crash reporting.";
+            var report = GameSettings.Current.AllowReporting ? "This was automatically reported to the devs to help us debug!" : "You have opted out of automatic crash reporting.";
             return System.Windows.Forms.MessageBox.Show(Message + "\n" + report, "ERROR!", System.Windows.Forms.MessageBoxButtons.RetryCancel) == System.Windows.Forms.DialogResult.Cancel;
         }
 

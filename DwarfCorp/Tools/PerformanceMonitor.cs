@@ -83,7 +83,7 @@ namespace DwarfCorp
             k++;
             var avgFPS = (int)FPSBuffer.Average();
 #if XNA_BUILD
-            if (!SentPerfReport && GameSettings.Default.AllowReporting && avgFPS < 20)
+            if (!SentPerfReport && GameSettings.Current.AllowReporting && avgFPS < 20)
             {
                 if (FPSFaultTimer != null && FPSFaultTimer.Elapsed.TotalSeconds > 5)
                 {
@@ -101,7 +101,7 @@ namespace DwarfCorp
                     FPSFaultTimer = Stopwatch.StartNew();
                 }
             }
-            else if (!SentPerfReport && GameSettings.Default.AllowReporting)
+            else if (!SentPerfReport && GameSettings.Current.AllowReporting)
             {
 
                 FPSFaultTimer = null;

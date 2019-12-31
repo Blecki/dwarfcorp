@@ -84,7 +84,7 @@ namespace DwarfCorp
         {
             base.Update(gameTime, chunks, camera);
 
-            if (GameSettings.Default.DisableWeather)
+            if (GameSettings.Current.DisableWeather)
             {
                 Die();
                 return;

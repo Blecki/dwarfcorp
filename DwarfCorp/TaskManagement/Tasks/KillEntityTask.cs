@@ -21,8 +21,8 @@ namespace DwarfCorp
         public KillEntityTask()
         {
             MaxAssignable = 64;
-            BoredomIncrease = GameSettings.Default.Boredom_ExcitingTask;
-            EnergyDecrease = GameSettings.Default.Energy_Arduous;
+            BoredomIncrease = GameSettings.Current.Boredom_ExcitingTask;
+            EnergyDecrease = GameSettings.Current.Energy_Arduous;
         }
 
         public KillEntityTask(GameComponent entity, KillType type)
@@ -34,8 +34,8 @@ namespace DwarfCorp
             Priority = TaskPriority.Urgent;
             AutoRetry = true;
             Category = TaskCategory.Attack;
-            BoredomIncrease = GameSettings.Default.Boredom_ExcitingTask;
-            EnergyDecrease = GameSettings.Default.Energy_Arduous;
+            BoredomIncrease = GameSettings.Current.Boredom_ExcitingTask;
+            EnergyDecrease = GameSettings.Current.Energy_Arduous;
 
             if (type == KillType.Auto)
                 ReassignOnDeath = false;

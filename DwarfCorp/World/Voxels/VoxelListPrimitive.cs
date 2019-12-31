@@ -204,7 +204,7 @@ namespace DwarfCorp
 
                         sliceStack.Add(cachedSlice);
 
-                        if (GameSettings.Default.GrassMotes)
+                        if (GameSettings.Current.GrassMotes)
                             chunk.RebuildMoteLayerIfNull(localY);
 
                         continue;
@@ -219,13 +219,13 @@ namespace DwarfCorp
                     chunk.Data.SliceCache[localY] = sliceGeometry;
                 }
 
-                if (GameSettings.Default.CalculateRamps)
+                if (GameSettings.Current.CalculateRamps)
                 {
                     UpdateCornerRamps(World.ChunkManager, chunk, localY);
                     UpdateNeighborEdgeRamps(World.ChunkManager, chunk, localY);
                 }
 
-                if (GameSettings.Default.GrassMotes)
+                if (GameSettings.Current.GrassMotes)
                     chunk.RebuildMoteLayer(localY);
 
                 DebugHelper.AssertNotNull(sliceGeometry);

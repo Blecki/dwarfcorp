@@ -520,7 +520,7 @@ namespace DwarfCorp.Play
                 new HorizontalMenuTray.MenuItem
                 {
                     Text = "SLOWMO",
-                    OnClick = (sender, args) => GameSettings.Default.EnableSlowMotion = !GameSettings.Default.EnableSlowMotion
+                    OnClick = (sender, args) => GameSettings.Current.EnableSlowMotion = !GameSettings.Current.EnableSlowMotion
                 },
                 new HorizontalMenuTray.MenuItem
                 {

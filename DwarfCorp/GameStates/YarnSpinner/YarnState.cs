@@ -215,7 +215,7 @@ namespace DwarfCorp
                 {
                     Border = null,
                     TextSize = 1,
-                    Font = GameSettings.Default.GuiScale == 1 ? "font16" : "font10",
+                    Font = GameSettings.Current.GuiScale == 1 ? "font16" : "font10",
                     Transparent = true
                 });
 

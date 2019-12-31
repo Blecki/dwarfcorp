@@ -44,7 +44,7 @@ namespace DwarfCorp
             RightReleased = RightReleasedCallback;
             MouseOver = bodies => { };
             Selected += SelectedCallback;
-            DeleteColor = GameSettings.Default.Colors.GetColor("Negative", Color.Red);
+            DeleteColor = GameSettings.Current.Colors.GetColor("Negative", Color.Red);
         }
 
         /// <summary>

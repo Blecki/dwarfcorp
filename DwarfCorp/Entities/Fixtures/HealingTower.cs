@@ -68,7 +68,7 @@ namespace DwarfCorp
                                 creature.Heal(HealIncrease);
                                 IndicatorManager.DrawIndicator((HealIncrease).ToString() + " HP",
                                     creature.Physics.Position, 1.0f,
-                                        GameSettings.Default.Colors.GetColor("Positive", Microsoft.Xna.Framework.Color.Green));
+                                        GameSettings.Current.Colors.GetColor("Positive", Microsoft.Xna.Framework.Color.Green));
                                 creature.DrawLifeTimer.Reset();
                                 World.ParticleManager.Trigger("star_particle", obj.Position, Color.Red, 10);
                                 World.ParticleManager.TriggerRay("star_particle", Position, obj.Position);

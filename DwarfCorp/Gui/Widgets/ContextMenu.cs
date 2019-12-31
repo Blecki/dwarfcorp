@@ -65,7 +65,7 @@ namespace DwarfCorp.Gui.Widgets
                         sender.Parent.Close();
                     },
                     ChangeColorOnHover = true,
-                    HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4()
+                    HoverTextColor = GameSettings.Current.Colors.GetColor("Highlight", Color.DarkRed).ToVector4()
                 });
             }
 
@@ -147,7 +147,7 @@ namespace DwarfCorp.Gui.Widgets
                         sender.Parent.Close();
                     },
                     ChangeColorOnHover = true,
-                    HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4()
+                    HoverTextColor = GameSettings.Current.Colors.GetColor("Highlight", Color.DarkRed).ToVector4()
                 });
             }
 

@@ -232,7 +232,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public bool IsExplored
         {
-            get { return !GameSettings.Default.FogofWar || (_cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] & VoxelConstants.ExploredMask) != 0; }
+            get { return !GameSettings.Current.FogofWar || (_cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] & VoxelConstants.ExploredMask) != 0; }
             set
             {
                 // This only ever changes from false to true, so we can take advantage of that fact.

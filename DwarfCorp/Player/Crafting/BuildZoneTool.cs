@@ -167,7 +167,7 @@ namespace DwarfCorp
                     if (CurrentZoneType.CanBuildHere(voxels, World))
                         World.UserInterface.ShowTooltip("Release to build here.");
                     else
-                        World.UserInterface.VoxSelector.SelectionColor = GameSettings.Default.Colors.GetColor("Negative", Color.Red);
+                        World.UserInterface.VoxSelector.SelectionColor = GameSettings.Current.Colors.GetColor("Negative", Color.Red);
                 }
             }
         }

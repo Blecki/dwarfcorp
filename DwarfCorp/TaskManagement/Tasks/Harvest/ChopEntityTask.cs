@@ -14,8 +14,8 @@ namespace DwarfCorp
         public ChopEntityTask()
         {
             MaxAssignable = 3;
-            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
-            EnergyDecrease = GameSettings.Default.Energy_Tiring;
+            BoredomIncrease = GameSettings.Current.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Current.Energy_Tiring;
         }
 
         public ChopEntityTask(GameComponent entity)
@@ -26,8 +26,8 @@ namespace DwarfCorp
             Priority = TaskPriority.Medium;
             AutoRetry = true;
             Category = TaskCategory.Chop;
-            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
-            EnergyDecrease = GameSettings.Default.Energy_Tiring;
+            BoredomIncrease = GameSettings.Current.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Current.Energy_Tiring;
         }
 
         public override MaybeNull<Act> CreateScript(Creature creature)

@@ -26,7 +26,7 @@ namespace DwarfCorp
         {
             ChunkData = Data;
 
-            GameSettings.Default.VisibilityUpdateTime = 0.05f;
+            GameSettings.Current.VisibilityUpdateTime = 0.05f;
         }
 
         public void RenderSelectionBuffer(Shader effect, GraphicsDevice graphicsDevice,

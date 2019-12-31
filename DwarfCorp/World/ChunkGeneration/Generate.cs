@@ -41,7 +41,7 @@ namespace DwarfCorp.Generation
             }
 
             // Todo: Can these be sped up by doing multiple in one iteration of the outer x,z?
-            if (!GameSettings.Default.FastGen)
+            if (!GameSettings.Current.FastGen)
             {
                 SetLoadingMessage("");
                 foreach (var chunk in ChunkData.ChunkMap)

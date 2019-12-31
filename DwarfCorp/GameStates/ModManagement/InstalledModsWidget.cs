@@ -261,7 +261,7 @@ namespace DwarfCorp.GameStates.ModManagement
 
         private void SaveEnabledList()
         {
-            GameSettings.Default.EnabledMods = ModList.Where(m => m.Enabled).Select(m => m.MetaData.IdentifierString).ToList();
+            GameSettings.Current.EnabledMods = ModList.Where(m => m.Enabled).Select(m => m.MetaData.IdentifierString).ToList();
             GameSettings.Save();
         }
 
@@ -271,7 +271,7 @@ namespace DwarfCorp.GameStates.ModManagement
 
             var allMods = new List<LineItem>();
 
-            foreach (var mod_id in GameSettings.Default.EnabledMods)
+            foreach (var mod_id in GameSettings.Current.EnabledMods)
             {
                 var metaData = availableMods.FirstOrDefault(mod => mod.IdentifierString == mod_id);
                 if (metaData == null) continue; // It's in the enabled list, but must have been uninstalled.

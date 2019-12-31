@@ -42,7 +42,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 AutoLayout = AutoLayout.DockFill,
                 Font = "monofont",
-                TextSize = GameSettings.Default.ConsoleTextSize,
+                TextSize = GameSettings.Current.ConsoleTextSize,
             }) as TextGrid;
         }
 
@@ -124,7 +124,7 @@ namespace DwarfCorp.Gui.Widgets
                     MinimumSize = new Point(0, 32),
                     Text = "",
                     Border = "",
-                    TextSize = GameSettings.Default.ConsoleTextSize,
+                    TextSize = GameSettings.Current.ConsoleTextSize,
                     Font = "monofont"
                 });
                 SendToBack(input);

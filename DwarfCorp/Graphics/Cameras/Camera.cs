@@ -114,7 +114,7 @@ namespace DwarfCorp
 
         public BoundingFrustum GetDrawFrustum()
         {
-            var projection = Matrix.CreatePerspectiveFieldOfView(FOV, AspectRatio, NearPlane, GameSettings.Default.ChunkDrawDistance);
+            var projection = Matrix.CreatePerspectiveFieldOfView(FOV, AspectRatio, NearPlane, GameSettings.Current.ChunkDrawDistance);
             return new BoundingFrustum(ViewMatrix * projection);
         }
     }

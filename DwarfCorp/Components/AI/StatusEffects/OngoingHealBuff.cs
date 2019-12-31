@@ -33,7 +33,7 @@ namespace DwarfCorp
                 creature.DrawLifeTimer.Reset();
                 IndicatorManager.DrawIndicator((DamagePerSecond).ToString() + " HP",
                     creature.Physics.Position, 1.0f,
-                     GameSettings.Default.Colors.GetColor("Positive", Microsoft.Xna.Framework.Color.Green));
+                     GameSettings.Current.Colors.GetColor("Positive", Microsoft.Xna.Framework.Color.Green));
             }
            
             base.Update(time, creature);

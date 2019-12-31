@@ -26,7 +26,7 @@ namespace DwarfCorp
         {
             var speed = Agent.Movement.Speed(Action);
 
-            return GameSettings.Default.CreatureMovementAdjust * Agent.Stats.Dexterity * speed * SpeedAdjust;
+            return GameSettings.Current.CreatureMovementAdjust * Agent.Stats.Dexterity * speed * SpeedAdjust;
         }
 
         public List<MoveAction> Path

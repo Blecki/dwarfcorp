@@ -24,8 +24,8 @@ namespace DwarfCorp
         public void Activate(WorldManager world, OrbitCamera camera)
         {
             Active = true;
-            _lightActive = GameSettings.Default.CursorLightEnabled;
-            GameSettings.Default.CursorLightEnabled = false;
+            _lightActive = GameSettings.Current.CursorLightEnabled;
+            GameSettings.Current.CursorLightEnabled = false;
             world.UserInterface.Gui.RootItem.Hidden = true;
             world.UserInterface.Gui.RootItem.Invalidate();
             
@@ -36,7 +36,7 @@ namespace DwarfCorp
         public void Deactivate(WorldManager world, OrbitCamera camera)
         {
             Active = false;
-            GameSettings.Default.CursorLightEnabled = _lightActive;
+            GameSettings.Current.CursorLightEnabled = _lightActive;
             world.UserInterface.Gui.RootItem.Hidden = false;
             world.UserInterface.Gui.RootItem.Invalidate();
             camera.Control = OrbitCamera.ControlType.Overhead;
@@ -85,14 +85,14 @@ namespace DwarfCorp
 
         public float CameraMoveSpeed
         {
-            get { return GameSettings.Default.CameraScrollSpeed; }
-            set { GameSettings.Default.CameraScrollSpeed = value; }
+            get { return GameSettings.Current.CameraScrollSpeed; }
+            set { GameSettings.Current.CameraScrollSpeed = value; }
         }
 
         public float CameraZoomSpeed
         {
-            get { return GameSettings.Default.CameraZoomSpeed; }
-            set { GameSettings.Default.CameraZoomSpeed = value; }
+            get { return GameSettings.Current.CameraZoomSpeed; }
+            set { GameSettings.Current.CameraZoomSpeed = value; }
         }
 
         public enum ControlType
@@ -223,7 +223,7 @@ namespace DwarfCorp
                 return;
             }
 
-            if (GameSettings.Default.FogofWar)
+            if (GameSettings.Current.FogofWar)
             {
                 var currentCoordinate = GlobalVoxelCoordinate.FromVector3(Position);
                 if (currentCoordinate != _prevVoxelCoord)
@@ -558,7 +558,7 @@ namespace DwarfCorp
             Target = MathFunctions.Clamp(Target, bounds);
             int edgePadding = -10000;
 
-            if (GameSettings.Default.EnableEdgeScroll)
+            if (GameSettings.Current.EnableEdgeScroll)
             {
                 edgePadding = 100;
             }
@@ -752,14 +752,14 @@ namespace DwarfCorp
                     {
                         var delta = change * -1;
 
-                        if (GameSettings.Default.InvertZoom)
+                        if (GameSettings.Current.InvertZoom)
                         {
                             delta *= -1;
                         }
 
                         diffRadius = delta * CameraZoomSpeed * dt;
 
-                        if (diffRadius < 0 && !FollowAutoTarget && GameSettings.Default.ZoomCameraTowardMouse && !shiftPressed)
+                        if (diffRadius < 0 && !FollowAutoTarget && GameSettings.Current.ZoomCameraTowardMouse && !shiftPressed)
                         {
                             float diffxy =
                                 (new Vector3(Target.X, 0, Target.Z) -
@@ -798,7 +798,7 @@ namespace DwarfCorp
             Velocity *= 0.8f;
             UpdateBasisVectors();
 
-            bool projectTarget = GameSettings.Default.CameraFollowSurface || (!GameSettings.Default.CameraFollowSurface && (keys.IsKeyDown(Keys.LeftControl) || keys.IsKeyDown(Keys.RightControl)));
+            bool projectTarget = GameSettings.Current.CameraFollowSurface || (!GameSettings.Current.CameraFollowSurface && (keys.IsKeyDown(Keys.LeftControl) || keys.IsKeyDown(Keys.RightControl)));
             Vector3 projectedTarget = projectTarget ? ProjectToSurface(Target) : Target;
             Vector3 diffTarget = projectedTarget - Target;
             if (diffTarget.LengthSquared() > 25)

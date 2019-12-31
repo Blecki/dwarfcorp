@@ -125,7 +125,7 @@ namespace DwarfCorp
                     continue;
                 }
 
-                Drawer3D.DrawBox(other.BoundingBox, GameSettings.Default.Colors.GetColor("Hunt", Color.Red), 0.1f, false);
+                Drawer3D.DrawBox(other.BoundingBox, GameSettings.Current.Colors.GetColor("Hunt", Color.Red), 0.1f, false);
 
                 if (button == InputManager.MouseButton.Left)
                 {

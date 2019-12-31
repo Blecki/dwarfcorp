@@ -26,20 +26,20 @@ namespace DwarfCorp
 
         public bool DrawTerrainReflected
         {
-            get { return GameSettings.Default.DrawChunksReflected; }
-            set { GameSettings.Default.DrawChunksReflected = value; }
+            get { return GameSettings.Current.DrawChunksReflected; }
+            set { GameSettings.Current.DrawChunksReflected = value; }
         }
 
         public bool DrawComponentsReflected
         {
-            get { return GameSettings.Default.DrawEntityReflected; }
-            set { GameSettings.Default.DrawEntityReflected = value; }
+            get { return GameSettings.Current.DrawEntityReflected; }
+            set { GameSettings.Current.DrawEntityReflected = value; }
         }
 
         public bool DrawSkyReflected
         {
-            get { return GameSettings.Default.DrawSkyReflected; }
-            set { GameSettings.Default.DrawSkyReflected = value; }
+            get { return GameSettings.Current.DrawSkyReflected; }
+            set { GameSettings.Current.DrawSkyReflected = value; }
         }
 
         public bool DrawReflections

@@ -57,7 +57,7 @@ namespace DwarfCorp.Gui.Widgets
 
             TextVerticalAlign = VerticalAlign.Center;
             ChangeColorOnHover = true;
-            HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4();
+            HoverTextColor = GameSettings.Current.Colors.GetColor("Highlight", Color.DarkRed).ToVector4();
 
             if (String.IsNullOrEmpty(Graphics))
                 Graphics = "checkbox";

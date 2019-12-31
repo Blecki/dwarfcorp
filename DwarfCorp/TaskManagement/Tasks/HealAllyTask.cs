@@ -66,7 +66,7 @@ namespace DwarfCorp
                     Ally.Creature.Heal(amount);
                     IndicatorManager.DrawIndicator((amount).ToString() + " HP",
                     Ally.Position, 1.0f,
-                    GameSettings.Default.Colors.GetColor("Positive", Microsoft.Xna.Framework.Color.Green));
+                    GameSettings.Current.Colors.GetColor("Positive", Microsoft.Xna.Framework.Color.Green));
                     Ally.Creature.DrawLifeTimer.Reset();
                 }
                 yield return Act.Status.Running;
@@ -140,7 +140,7 @@ namespace DwarfCorp
                     Ally.Creature.Heal(amount);
                     IndicatorManager.DrawIndicator((amount).ToString() + " HP",
                     Ally.Position, 1.0f,
-                    GameSettings.Default.Colors.GetColor("Positive", Microsoft.Xna.Framework.Color.Green));
+                    GameSettings.Current.Colors.GetColor("Positive", Microsoft.Xna.Framework.Color.Green));
                     Ally.Creature.DrawLifeTimer.Reset();
                     Agent.World.ParticleManager.TriggerRay("star_particle", Agent.Position, Ally.Position);
                     SoundManager.PlaySound(ContentPaths.Audio.tinkle, Agent.Position, true, 1.0f);

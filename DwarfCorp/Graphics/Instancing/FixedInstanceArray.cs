@@ -117,7 +117,7 @@ namespace DwarfCorp
 
         public FixedInstanceArray(string name, GeometricPrimitive model, string texture, int numInstances, BlendState blendMode)
         {
-            CullDistance = (GameSettings.Default.ChunkDrawDistance * GameSettings.Default.ChunkDrawDistance) - 40;
+            CullDistance = (GameSettings.Current.ChunkDrawDistance * GameSettings.Current.ChunkDrawDistance) - 40;
             Name = name;
             Model = model;
             Data = new List<InstanceData>();

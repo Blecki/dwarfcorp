@@ -127,7 +127,7 @@ namespace DwarfCorp
                     {
                         Creature.AI.AddXP(Math.Max((int)(voxelType.StartingHealth / 4), 1));
                         Creature.Stats.NumBlocksDestroyed++;
-                        ActHelper.ApplyWearToTool(Creature.AI, GameSettings.Default.Wear_Dig);
+                        ActHelper.ApplyWearToTool(Creature.AI, GameSettings.Current.Wear_Dig);
 
                         var items = VoxelHelpers.KillVoxel(Creature.World, vox);
 

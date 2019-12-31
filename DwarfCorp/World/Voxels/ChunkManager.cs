@@ -123,7 +123,7 @@ namespace DwarfCorp
             WaterUpdateThread = new AutoScaleThread(this, (f) => Water.UpdateWater());
             this.ChunkUpdateThread = new Thread(UpdateChunks) { IsBackground = true, Name = "Update Chunks" };
 
-            GameSettings.Default.VisibilityUpdateTime = 0.05f;
+            GameSettings.Current.VisibilityUpdateTime = 0.05f;
 
             Water = new WaterManager(this);
 
@@ -179,11 +179,11 @@ namespace DwarfCorp
 
                             liveChunks.Add(chunk);
 
-                            if (liveChunks.Count() > GameSettings.Default.MaxLiveChunks)
+                            if (liveChunks.Count() > GameSettings.Current.MaxLiveChunks)
                             {
                                 liveChunks.Sort((a, b) => a.RenderCycleWhenLastVisible - b.RenderCycleWhenLastVisible);
 
-                                while (liveChunks.Count() > GameSettings.Default.MaxLiveChunks)
+                                while (liveChunks.Count() > GameSettings.Current.MaxLiveChunks)
                                 {
                                     if (liveChunks[0].Visible) break;
                                     liveChunks[0].DiscardPrimitive();

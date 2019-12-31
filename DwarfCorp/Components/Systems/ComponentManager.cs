@@ -252,7 +252,7 @@ namespace DwarfCorp
 
             var playerPoint = World.Renderer.Camera.Position;
             // Todo: Make this a sphere?
-            var distanceVec = new Vector3(GameSettings.Default.EntityUpdateDistance, GameSettings.Default.EntityUpdateDistance, GameSettings.Default.EntityUpdateDistance);
+            var distanceVec = new Vector3(GameSettings.Current.EntityUpdateDistance, GameSettings.Current.EntityUpdateDistance, GameSettings.Current.EntityUpdateDistance);
             var updateBox = new BoundingBox(playerPoint - distanceVec, playerPoint + distanceVec);
             var componentsToUpdate = World.EnumerateIntersectingRootEntitiesLoose(updateBox);
 

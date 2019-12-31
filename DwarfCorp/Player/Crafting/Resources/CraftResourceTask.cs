@@ -21,8 +21,8 @@ namespace DwarfCorp
         public CraftResourceTask()
         {
             Category = TaskCategory.CraftItem;
-            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
-            EnergyDecrease = GameSettings.Default.Energy_Tiring;
+            BoredomIncrease = GameSettings.Current.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Current.Energy_Tiring;
             MaxAssignable = 1;
         }
 
@@ -43,8 +43,8 @@ namespace DwarfCorp
             Category = ItemType.CraftTaskCategory;
 
             AutoRetry = true;
-            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
-            EnergyDecrease = GameSettings.Default.Energy_Tiring;
+            BoredomIncrease = GameSettings.Current.Boredom_NormalTask;
+            EnergyDecrease = GameSettings.Current.Energy_Tiring;
 
             Des = new ResourceDes();
 

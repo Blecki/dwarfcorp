@@ -13,8 +13,8 @@ namespace DwarfCorp
         {
             Name = "Look Interesting";
             Priority = TaskPriority.Eventually;
-            BoredomIncrease = GameSettings.Default.Boredom_BoringTask;
-            EnergyDecrease = GameSettings.Default.Energy_Tiring;
+            BoredomIncrease = GameSettings.Current.Boredom_BoringTask;
+            EnergyDecrease = GameSettings.Current.Energy_Tiring;
         }
 
         public IEnumerable<Act.Status> ConverseFriends(CreatureAI c)

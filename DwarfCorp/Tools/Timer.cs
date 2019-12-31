@@ -129,7 +129,7 @@ namespace DwarfCorp
             ElapsedGameTime = new TimeSpan(0);
             ElapsedRealTime = time.ElapsedGameTime;
             TotalRealTime = time.TotalGameTime;
-            float slowmo = GameSettings.Default.EnableSlowMotion ? 0.1f : 1.0f;
+            float slowmo = GameSettings.Current.EnableSlowMotion ? 0.1f : 1.0f;
             if (IsPaused) return;
             else
             {

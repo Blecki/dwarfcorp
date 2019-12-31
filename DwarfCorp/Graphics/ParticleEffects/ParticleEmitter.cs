@@ -280,7 +280,7 @@ namespace DwarfCorp
             }
 
 
-            bool particlePhysics = GameSettings.Default.ParticlePhysics;
+            bool particlePhysics = GameSettings.Current.ParticlePhysics;
 
             foreach (Particle p in Particles)
             {

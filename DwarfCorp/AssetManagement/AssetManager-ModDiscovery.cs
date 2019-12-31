@@ -36,7 +36,7 @@ namespace DwarfCorp
 
             }
 
-            return subscribedMods.Concat(EnumerateMods(GameSettings.Default.LocalModDirectory, ModSource.LocalDirectory)).ToList();
+            return subscribedMods.Concat(EnumerateMods(GameSettings.Current.LocalModDirectory, ModSource.LocalDirectory)).ToList();
         }
 
         private static ModMetaData GetMod(string dir, ModSource Source)
@@ -48,7 +48,7 @@ namespace DwarfCorp
                 metaData.Directory = dir;
                 metaData.Source = Source;
 
-                if (dir.StartsWith(GameSettings.Default.SteamModDirectory))
+                if (dir.StartsWith(GameSettings.Current.SteamModDirectory))
                     metaData.SteamID = ulong.Parse(global::System.IO.Path.GetFileName(dir));
                 return metaData;
             }

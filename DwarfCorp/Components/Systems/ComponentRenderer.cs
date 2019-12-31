@@ -45,7 +45,7 @@ namespace DwarfCorp
             WaterRenderType waterRenderMode, 
             float waterLevel)
         {
-            effect.EnableLighting = GameSettings.Default.CursorLightEnabled;
+            effect.EnableLighting = GameSettings.Current.CursorLightEnabled;
             graphicsDevice.RasterizerState = RasterizerState.CullNone;
 
             if (waterRenderMode == WaterRenderType.Reflective)

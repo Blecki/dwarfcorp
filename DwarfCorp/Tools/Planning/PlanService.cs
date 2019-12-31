@@ -72,7 +72,7 @@ namespace DwarfCorp
     /// </summary>
     public class PlanService : Service<AstarPlanRequest, AStarPlanResponse>
     {
-        public PlanService() : base("Path Planner", GameSettings.Default.NumPathingThreads)
+        public PlanService() : base("Path Planner", GameSettings.Current.NumPathingThreads)
         {
 
         }

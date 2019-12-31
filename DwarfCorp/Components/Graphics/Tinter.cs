@@ -56,7 +56,7 @@ namespace DwarfCorp
         public Color LightRamp { get; set; }
         public float TintChangeRate { get; set; }
         public bool ColorAppplied = false;
-        private bool entityLighting = GameSettings.Default.EntityLighting;
+        private bool entityLighting = GameSettings.Current.EntityLighting;
         public Color VertexColorTint { get; set; }
         public bool Stipple { get; set; }
         private string previousEffect = null;
