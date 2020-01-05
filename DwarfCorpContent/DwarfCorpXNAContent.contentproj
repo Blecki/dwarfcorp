@@ -2318,6 +2318,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Bookshelf</Name>
     </None>
+    <None Include="World\ResourceItems\Musket.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Musket</Name>
+    </None>
     <None Include="World\ResourceItems\Shoes.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Shoes</Name>
@@ -4334,6 +4338,18 @@
     <None Include="World\default.conv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>default</Name>
+    </None>
+    <None Include="World\Voxels\CarvedStone.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>CarvedStone</Name>
+    </None>
+    <None Include="World\Voxels\SpiralStone.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>SpiralStone</Name>
+    </None>
+    <None Include="World\Voxels\Effigy.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Effigy</Name>
     </None>
     <None Include="World\Voxels\Stucco.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

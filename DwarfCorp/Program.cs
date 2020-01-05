@@ -11,8 +11,8 @@ namespace DwarfCorp
 {
     internal static class Program
     {
-        public static string Version = "19.08.31_XNA";
-        public static string[] CompatibleVersions = { "19.08.31_XNA", "19.08.31_FNA" };
+        public static string Version = "20.01.05_XNA";
+        public static string[] CompatibleVersions = { "20.01.05_XNA", "20.01.05_FNA" };
         public static string Commit = "UNKNOWN";
         public static char DirChar = Path.DirectorySeparatorChar;
         private static RavenClient ravenClient;

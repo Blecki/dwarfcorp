@@ -191,8 +191,8 @@ namespace DwarfCorp.Gui.Widgets
 
             Button = BottomBar.AddChild(new Button()
             {
-                Text = Library.GetString("craft-new", Data.Verb),
-                Tooltip = Library.GetString("craft-new-tooltip", Data.Verb, Data.DisplayName),
+                Text = Library.GetString("craft-new", Data.Verb.Base),
+                Tooltip = Library.GetString("craft-new-tooltip", Data.Verb.PresentTense, Data.DisplayName),
                 OnClick = (widget, args) =>
                 {
                     if (Button.Hidden) return;

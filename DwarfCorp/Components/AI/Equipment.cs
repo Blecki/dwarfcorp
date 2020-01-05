@@ -57,5 +57,18 @@ namespace DwarfCorp
             if (GetItemInSlot(Item.Equipment_Slot).HasValue(out var res) && Object.ReferenceEquals(res, Item))
                 UnequipItem(Item.Equipment_Slot);
         }
+
+        public void AddLayersToSprite(DwarfSprites.LayeredCharacterSprite Sprite)
+        {
+            foreach (var item in EquippedItems.Values)
+                if (!String.IsNullOrEmpty(item.Equipment_LayerName))
+                    if (DwarfSprites.LayerLibrary.FindLayerWithName(item.Equipment_LayerType, item.Equipment_LayerName).HasValue(out var layer))
+                    {
+                        if (DwarfSprites.LayerLibrary.FindPalette(item.Equipment_Palette).HasValue(out var palette))
+                            Sprite.AddLayer(layer, palette);
+                        else
+                            Sprite.AddLayer(layer, DwarfSprites.LayerLibrary.BasePalette);
+                    }
+        }
     }
 }

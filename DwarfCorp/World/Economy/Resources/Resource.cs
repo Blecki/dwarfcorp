@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Microsoft.Xna.Framework;
+using System.Runtime.Serialization;
 
 namespace DwarfCorp
 {
@@ -44,6 +45,18 @@ namespace DwarfCorp
             }
             else
                 return Default;
+        }
+
+        [OnDeserialized]
+        void OnDeserializing(StreamingContext context)
+        {
+            if (MetaData != null)
+                foreach (var entry in MetaData.Data.Keys.ToList())
+                {
+                    var value = MetaData[entry];
+                    if (value.Data != null && value.Data.GetType() == typeof(double))
+                        value.Data = (float)(double)value.Data;
+                }
         }
 
         [JsonIgnore] private MaybeNull<ResourceType> _cachedResourceType = null;

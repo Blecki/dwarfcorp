@@ -10,7 +10,6 @@ namespace DwarfCorp
     /// Acts should read/write data from the blackboard. This makes data management 
     /// clearer and easier to control. All creatures have blackboards.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class Blackboard
     {
         public Dictionary<string, ActData> Data { get; set; }
@@ -19,7 +18,6 @@ namespace DwarfCorp
         {
             Data = new Dictionary<string, ActData>();
         }
-
 
         public static implicit operator Blackboard(KeyValuePair<string, object> value)
         {

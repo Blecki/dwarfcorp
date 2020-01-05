@@ -60,7 +60,7 @@ namespace DwarfCorp.GameStates
                 Library.GetString("credits-tooltip"),
                 (sender, args) => GameStateManager.PushState(new CreditsState(GameState.Game)));
 
-#if DEBUG
+//#if DEBUG
             CreateMenuItem(frame, "QUICKPLAY", "",
                 (sender, args) =>
                 {
@@ -79,6 +79,7 @@ namespace DwarfCorp.GameStates
                     GameStateManager.PushState(new LoadState(Game, overworldSettings, LoadTypes.GenerateOverworld));
                 });
 
+#if DEBUG
             CreateMenuItem(frame, "GIANT QUICKPLAY", "",
                 (sender, args) =>
                 {
@@ -97,13 +98,14 @@ namespace DwarfCorp.GameStates
 
                     GameStateManager.PushState(new LoadState(Game, overworldSettings, LoadTypes.GenerateOverworld));
                 });
-
+#endif
             CreateMenuItem(frame, "Dwarf Designer", "Open the dwarf designer.",
                 (sender, args) =>
                 {
                     GameStateManager.PushState(new Debug.DwarfDesignerState(GameState.Game));
                 });
 
+#if DEBUG
             CreateMenuItem(frame, "Yarn test", "", (sender, args) =>
             {
                 GameStateManager.PushState(new YarnState(null, "test.conv", "Start", new Yarn.MemoryVariableStore()));

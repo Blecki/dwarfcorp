@@ -11,7 +11,7 @@ namespace DwarfCorp
 {
     public class CreatureAI : GameComponent
     {
-        public MaybeNull<Task> CurrentTask = null; // Todo: MaybeNull
+        public MaybeNull<Task> CurrentTask = null; 
         public List<Task> Tasks = new List<Task>();
         [JsonIgnore] protected MaybeNull<Act> CurrentAct = null;
 
@@ -22,7 +22,7 @@ namespace DwarfCorp
         [JsonIgnore] public PlanSubscriber PlanSubscriber = null;
         private Timer BehaviorTimer = new Timer(MathFunctions.Rand() * 5 + 3, false);
         private Timer _preEmptTimer = new Timer(4.0f, false);
-        [JsonIgnore] public Blackboard Blackboard = new Blackboard(); // Todo: Does not serializing this break all tasks?
+        public Blackboard Blackboard = new Blackboard();
         public string Biography = "";
         public string LastFailedAct = null;
 
