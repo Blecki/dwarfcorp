@@ -79,6 +79,7 @@ namespace DwarfCorp.Play.Trading
                 var toMove = amount.Resources.Take(numToMove).ToList();
                 amount.Resources.RemoveRange(0, numToMove);
                 destAmount.Resources.AddRange(toMove);
+                destAmount.Prototype = destAmount.Resources[0];
                 break;
             }
         }
@@ -380,7 +381,7 @@ namespace DwarfCorp.Play.Trading
                 OnTotalSelectedChanged = (s) => UpdateBottomDisplays()
             }) as ResourceColumns;
 
-            UpdateBottomDisplays();
+            Reset();
         }        
 
         private void UpdateBottomDisplays()

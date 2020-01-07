@@ -67,41 +67,52 @@ namespace DwarfCorp
             {
                 int num = MathFunctions.RandInt(tags.Value, tags.Value + 4);
 
-                var resources = Library.EnumerateResourceTypesWithTag(tags.Key).Select(r => new Resource(r));
-
-                if (resources.Count() <= 0) continue;
-
-                for (int i = 0; i < num; i++)
+                if (tags.Key == "Craft")
                 {
-                    MaybeNull<Resource> randResource = Datastructures.SelectRandom(resources);
-
-                    if (!randResource.HasValue(out var res) || !res.ResourceType.HasValue(out var resType) || resType.Tags.Any(blacklistTags.Contains))
-                        continue;
-
-                    if (tags.Key == "Craft")
+                    for (int i = 0; i < num; i++)
                     {
-                        var craftTag = Datastructures.SelectRandom(Crafts);
-                        var availableCrafts = Library.EnumerateResourceTypesWithTag(craftTag);
-                        if (Library.CreateMetaResource("Trinket", null, new Resource("Trinket"), new List<Resource> { new Resource(Datastructures.SelectRandom(availableCrafts)) }).HasValue(out var trinket))
+                        MaybeNull<Resource> randResource = null;
+
+                        if (tags.Key == "Craft")
                         {
-                            if (MathFunctions.RandEvent(0.3f) && Encrustings.Count > 0)
-                                randResource = Library.CreateMetaResource("GemTrinket", null, new Resource("Gem-set Trinket"), new List<Resource>
+                            var craftTag = Datastructures.SelectRandom(Crafts);
+                            var availableCrafts = Library.EnumerateResourceTypesWithTag(craftTag);
+                            if (Library.CreateMetaResource("Trinket", null, new Resource("Trinket"), new List<Resource> { new Resource(Datastructures.SelectRandom(availableCrafts)) }).HasValue(out var trinket))
+                            {
+                                if (MathFunctions.RandEvent(0.3f) && Encrustings.Count > 0)
+                                    randResource = Library.CreateMetaResource("GemTrinket", null, new Resource("Gem-set Trinket"), new List<Resource>
                                 {
                                     trinket,
                                     new Resource(Datastructures.SelectRandom(Library.EnumerateResourceTypesWithTag(Datastructures.SelectRandom(Encrustings))))
                                 });
-                            else
-                                randResource = trinket;
+                                else
+                                    randResource = trinket;
+                            }
                         }
-                    }
 
-                    if (randResource.HasValue(out res))
-                        toReturn.Add(res);
+                        if (randResource.HasValue(out var res))
+                            toReturn.Add(res);
+                    }
+                }
+                else
+                {
+                    var resources = Library.EnumerateResourceTypesWithTag(tags.Key).Select(r => new Resource(r));
+                    if (resources.Count() <= 0) continue;
+
+                    for (int i = 0; i < num; i++)
+                    {
+                        MaybeNull<Resource> randResource = Datastructures.SelectRandom(resources);
+
+                        if (!randResource.HasValue(out var res) || !res.ResourceType.HasValue(out var resType) || resType.Tags.Any(blacklistTags.Contains))
+                            continue;
+
+                        if (randResource.HasValue(out res))
+                            toReturn.Add(res);
+                    }
                 }
             }
 
             return toReturn;
-        }
-       
+        }       
     }
 }

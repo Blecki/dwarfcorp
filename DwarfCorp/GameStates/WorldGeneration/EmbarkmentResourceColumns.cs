@@ -113,7 +113,7 @@ namespace DwarfCorp.GameStates
                     var existingEntry = resourcesB.FirstOrDefault(r => r.ResourceType == lambdaResource.ResourceType);
                     if (existingEntry == null)
                     {
-                        existingEntry = new TradeableItem { ResourceType = lambdaResource.ResourceType, Resources = resourcesToMove };
+                        existingEntry = new TradeableItem { ResourceType = lambdaResource.ResourceType, Resources = resourcesToMove, Prototype = resourcesToMove[0] };
                         resourcesB.Add(existingEntry);
                         var rightLineItem = CreateLineItem(existingEntry);
                         rightLineItem.EnableHoverClick();
@@ -175,7 +175,7 @@ namespace DwarfCorp.GameStates
 
         private List<TradeableItem> Clone(List<TradeableItem> resources)
         {
-            return resources.Select(r => new TradeableItem { Resources = new List<Resource>(r.Resources), ResourceType = r.ResourceType }).ToList();
+            return resources.Select(r => new TradeableItem { Resources = new List<Resource>(r.Resources), ResourceType = r.ResourceType, Prototype = r.Prototype }).ToList();
         }
 
         public override void Construct()
@@ -239,10 +239,10 @@ namespace DwarfCorp.GameStates
 
         private void UpdateLineItemText(Widget LineItem, TradeableItem Resource)
         {
-            if (Library.GetResourceType(Resource.ResourceType).HasValue(out var resourceInfo))
-            {
+            if (Resource.Prototype != null)
+            { 
                 var font = LineItem.Root.GetTileSheet("font10");
-                var label = Resource.Resources[0].DisplayName;
+                var label = Resource.Prototype.DisplayName;
                 if (font != null)
                 {
                     var measurements = font.MeasureString(label);
@@ -258,13 +258,13 @@ namespace DwarfCorp.GameStates
                 counter.Invalidate();
 
                 LineItem.GetChild(0).Invalidate();
-                LineItem.Tooltip = resourceInfo.TypeName + "\n" + resourceInfo.Description;
+                LineItem.Tooltip = Resource.Prototype.DisplayName + "\n" + Resource.Prototype.Description;
 
                 for (int i = 0; i < 3; i++)
                 {
                     if (i > 0)
                         LineItem.GetChild(i).TextColor = Resource.Count > 0 ? Color.Black.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
-                    LineItem.GetChild(i).BackgroundColor = Resource.Count > 0 ? resourceInfo.Tint.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
+                    LineItem.GetChild(i).BackgroundColor = Resource.Count > 0 ? Resource.Prototype.Tint.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
                     LineItem.GetChild(i).Tooltip = LineItem.Tooltip;
                     LineItem.GetChild(i).Invalidate();
                 }

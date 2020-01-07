@@ -28,10 +28,10 @@ namespace DwarfCorp.Trade
 
         public Faction TraderFaction { get { return SourceEnvoy.OwnerFaction; } }
 
-        public DwarfBux ComputeValue(String Resource)
+        public DwarfBux ComputeValue(Resource Resource)
         {
-            if (Library.GetResourceType(Resource).HasValue(out var resource))
-                return GetValueMultiplier(resource) * resource.MoneyValue;
+            if (Resource.ResourceType.HasValue(out var type))
+                return GetValueMultiplier(type) * Resource.MoneyValue;
             return 0.0m;
         }
 

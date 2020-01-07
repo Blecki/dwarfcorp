@@ -11,15 +11,24 @@ namespace DwarfCorp.Play.Trading
 {
     public static class Helper
     {
-        public static List<Gui.Widgets.TradeableItem> AggregateResourcesIntoTradeableItems(ResourceSet Resources)
+        public static List<TradeableItem> AggregateResourcesIntoTradeableItems(ResourceSet Resources)
         {
-            var r = new Dictionary<String, Gui.Widgets.TradeableItem>();
+            var aggregates = new Dictionary<String, TradeableItem>();
+            var uniques = new List<TradeableItem>();
             foreach (var res in Resources.Enumerate())
-                if (r.ContainsKey(res.DisplayName))
-                    r[res.DisplayName].Resources.Add(res);
+            {
+                if (res.Aggregate)
+                {
+                    if (aggregates.ContainsKey(res.TypeName))
+                        aggregates[res.TypeName].Resources.Add(res);
+                    else
+                        aggregates.Add(res.TypeName, new Gui.Widgets.TradeableItem { Resources = new List<Resource> { res }, ResourceType = res.TypeName, Prototype = res });
+                }
                 else
-                    r.Add(res.DisplayName, new Gui.Widgets.TradeableItem { Resources = new List<Resource> { res }, ResourceType = res.DisplayName });
-            return r.Values.ToList();
+                    uniques.Add(new TradeableItem { Resources = new List<Resource> { res }, ResourceType = res.TypeName, Prototype = res });
+            }
+
+            return aggregates.Values.Concat(uniques).ToList();
         }
     }
 }

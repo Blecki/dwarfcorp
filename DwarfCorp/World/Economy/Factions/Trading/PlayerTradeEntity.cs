@@ -31,9 +31,9 @@ namespace DwarfCorp.Trade
                 Faction.World.AddResources(resource);
         }
 
-        public DwarfBux ComputeValue(String Resource)
+        public DwarfBux ComputeValue(Resource Resource)
         {
-            return Library.GetResourceType(Resource).HasValue(out var res) ? res.MoneyValue : 0;
+            return Resource.MoneyValue;
         }
 
         public DwarfBux ComputeValue(List<Resource> Resources)

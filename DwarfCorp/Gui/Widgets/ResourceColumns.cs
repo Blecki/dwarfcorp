@@ -14,6 +14,7 @@ namespace DwarfCorp.Gui.Widgets
         public List<Resource> Resources = new List<Resource>();
         public int Count => Resources.Count;
         public String ResourceType;
+        public Resource Prototype = null;
     }
 
     public class ResourceColumns : Columns
@@ -156,7 +157,7 @@ namespace DwarfCorp.Gui.Widgets
                     var existingEntry = resourcesB.FirstOrDefault(r => r.ResourceType == lambdaResource.ResourceType);
                     if (existingEntry == null)
                     {
-                        existingEntry = new TradeableItem { Resources = movedItems, ResourceType = lambdaResource.ResourceType };
+                        existingEntry = new TradeableItem { Resources = movedItems, ResourceType = lambdaResource.ResourceType, Prototype = movedItems[0] };
                         resourcesB.Add(existingEntry);
                         var rightLineItem = CreateLineItem(existingEntry);
                         rightLineItem.EnableHoverClick();
@@ -218,32 +219,32 @@ namespace DwarfCorp.Gui.Widgets
 
         private List<TradeableItem> Clone(List<TradeableItem> resources)
         {
-            return resources.Select(r => new TradeableItem { Resources = new List<Resource>(r.Resources), ResourceType = r.ResourceType }).ToList();
-        }
-
-        public List<TradeableItem> AggregateResources(IEnumerable<Resource> Resources)
-        {
-            var d = new Dictionary<String, TradeableItem>();
-            foreach (var r in Resources)
-                if (d.ContainsKey(r.TypeName))
-                    d[r.TypeName].Resources.Add(r);
-                else
-                    d.Add(r.TypeName, new TradeableItem { Resources = new List<Resource> { r }, ResourceType = r.TypeName });
-
-            return d.Values.ToList();
+            return resources.Select(r => new TradeableItem { Resources = new List<Resource>(r.Resources), ResourceType = r.ResourceType, Prototype = r.Prototype }).ToList();
         }
 
         public override void Construct()
         {
-            SourceResources = AggregateResources(TradeEntity.Resources.Enumerate());
+            //SourceResources = Play.Trading.Helper.AggregateResourcesIntoTradeableItems(TradeEntity.Resources);
 
-            Reconstruct(SourceResources, SelectedResources, 0);
+            //Reconstruct(SourceResources, SelectedResources, 0);
         }
 
         private void UpdateColumn(Gui.Widgets.WidgetListView ListView, List<TradeableItem> selectedResources)
         {
+            var lineItems = ListView.GetItems();
+            ListView.ClearItems();
             for (var i = 0; i < SelectedResources.Count; ++i)
-                UpdateLineItemText(ListView.GetChild(i + 1), selectedResources[i]);
+            {
+                Widget lineItem = null;
+                if (i >= lineItems.Count)
+                    lineItem = CreateLineItem(selectedResources[i]);
+                else
+                    lineItem = lineItems[i];
+                
+                UpdateLineItemText(lineItem, selectedResources[i]);
+
+                ListView.AddItem(lineItem);
+            }
         }
 
         private void UpdateRightColumn(Gui.Widgets.WidgetListView ListView)
@@ -262,8 +263,8 @@ namespace DwarfCorp.Gui.Widgets
             if (Library.GetResourceType(Resource.ResourceType).HasValue(out var res))
                 r.AddChild(new Play.ResourceIcon()
                 {
-                    MinimumSize = new Point(32 + 16, 32 + 16),
-                    MaximumSize = new Point(32 + 16, 32 + 16),
+                    MinimumSize = new Point(32, 32),
+                    MaximumSize = new Point(32, 32),
                     Resource = new Resource(res),
                     AutoLayout = AutoLayout.DockLeft,
                     BackgroundColor = Resource.Count > 0 ? res.Tint.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
@@ -311,10 +312,10 @@ namespace DwarfCorp.Gui.Widgets
 
         private void UpdateLineItemText(Widget LineItem, TradeableItem Resource)
         {
-            if (Library.GetResourceType(Resource.ResourceType).HasValue(out var resourceInfo))
+            if (Resource.Prototype != null)
             {
                 var font = LineItem.Root.GetTileSheet("font10");
-                var label = resourceInfo.TypeName;
+                var label = Resource.Prototype.DisplayName;
                 if (font != null)
                 {
                     Point measurements = font.MeasureString(label);
@@ -326,12 +327,10 @@ namespace DwarfCorp.Gui.Widgets
                 }
                 LineItem.GetChild(1).Text = label;
                 LineItem.GetChild(1).Invalidate();
-                LineItem.GetChild(2).Text = String.Format("{0}", ValueSourceEntity.ComputeValue(Resource.ResourceType));
-                var counter = LineItem.GetChild(0).Children.Last();
-                counter.Text = Resource.Count.ToString();
-                counter.Invalidate();
+                LineItem.GetChild(2).Text = String.Format("{0}", ValueSourceEntity.ComputeValue(Resource.Prototype));
+                LineItem.GetChild(0).Text = Resource.Count.ToString();
                 LineItem.GetChild(0).Invalidate();
-                LineItem.Tooltip = resourceInfo.TypeName + "\n" + resourceInfo.Description;
+                LineItem.Tooltip = Resource.Prototype.DisplayName + "\n" + Resource.Prototype.Description;
                 for (int i = 0; i < 3; i++)
                 {
                     if (i > 0)
@@ -341,9 +340,9 @@ namespace DwarfCorp.Gui.Widgets
                             : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
                     }
                     LineItem.GetChild(i).BackgroundColor = Resource.Count > 0
-                        ? resourceInfo.Tint.ToVector4()
+                        ? Resource.Prototype.Tint.ToVector4()
                         : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
-                    LineItem.GetChild(i).Tooltip = resourceInfo.TypeName + "\n" + resourceInfo.Description;
+                    LineItem.GetChild(i).Tooltip = Resource.Prototype.DisplayName + "\n" + Resource.Prototype.Description;
                     LineItem.GetChild(i).Invalidate();
                 }
             }

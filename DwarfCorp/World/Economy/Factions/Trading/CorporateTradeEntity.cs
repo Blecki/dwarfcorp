@@ -34,7 +34,7 @@ namespace DwarfCorp.Trade
 
         public Faction TraderFaction { get { return SourceEnvoy.OwnerFaction; } }
 
-        public DwarfBux ComputeValue(String Resource)
+        public DwarfBux ComputeValue(Resource Resource)
         {
             return 0;
         }

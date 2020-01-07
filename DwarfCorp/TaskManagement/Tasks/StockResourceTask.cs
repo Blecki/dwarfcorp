@@ -15,7 +15,7 @@ namespace DwarfCorp
 
         public StockResourceTask()
         {
-            Category = TaskCategory.Gather;
+            Category = TaskCategory.Other;
             Priority = TaskPriority.Medium;
             BoredomIncrease = GameSettings.Current.Boredom_NormalTask;
             EnergyDecrease = GameSettings.Current.Energy_Tiring;
@@ -23,7 +23,7 @@ namespace DwarfCorp
 
         public StockResourceTask(Resource ResourceToStock)
         {
-            Category = TaskCategory.Gather;
+            Category = TaskCategory.Other;
             this.ResourceToStock = ResourceToStock;
             Name = "Stock Entity: " + ResourceToStock.TypeName;
             Priority = TaskPriority.Medium;

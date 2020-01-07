@@ -89,6 +89,11 @@ namespace DwarfCorp.Gui.Widgets
             Children.Add(ScrollBar);
         }
 
+        public List<Widget> GetItems()
+        {
+            return Children.Skip(1).ToList();
+        }
+
         public override Point GetBestSize()
         {
             if (Rect.Width == 0 || Rect.Height == 0) return new Point(128, 128); // Arbitrary!

@@ -248,6 +248,11 @@ namespace DwarfCorp
                 .ToList();
         }
 
+        public List<InventoryItem> EnumerateInventory()
+        {
+            return Resources;
+        }
+
         public List<Resource> FindResourcesOfType(ResourceTypeAmount amount)
         {
             var count = 0;
