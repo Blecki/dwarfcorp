@@ -476,7 +476,6 @@ namespace DwarfCorp.Rail
             }
         }
 
-
         private void AddScaffoldGeometry(Matrix transform, Vector4 sideBounds, Vector2[] sideUvs, float HeightOffset, bool FlipTexture)
         {
             var uvDelta = sideUvs[1].X - sideUvs[0].X;
@@ -618,7 +617,6 @@ namespace DwarfCorp.Rail
         {
             base.Die();
             DetachFromNeighbors();
-            EntityFactory.CreateEntity<GameComponent>("Rail Resource", MathFunctions.RandVector3Box(GetBoundingBox()));
         }
 
         public void UpdatePiece(JunctionPiece Piece, VoxelHandle Location)
