@@ -459,7 +459,7 @@ namespace DwarfCorp
                 return new FindLandTask();
 
             if (GetRoot().GetComponent<Flammable>().HasValue(out var flames) && flames.IsOnFire)
-                return new LongWanderAct(this) { Name = "Freak out!", PathLength = 2, Radius = 5 }.AsTask();
+                return new ActWrapperTask(new LongWanderAct(this) { Name = "Freak out!", PathLength = 2, Radius = 5 });
 
             return new LookInterestingTask();
         }

@@ -362,7 +362,7 @@ namespace DwarfCorp
 
             // Freak out if on fire!
             if (GetRoot().GetComponent<Flammable>().HasValue(out var flames) && flames.IsOnFire)
-                ChangeTask(new LongWanderAct(this) { Name = "Freak out!", PathLength = 2, Radius = 5 }.AsTask());
+                ChangeTask(new ActWrapperTask(new LongWanderAct(this) { Name = "Freak out!", PathLength = 2, Radius = 5 }));
 
             // Heal thyself
             if (!Stats.Health.IsSatisfied())

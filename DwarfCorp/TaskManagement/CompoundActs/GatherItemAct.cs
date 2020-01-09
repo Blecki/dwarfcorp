@@ -69,11 +69,15 @@ namespace DwarfCorp
 
                 if(ItemToGather != null)
                 {
-                    Tree = new Sequence(
-                        new SetBlackboardData<GameComponent>(Agent, "GatherItem", ItemToGather),
-                        new GoToEntityAct(ItemToGather, Agent),
-                        new StashAct(Agent, null, "GatherItem", "GatheredResource"))
-                        | (new Wrap(() => Finally(Agent)) & false);
+                    Tree =
+                        new Select(
+                            new Sequence(
+                                new SetBlackboardData<GameComponent>(Agent, "GatherItem", ItemToGather),
+                                new GoToEntityAct(ItemToGather, Agent),
+                                new StashAct(Agent, null, "GatherItem", "GatheredResource")),
+                            new Sequence(
+                                new Wrap(() => Finally(Agent)),
+                                new Condition(() => false)));
 
                     Tree.Initialize();
                 }
