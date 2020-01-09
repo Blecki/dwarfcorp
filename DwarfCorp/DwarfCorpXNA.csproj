@@ -207,6 +207,7 @@
     <Compile Include="GameStates\Play\EmployeeInfoPanel\DebugPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\TaskListPanel.cs" />
     <Compile Include="GameStates\Play\GodMenu.cs" />
+    <Compile Include="TaskManagement\Always.cs" />
     <Compile Include="TaskManagement\ActHelper-ApplyWearToTool.cs" />
     <Compile Include="TaskManagement\ActHelper-GetEquippedItem.cs" />
     <Compile Include="TaskManagement\LeafActs\UnequipAct.cs" />

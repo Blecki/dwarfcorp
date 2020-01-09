@@ -14,7 +14,6 @@ namespace DwarfCorp
     /// An act is an another Name for a "Behavior". Behaviors are linked together into an "behavior tree". Each behavior is a coroutine
     /// which can either be running, succeed, or fail. 
     /// </summary>
-    [JsonObject(IsReference = true)]
     public class Act
     {
         public enum Status
@@ -42,12 +41,6 @@ namespace DwarfCorp
         {
             IsInitialized = false;
             Children = new List<Act>();
-        }
-
-
-        public static implicit operator Act(Func<IEnumerable<Status>> enumerator)
-        {
-            return enumerator.GetAct();
         }
 
         public static implicit operator Act(Func<bool> enumerator)
@@ -157,20 +150,4 @@ namespace DwarfCorp
                 }
         }
     }
-
-    public class Always : Act
-    {
-        public Act.Status AlwaysStatus = Act.Status.Success;
-        public Always(Act.Status status)
-        {
-            AlwaysStatus = status;
-        }
-
-        public override IEnumerable<Status> Run()
-        {
-            yield return AlwaysStatus;
-            yield break;
-        }
-    }
-
 }

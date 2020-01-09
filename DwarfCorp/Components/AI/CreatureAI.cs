@@ -11,9 +11,12 @@ namespace DwarfCorp
 {
     public class CreatureAI : GameComponent
     {
+        public bool MinecartActive = false;
+
         public MaybeNull<Task> CurrentTask = null; 
         public List<Task> Tasks = new List<Task>();
-        [JsonIgnore] protected MaybeNull<Act> CurrentAct = null;
+
+        [JsonIgnore] protected MaybeNull<Act> CurrentAct { get; private set; }
 
         public BoundingBox PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue), new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
         public EnemySensor Sensor { get; set; } // Todo: Don't serialize this.

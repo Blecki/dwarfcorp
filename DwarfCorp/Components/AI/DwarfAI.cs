@@ -12,25 +12,24 @@ namespace DwarfCorp
     public class DwarfAI : CreatureAI
     {
         [JsonProperty] private int lastXPAnnouncement = -1;
-        //private Timer restockTimer = new Timer(10.0f, false);
-        private Timer SpeakTimer = new Timer(5.0f, true);
         [JsonProperty] private int NumDaysNotPaid = 0;
-        private Timer IdleTimer = new Timer(2.0f, true);
         [JsonProperty] private double UnhappinessTime = 0.0f;
-        private Timer AutoGatherTimer = new Timer(MathFunctions.Rand() * 5 + 3, false);
 
         [JsonIgnore] public bool BreakOnUpdate = false;
 
+        private Timer SpeakTimer = new Timer(5.0f, true);
+        private Timer IdleTimer = new Timer(2.0f, true);
+        private Timer AutoGatherTimer = new Timer(MathFunctions.Rand() * 5 + 3, false);
+
         public DwarfAI()
         {
+
         }
 
-        public DwarfAI(
-            ComponentManager Manager,
-            string name,
-            EnemySensor sensor) :
+        public DwarfAI(ComponentManager Manager, string name, EnemySensor sensor) :
             base(Manager, name, sensor)
         {
+
         }
 
         private class IdleTask
@@ -330,8 +329,7 @@ namespace DwarfCorp
 
         private void AssignGeneratedTask(Task Task)
         {
-            if (!Tasks.Contains(Task) && !CurrentTask.ReferenceEquals(Task)) // Is this redundant?
-                AssignTask(Task);
+            AssignTask(Task);
         }
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera) 

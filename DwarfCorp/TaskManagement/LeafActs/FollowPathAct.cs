@@ -55,7 +55,8 @@ namespace DwarfCorp
             {
                 #region Ride Elevator
                 case MoveType.RideElevator:
-                 
+
+                    CleanupMinecart();
                     var shafts = Step.DestinationState.Tag as Elevators.ElevatorMoveState;
                     if (shafts == null || shafts.Entrance == null || shafts.Entrance.IsDead || shafts.Exit == null || shafts.Exit.IsDead)
                         yield return Status.Fail;
@@ -381,6 +382,8 @@ namespace DwarfCorp
 
                 case MoveType.Teleport:
 
+                    CleanupMinecart();
+
                     if (Step.InteractObject == null || Step.InteractObject.IsDead)
                         yield return Status.Fail;
 
@@ -427,6 +430,11 @@ namespace DwarfCorp
 
         private void SetupMinecart()
         {
+            if (Agent.MinecartActive)
+            {
+                var x = 5;
+            }
+
             if (Minecart == null)
                 Minecart = EntityFactory.CreateEntity<Cart>("Cart", Agent.Position);
         }
@@ -435,6 +443,8 @@ namespace DwarfCorp
         {
             if (Minecart != null)
                 Minecart.Delete();
+            Minecart = null;
+            Agent.MinecartActive = false;
         }
 
         public override IEnumerable<Status> Run()
@@ -452,8 +462,13 @@ namespace DwarfCorp
 
             foreach (var step in Path)
             {
-                foreach (var status in PerformStep(step))
+                if (Agent.MinecartActive && (step.MoveType != MoveType.RideVehicle && step.MoveType != MoveType.EnterVehicle && step.MoveType != MoveType.ExitVehicle))
                 {
+                    var x = 5;
+                }
+
+                foreach (var status in PerformStep(step))
+                { 
                     //Agent.Physics.PropogateTransforms();
                     DeltaTime += (float)DwarfTime.LastTime.ElapsedGameTime.TotalSeconds;
                     Creature.Physics.CollisionType = CollisionType.Dynamic;

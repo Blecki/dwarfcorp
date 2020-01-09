@@ -221,6 +221,7 @@
     <Compile Include="TaskManagement\ActHelper-GetEquippedItem.cs" />
     <Compile Include="TaskManagement\ActHelper-CreateToolCheckAct.cs" />
     <Compile Include="TaskManagement\ActWrapperTask.cs" />
+    <Compile Include="TaskManagement\Always.cs" />
     <Compile Include="TaskManagement\BehaviorExtensions.cs" />
     <Compile Include="TaskManagement\Blackboard.cs" />
     <Compile Include="TaskManagement\CompoundActs\TransferResourcesAct.cs" />

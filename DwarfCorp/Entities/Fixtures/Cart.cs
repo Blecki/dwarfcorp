@@ -33,7 +33,7 @@ namespace DwarfCorp
             Tags.Add("Cart");
             CollisionType = CollisionType.Static;
             SetFlag(Flag.RotateBoundingBox, true);
-
+            
             CreateCosmeticChildren(manager);
 
             OrientToWalls();
