@@ -31,7 +31,6 @@ namespace DwarfCorp
         public Gui.TileReference Icon { get; set; }
         public float BaseCraftTime = 0.0f;
         public string Description = "";
-        public List<CraftPrereq> Prerequisites = new List<CraftPrereq>();
         public int CraftedResultsCount = 1;
         public String ResourceCreated = "";
         public string CraftLocation = "Anvil";

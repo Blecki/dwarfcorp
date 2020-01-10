@@ -71,6 +71,14 @@ namespace DwarfCorp
             return desiredRoom;
         }
 
+        public MaybeNull<Stockpile> GetStockpileContainingResource(Resource Resource)
+        {
+            foreach (var stockpile in EnumerateZones().OfType<Stockpile>())
+                if (stockpile.Resources.Contains(Resource))
+                    return stockpile;
+            return null;
+        }
+
         public IEnumerable<KeyValuePair<Stockpile, Resource>> GetStockpilesContainingResources(Vector3 biasPos, IEnumerable<ResourceTypeAmount> required)
         {
             foreach (var amount in required)

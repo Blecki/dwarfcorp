@@ -207,6 +207,9 @@
     <Compile Include="GameStates\Play\EmployeeInfoPanel\DebugPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\TaskListPanel.cs" />
     <Compile Include="GameStates\Play\GodMenu.cs" />
+    <Compile Include="Player\Crafting\GetSpecificResourceAct.cs" />
+    <Compile Include="Player\Crafting\Resources\EncrustTrinketAct.cs" />
+    <Compile Include="Player\Crafting\Resources\EncrustTrinketTask.cs" />
     <Compile Include="TaskManagement\ActHelper-CreateEquipmentCheckAct.cs" />
     <Compile Include="TaskManagement\Always.cs" />
     <Compile Include="TaskManagement\ActHelper-ApplyWearToTool.cs" />
