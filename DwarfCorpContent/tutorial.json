@@ -234,5 +234,10 @@
     "Name": "place rail",
     "Title": "Rail Tool",
     "Text": "Dwarves will use rail to move quickly from place to place. To create a junction, simply overlap with existing rail. The correct junction will automatically be created."
+  },
+  {
+    "Name": "equipment",
+    "Title": "Equipment",
+    "Text": ""
   }
 ]

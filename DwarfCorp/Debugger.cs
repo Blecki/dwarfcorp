@@ -68,6 +68,13 @@ namespace DwarfCorp
             return r;
         }
 
+        public static void RaiseDebugWarning(String Message)
+        {
+#if DEBUG
+            throw new InvalidProgramException(Message);
+#endif
+        }
+
         private static Dictionary<String, Func<String, String>> CommandHandlers = null;
 
         public static String HandleConsoleCommand(String Command)

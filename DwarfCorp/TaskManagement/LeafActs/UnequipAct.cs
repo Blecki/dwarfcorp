@@ -6,29 +6,49 @@ namespace DwarfCorp
 {
     public class UnequipAct : CreatureAct
     {
-        public Resource Resource;
+        public String BlackboardEntry = "Resource";
 
         public UnequipAct()
         {
 
         }
 
-        public UnequipAct(CreatureAI Agent, Resource Resource) :
+        public UnequipAct(CreatureAI Agent) :
             base(Agent)
         {
-            this.Resource = Resource;
-            Name = "Unequip Tool";
+            Name = "Unequip";
         }
 
         public override IEnumerable<Status> Run()
         {
-            if (Agent.Creature.Equipment.HasValue(out var equipment) && equipment.GetItemInSlot(Resource.Equipment_Slot).HasValue(out var item) && Object.ReferenceEquals(item, Resource))
+            var list = Agent.Blackboard.GetData<List<Resource>>(BlackboardEntry);
+            if (list != null)
+                foreach (var item in list)
+                    UnequipItem(item);
+            else
             {
-                equipment.UnequipItem(item);
-                Creature.Inventory.AddResource(item);
-            }
+                var resource = Agent.Blackboard.GetData<Resource>(BlackboardEntry);
 
+                if (resource == null)
+                {
+                    yield return Status.Fail;
+                    yield break;
+                }
+
+                UnequipItem(resource);
+            }
             yield return Status.Success;
+        }
+
+        private void UnequipItem(Resource Item)
+        {
+            if (Agent.Creature.Equipment.HasValue(out var equipment)
+                && equipment.GetItemInSlot(Item.Equipment_Slot).HasValue(out var existingEquipment)
+                && Object.ReferenceEquals(Item, existingEquipment))
+            {
+                equipment.UnequipItem(existingEquipment);
+                Creature.Inventory.AddResource(existingEquipment);
+            }
         }
     }
 }

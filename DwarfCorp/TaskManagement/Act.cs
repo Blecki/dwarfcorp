@@ -48,15 +48,9 @@ namespace DwarfCorp
             return enumerator.GetAct();
         }
 
-        public static implicit operator Act(bool condition)
-        {
-            return new Condition(() => condition);
-        }
+        public static implicit operator Act(bool condition) => new Condition(() => condition);
 
-        public static implicit operator Act(Act.Status status)
-        {
-            return new Always(status);
-        }
+        public static implicit operator Act(Act.Status status) => new Always(status);
 
         public static implicit operator Act(Act[] acts)
         {
@@ -135,19 +129,12 @@ namespace DwarfCorp
             throw new NotImplementedException();
         }
 
-        public virtual Task AsTask()
-        {
-            return new ActWrapperTask(this);
-        }
-
         public virtual void OnCanceled()
         {
             IsCanceled = true;
             if(Children != null)
                 foreach (Act child in Children)
-                {
                     child.OnCanceled();
-                }
         }
     }
 }

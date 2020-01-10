@@ -29,7 +29,8 @@ namespace DwarfCorp
 
         public override MaybeNull<Act> CreateScript(Creature Agent)
         {
-            return new UnequipAct(Agent.AI, Resource);
+            Agent.AI.Blackboard.SetData("item-to-remove", Resource);
+            return new UnequipAct(Agent.AI) { BlackboardEntry = "item-to-remove" };
         }
 
         public override bool ShouldDelete(Creature agent)

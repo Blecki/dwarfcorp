@@ -86,7 +86,7 @@ namespace DwarfCorp
 
                 return new Select(
                     new Sequence(
-                        ActHelper.CreateToolCheckAct(creature.AI, false, "Hammer"),
+                        ActHelper.CreateEquipmentCheckAct(creature.AI, "Tool", ActHelper.EquipmentFallback.NoFallback, "Hammer"),
                         new GetResourcesOfType(creature.AI, new List<ResourceTypeAmount>() { resources }) { BlackboardEntry = "stashed-resource" },
                         new Domain(() => Validate(creature.AI, Voxel, resources),
                             new GoToVoxelAct(Voxel, PlanAct.PlanType.Radius, creature.AI, 4.0f)),

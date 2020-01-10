@@ -53,7 +53,8 @@ namespace DwarfCorp.Play
         {
             ItemSize = new Point(32, 48);
             Root.RegisterForUpdate(this);
-            Transparent = true;
+            if (String.IsNullOrEmpty(Border))
+                Transparent = true;
 
             OnUpdate = (sender, time) =>
             {

@@ -33,7 +33,7 @@ namespace DwarfCorp.Play.EmployeeInfo
             {
                 AutoLayout = AutoLayout.DockRight,
                 MinimumSize = new Point(200, 0),
-                Border = "border-thin",
+                Border = "border-one",
                 EnableDragAndDrop = false,
                 Resources = new ResourceSet(),
                 OnIconClicked = (sender, args) =>
@@ -55,7 +55,8 @@ namespace DwarfCorp.Play.EmployeeInfo
 
             var comparisonPanel = AddChild(new Widget
             {
-                AutoLayout = AutoLayout.DockFill
+                AutoLayout = AutoLayout.DockFill,
+                Border = "border-one"
             });
 
             var bottomBar = comparisonPanel.AddChild(new Widget
@@ -121,7 +122,8 @@ namespace DwarfCorp.Play.EmployeeInfo
 
             SelectedEquipIcon = comparisonPanel.AddChild(new ResourceIcon
             {
-                AutoLayout = AutoLayout.FloatTopRight
+                AutoLayout = AutoLayout.FloatTopRight,
+                MinimumSize = new Point(32, 32)
             }) as ResourceIcon;
 
 
@@ -132,6 +134,8 @@ namespace DwarfCorp.Play.EmployeeInfo
         {
             if (Employee != null && !Employee.IsDead)
             {
+                Employee.World.Tutorial("equipment");
+
                 Hidden = false;
                 Text = "";
 
@@ -157,9 +161,7 @@ namespace DwarfCorp.Play.EmployeeInfo
                                 RemoveButton.Hidden = false;
                                 RemoveButton.Invalidate();
                             }
-                        }
-
-                  
+                        }                  
 
                     ContentsPanel.Resources.Clear();
 
