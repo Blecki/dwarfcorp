@@ -88,7 +88,7 @@ namespace DwarfCorp.Play.EmployeeInfo
                 OnClick = (_sender, args) =>
                 {
                     if (SelectedEquipIcon.Resource != null)
-                        Employee.AssignTask(new FindAndEquipTask(SelectedEquipIcon.Resource.TypeName));
+                        Employee.AssignTask(new FindAndEquipTask(SelectedEquipIcon.Resource.DisplayName)); // Todo: Since we had to enumerate to build the list - couldn't we save the location?
                 },
                 Hidden = true
             });

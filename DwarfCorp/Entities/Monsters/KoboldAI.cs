@@ -26,13 +26,13 @@ namespace DwarfCorp
         {
             if (StealFromPlayerProbability > 0 && MathFunctions.RandEvent(StealFromPlayerProbability))
             {
-                var resources = World.ListResources();
+                var resources = World.ListApparentResources();
                 if (resources.Count > 0)
                 {
                     var resource = Datastructures.SelectRandom(resources);
                     if (resource.Value.Count > 0)
                     {
-                        AssignTask(new ActWrapperTask(new GetResourcesOfType(this, new List<ResourceTypeAmount>() { new ResourceTypeAmount(resource.Value.Type, 1) })) { Name = "Steal stuff", Priority = TaskPriority.High });
+                        AssignTask(new ActWrapperTask(new GetResourcesOfApparentType(this, new List<ResourceApparentTypeAmount>() { new ResourceApparentTypeAmount(resource.Value.Type, 1) })) { Name = "Steal stuff", Priority = TaskPriority.High });
                     }
                 }
             }

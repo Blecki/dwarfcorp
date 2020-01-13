@@ -6,12 +6,9 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// Tells a creature that it should pick up an item and put it in a stockpile.
-    /// </summary>
     internal class FindAndEquipTask : Task
     {
-        public String ResourceType;
+        public String ResourceApparentType;
 
         public FindAndEquipTask()
         {
@@ -21,16 +18,16 @@ namespace DwarfCorp
             EnergyDecrease = 0;
         }
 
-        public FindAndEquipTask(String ResourceType) : this()
+        public FindAndEquipTask(String ResourceApparentType) : this()
         {
-            this.ResourceType = ResourceType;
-            Name = "Equip: " + ResourceType;
+            this.ResourceApparentType = ResourceApparentType;
+            Name = "Equip: " + ResourceApparentType;
         }
 
         public override MaybeNull<Act> CreateScript(Creature Agent)
         {
             return new Sequence(
-                            new GetResourcesOfType(Agent.AI, new List<ResourceTypeAmount> { new ResourceTypeAmount(ResourceType, 1) }) { BlackboardEntry = "tool-stashed" },
+                            new GetResourcesOfApparentType(Agent.AI, new List<ResourceApparentTypeAmount> { new ResourceApparentTypeAmount(ResourceApparentType, 1) }) { BlackboardEntry = "tool-stashed" },
                             new EquipAct(Agent.AI) { BlackboardEntry = "tool-stashed" }
                         );
         }

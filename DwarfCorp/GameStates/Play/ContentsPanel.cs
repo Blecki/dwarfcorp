@@ -25,6 +25,7 @@ namespace DwarfCorp.Play
             public int Count;
         }
 
+        // Todo: Remove duplication with ResourceSet.GroupBy
         private List<AggregatedResource> AggregateByType()
         {
             var r = new Dictionary<String, AggregatedResource>();
