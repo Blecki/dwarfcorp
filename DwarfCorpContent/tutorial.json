@@ -3,7 +3,8 @@
     "Name": "new game start",
     "Title": "Tutorial",
     "Text": "Welcome to DwarfCorp! You can turn this tutorial off at any time and I won't bother you again. Why don't you try selecting a dwarf? The selector tool is at the left end of the tray at the bottom.",
-    "GuiHilite": "select"
+    "GuiHilite": "select",
+    "NextTutorial": "camera"
   },
   {
     "Name": "dwarf selected",
@@ -27,7 +28,8 @@
     "Name": "slice",
     "Title": "Slicing",
     "Text": "You can view slices of blocks beneath the earth. The most valuable resources are underground, and dwarves prefer living in the dark. Push the Slice key (by default Q) to slice the terrain at the mouse cursor. You can also slice terrain using the slice buttons at the bottom of the screen, using the slice-up and slice-down keys (by default, pageup and pagedown), or with CTRL + mousehweel.",
-    "GuiHilite": "slice"
+    "GuiHilite": "slice",
+    "NextTutorial": "unslice"
   },
   {
     "Name": "unslice",
@@ -194,7 +196,8 @@
     "Name": "camera",
     "Title": "The Camera",
     "Text": "Move the camera using the arrow keys, movement keys (by default, W.A.S.D) or by hovering the mouse at the side of the screen. Zoom the camera in and out using the mouse wheel or by right clicking and dragging while the shift key is pressed. Hold shift or middle mouse button and drag the mouse to rotate the camera. The camera can be re-centered on your balloon port by clicking on the Home button on the minimap (bottom left corner).",
-    "GuiHilite": "minimap"
+    "GuiHilite": "minimap",
+    "NextTutorial": "slice"
   },
   {
     "Name": "walk_camera",
@@ -238,6 +241,6 @@
   {
     "Name": "equipment",
     "Title": "Equipment",
-    "Text": ""
+    "Text": "Dwarves need equipment to carry out your instructions. Tools will wear out as they are used and need to be replaced periodically. On the left is the dwarf. Click on an equipment slot to get the option to remove the item, and to see all available items that can be equipped."
   }
 ]
