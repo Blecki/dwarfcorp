@@ -40,7 +40,7 @@ namespace DwarfCorp.GameStates
                 }).AutoLayout = AutoLayout.DockBottom;
 
             CreateMenuItem(frame, "NEVERMIND!", "This was probably a bad idea.",
-                (sender, args) => GameStateManager.PopState(false)).AutoLayout = AutoLayout.DockBottom;
+                (sender, args) => GameStateManager.PopState()).AutoLayout = AutoLayout.DockBottom;
 
             FinishMenu();
         }

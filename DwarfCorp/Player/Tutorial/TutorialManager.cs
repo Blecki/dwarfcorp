@@ -22,11 +22,10 @@ namespace DwarfCorp.Tutorial
 
         private Dictionary<String, TutorialEntry> Entries;
         public bool TutorialEnabled = true;
-        private String PendingTutorial = null;
         private Widget ExistingTutorial = null;
         private bool TutorialVisible = false;
-        private Widget HighlightWidget = null;
-        public bool TutorialHidden = false;
+
+        private Queue<String> PendingTutorials = new Queue<string>();
 
         public TutorialManager()
         {
@@ -70,83 +69,78 @@ namespace DwarfCorp.Tutorial
 
         public void ShowTutorial(String Name)
         {
-            if (TutorialEnabled && !TutorialVisible && Entries.ContainsKey(Name) && !Entries[Name].Shown)
-                PendingTutorial = Name;
+            if (TutorialEnabled && Entries.ContainsKey(Name) && !Entries[Name].Shown)
+            {
+                Entries[Name].Shown = true;
+                PendingTutorials.Enqueue(Name);
+            }
         }
 
         public void HideTutorial()
         {
-            TutorialHidden = true;
-            PendingTutorial = null;
-            if (TutorialVisible && ExistingTutorial != null)
-            {
+            TutorialVisible = false;
+
+            if (ExistingTutorial != null)
                 ExistingTutorial.Hidden = true;
-            }
         }
 
         public void ShowTutorial()
         {
-            TutorialHidden = false;
-            if (TutorialVisible && ExistingTutorial != null)
-            {
+            TutorialVisible = true;
+            if (ExistingTutorial != null)
                 ExistingTutorial.Hidden = false;
-            }
         }
 
         public void Update(Gui.Root Gui)
         {
-            if (!TutorialHidden && TutorialEnabled && !String.IsNullOrEmpty(PendingTutorial) && Gui != null &&!Entries[PendingTutorial].Shown)
+            if (!TutorialEnabled || Gui == null)
+                return;
+
+            if (ExistingTutorial != null) return;
+
+            if (PendingTutorials.Count > 0)
             {
-                if (TutorialVisible && ExistingTutorial != null)
+                var nextTutorial = PendingTutorials.Dequeue();
+                if (Entries.ContainsKey(nextTutorial))
                 {
-                    ExistingTutorial.Close();
-                    ExistingTutorial = null;
+                    var entry = Entries[nextTutorial];
+                    TutorialVisible = true;
+                    ExistingTutorial = CreateTutorialPopup(entry, Gui);
                 }
-
-                var entry = Entries[PendingTutorial];
-                entry.Shown = true;
-                entry.Name = PendingTutorial;
-                TutorialVisible = true;
-
-                var popup = Gui.ConstructWidget(new Gui.Widgets.TutorialPopup
-                {
-                    Message = entry,
-                    OnClose = (sender) =>
-                    {
-                        TutorialEnabled = !(sender as Gui.Widgets.TutorialPopup).DisableChecked;
-                        TutorialVisible = false;
-                        Gui.ClearSpecials();
-                        if (!String.IsNullOrEmpty(entry.NextTutorial))
-                        {
-                            ShowTutorial(entry.NextTutorial);
-                        }
-                        ExistingTutorial = null;
-                    },
-                    OnLayout = (sender) =>
-                    {
-                        sender.Rect.X = Gui.RenderData.VirtualScreen.Width - sender.Rect.Width;
-                        sender.Rect.Y = 64;
-                    }
-                });
-
-                if (entry.Popup)
-                {
-                    Gui.ShowMinorPopup(popup);
-                    popup.PopupDestructionType = PopupDestructionType.Keep;
-                }
-                else
-                    Gui.RootItem.AddChild(popup);
-                ExistingTutorial = popup;
-                PendingTutorial = null;
-
-                Gui.SpecialHiliteWidgetName = entry.GuiHilite;
             }
+        }
 
-            //if ((HighlightWidget != null) && (HighlightWidget.IsAnyParentHidden() || HighlightWidget.Hidden) && TutorialVisible && (ExistingTutorial != null))
-            //{
-            //    Gui.ClearSpecials();
-            //    ExistingTutorial.Close();
-            //}
+        private Widget CreateTutorialPopup(TutorialEntry Tutorial, Root Gui)
+        {
+            var popup = Gui.ConstructWidget(new Gui.Widgets.TutorialPopup
+            {
+                Message = Tutorial,
+                OnClose = (sender) =>
+                {
+                    TutorialEnabled = !(sender as Gui.Widgets.TutorialPopup).DisableChecked;
+                    Gui.ClearSpecials();
+                    if (!String.IsNullOrEmpty(Tutorial.NextTutorial))
+                        ShowTutorial(Tutorial.NextTutorial);
+                    ExistingTutorial = null;
+                },
+                OnLayout = (sender) =>
+                {
+                    sender.Rect.X = Gui.RenderData.VirtualScreen.Width - sender.Rect.Width;
+                    sender.Rect.Y = 64;
+                }
+            });
+
+            if (Tutorial.Popup)
+            {
+                Gui.ShowMinorPopup(popup);
+                popup.PopupDestructionType = PopupDestructionType.Keep;
+            }
+            else
+                Gui.RootItem.AddChild(popup);
+
+            Gui.SpecialHiliteWidgetName = Tutorial.GuiHilite;
+
+            return popup;
         }
 
         public bool HasCurrentTutorial()
