@@ -122,6 +122,25 @@ namespace DwarfCorp
             return toReturn;
         }
 
+        public Dictionary<string, ResourceApparentTypeAmount> ListApparentResources()
+        {
+            var toReturn = new Dictionary<string, ResourceApparentTypeAmount>();
+
+            foreach (var stockpile in EnumerateZones().OfType<Stockpile>().Where(pile => !(pile is Graveyard)))
+            {
+                foreach (var resource in stockpile.Resources.Enumerate())
+                {
+
+                    if (toReturn.ContainsKey(resource.DisplayName))
+                        toReturn[resource.DisplayName].Count += 1;
+                    else
+                        toReturn[resource.DisplayName] = new ResourceApparentTypeAmount(resource.DisplayName, 1);
+                }
+            }
+
+            return toReturn;
+        }
+
         public ResourceSet GetTradeableResources()
         {
             var r = new ResourceSet();

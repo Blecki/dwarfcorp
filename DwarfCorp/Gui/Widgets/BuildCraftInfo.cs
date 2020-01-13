@@ -208,7 +208,7 @@ namespace DwarfCorp.Gui.Widgets
                     return;
 
                 var notEnoughResources = false;
-                var availableResources = World.ListResources();
+                var availableResources = World.ListApparentResources();
 
                 foreach (var combo in ResourceCombos)
                 {
