@@ -98,6 +98,25 @@ namespace DwarfCorp
             }
         }
 
+        public IEnumerable<KeyValuePair<Stockpile, Resource>> GetStockpilesContainingResources(Vector3 biasPos, IEnumerable<ResourceApparentTypeAmount> required)
+        {
+            foreach (var amount in required)
+            {
+                var numGot = 0;
+                foreach (var stockpile in EnumerateZones().OfType<Stockpile>().OrderBy(s => (s.GetBoundingBox().Center() - biasPos).LengthSquared()))
+                {
+                    if (numGot >= amount.Count)
+                        break;
+
+                    foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => sResource.DisplayName == amount.Type))
+                    {
+                        numGot += 1;
+                        yield return new KeyValuePair<Stockpile, Resource>(stockpile, resource);
+                    }
+                }
+            }
+        }
+
         public IEnumerable<KeyValuePair<Stockpile, Resource>> GetStockpilesContainingResources( IEnumerable<ResourceTypeAmount> required)
         {
             foreach (var amount in required)
@@ -109,6 +128,27 @@ namespace DwarfCorp
                         break;
 
                     foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => sResource.TypeName == amount.Type))
+                    {
+                        numGot += 1;
+                        yield return new KeyValuePair<Stockpile, Resource>(stockpile, resource);
+                        if (numGot >= amount.Count)
+                            break;
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<KeyValuePair<Stockpile, Resource>> GetStockpilesContainingResources(IEnumerable<ResourceApparentTypeAmount> required)
+        {
+            foreach (var amount in required)
+            {
+                var numGot = 0;
+                foreach (var stockpile in EnumerateZones().OfType<Stockpile>())
+                {
+                    if (numGot >= amount.Count)
+                        break;
+
+                    foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => sResource.DisplayName == amount.Type))
                     {
                         numGot += 1;
                         yield return new KeyValuePair<Stockpile, Resource>(stockpile, resource);

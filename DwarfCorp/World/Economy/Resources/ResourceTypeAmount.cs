@@ -18,10 +18,22 @@ namespace DwarfCorp
         {
             
         }
+    }
 
-        public ResourceTypeAmount CloneResource()
+    public class ResourceApparentTypeAmount
+    {
+        public String Type { get; set; }
+        public int Count { get; set; }
+
+        public ResourceApparentTypeAmount(String Type, int Count)
         {
-            return new ResourceTypeAmount(Type, Count);
+            this.Type = Type;
+            this.Count = Count;
+        }
+
+        public ResourceApparentTypeAmount()
+        {
+
         }
     }
 }

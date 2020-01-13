@@ -270,6 +270,23 @@ namespace DwarfCorp
             return r;
         }
 
+        public List<Resource> FindResourcesOfApparentType(ResourceApparentTypeAmount amount)
+        {
+            var count = 0;
+            var r = new List<Resource>();
+            foreach (var res in Resources)
+            {
+                if (res.Resource.DisplayName == amount.Type && count < amount.Count)
+                {
+                    r.Add(res.Resource);
+                    count += 1;
+                    if (count >= amount.Count)
+                        break;
+                }
+            }
+            return r;
+        }
+
         public void AddResource(Resource tradeGood, RestockType type = RestockType.RestockResource)
         {
             Resources.Add(new InventoryItem()

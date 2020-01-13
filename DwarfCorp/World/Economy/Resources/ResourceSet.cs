@@ -51,6 +51,11 @@ namespace DwarfCorp
             return Resources.Count(r => r.TypeName == Type);
         }
 
+        public int ApparentCount(String ApparentType)
+        {
+            return Resources.Count(r => r.DisplayName == ApparentType);
+        }
+
         public int CountWithTag(String Tag)
         {
             return Resources.Count(r => r.ResourceType.HasValue(out var res) && res.Tags.Contains(Tag));
@@ -73,15 +78,51 @@ namespace DwarfCorp
             return r;
         }
 
-        public static List<ResourceTypeAmount> AggregateByType(List<Resource> Resources)
+        public struct ResourceGroup
         {
-            var r = new Dictionary<String, int>();
+            public String ApparentType;
+            public int Count;
+            public List<Resource> Resources;
+            public MaybeNull<Resource> Prototype { get => Resources.Count > 0 ? Resources[0] : null; }
+
+            public ResourceGroup Append(Resource Res)
+            {
+                Resources.Add(Res);
+
+                return new ResourceGroup
+                {
+                    ApparentType = ApparentType,
+                    Count = Count + 1,
+                    Resources = Resources
+                };
+            }
+        }
+
+        /// <summary>
+        /// Returns resources grouped by their type as it appears to the player, which may be different from their underlying type.
+        /// </summary>
+        /// <param name="Resources"></param>
+        /// <returns></returns>
+        public static IEnumerable<ResourceGroup> GroupByApparentType(List<Resource> Resources)
+        {
+            var r = new Dictionary<String, ResourceGroup>();
+            foreach (var res in Resources)
+                if (r.ContainsKey(res.DisplayName))
+                    r[res.DisplayName] = r[res.DisplayName].Append(res);
+                else
+                    r.Add(res.DisplayName, new ResourceGroup { ApparentType = res.DisplayName, Count = 1, Resources = new List<Resource> { res } });
+            return r.Values;
+        }
+
+        public static IEnumerable<ResourceGroup> GroupByRealType(List<Resource> Resources)
+        {
+            var r = new Dictionary<String, ResourceGroup>();
             foreach (var res in Resources)
                 if (r.ContainsKey(res.TypeName))
-                    r[res.TypeName] += 1;
+                    r[res.DisplayName] = r[res.TypeName].Append(res);
                 else
-                    r.Add(res.TypeName, 1);
-            return r.Select(p => new ResourceTypeAmount(p.Key, p.Value)).ToList();
+                    r.Add(res.DisplayName, new ResourceGroup { ApparentType = res.TypeName, Count = 1, Resources = new List<Resource> { res } });
+            return r.Values;
         }
     }
 }

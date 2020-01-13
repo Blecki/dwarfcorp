@@ -88,7 +88,6 @@ namespace DwarfCorp
 
         #region Property Accessors.
         [JsonIgnore] public String DisplayName { get { return GetProperty<String>("DisplayName", TypeName); } set { SetProperty<String>("DisplayName", value); } }
-        [JsonIgnore] public bool Aggregate { get { return GetProperty<bool>("Aggregate", true); } set { SetProperty<bool>("Aggregate", value); } }
         [JsonIgnore] public String Category { get { return GetProperty<String>("Category", ""); } set { SetProperty<String>("Category", value); } }
         [JsonIgnore] public List<Gui.TileReference> GuiLayers { get => GetProperty<List<Gui.TileReference>>("GuiLayers", null); set => SetProperty<List<Gui.TileReference>>("GuiLayers", value); }
         [JsonIgnore] public List<ResourceType.CompositeLayer> CompositeLayers { get => GetProperty<List<ResourceType.CompositeLayer>>("CompositeLayers", new List<ResourceType.CompositeLayer>()); set => SetProperty<List<ResourceType.CompositeLayer>>("CompositeLayers", value); }

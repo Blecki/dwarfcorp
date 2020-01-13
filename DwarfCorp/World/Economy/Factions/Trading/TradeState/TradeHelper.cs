@@ -14,21 +14,15 @@ namespace DwarfCorp.Play.Trading
         public static List<TradeableItem> AggregateResourcesIntoTradeableItems(ResourceSet Resources)
         {
             var aggregates = new Dictionary<String, TradeableItem>();
-            var uniques = new List<TradeableItem>();
             foreach (var res in Resources.Enumerate())
             {
-                if (res.Aggregate)
-                {
-                    if (aggregates.ContainsKey(res.TypeName))
-                        aggregates[res.TypeName].Resources.Add(res);
-                    else
-                        aggregates.Add(res.TypeName, new Gui.Widgets.TradeableItem { Resources = new List<Resource> { res }, ResourceType = res.TypeName, Prototype = res });
-                }
+                if (aggregates.ContainsKey(res.DisplayName))
+                    aggregates[res.DisplayName].Resources.Add(res);
                 else
-                    uniques.Add(new TradeableItem { Resources = new List<Resource> { res }, ResourceType = res.TypeName, Prototype = res });
+                    aggregates.Add(res.DisplayName, new Gui.Widgets.TradeableItem { Resources = new List<Resource> { res }, ResourceType = res.DisplayName, Prototype = res });
             }
 
-            return aggregates.Values.Concat(uniques).ToList();
+            return aggregates.Values.ToList();
         }
     }
 }

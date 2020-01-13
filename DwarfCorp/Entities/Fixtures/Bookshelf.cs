@@ -14,7 +14,7 @@ namespace DwarfCorp
         [EntityFactory("Bookshelf")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Bookshelf(Manager, Position, Data.GetData<Resource>("Resource", null)) { Tags = new List<string>() { "Research" } };
+            return new Bookshelf(Manager, Position, Data.GetData<Resource>("Resource", null));
         }
 
         private static GeometricPrimitive SharedPrimitive = null;
@@ -30,6 +30,8 @@ namespace DwarfCorp
                 new Vector3(0.0f, 0.5f, 0.35f), new CraftDetails(manager, Resource))
         {
             Tags.Add("Books");
+            Tags.Add("Bookshelf");
+            Tags.Add("Research");
             CollisionType = CollisionType.Static;
             SetFlag(Flag.RotateBoundingBox, true);
 

@@ -45,9 +45,9 @@ namespace DwarfCorp.GameStates
             });
         }
 
-        protected void CreateMenuItem(Gui.Widget Menu, string Name, string Tooltip, Action<Gui.Widget, Gui.InputEventArgs> OnClick)
+        protected Gui.Widget CreateMenuItem(Gui.Widget Menu, string Name, string Tooltip, Action<Gui.Widget, Gui.InputEventArgs> OnClick)
         {
-            Menu.AddChild(new Gui.Widgets.Button
+            return Menu.AddChild(new Gui.Widgets.Button
             {
                 AutoLayout = Gui.AutoLayout.DockTop,
                 Text = Name,

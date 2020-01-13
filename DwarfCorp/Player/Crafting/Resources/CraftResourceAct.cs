@@ -7,29 +7,27 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    public class ResourceDes
-    {
-        public bool Finished = false;
-        public float Progress = 0.0f;
-        public bool HasResources = false;
-        public CreatureAI ResourcesReservedFor = null;
-    }
-
-
     internal class CraftResourceAct : CompoundCreatureAct
     {
         public CraftItem ItemType;
-        public List<ResourceTypeAmount> RawMaterials;
+        public List<ResourceApparentTypeAmount> RawMaterials;
         public string Noise { get; set; }
         public ResourceDes Des;
         public MaybeNull<Resource> ActualCreatedResource = null;
-
         
-
         public CraftResourceAct()
         {
             if (Des.ResourcesReservedFor != null && Des.ResourcesReservedFor.IsDead)
                 Des.ResourcesReservedFor = null;
+        }
+
+        public CraftResourceAct(CreatureAI creature, CraftItem CraftItem, List<ResourceApparentTypeAmount> RawMaterials, ResourceDes Des) :
+            base(creature)
+        {
+            this.ItemType = CraftItem;
+            this.RawMaterials = RawMaterials;
+            this.Des = Des;
+            Name = "Build craft item";
         }
 
         public IEnumerable<Status> ReserveResources()
@@ -150,16 +148,6 @@ namespace DwarfCorp
             }
         }
 
-
-        public CraftResourceAct(CreatureAI creature, CraftItem CraftItem, List<ResourceTypeAmount> RawMaterials, ResourceDes Des) :
-            base(creature)
-        {
-            this.ItemType = CraftItem;
-            this.RawMaterials = RawMaterials;
-            this.Des = Des;
-            Name = "Build craft item";
-        }
-
         public bool ResourceStateValid()
         {
             bool valid = Des.HasResources || Des.ResourcesReservedFor != null;
@@ -181,7 +169,7 @@ namespace DwarfCorp
                                           new Domain(() => !Des.HasResources && (Des.ResourcesReservedFor == Agent || Des.ResourcesReservedFor == null),
                                                 new Sequence(
                                                     new Wrap(ReserveResources),
-                                                    new GetResourcesOfType(Agent, RawMaterials) { BlackboardEntry = "stashed-materials" })
+                                                    new GetResourcesOfApparentType(Agent, RawMaterials) { BlackboardEntry = "stashed-materials" })
                                                 | (new Wrap(UnReserve)) 
                                                 & false),
                                             new Domain(() => Des.HasResources || Des.ResourcesReservedFor != null, true));

@@ -145,6 +145,7 @@
     <Compile Include="Entities\Fixtures\StoneLadder.cs" />
     <Compile Include="Entities\Fixtures\WoodenLadder.cs" />
     <Compile Include="Entities\Plants\CandyCane.cs" />
+    <Compile Include="GameStates\FrontEnd\CheckMegaWorldState.cs" />
     <Compile Include="GameStates\Play\ContentsPanel.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\ApplicantInfo.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\EconomyState.cs" />
@@ -201,7 +202,9 @@
     <Compile Include="Player\Crafting\CraftItem.cs" />
     <Compile Include="Player\Crafting\GetAnySingleMatchingResourceAct.cs" />
     <Compile Include="Player\Crafting\GetResourcesAct.cs" />
+    <Compile Include="Player\Crafting\GetResourcesOfApparentType.cs" />
     <Compile Include="Player\Crafting\GetResourcesOfType.cs" />
+    <Compile Include="Player\Crafting\GetSpecificResourceAct.cs" />
     <Compile Include="Player\Crafting\Objects\CraftDetails.cs" />
     <Compile Include="Player\Crafting\Objects\CraftedBody.cs" />
     <Compile Include="Player\Crafting\Objects\CraftedFixture.cs" />
@@ -212,6 +215,9 @@
     <Compile Include="Player\Crafting\Objects\PlaceObjectTool.cs" />
     <Compile Include="Player\Crafting\Resources\CraftResourceAct.cs" />
     <Compile Include="Player\Crafting\Resources\CraftResourceTask.cs" />
+    <Compile Include="Player\Crafting\Resources\EncrustTrinketAct.cs" />
+    <Compile Include="Player\Crafting\Resources\EncrustTrinketTask.cs" />
+    <Compile Include="Player\Crafting\Resources\ResourceDes.cs" />
     <Compile Include="Player\Tutorial\JsonTutorialSet.cs" />
     <Compile Include="Player\Tutorial\TutorialManager.cs" />
     <Compile Include="Player\Tutorial\TutorialSaveData.cs" />

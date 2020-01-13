@@ -1761,6 +1761,7 @@ namespace DwarfCorp.GameStates
                                 return;
                             //sender.Hidden = true;
 
+                            // Todo: Break out into task composition function.
                             var numRepeats = buildInfo.GetNumRepeats();
                             if (numRepeats > 1)
                             {
@@ -2037,18 +2038,19 @@ namespace DwarfCorp.GameStates
 
                     (widget as FlatToolTray.Tray).ItemSource =
                         (new Widget[] { icon_menu_Plant_Return }).Concat(
-                         World.GetResourcesWithTagAggregatedByType("Plantable")                         
-                        .Select(resource => new FlatToolTray.Icon
+                            ResourceSet.GroupByRealType(World.GetResourcesWithTag("plantable"))     
+                        .Select(group => new FlatToolTray.Icon
                         {
-                            Icon = Library.GetResourceType(resource.Type).HasValue(out var res) ? res.GuiLayers[0] : null,
-                            Tooltip = "Plant " + resource.Type,
+                            // Todo: Should support apparent type grouping.
+                            Icon = group.Prototype.HasValue(out var res) ? res.GuiLayers[0] : null,
+                            Tooltip = "Plant " + group.ApparentType,
                             Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
-                            Text = resource.Type,
+                            Text = group.ApparentType,
                             TextVerticalAlign = VerticalAlign.Below,
-                            OnClick = (sender, args) => ChangeTool("Plant", resource.Type),
+                            OnClick = (sender, args) => ChangeTool("Plant", group.ApparentType),
                             PopupChild = new PlantInfo()
                             {
-                                Type = resource.Type,
+                                Type = group.ApparentType,
                                 Rect = new Rectangle(0, 0, 256, 128),
                                 TextColor = Color.Black.ToVector4()
                             },

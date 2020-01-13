@@ -28,25 +28,19 @@ namespace DwarfCorp.Play
         private List<AggregatedResource> AggregateByType()
         {
             var r = new Dictionary<String, AggregatedResource>();
-            var nonStackables = new List<Resource>();
             foreach (var res in Resources.Enumerate())
             {
-                if (res.Aggregate == false)
-                    nonStackables.Add(res);
+                if (r.ContainsKey(res.DisplayName))
+                    r[res.DisplayName].Count += 1;
                 else
-                {
-                    if (r.ContainsKey(res.TypeName))
-                        r[res.TypeName].Count += 1;
-                    else
-                        r.Add(res.TypeName, new AggregatedResource
-                        {
-                            Sample = res,
-                            Count = 1
-                        });
-                }
+                    r.Add(res.DisplayName, new AggregatedResource
+                    {
+                        Sample = res,
+                        Count = 1
+                    });
             }
 
-            return r.Values.Concat(nonStackables.Select(n => new AggregatedResource { Sample = n, Count = 1 })).ToList();
+            return r.Values.ToList();
         }
 
         public override void Construct()

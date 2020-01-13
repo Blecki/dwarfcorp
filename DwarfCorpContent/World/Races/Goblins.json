@@ -34,7 +34,7 @@
   "RareResources": [ "Metal", "Gem", "Precious", "Alcohol" ],
   "TradeGoods": {
     "AnimalProduct": 5,
-    "Craft": 1
+    "Gem":  1
   },
   "Crafts": [ "Bone" ],
   "Encrustings": [],

@@ -60,7 +60,6 @@ namespace DwarfCorp.GameStates
                 Library.GetString("credits-tooltip"),
                 (sender, args) => GameStateManager.PushState(new CreditsState(GameState.Game)));
 
-//#if DEBUG
             CreateMenuItem(frame, "QUICKPLAY", "",
                 (sender, args) =>
                 {
@@ -79,26 +78,12 @@ namespace DwarfCorp.GameStates
                     GameStateManager.PushState(new LoadState(Game, overworldSettings, LoadTypes.GenerateOverworld));
                 });
 
-#if DEBUG
             CreateMenuItem(frame, "GIANT QUICKPLAY", "",
                 (sender, args) =>
                 {
-                    DwarfGame.LogSentryBreadcrumb("Menu", "User generating a random world.");
-
-                    var overworldSettings = Overworld.Create();
-                    overworldSettings.InstanceSettings.Cell = new ColonyCell { Bounds = new Rectangle(0, 0, 64, 64), Faction = overworldSettings.ColonyCells.GetCellAt(0,0).Faction };
-                    overworldSettings.InstanceSettings.InitalEmbarkment = new Embarkment(overworldSettings);
-                    overworldSettings.InstanceSettings.InitalEmbarkment.Funds = 1000u;
-                    overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Crafter", overworldSettings.Company));
-                    overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Manager", overworldSettings.Company));
-                    overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Miner", overworldSettings.Company));
-                    overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Wizard", overworldSettings.Company));
-                    overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Soldier", overworldSettings.Company));
-                    overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Musketeer", overworldSettings.Company));
-
-                    GameStateManager.PushState(new LoadState(Game, overworldSettings, LoadTypes.GenerateOverworld));
+                    GameStateManager.PushState(new CheckMegaWorldState(Game));
                 });
-#endif
+
             CreateMenuItem(frame, "Dwarf Designer", "Open the dwarf designer.",
                 (sender, args) =>
                 {

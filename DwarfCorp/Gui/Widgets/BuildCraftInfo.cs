@@ -214,7 +214,9 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     var currentSelection = combo.Combo.SelectedItem;
 
-                    combo.Combo.Items = ResourceSet.AggregateByType(World.GetResourcesWithTag(combo.Resource.Tag)).Where(r => r.Count >= combo.Resource.Count).Select(r => r.Type).OrderBy(p => p).ToList();
+                    // Todo: Aggregate by display name instead. And then - ??
+                    combo.Combo.Items = ResourceSet.GroupByApparentType(
+                        World.GetResourcesWithTag(combo.Resource.Tag)).Where(r => r.Count >= combo.Resource.Count).Select(r => r.ApparentType).OrderBy(p => p).ToList();
 
                     if (combo.Combo.Items.Count == 0)
                     {
@@ -295,11 +297,11 @@ namespace DwarfCorp.Gui.Widgets
             return true;
         }
 
-        public List<ResourceTypeAmount> GetSelectedResources()
+        public List<ResourceApparentTypeAmount> GetSelectedResources()
         {
-            var r = new List<ResourceTypeAmount>();
+            var r = new List<ResourceApparentTypeAmount>();
             for (var i = 0; i < Data.RequiredResources.Count && i < ResourceCombos.Count; ++i)
-                r.Add(new ResourceTypeAmount(ResourceCombos[i].Combo.SelectedItem, Data.RequiredResources[i].Count));
+                r.Add(new ResourceApparentTypeAmount(ResourceCombos[i].Combo.SelectedItem, Data.RequiredResources[i].Count));
             return r;
         }
 

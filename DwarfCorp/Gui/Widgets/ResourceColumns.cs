@@ -154,7 +154,7 @@ namespace DwarfCorp.Gui.Widgets
                     lambdaResource.Resources.RemoveRange(0, toMove);
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_change_selection, 0.1f, MathFunctions.Rand() * 0.25f);
 
-                    var existingEntry = resourcesB.FirstOrDefault(r => r.ResourceType == lambdaResource.ResourceType);
+                    var existingEntry = resourcesB.FirstOrDefault(r => r.Prototype.DisplayName == lambdaResource.Prototype.DisplayName);
                     if (existingEntry == null)
                     {
                         existingEntry = new TradeableItem { Resources = movedItems, ResourceType = lambdaResource.ResourceType, Prototype = movedItems[0] };

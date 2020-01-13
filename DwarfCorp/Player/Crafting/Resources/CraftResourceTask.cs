@@ -14,7 +14,7 @@ namespace DwarfCorp
         public bool IsAutonomous { get; set; }
         public int NumRepeats;
         public int CurrentRepeat;
-        public List<ResourceTypeAmount> RawMaterials;
+        public List<ResourceApparentTypeAmount> RawMaterials;
         public CraftItem ItemType;
         public ResourceDes Des;
 
@@ -26,7 +26,7 @@ namespace DwarfCorp
             MaxAssignable = 1;
         }
 
-        public CraftResourceTask(CraftItem ItemType, int CurrentRepeat, int NumRepeats, List<ResourceTypeAmount> RawMaterials, int id = -1)
+        public CraftResourceTask(CraftItem ItemType, int CurrentRepeat, int NumRepeats, List<ResourceApparentTypeAmount> RawMaterials, int id = -1)
         {
             this.CurrentRepeat = CurrentRepeat;
             this.NumRepeats = NumRepeats;

@@ -53,12 +53,7 @@ namespace DwarfCorp
         {
             return EnumerateZones().OfType<Stockpile>().SelectMany(zone => zone.Resources.Enumerate().Where(r => r.ResourceType.HasValue(out var res) && res.Tags.Contains(Tag))).ToList();
         }
-
-        public List<ResourceTypeAmount> GetResourcesWithTagAggregatedByType(String Tag)
-        {
-            return ResourceSet.AggregateByType(GetResourcesWithTag(Tag));
-        }
-
+        
         public bool HasResourcesWithTags(IEnumerable<ResourceTagAmount> resources)
         {
             foreach (var resource in resources)
@@ -77,6 +72,19 @@ namespace DwarfCorp
             foreach (var resource in resources)
             {
                 int count = EnumerateZones().OfType<Stockpile>().Sum(stock => stock.Resources.Count(resource.Type));
+
+                if (count < resources.Where(r => r.Type == resource.Type).Sum(r => r.Count))
+                    return false;
+            }
+
+            return true;
+        }
+
+        public bool HasResources(IEnumerable<ResourceApparentTypeAmount> resources)
+        {
+            foreach (var resource in resources)
+            {
+                int count = EnumerateZones().OfType<Stockpile>().Sum(stock => stock.Resources.ApparentCount(resource.Type));
 
                 if (count < resources.Where(r => r.Type == resource.Type).Sum(r => r.Count))
                     return false;

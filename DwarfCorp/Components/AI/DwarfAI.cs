@@ -211,7 +211,7 @@ namespace DwarfCorp
                             }
 
                             if (allow && resources.Count > 0)
-                                return new CraftResourceTask(item, 1, 1, resources.Select(r => new ResourceTypeAmount(r.TypeName, 1)).ToList()) { IsAutonomous = true, Priority = TaskPriority.Low };
+                                return new CraftResourceTask(item, 1, 1, resources.Select(r => new ResourceApparentTypeAmount(r.DisplayName, 1)).ToList()) { IsAutonomous = true, Priority = TaskPriority.Low };
                         }
 
                         return null;
