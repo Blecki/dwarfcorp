@@ -260,21 +260,17 @@ namespace DwarfCorp.Gui.Widgets
                 Background = new TileReference("basic", 0)
             });
 
-            if (Library.GetResourceType(Resource.ResourceType).HasValue(out var res))
-                r.AddChild(new Play.ResourceIcon()
-                {
-                    MinimumSize = new Point(32, 32),
-                    MaximumSize = new Point(32, 32),
-                    Resource = new Resource(res),
-                    AutoLayout = AutoLayout.DockLeft,
-                    BackgroundColor = Resource.Count > 0 ? res.Tint.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
-                    TextColor = Color.White.ToVector4(),
-                    TextHorizontalAlign = HorizontalAlign.Right,
-                    TextVerticalAlign = VerticalAlign.Bottom
-                });
-            else
-                r.AddChild(new Widget());
-
+            r.AddChild(new Play.ResourceIcon()
+            {
+                MinimumSize = new Point(32, 32),
+                MaximumSize = new Point(32, 32),
+                Resource = Resource.Prototype,
+                AutoLayout = AutoLayout.DockLeft,
+                BackgroundColor = Resource.Count > 0 ? Resource.Prototype.Tint.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
+                TextColor = Color.White.ToVector4(),
+                TextHorizontalAlign = HorizontalAlign.Right,
+                TextVerticalAlign = VerticalAlign.Bottom
+            });
 
             r.AddChild(new Gui.Widget
             {

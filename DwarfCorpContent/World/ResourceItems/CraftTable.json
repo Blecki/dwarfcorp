@@ -17,7 +17,7 @@
     {
       "Asset": "entities\\Furniture\\interior_furniture",
       "FrameSize": "32, 32",
-      "Frame": "0, 7"
+      "Frame": "7, 0"
     }
   ],
   "TrinketData": {
