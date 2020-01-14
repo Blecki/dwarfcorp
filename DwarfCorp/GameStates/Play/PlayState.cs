@@ -2038,7 +2038,7 @@ namespace DwarfCorp.GameStates
 
                     (widget as FlatToolTray.Tray).ItemSource =
                         (new Widget[] { icon_menu_Plant_Return }).Concat(
-                            ResourceSet.GroupByRealType(World.GetResourcesWithTag("plantable"))     
+                            ResourceSet.GroupByRealType(World.GetResourcesWithTag("Plantable"))     
                         .Select(group => new FlatToolTray.Icon
                         {
                             // Todo: Should support apparent type grouping.
