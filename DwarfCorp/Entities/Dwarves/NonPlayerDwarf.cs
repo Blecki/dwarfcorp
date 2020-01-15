@@ -7,40 +7,59 @@ namespace DwarfCorp
 {
     public class NonPlayerDwarf : Creature
     {
+        private static void GiveEquipment(NonPlayerDwarf Dwarf, params String[] items)
+        {
+            if (Dwarf.GetRoot().GetComponent<Equipment>().HasValue(out var equipment))
+                foreach (var item in items)
+                    equipment.EquipItem(new Resource(item));
+        }
+
         [EntityFactory("Non-Player Dwarf Miner")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new NonPlayerDwarf(
+            var r = new NonPlayerDwarf(
                 Manager,
                 new CreatureStats("Dwarf", "Miner", 0)
                 {
                     RandomSeed = MathFunctions.Random.Next(),
                 },
-                Manager.World.Factions.Factions["Dwarves"], "Dwarf", Position).Physics;
+                Manager.World.Factions.Factions["Dwarves"], "Dwarf", Position);
+
+            GiveEquipment(r, "Boots", "Overalls", "Iron Pick", "Hardhat");
+
+            return r.Physics;
         }
 
         [EntityFactory("Non-Player Dwarf Soldier")]
         private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new NonPlayerDwarf(
+            var r = new NonPlayerDwarf(
                 Manager,
                 new CreatureStats("Dwarf", "Soldier", 0)
                 {
                     RandomSeed = MathFunctions.Random.Next(),
                 },
-                Manager.World.Factions.Factions["Dwarves"], "Dwarf", Position).Physics;
+                Manager.World.Factions.Factions["Dwarves"], "Dwarf", Position);
+
+            GiveEquipment(r, "Boots", "Tabard", "Iron Axe", "Helmet");
+
+            return r.Physics;
         }
 
         [EntityFactory("Non-Player Dwarf Crafter")]
         private static GameComponent __factory2(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new NonPlayerDwarf(
+            var r = new NonPlayerDwarf(
                 Manager,
                 new CreatureStats("Dwarf", "Crafter", 0)
                 {
                     RandomSeed = MathFunctions.Random.Next(),
                 },
-                Manager.World.Factions.Factions["Dwarves"], "Dwarf", Position).Physics; // Todo: Why are we adding them to a faction? Don't they just immediately get added to a different one?
+                Manager.World.Factions.Factions["Dwarves"], "Dwarf", Position); // Todo: Why are we adding them to a faction? Don't they just immediately get added to a different one?
+
+            GiveEquipment(r, "Boots", "Apron", "Iron Hammer");
+
+            return r.Physics;
         }
 
         public NonPlayerDwarf()
@@ -64,6 +83,7 @@ namespace DwarfCorp
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(10, 5, 10), Vector3.Zero));
             Physics.AddChild(new CreatureAI(Manager, "Non Player Dwarf AI", Sensor));         
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
+            Physics.AddChild(new Equipment(Manager));
 
             Physics.Tags.Add("Dwarf");
 

@@ -137,6 +137,7 @@ namespace DwarfCorp
                 for (var i = 0; i < ItemType.CraftedResultsCount; ++i)
                     Creature.Inventory.AddResource(res);
                 Creature.AI.AddXP((int)ItemType.BaseCraftTime);
+                ActHelper.ApplyWearToTool(Creature.AI, GameSettings.Current.Wear_Craft);
                 Des.Finished = true;
                 yield return Status.Success;
             }
@@ -234,7 +235,7 @@ namespace DwarfCorp
                     new ClearBlackboardData(Agent, "ResourcesStashed"),
                     getResources,
                     new Domain(ResourceStateValid, new Sequence(
-                        ActHelper.CreateEquipmentCheckAct(Agent, "Tool", ActHelper.EquipmentFallback.NoFallback, "Hammer"),
+                        ActHelper.CreateEquipmentCheckAct(Agent, "Tool", ActHelper.EquipmentFallback.AllowDefault, "Hammer"),
                         new Wrap(() => DestroyResources(() => Creature.Physics.Position + MathFunctions.RandVector3Cube() * 0.5f)),
                         new Wrap(WaitForResources) { Name = "Wait for resources." },
                         new Wrap(() => Creature.HitAndWait(time, true, () => Creature.Physics.Position)) { Name = "Construct object." },

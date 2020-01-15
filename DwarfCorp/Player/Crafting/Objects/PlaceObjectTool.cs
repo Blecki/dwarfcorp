@@ -100,13 +100,13 @@ namespace DwarfCorp
 
         private bool HandlePlaceExistingUpdate()
         {
-            var resources = World.ListResources().Where(r => Library.GetResourceType(r.Value.Type).HasValue(out var res) && res.TypeName == CraftType.TypeName).ToList();
+            //var resources = World.ListResources().Where(r => Library.GetResourceType(r.Value.Type).HasValue(out var res) && res.TypeName == CraftType.TypeName).ToList();
 
-            var toPlace = World.PersistentData.Designations.EnumerateEntityDesignations().Where(designation => designation.Type == DesignationType.PlaceObject &&
-                ((PlacementDesignation)designation.Tag).ItemType.TypeName == CraftType.TypeName).ToList();
+            //var toPlace = World.PersistentData.Designations.EnumerateEntityDesignations().Where(designation => designation.Type == DesignationType.PlaceObject &&
+            //    ((PlacementDesignation)designation.Tag).ItemType.TypeName == CraftType.TypeName).ToList();
 
-            if ((resources.Count - toPlace.Count) <= 0)
-                return false;
+            //if ((resources.Count - toPlace.Count) <= 0)
+            //    return false;
 
             return true;
         }

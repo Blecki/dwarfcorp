@@ -138,22 +138,20 @@ namespace DwarfCorp
 
         public SpawnEvent GenerateSpawnEvent(Faction spawnFaction, Faction targetFaction, int num, bool attack=true)
         {
-            Vector3 pos = GetRandomWorldEdge(World);
             return new SpawnEvent()
             {
                 NumCreatures = num,
                 SpawnFaction = spawnFaction,
                 TargetFaction = targetFaction,
-                WorldLocation = pos,
+                WorldLocation = GetRandomWorldEdge(World),
                 Attack = attack
             };
         }
 
         public List<CreatureAI> Spawn(SpawnEvent spawnEvent)
         {
-            List<GameComponent> bodies = 
-            spawnEvent.SpawnFaction.GenerateRandomSpawn(spawnEvent.NumCreatures, spawnEvent.WorldLocation);
-            List<CreatureAI> toReturn = new List<CreatureAI>();
+            var bodies = spawnEvent.SpawnFaction.GenerateRandomSpawn(spawnEvent.NumCreatures, spawnEvent.WorldLocation);
+            var toReturn = new List<CreatureAI>();
             foreach (GameComponent body in bodies)
             {
                 foreach (CreatureAI creature in body.EnumerateAll().OfType<CreatureAI>().ToList())
@@ -161,11 +159,9 @@ namespace DwarfCorp
                    
                     if (spawnEvent.Attack)
                     {
-                        CreatureAI enemyMinion = spawnEvent.TargetFaction.GetNearestMinion(creature.Position);
+                        var enemyMinion = spawnEvent.TargetFaction.GetNearestMinion(creature.Position);
                         if (enemyMinion != null)
-                        {
                             creature.AssignTask(new KillEntityTask(enemyMinion.Physics, KillEntityTask.KillType.Auto));
-                        }
                     }
                     toReturn.Add(creature);
                 }

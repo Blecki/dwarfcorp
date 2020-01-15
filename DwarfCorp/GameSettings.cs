@@ -255,7 +255,8 @@ namespace DwarfCorp
             [AutoResetFloat(32.0f)] public float IdleBehavior_Restock = 32.0f;
 
             [AutoResetFloat(0.5f)] public float Wear_Attack = 0.5f;
-            [AutoResetFloat(0.5f)] public float Wear_Dig = 1.0f;
+            [AutoResetFloat(1.0f)] public float Wear_Dig = 1.0f;
+            [AutoResetFloat(0.5f)] public float Wear_Craft = 0.5f;
 
             public int MaxVoxelDesignations = 1024;
             public int NumPathingThreads = 2;
