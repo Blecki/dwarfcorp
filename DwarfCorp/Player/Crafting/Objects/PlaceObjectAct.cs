@@ -41,6 +41,8 @@ namespace DwarfCorp
 
         public IEnumerable<Status> UnReserve()
         {
+            if (Item.SelectedResource == null)
+                yield return Act.Status.Fail;
 
             if (Item.SelectedResource.ReservedFor == Agent)
                 Item.SelectedResource.ReservedFor = null;
@@ -127,7 +129,7 @@ namespace DwarfCorp
                         new Wrap(AcquireResources)
                     ) | (new Wrap(UnReserve))
                                             & false),
-                    new Domain(() => Item.HasResources || Item.SelectedResource.ReservedFor != null, true));
+                    new Domain(() => Item.SelectedResource != null && (Item.HasResources || Item.SelectedResource.ReservedFor != null), true));
             Act buildAct = null;
 
             buildAct = new Wrap(() => Creature.HitAndWait(true, () => 1.0f,
