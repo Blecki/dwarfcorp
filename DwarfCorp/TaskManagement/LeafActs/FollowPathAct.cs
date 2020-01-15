@@ -155,6 +155,9 @@ namespace DwarfCorp
                 #endregion
                 case MoveType.EnterVehicle:
 
+                    if (!Step.DestinationVoxel.IsEmpty)
+                        yield return Status.Fail;
+
                     Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
 
                     foreach (var bit in Jump(GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel), Step.DestinationVoxel.Center - Step.SourceVoxel.Center, actionSpeed, 1.5f))
@@ -171,10 +174,17 @@ namespace DwarfCorp
                 case MoveType.ExitVehicle:
 
                     CleanupMinecart();
+
+                    if (!Step.DestinationVoxel.IsEmpty)
+                        yield return Status.Fail;
+
                     SetAgentTranslation(GetPathPoint(Step.DestinationVoxel));
                     break;
 
                 case MoveType.RideVehicle:
+
+                    if (!Step.DestinationVoxel.IsEmpty)
+                        yield return Status.Fail;
 
                     SetupMinecart();
                     var rail = Step.SourceState.Rail;
@@ -207,9 +217,11 @@ namespace DwarfCorp
 
                 case MoveType.Walk:
 
+                    CleanupMinecart();
                     // Todo: Fail if distance is too great.
 
-                    CleanupMinecart();
+                    if (!Step.DestinationVoxel.IsEmpty)
+                        yield return Status.Fail;
 
                     foreach (var bit in Translate(Agent.Position, GetPathPoint(Step.DestinationVoxel), actionSpeed))
                     {
@@ -221,6 +233,9 @@ namespace DwarfCorp
                 case MoveType.Swim:
 
                     CleanupMinecart();
+
+                    if (!Step.DestinationVoxel.IsEmpty)
+                        yield return Status.Fail;
 
                     foreach (var bit in Translate(Agent.Position, GetPathPoint(Step.DestinationVoxel), actionSpeed))
                     {
@@ -234,6 +249,10 @@ namespace DwarfCorp
                 case MoveType.Jump:
                     {
                         CleanupMinecart();
+
+                        if (!Step.DestinationVoxel.IsEmpty)
+                            yield return Status.Fail;
+
                         Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
 
                         var dest = GetPathPoint(Step.DestinationVoxel);
@@ -256,6 +275,10 @@ namespace DwarfCorp
                 case MoveType.HighJump:
                     {
                         CleanupMinecart();
+
+                        if (!Step.DestinationVoxel.IsEmpty)
+                            yield return Status.Fail;
+
                         Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
 
                         var dest = GetPathPoint(Step.DestinationVoxel);
@@ -279,6 +302,9 @@ namespace DwarfCorp
 
                     CleanupMinecart();
 
+                    if (!Step.DestinationVoxel.IsEmpty)
+                        yield return Status.Fail;
+
                     foreach (var bit in Translate(Agent.Position, GetPathPoint(Step.DestinationVoxel), actionSpeed))
                     {
                         SetCharacterMode(CharacterMode.Falling);
@@ -290,6 +316,9 @@ namespace DwarfCorp
                 case MoveType.Climb:
 
                     CleanupMinecart();
+
+                    if (!Step.DestinationVoxel.IsEmpty)
+                        yield return Status.Fail;
 
                     DeltaTime = 0.0f;
                     foreach (var bit in Translate(GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel), actionSpeed))
@@ -312,6 +341,9 @@ namespace DwarfCorp
                 case MoveType.ClimbWalls:
 
                     CleanupMinecart();
+
+                    if (!Step.DestinationVoxel.IsEmpty)
+                        yield return Status.Fail;
 
                     DeltaTime = 0.0f;
                     foreach (var bit in Translate(GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel), actionSpeed))
@@ -338,6 +370,9 @@ namespace DwarfCorp
 
                     CleanupMinecart();
 
+                    if (!Step.DestinationVoxel.IsEmpty)
+                        yield return Status.Fail;
+
                     DeltaTime = 0.0f;
                     foreach (var bit in Translate(GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel), actionSpeed))
                     {
@@ -354,6 +389,9 @@ namespace DwarfCorp
 
                     CleanupMinecart();
 
+                    if (Step.DestinationVoxel.IsEmpty) // Reverse of other states!
+                        yield return Status.Fail;
+
                     var destroy = new DigAct(Creature.AI, new KillVoxelTask(Step.DestinationVoxel)) { CheckOwnership = false } ;
                     destroy.Initialize();
                     foreach (var status in destroy.Run())
@@ -369,6 +407,9 @@ namespace DwarfCorp
 
                     CleanupMinecart();
 
+                    if (!Step.DestinationVoxel.IsEmpty)
+                        yield return Status.Fail;
+
                     var melee = new AttackAct(Creature.AI, (GameComponent) Step.InteractObject);
                     melee.Initialize();
                     foreach (var status in melee.Run())
@@ -383,6 +424,9 @@ namespace DwarfCorp
                 case MoveType.Teleport:
 
                     CleanupMinecart();
+
+                    if (!Step.DestinationVoxel.IsEmpty)
+                        yield return Status.Fail;
 
                     if (Step.InteractObject == null || Step.InteractObject.IsDead)
                         yield return Status.Fail;
