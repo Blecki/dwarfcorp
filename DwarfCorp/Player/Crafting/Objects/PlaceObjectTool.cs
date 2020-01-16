@@ -100,6 +100,9 @@ namespace DwarfCorp
 
         private bool HandlePlaceExistingUpdate()
         {
+            // Todo: Try checking for reserved resources??
+
+
             //var resources = World.ListResources().Where(r => Library.GetResourceType(r.Value.Type).HasValue(out var res) && res.TypeName == CraftType.TypeName).ToList();
 
             //var toPlace = World.PersistentData.Designations.EnumerateEntityDesignations().Where(designation => designation.Type == DesignationType.PlaceObject &&

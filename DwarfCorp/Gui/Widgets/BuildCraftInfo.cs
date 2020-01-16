@@ -250,12 +250,12 @@ namespace DwarfCorp.Gui.Widgets
                 else
                 {
                     if (!World.PlayerFaction.Minions.Any(m => m.Stats.IsTaskAllowed(Data.CraftTaskCategory)))
-                        BottomBar.Text = String.Format("You need a minion capable of {0} tasks to {1} this.", Data.CraftTaskCategory, Data.Verb);
+                        BottomBar.Text = String.Format("You need a minion capable of {0} tasks to {1} this.", Data.CraftTaskCategory, Data.Verb.PresentTense);
                     else
                     {
                         var nearestBuildLocation = World.PlayerFaction.FindNearestItemWithTags(Data.CraftLocation, Vector3.Zero, false, null);
                         if (!String.IsNullOrEmpty(Data.CraftLocation) && nearestBuildLocation == null)
-                            BottomBar.Text = String.Format("Needs {0} to {1}!", Data.CraftLocation, Data.Verb);
+                            BottomBar.Text = String.Format("Needs {0} to {1}!", Data.CraftLocation, Data.Verb.Base);
                         else
                         {
                             Button.Hidden = false;

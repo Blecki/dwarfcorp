@@ -183,7 +183,7 @@ namespace DwarfCorp
                     getResources,
                     new Domain(ResourceStateValid,
                         new Sequence(
-                            ActHelper.CreateEquipmentCheckAct(Agent, "Tool", ActHelper.EquipmentFallback.NoFallback, "Hammer"),
+                            ActHelper.CreateEquipmentCheckAct(Agent, "Tool", ActHelper.EquipmentFallback.AllowDefault, "Hammer"),
                             new GoToTaggedObjectAct(Agent)
                             {
                                 Teleport = true,

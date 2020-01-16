@@ -4339,9 +4339,25 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>default</Name>
     </None>
+    <None Include="World\Voxels\Dark Blue Tile.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Dark Blue Tile</Name>
+    </None>
     <None Include="World\Voxels\CarvedStone.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>CarvedStone</Name>
+    </None>
+    <None Include="World\Voxels\Green Tile.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Green Tile</Name>
+    </None>
+    <None Include="World\Voxels\Red Tile.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Red Tile</Name>
+    </None>
+    <None Include="World\Voxels\White Tile.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>White Tile</Name>
     </None>
     <None Include="World\Voxels\SpiralStone.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

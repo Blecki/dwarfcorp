@@ -188,6 +188,7 @@
     <Compile Include="Components\AI\Creature-Death.cs" />
     <Compile Include="GameStates\FrontEnd\CheckMegaWorldState.cs" />
     <Compile Include="GameStates\Play\ZonePanel\DraggedResourceIcon.cs" />
+    <Compile Include="Graphics\Cameras\TrailerCameraController.cs" />
     <Compile Include="Gui\DragAndDrop.cs" />
     <Compile Include="Library\EquipmentLibrary.cs" />
     <Compile Include="Components\AI\EquipmentSlotType.cs" />

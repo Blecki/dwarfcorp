@@ -170,6 +170,7 @@
     <Compile Include="GameStates\WorldGeneration\OverworldTextureGenerator.cs" />
     <Compile Include="GameStates\WorldGeneration\SimpleOrbitCamera.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldPreviewMesh.cs" />
+    <Compile Include="Graphics\Cameras\TrailerCameraController.cs" />
     <Compile Include="Gui\DragAndDrop.cs" />
     <Compile Include="Gui\Widgets\SliderCombo.cs" />
     <Compile Include="Gui\Widgets\PlaceCraftInfo.cs" />
