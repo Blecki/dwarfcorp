@@ -175,9 +175,9 @@ namespace DwarfCorp.Gui.Input
                             Message = Gui.InputEvents.KeyUp,
                             Args = new Gui.InputEventArgs
                             {
-                                Alt = args.Alt,
-                                Control = args.Control,
-                                Shift = args.Shift,
+                                Alt = AltDown,      // For some reason WM_KEYUP doesn't actually detect if the modifier keys are pressed or not. So what's the point??
+                                Control = CtrlDown,
+                                Shift = ShiftDown,
                                 KeyValue = (int)args.KeyCode
                             }
                         });

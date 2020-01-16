@@ -398,7 +398,33 @@ namespace DwarfCorp.GameStates
 
                 else if (@event == DwarfCorp.Gui.InputEvents.KeyUp)
                 {
-                    if (FlatToolTray.Tray.Hotkeys.Contains((Keys)args.KeyValue))
+                    if (args.KeyValue >= '0' && args.KeyValue <= '9' && (args.Control || args.Shift))
+                    {
+                        var savedPositionSlot = args.KeyValue - '0';
+
+                        if (args.Control)
+                        {
+                            if (World.Renderer.PersistentSettings.SavedCameraPositions.ContainsKey(savedPositionSlot))
+                            {
+                                var saved = World.Renderer.PersistentSettings.SavedCameraPositions[savedPositionSlot];
+                                World.Renderer.Camera.Target = saved.Target;
+                                World.Renderer.Camera.ViewMatrix = saved.ViewMatrix;
+                                World.Renderer.Camera.Position = saved.Position;
+                                World.Renderer.SetMaxViewingLevel(saved.SliceLevel);
+                            }
+                        }
+                        else if (args.Shift)
+                        {
+                            World.Renderer.PersistentSettings.SavedCameraPositions[savedPositionSlot] = new CameraPositiionSnapshot
+                            {
+                                Position = World.Renderer.Camera.Position,
+                                Target = World.Renderer.Camera.Target,
+                                ViewMatrix = World.Renderer.Camera.ViewMatrix,
+                                SliceLevel = World.Renderer.PersistentSettings.MaxViewingLevel
+                            };
+                        }
+                    }
+                    else if (FlatToolTray.Tray.Hotkeys.Contains((Keys)args.KeyValue))
                     {
                         if (PausePanel == null || PausePanel.Hidden)
                         {
@@ -426,8 +452,8 @@ namespace DwarfCorp.GameStates
                     }
                     else if ((Keys)args.KeyValue == ControlSettings.Mappings.SelectAllDwarves && (PausePanel == null || PausePanel.Hidden))
                     {
-                            World.PersistentData.SelectedMinions.AddRange(World.PlayerFaction.Minions);
-                            World.Tutorial("dwarf selected");
+                        World.PersistentData.SelectedMinions.AddRange(World.PlayerFaction.Minions);
+                        World.Tutorial("dwarf selected");
                     }
                     else if ((Keys)args.KeyValue == ControlSettings.Mappings.SelectNextEmployee && (PausePanel == null || PausePanel.Hidden))
                     {
@@ -501,7 +527,7 @@ namespace DwarfCorp.GameStates
                         Gui.RootItem.Invalidate();
                     }
                     else if ((Keys)args.KeyValue == ControlSettings.Mappings.Map && (PausePanel == null || PausePanel.Hidden))
-                            Gui.SafeCall(MinimapIcon.OnClick, MinimapIcon, new InputEventArgs());
+                        Gui.SafeCall(MinimapIcon.OnClick, MinimapIcon, new InputEventArgs());
                     else if ((Keys)args.KeyValue == ControlSettings.Mappings.Employees && (PausePanel == null || PausePanel.Hidden))
                         Gui.SafeCall(EmployeesIcon.OnClick, EmployeesIcon, new InputEventArgs());
                     else if ((Keys)args.KeyValue == ControlSettings.Mappings.Tasks && (PausePanel == null || PausePanel.Hidden))

@@ -14,17 +14,12 @@ namespace DwarfCorp
         [JsonIgnore]
         public WorldManager World { get; set; }
         public Vector3 Target { get; set; }
-        private Vector3 p = Vector3.Zero;
-
-        private void setP(Vector3 v)
-        {
-            p = v;
-        }
+        private Vector3 _position = Vector3.Zero;
 
         public Vector3 Position
         {
-            get { return p; }
-            set { setP(value); }
+            get { return _position; }
+            set { _position = value; }
         }
 
         public float FOV { get; set; }
@@ -36,8 +31,7 @@ namespace DwarfCorp
         public Matrix ProjectionMatrix { get; set; }
         public Vector3 Velocity { get; set; }
         private Vector3 lastPosition = Vector3.Zero;
-
-
+        
         public enum ProjectionMode
         {
             Orthographic,
@@ -46,7 +40,6 @@ namespace DwarfCorp
 
         public ProjectionMode Projection { get; set; }
         public int LastWheel { get; set; }
-
 
         public Camera(WorldManager world, Vector3 target, Vector3 position, float fov, float aspectRatio, float nearPlane, float farPlane)
         {
@@ -69,7 +62,6 @@ namespace DwarfCorp
   
         }
 
-
         public Vector3 Project(Vector3 pos)
         {
             return GameState.Game.Graphics.GraphicsDevice.Viewport.Project(pos, ProjectionMatrix, ViewMatrix, Matrix.Identity);
@@ -79,8 +71,7 @@ namespace DwarfCorp
         {
             return GameState.Game.Graphics.GraphicsDevice.Viewport.Unproject(pos, ProjectionMatrix, ViewMatrix, Matrix.Identity);
         }
-
-
+        
         public virtual void Update(DwarfTime time, ChunkManager chunks)
         {
             lastPosition = Position;
