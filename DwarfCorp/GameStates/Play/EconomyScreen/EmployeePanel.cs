@@ -11,6 +11,37 @@ namespace DwarfCorp.Gui.Widgets
     {
         public WorldManager World;
         private Gui.Widgets.WidgetListView EmployeeList;
+        private EditableTextField FilterTextField;
+
+        private string GetFilter()
+        {
+            if (FilterTextField != null)
+                return FilterTextField.Text;
+            return "";
+        }
+
+        private string GetMinionDescriptorString(CreatureAI Minion)
+        {
+            var builder = new StringBuilder();
+            builder.Append(Minion.Stats.Species.Name);
+            builder.Append(Minion.Stats.Gender);
+            builder.Append(Minion.Stats.FullName);
+            builder.Append(Minion.Stats.CurrentClass.Name);
+            builder.Append(Minion.Stats.CurrentLevel.Name);
+            builder.Append(Minion.Stats.Title);
+            if (Minion.Stats.IsOverQualified) builder.Append("wants promotion");
+            if (Minion.Stats.IsOnStrike) builder.Append("strike");
+            if (Minion.Stats.IsAsleep) builder.Append("asleeping");
+            return builder.ToString().ToUpper();
+        }
+
+        private bool PassesFilter(CreatureAI Minion)
+        {
+            var filter = GetFilter();
+            if (String.IsNullOrEmpty(filter))
+                return true;
+            return GetMinionDescriptorString(Minion).Contains(filter.ToUpper());
+        }
 
         private void RebuildEmployeeList()
         {
@@ -39,7 +70,7 @@ namespace DwarfCorp.Gui.Widgets
                 }
             });
 
-            foreach (var employee in World.PlayerFaction.Minions)
+            foreach (var employee in World.PlayerFaction.Minions.Where(m => PassesFilter(m)))
             {
                 var bar = Root.ConstructWidget(new Widget
                 {
@@ -72,7 +103,11 @@ namespace DwarfCorp.Gui.Widgets
 
         public override void Construct()
         {
-            var left = AddChild(new Widget());
+            var left = AddChild(new Widget
+            {
+                Background = new TileReference("basic", 0)
+            });
+
             var right = AddChild(new Play.EmployeeInfo.OverviewPanel
             {
                 OnFireClicked = (sender) =>
@@ -86,6 +121,27 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockBottom,
                 MinimumSize = new Point(0, 30)
             });
+
+            var topBar = left.AddChild(new Widget
+            {
+                AutoLayout = AutoLayout.DockTop,
+                MinimumSize = new Point(0, 32),
+                Padding = new Margin(2,2,2,2)
+            });
+
+            topBar.AddChild(new Widget
+            {
+                MinimumSize = new Point(64, 0),
+                AutoLayout = AutoLayout.DockLeft,
+                Text = "Filter:",
+                TextVerticalAlign = VerticalAlign.Center
+            });
+
+            FilterTextField = topBar.AddChild(new EditableTextField
+            {
+                AutoLayout = AutoLayout.DockFill,
+                OnTextChange = (sender) => RebuildEmployeeList()
+            }) as EditableTextField;
 
             EmployeeList = left.AddChild(new Gui.Widgets.WidgetListView
             {
