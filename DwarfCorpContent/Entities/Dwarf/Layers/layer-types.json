@@ -3,7 +3,8 @@
     "Name": "Body",
     "Precedence": 0,
     "Fundamental": true,
-    "PaletteType": "Skin"
+    "PaletteType": "Skin",
+    "Gendered": true
   },
 
 
