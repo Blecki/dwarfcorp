@@ -145,6 +145,8 @@
     <Compile Include="Entities\Fixtures\StoneLadder.cs" />
     <Compile Include="Entities\Fixtures\WoodenLadder.cs" />
     <Compile Include="Entities\Plants\CandyCane.cs" />
+    <Compile Include="GameStates\Debug\GuiDebugPanel.cs" />
+    <Compile Include="GameStates\Debug\GuiDebugState.cs" />
     <Compile Include="GameStates\FrontEnd\CheckMegaWorldState.cs" />
     <Compile Include="GameStates\Play\ContentsPanel.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\ApplicantInfo.cs" />

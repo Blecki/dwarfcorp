@@ -95,6 +95,11 @@ namespace DwarfCorp.GameStates
             {
                 GameStateManager.PushState(new YarnState(null, "test.conv", "Start", new Yarn.MemoryVariableStore()));
             });
+
+            CreateMenuItem(frame, "Debug GUI", "", (sender, args) =>
+            {
+                GameStateManager.PushState(new Debug.GuiDebugState(GameState.Game));
+            });
 #endif
 
             CreateMenuItem(frame, 
@@ -119,14 +124,14 @@ namespace DwarfCorp.GameStates
             var worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetWorldDirectory());
             var dirs = worldDirectory.EnumerateDirectories().ToList();
             dirs.Sort((a, b) =>
-        {
-            var aMeta = a.GetFiles("meta.txt");
-            var bMeta = b.GetFiles("meta.txt");
-            if (aMeta.Length > 0 && bMeta.Length > 0)
-                return bMeta[0].LastWriteTime.CompareTo(aMeta[0].LastWriteTime);
+            {
+                var aMeta = a.GetFiles("meta.txt");
+                var bMeta = b.GetFiles("meta.txt");
+                if (aMeta.Length > 0 && bMeta.Length > 0)
+                    return bMeta[0].LastWriteTime.CompareTo(aMeta[0].LastWriteTime);
 
-            return b.LastWriteTime.CompareTo(a.LastWriteTime);
-        });
+                return b.LastWriteTime.CompareTo(a.LastWriteTime);
+            });
 
             MakeMenu(dirs.FirstOrDefault());
             IsInitialized = true;
