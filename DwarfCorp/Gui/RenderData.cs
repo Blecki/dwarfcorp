@@ -30,10 +30,14 @@ namespace DwarfCorp.Gui
         public Effect Effect { get; private set; }
         public Texture2D Texture { get; private set; }
         public Dictionary<String, ITileSheet> TileSheets { get; private set; }
-        public Dictionary<String, JsonTileSheet> SourceSheets { get; private set; }
         public Rectangle VirtualScreen { get; private set; }
         public Rectangle RealScreen { get; private set; }
         public int ScaleRatio { get { return CalculateScale(); } }
+
+
+        private bool AtlasValid = false;
+        private List<JsonTileSheet> CoreSheets = null;
+        private Dictionary<string, Func<GraphicsDevice, ContentManager, JsonTileSheet, Texture2D>> SheetGenerators = null;
 
         public int CalculateScale()
         {
@@ -51,12 +55,36 @@ namespace DwarfCorp.Gui
         public RenderData(GraphicsDevice Device, ContentManager Content)
         {
             this.Effect = Content.Load<Effect>(ContentPaths.GUI.Shader);
-
             CalculateScreenSize();
 
-            // Load skin from disc. The skin is a set of tilesheets.
-            var sheets = FileUtils.LoadJsonListFromMultipleSources<JsonTileSheet>(ContentPaths.GUI.Skin, null, (s) => s.Name);
+            CoreSheets = FileUtils.LoadJsonListFromMultipleSources<JsonTileSheet>(ContentPaths.GUI.Skin, null, (s) => s.Name);
+            SheetGenerators = FindGenerators();
 
+            Prerender(Content);
+        }
+
+        public void Prerender(ContentManager Content)
+        {
+            if (AtlasValid) return;
+            AtlasValid = true;
+
+            TileSheets = new Dictionary<String, ITileSheet>();
+
+            var atlas = CompileAtlas(Content, CoreSheets, SheetGenerators);
+
+            if (Texture == null || Texture.IsDisposed || Texture.Width != atlas.Dimensions.Width || Texture.Height != atlas.Dimensions.Height)
+            {
+                if (Texture != null && !Texture.IsDisposed)
+                    Texture.Dispose();
+
+                Texture = new Texture2D(Device, atlas.Dimensions.Width, atlas.Dimensions.Height, false, SurfaceFormat.Color);
+            }
+            
+            BuildTilesheetsFromPackedAtlas(atlas);
+        }
+
+        private static Dictionary<string, Func<GraphicsDevice, ContentManager, JsonTileSheet, Texture2D>> FindGenerators()
+        {
             var generators = new Dictionary<String, Func<GraphicsDevice, ContentManager, JsonTileSheet, Texture2D>>();
             foreach (var method in AssetManager.EnumerateModHooks(typeof(TextureGeneratorAttribute), typeof(Texture2D), new Type[]
             {
@@ -65,101 +93,77 @@ namespace DwarfCorp.Gui
                 typeof(JsonTileSheet)
             }))
             {
-                var attribute = method.GetCustomAttributes(false).FirstOrDefault(a => a is TextureGeneratorAttribute) as TextureGeneratorAttribute;
-                if (attribute == null) continue;
+                if (!(method.GetCustomAttributes(false).FirstOrDefault(a => a is TextureGeneratorAttribute) is TextureGeneratorAttribute attribute))
+                    continue;
                 generators[attribute.GeneratorName] = (device, content, sheet) => method.Invoke(null, new Object[] { device, content, sheet }) as Texture2D;
             }
 
-            // Pack skin into a single texture - Build atlas information from texture sizes.
-            var atlas = TextureAtlas.Compiler.Compile(sheets.Select(s =>
-                {
-                    Texture2D realTexture = null;
+            return generators;
+        }
 
-                    switch (s.Type)
-                    {
-                        case JsonTileSheetType.TileSheet:
-                        case JsonTileSheetType.VariableWidthFont:
-                        case JsonTileSheetType.JsonFont:
-                            realTexture = AssetManager.GetContentTexture(s.Texture);
-                            break;
-                        case JsonTileSheetType.Generated:
-                            realTexture = generators[s.Texture](Device, Content, s);
-                            break;
-                    }
-
-                    return new TextureAtlas.Entry
-                    {
-                        Sheet = s,
-                        Rect = new Rectangle(0, 0, realTexture.Width, realTexture.Height),
-                        RealTexture = realTexture
-                    };
-                }).ToList());
-
-            SourceSheets = new Dictionary<string, JsonTileSheet>();
-            foreach(var sheet in sheets)
+        private TextureAtlas.Atlas CompileAtlas(ContentManager Content, List<JsonTileSheet> sheets, Dictionary<string, Func<GraphicsDevice, ContentManager, JsonTileSheet, Texture2D>> generators)
+        {
+            return TextureAtlas.Compiler.Compile(sheets.Select(s =>
             {
-                SourceSheets[sheet.Name] = sheet;
-            }
-            // Create the atlas texture
-            Texture = new Texture2D(Device, atlas.Dimensions.Width, atlas.Dimensions.Height, false, SurfaceFormat.Color);
+                Texture2D realTexture = null;
 
-            TileSheets = new Dictionary<String, ITileSheet>();
+                switch (s.Type)
+                {
+                    case JsonTileSheetType.TileSheet:
+                    case JsonTileSheetType.VariableWidthFont:
+                    case JsonTileSheetType.JsonFont:
+                        realTexture = AssetManager.GetContentTexture(s.Texture);
+                        break;
+                    case JsonTileSheetType.Generated:
+                        realTexture = generators[s.Texture](Device, Content, s);
+                        break;
+                }
 
+                return new TextureAtlas.Entry
+                {
+                    Sheet = s,
+                    Rect = new Rectangle(0, 0, realTexture.Width, realTexture.Height),
+                    RealTexture = realTexture
+                };
+            }).ToList());
+        }
+
+        private void BuildTilesheetsFromPackedAtlas(TextureAtlas.Atlas atlas)
+        {
             foreach (var texture in atlas.Textures)
             {
                 // Copy source texture into the atlas
                 var realTexture = texture.RealTexture;
-                if (realTexture == null || realTexture.IsDisposed || realTexture.GraphicsDevice.IsDisposed)
-                {
-                    texture.RealTexture = AssetManager.GetContentTexture(texture.Sheet.Texture);
-                    realTexture = texture.RealTexture;
-                }
-                var textureData = new Color[realTexture.Width * realTexture.Height];
-                realTexture.GetData(textureData);
+                //if (realTexture == null || realTexture.IsDisposed || realTexture.GraphicsDevice.IsDisposed)
+                //{
+                //    texture.RealTexture = AssetManager.GetContentTexture(texture.Sheet.Texture);
+                //    realTexture = texture.RealTexture;
+                //}
+                var memTexture = TextureTool.MemoryTextureFromTexture2D(realTexture);
 
                 if (texture.Sheet.Type == JsonTileSheetType.VariableWidthFont)
                 {
-                    for (int i = 0; i < textureData.Length; ++i)
-                    {
-                        if (textureData[i].R == 0 &&
-                            textureData[i].G == 0 &&
-                            textureData[i].B == 0)
-                            textureData[i] = new Color(0, 0, 0, 0);
-                    }
+                    // Make black pixels transparent.
+                    memTexture.Filter(c => (c.R == 0 && c.G == 0 && c.B == 0) ? new Color(0, 0, 0, 0) : c);
 
                     TileSheets.Upsert(texture.Sheet.Name, new VariableWidthFont(realTexture, Texture.Width,
                         Texture.Height, texture.Rect));
                 }
                 else if (texture.Sheet.Type == JsonTileSheetType.JsonFont)
-                {
                     TileSheets.Upsert(texture.Sheet.Name, new JsonFont(texture.Sheet.Texture, atlas.Dimensions, texture.Rect));
-                }
                 else
-                {
-                    // Create a tilesheet pointing into the atlas texture.
                     TileSheets.Upsert(texture.Sheet.Name, new TileSheet(Texture.Width,
                         Texture.Height, texture.Rect, texture.Sheet.TileWidth, texture.Sheet.TileHeight, texture.Sheet.RepeatWhenUsedAsBorder));
-                }
 
-                // Paste texture data into atlas.
-                Texture.SetData(0, texture.Rect, textureData, 0, realTexture.Width * realTexture.Height);
-
+                Texture.SetData(0, texture.Rect, memTexture.Data, 0, realTexture.Width * realTexture.Height);
             }
-
-            Console.Out.WriteLine("Done with texture atlas.");
         }
 
         public void CalculateScreenSize()
         {
-            var screenSize = ActualScreenBounds;
-            VirtualScreen = new Rectangle(0, 0,
-                screenSize.X / ScaleRatio,
-                screenSize.Y / ScaleRatio);
-            
+            VirtualScreen = new Rectangle(0, 0, ActualScreenBounds.X / ScaleRatio, ActualScreenBounds.Y / ScaleRatio);
             RealScreen = new Rectangle(0, 0, VirtualScreen.Width * ScaleRatio, VirtualScreen.Height * ScaleRatio);
-            RealScreen = new Rectangle((screenSize.X - RealScreen.Width) / 2,
-                (screenSize.Y - RealScreen.Height) / 2,
-                RealScreen.Width, RealScreen.Height);
+            RealScreen = new Rectangle((ActualScreenBounds.X - RealScreen.Width) / 2, (ActualScreenBounds.Y - RealScreen.Height) / 2, RealScreen.Width, RealScreen.Height);
         }
 
         public void Dispose()

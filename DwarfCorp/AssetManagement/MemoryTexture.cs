@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace DwarfCorp
 {
@@ -19,6 +20,12 @@ namespace DwarfCorp
         public int Index(int X, int Y)
         {
             return (Y * Width) + X;
+        }
+
+        public void Filter(Func<Color, Color> FilterFunction)
+        {
+            for (var i = 0; i < Data.Length; ++i)
+                Data[i] = FilterFunction(Data[i]);
         }
     }
 }
