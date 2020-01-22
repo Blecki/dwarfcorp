@@ -53,6 +53,29 @@ namespace DwarfCorp.GameStates.Debug
                 }
             });
 
+            bar.AddChild(new Widget
+            {
+                Text = "!!!!",
+                Border = "border-button",
+                AutoLayout = AutoLayout.DockLeft,
+                MinimumSize = new Point(64, 0),
+                TextVerticalAlign = VerticalAlign.Center,
+                TextHorizontalAlign = HorizontalAlign.Center,
+                OnClick = (sender, args) =>
+                {
+                    var texture = AssetManager.GetContentTexture("Entities/Troll/troll");
+                    var sheet = new JsonTileSheet
+                    {
+                        Type = JsonTileSheetType.TileSheet,
+                        TileHeight = 48,
+                        TileWidth = 32,
+                        Name = "TROLL"
+                    };
+                    Root.RenderData.AddDynamicSheet(sheet, texture);
+                    Invalidate();
+                }
+            });
+
             Info = bar.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockFill,

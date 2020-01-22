@@ -39,6 +39,14 @@ namespace DwarfCorp.Gui
         private List<JsonTileSheet> CoreSheets = null;
         private Dictionary<string, Func<GraphicsDevice, ContentManager, JsonTileSheet, Texture2D>> SheetGenerators = null;
 
+        private class DynamicTileSheet
+        {
+            public Texture2D Texture;
+            public JsonTileSheet Sheet;
+        }
+
+        private List<DynamicTileSheet> DynamicSheets = new List<DynamicTileSheet>();
+
         public int CalculateScale()
         {
             if (!DwarfCorp.GameSettings.Current.GuiAutoScale)
@@ -61,6 +69,13 @@ namespace DwarfCorp.Gui
             SheetGenerators = FindGenerators();
 
             Prerender(Content);
+        }
+
+        // This should return some kind of dynamic sheet handle that can be used to render with it, and to switch out it's texture.
+        public void AddDynamicSheet(JsonTileSheet Sheet, Texture2D Texture)
+        {
+            DynamicSheets.Add(new DynamicTileSheet { Sheet = Sheet, Texture = Texture });
+            AtlasValid = false;
         }
 
         public void Prerender(ContentManager Content)
@@ -103,7 +118,7 @@ namespace DwarfCorp.Gui
 
         private TextureAtlas.Atlas CompileAtlas(ContentManager Content, List<JsonTileSheet> sheets, Dictionary<string, Func<GraphicsDevice, ContentManager, JsonTileSheet, Texture2D>> generators)
         {
-            return TextureAtlas.Compiler.Compile(sheets.Select(s =>
+            return TextureAtlas.Compiler.Compile(CoreSheets.Select(s =>
             {
                 Texture2D realTexture = null;
 
@@ -125,7 +140,15 @@ namespace DwarfCorp.Gui
                     Rect = new Rectangle(0, 0, realTexture.Width, realTexture.Height),
                     RealTexture = realTexture
                 };
-            }).ToList());
+            }).Concat(DynamicSheets.Select(s =>
+            {
+                return new TextureAtlas.Entry
+                {
+                    Sheet = s.Sheet,
+                    Rect = new Rectangle(0, 0, s.Texture.Width, s.Texture.Height),
+                    RealTexture = s.Texture
+                };
+            })).ToList());
         }
 
         private void BuildTilesheetsFromPackedAtlas(TextureAtlas.Atlas atlas)
