@@ -145,8 +145,9 @@
     <Compile Include="Entities\Fixtures\StoneLadder.cs" />
     <Compile Include="Entities\Fixtures\WoodenLadder.cs" />
     <Compile Include="Entities\Plants\CandyCane.cs" />
-    <Compile Include="GameStates\Debug\GuiDebugPanel.cs" />
-    <Compile Include="GameStates\Debug\GuiDebugState.cs" />
+    <Compile Include="GameStates\DebugStates\DwarfDesignerState.cs" />
+    <Compile Include="GameStates\DebugStates\GuiDebugPanel.cs" />
+    <Compile Include="GameStates\DebugStates\GuiDebugState.cs" />
     <Compile Include="GameStates\FrontEnd\CheckMegaWorldState.cs" />
     <Compile Include="GameStates\Play\ContentsPanel.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\ApplicantInfo.cs" />
@@ -479,7 +480,6 @@
     <Compile Include=".\Entities\Traps\TurretTrap.cs" />
     <Compile Include=".\FNAProgram.cs" />
     <Compile Include=".\GameSettings.cs" />
-    <Compile Include=".\GameStates\Debug\DwarfDesignerState.cs" />
     <Compile Include=".\GameStates\FrontEnd\CreditsState.cs" />
     <Compile Include=".\GameStates\FrontEnd\IntroState.cs" />
     <Compile Include=".\GameStates\FrontEnd\LoadState.cs" />

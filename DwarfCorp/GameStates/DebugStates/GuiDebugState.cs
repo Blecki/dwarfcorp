@@ -34,13 +34,16 @@ namespace DwarfCorp.GameStates.Debug
                 Text = "Exit",
                 Border = "border-button",
                 AutoLayout = AutoLayout.FloatBottomRight,
-                OnClick = (sender, args) => GameStateManager.PopState()
+                OnClick = (sender, args) => GameStateManager.PopState(),
+                TextSize = 2,
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Center
             });
 
             AtlasPanel = panel.AddChild(new GuiDebugPanel
             {
                 AutoLayout = AutoLayout.FloatCenter,
-                MinimumSize = new Point((int)(GuiRoot.RenderData.VirtualScreen.Width * 0.75f), (int)(GuiRoot.RenderData.VirtualScreen.Height * 0.75f)),
+                MinimumSize = new Point((int)(GuiRoot.RenderData.VirtualScreen.Width * 0.9f), (int)(GuiRoot.RenderData.VirtualScreen.Height * 0.9f)),
             });
 
             GuiRoot.RootItem.Layout();

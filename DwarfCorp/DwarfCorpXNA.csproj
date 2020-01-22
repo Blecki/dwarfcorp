@@ -186,8 +186,8 @@
     <Compile Include="AssetManagement\StringLibrary.cs" />
     <Compile Include="AssetManagement\TextureTool-LoadPSD.cs" />
     <Compile Include="Components\AI\Creature-Death.cs" />
-    <Compile Include="GameStates\Debug\GuiDebugPanel.cs" />
-    <Compile Include="GameStates\Debug\GuiDebugState.cs" />
+    <Compile Include="GameStates\DebugStates\GuiDebugPanel.cs" />
+    <Compile Include="GameStates\DebugStates\GuiDebugState.cs" />
     <Compile Include="GameStates\FrontEnd\CheckMegaWorldState.cs" />
     <Compile Include="GameStates\Play\ZonePanel\DraggedResourceIcon.cs" />
     <Compile Include="Graphics\Cameras\CameraPositionSnapshot.cs" />
@@ -610,7 +610,7 @@
     <Compile Include="Entities\Fixtures\Fence.cs" />
     <Compile Include="Entities\Plants\PlantFactories.cs" />
     <Compile Include="Entities\TimedExplosion.cs" />
-    <Compile Include="GameStates\Debug\DwarfDesignerState.cs" />
+    <Compile Include="GameStates\DebugStates\DwarfDesignerState.cs" />
     <Compile Include="GameStates\ModManagement\Steam\UGCTransactionProcessor.cs" />
     <Compile Include="GameStates\ModManagement\SearchWidget.cs" />
     <Compile Include="GameStates\ModManagement\InstalledModsWidget.cs" />
