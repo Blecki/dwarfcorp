@@ -12,22 +12,23 @@ namespace DwarfCorp.Gui
         public static Mesh Quad(Vector2 bottomLeft, Vector2 topLeft, Vector2 bottomRight, Vector2 topRight)
         {
             var result = new Mesh();
-            result.verticies = new Vertex[4];
+            result.Verticies = new Vertex[4];
+            result.VertexCount = 4;
 
-            result.verticies[0].Position = new Vector3(topLeft.X, topLeft.Y, 0);
-            result.verticies[1].Position = new Vector3(topRight.X, topRight.Y, 0);
-            result.verticies[2].Position = new Vector3(bottomRight.X, bottomRight.Y, 0);
-            result.verticies[3].Position = new Vector3(bottomLeft.X, bottomLeft.Y, 0);
+            result.Verticies[0].Position = new Vector3(topLeft.X, topLeft.Y, 0);
+            result.Verticies[1].Position = new Vector3(topRight.X, topRight.Y, 0);
+            result.Verticies[2].Position = new Vector3(bottomRight.X, bottomRight.Y, 0);
+            result.Verticies[3].Position = new Vector3(bottomLeft.X, bottomLeft.Y, 0);
 
-            result.verticies[0].TextureCoordinate = new Vector2(0.0f, 0.0f);
-            result.verticies[1].TextureCoordinate = new Vector2(1.0f, 0.0f);
-            result.verticies[2].TextureCoordinate = new Vector2(1.0f, 1.0f);
-            result.verticies[3].TextureCoordinate = new Vector2(0.0f, 1.0f);
+            result.Verticies[0].TextureCoordinate = new Vector2(0.0f, 0.0f);
+            result.Verticies[1].TextureCoordinate = new Vector2(1.0f, 0.0f);
+            result.Verticies[2].TextureCoordinate = new Vector2(1.0f, 1.0f);
+            result.Verticies[3].TextureCoordinate = new Vector2(0.0f, 1.0f);
 
-            result.verticies[0].Color = Vector4.One;
-            result.verticies[1].Color = Vector4.One;
-            result.verticies[2].Color = Vector4.One;
-            result.verticies[3].Color = Vector4.One;
+            result.Verticies[0].Color = Vector4.One;
+            result.Verticies[1].Color = Vector4.One;
+            result.Verticies[2].Color = Vector4.One;
+            result.Verticies[3].Color = Vector4.One;
 
             result.indicies = new short[] { 0, 1, 2, 3, 0, 2 };
             return result;
@@ -36,22 +37,23 @@ namespace DwarfCorp.Gui
         public static Mesh Quad()
         {
             var result = new Mesh();
-            result.verticies = new Vertex[4];
+            result.Verticies = new Vertex[4];
+            result.VertexCount = 4;
 
-            result.verticies[0].Position = new Vector3(0.0f, 0.0f, 0);
-            result.verticies[1].Position = new Vector3(1.0f, 0.0f, 0);
-            result.verticies[2].Position = new Vector3(1.0f, 1.0f, 0);
-            result.verticies[3].Position = new Vector3(0.0f, 1.0f, 0);
+            result.Verticies[0].Position = new Vector3(0.0f, 0.0f, 0);
+            result.Verticies[1].Position = new Vector3(1.0f, 0.0f, 0);
+            result.Verticies[2].Position = new Vector3(1.0f, 1.0f, 0);
+            result.Verticies[3].Position = new Vector3(0.0f, 1.0f, 0);
 
-            result.verticies[0].TextureCoordinate = new Vector2(0.0f, 0.0f);
-            result.verticies[1].TextureCoordinate = new Vector2(1.0f, 0.0f);
-            result.verticies[2].TextureCoordinate = new Vector2(1.0f, 1.0f);
-            result.verticies[3].TextureCoordinate = new Vector2(0.0f, 1.0f);
+            result.Verticies[0].TextureCoordinate = new Vector2(0.0f, 0.0f);
+            result.Verticies[1].TextureCoordinate = new Vector2(1.0f, 0.0f);
+            result.Verticies[2].TextureCoordinate = new Vector2(1.0f, 1.0f);
+            result.Verticies[3].TextureCoordinate = new Vector2(0.0f, 1.0f);
 
-            result.verticies[0].Color = Vector4.One;
-            result.verticies[1].Color = Vector4.One;
-            result.verticies[2].Color = Vector4.One;
-            result.verticies[3].Color = Vector4.One;
+            result.Verticies[0].Color = Vector4.One;
+            result.Verticies[1].Color = Vector4.One;
+            result.Verticies[2].Color = Vector4.One;
+            result.Verticies[3].Color = Vector4.One;
 
             result.indicies = new short[] { 0, 1, 2, 3, 0, 2 };
             return result;
@@ -64,10 +66,42 @@ namespace DwarfCorp.Gui
         {
             // Better be a fucking quad!
 
-            verticies[0].TextureCoordinate = new Vector2(0.0f, 0.0f);
-            verticies[1].TextureCoordinate = new Vector2(1.0f, 0.0f);
-            verticies[2].TextureCoordinate = new Vector2(1.0f, 1.0f);
-            verticies[3].TextureCoordinate = new Vector2(0.0f, 1.0f);
+            Verticies[0].TextureCoordinate = new Vector2(0.0f, 0.0f);
+            Verticies[1].TextureCoordinate = new Vector2(1.0f, 0.0f);
+            Verticies[2].TextureCoordinate = new Vector2(1.0f, 1.0f);
+            Verticies[3].TextureCoordinate = new Vector2(0.0f, 1.0f);
         }
+
+
+        public MeshPart QuadPart()
+        {
+            var result = new MeshPart
+            {
+                VertexOffset = VertexCount,
+                VertexCount = 4,
+                Mesh = this
+            };
+
+            var baseIndex = VertexCount;
+
+            GrowVerticies(4); // Todo: Need to implement a better growth strategy.
+
+            Verticies[baseIndex + 0] = new Vertex { Position = new Vector3(0.0f, 0.0f, 0), TextureCoordinate = new Vector2(0.0f, 0.0f), Color = Vector4.One };
+            Verticies[baseIndex + 1] = new Vertex { Position = new Vector3(1.0f, 0.0f, 0), TextureCoordinate = new Vector2(1.0f, 0.0f), Color = Vector4.One };
+            Verticies[baseIndex + 2] = new Vertex { Position = new Vector3(1.0f, 1.0f, 0), TextureCoordinate = new Vector2(1.0f, 1.0f), Color = Vector4.One };
+            Verticies[baseIndex + 3] = new Vertex { Position = new Vector3(0.0f, 1.0f, 0), TextureCoordinate = new Vector2(0.0f, 1.0f), Color = Vector4.One };
+
+            var indexBase = indicies.Length;
+            GrowIndicies(6);
+            indicies[indexBase + 0] = (short)(baseIndex + 0);
+            indicies[indexBase + 1] = (short)(baseIndex + 1);
+            indicies[indexBase + 2] = (short)(baseIndex + 2);
+            indicies[indexBase + 3] = (short)(baseIndex + 3);
+            indicies[indexBase + 4] = (short)(baseIndex + 0);
+            indicies[indexBase + 5] = (short)(baseIndex + 2);
+
+            return result;
+        }
+
     }
 }

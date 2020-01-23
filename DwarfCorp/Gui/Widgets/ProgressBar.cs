@@ -30,26 +30,25 @@ namespace DwarfCorp.Gui.Widgets
             var fillArea = Rect.Width - 24;
             var fillTo = (int)(fillArea * Percentage * 0.01f);
 
-            return Mesh.Merge(
-                Mesh.TiledSprite(new Rectangle(Rect.X + 12, Rect.Y, fillTo, Rect.Height),
-                    fill, 0)
-                    .Colorize(FillColor),
-                Mesh.Quad()
-                    .Scale(fill.TileWidth, fill.TileHeight)
-                    .Translate(Rect.X + fillTo + 12, Rect.Y)
-                    .Texture(fill.TileMatrix(1))
-                    .Colorize(FillColor),
-                Mesh.Quad()
-                    .Scale(sides.TileWidth, sides.TileHeight)
-                    .Translate(Rect.X, Rect.Y)
-                    .Texture(sides.TileMatrix(0)),
-                Mesh.Quad()
-                    .Scale(sides.TileWidth, sides.TileHeight)
-                    .Translate(Rect.X + Rect.Width - sides.TileWidth, Rect.Y)
-                    .Texture(sides.TileMatrix(1)),
-                Mesh.TiledSprite(Rect.Interior(sides.TileWidth, 0, sides.TileWidth, 0),
-                    middle, 0),
-                base.Redraw());
+            var r = Mesh.EmptyMesh();
+
+            Mesh.TiledSprite(r, new Rectangle(Rect.X + 12, Rect.Y, fillTo, Rect.Height), fill, 0).Colorize(FillColor);
+            r.QuadPart()
+                .Scale(fill.TileWidth, fill.TileHeight)
+                .Translate(Rect.X + fillTo + 12, Rect.Y)
+                .Texture(fill.TileMatrix(1))
+                .Colorize(FillColor);
+            r.QuadPart()
+                .Scale(sides.TileWidth, sides.TileHeight)
+                .Translate(Rect.X, Rect.Y)
+                .Texture(sides.TileMatrix(0));
+            r.QuadPart()
+                .Scale(sides.TileWidth, sides.TileHeight)
+                .Translate(Rect.X + Rect.Width - sides.TileWidth, Rect.Y)
+                .Texture(sides.TileMatrix(1));
+            Mesh.TiledSprite(r, Rect.Interior(sides.TileWidth, 0, sides.TileWidth, 0), middle, 0);
+
+            return Mesh.Merge(r, base.Redraw());
         }
 
         public override Point GetBestSize()

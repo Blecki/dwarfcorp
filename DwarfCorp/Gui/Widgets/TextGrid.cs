@@ -45,12 +45,12 @@ namespace DwarfCorp.Gui.Widgets
 
         public void SetCharacter(int Index, char C)
         {
-            if ((Index * 4) + 3 <= GridMesh.verticies.Length)
+            if ((Index * 4) + 3 <= GridMesh.VertexCount)
             {
-                GridMesh.verticies[(Index * 4) + 0].TextureCoordinate = new Vector2(0.0f, 0.0f);
-                GridMesh.verticies[(Index * 4) + 1].TextureCoordinate = new Vector2(1.0f, 0.0f);
-                GridMesh.verticies[(Index * 4) + 2].TextureCoordinate = new Vector2(1.0f, 1.0f);
-                GridMesh.verticies[(Index * 4) + 3].TextureCoordinate = new Vector2(0.0f, 1.0f);
+                GridMesh.Verticies[(Index * 4) + 0].TextureCoordinate = new Vector2(0.0f, 0.0f);
+                GridMesh.Verticies[(Index * 4) + 1].TextureCoordinate = new Vector2(1.0f, 0.0f);
+                GridMesh.Verticies[(Index * 4) + 2].TextureCoordinate = new Vector2(1.0f, 1.0f);
+                GridMesh.Verticies[(Index * 4) + 3].TextureCoordinate = new Vector2(0.0f, 1.0f);
 
                 var font = Root.GetTileSheet(Font);
                 GridMesh.Texture(font.TileMatrix(C), Index * 4, 4);

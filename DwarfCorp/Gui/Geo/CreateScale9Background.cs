@@ -26,17 +26,33 @@ namespace DwarfCorp.Gui
                 .Texture(Tiles.TileMatrix(Tile));
         }
 
+        public static MeshPart FittedSprite(Mesh Into, Rectangle Rect, ITileSheet Tiles, int Tile)
+        {
+            return Into.QuadPart()
+                .Scale(Rect.Width, Rect.Height)
+                .Translate(Rect.X, Rect.Y)
+                .Texture(Tiles.TileMatrix(Tile));
+        }
+
         // Tiles a sprite across a rect. Expensive!
         public static Mesh TiledSprite(Rectangle Rect, ITileSheet Tiles, int Tile)
         {
-            var meshes = new List<Mesh>();
+            var r = Mesh.EmptyMesh();
+            TiledSprite(r, Rect, Tiles, Tile);
+            return r;
+        }
+
+        // Tiles a sprite across a rect. Expensive!
+        public static MeshPart TiledSprite(Mesh Into, Rectangle Rect, ITileSheet Tiles, int Tile)
+        {
             var pos = new Point(Rect.X, Rect.Y);
+            var r = new MeshPart { VertexOffset = Into.VertexCount, Mesh = Into };
 
             while (pos.X < Rect.Right)
             {
                 while (pos.Y < Rect.Bottom)
                 {
-                    var quad = Mesh.Quad();
+                    var quad = Into.QuadPart();
                     var size = new Point(Tiles.TileWidth, Tiles.TileHeight);
 
                     // Adjust texture coordinates if needed.
@@ -58,17 +74,15 @@ namespace DwarfCorp.Gui
                         .Translate(pos.X, pos.Y)
                         .Texture(Tiles.TileMatrix(Tile));
 
-                    meshes.Add(quad);
-
                     pos.Y += Tiles.TileHeight;
                 }
                 pos.Y = Rect.Y;
                 pos.X += Tiles.TileWidth;
             }
 
-            return Mesh.Merge(meshes.ToArray());
+            r.VertexCount = Into.VertexCount - r.VertexOffset;
+            return r;
         }
-
 
         /// <summary>
         /// Create a mesh for a scale9 background. This assumed the tilesheet is 3*3 and positions the 
@@ -80,12 +94,31 @@ namespace DwarfCorp.Gui
         /// <param name="Corners"></param>
         /// <returns></returns>
         public static Mesh CreateScale9Background(
-            Rectangle Rect, 
-            ITileSheet Tiles, 
+            Rectangle Rect,
+            ITileSheet Tiles,
+            Scale9Corners Corners = Scale9Corners.All)
+        {
+            var result = Mesh.EmptyMesh();
+            CreateScale9Background(result, Rect, Tiles, Corners);
+            return result;
+        }
+
+        /// <summary>
+        /// Create a mesh for a scale9 background. This assumed the tilesheet is 3*3 and positions the 
+        /// corners without scalling, scales the edges on one axis only, and fills the middle with the 
+        /// center tile.
+        /// </summary>
+        /// <param name="Rect"></param>
+        /// <param name="Tiles"></param>
+        /// <param name="Corners"></param>
+        /// <returns></returns>
+        public static MeshPart CreateScale9Background(
+            Mesh Into,
+            Rectangle Rect,
+            ITileSheet Tiles,
             Scale9Corners Corners = Scale9Corners.All)
         {
             var rects = new Rectangle[9];
-
             var margin = new Margin(0, 0, 0, 0);
 
             if (Corners.HasFlag(Scale9Corners.Left)) margin.Left = Tiles.TileWidth;
@@ -94,35 +127,29 @@ namespace DwarfCorp.Gui
             if (Corners.HasFlag(Scale9Corners.Bottom)) margin.Bottom = Tiles.TileHeight;
 
             rects[0] = new Rectangle(Rect.Left, Rect.Top, margin.Left, margin.Top);
-            rects[1] = new Rectangle(Rect.Left + margin.Left, Rect.Top, 
-                Rect.Width - margin.Left - margin.Right, margin.Top);
+            rects[1] = new Rectangle(Rect.Left + margin.Left, Rect.Top, Rect.Width - margin.Left - margin.Right, margin.Top);
             rects[2] = new Rectangle(Rect.Right - margin.Right, Rect.Top, margin.Right, margin.Top);
-            rects[3] = new Rectangle(Rect.Left, Rect.Top + margin.Top, margin.Left, 
-                Rect.Height - margin.Top - margin.Bottom);
-            rects[4] = new Rectangle(Rect.Left + margin.Left, Rect.Top + margin.Top,
-                Rect.Width - margin.Left - margin.Right, Rect.Height - margin.Top - margin.Bottom);
-            rects[5] = new Rectangle(Rect.Right - margin.Right, Rect.Top + margin.Top, margin.Right,
-                Rect.Height - margin.Top - margin.Bottom);
+            rects[3] = new Rectangle(Rect.Left, Rect.Top + margin.Top, margin.Left, Rect.Height - margin.Top - margin.Bottom);
+            rects[4] = new Rectangle(Rect.Left + margin.Left, Rect.Top + margin.Top, Rect.Width - margin.Left - margin.Right, Rect.Height - margin.Top - margin.Bottom);
+            rects[5] = new Rectangle(Rect.Right - margin.Right, Rect.Top + margin.Top, margin.Right, Rect.Height - margin.Top - margin.Bottom);
             rects[6] = new Rectangle(Rect.Left, Rect.Bottom - margin.Bottom, margin.Left, margin.Bottom);
-            rects[7] = new Rectangle(Rect.Left + margin.Left, Rect.Bottom - margin.Bottom,
-                Rect.Width - margin.Left - margin.Right, margin.Bottom);
-            rects[8] = new Rectangle(Rect.Right - margin.Right, Rect.Bottom - margin.Bottom,
-                margin.Right, margin.Bottom);
+            rects[7] = new Rectangle(Rect.Left + margin.Left, Rect.Bottom - margin.Bottom, Rect.Width - margin.Left - margin.Right, margin.Bottom);
+            rects[8] = new Rectangle(Rect.Right - margin.Right, Rect.Bottom - margin.Bottom, margin.Right, margin.Bottom);
 
-            var result = new List<Mesh>();
+            var result = new MeshPart { VertexOffset = Into.VertexCount, Mesh = Into };
 
             for (var i = 0; i < 9; ++i)
-            {
                 if (rects[i].Width != 0 && rects[i].Height != 0)
                 {
                     if (Tiles.RepeatWhenUsedAsBorder)
-                        result.Add(TiledSprite(rects[i], Tiles, i));
+                        TiledSprite(Into, rects[i], Tiles, i);
                     else
-                        result.Add(FittedSprite(rects[i], Tiles, i));
+                        FittedSprite(Into, rects[i], Tiles, i);
                 }
-            }
 
-             return Merge(result.ToArray());
+            result.VertexCount = Into.VertexCount - result.VertexOffset;
+            return result;
         }
+
     }
 }

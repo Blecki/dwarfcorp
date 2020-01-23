@@ -258,11 +258,11 @@ namespace DwarfCorp.Gui.Widgets
                             drawableArea.Y + ((drawableArea.Height - (pipeGlyph.Y * TextSize)) / 2))
                         .Texture(font.TileMatrix((int)('|' - ' ')))
                         .Colorize(new Vector4(1, 0, 0, 1));
-                    return Mesh.Merge(GetBackgroundMesh(), Mesh.Clip(Mesh.Merge(GetTextMesh(), cursorMesh), GetDrawableInterior()));
+                    return Mesh.Merge(GetBackgroundMesh(), Mesh.ClipToNewMesh(Mesh.Merge(GetTextMesh(), cursorMesh), GetDrawableInterior()));
                 }
             }
             
-            return Mesh.Merge(GetBackgroundMesh(), Mesh.Clip(GetTextMesh(), GetDrawableInterior()));
+            return Mesh.Merge(GetBackgroundMesh(), Mesh.ClipToNewMesh(GetTextMesh(), GetDrawableInterior()));
         }
     }
 }

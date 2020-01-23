@@ -176,6 +176,8 @@
     <Compile Include="Graphics\Cameras\CameraPositionSnapshot.cs" />
     <Compile Include="Graphics\Cameras\TrailerCameraController.cs" />
     <Compile Include="Gui\DragAndDrop.cs" />
+    <Compile Include="Gui\Geo\PartBasics.cs" />
+    <Compile Include="Gui\Geo\MeshPart.cs" />
     <Compile Include="Gui\Widgets\SliderCombo.cs" />
     <Compile Include="Gui\Widgets\PlaceCraftInfo.cs" />
     <Compile Include="Gui\Widgets\DefaultTaskPriority.cs" />

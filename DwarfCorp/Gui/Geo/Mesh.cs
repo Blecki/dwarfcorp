@@ -34,19 +34,39 @@ namespace DwarfCorp.Gui
     /// </summary>
     public partial class Mesh
     {
-        public Vertex[] verticies;
+        public Vertex[] Verticies;
+        public int VertexCount { get; private set; }
+
         public short[] indicies;
 
         public void Render(GraphicsDevice Device)
         {
-            if (verticies.Length != 0)
-                Device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, verticies, 0, verticies.Length,
+            if (VertexCount != 0)
+                Device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, Verticies, 0, VertexCount,
                     indicies, 0, indicies.Length / 3);
         }
 
         public static Mesh EmptyMesh()
         {
-            return new Mesh() { indicies = new short[0], verticies = new Vertex[0] };
+            return new Mesh() { indicies = new short[0], Verticies = new Vertex[0], VertexCount = 0 };
+        }
+
+        public void GrowVerticies(int by)
+        {
+            VertexCount += by;
+            if (Verticies.Length < VertexCount)
+            {
+                var newVerts = new Vertex[(int)Math.Ceiling(VertexCount * 1.5)];
+                Verticies.CopyTo(newVerts, 0);
+                Verticies = newVerts;
+            }
+        }
+
+        public void GrowIndicies(int by)
+        {
+            var newIndicies = new short[indicies.Length + by];
+            indicies.CopyTo(newIndicies, 0);
+            indicies = newIndicies;
         }
     }
 }

@@ -456,37 +456,32 @@ namespace DwarfCorp.Gui
 
             if (Background != null)
             {
+                var bg = Mesh.EmptyMesh();
+                var bgPart = bg.QuadPart();
+                result.Add(bg);
                 if (Rotation != 0.0)
                 {
-                    result.Add(Mesh.Quad()
+                    bgPart
                         .Scale(Rect.Width, Rect.Height)
                         .Transform(Rect.X, Rect.Y, Rect.Width, Rect.Height, Rotation)
                         .Colorize(BackgroundColor)
-                        .Texture(Root.GetTileSheet(Background.Sheet).TileMatrix(Background.Tile)));
+                        .Texture(Root.GetTileSheet(Background.Sheet).TileMatrix(Background.Tile));
                 }
                 else
                 {
-                    result.Add(Mesh.Quad()
+                    bgPart
                             .Scale(Rect.Width, Rect.Height)
                             .Translate(Rect.X, Rect.Y)
                             .Colorize(BackgroundColor)
-                            .Texture(Root.GetTileSheet(Background.Sheet).TileMatrix(Background.Tile)));
+                            .Texture(Root.GetTileSheet(Background.Sheet).TileMatrix(Background.Tile));
                 }
             }
 
             if (!String.IsNullOrEmpty(Border))
-            {
-                //Create a 'scale 9' background 
-                result.Add(
-                    Mesh.CreateScale9Background(Rect, Root.GetTileSheet(Border))
-                    .Colorize(BackgroundColor));
-            }
+                result.Add(Mesh.CreateScale9Background(Rect, Root.GetTileSheet(Border)).Colorize(BackgroundColor));
 
-            // Add text label
             if (!String.IsNullOrEmpty(Text))
-            {
                 GetTextMesh(result);
-            }
 
             return Mesh.Merge(result.ToArray());
         }

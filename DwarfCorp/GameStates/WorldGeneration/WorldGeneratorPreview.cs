@@ -154,7 +154,7 @@ namespace DwarfCorp.GameStates
 
             var colorKeyEntries = Library.CreateBiomeColors().ToList();
             var font = Root.GetTileSheet("font8");
-            var stringMeshes = new List<Gui.Mesh>();
+            var stringMeshes = new List<Gui.Mesh>(); // Todo: Convert to MeshPart system. Requires string meshes to use it first.
             var y = Rect.Y;
             var maxWidth = 0;
 
