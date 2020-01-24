@@ -537,6 +537,7 @@ namespace DwarfCorp.Gui
             var text = (WrapText || WrapWithinWords)
                 ? font.WordWrapString(Text, TextSize, drawableArea.Width, WrapWithinWords)
                 : Text;
+
             var stringMesh = Mesh.CreateStringMesh(
                 text,
                 font,

@@ -18,41 +18,25 @@ namespace DwarfCorp.Gui
 
     public partial class Mesh
     {
-        public static Mesh FittedSprite(Rectangle Rect, ITileSheet Tiles, int Tile)
+        public MeshPart FittedSpritePart(Rectangle Rect, ITileSheet Tiles, int Tile)
         {
-            return Quad()
-                .Scale(Rect.Width, Rect.Height)
-                .Translate(Rect.X, Rect.Y)
-                .Texture(Tiles.TileMatrix(Tile));
-        }
-
-        public static MeshPart FittedSprite(Mesh Into, Rectangle Rect, ITileSheet Tiles, int Tile)
-        {
-            return Into.QuadPart()
+            return QuadPart()
                 .Scale(Rect.Width, Rect.Height)
                 .Translate(Rect.X, Rect.Y)
                 .Texture(Tiles.TileMatrix(Tile));
         }
 
         // Tiles a sprite across a rect. Expensive!
-        public static Mesh TiledSprite(Rectangle Rect, ITileSheet Tiles, int Tile)
-        {
-            var r = Mesh.EmptyMesh();
-            TiledSprite(r, Rect, Tiles, Tile);
-            return r;
-        }
-
-        // Tiles a sprite across a rect. Expensive!
-        public static MeshPart TiledSprite(Mesh Into, Rectangle Rect, ITileSheet Tiles, int Tile)
+        public MeshPart TiledSpritePart(Rectangle Rect, ITileSheet Tiles, int Tile)
         {
             var pos = new Point(Rect.X, Rect.Y);
-            var r = new MeshPart { VertexOffset = Into.VertexCount, Mesh = Into };
+            var r = new MeshPart { VertexOffset = this.VertexCount, Mesh = this };
 
             while (pos.X < Rect.Right)
             {
                 while (pos.Y < Rect.Bottom)
                 {
-                    var quad = Into.QuadPart();
+                    var quad = QuadPart();
                     var size = new Point(Tiles.TileWidth, Tiles.TileHeight);
 
                     // Adjust texture coordinates if needed.
@@ -80,7 +64,7 @@ namespace DwarfCorp.Gui
                 pos.X += Tiles.TileWidth;
             }
 
-            r.VertexCount = Into.VertexCount - r.VertexOffset;
+            r.VertexCount = this.VertexCount - r.VertexOffset;
             return r;
         }
 
@@ -142,9 +126,9 @@ namespace DwarfCorp.Gui
                 if (rects[i].Width != 0 && rects[i].Height != 0)
                 {
                     if (Tiles.RepeatWhenUsedAsBorder)
-                        TiledSprite(Into, rects[i], Tiles, i);
+                        Into.TiledSpritePart(rects[i], Tiles, i);
                     else
-                        FittedSprite(Into, rects[i], Tiles, i);
+                        Into.FittedSpritePart(rects[i], Tiles, i);
                 }
 
             result.VertexCount = Into.VertexCount - result.VertexOffset;

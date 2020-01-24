@@ -154,7 +154,7 @@ namespace DwarfCorp.GameStates
 
             var colorKeyEntries = Library.CreateBiomeColors().ToList();
             var font = Root.GetTileSheet("font8");
-            var stringMeshes = new List<Gui.Mesh>(); // Todo: Convert to MeshPart system. Requires string meshes to use it first.
+            var legendMesh = Gui.Mesh.EmptyMesh();
             var y = Rect.Y;
             var maxWidth = 0;
 
@@ -165,13 +165,20 @@ namespace DwarfCorp.GameStates
             foreach (var color in colorKeyEntries)
             {
                 Rectangle bounds;
-                var mesh = Gui.Mesh.CreateStringMesh(color.Key, font, new Vector2(1, 1), out bounds);
-                stringMeshes.Add(mesh.Translate(PreviewPanel.Rect.Right - bounds.Width - (font.TileHeight + 4), y).Colorize(new Vector4(0, 0, 0, 1)));
-                if (bounds.Width > maxWidth) maxWidth = bounds.Width;
-                stringMeshes.Add(Gui.Mesh.Quad().Scale(font.TileHeight, font.TileHeight)
+
+                legendMesh.StringPart(color.Key, font, new Vector2(1, 1), out bounds)
+                    .Translate(PreviewPanel.Rect.Right - bounds.Width - (font.TileHeight + 4), y)
+                    .Colorize(new Vector4(0, 0, 0, 1));
+
+                if (bounds.Width > maxWidth)
+                    maxWidth = bounds.Width;
+
+                legendMesh.QuadPart()
+                    .Scale(font.TileHeight, font.TileHeight)
                     .Translate(PreviewPanel.Rect.Right - font.TileHeight + 2, y)
                     .Texture(Root.GetTileSheet("basic").TileMatrix(1))
-                    .Colorize(color.Value.ToVector4()));
+                    .Colorize(color.Value.ToVector4());
+
                 y += bounds.Height;
             }
 
@@ -182,19 +189,24 @@ namespace DwarfCorp.GameStates
             var dy = 0;
             foreach (var line in previewText)
             {
-                Rectangle previewBounds;
-                var previewMesh = Gui.Mesh.CreateStringMesh(line.Key, font, new Vector2(1, 1), out previewBounds);
-                stringMeshes.Add(Gui.Mesh.FittedSprite(previewBounds, background, 0).Translate(PreviewPanel.Rect.Left + 16, PreviewPanel.Rect.Top + 16 + dy).Colorize(new Vector4(0.0f, 0.0f, 0.0f, 0.7f)));
-                stringMeshes.Add(previewMesh.Translate(PreviewPanel.Rect.Left + 16, PreviewPanel.Rect.Top + 16 + dy).Colorize(line.Value.ToVector4()));
+                var previewBounds = Gui.Mesh.MeasureStringMesh(line.Key, font, new Vector2(1, 1));
+
+                legendMesh.FittedSpritePart(previewBounds, background, 0)
+                    .Translate(PreviewPanel.Rect.Left + 16, PreviewPanel.Rect.Top + 16 + dy)
+                    .Colorize(new Vector4(0.0f, 0.0f, 0.0f, 0.7f));
+
+                legendMesh.StringPart(line.Key, font, new Vector2(1, 1), out previewBounds)
+                    .Translate(PreviewPanel.Rect.Left + 16, PreviewPanel.Rect.Top + 16 + dy)
+                    .Colorize(line.Value.ToVector4());
+
                 dy += previewBounds.Height;
             }
 
-            KeyMesh = Gui.Mesh.Merge(stringMeshes.ToArray());
             var thinBorder = Root.GetTileSheet("border-thin");
             var bgMesh = Gui.Mesh.CreateScale9Background(
                 new Rectangle(Rect.Right - thinBorder.TileWidth - maxWidth - 8 - font.TileHeight, Rect.Y, maxWidth + thinBorder.TileWidth + 8 + font.TileHeight, y - Rect.Y + thinBorder.TileHeight),
                 thinBorder, Scale9Corners.Bottom | Scale9Corners.Left);
-            KeyMesh = Gui.Mesh.Merge(bgMesh, KeyMesh);
+            KeyMesh = Gui.Mesh.Merge(bgMesh, legendMesh);
         }
 
         public void RenderPreview(GraphicsDevice device)

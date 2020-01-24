@@ -186,6 +186,8 @@
     <Compile Include="AssetManagement\StringLibrary.cs" />
     <Compile Include="AssetManagement\TextureTool-LoadPSD.cs" />
     <Compile Include="Components\AI\Creature-Death.cs" />
+    <Compile Include="GameStates\DebugStates\GuiTextDebugPanel.cs" />
+    <Compile Include="GameStates\DebugStates\GuiTextureDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\GuiDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\GuiDebugState.cs" />
     <Compile Include="GameStates\FrontEnd\CheckMegaWorldState.cs" />

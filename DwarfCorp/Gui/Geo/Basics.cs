@@ -103,13 +103,13 @@ namespace DwarfCorp.Gui
             var result = new Mesh();
             result.indicies = new short[other.indicies.Length];
             result.Verticies = new Vertex[other.Verticies.Length];
+            result.VertexCount = other.VertexCount;
             other.indicies.CopyTo(result.indicies, 0);
             other.Verticies.CopyTo(result.Verticies, 0);
 
             for (int i = 0; i < other.VertexCount; i++)
-            {
                 result.Verticies[i].Position = MathFunctions.Clamp(result.Verticies[i].Position, rect);
-            }
+
             return result;
         }
 

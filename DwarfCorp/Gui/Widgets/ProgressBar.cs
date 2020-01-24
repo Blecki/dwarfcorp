@@ -32,7 +32,8 @@ namespace DwarfCorp.Gui.Widgets
 
             var r = Mesh.EmptyMesh();
 
-            Mesh.TiledSprite(r, new Rectangle(Rect.X + 12, Rect.Y, fillTo, Rect.Height), fill, 0).Colorize(FillColor);
+            r.TiledSpritePart(new Rectangle(Rect.X + 12, Rect.Y, fillTo, Rect.Height), fill, 0)
+                .Colorize(FillColor);
             r.QuadPart()
                 .Scale(fill.TileWidth, fill.TileHeight)
                 .Translate(Rect.X + fillTo + 12, Rect.Y)
@@ -46,7 +47,7 @@ namespace DwarfCorp.Gui.Widgets
                 .Scale(sides.TileWidth, sides.TileHeight)
                 .Translate(Rect.X + Rect.Width - sides.TileWidth, Rect.Y)
                 .Texture(sides.TileMatrix(1));
-            Mesh.TiledSprite(r, Rect.Interior(sides.TileWidth, 0, sides.TileWidth, 0), middle, 0);
+            r.TiledSpritePart(Rect.Interior(sides.TileWidth, 0, sides.TileWidth, 0), middle, 0);
 
             return Mesh.Merge(r, base.Redraw());
         }

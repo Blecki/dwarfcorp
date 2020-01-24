@@ -148,6 +148,8 @@
     <Compile Include="GameStates\DebugStates\DwarfDesignerState.cs" />
     <Compile Include="GameStates\DebugStates\GuiDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\GuiDebugState.cs" />
+    <Compile Include="GameStates\DebugStates\GuiTextDebugPanel.cs" />
+    <Compile Include="GameStates\DebugStates\GuiTextureDebugPanel.cs" />
     <Compile Include="GameStates\FrontEnd\CheckMegaWorldState.cs" />
     <Compile Include="GameStates\Play\ContentsPanel.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\ApplicantInfo.cs" />
