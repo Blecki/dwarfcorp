@@ -2310,6 +2310,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Apothecary</Name>
     </None>
+    <None Include="World\ResourceItems\CopperHoe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>CopperHoe</Name>
+    </None>
     <None Include="World\ResourceItems\GreenApron.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>GreenApron</Name>
@@ -2317,6 +2321,10 @@
     <None Include="World\ResourceItems\Bookshelf.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Bookshelf</Name>
+    </None>
+    <None Include="World\ResourceItems\IronHoe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>IronHoe</Name>
     </None>
     <None Include="World\ResourceItems\Musket.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2453,6 +2461,10 @@
     <None Include="World\ResourceItems\PurpleShirt.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>PurpleShirt</Name>
+    </None>
+    <None Include="World\ResourceItems\StoneHoe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>StoneHoe</Name>
     </None>
     <None Include="World\ResourceItems\WizardHat.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2609,6 +2621,10 @@
     <None Include="World\ResourceItems\WoodHammer.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>WoodHammer</Name>
+    </None>
+    <None Include="World\ResourceItems\WoodHoe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>WoodHoe</Name>
     </None>
     <None Include="World\ResourceItems\WoodPick.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

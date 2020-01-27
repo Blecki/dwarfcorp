@@ -8,7 +8,6 @@ namespace DwarfCorp
     /// <summary>
     /// A creature goes to an entity, and then hits it until the other entity is dead.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class KillEntityAct : CompoundCreatureAct
     {
         public GameComponent Entity { get; set; }

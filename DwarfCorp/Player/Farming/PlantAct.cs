@@ -31,14 +31,13 @@ namespace DwarfCorp
                 yield break;
             }
             else if (Farm.Finished)
-            {
                 yield return Status.Success;
-            }
             else
             {
                 Creature.CurrentCharacterMode = Creature.Stats.CurrentClass.AttackMode;
                 Creature.Sprite.ResetAnimations(Creature.Stats.CurrentClass.AttackMode);
                 Creature.Sprite.PlayAnimations(Creature.Stats.CurrentClass.AttackMode);
+
                 while (Farm.Progress < Farm.TargetProgress && !Farm.Finished)
                 {
                     Creature.Physics.Velocity *= 0.1f;
@@ -55,24 +54,22 @@ namespace DwarfCorp
                     {
                         if (Library.GetResourceType(Farm.SeedType).HasValue(out var seedType))
                         {
-                            var plant = EntityFactory.CreateEntity<Plant>(
-                                seedType.PlantToGenerate,
-                                Farm.Voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f));
+                            var plant = EntityFactory.CreateEntity<Plant>(seedType.PlantToGenerate, Farm.Voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f));
 
                             plant.Farm = Farm;
 
-                            Matrix original = plant.LocalTransform;
+                            var original = plant.LocalTransform;
                             original.Translation += Vector3.Down;
                             plant.AnimationQueue.Add(new EaseMotion(0.5f, original, plant.LocalTransform.Translation));
 
-
                             Creature.Manager.World.ParticleManager.Trigger("puff", original.Translation, Color.White, 20);
-
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, Farm.Voxel.WorldPosition, true);
                         }
 
                         Farm.Finished = true;
                         DestroyResources();
+
+                        ActHelper.ApplyWearToTool(Creature.AI, GameSettings.Current.Wear_Dig);
                     }
 
                     if (MathFunctions.RandEvent(0.01f))
@@ -95,29 +92,22 @@ namespace DwarfCorp
             bool tileValid = Farm.Voxel.IsValid && !Farm.Voxel.IsEmpty;
 
             if (!tileValid)
-            {
                 return false;
-            }
 
             if (Farm.Finished)
-            {
                 return false;
-            }
             
             return true;
         }
 
         private IEnumerable<Act.Status> Cleanup()
         {
-
             OnCanceled();
             yield return Act.Status.Success;
         }
 
         public override void OnCanceled()
         {
-            var tile = Farm;
-            
             base.OnCanceled();
         }
 
@@ -135,6 +125,7 @@ namespace DwarfCorp
                 if (Farm.Voxel.IsValid)
                 {
                     Tree = new Select(new Sequence(
+                        ActHelper.CreateEquipmentCheckAct(Agent, "Tool", ActHelper.EquipmentFallback.AllowDefault, "Hoe"),
                         new GetResourcesOfType(Agent, new List<ResourceTypeAmount> { new ResourceTypeAmount(Farm.SeedType, 1) }) { BlackboardEntry = "stashed-resources" },
                         new Domain(Validate, new GoToVoxelAct(Farm.Voxel, PlanAct.PlanType.Adjacent, Creature.AI)),
                         new Domain(Validate, new StopAct(Creature.AI)),

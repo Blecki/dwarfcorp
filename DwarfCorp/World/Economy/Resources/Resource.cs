@@ -18,7 +18,7 @@ namespace DwarfCorp
 
         public Blackboard MetaData = null;
 
-        private Resource SetProperty<T>(String Name, T Value)
+        public Resource SetProperty<T>(String Name, T Value)
         {
             var prop = typeof(ResourceType).GetField(Name);
             if (prop != null && prop.FieldType != typeof(T))
@@ -31,7 +31,7 @@ namespace DwarfCorp
             return this;
         }
 
-        private T GetProperty<T>(String Name, T Default)
+        public T GetProperty<T>(String Name, T Default)
         {
             if (MetaData != null && MetaData.Has(Name))
                 return MetaData.GetData<T>(Name, Default);

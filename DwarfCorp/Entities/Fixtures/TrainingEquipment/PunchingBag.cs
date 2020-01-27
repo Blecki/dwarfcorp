@@ -8,8 +8,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
-    public class PunchingBag : CraftedFixture
+    public class PunchingBag : TrainingEquipment
     {
         [EntityFactory("Punching Bag")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
@@ -23,17 +22,8 @@ namespace DwarfCorp
         }
 
         public PunchingBag(ComponentManager componentManager, Vector3 position, Resource Resource) :
-            base(componentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 5), new CraftDetails(componentManager, Resource))
+            base("Punching Bag", componentManager, position, Resource, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 5))
         {
-            Name = "Punching Bag";
-            Tags.Add("Punching  Bag");
-            Tags.Add("Train");
-
-            if (GetRoot().GetComponent<Health>().HasValue(out var health))
-            {
-                health.MaxHealth = 500;
-                health.Hp = 500;
-            }
         }
     }
 }

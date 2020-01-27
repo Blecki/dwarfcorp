@@ -56,7 +56,7 @@ namespace DwarfCorp
 
                     if (button == InputManager.MouseButton.Left)
                     {
-                        var task = new DestroyObjectTask(body);
+                        var task = new DeconstructObjectTask(body);
                         World.TaskManager.AddTask(task);
                         World.UserInterface.ShowToolPopup("Will destroy this " + body.Name);
                         OnConfirm(World.PersistentData.SelectedMinions);
