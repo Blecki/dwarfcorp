@@ -194,70 +194,67 @@ namespace DwarfCorp.Gui.Widgets
             }
         }
 
-        protected Mesh GetBackgroundMesh()
+        protected void CreateBackgroundMesh(Mesh Into)
         {
             if (Hidden) throw new InvalidOperationException();
 
             if (Transparent || Root == null)
-                return Mesh.EmptyMesh();
-
-            var result = new List<Mesh>();
+                return;
 
             if (Background != null)
-                result.Add(Mesh.Quad()
+                Into.QuadPart()
                     .Scale(Rect.Width, Rect.Height)
                     .Translate(Rect.X, Rect.Y)
                     .Colorize(BackgroundColor)
-                    .Texture(Root.GetTileSheet(Background.Sheet).TileMatrix(Background.Tile)));
+                    .Texture(Root.GetTileSheet(Background.Sheet).TileMatrix(Background.Tile));
 
             if (!String.IsNullOrEmpty(Border))
-            {
-                //Create a 'scale 9' background 
-                result.Add(
-                    Mesh.CreateScale9Background(Rect, Root.GetTileSheet(Border))
-                    .Colorize(BackgroundColor));
-            }
-            return Mesh.Merge(result.ToArray());
+                Into.CreateScale9BackgroundPart(Rect, Root.GetTileSheet(Border)).Colorize(BackgroundColor);
         }
 
-        protected Mesh GetEditableFieldTextMesh()
+        protected MeshPart GetEditableFieldTextMesh(Mesh Mesh)
         {
             if (!String.IsNullOrEmpty(Text))
-                return GetTextMesh();
+                return GetTextMeshPart(Mesh);
             else
-                return GetTextMesh(PromptText, new Vector4(0.5f, 0.5f, 0.5f, 1.0f));
+                return GetTextMeshPart(Mesh, PromptText, new Vector4(0.5f, 0.5f, 0.5f, 1.0f));
         }
 
         protected override Mesh Redraw()
         {
+            var mesh = Mesh.EmptyMesh();
+            CreateBackgroundMesh(mesh);
+
+            var textPart = mesh.BeginPart();
+            GetEditableFieldTextMesh(mesh);
+
             if (Object.ReferenceEquals(this, Root.FocusItem))
             {
                 if (CursorPosition > Text.Length || CursorPosition < 0)
-                {
                     CursorPosition = Text.Length;
-                }
 
                 var cursorTime = (int)(Math.Floor(Root.RunTime / Root.CursorBlinkTime));
                 if ((cursorTime % 2) == 0)
                 {
                     var font = Root.GetTileSheet(Font);
                     var drawableArea = this.GetDrawableInterior();
-
                     var pipeGlyph = font.GlyphSize('|' - ' ');
-                    var cursorMesh = Mesh.Quad()
+
+                    mesh.QuadPart()
                         .Scale(pipeGlyph.X * TextSize, pipeGlyph.Y * TextSize)
-                        .Translate(drawableArea.X 
-                            + font.MeasureString(Text.Substring(0, CursorPosition)).X * TextSize 
+                        .Translate(drawableArea.X
+                            + font.MeasureString(Text.Substring(0, CursorPosition)).X * TextSize
                             - ((pipeGlyph.X * TextSize) / 2),
                             drawableArea.Y + ((drawableArea.Height - (pipeGlyph.Y * TextSize)) / 2))
                         .Texture(font.TileMatrix((int)('|' - ' ')))
                         .Colorize(new Vector4(1, 0, 0, 1));
-
-                    return Mesh.Merge(GetBackgroundMesh(), Mesh.ClipToNewMesh(Mesh.Merge(GetEditableFieldTextMesh(), cursorMesh), GetDrawableInterior()));
                 }
             }
-            
-            return Mesh.Merge(GetBackgroundMesh(), Mesh.ClipToNewMesh(GetEditableFieldTextMesh(), GetDrawableInterior()));
+
+            textPart.End();
+            textPart.ClipToBounds(GetDrawableInterior());
+
+            return mesh;
         }
     }
 }

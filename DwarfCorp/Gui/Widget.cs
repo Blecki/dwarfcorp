@@ -449,41 +449,34 @@ namespace DwarfCorp.Gui
         {
             if (Hidden) throw new InvalidOperationException();
 
-            if (Transparent || Root== null)
-                return Mesh.EmptyMesh();
+            var r = Mesh.EmptyMesh();
 
-            var result = new List<Mesh>();
+            if (Transparent || Root == null)
+                return r;
 
             if (Background != null)
             {
-                var bg = Mesh.EmptyMesh();
-                var bgPart = bg.QuadPart();
-                result.Add(bg);
                 if (Rotation != 0.0)
-                {
-                    bgPart
+                    r.QuadPart()
                         .Scale(Rect.Width, Rect.Height)
                         .Transform(Rect.X, Rect.Y, Rect.Width, Rect.Height, Rotation)
                         .Colorize(BackgroundColor)
                         .Texture(Root.GetTileSheet(Background.Sheet).TileMatrix(Background.Tile));
-                }
                 else
-                {
-                    bgPart
+                    r.QuadPart()
                             .Scale(Rect.Width, Rect.Height)
                             .Translate(Rect.X, Rect.Y)
                             .Colorize(BackgroundColor)
                             .Texture(Root.GetTileSheet(Background.Sheet).TileMatrix(Background.Tile));
-                }
             }
 
             if (!String.IsNullOrEmpty(Border))
-                result.Add(Mesh.CreateScale9Background(Rect, Root.GetTileSheet(Border)).Colorize(BackgroundColor));
+                r.CreateScale9BackgroundPart(Rect, Root.GetTileSheet(Border)).Colorize(BackgroundColor);
 
             if (!String.IsNullOrEmpty(Text))
-                result.Add(GetTextMesh());
+                GetTextMeshPart(r);
 
-            return Mesh.Merge(result.ToArray());
+            return r;
         }
 
         public virtual void PostDraw(GraphicsDevice device)
@@ -593,6 +586,72 @@ namespace DwarfCorp.Gui
         public Mesh GetTextMesh()
         {
             return GetTextMesh(Text, TextColor);
+        }
+
+        public MeshPart GetTextMeshPart(Mesh Mesh, String Text, Vector4 TextColor)
+        {
+            var drawableArea = GetDrawableInterior();
+            var stringMeshSize = new Rectangle();
+            var font = Root.GetTileSheet(Font);
+            var text = (WrapText || WrapWithinWords)
+                ? font.WordWrapString(Text, TextSize, drawableArea.Width, WrapWithinWords)
+                : Text;
+
+            var stringMesh = Mesh.StringPart(text, font, new Vector2(TextSize, TextSize), out stringMeshSize).Colorize(TextColor);
+
+            if (AutoResizeToTextHeight && stringMeshSize.Height < Rect.Height)
+            {
+                if (!String.IsNullOrEmpty(Border))
+                {
+                    var tileSheet = Root.GetTileSheet(Border);
+                    Rect = new Rectangle(Rect.X, Rect.Y, Rect.Width, stringMeshSize.Height + tileSheet.TileHeight * 2);
+                }
+                else
+                    Rect = new Rectangle(Rect.X, Rect.Y, Rect.Width, stringMeshSize.Height);
+
+                MinimumSize.Y = stringMeshSize.Height;
+                Parent.Layout();
+            }
+
+            var textDrawPos = Vector2.Zero;
+
+            switch (TextHorizontalAlign)
+            {
+                case HorizontalAlign.Left:
+                    textDrawPos.X = drawableArea.X;
+                    break;
+                case HorizontalAlign.Right:
+                    textDrawPos.X = drawableArea.X + drawableArea.Width - stringMeshSize.Width;
+                    break;
+                case HorizontalAlign.Center:
+                    textDrawPos.X = drawableArea.X + ((drawableArea.Width - stringMeshSize.Width) / 2);
+                    break;
+            }
+
+            switch (TextVerticalAlign)
+            {
+                case VerticalAlign.Top:
+                    textDrawPos.Y = drawableArea.Y;
+                    break;
+                case VerticalAlign.Bottom:
+                    textDrawPos.Y = drawableArea.Y + drawableArea.Height - stringMeshSize.Height;
+                    break;
+                case VerticalAlign.Below:
+                    textDrawPos.Y = drawableArea.Y + drawableArea.Height;
+                    break;
+                case VerticalAlign.Center:
+                    textDrawPos.Y = drawableArea.Y + ((drawableArea.Height - stringMeshSize.Height) / 2);
+                    break;
+            }
+
+            stringMesh.Translate(textDrawPos.X, textDrawPos.Y);
+            return stringMesh;
+        }
+
+
+        public MeshPart GetTextMeshPart(Mesh Mesh)
+        {
+            return GetTextMeshPart(Mesh, Text, TextColor);
         }
 
         /// <summary>

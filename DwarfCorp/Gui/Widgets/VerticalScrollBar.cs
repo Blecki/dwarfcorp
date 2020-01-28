@@ -75,22 +75,24 @@ namespace DwarfCorp.Gui.Widgets
 
         protected override Mesh Redraw()
         {
+            var result = Mesh.EmptyMesh();
+
             if (ScrollArea == 0)
-                return Mesh.EmptyMesh();
+                return result;
 
             var tiles = Root.GetTileSheet(Graphics);
 
-            var topButton = Mesh.Quad()
+            result.QuadPart()
                 .Scale(tiles.TileWidth, tiles.TileHeight)
                 .Translate(Rect.X, Rect.Y)
                 .Texture(tiles.TileMatrix(0));
 
-            var bottomButton = Mesh.Quad()
+            result.QuadPart()
                 .Scale(tiles.TileWidth, tiles.TileHeight)
                 .Translate(Rect.X, Rect.Y + Rect.Height - tiles.TileHeight)
                 .Texture(tiles.TileMatrix(3));
 
-            var background = Mesh.Quad()
+            result.QuadPart()
                 .Scale(tiles.TileWidth, Rect.Height - tiles.TileHeight - tiles.TileHeight)
                 .Translate(Rect.X, Rect.Y + tiles.TileHeight)
                 .Texture(tiles.TileMatrix(1));
@@ -98,15 +100,13 @@ namespace DwarfCorp.Gui.Widgets
             var scrollSize = Rect.Height - tiles.TileHeight - tiles.TileHeight;
             var barTop = (_scrollArea == 0 ? 0.0f : ((float)_scrollPosition / (float)_scrollArea)) * scrollSize;
             var barBottom = (_scrollArea == 0 ? 0.0f : ((float)(_scrollPosition + 1) / (float)_scrollArea)) * scrollSize;
-            var barPosition = ScrollPercentage * scrollSize;
-            var pixelPosition = Rect.Y + tiles.TileHeight + (int)barPosition;
 
-            var bar = Mesh.CreateScale9Background(
+            result.CreateScale9BackgroundPart(
                 new Rectangle(Rect.X, Rect.Y + tiles.TileHeight + (int)barTop, Rect.Width, Math.Max(16, (int)(barBottom - barTop))),
                 Root.GetTileSheet("brown-frame"),
                 Scale9Corners.Top | Scale9Corners.Bottom | Scale9Corners.Left | Scale9Corners.Right);
 
-            return Mesh.Merge(topButton, bottomButton, background, bar);
+            return result;
         }
 
         public override Point GetBestSize()

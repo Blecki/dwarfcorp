@@ -77,25 +77,6 @@ namespace DwarfCorp.Gui
         /// <param name="Tiles"></param>
         /// <param name="Corners"></param>
         /// <returns></returns>
-        public static Mesh CreateScale9Background(
-            Rectangle Rect,
-            ITileSheet Tiles,
-            Scale9Corners Corners = Scale9Corners.All)
-        {
-            var result = Mesh.EmptyMesh();
-            result.CreateScale9BackgroundPart(Rect, Tiles, Corners);
-            return result;
-        }
-
-        /// <summary>
-        /// Create a mesh for a scale9 background. This assumed the tilesheet is 3*3 and positions the 
-        /// corners without scalling, scales the edges on one axis only, and fills the middle with the 
-        /// center tile.
-        /// </summary>
-        /// <param name="Rect"></param>
-        /// <param name="Tiles"></param>
-        /// <param name="Corners"></param>
-        /// <returns></returns>
         public MeshPart CreateScale9BackgroundPart(
             Rectangle Rect,
             ITileSheet Tiles,

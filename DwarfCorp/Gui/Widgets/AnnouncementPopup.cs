@@ -115,14 +115,8 @@ namespace DwarfCorp.Gui.Widgets
 
         protected override Gui.Mesh Redraw()
         {
-            var meshes = new List<Gui.Mesh>();
-
+            var mesh = Mesh.EmptyMesh();
             var speakerTiles = Root.GetTileSheet(Speaker);
-
-            meshes.Add(Gui.Mesh.Quad()
-                .TileScaleAndTexture(speakerTiles, 0)
-                .Translate(Rect.Right - speakerTiles.TileWidth, Rect.Bottom - speakerTiles.TileHeight));
-
             var font = Root.GetTileSheet(Font);
 
             foreach (var announcement in Announcements)
@@ -146,15 +140,17 @@ namespace DwarfCorp.Gui.Widgets
                 childPos += announcement.Widget.Rect.Height + 2;
             }
 
+            mesh.QuadPart()
+                .TileScaleAndTexture(speakerTiles, 0)
+                .Translate(Rect.Right - speakerTiles.TileWidth, Rect.Bottom - speakerTiles.TileHeight);
+            
             if (Announcements.Count > 0)
             {
-                var bubbleRect = new Rectangle(Rect.Left, Rect.Top,
-                    Rect.Width - speakerTiles.TileWidth, Rect.Height - (speakerTiles.TileHeight / 2));
-
-                meshes.Add(Gui.Mesh.CreateScale9Background(bubbleRect, Root.GetTileSheet("speech-bubble")));
+                var bubbleRect = new Rectangle(Rect.Left, Rect.Top, Rect.Width - speakerTiles.TileWidth, Rect.Height - (speakerTiles.TileHeight / 2));
+                mesh.CreateScale9BackgroundPart(bubbleRect, Root.GetTileSheet("speech-bubble"));
             }
 
-            return Gui.Mesh.Merge(meshes.ToArray());
+            return mesh;
         }
     }
 }

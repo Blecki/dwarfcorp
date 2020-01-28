@@ -752,7 +752,8 @@ namespace DwarfCorp.Gui
                 {
                     var sheet = GetTileSheet("border-hilite");
                     var area = widget.Rect.Interior(-sheet.TileWidth, -sheet.TileHeight, -sheet.TileWidth, -sheet.TileHeight);
-                    var mesh = Mesh.CreateScale9Background(area, sheet);
+                    var mesh = Mesh.EmptyMesh();
+                    mesh.CreateScale9BackgroundPart(area, sheet);
                     mesh.Render(RenderData.Device);
 
 

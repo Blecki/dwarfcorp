@@ -307,7 +307,8 @@ namespace DwarfCorp.Gui.Widgets
 
         protected override Mesh Redraw()
         {
-            var borderMesh = Mesh.CreateScale9Background(Rect, Root.GetTileSheet("border-fancy"), Scale9Corners.Top | Scale9Corners.Left | Scale9Corners.Right);
+            var borderMesh = Mesh.EmptyMesh();
+            borderMesh.CreateScale9BackgroundPart(Rect, Root.GetTileSheet("border-fancy"), Scale9Corners.Top | Scale9Corners.Left | Scale9Corners.Right);
             return Mesh.Merge(borderMesh, base.Redraw());
         }
     }

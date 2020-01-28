@@ -134,22 +134,24 @@ namespace DwarfCorp.Gui.Widgets
             Layout();
         }
 
-        protected override Gui.Mesh Redraw()
+        protected override Mesh Redraw()
         {
-            Gui.Mesh mesh = base.Redraw();
+            var mesh = base.Redraw();
+
             if (Selection != -1)
             {
                 var border = Root.GetTileSheet(SelectionBorder);
                 var rect = Panel.GetChild(Selection).Rect.Interior(-border.TileWidth, -border.TileHeight, -border.TileWidth, -border.TileHeight);
-                mesh = Gui.Mesh.Merge(mesh, Gui.Mesh.CreateScale9Background(rect, border));
+                mesh.CreateScale9BackgroundPart(rect, border);
             }
 
             if (HoverItem != -1)
             {
                 var border = Root.GetTileSheet(SelectionBorder);
                 var rect = Panel.GetChild(HoverItem).Rect.Interior(-border.TileWidth, -border.TileHeight, -border.TileWidth, -border.TileHeight);
-                mesh =  Gui.Mesh.Merge(mesh, Gui.Mesh.CreateScale9Background(rect, border).Colorize(new Vector4(0.5f, 0, 0, 1.0f)));
+                mesh.CreateScale9BackgroundPart(rect, border).Colorize(new Vector4(0.5f, 0, 0, 1.0f));
             }
+
             return mesh;
         }
     }

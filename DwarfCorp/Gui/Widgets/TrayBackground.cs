@@ -37,12 +37,12 @@ namespace DwarfCorp.Gui.Widgets
         {
             if (Border != null)
             {
-                return Gui.Mesh.CreateScale9Background(Rect, Root.GetTileSheet(Border), Corners);
+                var mesh = Mesh.EmptyMesh();
+                mesh.CreateScale9BackgroundPart(Rect, Root.GetTileSheet(Border), Corners);
+                return mesh;
             }
             else
-            {
                 return base.Redraw();
-            }
         }
     }
 }

@@ -76,21 +76,19 @@ namespace DwarfCorp.Gui.Widgets
             var baseMesh = base.Redraw();
             var baseDrawArea = base.GetDrawableInterior();
 
-            var checkMesh = Mesh.Quad()
+            var checkMesh = baseMesh.QuadPart()
                 .Scale(16, 16)
                 .Translate(baseDrawArea.X + InteriorMargin.Left, baseDrawArea.Y + InteriorMargin.Top + (baseDrawArea.Height / 2 - 8))
                 .Texture(Root.GetTileSheet(Graphics).TileMatrix(CheckState ? 1 : 0));
 
-            var r = Mesh.Merge(baseMesh, checkMesh);
-
             if (!Enabled)
-                r = r.MorphEx(v =>
+                checkMesh.MorphEx(v =>
                 {
                     v.Color = new Vector4(TextColor.X, TextColor.Y, TextColor.Z, 0.3f);
                     return v;
                 });
 
-            return r;
+            return baseMesh;
         }
 
         public override Point GetBestSize()

@@ -9,24 +9,6 @@ namespace DwarfCorp.Gui
 {
     public partial class Mesh
     {
-        public static void CopyIndicies(short[] into, int at, short[] source)
-        {
-            for (int i = 0; i < source.Length; ++i)
-                into[at + i] = source[i];
-        }
-
-        public Mesh Copy()
-        {
-            var result = new Mesh();
-
-            result.VertexCount = VertexCount;
-            result.Verticies = new Vertex[Verticies.Length];
-            Verticies.CopyTo(result.Verticies, 0);
-            result.indicies = new short[indicies.Length];
-            CopyIndicies(result.indicies, 0, indicies);
-            return result;
-        }
-
         private Mesh Transform(Matrix m, int start, int count)
         {
             for (int i = start; i < start + count; ++i)
@@ -82,35 +64,6 @@ namespace DwarfCorp.Gui
             for (int i = StartIndex; i < VertexCount && i < StartIndex + Count; ++i)
                 Verticies[i].Color = Color;
             return this;
-        }
-
-        public Mesh Morph(Func<Vector3, Vector3> func)
-        {
-            for (int i = 0; i < VertexCount; ++i)
-                Verticies[i].Position = func(Verticies[i].Position);
-            return this;
-        }
-
-        public Mesh MorphEx(Func<Vertex, Vertex> func)
-        {
-            for (int i = 0; i < VertexCount; ++i)
-                Verticies[i] = func(Verticies[i]);
-            return this;
-        }
-
-        public static Mesh ClipToNewMesh(Mesh other, Rectangle rect)
-        {
-            var result = new Mesh();
-            result.indicies = new short[other.indicies.Length];
-            result.Verticies = new Vertex[other.Verticies.Length];
-            result.VertexCount = other.VertexCount;
-            other.indicies.CopyTo(result.indicies, 0);
-            other.Verticies.CopyTo(result.Verticies, 0);
-
-            for (int i = 0; i < other.VertexCount; i++)
-                result.Verticies[i].Position = MathFunctions.Clamp(result.Verticies[i].Position, rect);
-
-            return result;
         }
 
         public static Mesh Merge(params Mesh[] parts)

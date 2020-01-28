@@ -15,5 +15,10 @@ namespace DwarfCorp.Gui
         public int VertexOffset = 0;
         public int VertexCount = 0;
         public Mesh Mesh = null;
+
+        public void End()
+        {
+            this.VertexCount = Mesh.VertexCount - this.VertexOffset;
+        }
     }
 }

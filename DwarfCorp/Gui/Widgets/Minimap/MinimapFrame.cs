@@ -86,7 +86,9 @@ namespace DwarfCorp.Gui.Widgets.Minimap
 
         protected override Gui.Mesh Redraw()
         {
-            return Gui.Mesh.CreateScale9Background(Rect, Root.GetTileSheet("tray-border-transparent"), Scale9Corners.Top | Scale9Corners.Right);
+            var mesh = Mesh.EmptyMesh();
+            mesh.CreateScale9BackgroundPart(Rect, Root.GetTileSheet("tray-border-transparent"), Scale9Corners.Top | Scale9Corners.Right);
+            return mesh;
         }
     }
 }

@@ -68,5 +68,25 @@ namespace DwarfCorp.Gui
             indicies.CopyTo(newIndicies, 0);
             indicies = newIndicies;
         }
+
+        public MeshPart BeginPart()
+        {
+            return GetPart(VertexCount, 0);
+        }
+
+        public MeshPart EntireMeshAsPart()
+        {
+            return GetPart(0, VertexCount);
+        }
+
+        public MeshPart GetPart(int VertexOffset, int VertexCount)
+        {
+            return new MeshPart
+            {
+                Mesh = this,
+                VertexOffset = VertexOffset,
+                VertexCount = VertexCount
+            };
+        }
     }
 }

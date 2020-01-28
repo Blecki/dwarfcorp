@@ -78,5 +78,28 @@ namespace DwarfCorp.Gui
                 Mesh.Verticies[VertexOffset + i] = func(Mesh.Verticies[VertexOffset + i]);
             return this;
         }
+
+        public MeshPart ClipToBounds(Rectangle Rect)
+        {
+            for (int i = 0; i < VertexCount; i++)
+                Mesh.Verticies[VertexOffset + i].Position = MathFunctions.Clamp(Mesh.Verticies[VertexOffset + i].Position, Rect);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets a quad's texture coordinates back to the default values. Sure hope the mesh is actually a quad!
+        /// </summary>
+        public MeshPart ResetQuadTexture()
+        {
+            // Better be a fucking quad!
+
+            Mesh.Verticies[VertexOffset + 0].TextureCoordinate = new Vector2(0.0f, 0.0f);
+            Mesh.Verticies[VertexOffset + 1].TextureCoordinate = new Vector2(1.0f, 0.0f);
+            Mesh.Verticies[VertexOffset + 2].TextureCoordinate = new Vector2(1.0f, 1.0f);
+            Mesh.Verticies[VertexOffset + 3].TextureCoordinate = new Vector2(0.0f, 1.0f);
+
+            return this;
+        }
     }
 }
