@@ -9,17 +9,6 @@ namespace DwarfCorp.Gui
 {
     public partial class Mesh
     {
-        public static Mesh CreateStringMesh(
-            String String, 
-            ITileSheet FontSheet, 
-            Vector2 GlyphScale,
-            out Rectangle Bounds)
-        {
-            var r = Mesh.EmptyMesh();
-            r.StringPart(String, FontSheet, GlyphScale, out Bounds);
-            return r;
-        }
-
         public MeshPart StringPart(
             String String,
             ITileSheet FontSheet,

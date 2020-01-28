@@ -20,7 +20,7 @@ namespace DwarfCorp.Gui.Widgets
                 var border = Root.GetTileSheet(Graphics);
 
                 var mesh = Mesh.EmptyMesh();
-                var bgMesh = mesh.CreateScale9BackgroundPart(Rect.Interior(0, 0, 0, -border.TileHeight), border, Scale9Corners.Top | Scale9Corners.Left | Scale9Corners.Right);
+                var bgMesh = mesh.Scale9Part(Rect.Interior(0, 0, 0, -border.TileHeight), border, Scale9Corners.Top | Scale9Corners.Left | Scale9Corners.Right);
 
                 var parent = Parent as TabPanel;
                 if (!Object.ReferenceEquals(parent.GetTabButton(parent.SelectedTab), this))

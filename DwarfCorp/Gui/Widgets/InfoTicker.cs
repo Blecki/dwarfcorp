@@ -59,8 +59,7 @@ namespace DwarfCorp.Gui.Widgets
 
         protected override Gui.Mesh Redraw()
         {
-            var meshes = new List<Gui.Mesh>();
-            var stringScreenSize = new Rectangle();
+            var mesh = Mesh.EmptyMesh();
             var font = Root.GetTileSheet(Font);
             var basic = Root.GetTileSheet("basic");
             var linePos = 0;
@@ -68,20 +67,23 @@ namespace DwarfCorp.Gui.Widgets
             MessageLock.WaitOne();
             foreach (var line in Messages)
             {
-                var stringMesh = Gui.Mesh.CreateStringMesh(line, font, new Vector2(TextSize, TextSize), out stringScreenSize)
-                    .Translate(Rect.X, Rect.Y + linePos)
-                    .Colorize(TextColor);
-                meshes.Add(Gui.Mesh.Quad()
-                    .Scale(stringScreenSize.Width, stringScreenSize.Height)
+                var stringSize = Mesh.MeasureStringMesh(line, font, new Vector2(TextSize, TextSize));
+
+                mesh.QuadPart()
+                    .Scale(stringSize.Width, stringSize.Height)
                     .Translate(Rect.X, Rect.Y + linePos)
                     .Texture(basic.TileMatrix(1))
-                    .Colorize(TextBackgroundColor));
-                meshes.Add(stringMesh);
+                    .Colorize(TextBackgroundColor);
+
+                mesh.StringPart(line, font, new Vector2(TextSize, TextSize), out var _)
+                    .Translate(Rect.X, Rect.Y + linePos)
+                    .Colorize(TextColor);
+
                 linePos += font.TileHeight * TextSize;
             }
             MessageLock.ReleaseMutex();
 
-            return Gui.Mesh.Merge(meshes.ToArray());
+            return mesh;
         }
 
         public bool HasMesssage(string loadingMessage)

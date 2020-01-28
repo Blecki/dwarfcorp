@@ -101,7 +101,7 @@ namespace DwarfCorp.Gui.Widgets
             var barTop = (_scrollArea == 0 ? 0.0f : ((float)_scrollPosition / (float)_scrollArea)) * scrollSize;
             var barBottom = (_scrollArea == 0 ? 0.0f : ((float)(_scrollPosition + 1) / (float)_scrollArea)) * scrollSize;
 
-            result.CreateScale9BackgroundPart(
+            result.Scale9Part(
                 new Rectangle(Rect.X, Rect.Y + tiles.TileHeight + (int)barTop, Rect.Width, Math.Max(16, (int)(barBottom - barTop))),
                 Root.GetTileSheet("brown-frame"),
                 Scale9Corners.Top | Scale9Corners.Bottom | Scale9Corners.Left | Scale9Corners.Right);

@@ -232,7 +232,7 @@ namespace DwarfCorp.Gui.Widgets
             if (Border != null && !Transparent)
             {
                 var mesh = Mesh.EmptyMesh();
-                mesh.CreateScale9BackgroundPart(Rect, Root.GetTileSheet(Border), Corners);
+                mesh.Scale9Part(Rect, Root.GetTileSheet(Border), Corners);
                 return mesh;
             }
             else

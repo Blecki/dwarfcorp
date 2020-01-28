@@ -209,7 +209,7 @@ namespace DwarfCorp.Gui.Widgets
                     .Texture(Root.GetTileSheet(Background.Sheet).TileMatrix(Background.Tile));
 
             if (!String.IsNullOrEmpty(Border))
-                Into.CreateScale9BackgroundPart(Rect, Root.GetTileSheet(Border)).Colorize(BackgroundColor);
+                Into.Scale9Part(Rect, Root.GetTileSheet(Border)).Colorize(BackgroundColor);
         }
 
         protected MeshPart GetEditableFieldTextMesh(Mesh Mesh)

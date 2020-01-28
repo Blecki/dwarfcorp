@@ -108,9 +108,8 @@ namespace DwarfCorp.Gui.Widgets
             if (topItem < 0) topItem = 0;
 
             var stringPos = drawableInterior.Y;
-            var meshes = new List<Mesh>();
-            meshes.Add(base.Redraw());
-            Rectangle toss;
+            var mesh = base.Redraw();
+
             for (int i = 0; i < itemsThatFit && (topItem + i) < Items.Count; ++i)
             {
                 bool hovered = topItem + i == HoverIndex;
@@ -122,13 +121,14 @@ namespace DwarfCorp.Gui.Widgets
                 else if (selected)
                     color = SelectedTextColor;
 
-                meshes.Add(Mesh.CreateStringMesh(Items[topItem + i], font, new Vector2(TextSize, TextSize), out toss)
+                mesh.StringPart(Items[topItem + i], font, new Vector2(TextSize, TextSize), out var toss)
                     .Translate(drawableInterior.X, stringPos)
-                    .Colorize(color));
+                    .Colorize(color);
+
                 stringPos += (font.TileHeight * TextSize) + 2;
             }
 
-            return Mesh.Merge(meshes.ToArray());
+            return mesh;
         }
     }
 }

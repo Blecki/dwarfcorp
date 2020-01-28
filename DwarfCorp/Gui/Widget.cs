@@ -471,7 +471,7 @@ namespace DwarfCorp.Gui
             }
 
             if (!String.IsNullOrEmpty(Border))
-                r.CreateScale9BackgroundPart(Rect, Root.GetTileSheet(Border)).Colorize(BackgroundColor);
+                r.Scale9Part(Rect, Root.GetTileSheet(Border)).Colorize(BackgroundColor);
 
             if (!String.IsNullOrEmpty(Text))
                 GetTextMeshPart(r);

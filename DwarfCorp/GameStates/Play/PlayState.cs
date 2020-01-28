@@ -1225,7 +1225,6 @@ namespace DwarfCorp.GameStates
                 Tag = "economy",
                 Icon = new Gui.TileReference("tool-icons", 10),
                 OnClick = (sender, args) => GameStateManager.PushState(new EconomyState(Game, World)),
-                DrawIndicator = true,
                 Tooltip = Library.GetString("economy-tooltip"),
                 Text = Library.GetString("economy-label"),
                 TextVerticalAlign = VerticalAlign.Below

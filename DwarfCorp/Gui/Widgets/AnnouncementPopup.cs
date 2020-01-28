@@ -147,7 +147,7 @@ namespace DwarfCorp.Gui.Widgets
             if (Announcements.Count > 0)
             {
                 var bubbleRect = new Rectangle(Rect.Left, Rect.Top, Rect.Width - speakerTiles.TileWidth, Rect.Height - (speakerTiles.TileHeight / 2));
-                mesh.CreateScale9BackgroundPart(bubbleRect, Root.GetTileSheet("speech-bubble"));
+                mesh.Scale9Part(bubbleRect, Root.GetTileSheet("speech-bubble"));
             }
 
             return mesh;

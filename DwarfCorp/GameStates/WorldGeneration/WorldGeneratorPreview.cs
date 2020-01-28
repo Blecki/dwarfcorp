@@ -204,7 +204,7 @@ namespace DwarfCorp.GameStates
 
             var thinBorder = Root.GetTileSheet("border-thin");
             var bgMesh = Gui.Mesh.EmptyMesh();
-            bgMesh.CreateScale9BackgroundPart(
+            bgMesh.Scale9Part(
                 new Rectangle(Rect.Right - thinBorder.TileWidth - maxWidth - 8 - font.TileHeight, Rect.Y, maxWidth + thinBorder.TileWidth + 8 + font.TileHeight, y - Rect.Y + thinBorder.TileHeight),
                 thinBorder, Scale9Corners.Bottom | Scale9Corners.Left);
             KeyMesh = Gui.Mesh.Merge(bgMesh, legendMesh); // Can't build them in order because the size of bgMesh depends on the size of the legend.

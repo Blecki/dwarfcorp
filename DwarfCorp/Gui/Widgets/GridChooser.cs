@@ -142,14 +142,14 @@ namespace DwarfCorp.Gui.Widgets
             {
                 var border = Root.GetTileSheet(SelectionBorder);
                 var rect = Panel.GetChild(Selection).Rect.Interior(-border.TileWidth, -border.TileHeight, -border.TileWidth, -border.TileHeight);
-                mesh.CreateScale9BackgroundPart(rect, border);
+                mesh.Scale9Part(rect, border);
             }
 
             if (HoverItem != -1)
             {
                 var border = Root.GetTileSheet(SelectionBorder);
                 var rect = Panel.GetChild(HoverItem).Rect.Interior(-border.TileWidth, -border.TileHeight, -border.TileWidth, -border.TileHeight);
-                mesh.CreateScale9BackgroundPart(rect, border).Colorize(new Vector4(0.5f, 0, 0, 1.0f));
+                mesh.Scale9Part(rect, border).Colorize(new Vector4(0.5f, 0, 0, 1.0f));
             }
 
             return mesh;

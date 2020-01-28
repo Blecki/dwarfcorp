@@ -77,7 +77,7 @@ namespace DwarfCorp.Gui
         /// <param name="Tiles"></param>
         /// <param name="Corners"></param>
         /// <returns></returns>
-        public MeshPart CreateScale9BackgroundPart(
+        public MeshPart Scale9Part(
             Rectangle Rect,
             ITileSheet Tiles,
             Scale9Corners Corners = Scale9Corners.All)

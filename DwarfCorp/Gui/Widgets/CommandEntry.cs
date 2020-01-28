@@ -146,7 +146,27 @@ namespace DwarfCorp.Gui.Widgets
 
         protected override Mesh Redraw()
         {
-            var result = new List<Mesh>();
+            var result = Mesh.EmptyMesh();
+
+            // Add text label
+            if (!String.IsNullOrEmpty(Text))
+            {
+                var _text = ModString(Text);
+                var drawableArea = GetDrawableInterior();
+                var stringMeshSize = new Rectangle();
+                var font = Root.GetTileSheet(Font);
+                var text = (WrapText)
+                    ? font.WordWrapString(_text, TextSize, drawableArea.Width, WrapWithinWords)
+                    : _text;
+
+                var stringMesh = result.StringPart(text, font, new Vector2(TextSize, TextSize), out stringMeshSize).Colorize(TextColor);
+                
+                var textDrawPos = Vector2.Zero;
+                textDrawPos.X = drawableArea.X;
+                textDrawPos.Y = drawableArea.Y + ((drawableArea.Height - stringMeshSize.Height) / 2);
+
+                stringMesh.Translate(textDrawPos.X, textDrawPos.Y);
+            }
 
             if (Object.ReferenceEquals(this, Root.FocusItem))
             {
@@ -160,7 +180,7 @@ namespace DwarfCorp.Gui.Widgets
                     var drawableArea = this.GetDrawableInterior();
 
                     var pipeGlyph = font.GlyphSize('|');
-                    var cursorMesh = Mesh.Quad()
+                    result.QuadPart()
                         .Scale(pipeGlyph.X * TextSize, pipeGlyph.Y * TextSize)
                         .Translate(drawableArea.X 
                             + font.MeasureString(Text.Substring(0, CursorPosition)).X * TextSize 
@@ -168,37 +188,10 @@ namespace DwarfCorp.Gui.Widgets
                             drawableArea.Y + ((drawableArea.Height - (pipeGlyph.Y * TextSize)) / 2))
                         .Texture(font.TileMatrix((int)('|' )))
                         .Colorize(new Vector4(1, 0, 0, 1));
-                    result.Add(cursorMesh);
                 }
             }
 
-            // Add text label
-            if (!String.IsNullOrEmpty(Text))
-            {
-                var _text = ModString(Text);
-                var drawableArea = GetDrawableInterior();
-                var stringMeshSize = new Rectangle();
-                var font = Root.GetTileSheet(Font);
-                var text = (WrapText)
-                    ? font.WordWrapString(_text, TextSize, drawableArea.Width, WrapWithinWords)
-                    : _text;
-                var stringMesh = Mesh.CreateStringMesh(
-                    text,
-                    font,
-                    new Vector2(TextSize, TextSize),
-                    out stringMeshSize)
-                    .Colorize(TextColor);
-
-
-                var textDrawPos = Vector2.Zero;
-                textDrawPos.X = drawableArea.X;
-                textDrawPos.Y = drawableArea.Y + ((drawableArea.Height - stringMeshSize.Height) / 2);
-
-                stringMesh.Translate(textDrawPos.X, textDrawPos.Y);
-                result.Add(stringMesh);
-            }
-
-            return Mesh.Merge(result.ToArray());
+            return result;
         }
 
         private String ModString(String S)

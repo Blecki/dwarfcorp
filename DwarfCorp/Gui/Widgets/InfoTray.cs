@@ -80,29 +80,29 @@ namespace DwarfCorp.Gui.Widgets
             foreach (var m in Messages)
                 lines.AddRange(m.RawMessage.Split('\n'));
 
-            //if (ActiveMessage == null) return Gui.Mesh.EmptyMesh();
-
-            var meshes = new List<Gui.Mesh>();
-            var stringScreenSize = new Rectangle();
+            var mesh = Mesh.EmptyMesh();
             var font = Root.GetTileSheet(Font);
             var basic = Root.GetTileSheet("basic");
             var linePos = 0;
 
-            foreach (var line in lines)//ActiveMessage.Lines)
+            foreach (var line in lines)
             {
-                var stringMesh = Gui.Mesh.CreateStringMesh(line, font, new Vector2(TextSize, TextSize), out stringScreenSize)
-                   .Translate(Rect.X, linePos)
-                   .Colorize(TextColor);
-                meshes.Add(Gui.Mesh.Quad()
-                    .Scale(stringScreenSize.Width, stringScreenSize.Height)
+                var stringSize = Gui.Mesh.MeasureStringMesh(line, font, new Vector2(TextSize, TextSize));
+
+                mesh.QuadPart()
+                    .Scale(stringSize.Width, stringSize.Height)
                     .Translate(Rect.X, linePos)
                     .Texture(basic.TileMatrix(1))
-                    .Colorize(TextBackgroundColor));
-                meshes.Add(stringMesh);
+                    .Colorize(TextBackgroundColor);
+
+                mesh.StringPart(line, font, new Vector2(TextSize, TextSize), out var _)
+                   .Translate(Rect.X, linePos)
+                   .Colorize(TextColor);
+
                 linePos += font.TileHeight * TextSize;
             }
-            
-            return Gui.Mesh.Merge(meshes.ToArray());
+
+            return mesh;
         }
     }
 }

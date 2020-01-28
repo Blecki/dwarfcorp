@@ -139,10 +139,11 @@ namespace DwarfCorp.Gui.Widgets
                     float x_1 = rect.X + rect.Width;
                     float y_0 = rect.Y + (rect.Height - (alpha) * rect.Height);
                     float y_1 = rect.Y + (rect.Height - (alpha) * rect.Height);
-                    meshes.Add(//Mesh.Quad(new Vector2(x_0, y_0 + 4), new Vector2(x_0, y_0 - 4), new Vector2(x_1, y_1 + 4), new Vector2(x_1, y_1 - 4))
+                    meshes.Add(
                         Mesh.Quad().Scale(rect.Width, 1).Translate(x_0, y_0)
                     .Texture(tileMatrix).Colorize(LineColor.ToVector4() * 0.5f));
                 }
+
                 for (int i = 0; i < Values.Count - 1; i++)
                 {
                     float alpha_0 = (float)(i) / Values.Count;
