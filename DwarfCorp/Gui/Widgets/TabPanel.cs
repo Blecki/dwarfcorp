@@ -99,7 +99,9 @@ namespace DwarfCorp.Gui.Widgets
                 var border = Root.GetTileSheet(Graphics);
                 var tabPanel = Parent as TabPanel;
                 var tabButton = tabPanel.GetTabButton(tabPanel.SelectedTab);
-                return Mesh.CreateTabPanelBackground(Rect, border, tabButton.Rect.X, tabButton.Rect.Width);
+                var r = Mesh.EmptyMesh();
+                r.CreateTabPanelBackgroundPart(Rect, border, tabButton.Rect.X, tabButton.Rect.Width);
+                return r;
             }
 
             public override void Layout()

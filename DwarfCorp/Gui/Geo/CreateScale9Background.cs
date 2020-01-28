@@ -83,7 +83,7 @@ namespace DwarfCorp.Gui
             Scale9Corners Corners = Scale9Corners.All)
         {
             var result = Mesh.EmptyMesh();
-            CreateScale9Background(result, Rect, Tiles, Corners);
+            result.CreateScale9BackgroundPart(Rect, Tiles, Corners);
             return result;
         }
 
@@ -96,8 +96,7 @@ namespace DwarfCorp.Gui
         /// <param name="Tiles"></param>
         /// <param name="Corners"></param>
         /// <returns></returns>
-        public static MeshPart CreateScale9Background(
-            Mesh Into,
+        public MeshPart CreateScale9BackgroundPart(
             Rectangle Rect,
             ITileSheet Tiles,
             Scale9Corners Corners = Scale9Corners.All)
@@ -120,18 +119,18 @@ namespace DwarfCorp.Gui
             rects[7] = new Rectangle(Rect.Left + margin.Left, Rect.Bottom - margin.Bottom, Rect.Width - margin.Left - margin.Right, margin.Bottom);
             rects[8] = new Rectangle(Rect.Right - margin.Right, Rect.Bottom - margin.Bottom, margin.Right, margin.Bottom);
 
-            var result = new MeshPart { VertexOffset = Into.VertexCount, Mesh = Into };
+            var result = new MeshPart { VertexOffset = this.VertexCount, Mesh = this };
 
             for (var i = 0; i < 9; ++i)
                 if (rects[i].Width != 0 && rects[i].Height != 0)
                 {
                     if (Tiles.RepeatWhenUsedAsBorder)
-                        Into.TiledSpritePart(rects[i], Tiles, i);
+                        TiledSpritePart(rects[i], Tiles, i);
                     else
-                        Into.FittedSpritePart(rects[i], Tiles, i);
+                        FittedSpritePart(rects[i], Tiles, i);
                 }
 
-            result.VertexCount = Into.VertexCount - result.VertexOffset;
+            result.VertexCount = this.VertexCount - result.VertexOffset;
             return result;
         }
 

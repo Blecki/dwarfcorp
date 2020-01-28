@@ -184,7 +184,7 @@ namespace DwarfCorp.Gui.Widgets
                 else if (!Enabled && ChangeTextColorOnEnable) TextColor = DisabledTextColor;
                 var prevRect = Rect;
                 Rect = new Rectangle(prevRect.X - 4, prevRect.Y, prevRect.Width + 8, prevRect.Height);
-                base.GetTextMesh(meshes);
+                meshes.Add(base.GetTextMesh());
                 Rect = prevRect;
             }
 

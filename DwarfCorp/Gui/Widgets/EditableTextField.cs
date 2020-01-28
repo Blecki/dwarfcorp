@@ -220,18 +220,12 @@ namespace DwarfCorp.Gui.Widgets
             return Mesh.Merge(result.ToArray());
         }
 
-        protected Mesh GetTextMesh()
+        protected Mesh GetEditableFieldTextMesh()
         {
-            var result = new List<Mesh>();
-
-            // Add text label
             if (!String.IsNullOrEmpty(Text))
-                GetTextMesh(result);
+                return GetTextMesh();
             else
-                GetTextMesh(result, PromptText, new Vector4(0.5f, 0.5f, 0.5f, 1.0f));
-            
-
-            return Mesh.Merge(result.ToArray());
+                return GetTextMesh(PromptText, new Vector4(0.5f, 0.5f, 0.5f, 1.0f));
         }
 
         protected override Mesh Redraw()
@@ -259,11 +253,11 @@ namespace DwarfCorp.Gui.Widgets
                         .Texture(font.TileMatrix((int)('|' - ' ')))
                         .Colorize(new Vector4(1, 0, 0, 1));
 
-                    return Mesh.Merge(GetBackgroundMesh(), Mesh.ClipToNewMesh(Mesh.Merge(GetTextMesh(), cursorMesh), GetDrawableInterior()));
+                    return Mesh.Merge(GetBackgroundMesh(), Mesh.ClipToNewMesh(Mesh.Merge(GetEditableFieldTextMesh(), cursorMesh), GetDrawableInterior()));
                 }
             }
             
-            return Mesh.Merge(GetBackgroundMesh(), Mesh.ClipToNewMesh(GetTextMesh(), GetDrawableInterior()));
+            return Mesh.Merge(GetBackgroundMesh(), Mesh.ClipToNewMesh(GetEditableFieldTextMesh(), GetDrawableInterior()));
         }
     }
 }

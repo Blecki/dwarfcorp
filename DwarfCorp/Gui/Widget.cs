@@ -481,7 +481,7 @@ namespace DwarfCorp.Gui
                 result.Add(Mesh.CreateScale9Background(Rect, Root.GetTileSheet(Border)).Colorize(BackgroundColor));
 
             if (!String.IsNullOrEmpty(Text))
-                GetTextMesh(result);
+                result.Add(GetTextMesh());
 
             return Mesh.Merge(result.ToArray());
         }
@@ -529,7 +529,7 @@ namespace DwarfCorp.Gui
             return Parent.IsAnyParentTransparent();
         }
 
-        public void GetTextMesh(List<Mesh> result, String Text, Vector4 TextColor)
+        public Mesh GetTextMesh(String Text, Vector4 TextColor)
         {
             var drawableArea = GetDrawableInterior();
             var stringMeshSize = new Rectangle();
@@ -538,12 +538,8 @@ namespace DwarfCorp.Gui
                 ? font.WordWrapString(Text, TextSize, drawableArea.Width, WrapWithinWords)
                 : Text;
 
-            var stringMesh = Mesh.CreateStringMesh(
-                text,
-                font,
-                new Vector2(TextSize, TextSize),
-                out stringMeshSize)
-                .Colorize(TextColor);
+            var r = Mesh.EmptyMesh();
+            var stringMesh = r.StringPart(text, font, new Vector2(TextSize, TextSize), out stringMeshSize).Colorize(TextColor);
 
             if (AutoResizeToTextHeight && stringMeshSize.Height < Rect.Height)
             {
@@ -553,9 +549,8 @@ namespace DwarfCorp.Gui
                     Rect = new Rectangle(Rect.X, Rect.Y, Rect.Width, stringMeshSize.Height + tileSheet.TileHeight * 2);
                 }
                 else
-                {
                     Rect = new Rectangle(Rect.X, Rect.Y, Rect.Width, stringMeshSize.Height);
-                }
+
                 MinimumSize.Y = stringMeshSize.Height;
                 Parent.Layout();
             }
@@ -592,12 +587,12 @@ namespace DwarfCorp.Gui
             }
 
             stringMesh.Translate(textDrawPos.X, textDrawPos.Y);
-            result.Add(stringMesh);
+            return r;
         }
 
-        public void GetTextMesh(List<Mesh> result)
+        public Mesh GetTextMesh()
         {
-            GetTextMesh(result, Text, TextColor);
+            return GetTextMesh(Text, TextColor);
         }
 
         /// <summary>
