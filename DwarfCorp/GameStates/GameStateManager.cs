@@ -69,6 +69,19 @@ namespace DwarfCorp.GameStates
 
                 if (CurrentState != null && CurrentState.IsInitialized)
                     CurrentState.Update(time);
+
+                if (DwarfGame.IsConsoleVisible)
+                {
+                    PerformanceMonitor.SetMetric("MEMORY", BytesToString(System.GC.GetTotalMemory(false)));
+
+                    var statsDisplay = DwarfGame.GetConsoleTile("STATS");
+
+                    statsDisplay.Lines.Clear();
+                    statsDisplay.Lines.Add("** STATISTICS **");
+                    foreach (var metric in PerformanceMonitor.EnumerateMetrics())
+                        statsDisplay.Lines.Add(String.Format("{0} {1}", metric.Value.ToString(), metric.Key));
+                    statsDisplay.Invalidate();
+                }
             }
         }
 
@@ -88,6 +101,17 @@ namespace DwarfCorp.GameStates
                     }
                 }
             }
+        }
+
+        public static String BytesToString(long byteCount)
+        {
+            string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" }; //Longs run out around EB
+            if (byteCount == 0)
+                return "0" + suf[0];
+            long bytes = Math.Abs(byteCount);
+            int place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
+            double num = Math.Round(bytes / Math.Pow(1024, place), 1);
+            return String.Format("{0:000} {1}", Math.Sign(byteCount) * num, suf[place]);
         }
     }
 }

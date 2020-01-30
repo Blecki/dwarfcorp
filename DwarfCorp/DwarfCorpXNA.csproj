@@ -868,7 +868,6 @@
     <Compile Include="World\CompanyInformation.cs" />
     <Compile Include="World\IndicatorManager.cs" />
     <Compile Include="Gui\Enums.cs" />
-    <Compile Include="Gui\Geo\Basics.cs" />
     <Compile Include="Gui\Geo\CreateQuad.cs" />
     <Compile Include="Gui\Geo\CreateScale9Background.cs" />
     <Compile Include="Gui\Geo\CreateStringMesh.cs" />

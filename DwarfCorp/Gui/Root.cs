@@ -641,10 +641,13 @@ namespace DwarfCorp.Gui
         /// Draw a quad using the device provided earlier. Depth testing should be off.
         /// </summary>
         public void DrawQuad(Rectangle Quad, Texture2D Texture)
-        {            
-            var mesh = Mesh.Quad()
-                    .Scale(Quad.Width, Quad.Height)
-                    .Translate(Quad.X, Quad.Y);
+        {
+            var mesh = Mesh.EmptyMesh();
+
+            mesh.QuadPart()
+                .Scale(Quad.Width, Quad.Height)
+                .Translate(Quad.X, Quad.Y);
+
             DrawMesh(mesh, Texture);
         }
 
@@ -688,6 +691,8 @@ namespace DwarfCorp.Gui
             RenderData.Effect.CurrentTechnique.Passes[0].Apply();
 
             var mesh = RootItem.GetRenderMesh();
+            PerformanceMonitor.SetMetric("GUI Mesh Size", mesh.Verticies.Length);
+
             mesh.Render(RenderData.Device);
 
             foreach(var widget in RootItem.EnumerateTree()) // Todo: Should probably use a registration system. But, hasn't been a performance issue thus far.

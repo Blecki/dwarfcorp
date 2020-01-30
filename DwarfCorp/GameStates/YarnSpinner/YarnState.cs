@@ -19,7 +19,7 @@ namespace DwarfCorp
         private AnimationPlayer SpeakerAnimationPlayer;
         private Animation SpeakerAnimation;
         private bool SpeakerVisible = false;
-        private Gui.Mesh SpeakerRectangle = null;
+        private Gui.Mesh SpeakerRectangle = Mesh.Quad();
         private Widget SpeakerBorder = null;
         private SpeechSynthesizer Language;
         private IEnumerator<String> CurrentSpeach;
@@ -255,7 +255,10 @@ namespace DwarfCorp
                 SpeakerBorder.Rect.X = 0;
             }
 
-            SpeakerRectangle = Gui.Mesh.Quad().Scale(SpeakerBorder.Rect.Width, SpeakerBorder.Rect.Height).Translate(SpeakerBorder.Rect.X, SpeakerBorder.Rect.Y);
+            SpeakerRectangle.EntireMeshAsPart()
+                .ResetQuad()
+                .Scale(SpeakerBorder.Rect.Width, SpeakerBorder.Rect.Height)
+                .Translate(SpeakerBorder.Rect.X, SpeakerBorder.Rect.Y);
 
             _Output.Invalidate();
             SpeakerBorder.Invalidate();
@@ -362,7 +365,10 @@ namespace DwarfCorp
             AutoHideBubble = true;
 
             SpeakerBorder.Rect = new Rectangle(16, GuiRoot.RenderData.VirtualScreen.Height - (256 - 16), 256 - 32, 256 - 32);
-            SpeakerRectangle = Gui.Mesh.Quad().Scale(256, 256).Translate(0, GuiRoot.RenderData.VirtualScreen.Height - 256);
+            SpeakerRectangle.EntireMeshAsPart()
+                .ResetQuad()
+                .Scale(256, 256)
+                .Translate(0, GuiRoot.RenderData.VirtualScreen.Height - 256);
             _Output.Rect = new Rectangle(256, GuiRoot.RenderData.VirtualScreen.Height - 260, global::System.Math.Min(GuiRoot.RenderData.VirtualScreen.Width - 256, 550), 260);
 
             SpeakerBorder.Invalidate();
@@ -387,7 +393,9 @@ namespace DwarfCorp
             AutoHideBubble = true;
 
             SpeakerBorder.Rect = new Rectangle(16, GuiRoot.RenderData.VirtualScreen.Height - (256 - 16), 256 - 32, 256 - 32);
-            SpeakerRectangle = Gui.Mesh.Quad().Scale(256, 256).Translate(0, GuiRoot.RenderData.VirtualScreen.Height - 256);
+            SpeakerRectangle.EntireMeshAsPart()
+                .ResetQuad()
+                .Scale(256, 256).Translate(0, GuiRoot.RenderData.VirtualScreen.Height - 256);
             _Output.Rect = new Rectangle(256, GuiRoot.RenderData.VirtualScreen.Height - 260, global::System.Math.Min(GuiRoot.RenderData.VirtualScreen.Width - 256, 550), 260);
 
             SpeakerBorder.Invalidate();

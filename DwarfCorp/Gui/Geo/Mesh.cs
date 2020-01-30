@@ -88,5 +88,40 @@ namespace DwarfCorp.Gui
                 VertexCount = VertexCount
             };
         }
+
+        public static Mesh Merge(params Mesh[] parts)
+        {
+            var result = new Mesh();
+
+            result.Verticies = new Vertex[parts.Sum((p) => p.VertexCount)];
+            result.indicies = new short[parts.Sum((p) => p.indicies.Length)];
+            result.VertexCount = result.Verticies.Length;
+
+            int vCount = 0;
+            int iCount = 0;
+            foreach (var part in parts)
+            {
+                for (int i = 0; i < part.VertexCount; ++i) result.Verticies[i + vCount] = part.Verticies[i];
+                for (int i = 0; i < part.indicies.Length; ++i) result.indicies[i + iCount] = (short)(part.indicies[i] + vCount);
+                vCount += part.VertexCount;
+                iCount += part.indicies.Length;
+            }
+            return result;
+        }
+
+        public MeshPart Concat(Mesh Other)
+        {
+            var result = this.BeginPart();
+            result.VertexCount = Other.VertexCount;
+            var indexStart = this.indicies.Length;
+
+            this.GrowVerticies(Other.VertexCount);
+            this.GrowIndicies(Other.indicies.Length);
+
+            for (int i = 0; i < Other.VertexCount; ++i) this.Verticies[i + result.VertexOffset] = Other.Verticies[i];
+            for (int i = 0; i < Other.indicies.Length; ++i) this.indicies[i + indexStart] = (short)(Other.indicies[i] + result.VertexOffset);
+
+            return result;
+        }
     }
 }

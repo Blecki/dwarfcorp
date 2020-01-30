@@ -11,6 +11,7 @@ namespace DwarfCorp.GameStates
         private Gui.Root GuiRoot;
         private Widget LogoWidget;
         private Texture2D LogoTexture;
+        private Mesh LogoMesh = Mesh.Quad();
 
         public MenuState(DwarfGame game) :
             base(game)
@@ -106,11 +107,12 @@ namespace DwarfCorp.GameStates
             if (LogoTexture.IsDisposed)
                 LogoTexture = AssetManager.GetContentTexture("newgui/gamelogo");
 
-            GuiRoot.DrawMesh(
-                Gui.Mesh.Quad()
+            LogoMesh.EntireMeshAsPart()
+                .ResetQuad()
                 .Scale(LogoWidget.Rect.Width, LogoWidget.Rect.Height)
-                .Translate(LogoWidget.Rect.X, LogoWidget.Rect.Y),
-                LogoTexture);
+                .Translate(LogoWidget.Rect.X, LogoWidget.Rect.Y);
+
+            GuiRoot.DrawMesh(LogoMesh, LogoTexture);
             GuiRoot.Draw();
             base.Render(gameTime);
         }
