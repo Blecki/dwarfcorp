@@ -24,31 +24,30 @@ namespace DwarfCorp.Gui.Widgets
 
         protected override Gui.Mesh Redraw()
         {
-            var meshes = new List<Gui.Mesh>();
-            meshes.Add(base.Redraw());
+            var mesh = base.Redraw();
 
             if (CompanyInformation.LogoBackground != null)
             {
                 var bgTileSet = Root.GetTileSheet(CompanyInformation.LogoBackground.Sheet);
-                meshes.Add(Gui.Mesh.Quad()
+                mesh.QuadPart()
                     .Scale(Rect.Width, Rect.Height)
                     .Texture(bgTileSet.TileMatrix(CompanyInformation.LogoBackground.Tile))
                     .Translate(Rect.X, Rect.Y)
-                    .Colorize(CompanyInformation.LogoBackgroundColor));
+                    .Colorize(CompanyInformation.LogoBackgroundColor);
             }
 
             if (CompanyInformation.LogoSymbol != null)
             {
                 // Todo: Center symbol on logo.
                 var symbol = Root.GetTileSheet(CompanyInformation.LogoSymbol.Sheet);
-                meshes.Add(Gui.Mesh.Quad()
+                mesh.QuadPart()
                     .Scale(Rect.Width, Rect.Height)
                     .Texture(symbol.TileMatrix(CompanyInformation.LogoSymbol.Tile))
                     .Translate(Rect.X, Rect.Y)
-                    .Colorize(CompanyInformation.LogoSymbolColor));
+                    .Colorize(CompanyInformation.LogoSymbolColor);
             }
 
-            return Gui.Mesh.Merge(meshes.ToArray());
+            return mesh;
         }
     }
 }

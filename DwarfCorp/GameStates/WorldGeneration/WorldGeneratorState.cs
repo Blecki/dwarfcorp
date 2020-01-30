@@ -253,7 +253,7 @@ namespace DwarfCorp.GameStates
                 Preview.DrawPreview();
                 GuiRoot.MousePointer = new MousePointer("mouse", 1, 0);
                 if (RightPanel is LaunchPanel launch)
-                    launch.DrawPreview();
+                    launch.DrawZoomedPreview();
             }
 
             GuiRoot.RedrawPopups();

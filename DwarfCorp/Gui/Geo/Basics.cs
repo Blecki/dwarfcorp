@@ -36,36 +36,6 @@ namespace DwarfCorp.Gui
             return Transform(Matrix.CreateTranslation(-w * 0.5f, -h * 0.5f, 0) * Matrix.CreateRotationZ(r) * Matrix.CreateTranslation(w * 0.5f, h * 0.5f, 0) * Matrix.CreateTranslation(X, Y, 0));
         }
 
-        public Mesh Texture(Matrix M)
-        {
-            return Texture(M, 0, VertexCount);
-        }
-
-        public Mesh Texture(Matrix M, int StartIndex, int Count)
-        {
-            for (int i = StartIndex; i < StartIndex + Count; ++i)
-                Verticies[i].TextureCoordinate = Vector2.Transform(Verticies[i].TextureCoordinate, M);
-            return this;
-        }
-
-        public Mesh TileScaleAndTexture(ITileSheet Sheet, int T)
-        {
-            return this.Scale(Sheet.TileWidth, Sheet.TileHeight)
-                .Texture(Sheet.TileMatrix(T));
-        }
-
-        public Mesh Colorize(Vector4 Color)
-        {
-            return Colorize(Color, 0, VertexCount);
-        }
-
-        public Mesh Colorize(Vector4 Color, int StartIndex, int Count)
-        {
-            for (int i = StartIndex; i < VertexCount && i < StartIndex + Count; ++i)
-                Verticies[i].Color = Color;
-            return this;
-        }
-
         public static Mesh Merge(params Mesh[] parts)
         {
             var result = new Mesh();
@@ -83,6 +53,21 @@ namespace DwarfCorp.Gui
                 vCount += part.VertexCount;
                 iCount += part.indicies.Length;
             }
+            return result;
+        }
+
+        public MeshPart Concat(Mesh Other)
+        {
+            var result = this.BeginPart();
+            result.VertexCount = Other.VertexCount;
+            var indexStart = this.indicies.Length;
+
+            this.GrowVerticies(Other.VertexCount);
+            this.GrowIndicies(Other.indicies.Length);
+
+            for (int i = 0; i < Other.VertexCount; ++i) this.Verticies[i + result.VertexOffset] = Other.Verticies[i];
+            for (int i = 0; i < Other.indicies.Length; ++i) this.indicies[i + indexStart] = (short)(Other.indicies[i] + result.VertexOffset);
+
             return result;
         }
     }

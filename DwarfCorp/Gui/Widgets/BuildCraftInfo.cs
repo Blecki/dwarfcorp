@@ -309,8 +309,7 @@ namespace DwarfCorp.Gui.Widgets
         {
             var borderMesh = Mesh.EmptyMesh();
             borderMesh.Scale9Part(Rect, Root.GetTileSheet("border-fancy"), Scale9Corners.Top | Scale9Corners.Left | Scale9Corners.Right);
-            return Mesh.Merge(borderMesh, base.Redraw());
+            return Mesh.Merge(borderMesh, base.Redraw()); // This will be removable when we switch to in place drawing for the whole GUI tree.
         }
     }
-
 }

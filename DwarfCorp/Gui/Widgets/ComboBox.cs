@@ -165,12 +165,13 @@ namespace DwarfCorp.Gui.Widgets
 
         protected override Mesh Redraw()
         {
+            var mesh = base.Redraw();
             var gfx = Root.GetTileSheet(Graphics);
             var interior = GetDrawableInterior();
-            var downArrow = Mesh.Quad()
+            mesh.QuadPart()
                .TileScaleAndTexture(gfx, 0)
                .Translate(interior.X + interior.Width, interior.Y);
-            return Mesh.Merge(base.Redraw(), downArrow);
+            return mesh;
         }
     }
 }

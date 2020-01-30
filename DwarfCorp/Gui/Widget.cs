@@ -668,7 +668,7 @@ namespace DwarfCorp.Gui
                 r[0] = Redraw();
                 for (var i = 0; i < Children.Count; ++i)
                     r[i + 1] = Children[i].GetRenderMesh();
-                CachedRenderMesh = Mesh.Merge(r);
+                CachedRenderMesh = Mesh.Merge(r); // This is the heart of the in-place mesh generation... can't kill merge yet!
             }
 
             return CachedRenderMesh;

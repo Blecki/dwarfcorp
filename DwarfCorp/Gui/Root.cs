@@ -44,6 +44,7 @@ namespace DwarfCorp.Gui
 
         private MousePointer SpecialIndicator = null;
         public String SpecialHiliteWidgetName = "";
+        private Mesh MouseMesh = Mesh.Quad();
 
         public void ClearSpecials()
         {
@@ -771,34 +772,37 @@ namespace DwarfCorp.Gui
                     }
 
                     var tileSheet = GetTileSheet(SpecialIndicator.Sheet);
-                    var mouseMesh = Mesh.Quad()
+                    MouseMesh.EntireMeshAsPart()
+                        .ResetQuad()
                         .Scale(tileSheet.TileWidth, tileSheet.TileHeight)
                         .Translate(
                             specialIndicatorPosition.X +
                             (float)Math.Sin(DwarfTime.LastTime.TotalRealTime.TotalSeconds * 4.0) * 8.0f,
                             specialIndicatorPosition.Y)
                         .Texture(tileSheet.TileMatrix(SpecialIndicator.AnimationFrame));
-                    mouseMesh.Render(RenderData.Device);
+                    MouseMesh.Render(RenderData.Device);
                 }
             }
 
             if (MouseVisible && MousePointer != null)
             {
                 var tileSheet = GetTileSheet(MousePointer.Sheet);
-                var mouseMesh = Mesh.Quad()
+                MouseMesh.EntireMeshAsPart()
+                    .ResetQuad()
                     .Scale(tileSheet.TileWidth, tileSheet.TileHeight)
                     .Translate(MousePosition.X, MousePosition.Y)
                     .Texture(tileSheet.TileMatrix(MousePointer.AnimationFrame));
-                mouseMesh.Render(RenderData.Device);
+                MouseMesh.Render(RenderData.Device);
 
                 if (MouseOverlaySheet != null)
                 {
                     var overlaySheet = GetTileSheet(MouseOverlaySheet.Sheet);
-                    var overlayMesh = Mesh.Quad()
+                    MouseMesh.EntireMeshAsPart()
+                        .ResetQuad()
                         .Scale(overlaySheet.TileWidth, overlaySheet.TileHeight)
                         .Translate(MousePosition.X + overlaySheet.TileWidth / 2, MousePosition.Y + overlaySheet.TileHeight / 2)
                         .Texture(overlaySheet.TileMatrix(MouseOverlaySheet.Tile));
-                    overlayMesh.Render(RenderData.Device);
+                    MouseMesh.Render(RenderData.Device);
                 }
             }
         }

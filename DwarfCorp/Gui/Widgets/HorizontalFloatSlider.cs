@@ -73,7 +73,9 @@ namespace DwarfCorp.Gui.Widgets
         {
             var tiles = Root.GetTileSheet(Graphics);
 
-            var background = Mesh.Quad()
+            var mesh = Mesh.EmptyMesh();
+
+            mesh.QuadPart()
                 .Scale(Rect.Width, Rect.Height)
                 .Translate(Rect.X, Rect.Y)
                 .Texture(tiles.TileMatrix(0));
@@ -82,12 +84,12 @@ namespace DwarfCorp.Gui.Widgets
             var barPosition = ScrollPercentage * scrollSize;
             var pixelPosition = Rect.X + (int)barPosition + EndBufferSize;
 
-            var bar = Mesh.Quad()
+            mesh.QuadPart()
                 .Scale(tiles.TileWidth, tiles.TileHeight)
                 .Translate(pixelPosition - (tiles.TileWidth / 2), Rect.Y)
                 .Texture(tiles.TileMatrix(1));
 
-            return Mesh.Merge(background, bar);
+            return mesh;
         }
 
         public override Point GetBestSize()

@@ -22,7 +22,8 @@ namespace DwarfCorp.Gui.Widgets
         public override void Layout()
         {
             base.Layout();
-            SpriteMesh = Gui.Mesh.Quad()
+            SpriteMesh = Mesh.EmptyMesh();
+            SpriteMesh.QuadPart()
                 .Scale(Rect.Width, Rect.Height)
                 .Translate(Rect.X, Rect.Y);
         }
@@ -45,9 +46,8 @@ namespace DwarfCorp.Gui.Widgets
             if (texture != null)
             {
                 var sheet = new SpriteSheet(texture, 48, 40);
-                SpriteMesh.ResetQuadTexture();
                 var frame = AnimationPlayer.GetCurrentAnimation().Frames[AnimationPlayer.CurrentFrame];
-                SpriteMesh.Texture(sheet.TileMatrix(frame.X, frame.Y));
+                SpriteMesh.EntireMeshAsPart().ResetQuadTexture().Texture(sheet.TileMatrix(frame.X, frame.Y));
                 Root.DrawMesh(SpriteMesh, texture);
             }
 

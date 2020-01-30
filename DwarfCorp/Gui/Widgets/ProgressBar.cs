@@ -49,7 +49,7 @@ namespace DwarfCorp.Gui.Widgets
                 .Texture(sides.TileMatrix(1));
             r.TiledSpritePart(Rect.Interior(sides.TileWidth, 0, sides.TileWidth, 0), middle, 0);
 
-            return Mesh.Merge(r, base.Redraw());
+            return Mesh.Merge(r, base.Redraw()); // This can be removed when we switch completely to in place drawing
         }
 
         public override Point GetBestSize()

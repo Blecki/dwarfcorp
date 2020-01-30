@@ -108,20 +108,22 @@ namespace DwarfCorp.Gui.Widgets
                 float alpha = 0.995f;
                 float currentMax = Values.Max();
                 MaxValueSeen = Math.Max(alpha * MaxValueSeen + (1.0f - alpha) * currentMax, currentMax);
-                var maxValue = MaxValueSeen;
-                var yScale = (float)GraphBox.Rect.Width / maxValue;
-                var columns = Gui.Mesh.Merge(EnumerateRange(0, Values.Count).Select(x =>
-                {
-                    return Gui.Mesh.Quad().Scale(1.0f, Values[x] * yScale)
-                    .Translate(x + GraphBox.Rect.X, GraphBox.Rect.Y)
-                    .Texture(tileMatrix)
-                    .Colorize(new Vector4(Values[x] / maxValue, 1.0f - (Values[x] / maxValue), 0, 0.75f));
-                }).ToArray());
+                var yScale = (float)GraphBox.Rect.Width / MaxValueSeen;
 
                 MinLabel.Text = ModString(MinLabelString);
-                MaxLabel.Text = ModString(String.Format("{0}", maxValue));
+                MaxLabel.Text = ModString(String.Format("{0}", MaxValueSeen));
 
-                return Gui.Mesh.Merge(base.Redraw(), columns);
+                var mesh = base.Redraw();
+                foreach (var x in EnumerateRange(0, Values.Count))
+                { 
+                    mesh.QuadPart()
+                        .Scale(1.0f, Values[x] * yScale)
+                        .Translate(x + GraphBox.Rect.X, GraphBox.Rect.Y)
+                        .Texture(tileMatrix)
+                        .Colorize(new Vector4(Values[x] / MaxValueSeen, 1.0f - (Values[x] / MaxValueSeen), 0, 0.75f));
+                };
+
+                return mesh;
             }
             else
             {
@@ -131,7 +133,14 @@ namespace DwarfCorp.Gui.Widgets
                 float min = Math.Min(Values.Min(), 1.0e-4f);
                 int num_gridlines = 10;
 
-                List<Gui.Mesh> meshes = new List<Mesh>();
+                MaxLabel.Text = String.Format("{0}", (int)min);
+                MinLabel.Text = String.Format("{0}", (int)max);
+                XLabelMaxWidget.Text = XLabelMax;
+                XLabelMinWidget.Text = XLabelMin;
+                Layout();
+
+                var mesh = base.Redraw();
+
                 for (int i = 0; i < num_gridlines + 1; i++)
                 {
                     float alpha = (float)i / (num_gridlines);
@@ -139,9 +148,11 @@ namespace DwarfCorp.Gui.Widgets
                     float x_1 = rect.X + rect.Width;
                     float y_0 = rect.Y + (rect.Height - (alpha) * rect.Height);
                     float y_1 = rect.Y + (rect.Height - (alpha) * rect.Height);
-                    meshes.Add(
-                        Mesh.Quad().Scale(rect.Width, 1).Translate(x_0, y_0)
-                    .Texture(tileMatrix).Colorize(LineColor.ToVector4() * 0.5f));
+                    mesh.QuadPart()
+                        .Scale(rect.Width, 1)
+                        .Translate(x_0, y_0)
+                        .Texture(tileMatrix)
+                        .Colorize(LineColor.ToVector4() * 0.5f);
                 }
 
                 for (int i = 0; i < Values.Count - 1; i++)
@@ -162,15 +173,11 @@ namespace DwarfCorp.Gui.Widgets
                     Vector3 p12 = p1 - cross * 2;
                     Vector3 p21 = p2 + cross * 2;
                     Vector3 p22 = p2 - cross * 2;
-                    meshes.Add(Mesh.Quad(new Vector2(p11.X, p11.Y), new Vector2(p12.X, p12.Y), new Vector2(p21.X, p21.Y), new Vector2(p22.X, p22.Y))
-                        .Texture(tileMatrix).Colorize(LineColor.ToVector4()));
+                    mesh.QuadPart(new Vector2(p11.X, p11.Y), new Vector2(p12.X, p12.Y), new Vector2(p21.X, p21.Y), new Vector2(p22.X, p22.Y))
+                        .Texture(tileMatrix).Colorize(LineColor.ToVector4());
                 }
-                MaxLabel.Text = String.Format("{0}", (int)min);
-                MinLabel.Text = String.Format("{0}", (int)max);
-                XLabelMaxWidget.Text = XLabelMax;
-                XLabelMinWidget.Text = XLabelMin;
-                Layout();
-                return Gui.Mesh.Merge(base.Redraw(), Gui.Mesh.Merge(meshes.ToArray()));
+
+                return mesh;
             }
         }
 

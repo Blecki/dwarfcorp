@@ -52,27 +52,28 @@ namespace DwarfCorp.Play
 
         protected override Mesh Redraw()
         {
+            var r = base.Redraw();
+
             if (_Resource == null)
-                return base.Redraw();
+                return r;
 
             if (OverrideTooltip)
                 Tooltip = String.Format("{0}\n{1}\nWear: {2:##.##}%", _Resource.DisplayName, _Resource.Description, (_Resource.Tool_Wear / _Resource.Tool_Durability) * 100.0f);
 
-            var r = new List<Mesh>();
             if (!String.IsNullOrEmpty(Hilite))
-                r.Add(Mesh.Quad()
+                r.QuadPart()
                     .Scale(32, 32)
                     .Translate(Rect.X, Rect.Y)
-                    .Texture(Root.GetTileSheet(Hilite).TileMatrix(0)));
+                    .Texture(Root.GetTileSheet(Hilite).TileMatrix(0));
 
             foreach (var layer in _Resource.GuiLayers)
-                r.Add(Mesh.Quad()
+                r.QuadPart()
                             .Scale(32, 32)
                             .Translate(Rect.X, Rect.Y)
                             .Colorize(BackgroundColor)
-                            .Texture(Root.GetTileSheet(layer.Sheet).TileMatrix(layer.Tile)));
-            r.Add(base.Redraw());
-            return Mesh.Merge(r.ToArray());
+                            .Texture(Root.GetTileSheet(layer.Sheet).TileMatrix(layer.Tile));
+
+            return r;
         }
     }
 }

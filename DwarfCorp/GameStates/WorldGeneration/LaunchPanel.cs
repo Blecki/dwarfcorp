@@ -20,6 +20,7 @@ namespace DwarfCorp.GameStates
         private DwarfGame Game;
         private WorldGeneratorState Preview;
         private Widget ZoomedPreview;
+        private Gui.Mesh ZoomedPreviewMesh;
 
         public LaunchPanel(DwarfGame Game, OverworldGenerator Generator, Overworld Settings, WorldGeneratorState Preview) 
         {
@@ -219,15 +220,21 @@ namespace DwarfCorp.GameStates
                 Widget.TextColor = new Vector4(0, 0, 0, 1);
         }
 
-        public void DrawPreview()
+        public void DrawZoomedPreview()
         {
-            Root.DrawMesh(
-                    Gui.Mesh.Quad()
-                    .Scale(-ZoomedPreview.Rect.Width, -ZoomedPreview.Rect.Height)
-                    .Translate(ZoomedPreview.Rect.X + ZoomedPreview.Rect.Width,
-                        ZoomedPreview.Rect.Y + ZoomedPreview.Rect.Height)
-                    .Texture(Preview.Preview.ZoomedPreviewMatrix),
-                    Preview.Preview.TerrainTexture);
+            if (ZoomedPreviewMesh == null)
+            {
+                ZoomedPreviewMesh = Mesh.EmptyMesh();
+                ZoomedPreviewMesh.QuadPart();
+            }
+
+            ZoomedPreviewMesh.EntireMeshAsPart()
+                .ResetQuad()
+                .Scale(-ZoomedPreview.Rect.Width, -ZoomedPreview.Rect.Height)
+                .Translate(ZoomedPreview.Rect.X + ZoomedPreview.Rect.Width, ZoomedPreview.Rect.Y + ZoomedPreview.Rect.Height)
+                .Texture(Preview.Preview.ZoomedPreviewMatrix);
+
+            Root.DrawMesh(ZoomedPreviewMesh, Preview.Preview.TerrainTexture);
         }
     }
 }

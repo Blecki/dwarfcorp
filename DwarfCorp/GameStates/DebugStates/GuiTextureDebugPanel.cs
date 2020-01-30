@@ -111,14 +111,19 @@ namespace DwarfCorp.GameStates.Debug
 
             var basicTiles = Root.GetTileSheet("basic");
 
+            var mesh = Mesh.EmptyMesh();
 
-            return Mesh.Merge(
-                Mesh.Quad()
+            mesh.QuadPart()
                     .Texture(basicTiles.TileMatrix(1))
                     .Scale(TextureView.Rect.Width, TextureView.Rect.Height)
                     .Translate(TextureView.Rect.X, TextureView.Rect.Y)
-                    .Colorize(TextureViewBackgroundColor), 
-                Mesh.Quad().Scale(newSize.X, newSize.Y).Translate(TextureView.Rect.Center.X - (newSize.X / 2), TextureView.Rect.Center.Y - (newSize.Y / 2)));
+                    .Colorize(TextureViewBackgroundColor);
+
+            mesh.QuadPart()
+                .Scale(newSize.X, newSize.Y)
+                .Translate(TextureView.Rect.Center.X - (newSize.X / 2), TextureView.Rect.Center.Y - (newSize.Y / 2));
+
+            return mesh;
         }
     }
 }

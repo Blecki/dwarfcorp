@@ -148,30 +148,44 @@ namespace DwarfCorp.GameStates
         {
             if (Root == null) return;
 
-            var background = Root.GetTileSheet("basic");
-
             OverworldTextureGenerator.Generate(Overworld, ShowPolitics, TerrainTexture, PreviewTexture);
 
-            var colorKeyEntries = Library.CreateBiomeColors().ToList();
+            var background = Root.GetTileSheet("basic");
             var font = Root.GetTileSheet("font8");
             var legendMesh = Gui.Mesh.EmptyMesh();
             var y = Rect.Y;
             var maxWidth = 0;
 
+            // Gather entries.
+            var colorKeyEntries = Library.CreateBiomeColors().ToList();
             foreach (var native in Overworld.Natives.Where(n => n.InteractiveFaction && !n.IsCorporate))
                 colorKeyEntries.Add(new KeyValuePair<string, Color>(native.Name, native.PrimaryColor));
             colorKeyEntries.Add(new KeyValuePair<string, Color>("Player", Overworld.Natives.FirstOrDefault(n => n.Name == "Player").PrimaryColor));
 
+            // Calculate legend size.
             foreach (var color in colorKeyEntries)
             {
-                Rectangle bounds;
-
-                legendMesh.StringPart(color.Key, font, new Vector2(1, 1), out bounds)
-                    .Translate(PreviewPanel.Rect.Right - bounds.Width - (font.TileHeight + 4), y)
-                    .Colorize(new Vector4(0, 0, 0, 1));
+                var bounds = Gui.Mesh.MeasureStringMesh(color.Key, font, new Vector2(1, 1));
 
                 if (bounds.Width > maxWidth)
                     maxWidth = bounds.Width;
+
+                y += bounds.Height;
+            }
+
+            // Add legend background.
+            var thinBorder = Root.GetTileSheet("border-thin");
+            legendMesh.Scale9Part(
+                new Rectangle(Rect.Right - thinBorder.TileWidth - maxWidth - 8 - font.TileHeight, Rect.Y, maxWidth + thinBorder.TileWidth + 8 + font.TileHeight, y - Rect.Y + thinBorder.TileHeight),
+                thinBorder, Scale9Corners.Bottom | Scale9Corners.Left);
+
+            // Add legend entries.
+            y = Rect.Y;
+            foreach (var color in colorKeyEntries)
+            {
+                legendMesh.StringPart(color.Key, font, new Vector2(1, 1), out var bounds)
+                    .Translate(PreviewPanel.Rect.Right - bounds.Width - (font.TileHeight + 4), y)
+                    .Colorize(new Vector4(0, 0, 0, 1));
 
                 legendMesh.QuadPart()
                     .Scale(font.TileHeight, font.TileHeight)
@@ -182,7 +196,7 @@ namespace DwarfCorp.GameStates
                 y += bounds.Height;
             }
 
-
+            // Add spawn stats
             if (previewText == null)
                 previewText = Generator.GetSpawnStats();
 
@@ -202,12 +216,7 @@ namespace DwarfCorp.GameStates
                 dy += previewBounds.Height;
             }
 
-            var thinBorder = Root.GetTileSheet("border-thin");
-            var bgMesh = Gui.Mesh.EmptyMesh();
-            bgMesh.Scale9Part(
-                new Rectangle(Rect.Right - thinBorder.TileWidth - maxWidth - 8 - font.TileHeight, Rect.Y, maxWidth + thinBorder.TileWidth + 8 + font.TileHeight, y - Rect.Y + thinBorder.TileHeight),
-                thinBorder, Scale9Corners.Bottom | Scale9Corners.Left);
-            KeyMesh = Gui.Mesh.Merge(bgMesh, legendMesh); // Can't build them in order because the size of bgMesh depends on the size of the legend.
+            KeyMesh = legendMesh;
         }
 
         public void RenderPreview(GraphicsDevice device)

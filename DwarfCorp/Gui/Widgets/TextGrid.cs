@@ -29,16 +29,15 @@ namespace DwarfCorp.Gui.Widgets
             var realX = interior.X + (interior.Width / 2) - ((font.TileWidth * TextSize * gridW) / 2);
             var realY = interior.Y + (interior.Height / 2) - ((font.TileHeight * TextSize * gridH) / 2);
 
-            var quads = new List<Mesh>();
+            GridMesh = Mesh.EmptyMesh();
             for (var y = 0; y < gridH; ++y)
                 for (var x = 0; x < gridW; ++x)
-                    quads.Add(Mesh.Quad()
+                    GridMesh.QuadPart()
                         .Scale(font.TileWidth * TextSize, font.TileHeight * TextSize)
                         .Translate((x * font.TileWidth * TextSize) + realX,
                             (y * font.TileHeight * TextSize) + realY)
-                        .Texture(font.TileMatrix(0)));
+                        .Texture(font.TileMatrix(0));
 
-            GridMesh = Mesh.Merge(quads.ToArray());
             TextWidth = gridW;
             TextHeight = gridH;
         }
@@ -60,7 +59,9 @@ namespace DwarfCorp.Gui.Widgets
 
         protected override Mesh Redraw()
         {
-            return Mesh.Merge(base.Redraw(), GridMesh);
+            var mesh = base.Redraw();
+            mesh.Concat(GridMesh);
+            return mesh;
         }
     }
 }

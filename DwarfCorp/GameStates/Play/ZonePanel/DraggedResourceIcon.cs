@@ -27,18 +27,17 @@ namespace DwarfCorp.Play
 
         protected override Mesh Redraw()
         {
+            var mesh = base.Redraw();
             if (_Resource == null)
-                return base.Redraw();
+                return mesh;
 
-            var r = new List<Mesh>();
             foreach (var layer in _Resource.GuiLayers)
-                r.Add(Mesh.Quad()
+                mesh.QuadPart()
                             .Scale(Rect.Width, Rect.Height)
                             .Translate(Rect.X, Rect.Y)
                             .Colorize(BackgroundColor)
-                            .Texture(Root.GetTileSheet(layer.Sheet).TileMatrix(layer.Tile)));
-            r.Add(base.Redraw());
-            return Mesh.Merge(r.ToArray());
+                            .Texture(Root.GetTileSheet(layer.Sheet).TileMatrix(layer.Tile));
+            return mesh;
         }
     }
 }

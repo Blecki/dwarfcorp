@@ -101,5 +101,15 @@ namespace DwarfCorp.Gui
 
             return this;
         }
+
+        public MeshPart ResetQuad()
+        {
+            Mesh.Verticies[VertexOffset + 0] = new Vertex { Position = new Vector3(0.0f, 0.0f, 0), TextureCoordinate = new Vector2(0.0f, 0.0f), Color = Vector4.One };
+            Mesh.Verticies[VertexOffset + 1] = new Vertex { Position = new Vector3(1.0f, 0.0f, 0), TextureCoordinate = new Vector2(1.0f, 0.0f), Color = Vector4.One };
+            Mesh.Verticies[VertexOffset + 2] = new Vertex { Position = new Vector3(1.0f, 1.0f, 0), TextureCoordinate = new Vector2(1.0f, 1.0f), Color = Vector4.One };
+            Mesh.Verticies[VertexOffset + 3] = new Vertex { Position = new Vector3(0.0f, 1.0f, 0), TextureCoordinate = new Vector2(0.0f, 1.0f), Color = Vector4.One };
+
+            return this;
+        }        
     }
 }

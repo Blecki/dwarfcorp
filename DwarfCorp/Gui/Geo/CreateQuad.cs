@@ -103,5 +103,36 @@ namespace DwarfCorp.Gui
             return result;
         }
 
+
+        public MeshPart QuadPart(Vector2 bottomLeft, Vector2 topLeft, Vector2 bottomRight, Vector2 topRight)
+        {
+            var result = new MeshPart
+            {
+                VertexOffset = VertexCount,
+                VertexCount = 4,
+                Mesh = this
+            };
+
+            var baseIndex = VertexCount;
+
+            GrowVerticies(4); // Todo: Need to implement a better growth strategy.
+
+            Verticies[baseIndex + 0] = new Vertex { Position = new Vector3(topLeft, 0.0f),     TextureCoordinate = new Vector2(0.0f, 0.0f), Color = Vector4.One };
+            Verticies[baseIndex + 1] = new Vertex { Position = new Vector3(topRight, 0.0f),    TextureCoordinate = new Vector2(1.0f, 0.0f), Color = Vector4.One };
+            Verticies[baseIndex + 2] = new Vertex { Position = new Vector3(bottomRight, 0.0f), TextureCoordinate = new Vector2(1.0f, 1.0f), Color = Vector4.One };
+            Verticies[baseIndex + 3] = new Vertex { Position = new Vector3(bottomLeft, 0.0f),  TextureCoordinate = new Vector2(0.0f, 1.0f), Color = Vector4.One };
+
+            var indexBase = indicies.Length;
+            GrowIndicies(6);
+            indicies[indexBase + 0] = (short)(baseIndex + 0);
+            indicies[indexBase + 1] = (short)(baseIndex + 1);
+            indicies[indexBase + 2] = (short)(baseIndex + 2);
+            indicies[indexBase + 3] = (short)(baseIndex + 3);
+            indicies[indexBase + 4] = (short)(baseIndex + 0);
+            indicies[indexBase + 5] = (short)(baseIndex + 2);
+
+            return result;
+        }
+
     }
 }

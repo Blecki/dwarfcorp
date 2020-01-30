@@ -304,8 +304,9 @@ namespace DwarfCorp
             {
                 var sheet = SpeakerAnimationPlayer.GetCurrentAnimation().SpriteSheet;
                 var frame = SpeakerAnimationPlayer.GetCurrentAnimation().Frames[SpeakerAnimationPlayer.CurrentFrame];
-                SpeakerRectangle.ResetQuadTexture();
-                SpeakerRectangle.Texture(sheet.TileMatrix(frame.X, frame.Y));
+                SpeakerRectangle.EntireMeshAsPart()
+                    .ResetQuadTexture()
+                    .Texture(sheet.TileMatrix(frame.X, frame.Y));
                 GuiRoot.DrawMesh(SpeakerRectangle, sheet.GetTexture());
             }
 
