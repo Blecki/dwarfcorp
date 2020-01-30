@@ -9,31 +9,6 @@ namespace DwarfCorp.Gui
 {
     public partial class Mesh
     {
-        public static Mesh Quad(Vector2 bottomLeft, Vector2 topLeft, Vector2 bottomRight, Vector2 topRight)
-        {
-            var result = new Mesh();
-            result.Verticies = new Vertex[4];
-            result.VertexCount = 4;
-
-            result.Verticies[0].Position = new Vector3(topLeft.X, topLeft.Y, 0);
-            result.Verticies[1].Position = new Vector3(topRight.X, topRight.Y, 0);
-            result.Verticies[2].Position = new Vector3(bottomRight.X, bottomRight.Y, 0);
-            result.Verticies[3].Position = new Vector3(bottomLeft.X, bottomLeft.Y, 0);
-
-            result.Verticies[0].TextureCoordinate = new Vector2(0.0f, 0.0f);
-            result.Verticies[1].TextureCoordinate = new Vector2(1.0f, 0.0f);
-            result.Verticies[2].TextureCoordinate = new Vector2(1.0f, 1.0f);
-            result.Verticies[3].TextureCoordinate = new Vector2(0.0f, 1.0f);
-
-            result.Verticies[0].Color = Vector4.One;
-            result.Verticies[1].Color = Vector4.One;
-            result.Verticies[2].Color = Vector4.One;
-            result.Verticies[3].Color = Vector4.One;
-
-            result.indicies = new short[] { 0, 1, 2, 3, 0, 2 };
-            return result;
-        }
-
         public static Mesh Quad()
         {
             var result = new Mesh();
@@ -58,20 +33,6 @@ namespace DwarfCorp.Gui
             result.indicies = new short[] { 0, 1, 2, 3, 0, 2 };
             return result;
         }
-
-        /// <summary>
-        /// Sets a quad's texture coordinates back to the default values. Sure hope the mesh is actually a quad!
-        /// </summary>
-        public void ResetQuadTexture()
-        {
-            // Better be a fucking quad!
-
-            Verticies[0].TextureCoordinate = new Vector2(0.0f, 0.0f);
-            Verticies[1].TextureCoordinate = new Vector2(1.0f, 0.0f);
-            Verticies[2].TextureCoordinate = new Vector2(1.0f, 1.0f);
-            Verticies[3].TextureCoordinate = new Vector2(0.0f, 1.0f);
-        }
-
 
         public MeshPart QuadPart()
         {

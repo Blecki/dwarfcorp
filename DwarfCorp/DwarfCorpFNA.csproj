@@ -584,7 +584,6 @@
     <Compile Include=".\Graphics\Primitives\RawPrimitive.cs" />
     <Compile Include=".\Graphics\SelectionBuffer.cs" />
     <Compile Include=".\Gui\Enums.cs" />
-    <Compile Include=".\Gui\Geo\Basics.cs" />
     <Compile Include=".\Gui\Geo\CreateQuad.cs" />
     <Compile Include=".\Gui\Geo\CreateScale9Background.cs" />
     <Compile Include=".\Gui\Geo\CreateStringMesh.cs" />

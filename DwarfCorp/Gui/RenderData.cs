@@ -72,6 +72,7 @@ namespace DwarfCorp.Gui
         }
 
         // This should return some kind of dynamic sheet handle that can be used to render with it, and to switch out it's texture.
+        // - Employee Icon will be first to use this, and will replace the texture data //without// having to relayout the sheet.
         public void AddDynamicSheet(JsonTileSheet Sheet, Texture2D Texture)
         {
             DynamicSheets.Add(new DynamicTileSheet { Sheet = Sheet, Texture = Texture });
