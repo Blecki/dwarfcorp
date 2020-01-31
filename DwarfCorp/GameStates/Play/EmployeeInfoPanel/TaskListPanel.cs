@@ -42,7 +42,7 @@ namespace DwarfCorp.Play.EmployeeInfo
                 var tag = task.GuiTag as Widget;
                 var lambdaCopy = task;
 
-                if (tag != null)
+                if (tag != null && Object.ReferenceEquals(tag.Root, this.Root))
                     ListView.AddItem(tag);
                 else
                 {

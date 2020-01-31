@@ -662,6 +662,15 @@ namespace DwarfCorp.Gui
         {
             if (Hidden) return Mesh.EmptyMesh();
 
+            if (Debugger.Switches.ABTestSwitch)
+            {
+                var r = new Mesh[1 + Children.Count];
+                r[0] = Redraw();
+                for (var i = 0; i < Children.Count; ++i)
+                    r[i + 1] = Children[i].GetRenderMesh();
+                return Mesh.Merge(r);
+            }
+
             if (CachedRenderMesh == null)
             {
                 var r = new Mesh[1 + Children.Count];
@@ -671,6 +680,18 @@ namespace DwarfCorp.Gui
                 CachedRenderMesh = Mesh.Merge(r); // This is the heart of the in-place mesh generation... can't kill merge yet!
             }
 
+            return CachedRenderMesh;
+        }
+
+        public Mesh ForceRenderMeshUpdate()
+        {
+            if (Hidden) return Mesh.EmptyMesh();
+
+            var r = new Mesh[1 + Children.Count];
+            r[0] = Redraw();
+            for (var i = 0; i < Children.Count; ++i)
+                r[i + 1] = Children[i].ForceRenderMeshUpdate();
+            CachedRenderMesh = Mesh.Merge(r);
             return CachedRenderMesh;
         }
 

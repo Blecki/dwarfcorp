@@ -45,6 +45,12 @@ namespace DwarfCorp.Gui
         private MousePointer SpecialIndicator = null;
         public String SpecialHiliteWidgetName = "";
         private Mesh MouseMesh = Mesh.Quad();
+        private bool RenderDataInvalid = false;
+
+        public void InvalidateRenderData()
+        {
+            RenderDataInvalid = true;
+        }
 
         public void ClearSpecials()
         {
@@ -690,7 +696,10 @@ namespace DwarfCorp.Gui
             RenderData.Effect.Parameters["Texture"].SetValue(RenderData.Texture);
             RenderData.Effect.CurrentTechnique.Passes[0].Apply();
 
-            var mesh = RootItem.GetRenderMesh();
+            PerformanceMonitor.PushFrame("GUI Mesh Gen");
+            var mesh = RenderDataInvalid ? RootItem.ForceRenderMeshUpdate() : RootItem.GetRenderMesh();
+            RenderDataInvalid = false;
+            PerformanceMonitor.PopFrame();
             PerformanceMonitor.SetMetric("GUI Mesh Size", mesh.Verticies.Length);
 
             mesh.Render(RenderData.Device);

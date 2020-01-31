@@ -72,6 +72,7 @@ namespace DwarfCorp.GameStates.Debug
                         Name = "TROLL"
                     };
                     Root.RenderData.AddDynamicSheet(sheet, texture);
+                    Root.InvalidateRenderData();
                     Invalidate();
                 }
             });
