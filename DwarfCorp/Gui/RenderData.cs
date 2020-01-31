@@ -119,6 +119,7 @@ namespace DwarfCorp.Gui
 
         private TextureAtlas.Atlas CompileAtlas(ContentManager Content, List<JsonTileSheet> sheets, Dictionary<string, Func<GraphicsDevice, ContentManager, JsonTileSheet, Texture2D>> generators)
         {
+            // Todo: Save a list of Atlas Entries at this top level.
             return TextureAtlas.Compiler.Compile(CoreSheets.Select(s =>
             {
                 Texture2D realTexture = null;
@@ -154,15 +155,11 @@ namespace DwarfCorp.Gui
 
         private void BuildTilesheetsFromPackedAtlas(TextureAtlas.Atlas atlas)
         {
+            // Todo: Use the tile sheet saved in the atlas entry if it exists. Otherwise, make a new one.
             foreach (var texture in atlas.Textures)
             {
                 // Copy source texture into the atlas
                 var realTexture = texture.RealTexture;
-                //if (realTexture == null || realTexture.IsDisposed || realTexture.GraphicsDevice.IsDisposed)
-                //{
-                //    texture.RealTexture = AssetManager.GetContentTexture(texture.Sheet.Texture);
-                //    realTexture = texture.RealTexture;
-                //}
                 var memTexture = TextureTool.MemoryTextureFromTexture2D(realTexture);
 
                 if (texture.Sheet.Type == JsonTileSheetType.VariableWidthFont)
