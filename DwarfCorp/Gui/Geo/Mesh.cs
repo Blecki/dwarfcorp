@@ -37,18 +37,32 @@ namespace DwarfCorp.Gui
         public Vertex[] Verticies;
         public int VertexCount { get; private set; }
 
-        public short[] indicies;
+        public short[] Indicies;
+        public int IndexCount { get; private set; }
+
+        private Mesh() { }
 
         public void Render(GraphicsDevice Device)
         {
             if (VertexCount != 0)
-                Device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, Verticies, 0, VertexCount,
-                    indicies, 0, indicies.Length / 3);
+                Device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, Verticies, 0, VertexCount, Indicies, 0, IndexCount / 3);
         }
 
         public static Mesh EmptyMesh()
         {
-            return new Mesh() { indicies = new short[0], Verticies = new Vertex[0], VertexCount = 0 };
+            return new Mesh()
+            {
+                Verticies = new Vertex[0],
+                VertexCount = 0,
+                Indicies = new short[0],
+                IndexCount = 0
+            };
+        }
+
+        public void ResetCounts()
+        {
+            VertexCount = 0;
+            IndexCount = 0;
         }
 
         public void GrowVerticies(int by)
@@ -64,9 +78,13 @@ namespace DwarfCorp.Gui
 
         public void GrowIndicies(int by)
         {
-            var newIndicies = new short[indicies.Length + by];
-            indicies.CopyTo(newIndicies, 0);
-            indicies = newIndicies;
+            IndexCount += by;
+            if (Indicies.Length < IndexCount)
+            {
+                var newIndicies = new short[(int)Math.Ceiling(IndexCount * 1.5)];
+                Indicies.CopyTo(newIndicies, 0);
+                Indicies = newIndicies;
+            }
         }
 
         public MeshPart BeginPart()
@@ -94,17 +112,18 @@ namespace DwarfCorp.Gui
             var result = new Mesh();
 
             result.Verticies = new Vertex[parts.Sum((p) => p.VertexCount)];
-            result.indicies = new short[parts.Sum((p) => p.indicies.Length)];
+            result.Indicies = new short[parts.Sum((p) => p.IndexCount)];
             result.VertexCount = result.Verticies.Length;
+            result.IndexCount = result.Indicies.Length;
 
             int vCount = 0;
             int iCount = 0;
             foreach (var part in parts)
             {
                 for (int i = 0; i < part.VertexCount; ++i) result.Verticies[i + vCount] = part.Verticies[i];
-                for (int i = 0; i < part.indicies.Length; ++i) result.indicies[i + iCount] = (short)(part.indicies[i] + vCount);
+                for (int i = 0; i < part.IndexCount; ++i) result.Indicies[i + iCount] = (short)(part.Indicies[i] + vCount);
                 vCount += part.VertexCount;
-                iCount += part.indicies.Length;
+                iCount += part.IndexCount;
             }
             return result;
         }
@@ -113,13 +132,13 @@ namespace DwarfCorp.Gui
         {
             var result = this.BeginPart();
             result.VertexCount = Other.VertexCount;
-            var indexStart = this.indicies.Length;
+            var indexStart = IndexCount;
 
             this.GrowVerticies(Other.VertexCount);
-            this.GrowIndicies(Other.indicies.Length);
+            this.GrowIndicies(Other.IndexCount);
 
             for (int i = 0; i < Other.VertexCount; ++i) this.Verticies[i + result.VertexOffset] = Other.Verticies[i];
-            for (int i = 0; i < Other.indicies.Length; ++i) this.indicies[i + indexStart] = (short)(Other.indicies[i] + result.VertexOffset);
+            for (int i = 0; i < Other.IndexCount; ++i) this.Indicies[i + indexStart] = (short)(Other.Indicies[i] + result.VertexOffset);
 
             return result;
         }
