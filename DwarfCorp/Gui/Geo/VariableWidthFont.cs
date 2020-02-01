@@ -14,6 +14,11 @@ namespace DwarfCorp.Gui
 
         public bool RepeatWhenUsedAsBorder { get { return false; } }
 
+        public void ResetAtlasBounds(Rectangle MyBounds, Rectangle AtlasBounds)
+        {
+            Sheet = new TileSheet(AtlasBounds.Width, AtlasBounds.Height, MyBounds, 1, 1, false);
+        }
+
         public Vector4 MapRectangleToUVBounds(Rectangle R)
         {
             // This operation is pretty much nonsense for a font, but, whatever. Do it.

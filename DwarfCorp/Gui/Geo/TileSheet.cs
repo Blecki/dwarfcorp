@@ -20,6 +20,13 @@ namespace DwarfCorp.Gui
         public int TileHeight { get; private set; }
         public bool RepeatWhenUsedAsBorder { get; private set; }
 
+        public void ResetAtlasBounds(Rectangle MyBounds, Rectangle AtlasBounds)
+        {
+            TextureWidth = AtlasBounds.Width;
+            TextureHeight = AtlasBounds.Height;
+            SourceRect = MyBounds;
+        }
+
 
         public float SourceURange { get { return (float)SourceRect.Width / (float)TextureWidth; } }
         public float SourceVRange { get { return (float)SourceRect.Height / (float)TextureHeight; } }

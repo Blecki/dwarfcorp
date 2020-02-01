@@ -18,5 +18,7 @@ namespace DwarfCorp.Gui
         bool HasGlyph(int TileID);
         Vector4 MapRectangleToUVBounds(Rectangle R);
         String WordWrapString(String S, float GlyphWidthScale, float Width, bool wrapWithinWords);
+
+        void ResetAtlasBounds(Rectangle MyBounds, Rectangle AtlasBounds);
     }
 }

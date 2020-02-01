@@ -26,6 +26,17 @@ namespace DwarfCorp
             return r;
         }
 
+        public static MemoryTexture MemoryTextureFromTexture2D(Texture2D Source, Rectangle SourceRect)
+        {
+            if (Source == null || Source.IsDisposed || Source.GraphicsDevice.IsDisposed)
+            {
+                return null;
+            }
+            var r = new MemoryTexture(SourceRect.Width, SourceRect.Height);
+            Source.GetData(0, SourceRect, r.Data, 0, SourceRect.Width * SourceRect.Height);
+            return r;
+        }
+
         public static Texture2D Texture2DFromMemoryTexture(GraphicsDevice Device, MemoryTexture Source)
         {
             if (Source == null || Device.IsDisposed)

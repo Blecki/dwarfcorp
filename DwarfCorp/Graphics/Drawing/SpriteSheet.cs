@@ -40,7 +40,6 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class SpriteSheet
     {
         protected bool Equals(SpriteSheet other)

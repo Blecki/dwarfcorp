@@ -35,6 +35,11 @@ namespace DwarfCorp.Gui
         private TileSheet Sheet;
         private Dictionary<char, Glyph> Glyphs = new Dictionary<char, Glyph>();
 
+        public void ResetAtlasBounds(Rectangle MyBounds, Rectangle AtlasBounds)
+        {
+            Sheet = new TileSheet(AtlasBounds.Width, AtlasBounds.Height, MyBounds, 1, 1, false);
+        }
+
         public bool RepeatWhenUsedAsBorder { get { return false; } }
 
         public Vector4 MapRectangleToUVBounds(Rectangle R)

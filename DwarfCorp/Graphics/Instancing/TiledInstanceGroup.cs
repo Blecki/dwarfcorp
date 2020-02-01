@@ -19,7 +19,8 @@ namespace DwarfCorp
         private int InstanceCount = 0;
         private DynamicVertexBuffer InstanceBuffer = null;
         private Dictionary<String, Gui.TileSheet> Atlas = new Dictionary<string, Gui.TileSheet>();
-        private Gui.TextureAtlas.Atlas RawAtlas = null;
+        private List<Gui.TextureAtlas.Entry> AtlasEntries = null;
+        private Rectangle AtlasBounds;
         private Texture2D AtlasTexture = null;
         private bool NeedsRendered = true;
 
@@ -61,7 +62,7 @@ namespace DwarfCorp
 
         private void RebuildAtlas()
         {
-            RawAtlas = Gui.TextureAtlas.Compiler.Compile(Atlas.Select(s =>
+            AtlasEntries = Atlas.Select(s =>
             {
                 return new Gui.TextureAtlas.Entry
                 {
@@ -76,14 +77,16 @@ namespace DwarfCorp
                     Rect = new Rectangle(0, 0, s.Value.TileWidth, s.Value.TileHeight),
                     RealTexture = AssetManager.GetContentTexture(s.Key)
                 };
-            }).ToList());
+            }).ToList();
 
-            foreach (var texture in RawAtlas.Textures)
+            AtlasBounds = Gui.TextureAtlas.Compiler.Compile(AtlasEntries);
+
+            foreach (var texture in AtlasEntries)
             {
                 var sheet = Atlas[texture.Sheet.Name];
                 sheet.SourceRect = texture.Rect;
-                sheet.TextureWidth = RawAtlas.Dimensions.Width;
-                sheet.TextureHeight = RawAtlas.Dimensions.Height;
+                sheet.TextureWidth = AtlasBounds.Width;
+                sheet.TextureHeight = AtlasBounds.Height;
             }
         }
 
@@ -113,20 +116,12 @@ namespace DwarfCorp
 
             if (NeedsRendered || (AtlasTexture != null && (AtlasTexture.IsDisposed || AtlasTexture.GraphicsDevice.IsDisposed)))
             {
-                if (RawAtlas == null || RawAtlas.Textures.Count == 0)
-                {
+                if (AtlasEntries == null)
                     RebuildAtlas();
-                    if (RawAtlas == null || RawAtlas.Textures.Count == 0)
-                    {
-                        // WTF.
-                        InstanceCount = 0;
-                        return;
-                    }
-                }
 
-                AtlasTexture = new Texture2D(Device, RawAtlas.Dimensions.Width, RawAtlas.Dimensions.Height);
+                AtlasTexture = new Texture2D(Device, AtlasBounds.Width, AtlasBounds.Height);
 
-                foreach (var texture in RawAtlas.Textures)
+                foreach (var texture in AtlasEntries)
                 {
                     var realTexture = texture.RealTexture;
                     if (realTexture == null || realTexture.IsDisposed || realTexture.GraphicsDevice.IsDisposed)

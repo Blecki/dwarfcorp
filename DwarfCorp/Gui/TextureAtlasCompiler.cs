@@ -12,13 +12,14 @@ namespace DwarfCorp.Gui.TextureAtlas
         public JsonTileSheet Sheet;
         public Rectangle Rect;
         public Texture2D RealTexture;
-        public TileSheet TileSheet;
-    }
+        public ITileSheet TileSheet;
+        public bool NeedsBlit = false;
 
-    public class Atlas
-    {
-        public Rectangle Dimensions;
-        public List<Entry> Textures;
+        public void ReplaceTexture(Texture2D NewTexture)
+        {
+            RealTexture = NewTexture;
+            NeedsBlit = true;
+        }
     }
 
     internal static class BspSubdivision
@@ -125,24 +126,25 @@ namespace DwarfCorp.Gui.TextureAtlas
 
     public class Compiler
     {
-        public static Atlas Compile(List<Entry> Entries)
+        public static Rectangle Compile(IEnumerable<Entry> Entries)
         {
-            Entries.Sort((A, B) =>
+            var entries = Entries.ToList();
+
+            entries.Sort((A, B) =>
             {
                 return (B.Rect.Width * B.Rect.Height) - (A.Rect.Width * A.Rect.Height);
             });
 
             // Find smallest power of 2 sized texture that can hold the largest entry.
-            var largestEntry = Entries[0];
+            var largestEntry = entries[0];
             var texSize = new Rectangle(0, 0, 1, 1);
             while (texSize.Width < largestEntry.Rect.Width)
                 texSize.Width *= 2;
             while (texSize.Height < largestEntry.Rect.Height)
                 texSize.Height *= 2;
 
-            // Be sure to pass a copy of the list since the algorithm modifies it.
-            texSize = BspSubdivision.ExpandHorizontal(texSize, texSize, new List<Entry>(Entries));
-            return new Atlas { Dimensions = texSize, Textures = Entries };
+            texSize = BspSubdivision.ExpandHorizontal(texSize, texSize, entries);
+            return texSize;
         }
     }
 }
