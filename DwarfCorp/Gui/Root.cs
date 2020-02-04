@@ -45,12 +45,9 @@ namespace DwarfCorp.Gui
         private MousePointer SpecialIndicator = null;
         public String SpecialHiliteWidgetName = "";
         private Mesh MouseMesh = Mesh.Quad();
-        private bool RenderDataInvalid = false;
+        public SpriteAtlas SpriteAtlas;
 
-        public void InvalidateRenderData()
-        {
-            RenderDataInvalid = true;
-        }
+        public bool SetMetrics = true;
 
         public void ClearSpecials()
         {
@@ -84,8 +81,8 @@ namespace DwarfCorp.Gui
                     Transparent = true
                 });
 
+            SpriteAtlas = new SpriteAtlas(RenderData.Device, RenderData.Content);
         }
-
 
         public string Sanitize(String Name)
         {
@@ -99,15 +96,10 @@ namespace DwarfCorp.Gui
         /// <returns></returns>
         public ITileSheet GetTileSheet(String Name)
         {
-            if (Name == null || !RenderData.TileSheets.ContainsKey(Name))
-            {
-                // Lol this is a hack to make the game behave gracefully whenever there is a bad specification for
-                // a tile sheet.
-                return RenderData.TileSheets["error"];
-            }
-            return RenderData.TileSheets[Sanitize(Name)];
+            if (Name == null || !SpriteAtlas.NamedTileSheets.ContainsKey(Name))
+                return SpriteAtlas.NamedTileSheets["error"];
+            return SpriteAtlas.NamedTileSheets[Sanitize(Name)];
         }
-
 
         /// <summary>
         /// Widgets must be constructed or some operations will fail. Use this function to construct a widget 
@@ -663,11 +655,17 @@ namespace DwarfCorp.Gui
         public void Draw(Point Offset, bool Mouse = true)
         {
             if (RenderData.Device.IsDisposed || RenderData.Effect.IsDisposed)
-            {
                 RenderData = new RenderData(GameStates.GameState.Game.GraphicsDevice, GameStates.GameState.Game.Content);
-            }
 
-            RenderData.Prerender(GameStates.GameState.Game.Content);
+            PerformanceMonitor.PushFrame("GUI Mesh Gen");
+
+            var spriteAtlasPrerenderResult = SpriteAtlas.Prerender();
+            var mesh = spriteAtlasPrerenderResult == SpriteAtlas.PrerenderResult.RebuiltAtlas ? RootItem.ForceRenderMeshUpdate() : RootItem.GetRenderMesh();
+
+            PerformanceMonitor.PopFrame();
+
+            if (SetMetrics)
+                PerformanceMonitor.SetMetric("GUI Mesh Size", mesh.Verticies.Length);
 
             RenderData.Device.DepthStencilState = DepthStencilState.None;
             RenderData.Effect.CurrentTechnique = RenderData.Effect.Techniques[0];
@@ -693,21 +691,13 @@ namespace DwarfCorp.Gui
                 );
 #endif
 
-            RenderData.Effect.Parameters["Texture"].SetValue(RenderData.Texture);
+            RenderData.Effect.Parameters["Texture"].SetValue(SpriteAtlas.Texture);
             RenderData.Effect.CurrentTechnique.Passes[0].Apply();
-
-            PerformanceMonitor.PushFrame("GUI Mesh Gen");
-            var mesh = RenderDataInvalid ? RootItem.ForceRenderMeshUpdate() : RootItem.GetRenderMesh();
-            RenderDataInvalid = false;
-            PerformanceMonitor.PopFrame();
-            PerformanceMonitor.SetMetric("GUI Mesh Size", mesh.Verticies.Length);
-
+            
             mesh.Render(RenderData.Device);
 
             foreach(var widget in RootItem.EnumerateTree()) // Todo: Should probably use a registration system. But, hasn't been a performance issue thus far.
-            {
                 widget.PostDraw(GameStates.GameState.Game.GraphicsDevice);
-            }
 
             if (Mouse) DrawMouse();
         }
@@ -745,7 +735,7 @@ namespace DwarfCorp.Gui
                 );
 #endif
 
-            RenderData.Effect.Parameters["Texture"].SetValue(RenderData.Texture);
+            RenderData.Effect.Parameters["Texture"].SetValue(SpriteAtlas.Texture);
             RenderData.Effect.CurrentTechnique.Passes[0].Apply();
 
             foreach (var item in PopupStack)
@@ -757,7 +747,7 @@ namespace DwarfCorp.Gui
             if (RootItem == null || RootItem.Hidden || RenderData == null)
                 return;
 
-            RenderData.Effect.Parameters["Texture"].SetValue(RenderData.Texture);
+            RenderData.Effect.Parameters["Texture"].SetValue(SpriteAtlas.Texture);
             RenderData.Effect.CurrentTechnique.Passes[0].Apply();
 
             if (!String.IsNullOrEmpty(SpecialHiliteWidgetName))

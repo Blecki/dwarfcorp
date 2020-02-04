@@ -57,6 +57,23 @@ namespace DwarfCorp.Play
 
                 new HorizontalMenuTray.MenuItem
                 {
+                    Text = "DEBUG GUI",
+                    OnClick = (sender, args) =>
+                    {
+                        var popup = Root.ConstructWidget(new GameStates.Debug.GuiDebugPanel
+                        {
+                            Rect = Root.RenderData.VirtualScreen,
+                            IncludeCloseButton = true
+                        });
+
+                        popup.Layout();
+
+                        Root.ShowModalPopup(popup);
+                    }
+                },
+
+                new HorizontalMenuTray.MenuItem
+                {
                     Text = "CRASH",
                     OnClick = (sender, args) => throw new InvalidProgramException()
                 },

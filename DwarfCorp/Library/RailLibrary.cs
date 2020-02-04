@@ -125,7 +125,7 @@ namespace DwarfCorp
 
         // Todo: Use Sheet.TileHeight as well.
         [TextureGenerator("RailIcons")]
-        public static Texture2D RenderPatternIcons(GraphicsDevice device, Microsoft.Xna.Framework.Content.ContentManager Content, Gui.JsonTileSheet Sheet)
+        public static Texture2D RenderPatternIcons(GraphicsDevice device, Microsoft.Xna.Framework.Content.ContentManager Content, Gui.TileSheetDefinition Sheet)
         {
             InitializeRailLibrary();
 

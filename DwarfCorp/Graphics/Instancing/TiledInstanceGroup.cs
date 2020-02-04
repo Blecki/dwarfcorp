@@ -19,7 +19,7 @@ namespace DwarfCorp
         private int InstanceCount = 0;
         private DynamicVertexBuffer InstanceBuffer = null;
         private Dictionary<String, Gui.TileSheet> Atlas = new Dictionary<string, Gui.TileSheet>();
-        private List<Gui.TextureAtlas.Entry> AtlasEntries = null;
+        private List<Gui.TextureAtlas.SpriteAtlasEntry> AtlasEntries = null;
         private Rectangle AtlasBounds;
         private Texture2D AtlasTexture = null;
         private bool NeedsRendered = true;
@@ -64,18 +64,18 @@ namespace DwarfCorp
         {
             AtlasEntries = Atlas.Select(s =>
             {
-                return new Gui.TextureAtlas.Entry
+                return new Gui.TextureAtlas.SpriteAtlasEntry
                 {
-                    Sheet = new Gui.JsonTileSheet
+                    SourceDefinition = new Gui.TileSheetDefinition
                     {
                         Texture = s.Key,
                         Name = s.Key,
-                        Type = Gui.JsonTileSheetType.TileSheet,
+                        Type = Gui.TileSheetType.TileSheet,
                         TileHeight = s.Value.TileHeight,
                         TileWidth = s.Value.TileWidth
                     },
-                    Rect = new Rectangle(0, 0, s.Value.TileWidth, s.Value.TileHeight),
-                    RealTexture = AssetManager.GetContentTexture(s.Key)
+                    AtlasBounds = new Rectangle(0, 0, s.Value.TileWidth, s.Value.TileHeight),
+                    SourceTexture = AssetManager.GetContentTexture(s.Key)
                 };
             }).ToList();
 
@@ -83,8 +83,8 @@ namespace DwarfCorp
 
             foreach (var texture in AtlasEntries)
             {
-                var sheet = Atlas[texture.Sheet.Name];
-                sheet.SourceRect = texture.Rect;
+                var sheet = Atlas[texture.SourceDefinition.Name];
+                sheet.SourceRect = texture.AtlasBounds;
                 sheet.TextureWidth = AtlasBounds.Width;
                 sheet.TextureHeight = AtlasBounds.Height;
             }
@@ -123,18 +123,18 @@ namespace DwarfCorp
 
                 foreach (var texture in AtlasEntries)
                 {
-                    var realTexture = texture.RealTexture;
+                    var realTexture = texture.SourceTexture;
                     if (realTexture == null || realTexture.IsDisposed || realTexture.GraphicsDevice.IsDisposed)
                     {
-                        texture.RealTexture = AssetManager.GetContentTexture(texture.Sheet.Texture);
-                        realTexture = texture.RealTexture;
+                        texture.SourceTexture = AssetManager.GetContentTexture(texture.SourceDefinition.Texture);
+                        realTexture = texture.SourceTexture;
                     }
 
                     var textureData = new Color[realTexture.Width * realTexture.Height];
                     realTexture.GetData(textureData);
 
                     // Paste texture data into atlas.
-                    AtlasTexture.SetData(0, texture.Rect, textureData, 0, realTexture.Width * realTexture.Height);
+                    AtlasTexture.SetData(0, texture.AtlasBounds, textureData, 0, realTexture.Width * realTexture.Height);
                 }
 
                 NeedsRendered = false;

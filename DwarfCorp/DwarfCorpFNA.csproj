@@ -116,6 +116,7 @@
     <Compile Include="AssetManagement\JsonConverters\RectangleConverter.cs" />
     <Compile Include="AssetManagement\JsonConverters\TextureContentConverter.cs" />
     <Compile Include="AssetManagement\ObjLoader.cs" />
+    <Compile Include="AssetManagement\TextureTool-CropAndColorSprite.cs" />
     <Compile Include="AssetManagement\TextureTool-LoadPSD.cs" />
     <Compile Include="Components\AI\DwarfAI.cs" />
     <Compile Include="Components\AI\Equipment.cs" />
@@ -185,6 +186,9 @@
     <Compile Include="Gui\DragAndDrop.cs" />
     <Compile Include="Gui\Geo\PartBasics.cs" />
     <Compile Include="Gui\Geo\MeshPart.cs" />
+    <Compile Include="Gui\SpriteAtlas.cs" />
+    <Compile Include="Gui\SpriteAtlasEntry.cs" />
+    <Compile Include="Gui\TileSheetDefinition.cs" />
     <Compile Include="Gui\Widgets\SliderCombo.cs" />
     <Compile Include="Gui\Widgets\PlaceCraftInfo.cs" />
     <Compile Include="Gui\Widgets\DefaultTaskPriority.cs" />
@@ -599,7 +603,6 @@
     <Compile Include=".\Gui\Input\Input.cs" />
     <Compile Include=".\Gui\Input\InputMapper.cs" />
     <Compile Include=".\Gui\Input\MessageFilter.cs" />
-    <Compile Include=".\Gui\JsonTileSheet.cs" />
     <Compile Include=".\Gui\Layout.cs" />
     <Compile Include=".\Gui\Margin.cs" />
     <Compile Include=".\Gui\MousePointer.cs" />
@@ -610,7 +613,6 @@
     <Compile Include=".\Gui\TextureAtlasCompiler.cs" />
     <Compile Include=".\Gui\TextureGeneratorAttribute.cs" />
     <Compile Include=".\Gui\TileReference.cs" />
-    <Compile Include=".\Gui\TileSheetExtension.cs" />
     <Compile Include=".\Gui\Widget.cs" />
     <Compile Include=".\Gui\Widgets\AnnouncementPopup.cs" />
     <Compile Include=".\Gui\Widgets\AudioMixerWidget.cs" />

@@ -133,7 +133,7 @@ namespace DwarfCorp.GameStates
             var rect = PreviewPanel.GetDrawableInterior();
 
             if (KeyMesh != null)
-                Root.DrawMesh(KeyMesh, Root.RenderData.Texture);
+                Root.DrawMesh(KeyMesh, Root.SpriteAtlas.Texture);
         }
 
         private bool PreviewTextureNeedsRegeneration()

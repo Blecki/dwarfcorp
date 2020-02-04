@@ -7,21 +7,6 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp.Gui.TextureAtlas
 {
-    public class Entry
-    {
-        public JsonTileSheet Sheet;
-        public Rectangle Rect;
-        public Texture2D RealTexture;
-        public ITileSheet TileSheet;
-        public bool NeedsBlit = false;
-
-        public void ReplaceTexture(Texture2D NewTexture)
-        {
-            RealTexture = NewTexture;
-            NeedsBlit = true;
-        }
-    }
-
     internal static class BspSubdivision
     {
         /// <summary>
@@ -30,15 +15,15 @@ namespace DwarfCorp.Gui.TextureAtlas
         /// </summary>
         /// <param name="Dimensions"></param>
         /// <param name="Textures"></param>
-        internal static void TryPlaceTextures(Rectangle Dimensions, List<Entry> Textures)
+        internal static void TryPlaceTextures(Rectangle Dimensions, List<SpriteAtlasEntry> Textures)
         {
-            Entry tex = null;
+            SpriteAtlasEntry tex = null;
 
             //Find largest entry that fits within the dimensions.
             for (int i = 0; i < Textures.Count; ++i)
             {
                 var Entry = Textures[i];
-                if (Entry.Rect.Width > Dimensions.Width || Entry.Rect.Height > Dimensions.Height)
+                if (Entry.AtlasBounds.Width > Dimensions.Width || Entry.AtlasBounds.Height > Dimensions.Height)
                     continue;
                 Textures.RemoveAt(i);
                 tex = Entry;
@@ -48,12 +33,12 @@ namespace DwarfCorp.Gui.TextureAtlas
             // Quit if nothing fit.
             if (tex == null) return;
 
-            tex.Rect.X = Dimensions.X;
-            tex.Rect.Y = Dimensions.Y;
+            tex.AtlasBounds.X = Dimensions.X;
+            tex.AtlasBounds.Y = Dimensions.Y;
 
             //Subdivide remaining space.
-            int HorizontalDifference = Dimensions.Width - tex.Rect.Width;
-            int VerticalDifference = Dimensions.Height - tex.Rect.Height;
+            int HorizontalDifference = Dimensions.Width - tex.AtlasBounds.Width;
+            int VerticalDifference = Dimensions.Height - tex.AtlasBounds.Height;
 
             if (HorizontalDifference == 0 && VerticalDifference == 0) //Perfect fit!
                 return;
@@ -64,17 +49,17 @@ namespace DwarfCorp.Gui.TextureAtlas
             // Subdivide the space on the shortest axis of the texture we just placed.
             if (HorizontalDifference >= VerticalDifference)
             {
-                ASpace = new Rectangle(Dimensions.X + tex.Rect.Width, Dimensions.Y, HorizontalDifference, Dimensions.Height);
+                ASpace = new Rectangle(Dimensions.X + tex.AtlasBounds.Width, Dimensions.Y, HorizontalDifference, Dimensions.Height);
 
                 // Remember that this isn't a perfect split - a chunk belongs to the placed texture.
                 if (VerticalDifference > 0)
-                    BSpace = new Rectangle(Dimensions.X, Dimensions.Y + tex.Rect.Height, tex.Rect.Width, VerticalDifference);
+                    BSpace = new Rectangle(Dimensions.X, Dimensions.Y + tex.AtlasBounds.Height, tex.AtlasBounds.Width, VerticalDifference);
             }
             else
             {
-                ASpace = new Rectangle(Dimensions.X, Dimensions.Y + tex.Rect.Height, Dimensions.Width, VerticalDifference);
+                ASpace = new Rectangle(Dimensions.X, Dimensions.Y + tex.AtlasBounds.Height, Dimensions.Width, VerticalDifference);
                 if (HorizontalDifference > 0)
-                    BSpace = new Rectangle(Dimensions.X + tex.Rect.Width, Dimensions.Y, HorizontalDifference, tex.Rect.Height);
+                    BSpace = new Rectangle(Dimensions.X + tex.AtlasBounds.Width, Dimensions.Y, HorizontalDifference, tex.AtlasBounds.Height);
             }
 
            TryPlaceTextures(ASpace.Value, Textures);
@@ -88,7 +73,7 @@ namespace DwarfCorp.Gui.TextureAtlas
         /// <param name="WorkingArea"></param>
         /// <param name="Textures"></param>
         /// <returns></returns>
-        internal static Rectangle ExpandVertical(Rectangle TotalArea, Rectangle WorkingArea, List<Entry> Textures)
+        internal static Rectangle ExpandVertical(Rectangle TotalArea, Rectangle WorkingArea, List<SpriteAtlasEntry> Textures)
         {
             TryPlaceTextures(WorkingArea, Textures);
 
@@ -109,7 +94,7 @@ namespace DwarfCorp.Gui.TextureAtlas
         /// <param name="WorkingArea"></param>
         /// <param name="Textures"></param>
         /// <returns></returns>
-        internal static Rectangle ExpandHorizontal(Rectangle TotalArea, Rectangle WorkingArea, List<Entry> Textures)
+        internal static Rectangle ExpandHorizontal(Rectangle TotalArea, Rectangle WorkingArea, List<SpriteAtlasEntry> Textures)
         {
             TryPlaceTextures(WorkingArea, Textures);
 
@@ -126,21 +111,21 @@ namespace DwarfCorp.Gui.TextureAtlas
 
     public class Compiler
     {
-        public static Rectangle Compile(IEnumerable<Entry> Entries)
+        public static Rectangle Compile(IEnumerable<SpriteAtlasEntry> Entries)
         {
             var entries = Entries.ToList();
 
             entries.Sort((A, B) =>
             {
-                return (B.Rect.Width * B.Rect.Height) - (A.Rect.Width * A.Rect.Height);
+                return (B.AtlasBounds.Width * B.AtlasBounds.Height) - (A.AtlasBounds.Width * A.AtlasBounds.Height);
             });
 
             // Find smallest power of 2 sized texture that can hold the largest entry.
             var largestEntry = entries[0];
             var texSize = new Rectangle(0, 0, 1, 1);
-            while (texSize.Width < largestEntry.Rect.Width)
+            while (texSize.Width < largestEntry.AtlasBounds.Width)
                 texSize.Width *= 2;
-            while (texSize.Height < largestEntry.Rect.Height)
+            while (texSize.Height < largestEntry.AtlasBounds.Height)
                 texSize.Height *= 2;
 
             texSize = BspSubdivision.ExpandHorizontal(texSize, texSize, entries);

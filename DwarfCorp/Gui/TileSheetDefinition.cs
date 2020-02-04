@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DwarfCorp.Gui
 {
-    public enum JsonTileSheetType
+    public enum TileSheetType
     {
         VariableWidthFont,
         TileSheet,
@@ -14,13 +14,13 @@ namespace DwarfCorp.Gui
         JsonFont
     }
 
-    public class JsonTileSheet
+    public class TileSheetDefinition
     {
         public String Name;
         public String Texture;
         public int TileWidth;
         public int TileHeight;
-        public JsonTileSheetType Type = JsonTileSheetType.TileSheet;
+        public TileSheetType Type = TileSheetType.TileSheet;
         public bool RepeatWhenUsedAsBorder = false;
     }
 }

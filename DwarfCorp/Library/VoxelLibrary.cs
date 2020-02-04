@@ -154,7 +154,7 @@ namespace DwarfCorp
 
         // Todo: Use Sheet.TileHeight as well.
         [TextureGenerator("Voxels")]
-        public static Texture2D RenderVoxelIcons(GraphicsDevice device, Microsoft.Xna.Framework.Content.ContentManager Content, Gui.JsonTileSheet Sheet)
+        public static Texture2D RenderVoxelIcons(GraphicsDevice device, Microsoft.Xna.Framework.Content.ContentManager Content, Gui.TileSheetDefinition Sheet)
         {
             InitializeVoxels();
 

@@ -64,15 +64,14 @@ namespace DwarfCorp.GameStates.Debug
                 OnClick = (sender, args) =>
                 {
                     var texture = AssetManager.GetContentTexture("Entities/Troll/troll");
-                    var sheet = new JsonTileSheet
+                    var sheet = new TileSheetDefinition
                     {
-                        Type = JsonTileSheetType.TileSheet,
+                        Type = TileSheetType.TileSheet,
                         TileHeight = 48,
                         TileWidth = 32,
                         Name = "TROLL"
                     };
-                    Root.RenderData.AddDynamicSheet(sheet, texture);
-                    Root.InvalidateRenderData();
+                    Root.SpriteAtlas.AddDynamicSheet(null, sheet, texture);
                     Invalidate();
                 }
             });
@@ -93,9 +92,9 @@ namespace DwarfCorp.GameStates.Debug
 
         protected override Mesh Redraw()
         {
-            Info.Text = String.Format("{0} x {1}", Root.RenderData.Texture.Width, Root.RenderData.Texture.Height);
+            Info.Text = String.Format("{0} x {1}", Root.SpriteAtlas.Texture.Width, Root.SpriteAtlas.Texture.Height);
 
-            var textureSize = Root.RenderData.Texture.Bounds;
+            var textureSize = Root.SpriteAtlas.Texture.Bounds;
             var newSize = new Vector2(textureSize.Width, textureSize.Height);
 
             if (newSize.X != TextureView.Rect.Width)

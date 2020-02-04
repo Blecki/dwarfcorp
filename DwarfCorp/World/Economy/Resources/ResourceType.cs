@@ -22,6 +22,18 @@ namespace DwarfCorp
             public Point Frame;
         }
 
+        public class GuiGraphic
+        {
+            public string AssetPath;
+            public Point FrameSize;
+            public Point Frame;
+
+            public String GetSheetIdentifier()
+            {
+                return AssetPath + String.Format("/{0}-{1}/{2}-{3}", FrameSize.X, FrameSize.Y, Frame.X, Frame.Y);
+            }
+        }
+
         public string TypeName;
         public string DisplayName { get; set; }
         public Gui.TileReference Icon { get => GuiLayers[0]; }
@@ -39,6 +51,12 @@ namespace DwarfCorp
         public Potion PotionType = null;
         public string Category = "";
         public String GetCategory => Category;
+
+        #region Gui
+        public bool Gui_NewStyle = false;
+        public GuiGraphic Gui_Graphic = null;
+        public String Gui_Palette = null;
+        #endregion
 
         #region Tool
         public bool Tool_Breakable = true;

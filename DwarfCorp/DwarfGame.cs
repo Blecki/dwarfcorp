@@ -228,6 +228,7 @@ namespace DwarfCorp
 
             // Create console.
             ConsoleGui = new Gui.Root(GuiSkin);
+            ConsoleGui.SetMetrics = false;
             ConsoleGui.RootItem.AddChild(new Gui.Widgets.AutoGridPanel
             {
                 Rows = 2,

@@ -2466,6 +2466,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>StoneHoe</Name>
     </None>
+    <None Include="World\ResourceItems\AATestResource.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>AATestResource</Name>
+    </None>
     <None Include="World\ResourceItems\WizardHat.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>WizardHat</Name>
@@ -5361,6 +5365,13 @@
   <ItemGroup>
     <Compile Include="newgui\selected-slot.png">
       <Name>selected-slot</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\Dwarf\ToolIcons\equipment.png">
+      <Name>equipment</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

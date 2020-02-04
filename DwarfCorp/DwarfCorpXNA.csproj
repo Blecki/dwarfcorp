@@ -184,6 +184,7 @@
     <Compile Include="AssetManagement\ModMetaData.cs" />
     <Compile Include="AssetManagement\ObjLoader.cs" />
     <Compile Include="AssetManagement\StringLibrary.cs" />
+    <Compile Include="AssetManagement\TextureTool-CropAndColorSprite.cs" />
     <Compile Include="AssetManagement\TextureTool-LoadPSD.cs" />
     <Compile Include="Components\AI\Creature-Death.cs" />
     <Compile Include="Entities\Fixtures\TrainingEquipment\TrainingEquipment.cs" />
@@ -198,6 +199,8 @@
     <Compile Include="Gui\DragAndDrop.cs" />
     <Compile Include="Gui\Geo\MeshPart.cs" />
     <Compile Include="Gui\Geo\PartBasics.cs" />
+    <Compile Include="Gui\RenderData.cs" />
+    <Compile Include="Gui\SpriteAtlasEntry.cs" />
     <Compile Include="Library\EquipmentLibrary.cs" />
     <Compile Include="Components\AI\EquipmentSlotType.cs" />
     <Compile Include="Components\AI\FairyAI.cs" />
@@ -881,12 +884,12 @@
     <Compile Include="Gui\Input\Input.cs" />
     <Compile Include="Gui\Input\InputMapper.cs" />
     <Compile Include="Gui\Input\MessageFilter.cs" />
-    <Compile Include="Gui\JsonTileSheet.cs" />
+    <Compile Include="Gui\TileSheetDefinition.cs" />
     <Compile Include="Gui\Layout.cs" />
     <Compile Include="Gui\Margin.cs" />
     <Compile Include="Gui\MousePointer.cs" />
     <Compile Include="Gui\RectangleExtension.cs" />
-    <Compile Include="Gui\RenderData.cs" />
+    <Compile Include="Gui\SpriteAtlas.cs" />
     <Compile Include="Gui\Root.cs" />
     <Compile Include="Gui\TextFieldLogic.cs" />
     <Compile Include="Gui\TextureAtlasCompiler.cs" />
@@ -940,7 +943,6 @@
     <Compile Include="Gui\Widgets\Minimap\MinimapFrame.cs" />
     <Compile Include="Gui\Widgets\Popup.cs" />
     <Compile Include="Gui\Widgets\Confirm.cs" />
-    <Compile Include="Gui\TileSheetExtension.cs" />
     <Compile Include="ProgramData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
