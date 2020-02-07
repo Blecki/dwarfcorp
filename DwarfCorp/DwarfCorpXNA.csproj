@@ -738,7 +738,7 @@
     <Compile Include="Entities\Fixtures\Anvil.cs" />
     <Compile Include="Entities\Fixtures\Bed.cs" />
     <Compile Include="Entities\Fixtures\Chair.cs" />
-    <Compile Include="Entities\Resources\CoinPile.cs" />
+    <Compile Include="World\Economy\Resources\CoinPile.cs" />
     <Compile Include="Entities\Fixtures\Crate.cs" />
     <Compile Include="Entities\Fixtures\Door.cs" />
     <Compile Include="Entities\Fixtures\Fixture.cs" />
@@ -757,8 +757,8 @@
     <Compile Include="Entities\Plants\Tree.cs" />
     <Compile Include="Entities\Plants\Wheat.cs" />
     <Compile Include="Entities\Projectiles\Projectile.cs" />
-    <Compile Include="Entities\Resources\ResourceEntity.cs" />
-    <Compile Include="Entities\Resources\ResourcePack.cs" />
+    <Compile Include="World\Economy\Resources\ResourceEntity.cs" />
+    <Compile Include="World\Economy\Resources\ResourcePack.cs" />
     <Compile Include="Entities\Traps\BearTrap.cs" />
     <Compile Include="Entities\Traps\TurretTrap.cs" />
     <Compile Include="GameSettings.cs" />

@@ -9,7 +9,6 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class SimpleSprite : Tinter
     {
         public enum OrientMode
@@ -60,6 +59,7 @@ namespace DwarfCorp
             if (InstanceData == null)
                 InstanceData = new NewInstanceData(Manager.World.Renderer.InstanceRenderer.PrepareCombinedTiledInstance(), Matrix.Identity, Color.White);
 
+            InstanceData.CachedSpriteSheet = Sheet;
             InstanceData.Transform = GetWorldMatrix(Camera);
             InstanceData.LightRamp = LightRamp;
             InstanceData.SpriteBounds = new Rectangle(Sheet.FrameWidth * Frame.X, Sheet.FrameHeight * Frame.Y, Sheet.FrameWidth, Sheet.FrameHeight);

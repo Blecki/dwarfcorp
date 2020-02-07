@@ -113,6 +113,9 @@ namespace DwarfCorp
         [JsonIgnore] public String Equipment_Slot { get => GetProperty<String>("Equipment_Slot", ""); set => SetProperty<String>("Equipment_Slot", value); }
         [JsonIgnore] public String Equipment_Palette { get => GetProperty<String>("Equipment_Palette", "Base"); set => SetProperty<String>("Equipment_Palette", value); }
 
+        [JsonIgnore] public bool Gui_NewStyle { get => GetProperty<bool>("Gui_NewStyle", false); set => SetProperty<bool>("Gui_NewStyle", value); }
+        [JsonIgnore] public ResourceType.GuiGraphic Gui_Graphic { get => GetProperty<ResourceType.GuiGraphic>("Gui_Graphic", null); set => SetProperty<ResourceType.GuiGraphic>("Gui_Graphic", value); }
+        [JsonIgnore] public String Gui_Palette { get => GetProperty<String>("Gui_Palette", "Base"); set => SetProperty<String>("Gui_Palette", value); }
         #endregion
     }
 }

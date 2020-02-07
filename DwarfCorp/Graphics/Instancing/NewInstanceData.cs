@@ -11,7 +11,8 @@ namespace DwarfCorp
     {
         public string Type;
         public Rectangle SpriteBounds;
-        public string TextureAsset;
+        public string TextureAsset; // Instead of a name - this needs to be a reference to the actual asset.
+        public SpriteSheet CachedSpriteSheet = null;
         public Matrix Transform;
         public Color LightRamp;
         public Color SelectionBufferColor;

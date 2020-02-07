@@ -56,6 +56,11 @@ namespace DwarfCorp
             }
         }
 
+        public TiledInstanceGroup GetCombinedTiledInstance()
+        {
+            return InstanceTypes[PrepareCombinedTiledInstance()] as TiledInstanceGroup;
+        }
+
         internal String PrepareCombinedTiledInstance()
         {
             lock (InstanceTypes)

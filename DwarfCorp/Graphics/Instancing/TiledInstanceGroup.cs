@@ -12,13 +12,19 @@ namespace DwarfCorp
 {
     public class TiledInstanceGroup : InstanceGroup
     {
+        private class InstanceTileSheet
+        {
+            public Gui.TileSheet Sheet;
+            public Texture2D Texture;
+        }
+
         private const int InstanceQueueSize = 1024;
 
         public InstanceRenderData RenderData;
         private TiledInstancedVertex[] Instances = new TiledInstancedVertex[InstanceQueueSize];
         private int InstanceCount = 0;
         private DynamicVertexBuffer InstanceBuffer = null;
-        private Dictionary<String, Gui.TileSheet> Atlas = new Dictionary<string, Gui.TileSheet>();
+        private Dictionary<String, InstanceTileSheet> Atlas = new Dictionary<string, InstanceTileSheet>();
         private List<Gui.TextureAtlas.SpriteAtlasEntry> AtlasEntries = null;
         private Rectangle AtlasBounds;
         private Texture2D AtlasTexture = null;
@@ -32,32 +38,47 @@ namespace DwarfCorp
         {
         }
 
+        public Texture2D GetAtlasTexture()
+        {
+            return AtlasTexture;
+        }
+
+        public bool DoesInstanceSheetExist(String Name)
+        {
+            return Atlas.ContainsKey(Name);
+        }
+
         private Vector4 GetTileBounds(NewInstanceData Instance)
         {
             if (Instance.AtlasCache != null)
                 return Instance.AtlasCache.MapRectangleToUVBounds(Instance.SpriteBounds);
 
-            Gui.TileSheet sheet = null;
-            Texture2D tex = null;
-            bool exists = false;
             if (Instance.TextureAsset == null)
-            {
                 Instance.TextureAsset = "newgui/error";
-            }
-            exists = Atlas.TryGetValue(Instance.TextureAsset, out sheet);
+
+            var exists = Atlas.TryGetValue(Instance.TextureAsset, out var sheet); // Need to give them dynamic names generated from asset and palette?
             if (!exists)
             {
-                tex = AssetManager.GetContentTexture(Instance.TextureAsset);
+                Texture2D tex = null;
+                if (Instance.CachedSpriteSheet != null)
+                    tex = Instance.CachedSpriteSheet.GetTexture();
+                else
+                    tex = AssetManager.GetContentTexture(Instance.TextureAsset);
+
                 if (tex == null) return Vector4.Zero; // Actually should never happen.
 
-                sheet = new Gui.TileSheet(tex.Width, tex.Height, new Rectangle(0, 0, tex.Width, tex.Height), tex.Width, tex.Height, false);
+                sheet = new InstanceTileSheet
+                {
+                    Sheet = new Gui.TileSheet(tex.Width, tex.Height, new Rectangle(0, 0, tex.Width, tex.Height), tex.Width, tex.Height, false),
+                    Texture = tex
+                };
                 Atlas.Add(Instance.TextureAsset, sheet);
 
                 RebuildAtlas();
                 NeedsRendered = true;
             }
-            Instance.AtlasCache = sheet;
-            return sheet.MapRectangleToUVBounds(Instance.SpriteBounds);
+            Instance.AtlasCache = sheet.Sheet;
+            return sheet.Sheet.MapRectangleToUVBounds(Instance.SpriteBounds);
         }
 
         private void RebuildAtlas()
@@ -71,11 +92,11 @@ namespace DwarfCorp
                         Texture = s.Key,
                         Name = s.Key,
                         Type = Gui.TileSheetType.TileSheet,
-                        TileHeight = s.Value.TileHeight,
-                        TileWidth = s.Value.TileWidth
+                        TileHeight = s.Value.Sheet.TileHeight,
+                        TileWidth = s.Value.Sheet.TileWidth
                     },
-                    AtlasBounds = new Rectangle(0, 0, s.Value.TileWidth, s.Value.TileHeight),
-                    SourceTexture = AssetManager.GetContentTexture(s.Key)
+                    AtlasBounds = new Rectangle(0, 0, s.Value.Sheet.TileWidth, s.Value.Sheet.TileHeight),
+                    SourceTexture = s.Value.Texture
                 };
             }).ToList();
 
@@ -84,9 +105,9 @@ namespace DwarfCorp
             foreach (var texture in AtlasEntries)
             {
                 var sheet = Atlas[texture.SourceDefinition.Name];
-                sheet.SourceRect = texture.AtlasBounds;
-                sheet.TextureWidth = AtlasBounds.Width;
-                sheet.TextureHeight = AtlasBounds.Height;
+                sheet.Sheet.SourceRect = texture.AtlasBounds;
+                sheet.Sheet.TextureWidth = AtlasBounds.Width;
+                sheet.Sheet.TextureHeight = AtlasBounds.Height;
             }
         }
 

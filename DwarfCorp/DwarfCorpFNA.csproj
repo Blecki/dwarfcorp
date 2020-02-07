@@ -435,8 +435,11 @@
     <Compile Include="World\Economy\Money.cs" />
     <Compile Include="World\Economy\Payroll\CollectMoney.cs" />
     <Compile Include="World\Economy\Payroll\DepositMoney.cs" />
+    <Compile Include="World\Economy\Resources\CoinPile.cs" />
     <Compile Include="World\Economy\Resources\Inventory.cs" />
     <Compile Include="World\Economy\Resources\Resource.cs" />
+    <Compile Include="World\Economy\Resources\ResourceEntity.cs" />
+    <Compile Include="World\Economy\Resources\ResourcePack.cs" />
     <Compile Include="World\Economy\Resources\ResourceTagAmount.cs" />
     <Compile Include="World\Economy\Resources\ResourceSet.cs" />
     <Compile Include="Entities\Animals\BatAI.cs" />
@@ -477,9 +480,6 @@
     <Compile Include=".\Entities\Projectiles\MudProjectile.cs" />
     <Compile Include=".\Entities\Projectiles\Projectile.cs" />
     <Compile Include=".\Entities\Projectiles\WebProjectile.cs" />
-    <Compile Include=".\Entities\Resources\CoinPile.cs" />
-    <Compile Include=".\Entities\Resources\ResourceEntity.cs" />
-    <Compile Include=".\Entities\Resources\ResourcePack.cs" />
     <Compile Include=".\Entities\Steam\BuildBuff.cs" />
     <Compile Include=".\Entities\Steam\CheckValve.cs" />
     <Compile Include=".\Entities\Steam\Orientation.cs" />

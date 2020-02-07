@@ -34,22 +34,19 @@ namespace DwarfCorp.Play
         
         private Gui.TextureAtlas.SpriteAtlasEntry GetDynamicSheet()
         {
-            if (Resource.ResourceType.HasValue(out var res))
-            {
-                var sheetName = Resource.TypeName + "&" + res.Gui_Graphic.GetSheetIdentifier() + "&" + res.Gui_Palette; // Todo - will need to promote to pass through props
+                var sheetName = Resource.TypeName + "&" + Resource.Gui_Graphic.GetSheetIdentifier() + "&" + Resource.Gui_Palette; 
+                var asset = AssetManager.GetContentTexture(Resource.Gui_Graphic.AssetPath);
 
-                var asset = AssetManager.GetContentTexture(res.Gui_Graphic.AssetPath);
-                if (DwarfSprites.LayerLibrary.FindPalette(res.Gui_Palette).HasValue(out var palette))
+            if (DwarfSprites.LayerLibrary.FindPalette(Resource.Gui_Palette).HasValue(out var palette))
+            {
+                var tex = TextureTool.CropAndColorSprite(Root.RenderData.Device, asset, Resource.Gui_Graphic.FrameSize, Resource.Gui_Graphic.Frame,
+                    DwarfSprites.LayerLibrary.BasePalette.CachedPalette, palette.CachedPalette);
+                return Root.SpriteAtlas.AddDynamicSheet(sheetName, new TileSheetDefinition
                 {
-                    var tex = TextureTool.CropAndColorSprite(Root.RenderData.Device, asset, res.Gui_Graphic.FrameSize, res.Gui_Graphic.Frame,
-                        DwarfSprites.LayerLibrary.BasePalette.CachedPalette, palette.CachedPalette);
-                    return Root.SpriteAtlas.AddDynamicSheet(sheetName, new TileSheetDefinition
-                    {
-                        TileHeight = res.Gui_Graphic.FrameSize.Y,
-                        TileWidth = res.Gui_Graphic.FrameSize.X,
-                        Type = TileSheetType.TileSheet
-                    }, tex);
-                }
+                    TileHeight = Resource.Gui_Graphic.FrameSize.Y,
+                    TileWidth = Resource.Gui_Graphic.FrameSize.X,
+                    Type = TileSheetType.TileSheet
+                }, tex);
             }
 
             return null;
@@ -74,7 +71,7 @@ namespace DwarfCorp.Play
 
             OnUpdate = (sender, time) =>
             {
-                if (Resource != null && Resource.ResourceType.HasValue(out var res) && res.Gui_NewStyle && CachedDynamicSheet == null)
+                if (Resource != null && Resource.Gui_NewStyle && CachedDynamicSheet == null)
                     CachedDynamicSheet = GetDynamicSheet();
             };
 
@@ -99,7 +96,7 @@ namespace DwarfCorp.Play
                     .Translate(Rect.X, Rect.Y)
                     .Texture(Root.GetTileSheet(Hilite).TileMatrix(0));
 
-            if (Resource.ResourceType.HasValue(out var res) && res.Gui_NewStyle)
+            if (_Resource.Gui_NewStyle)
             {
                 if (CachedDynamicSheet != null)
                     r.QuadPart()

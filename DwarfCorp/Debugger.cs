@@ -33,6 +33,7 @@ namespace DwarfCorp
             public static bool DisableWaterUpdate = false;
             public static bool DrawInvisible = false;
             public static bool ShowEntityInfo = false;
+            public static bool DrawTiledInstanceAtlas = false;
         }
 
         public class Switch

@@ -509,6 +509,14 @@ namespace DwarfCorp
                 }
             }
 
+            if (Debugger.Switches.DrawTiledInstanceAtlas)
+            {
+                var tiledInstanceGroup = InstanceRenderer.GetCombinedTiledInstance();
+                var tex = tiledInstanceGroup.GetAtlasTexture();
+                if (tex != null)
+                    this.World.UserInterface.Gui.DrawQuad(tex.Bounds, tex);
+            }
+
             DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle =
                 DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;
 
