@@ -51,5 +51,13 @@
   "Equipment_LayerType": "Feet",
   "Equipment_LayerName": "boots",
   "Equipment_Slot": "Feet",
-  "Equipment_Palette": "Base"
+  "Equipment_Palette": "Base",
+
+  "Gui_NewStyle": true,
+  "Gui_Graphic": {
+    "AssetPath": "Entities/Dwarf/ToolIcons/equipment",
+    "FrameSize": "32, 32",
+    "Frame": "2, 5"
+  },
+  "Gui_Palette": "Iron Equipment"
 }

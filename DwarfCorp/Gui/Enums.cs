@@ -24,6 +24,7 @@ namespace DwarfCorp.Gui
     {
         None,
         DockTop,
+        DockTopCentered,
         DockRight,
         DockBottom,
         DockLeft,

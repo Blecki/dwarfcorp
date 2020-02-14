@@ -69,19 +69,19 @@ namespace DwarfCorp
                 var tiledInstanceGroup = Manager.World.Renderer.InstanceRenderer.GetCombinedTiledInstance();
                 Texture2D fixedTex = null;
                 if (!tiledInstanceGroup.DoesInstanceSheetExist(sheetName))
-                {
-                    // Make texture.
                     if (DwarfSprites.LayerLibrary.FindPalette(Resource.Gui_Palette).HasValue(out var palette))
                         fixedTex = TextureTool.CropAndColorSprite(manager.World.Renderer.GraphicsDevice, AssetManager.GetContentTexture(Resource.Gui_Graphic.AssetPath),
                             Resource.Gui_Graphic.FrameSize, Resource.Gui_Graphic.Frame, DwarfSprites.LayerLibrary.BasePalette.CachedPalette, palette.CachedPalette);
-                }
+
                 var sheet = new SpriteSheet(fixedTex)
                 {
                     FrameWidth = Resource.Gui_Graphic.FrameSize.X,
                     FrameHeight = Resource.Gui_Graphic.FrameSize.Y,
                     AssetName = sheetName
                 };
-                var sprite = AddChild(new SimpleBobber(Manager, "Sprite", Matrix.CreateTranslation(Vector3.UnitY * 0.25f), sheet, Point.Zero, 0.15f, MathFunctions.Rand() + 2.0f, MathFunctions.Rand() * 3.0f)) as Tinter;
+
+                var sprite = AddChild(new SimpleBobber(Manager, "Sprite", Matrix.CreateTranslation(Vector3.UnitY * 0.25f), sheet, Point.Zero, 0.15f, 
+                    MathFunctions.Rand() + 2.0f, MathFunctions.Rand() * 3.0f)) as Tinter;
                 sprite.LocalTransform = Matrix.CreateTranslation(Vector3.UnitY * 0.25f + MathFunctions.RandVector3Cube() * 0.1f);
                 sprite.LightRamp = Resource.Tint;
                 sprite.SetFlag(Flag.ShouldSerialize, false);

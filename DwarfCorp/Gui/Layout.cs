@@ -57,6 +57,12 @@ namespace DwarfCorp.Gui
                     newPos = new Rectangle(Inside.X + Padding.Left, Inside.Y + Padding.Top, size.X, size.Y);
                     Inside = Inside.Interior(0, size.Y + Padding.Top, 0, 0);
                     break;
+                case AutoLayout.DockTopCentered:
+                    // Same as dock top, unless the widget is too small.
+                    size = GetClampedChildSize(Child, new Point(Inside.Width - Padding.Horizontal, size.Y));
+                    newPos = new Rectangle(Inside.X + Padding.Left + (Inside.Width - Padding.Horizontal - size.X) / 2, Inside.Y + Padding.Top, size.X, size.Y);
+                    Inside = Inside.Interior(0, size.Y + Padding.Top, 0, 0);
+                    break;
                 case AutoLayout.DockRight:
                     size = GetClampedChildSize(Child, new Point(size.X, Inside.Height - Padding.Vertical));
                     newPos = new Rectangle(Inside.Right - size.X - Padding.Right, 

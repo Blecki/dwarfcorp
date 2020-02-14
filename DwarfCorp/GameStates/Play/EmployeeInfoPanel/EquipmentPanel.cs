@@ -29,10 +29,17 @@ namespace DwarfCorp.Play.EmployeeInfo
         {
             Font = "font8";
 
+            var currentEquipPanel = AddChild(new Widget
+            {
+                Transparent = true,
+                AutoLayout = AutoLayout.DockLeft,
+                MinimumSize = new Point(128, 0)
+            });
+
             ContentsPanel = AddChild(new ContentsPanel
             {
-                AutoLayout = AutoLayout.DockRight,
-                MinimumSize = new Point(200, 0),
+                AutoLayout = AutoLayout.DockFill,
+                MinimumSize = new Point(128, 0),
                 Border = "border-one",
                 EnableDragAndDrop = false,
                 Resources = new ResourceSet(),
@@ -45,15 +52,22 @@ namespace DwarfCorp.Play.EmployeeInfo
 
             }) as ContentsPanel;
 
-            var background = AddChild(new Widget
+            var equipmentSlotPanel = currentEquipPanel.AddChild(new Widget
             {
-                Background = new TileReference("equipment", 0),
-                MinimumSize = new Point(128, 128),
-                MaximumSize = new Point(128, 128),
-                AutoLayout = AutoLayout.DockTop
+                MinimumSize = new Point(104, 104),
+                MaximumSize = new Point(104, 104),
+                AutoLayout = AutoLayout.DockTopCentered
             });
 
-            var comparisonPanel = AddChild(new Widget
+            equipmentSlotPanel.AddChild(new Widget
+            {
+                Background = new TileReference("equipment_sheet", 0),
+                MinimumSize = new Point(32, 32),
+                MaximumSize = new Point(32, 32),
+                AutoLayout = AutoLayout.FloatCenter
+            });
+
+            var comparisonPanel = currentEquipPanel.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockFill,
                 Border = "border-one"
@@ -68,8 +82,10 @@ namespace DwarfCorp.Play.EmployeeInfo
             RemoveButton = bottomBar.AddChild(new Widget
             {
                 Text = "REMOVE",
-                OnLayout = (_) => _.Rect = new Rectangle(bottomBar.Rect.X, bottomBar.Rect.Y, bottomBar.Rect.Width / 2, bottomBar.Rect.Height),
                 TextVerticalAlign = VerticalAlign.Center,
+                MinimumSize = new Point(64, 32),
+                MaximumSize = new Point(64, 32),
+                AutoLayout = AutoLayout.DockLeft,
                 ChangeColorOnHover = true,
                 OnClick = (_sender, args) =>
                 {
@@ -82,8 +98,10 @@ namespace DwarfCorp.Play.EmployeeInfo
             EquipButton = bottomBar.AddChild(new Widget
             {
                 Text = "EQUIP",
-                OnLayout = (_) => _.Rect = new Rectangle(bottomBar.Rect.X + bottomBar.Rect.Width / 2, bottomBar.Rect.Y, bottomBar.Rect.Width / 2, bottomBar.Rect.Height),
                 TextVerticalAlign = VerticalAlign.Center,
+                MinimumSize = new Point(64, 32),
+                MaximumSize = new Point(64, 32),
+                AutoLayout = AutoLayout.DockRight,
                 ChangeColorOnHover = true,
                 OnClick = (_sender, args) =>
                 {
@@ -93,14 +111,11 @@ namespace DwarfCorp.Play.EmployeeInfo
                 Hidden = true
             });
 
-            var bgTile = Root.GetTileSheet("equipment");
-            var scale = 128 / bgTile.TileWidth;
-
             foreach (var slot in Library.EnumerateEquipmentSlotTypes())
             {
                 var slotIcon = AddChild(new ResourceIcon
                 {
-                    OnLayout = (_) => _.Rect = new Rectangle(background.Rect.X + slot.GuiOffset.X * scale, background.Rect.Y + slot.GuiOffset.Y * scale, 16 * scale, 16 * scale),
+                    OnLayout = (_) => _.Rect = new Rectangle(equipmentSlotPanel.Rect.X + slot.GuiOffset.X, equipmentSlotPanel.Rect.Y + slot.GuiOffset.Y, 32, 32),
                     EnableDragAndDrop = false,
                     Tag = slot,
                     OnClick = (sender, args) =>
@@ -139,29 +154,55 @@ namespace DwarfCorp.Play.EmployeeInfo
                 Hidden = false;
                 Text = "";
 
-                foreach (var icon in ResourceIcons)
-                {
-                    icon.Value.Hilite = null;
-                    icon.Value.Resource = null;
-                }
-                   
                 if (Employee.Creature.Equipment.HasValue(out var equipment))
                 {
-                    SelectedSlotIcon.Resource = null;
-                    RemoveButton.Hidden = true;
+                    if (SelectedSlot != null && equipment.GetItemInSlot(SelectedSlot.Name).HasValue(out var selectedTool))
+                    {
+                        SelectedSlotIcon.Resource = selectedTool;
+                        RemoveButton.Hidden = false;
+                    }
+                    else
+                    {
+                        SelectedSlotIcon.Resource = null;
+                        RemoveButton.Hidden = true;
+                    }
 
                     foreach (var slot in ResourceIcons)
-                        if (equipment.GetItemInSlot(slot.Key).HasValue(out var tool))
+                    {
+                        var tool = equipment.GetItemInSlot(slot.Key);
+                        var slotType = Library.FindEquipmentSlotType(slot.Key);
+
+                        // Set the icon background
+                        if (tool.HasValue(out var t))
                         {
-                            slot.Value.Resource = tool;
+                            slot.Value.Resource = t;
+
                             if (SelectedSlot != null && SelectedSlot.Name == slot.Key)
-                            {
-                                slot.Value.Hilite = "selected-slot";
-                                SelectedSlotIcon.Resource = tool;
-                                RemoveButton.Hidden = false;
-                                RemoveButton.Invalidate();
-                            }
-                        }                  
+                                slot.Value.Hilite = new TileReference("equipment_sheet", 2);
+                            else
+                                slot.Value.Hilite = new TileReference("equipment_sheet", 1);
+                        }
+                        else if (slotType.HasValue(out var st))
+                        {
+                            slot.Value.Resource = null;
+
+                            if (SelectedSlot != null && SelectedSlot.Name == slot.Key)
+                                slot.Value.Hilite = st.SelectedBackground;
+                            else
+                                slot.Value.Hilite = st.UnselectedBackground;
+                        }
+                        else
+                        {
+                            slot.Value.Resource = null;
+
+                            if (SelectedSlot != null && SelectedSlot.Name == slot.Key)
+                                slot.Value.Hilite = new TileReference("equipment_sheet", 2);
+                            else
+                                slot.Value.Hilite = new TileReference("equipment_sheet", 1);
+                        }
+
+                        slot.Value.Invalidate();
+                    }
 
                     ContentsPanel.Resources.Clear();
 

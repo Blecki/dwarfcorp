@@ -182,6 +182,12 @@
     "TileHeight": 64
   },
   {
+    "Name": "equipment_sheet",
+    "Texture": "newgui/equipment_sheet",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
     "Name": "selected-slot",
     "Texture": "newgui/selected-slot",
     "TileWidth": 16,

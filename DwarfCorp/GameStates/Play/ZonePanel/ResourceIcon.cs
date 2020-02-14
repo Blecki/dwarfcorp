@@ -13,7 +13,7 @@ namespace DwarfCorp.Play
         public bool OverrideTooltip = true;
         public bool EnableDragAndDrop = false;
         public Func<Widget, DragAndDrop.DraggedItem> CreateDraggableItem = null;
-        public String Hilite = null;
+        public TileReference Hilite = null;
         private Gui.TextureAtlas.SpriteAtlasEntry CachedDynamicSheet = null;
 
         private Resource _Resource = null;
@@ -21,9 +21,12 @@ namespace DwarfCorp.Play
         {
             set
             {
-                _Resource = value;
-                CachedDynamicSheet = null;
-                Invalidate();
+                if (!Object.ReferenceEquals(_Resource, value))
+                {
+                    _Resource = value;
+                    CachedDynamicSheet = null;
+                    Invalidate();
+                }
             }
 
             get
@@ -72,7 +75,10 @@ namespace DwarfCorp.Play
             OnUpdate = (sender, time) =>
             {
                 if (Resource != null && Resource.Gui_NewStyle && CachedDynamicSheet == null)
+                {
                     CachedDynamicSheet = GetDynamicSheet();
+                    Invalidate();
+                }
             };
 
             Root.RegisterForUpdate(this);
@@ -84,35 +90,35 @@ namespace DwarfCorp.Play
         {
             var r = base.Redraw();
 
-            if (_Resource == null)
-                return r;
-
-            if (OverrideTooltip)
-                Tooltip = String.Format("{0}\n{1}\nWear: {2:##.##}%", _Resource.DisplayName, _Resource.Description, (_Resource.Tool_Wear / _Resource.Tool_Durability) * 100.0f);
-
-            if (!String.IsNullOrEmpty(Hilite))
+            if (Hilite != null)
                 r.QuadPart()
                     .Scale(32, 32)
                     .Translate(Rect.X, Rect.Y)
-                    .Texture(Root.GetTileSheet(Hilite).TileMatrix(0));
+                    .Texture(Root.GetTileSheet(Hilite.Sheet).TileMatrix(Hilite.Tile));
 
-            if (_Resource.Gui_NewStyle)
+            if (_Resource != null)
             {
-                if (CachedDynamicSheet != null)
-                    r.QuadPart()
-                        .Scale(32, 32)
-                        .Translate(Rect.X, Rect.Y)
-                        .Colorize(BackgroundColor)
-                        .Texture(CachedDynamicSheet.TileSheet.TileMatrix(0));
-            }
-            else
-            {
-                foreach (var layer in _Resource.GuiLayers)
-                    r.QuadPart()
-                                .Scale(32, 32)
-                                .Translate(Rect.X, Rect.Y)
-                                .Colorize(BackgroundColor)
-                                .Texture(Root.GetTileSheet(layer.Sheet).TileMatrix(layer.Tile));
+                if (_Resource.Gui_NewStyle)
+                {
+                    if (CachedDynamicSheet != null)
+                        r.QuadPart()
+                            .Scale(32, 32)
+                            .Translate(Rect.X, Rect.Y)
+                            .Colorize(BackgroundColor)
+                            .Texture(CachedDynamicSheet.TileSheet.TileMatrix(0));
+                }
+                else
+                {
+                    foreach (var layer in _Resource.GuiLayers)
+                        r.QuadPart()
+                                    .Scale(32, 32)
+                                    .Translate(Rect.X, Rect.Y)
+                                    .Colorize(BackgroundColor)
+                                    .Texture(Root.GetTileSheet(layer.Sheet).TileMatrix(layer.Tile));
+                }
+
+                if (OverrideTooltip)
+                    Tooltip = String.Format("{0}\n{1}\nWear: {2:##.##}%", _Resource.DisplayName, _Resource.Description, (_Resource.Tool_Wear / _Resource.Tool_Durability) * 100.0f);
             }
 
             return r;

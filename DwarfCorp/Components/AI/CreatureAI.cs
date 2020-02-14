@@ -728,18 +728,15 @@ namespace DwarfCorp
 
         public void Chat()
         {
-            var Employee = this;
-            Func<string> get_status = () => Employee.Stats.GetStatusAdjective();
-
-            Employee.World.Paused = true;
+            World.Paused = true;
             // Prepare conversation memory for an envoy conversation.
-            var cMem = Employee.World.ConversationMemory;
-            cMem.SetValue("$world", new Yarn.Value(Employee.World));
-            cMem.SetValue("$employee", new Yarn.Value(Employee));
-            cMem.SetValue("$employee_name", new Yarn.Value(Employee.Stats.FullName));
-            cMem.SetValue("$employee_status", new Yarn.Value(get_status()));
+            var cMem = World.ConversationMemory;
+            cMem.SetValue("$world", new Yarn.Value(World));
+            cMem.SetValue("$employee", new Yarn.Value(this));
+            cMem.SetValue("$employee_name", new Yarn.Value(Stats.FullName));
+            cMem.SetValue("$employee_status", new Yarn.Value(Stats.GetStatusAdjective()));
             var timeOfDay = "Morning";
-            int hour = Employee.World.Time.CurrentDate.Hour;
+            int hour = World.Time.CurrentDate.Hour;
             if (hour > 12)
             {
                 timeOfDay = "Afternoon";
@@ -750,10 +747,10 @@ namespace DwarfCorp
                 timeOfDay = "Evening";
             }
             cMem.SetValue("$time_of_day", new Yarn.Value(timeOfDay));
-            cMem.SetValue("$is_asleep", new Yarn.Value(Employee.Stats.IsAsleep));
-            cMem.SetValue("$is_on_strike", new Yarn.Value(Employee.Stats.IsOnStrike));
+            cMem.SetValue("$is_asleep", new Yarn.Value(Stats.IsAsleep));
+            cMem.SetValue("$is_on_strike", new Yarn.Value(Stats.IsOnStrike));
 
-            if (Employee.Creature.Physics.GetComponent<DwarfThoughts>().HasValue(out var thoughts))
+            if (Creature.Physics.GetComponent<DwarfThoughts>().HasValue(out var thoughts))
             {
                 cMem.SetValue("$grievences", new Yarn.Value(TextGenerator.GetListString(thoughts.Thoughts.Where(thought => thought.HappinessModifier < 0).Select(thought => thought.Description))));
                 cMem.SetValue("$good_things", new Yarn.Value(TextGenerator.GetListString(thoughts.Thoughts.Where(thought => thought.HappinessModifier >= 0).Select(thought => thought.Description))));
@@ -762,34 +759,33 @@ namespace DwarfCorp
             {
                 cMem.SetValue("$grievences", new Yarn.Value(""));
                 cMem.SetValue("$good_things", new Yarn.Value(""));
-
             }
 
             String[] personalities = { "happy", "grumpy", "anxious" };
-            var myRandom = new Random(Employee.Stats.RandomSeed);
+            var myRandom = new Random(Stats.RandomSeed);
             cMem.SetValue("$personality", new Yarn.Value(personalities[myRandom.Next(0, personalities.Length)]));
-            cMem.SetValue("$motto", new Yarn.Value(Employee.World.PlayerFaction.Economy.Information.Motto));
-            cMem.SetValue("$company_name", new Yarn.Value(Employee.World.PlayerFaction.Economy.Information.Name));
-            cMem.SetValue("$employee_task", new Yarn.Value(Employee.CurrentTask.HasValue(out var currentTask) ? "Nothing" : currentTask.Name));
-            cMem.SetValue("$employee_class", new Yarn.Value(Employee.Stats.CurrentClass.Name));
-            var injuries = TextGenerator.GetListString(Employee.Creature.Stats.Buffs.OfType<Disease>().Select(disease => disease.Name));
+            cMem.SetValue("$motto", new Yarn.Value(World.PlayerFaction.Economy.Information.Motto));
+            cMem.SetValue("$company_name", new Yarn.Value(World.PlayerFaction.Economy.Information.Name));
+            cMem.SetValue("$employee_task", new Yarn.Value(CurrentTask.HasValue(out var currentTask) ? "Nothing" : currentTask.Name));
+            cMem.SetValue("$employee_class", new Yarn.Value(Stats.CurrentClass.Name));
+            var injuries = TextGenerator.GetListString(Creature.Stats.Buffs.OfType<Disease>().Select(disease => disease.Name));
             if (injuries == "")
             {
                 injuries = "no problems";
             }
             cMem.SetValue("$injuries", new Yarn.Value(injuries));
-            cMem.SetValue("$employee_pay", new Yarn.Value((float)(decimal)Employee.Stats.CurrentLevel.Pay));
-            cMem.SetValue("$employee_bonus", new Yarn.Value(4 * (float)(decimal)Employee.Stats.CurrentLevel.Pay));
-            cMem.SetValue("$company_money", new Yarn.Value((float)(decimal)Employee.Faction.Economy.Funds));
+            cMem.SetValue("$employee_pay", new Yarn.Value((float)(decimal)Stats.CurrentLevel.Pay));
+            cMem.SetValue("$employee_bonus", new Yarn.Value(4 * (float)(decimal)Stats.CurrentLevel.Pay));
+            cMem.SetValue("$company_money", new Yarn.Value((float)(decimal)Faction.Economy.Funds));
 
-            if (Employee.Physics.GetComponent<Flammable>().HasValue(out var flames))
+            if (Physics.GetComponent<Flammable>().HasValue(out var flames))
                 cMem.SetValue("$is_on_fire", new Yarn.Value(flames.IsOnFire));
             else
                 cMem.SetValue("$is_on_fire", new Yarn.Value(false));
 
             var state = new YarnState(World, ContentPaths.employee_conversation, "Start", cMem);
-            state.AddEmployeePortrait(Employee);
-            state.SetVoicePitch(Employee.Stats.VoicePitch);
+            state.AddEmployeePortrait(this);
+            state.SetVoicePitch(Stats.VoicePitch);
             GameStateManager.PushState(state);
         }
     }

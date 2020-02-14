@@ -51,5 +51,14 @@
   "Equipment_LayerType": "Clothing",
   "Equipment_LayerName": "apron",
   "Equipment_Slot": "Clothing",
-  "Equipment_Palette": "Green Coat"
+  "Equipment_Palette": "Leather Equipment",
+
+  "Gui_NewStyle": true,
+  "Gui_Graphic": {
+    "AssetPath": "Entities/Dwarf/ToolIcons/equipment",
+    "FrameSize": "32, 32",
+    "Frame": "0, 4"
+  },
+  "Gui_Palette": "Leather Equipment"
+
 }

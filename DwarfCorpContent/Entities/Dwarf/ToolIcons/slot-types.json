@@ -1,22 +1,22 @@
 [
   {
     "Name": "Tool",
-    "GuiOffset": "2, 26"
+    "GuiOffset": "2, 36"
   },
 
   {
     "Name": "Clothing",
-    "GuiOffset": "24, 26"
+    "GuiOffset": "70, 36"
   },
 
   {
     "Name": "Feet",
-    "GuiOffset": "24, 48"
+    "GuiOffset": "36, 70"
   },
 
   {
     "Name": "Hat",
-    "GuiOffset": "24, 0"
+    "GuiOffset": "36, 2"
   }
 
 ]

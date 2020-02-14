@@ -13,5 +13,7 @@ namespace DwarfCorp
     {
         public String Name;
         public Point GuiOffset = new Point(0, 0);
+        public Gui.TileReference UnselectedBackground = new Gui.TileReference("equipment_sheet", 1);
+        public Gui.TileReference SelectedBackground = new Gui.TileReference("equipment_sheet", 2);
     }
 }

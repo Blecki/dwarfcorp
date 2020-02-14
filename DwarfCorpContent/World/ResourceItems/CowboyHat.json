@@ -51,5 +51,14 @@
   "Equipment_LayerType": "Hat",
   "Equipment_LayerName": "cowboy-hat",
   "Equipment_Slot": "Hat",
-  "Equipment_Palette": "Brown Equipment"
+  "Equipment_Palette": "Brown Equipment",
+
+  "Gui_NewStyle": true,
+  "Gui_Graphic": {
+    "AssetPath": "Entities/Dwarf/ToolIcons/equipment",
+    "FrameSize": "32, 32",
+    "Frame": "0, 2"
+  },
+  "Gui_Palette": "Brown Equipment"
+
 }

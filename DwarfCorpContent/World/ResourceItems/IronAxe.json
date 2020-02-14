@@ -52,5 +52,14 @@
   "Equipment_LayerType": "Tool",
   "Equipment_Palette": "Iron Equipment",
   "Equipment_LayerName": "axe",
-  "Equipment_Slot": "Tool"
+  "Equipment_Slot": "Tool",
+
+  "Gui_NewStyle": true,
+  "Gui_Graphic": {
+    "AssetPath": "Entities/Dwarf/ToolIcons/equipment",
+    "FrameSize": "32, 32",
+    "Frame": "1, 1"
+  },
+  "Gui_Palette": "Iron Equipment"
+
 }

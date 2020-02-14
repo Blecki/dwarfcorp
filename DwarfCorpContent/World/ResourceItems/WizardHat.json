@@ -51,5 +51,14 @@
   "Equipment_LayerType": "Hat",
   "Equipment_LayerName": "wizard-hat",
   "Equipment_Slot": "Hat",
-  "Equipment_Palette": "Purple Equipment"
+  "Equipment_Palette": "Purple Equipment",
+
+  "Gui_NewStyle": true,
+  "Gui_Graphic": {
+    "AssetPath": "Entities/Dwarf/ToolIcons/equipment",
+    "FrameSize": "32, 32",
+    "Frame": "2, 2"
+  },
+  "Gui_Palette": "Purple Equipment"
+
 }
