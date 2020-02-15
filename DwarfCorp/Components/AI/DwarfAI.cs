@@ -368,9 +368,12 @@ namespace DwarfCorp
             if (!Stats.Health.IsSatisfied())
                 AssignGeneratedTask(new GetHealedTask());
 
-            // Try to go to sleep if we are low on energy and it is night time.
+            // Try to go to sleep if we are low on energy.
+            if (Stats.Energy.IsDissatisfied())
+                AssignGeneratedTask(new SatisfyTirednessTask()); // Satisfy Tiredness is 'High' priority, so they will truck on for urgent tasks.
+
             if (Stats.Energy.IsCritical())
-                AssignGeneratedTask(new SatisfyTirednessTask());
+                ChangeTask(new SatisfyTirednessTask()); // But they've reached their limit.
 
             // Try to find food if we are hungry.
             if (Stats.Hunger.IsDissatisfied() && World.CountResourcesWithTag("Edible") > 0)
