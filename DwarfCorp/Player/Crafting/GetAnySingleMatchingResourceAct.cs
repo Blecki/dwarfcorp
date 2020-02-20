@@ -53,22 +53,22 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    Tree = new Sequence(
-                        new Domain(() => HasResources(Agent, location.Value),
-                            new GoToZoneAct(Agent, location.Value.Key)),
-                        new Condition(() => HasResources(Agent, location.Value)),
-                        new StashResourcesAct(Agent, location.Value.Key, location.Value.Value),
-                        new SetBlackboardData<Resource>(Agent, BlackboardEntry, location.Value.Value))
-                        | (new Wrap(Agent.Creature.RestockAll) & false);
+                    Tree = new Select(
+                        new Sequence(
+                            new Domain(() => HasResources(Agent, location.Value),
+                                new GoToZoneAct(Agent, location.Value.Key)),
+                            new Condition(() => HasResources(Agent, location.Value)),
+                            new StashResourcesAct(Agent, location.Value.Key, location.Value.Value),
+                            new SetBlackboardData<Resource>(Agent, BlackboardEntry, location.Value.Value)),
+                        new Sequence(
+                            new Wrap(Agent.Creature.RestockAll),
+                            false));
                 }
             }
             else
-            {
                 Tree = new SetBlackboardData<Resource>(Agent, BlackboardEntry, resource);
-            }
             
             base.Initialize();
         }
     }
-
 }

@@ -94,10 +94,12 @@ namespace DwarfCorp
 
         public override MaybeNull<Act> CreateScript(Creature creature)
         {
-            return new Sequence(new CraftResourceAct(creature.AI, ItemType, RawMaterials, Des)
-            {
-                Noise = ItemType.CraftNoise
-            }) | new Wrap(() => Cleanup(creature.AI));
+            return new Select(
+                new Sequence(new CraftResourceAct(creature.AI, ItemType, RawMaterials, Des)
+                {
+                    Noise = ItemType.CraftNoise
+                }),
+                new Wrap(() => Cleanup(creature.AI)));
         }
     }
 }

@@ -37,12 +37,14 @@ namespace DwarfCorp
             Tree = new Domain(Verify(Agent),
                 new Sequence(
                     ActHelper.CreateEquipmentCheckAct(Creature, "Tool", ActHelper.EquipmentFallback.AllowDefault, "Axe", "Pick"), // Allow hands to be used to harvest as a means to prevent game deadlock.
-                    new GoToEntityAct(Entity, Creature)
-                    {
-                        MovingTarget = false,
-                        PlanType = PlanAct.PlanType.Adjacent,
-                        Radius = 0.0f
-                    } | new Wrap(() => OnAttackEnd(Creature)),
+                    new Select(
+                        new GoToEntityAct(Entity, Creature)
+                        {
+                            MovingTarget = false,
+                            PlanType = PlanAct.PlanType.Adjacent,
+                            Radius = 0.0f
+                        },
+                        new Wrap(() => OnAttackEnd(Creature))),
                     new AttackAct(Agent, Entity)));
         }
     }

@@ -52,16 +52,6 @@ namespace DwarfCorp
 
         public static implicit operator Act(Act.Status status) => new Always(status);
 
-        public static implicit operator Act(Act[] acts)
-        {
-            return new Sequence(acts);
-        }
-
-        public static implicit operator Act(List<Act> acts)
-        {
-            return new Sequence(acts.ToArray());
-        }
-
         public static Act operator &(Act b1, Act b2)
         {
             return new Sequence(b1, b2);

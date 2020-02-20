@@ -168,20 +168,22 @@ namespace DwarfCorp
             var time = 3 * (ItemType.BaseCraftTime / Creature.AI.Stats.Intelligence);
             var getResources = new Select(new Domain(() => Des.HasResources || Des.ResourcesReservedFor != null, true),
                                           new Domain(() => !Des.HasResources && (Des.ResourcesReservedFor == Agent || Des.ResourcesReservedFor == null),
-                                                new Sequence(
-                                                    new Wrap(ReserveResources),
-                                                    new GetResourcesOfApparentType(Agent, RawMaterials) { BlackboardEntry = "stashed-materials" })
-                                                | (new Wrap(UnReserve)) 
-                                                & false),
+                                                new Sequence(      
+                                                    new Select(
+                                                        new Sequence(
+                                                            new Wrap(ReserveResources),
+                                                            new GetResourcesOfApparentType(Agent, RawMaterials) { BlackboardEntry = "stashed-materials" }),
+                                                        (new Wrap(UnReserve))),
+                                                        false)),
                                             new Domain(() => Des.HasResources || Des.ResourcesReservedFor != null, true));
 
             if (!String.IsNullOrEmpty(ItemType.CraftLocation))
             {
-                Tree = new Sequence(
+                Tree = new Select(new Sequence(
                     new Wrap(() => Creature.FindAndReserve(ItemType.CraftLocation, "craft-location")),
                     new ClearBlackboardData(Agent, "ResourcesStashed"),
                     getResources,
-                    new Domain(ResourceStateValid,
+                    new Select(new Domain(ResourceStateValid,
                         new Sequence(
                             ActHelper.CreateEquipmentCheckAct(Agent, "Tool", ActHelper.EquipmentFallback.AllowDefault, "Hammer"),
                             new GoToTaggedObjectAct(Agent)
@@ -198,7 +200,7 @@ namespace DwarfCorp
                                 () => Des.Progress, // Current Progress
                                 () =>
                                 { // Increment Progress
-                                        var location = Creature.AI.Blackboard.GetData<GameComponent>(ItemType.CraftLocation);
+                                    var location = Creature.AI.Blackboard.GetData<GameComponent>(ItemType.CraftLocation);
 
                                     float workstationBuff = 1.0f;
                                     if (location != null)
@@ -214,7 +216,7 @@ namespace DwarfCorp
                                 },
                                 () =>
                                 { // Get Position
-                                        var location = Creature.AI.Blackboard.GetData<GameComponent>(ItemType.CraftLocation);
+                                    var location = Creature.AI.Blackboard.GetData<GameComponent>(ItemType.CraftLocation);
                                     if (location != null)
                                         return location.Position;
                                     return Agent.Position;
@@ -224,14 +226,14 @@ namespace DwarfCorp
                             unreserveAct,
                             new Wrap(() => CreateResources()),
                             new Wrap(Creature.RestockAll)
-                            ))
-                            | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false)
-                        )
-                        | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false);
+                            )),
+                            new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false))
+                        ),
+                        new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false));
             }
             else
             {
-                Tree = new Sequence(
+                Tree = new Select(new Sequence(
                     new ClearBlackboardData(Agent, "ResourcesStashed"),
                     getResources,
                     new Domain(ResourceStateValid, new Sequence(
@@ -241,7 +243,7 @@ namespace DwarfCorp
                         new Wrap(() => Creature.HitAndWait(time, true, () => Creature.Physics.Position)) { Name = "Construct object." },
                         new Wrap(() => CreateResources()))
                     )
-                ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false);
+                ), new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false));
             }
 
             base.Initialize();

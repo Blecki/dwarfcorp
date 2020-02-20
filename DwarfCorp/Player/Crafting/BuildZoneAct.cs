@@ -144,24 +144,22 @@ namespace DwarfCorp
             Tree = new Sequence(new Select(new Domain(buildRoom.MeetsBuildRequirements() || buildRoom.ResourcesReservedFor != null, true), 
                                            new Domain(!buildRoom.MeetsBuildRequirements() && (buildRoom.ResourcesReservedFor == null || buildRoom.ResourcesReservedFor == Agent), new Sequence(new Wrap(Reserve), new GetResourcesWithTag(Agent, Resources) { BlackboardEntry = "zone_resources" })),
                                            new Domain(buildRoom.MeetsBuildRequirements() || buildRoom.ResourcesReservedFor != null, true)),
-                new Domain(() => IsRoomBuildOrder(buildRoom) && !buildRoom.IsBuilt && !buildRoom.IsDestroyed && ValidResourceState(), 
-                new Sequence(
-                    ActHelper.CreateEquipmentCheckAct(agent, "Tool", ActHelper.EquipmentFallback.NoFallback, "Hammer"),
-                    SetTargetVoxelFromRoomAct(buildRoom, "ActionVoxel"),
-                    new GoToNamedVoxelAct("ActionVoxel", PlanAct.PlanType.Adjacent, Agent),
-                    new Wrap(PutResources),
-                    new Wrap(WaitForResources) {  Name = "Wait for resources..."},
-                    new Wrap(() => Creature.HitAndWait(true, () => 1.0f, () => buildRoom.BuildProgress,
-                    () => buildRoom.BuildProgress += agent.Stats.BuildSpeed / buildRoom.VoxelOrders.Count * 0.5f,
-                    () => MathFunctions.RandVector3Box(buildRoom.GetBoundingBox()), ContentPaths.Audio.Oscar.sfx_ic_dwarf_craft, () => !buildRoom.IsBuilt && !buildRoom.IsDestroyed))
-                    { Name = "Build room.." },
-                    new CreateRoomAct(Agent, buildRoom)
-                    , new Wrap(OnFailOrCancel))) | new Wrap(OnFailOrCancel)
-                );
+                new Select(
+                    new Domain(() => IsRoomBuildOrder(buildRoom) && !buildRoom.IsBuilt && !buildRoom.IsDestroyed && ValidResourceState(), 
+                        new Sequence(
+                            ActHelper.CreateEquipmentCheckAct(agent, "Tool", ActHelper.EquipmentFallback.NoFallback, "Hammer"),
+                            SetTargetVoxelFromRoomAct(buildRoom, "ActionVoxel"),
+                            new GoToNamedVoxelAct("ActionVoxel", PlanAct.PlanType.Adjacent, Agent),
+                            new Wrap(PutResources),
+                            new Wrap(WaitForResources) {  Name = "Wait for resources..."},
+                            new Wrap(() => Creature.HitAndWait(true, () => 1.0f, () => buildRoom.BuildProgress,
+                                () => buildRoom.BuildProgress += agent.Stats.BuildSpeed / buildRoom.VoxelOrders.Count * 0.5f,
+                                () => MathFunctions.RandVector3Box(buildRoom.GetBoundingBox()), ContentPaths.Audio.Oscar.sfx_ic_dwarf_craft, () => !buildRoom.IsBuilt && !buildRoom.IsDestroyed))
+                                { Name = "Build room.." },
+                            new CreateRoomAct(Agent, buildRoom),
+                            new Wrap(OnFailOrCancel))),
+                        new Wrap(OnFailOrCancel))
+                    );
         }
-
     }
-
-
-
 }

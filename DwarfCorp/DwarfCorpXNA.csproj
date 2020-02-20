@@ -231,6 +231,7 @@
     <Compile Include="TaskManagement\Always.cs" />
     <Compile Include="TaskManagement\ActHelper-ApplyWearToTool.cs" />
     <Compile Include="TaskManagement\ActHelper-GetEquippedItem.cs" />
+    <Compile Include="TaskManagement\CompoundActs\GetHealedAct.cs" />
     <Compile Include="TaskManagement\LeafActs\UnequipAct.cs" />
     <Compile Include="TaskManagement\FailMessage.cs" />
     <Compile Include="TaskManagement\FailureRecord.cs" />
