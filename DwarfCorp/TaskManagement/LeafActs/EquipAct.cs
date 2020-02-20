@@ -34,6 +34,7 @@ namespace DwarfCorp
 
                 if (resource == null)
                 {
+                    Agent.SetTaskFailureReason("The item I just had vanished!");
                     yield return Status.Fail;
                     yield break;
                 }

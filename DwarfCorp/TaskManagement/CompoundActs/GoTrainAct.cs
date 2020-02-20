@@ -28,7 +28,7 @@ namespace DwarfCorp
             var obj = Agent.Blackboard.GetData<GameComponent>("training-object");
             if (obj == null)
             {
-                Agent.SetMessage("Failed to find magical object for research purposes.");
+                Agent.SetTaskFailureReason("Failed to find magical object for research purposes.");
                 yield return Act.Status.Fail;
                 yield break;
             }

@@ -58,7 +58,7 @@ namespace DwarfCorp
             if (Item.SelectedResource != null)
                 if (!Creature.Inventory.RemoveAndCreateWithToss(Item.SelectedResource, pos(), Inventory.RestockType.None))
                 {
-                    Agent.SetMessage("Failed to create resources for item (1).");
+                    Agent.SetTaskFailureReason("Failed to create resources for item (1).");
                     yield return Act.Status.Fail;
                     yield break;
                 }
@@ -83,7 +83,7 @@ namespace DwarfCorp
                 enumerator.MoveNext();
                 if (Item.SelectedResource.ReservedFor == null || Item.SelectedResource.ReservedFor.IsDead)
                 {
-                    Agent.SetMessage("Waiting for resources failed.");
+                    Agent.SetTaskFailureReason("Waiting for resources failed.");
                     yield return Act.Status.Fail;
                     yield break;
                 }
@@ -110,7 +110,7 @@ namespace DwarfCorp
         {
             bool valid =  Item.HasResources || Item.SelectedResource != null;
             if (!valid)
-                Agent.SetMessage("Resource state not valid.");
+                Agent.SetTaskFailureReason("Resource state not valid.");
 
             return valid;
         }

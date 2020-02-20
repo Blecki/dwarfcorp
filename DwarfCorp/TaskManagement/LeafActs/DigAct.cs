@@ -38,7 +38,7 @@ namespace DwarfCorp
             {
                 if (!DigAct.Voxel.IsValid)
                 {
-                    performer.AI.SetMessage("Failed to dig. Voxel was not valid.");
+                    performer.AI.SetTaskFailureReason("Failed to dig. Voxel was not valid.");
                     yield return Act.Status.Fail;
                     yield break;
                 }
@@ -79,7 +79,7 @@ namespace DwarfCorp
                 if (!vox.IsValid)
                 {
                     Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
-                    Agent.SetMessage("Failed to dig. Invalid voxel.");
+                    Agent.SetTaskFailureReason("Failed to dig. Invalid voxel.");
                     yield return Act.Status.Fail;
                     break;
                 }

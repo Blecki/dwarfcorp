@@ -34,25 +34,17 @@ namespace DwarfCorp.Play
                 return _Resource;
             }
         }
-        
+
         private Gui.TextureAtlas.SpriteAtlasEntry GetDynamicSheet()
         {
-                var sheetName = Resource.TypeName + "&" + Resource.Gui_Graphic.GetSheetIdentifier() + "&" + Resource.Gui_Palette; 
-                var asset = AssetManager.GetContentTexture(Resource.Gui_Graphic.AssetPath);
-
-            if (DwarfSprites.LayerLibrary.FindPalette(Resource.Gui_Palette).HasValue(out var palette))
+            var sheetName = ResourceGraphicsHelper.GetUniqueGraphicsIdentifier(Resource);
+            var tex = ResourceGraphicsHelper.GetResourceTexture(Root.RenderData.Device, Resource.Gui_Graphic, Resource.Gui_Palette);
+            return Root.SpriteAtlas.AddDynamicSheet(sheetName, new TileSheetDefinition
             {
-                var tex = TextureTool.CropAndColorSprite(Root.RenderData.Device, asset, Resource.Gui_Graphic.FrameSize, Resource.Gui_Graphic.Frame,
-                    DwarfSprites.LayerLibrary.BasePalette.CachedPalette, palette.CachedPalette);
-                return Root.SpriteAtlas.AddDynamicSheet(sheetName, new TileSheetDefinition
-                {
-                    TileHeight = Resource.Gui_Graphic.FrameSize.Y,
-                    TileWidth = Resource.Gui_Graphic.FrameSize.X,
-                    Type = TileSheetType.TileSheet
-                }, tex);
-            }
-
-            return null;
+                TileHeight = Resource.Gui_Graphic.FrameSize.Y,
+                TileWidth = Resource.Gui_Graphic.FrameSize.X,
+                Type = TileSheetType.TileSheet
+            }, tex);
         }
 
         public override void Construct()

@@ -95,6 +95,7 @@ namespace DwarfCorp
 
                 Creature.Stats.NumBlocksPlaced++;
                 Creature.AI.AddXP(1);
+                ActHelper.ApplyWearToTool(Creature.AI, GameSettings.Current.Wear_Craft);
 
                 yield return Status.Success;
                 yield break;

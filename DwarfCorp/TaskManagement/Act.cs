@@ -62,23 +62,6 @@ namespace DwarfCorp
             return new Sequence(acts.ToArray());
         }
 
-        public static Act operator+(Func<bool> domain, Act act)
-        {
-            return new Domain(domain, act);
-        }
-
-        public static Act operator+(Sequence seq, Act act)
-        {
-            seq.Children.Add(act);
-            return seq;
-        }
-
-        public static Act operator +(Select select, Act act)
-        {
-            select.Children.Add(act);
-            return select;
-        }
-
         public static Act operator &(Act b1, Act b2)
         {
             return new Sequence(b1, b2);
@@ -89,34 +72,18 @@ namespace DwarfCorp
             return new Select(b1, b2);
         }
 
-        public static Act operator *(Act b1, Act b2)
-        {
-            return new Parallel(b1, b2);
-        }
-
-        public static Act operator !(Act b1)
-        {
-            return new Not(b1);
-        }
-
-
         public Status Tick()
         {
             if(Enumerator == null)
-            {
                 Initialize();
-            }
+
             if (Enumerator != null)
-            {
                 Enumerator.MoveNext();
-            }
             else
-            {
                 return Status.Fail;
-            }
+
             return Enumerator.Current;
         }
-
 
         public virtual void Initialize()
         {
@@ -132,6 +99,7 @@ namespace DwarfCorp
         public virtual void OnCanceled()
         {
             IsCanceled = true;
+
             if(Children != null)
                 foreach (Act child in Children)
                     child.OnCanceled();

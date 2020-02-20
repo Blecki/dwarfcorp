@@ -82,6 +82,7 @@ namespace DwarfCorp.Play.EmployeeInfo
             RemoveButton = bottomBar.AddChild(new Widget
             {
                 Text = "REMOVE",
+                Border = "border-one",
                 TextVerticalAlign = VerticalAlign.Center,
                 MinimumSize = new Point(64, 32),
                 MaximumSize = new Point(64, 32),
@@ -98,6 +99,7 @@ namespace DwarfCorp.Play.EmployeeInfo
             EquipButton = bottomBar.AddChild(new Widget
             {
                 Text = "EQUIP",
+                Border = "border-one",
                 TextVerticalAlign = VerticalAlign.Center,
                 MinimumSize = new Point(64, 32),
                 MaximumSize = new Point(64, 32),

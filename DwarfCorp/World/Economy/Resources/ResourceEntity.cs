@@ -65,15 +65,14 @@ namespace DwarfCorp
 
             if (Resource.Gui_NewStyle)
             {
-                var sheetName = String.Format("{0}&{1}-{2}&{3}", Resource.Gui_Graphic.AssetPath, Resource.Gui_Graphic.Frame.X, Resource.Gui_Graphic.Frame.Y, Resource.Gui_Palette);
+                var sheetName = ResourceGraphicsHelper.GetUniqueGraphicsIdentifier(Resource);
                 var tiledInstanceGroup = Manager.World.Renderer.InstanceRenderer.GetCombinedTiledInstance();
+
                 Texture2D fixedTex = null;
                 if (!tiledInstanceGroup.DoesInstanceSheetExist(sheetName))
-                    if (DwarfSprites.LayerLibrary.FindPalette(Resource.Gui_Palette).HasValue(out var palette))
-                        fixedTex = TextureTool.CropAndColorSprite(manager.World.Renderer.GraphicsDevice, AssetManager.GetContentTexture(Resource.Gui_Graphic.AssetPath),
-                            Resource.Gui_Graphic.FrameSize, Resource.Gui_Graphic.Frame, DwarfSprites.LayerLibrary.BasePalette.CachedPalette, palette.CachedPalette);
+                    fixedTex = ResourceGraphicsHelper.GetResourceTexture(manager.World.Renderer.GraphicsDevice, Resource.Gui_Graphic, Resource.Gui_Palette);
 
-                var sheet = new SpriteSheet(fixedTex)
+                var sheet = new SpriteSheet(fixedTex) // The tiled instance renderer will automatically grab the texture from this.
                 {
                     FrameWidth = Resource.Gui_Graphic.FrameSize.X,
                     FrameHeight = Resource.Gui_Graphic.FrameSize.Y,

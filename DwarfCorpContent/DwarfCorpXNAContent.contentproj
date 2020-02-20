@@ -2134,6 +2134,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>corporate</Name>
     </None>
+    <None Include="World\CraftItems\CopperHoe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>CopperHoe</Name>
+    </None>
     <None Include="World\CraftItems\CopperAxe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>CopperAxe</Name>
@@ -2162,6 +2166,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>CopperPick</Name>
     </None>
+    <None Include="World\CraftItems\IronHoe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>IronHoe</Name>
+    </None>
     <None Include="World\CraftItems\IronAxe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>IronAxe</Name>
@@ -2173,6 +2181,10 @@
     <None Include="World\CraftItems\IronPick.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>IronPick</Name>
+    </None>
+    <None Include="World\CraftItems\StoneHoe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>StoneHoe</Name>
     </None>
     <None Include="World\CraftItems\StoneAxe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2193,6 +2205,10 @@
     <None Include="World\CraftItems\CandyTable.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>CandyTable</Name>
+    </None>
+    <None Include="World\CraftItems\WoodHoe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>WoodHoe</Name>
     </None>
     <None Include="World\CraftItems\WoodAxe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2309,6 +2325,10 @@
     <None Include="World\ResourceItems\Apothecary.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Apothecary</Name>
+    </None>
+    <None Include="World\ResourceItems\Cotton.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Cotton</Name>
     </None>
     <None Include="World\ResourceItems\CopperHoe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -5379,6 +5399,23 @@
   <ItemGroup>
     <Compile Include="newgui\equipment_sheet.png">
       <Name>equipment_sheet</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\Plants\cotton-resource.png">
+      <Name>cotton-resource</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Plants\cotton-sprout.png">
+      <Name>cotton-sprout</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Plants\cotton.png">
+      <Name>cotton</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

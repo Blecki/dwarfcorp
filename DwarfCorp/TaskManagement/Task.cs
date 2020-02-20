@@ -19,6 +19,8 @@ namespace DwarfCorp
         public float EnergyDecrease = 0.0f;
         public bool WasCancelled = false;
 
+        public FailureRecord FailureRecord = new FailureRecord();
+
         [JsonIgnore] public object GuiTag = null;
 
         public override int GetHashCode() { return Name != null ? Name.GetHashCode() : 0; }

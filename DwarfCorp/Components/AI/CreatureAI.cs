@@ -21,7 +21,7 @@ namespace DwarfCorp
         public BoundingBox PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue), new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
         public EnemySensor Sensor { get; set; } // Todo: Don't serialize this.
         public CreatureMovement Movement { get; set; }
-        [JsonProperty] private String LastMesage = "";
+        [JsonProperty] private String LastTaskFailureReason = "";
         [JsonIgnore] public PlanSubscriber PlanSubscriber = null;
         private Timer BehaviorTimer = new Timer(MathFunctions.Rand() * 5 + 3, false);
         private Timer _preEmptTimer = new Timer(4.0f, false);
@@ -186,6 +186,9 @@ namespace DwarfCorp
         {
             if (CurrentTask.HasValue(out var currentTask))
             {
+                if (currentTask is SatisfyTirednessTask)
+                    return; // Don't pre-empt sleeping.
+
                 Task newTask = null;
 
                 _preEmptTimer.Update(DwarfTime.LastTime);
@@ -588,15 +591,17 @@ namespace DwarfCorp
             if (Stats.IsOnStrike)
                 desc += "\n ON STRIKE";
 
-            if (!String.IsNullOrEmpty(LastMesage))
-                desc += "\n" + LastMesage;
+            if (!String.IsNullOrEmpty(LastTaskFailureReason))
+                desc += "\n" + LastTaskFailureReason;
 
             return desc;
         }
 
-        public void SetMessage(string message)
+        public void SetTaskFailureReason(string message)
         {
-            LastMesage = message;
+            if (CurrentTask.HasValue(out var currentTask))
+                currentTask.FailureRecord.AddFailureReason(this, message);
+            LastTaskFailureReason = message;
         }
 
         public enum FightOrFlightResponse

@@ -239,5 +239,25 @@ namespace DwarfCorp
             };
         }
         #endregion
+
+        #region Cotton
+        [EntityFactory("Cotton")]
+        private static GameComponent __factory18(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Cotton(Manager, Position);
+        }
+
+        [EntityFactory("Cotton Sprout")]
+        private static GameComponent __factory19(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Seedling(Manager, "Cotton", Position, "Entities\\Plants\\cotton-sprout")
+            {
+                GrowthHours = 12.0f,
+                MaxSize = 1.0f,
+                GoodBiomes = "Grassland",
+                BadBiomes = "Desert Tiaga Tundra Waste Haunted Forest Jolly Forest"
+            };
+        }
+        #endregion
     }
 }

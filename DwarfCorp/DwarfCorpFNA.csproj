@@ -151,6 +151,7 @@
     <Compile Include="Entities\Fixtures\StoneLadder.cs" />
     <Compile Include="Entities\Fixtures\WoodenLadder.cs" />
     <Compile Include="Entities\Plants\CandyCane.cs" />
+    <Compile Include="Entities\Plants\Cotton.cs" />
     <Compile Include="GameStates\DebugStates\DwarfDesignerState.cs" />
     <Compile Include="GameStates\DebugStates\GuiDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\GuiDebugState.cs" />
@@ -254,6 +255,8 @@
     <Compile Include="TaskManagement\CompoundActs\TransferResourcesAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\TransferResourcesTask.cs" />
     <Compile Include="TaskManagement\Enums.cs" />
+    <Compile Include="TaskManagement\FailMessage.cs" />
+    <Compile Include="TaskManagement\FailureRecord.cs" />
     <Compile Include="TaskManagement\LeafActs\EquipAct.cs" />
     <Compile Include="TaskManagement\LeafActs\GreedyPathAct.cs" />
     <Compile Include="TaskManagement\LeafActs\LongWanderAct.cs" />
@@ -266,7 +269,6 @@
     <Compile Include="TaskManagement\Tasks\KillVoxel\KillVoxelAct.cs" />
     <Compile Include="TaskManagement\Tasks\KillVoxel\KillVoxelTask.cs" />
     <Compile Include="TaskManagement\Tasks\UnequipTask.cs" />
-    <Compile Include="TaskManagement\TestBehaviors.cs" />
     <Compile Include="Tools\NeverNull.cs" />
     <Compile Include="Tools\MaybeNull.cs" />
     <Compile Include="World\AutoScaleThread.cs" />
@@ -437,6 +439,7 @@
     <Compile Include="World\Economy\Payroll\DepositMoney.cs" />
     <Compile Include="World\Economy\Resources\CoinPile.cs" />
     <Compile Include="World\Economy\Resources\Inventory.cs" />
+    <Compile Include="World\Economy\Resources\ResourceGraphicsHelper.cs" />
     <Compile Include="World\Economy\Resources\Resource.cs" />
     <Compile Include="World\Economy\Resources\ResourceEntity.cs" />
     <Compile Include="World\Economy\Resources\ResourcePack.cs" />
@@ -660,7 +663,7 @@
     <Compile Include=".\Gui\Widgets\ResourceColumns.cs" />
     <Compile Include=".\Gui\Widgets\ResourcePanel.cs" />
     <Compile Include=".\Gui\Widgets\TabPanel.cs" />
-    <Compile Include=".\Gui\Widgets\TaskListPanel.cs" />
+    <Compile Include="GameStates\Play\TaskListPanel.cs" />
     <Compile Include=".\Gui\Widgets\TextBox.cs" />
     <Compile Include=".\Gui\Widgets\TextGrid.cs" />
     <Compile Include=".\Gui\Widgets\TextProgressBar.cs" />

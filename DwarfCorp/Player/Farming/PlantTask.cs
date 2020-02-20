@@ -72,7 +72,7 @@ namespace DwarfCorp
         {
             if (creature.Blackboard.GetData<bool>("NoPath", false))
             {
-                creature.SetMessage("Failed to plant. Task was unreachable.");
+                creature.SetTaskFailureReason("Failed to plant. Task was unreachable.");
                 yield return Act.Status.Fail;
                 yield break;
             }

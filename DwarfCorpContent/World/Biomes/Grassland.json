@@ -14,7 +14,17 @@
       "SizeVariance": 0.1,
       "VerticalOffset": 0.45,
       "NoiseOffset": 288.487122,
-      "SpawnProbability": 0.01
+      "SpawnProbability": 0.04
+    },
+    {
+      "Name": "Cotton",
+      "ClumpSize": 50.0,
+      "ClumpThreshold": 0.8,
+      "MeanSize": 1.0,
+      "SizeVariance": 0.1,
+      "VerticalOffset": 0.45,
+      "NoiseOffset": 288.487122,
+      "SpawnProbability": 0.04
     },
     {
       "Name": "Apple Tree",

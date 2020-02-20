@@ -51,7 +51,7 @@ namespace DwarfCorp
                             return false;
                         }),
                         new Sequence(
-                            new GetAnySingleMatchingResourceAct(Agent, RequiredTags.ToList()) { BlackboardEntry = "tool-stashed" },
+                            new FailMessage(Agent, new GetAnySingleMatchingResourceAct(Agent, RequiredTags.ToList()) { BlackboardEntry = "tool-stashed" }, "Could not locate tool."),
                             new EquipAct(Agent) { BlackboardEntry = "tool-stashed" }
                         )));
             else

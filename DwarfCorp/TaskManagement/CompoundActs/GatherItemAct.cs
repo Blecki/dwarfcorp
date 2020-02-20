@@ -28,7 +28,7 @@ namespace DwarfCorp
                 //    }
                 //}
 
-                Agent.SetMessage("Failed to gather. No path.");
+                Agent.SetTaskFailureReason("Failed to gather. No path.");
                 yield return Act.Status.Fail;
             }
 

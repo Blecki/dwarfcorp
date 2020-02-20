@@ -6,7 +6,7 @@ using DwarfCorp.Gui;
 using DwarfCorp.Gui.Widgets;
 using Microsoft.Xna.Framework;
 
-namespace DwarfCorp.Gui.Widgets
+namespace DwarfCorp.Play
 {
     public class TaskListPanel : Widget
     {
@@ -182,6 +182,7 @@ namespace DwarfCorp.Gui.Widgets
                     }
 
                     tag.Text = task.Name;
+                    tag.Tooltip = task.FailureRecord.FormatTooltip();
                 }
 
                 ListView.Invalidate();

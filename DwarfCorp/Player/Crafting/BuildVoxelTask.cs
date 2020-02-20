@@ -45,7 +45,12 @@ namespace DwarfCorp
                 return Feasibility.Infeasible;
 
             if (Library.GetVoxelType(VoxType).HasValue(out VoxelType voxtype))
-                return agent.World.CanBuildVoxel(voxtype) ? Feasibility.Feasible : Feasibility.Infeasible;
+            {
+                if (agent.World.CanBuildVoxel(voxtype)) return Feasibility.Feasible;
+
+                FailureRecord.InfeasibleReason = "Do not have resources.";
+                return Feasibility.Infeasible;
+            }
             else
                 return Feasibility.Infeasible;
         }
@@ -87,7 +92,8 @@ namespace DwarfCorp
                 return new Select(
                     new Sequence(
                         ActHelper.CreateEquipmentCheckAct(creature.AI, "Tool", ActHelper.EquipmentFallback.NoFallback, "Hammer"),
-                        new GetResourcesOfType(creature.AI, new List<ResourceTypeAmount>() { resources }) { BlackboardEntry = "stashed-resource" },
+                        new FailMessage(creature.AI, new GetResourcesOfType(creature.AI, new List<ResourceTypeAmount>() { resources }) { BlackboardEntry = "stashed-resource" }, 
+                            "Couldn't locate the correct resources!"),
                         new Domain(() => Validate(creature.AI, Voxel, resources),
                             new GoToVoxelAct(Voxel, PlanAct.PlanType.Radius, creature.AI, 4.0f)),
                         new PlaceVoxelAct(Voxel, creature.AI, "stashed-resource", VoxType)),

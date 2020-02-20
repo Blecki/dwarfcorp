@@ -68,8 +68,6 @@ namespace DwarfCorp
 
                         Farm.Finished = true;
                         DestroyResources();
-
-                        ActHelper.ApplyWearToTool(Creature.AI, GameSettings.Current.Wear_Dig);
                     }
 
                     if (MathFunctions.RandEvent(0.01f))
@@ -81,6 +79,7 @@ namespace DwarfCorp
                 Creature.CurrentCharacterMode = CharacterMode.Idle;
                 Creature.AddThought("I farmed something!", new TimeSpan(0, 4, 0, 0), 1.0f);
                 Creature.AI.AddXP(1);
+                ActHelper.ApplyWearToTool(Creature.AI, GameSettings.Current.Wear_Dig);
                 Creature.Sprite.PauseAnimations(Creature.Stats.CurrentClass.AttackMode);
                 yield return Status.Success;
             }
@@ -125,7 +124,7 @@ namespace DwarfCorp
                 if (Farm.Voxel.IsValid)
                 {
                     Tree = new Select(new Sequence(
-                        ActHelper.CreateEquipmentCheckAct(Agent, "Tool", ActHelper.EquipmentFallback.AllowDefault, "Hoe"),
+                        ActHelper.CreateEquipmentCheckAct(Agent, "Tool", ActHelper.EquipmentFallback.NoFallback, "Hoe"),
                         new GetResourcesOfType(Agent, new List<ResourceTypeAmount> { new ResourceTypeAmount(Farm.SeedType, 1) }) { BlackboardEntry = "stashed-resources" },
                         new Domain(Validate, new GoToVoxelAct(Farm.Voxel, PlanAct.PlanType.Adjacent, Creature.AI)),
                         new Domain(Validate, new StopAct(Creature.AI)),

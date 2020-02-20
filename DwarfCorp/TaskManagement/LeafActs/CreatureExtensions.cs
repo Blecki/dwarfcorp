@@ -14,7 +14,7 @@ namespace DwarfCorp
         {
             if(data == null)
             {
-                agent.AI.SetMessage("Failed to clear blackboard data because it was null.");
+                agent.AI.SetTaskFailureReason("Failed to clear blackboard data because it was null.");
                 yield return Act.Status.Fail;
             }
             else
@@ -37,7 +37,7 @@ namespace DwarfCorp
                 yield return Act.Status.Success;
                 yield break;
             }
-            agent.AI.SetMessage(String.Format("Failed to reserve item with tag {0}, no items.", tag));
+            agent.AI.SetTaskFailureReason(String.Format("Failed to reserve item with tag {0}, no items.", tag));
             yield return Act.Status.Fail;
         }
 

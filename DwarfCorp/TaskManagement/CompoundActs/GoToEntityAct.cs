@@ -147,7 +147,7 @@ namespace DwarfCorp
                 
                 if (!planSucceeded)
                 {
-                    Agent.SetMessage("Failed to reach entity. Path planning failed.");
+                    Agent.SetTaskFailureReason("Failed to reach entity. Path planning failed.");
                     yield return Act.Status.Fail;
                     yield break;
                 }
@@ -180,7 +180,7 @@ namespace DwarfCorp
                         List<MoveAction> path = Agent.Blackboard.GetData<List<MoveAction>>("PathToEntity");
                         if (path == null || path.Count == 0)
                         {
-                            Agent.SetMessage("Failed to find path to entity.");
+                            Agent.SetTaskFailureReason("Failed to find path to entity.");
                             yield return Act.Status.Fail;
                             yield break;
                         }

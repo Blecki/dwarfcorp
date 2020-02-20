@@ -47,7 +47,7 @@ namespace DwarfCorp
 
             if(Agent.Faction.Economy.Funds < Money)
             {
-                Agent.SetMessage("Failed to remove money from zone.");
+                Agent.SetTaskFailureReason("Failed to remove money from zone.");
                 yield return Status.Fail;
             }
             else

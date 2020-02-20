@@ -1,0 +1,30 @@
+{
+  "Name": "Iron Hoe",
+  "EntityName": "",
+  "Category": "Tools",
+  "RequiredResources": [
+    {
+      "Tag": "Wood",
+      "Count": 1
+    },
+    {
+      "Tag": "Iron",
+      "Count": 1
+    }
+  ],
+  "Icon": {
+    "Sheet": "axe-resources",
+    "Tile": 2
+  },
+  "BaseCraftTime": 9.0,
+  "Description": "An axe made of iron.",
+  "Type": "Resource",
+  "Prerequisites": [],
+  "ResourceCreated": "Iron Hoe",
+  "CraftLocation": "Anvil",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.45, 0",
+  "AddToOwnedPool": true,
+  "CraftActBehavior": "Normal",
+  "Tutorial": "Dwarves need axes to fell trees."
+}

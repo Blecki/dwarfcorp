@@ -342,7 +342,7 @@ namespace DwarfCorp
             if (!Active)
                 return;
 
-            SetMessage("");
+            //SetMessage("");
             Creature.NoiseMaker.BasePitch = Stats.VoicePitch;
 
             AutoGatherTimer.Update(gameTime);
@@ -373,7 +373,7 @@ namespace DwarfCorp
                 AssignGeneratedTask(new SatisfyTirednessTask()); // Satisfy Tiredness is 'High' priority, so they will truck on for urgent tasks.
 
             if (Stats.Energy.IsCritical())
-                ChangeTask(new SatisfyTirednessTask()); // But they've reached their limit.
+                ChangeTask(new SatisfyTirednessTask() { Priority = TaskPriority.Urgent }); // But they've reached their limit.
 
             // Try to find food if we are hungry.
             if (Stats.Hunger.IsDissatisfied() && World.CountResourcesWithTag("Edible") > 0)

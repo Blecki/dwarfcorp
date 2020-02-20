@@ -1,0 +1,38 @@
+{
+  "TypeName": "Cotton",
+  "MoneyValue": 3.0,
+  "Description": "Use to make clothing, or grow more cotton.",
+  "Category": "Seeds",
+ 
+  "Tags": [
+    "Plantable",
+    "Flammable",
+    "AboveGroundPlant"
+  ],
+  "FoodContent": 0.0,
+  
+  "TrinketData": {
+    "BaseAsset": null,
+    "EncrustingAsset": null,
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "DisplayName": "Cotton",
+  "PlantToGenerate": "Cotton Sprout",
+  "CanCraft": false,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+
+  "Gui_NewStyle": true,
+  "Gui_Graphic": {
+    "AssetPath": "Entities/Plants/cotton-resource",
+    "FrameSize": "32, 32",
+    "Frame": "0, 0"
+  },
+  "Gui_Palette": "None"
+}

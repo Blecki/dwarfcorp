@@ -65,7 +65,7 @@ namespace DwarfCorp
                 foreach (var res in stashed)
                     if (!Creature.Inventory.RemoveAndCreateWithToss(res, pos(), Inventory.RestockType.None))
                     {
-                        Agent.SetMessage("Failed to create resources for item (1).");
+                        Agent.SetTaskFailureReason("Failed to create resources for item (1).");
                         yield return Act.Status.Fail;
                         yield break;
                     }
@@ -91,7 +91,7 @@ namespace DwarfCorp
                 enumerator.MoveNext();
                 if (Des.ResourcesReservedFor == null || Des.ResourcesReservedFor.IsDead)
                 {
-                    Agent.SetMessage("Waiting for resources failed.");
+                    Agent.SetTaskFailureReason("Waiting for resources failed.");
                     yield return Act.Status.Fail;
                     yield break;
                 }
@@ -105,7 +105,7 @@ namespace DwarfCorp
         {
             if (RawMaterials == null || RawMaterials.Count == 0)
             {
-                Agent.SetMessage("Failed to create resources.");
+                Agent.SetTaskFailureReason("Failed to create resources.");
                 yield return Act.Status.Fail;
                 yield break;
             }
@@ -116,7 +116,7 @@ namespace DwarfCorp
                 yield return Status.Success;
             else
             {
-                Agent.SetMessage("Failed to create meta resource.");
+                Agent.SetTaskFailureReason("Failed to create meta resource.");
                 yield return Act.Status.Fail;
             }
         }
@@ -143,7 +143,7 @@ namespace DwarfCorp
             }
             else
             {
-                Agent.SetMessage("Invalid meta resource");
+                Agent.SetTaskFailureReason("Invalid meta resource");
                 yield return Act.Status.Fail;
                 yield break;
             }
@@ -153,7 +153,7 @@ namespace DwarfCorp
         {
             bool valid = Des.HasResources || Des.ResourcesReservedFor != null;
             if (!valid)
-                Agent.SetMessage("Resource state not valid.");
+                Agent.SetTaskFailureReason("Resource state not valid.");
 
             var location = Creature.AI.Blackboard.GetData<GameComponent>(ItemType.CraftLocation);
             if (location != null && location.IsDead)
@@ -243,6 +243,7 @@ namespace DwarfCorp
                     )
                 ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false);
             }
+
             base.Initialize();
         }
 

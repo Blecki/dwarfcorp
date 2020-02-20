@@ -32,7 +32,7 @@ namespace DwarfCorp
         {
             if (!Agent.Blackboard.Has("MoneyNeeded"))
             {
-                Agent.SetMessage("Failed to get money. Internal error.");
+                Agent.SetTaskFailureReason("Failed to get money. Internal error.");
                 yield return Act.Status.Fail;
                 yield break;
             }
@@ -49,7 +49,7 @@ namespace DwarfCorp
             if (Agent.Faction.Economy.Funds < needed)
             {
                 Agent.World.MakeAnnouncement(String.Format("Could not pay {0}, not enough money!", Agent.Stats.FullName));
-                Agent.SetMessage("Failed to get money, not enough in treasury.");
+                Agent.SetTaskFailureReason("Failed to get money, not enough in treasury.");
                 if (IncrementDays && Agent is DwarfAI dorf)
                     dorf.OnNotPaid();
 

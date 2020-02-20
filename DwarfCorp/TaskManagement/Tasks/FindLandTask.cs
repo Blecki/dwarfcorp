@@ -99,7 +99,7 @@ namespace DwarfCorp
                 }
                 yield return Act.Status.Running;
             }
-            creature.AI.SetMessage("Could not find land.");
+            creature.AI.SetTaskFailureReason("Could not find land.");
             yield return Act.Status.Fail;
         }
 

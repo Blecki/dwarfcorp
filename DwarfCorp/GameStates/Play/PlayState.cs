@@ -1044,7 +1044,7 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(300, 200)
             });
 
-            var taskList = Gui.RootItem.AddChild(new TaskListPanel
+            var taskList = Gui.RootItem.AddChild(new Play.TaskListPanel
             {
                 Border = "border-thin",
                 AutoLayout = AutoLayout.FloatBottomLeft,
@@ -2046,7 +2046,7 @@ namespace DwarfCorp.GameStates
                         .Select(group => new FlatToolTray.Icon
                         {
                             // Todo: Should support apparent type grouping.
-                            Icon = group.Prototype.HasValue(out var res) ? res.GuiLayers[0] : null,
+                            Icon = (group.Prototype.HasValue(out var res) && res.GuiLayers != null) ? res.GuiLayers[0] : null, // Menu icons need to support new dynamic resource gui icons.
                             Tooltip = "Plant " + group.ApparentType,
                             Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
                             Text = group.ApparentType,
