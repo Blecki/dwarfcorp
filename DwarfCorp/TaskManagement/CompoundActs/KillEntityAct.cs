@@ -96,52 +96,45 @@ namespace DwarfCorp
 
             if (creature.Movement.IsSessile)
             {
-                Tree =
-                    new Domain(() => Verify(creature),
-                        new Sequence
-                        (
-                            new AttackAct(Agent, entity)
-                        ) | new Wrap(() => OnAttackEnd(creature))
-                        );
+                Tree = new Domain(() => Verify(creature),
+                    new Select(
+                        new AttackAct(Agent, entity),
+                        new Wrap(() => OnAttackEnd(creature))));
             }
             else
             {
                 if (creature.Creature.Attacks[0].Weapon.Mode != Weapon.AttackMode.Ranged || 
                     closestDefensiveStructure == null || (closestDefensiveStructure.Position - creature.Position).Length() > 20.0f)
                 {
-                    Tree =
-                        new Domain(() => Verify(creature),
-                        new Sequence
-                            (
-                            new GoToEntityAct(entity, creature)
-                            {
-                                MovingTarget = true,
-                                PlanType = planType,
-                                Radius = radius
-                            } | new Wrap(() => OnAttackEnd(creature)),
+                    Tree = new Domain(() => Verify(creature),
+                        new Sequence(
+                            new Select(
+                                new GoToEntityAct(entity, creature)
+                                {
+                                    MovingTarget = true,
+                                    PlanType = planType,
+                                    Radius = radius
+                                },
+                                new Wrap(() => OnAttackEnd(creature))),
                             new AttackAct(Agent, entity),
-                            new Wrap(() => OnAttackEnd(creature))
-                            ));
+                            new Wrap(() => OnAttackEnd(creature))));
                 }
                 else
                 {
                     closestDefensiveStructure.ReservedFor = creature;
-                    Tree =
-                        new Domain(() => Verify(creature), 
-                        new Sequence
-                            (
-                            new GoToEntityAct(closestDefensiveStructure, creature)
-                            {
-                                PlanType = PlanAct.PlanType.Into,
-                            } | new Wrap(() => OnAttackEnd(creature)),
+                    Tree = new Domain(() => Verify(creature), 
+                        new Sequence(
+                            new Select(
+                                new GoToEntityAct(closestDefensiveStructure, creature)
+                                {
+                                    PlanType = PlanAct.PlanType.Into,
+                                }, 
+                                new Wrap(() => OnAttackEnd(creature))),
                             new TeleportAct(Creature.AI) { Location = closestDefensiveStructure.GetRotatedBoundingBox().Center(), Type = TeleportAct.TeleportType.Lerp },
                             new AttackAct(Agent, entity) {  DefensiveStructure = closestDefensiveStructure},
-                            new Wrap(() => OnAttackEnd(creature))
-                            ));
+                            new Wrap(() => OnAttackEnd(creature))));
                 }
-
             }
         }
     }
-
 }

@@ -116,16 +116,25 @@ namespace DwarfCorp
         public override void Initialize()
         {
             Creature.OverrideCharacterMode = false;
-           
-            Tree = new Domain(  () => !Agent.IsDead && !Agent.Creature.Stats.IsAsleep,
-                                new Sequence(new ClearBlackboardData(Creature.AI, "reserved-chair"),
-                                new Wrap(() => Creature.FindAndReserve("Chair", "reserved-chair")),
-                                new Domain(ValidateSit, new Sequence(
-                                new GoToTaggedObjectAct(Creature.AI) {
+
+            Tree = new Select(
+                new Domain(() => !Agent.IsDead && !Agent.Creature.Stats.IsAsleep,
+                    new Sequence(
+                        new ClearBlackboardData(Creature.AI, "reserved-chair"),
+                        new Wrap(() => Creature.FindAndReserve("Chair", "reserved-chair")),
+                        new Domain(ValidateSit,
+                            new Sequence(
+                                new GoToTaggedObjectAct(Creature.AI)
+                                {
                                     Teleport = true,
-                                    TeleportOffset = new Vector3(0, 0.1f, 0), ObjectBlackboardName = "reserved-chair", CheckForOcclusion = false},
+                                    TeleportOffset = new Vector3(0, 0.1f, 0),
+                                    ObjectBlackboardName = "reserved-chair",
+                                    CheckForOcclusion = false
+                                },
                                 new Wrap(WaitUntilBored))),
-                                new Wrap(() => Creature.Unreserve("reserved-chair")))) | new Wrap(() => Creature.Unreserve("reserved-chair"));
+                                new Wrap(() => Creature.Unreserve("reserved-chair")))),
+                new Wrap(() => Creature.Unreserve("reserved-chair")));
+
             base.Initialize();
         }
 

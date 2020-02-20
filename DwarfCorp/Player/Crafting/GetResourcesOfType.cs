@@ -76,7 +76,11 @@ namespace DwarfCorp
                         children.Add(new Sequence(new Condition(() => HasResources(Agent, resource)), new StashResourcesAct(Agent, resource.Key, resource.Value)));
                     }
                     children.Add(new SetBlackboardData<List<Resource>>(Agent, BlackboardEntry, resourcesToStash.Select(r => r.Value).ToList()));
-                    Tree = new Sequence(children.ToArray()) | (new Wrap(Agent.Creature.RestockAll) & false);
+                    Tree = new Select(
+                        new Sequence(children.ToArray()),
+                        new Sequence(
+                            new Wrap(Agent.Creature.RestockAll),
+                            false));
                 }
             }
             else

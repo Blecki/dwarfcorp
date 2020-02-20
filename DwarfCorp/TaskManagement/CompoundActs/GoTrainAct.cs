@@ -16,7 +16,6 @@ namespace DwarfCorp
 
         }
 
-
         public GoTrainAct(CreatureAI creature) :
             base(creature)
         {
@@ -44,20 +43,24 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-            Act trainAct = Magical ? new Wrap(DoMagicResearch) { Name = "Magic research" } as Act : new AttackAct(Agent, "training-object") { Training = true, Timeout = new Timer(10.0f, false) };
-            Act unreserveAct = new Wrap(() => Creature.Unreserve("training-object"));
-            Tree = new Sequence(
-                new Wrap(() => Creature.FindAndReserve(Magical ? "Research" : "Train", "training-object")),
-                new Sequence
-                    (
-                        new GoToTaggedObjectAct(Agent) {Teleport = false, TeleportOffset = new Vector3(1, 0, 0), ObjectBlackboardName = "training-object" },
-                        trainAct,
-                        unreserveAct
-                    ) | new Sequence(unreserveAct, false)
-                    ) | new Sequence(unreserveAct, false);
+            var trainAct = Magical ? new Wrap(DoMagicResearch) { Name = "Magic research" } as Act : new AttackAct(Agent, "training-object") { Training = true, Timeout = new Timer(10.0f, false) };
+            var unreserveAct = new Wrap(() => Creature.Unreserve("training-object"));
+
+            Tree = new Select(
+                new Sequence(
+                    new Wrap(() => Creature.FindAndReserve(Magical ? "Research" : "Train", "training-object")),
+                    new Select(
+                        new Sequence(
+                            new GoToTaggedObjectAct(Agent) { Teleport = false, TeleportOffset = new Vector3(1, 0, 0), ObjectBlackboardName = "training-object" },
+                            trainAct,
+                            unreserveAct),
+                        new Sequence(
+                            unreserveAct,
+                            false))),
+                new Sequence(unreserveAct, false));
+
             base.Initialize();
         }
-
 
         public override void OnCanceled()
         {
@@ -65,7 +68,5 @@ namespace DwarfCorp
                 continue;
             base.OnCanceled();
         }
-
-
     }
 }

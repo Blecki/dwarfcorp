@@ -29,7 +29,11 @@ namespace DwarfCorp.Scripting
             var voxel = new VoxelHandle(Agent.World.ChunkManager, GlobalVoxelCoordinate.FromVector3(Game.Location));
 
             if (voxel.IsValid)
-                Tree = new Sequence(new GoToVoxelAct(voxel, PlanAct.PlanType.Radius, Agent) { Name = "Go to gambling site.", Radius = 3.0f }, new Wrap(Gamble)) | new Wrap(Cleanup);
+                Tree = new Select(
+                    new Sequence(
+                        new GoToVoxelAct(voxel, PlanAct.PlanType.Radius, Agent) { Name = "Go to gambling site.", Radius = 3.0f },
+                        new Wrap(Gamble)),
+                    new Wrap(Cleanup));
             else
                 Tree = new Always(Status.Fail);
 
