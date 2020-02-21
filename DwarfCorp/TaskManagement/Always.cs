@@ -12,6 +12,7 @@ namespace DwarfCorp
     public class Always : Act
     {
         public Act.Status AlwaysStatus = Act.Status.Success;
+
         public Always(Act.Status status)
         {
             AlwaysStatus = status;
@@ -19,6 +20,7 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
+            LastTickedChild = this;
             yield return AlwaysStatus;
             yield break;
         }

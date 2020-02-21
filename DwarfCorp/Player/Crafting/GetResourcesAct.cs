@@ -98,8 +98,8 @@ namespace DwarfCorp
                     Tree = new Select(
                         new Sequence(children.ToArray()),
                         new Sequence(
-                            new Wrap(Agent.Creature.RestockAll), 
-                            false));
+                            new Wrap(Agent.Creature.RestockAll),
+                            new Always(Status.Fail)));
                 }
             }
             else

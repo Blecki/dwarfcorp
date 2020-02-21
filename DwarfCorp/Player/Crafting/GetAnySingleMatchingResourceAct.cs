@@ -62,7 +62,7 @@ namespace DwarfCorp
                             new SetBlackboardData<Resource>(Agent, BlackboardEntry, location.Value.Value)),
                         new Sequence(
                             new Wrap(Agent.Creature.RestockAll),
-                            false));
+                            new Always(Status.Fail)));
                 }
             }
             else

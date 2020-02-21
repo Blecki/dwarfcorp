@@ -43,13 +43,13 @@ namespace DwarfCorp
             base(creature)
         {
             Name = "Kill DestinationVoxel " + OwnerTask.Voxel.WorldPosition;
-            Tree = 
+            Tree = new Select(
                 new Domain(() => CheckIsDigDesignation(creature, OwnerTask),
                 new Sequence(
                     ActHelper.CreateEquipmentCheckAct(creature, "Tool", ActHelper.EquipmentFallback.AllowDefault, "Pick"),
                     new GoToVoxelAct(OwnerTask.Voxel, PlanAct.PlanType.Radius, creature) { Radius = 2.0f },
-                    new DigAct(Agent, OwnerTask)))
-                | new Wrap(() => Cleanup(creature, OwnerTask));
+                    new DigAct(Agent, OwnerTask))),
+                new Wrap(() => Cleanup(creature, OwnerTask)));
         }
     }
 }

@@ -30,7 +30,9 @@ namespace DwarfCorp
             if (!Wait)
                 return new GoToZoneAct(agent.AI, Zone);
 
-            return new GoToZoneAct(agent.AI, Zone) & new Wait(999) { Name = "Wait." };
+            return new Sequence(
+                new GoToZoneAct(agent.AI, Zone),
+                new Wait(999) { Name = "Wait." });
         }
     }
 }

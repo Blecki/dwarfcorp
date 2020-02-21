@@ -35,7 +35,9 @@ namespace DwarfCorp
             Tree = new Sequence(new Select(new GetResourcesWithTag(Agent, FoodTag) { Name = "Get " + FoodTag },
                                             new GetResourcesWithTag(Agent, FallbackTag) { Name = "Get " + FallbackTag })
             { Name = "Get Food" },
-                                new Select(new GoToChairAndSitAct(Agent), true) { Name = "Find a place to eat." },
+                                new Select(
+                                    new GoToChairAndSitAct(Agent), 
+                                    new Always(Status.Success)) { Name = "Find a place to eat." },
                                 new EatFoodAct(Agent, MustPay));
                 
             base.Initialize();

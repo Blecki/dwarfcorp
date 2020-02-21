@@ -81,12 +81,14 @@ namespace DwarfCorp
 
             if (closestBed == null)
             {
-                Tree = new Select(new Sequence(
-                    new Domain(() => !Ally.IsDead && Ally.Stats.Health.IsDissatisfied(),
-                        new GoToEntityAct(Ally.Physics, Agent)),
-                        new Wrap(() => PickupAlly()),
-                        new Wrap(() => HealAlly()) { Name = "Do CPR." }),
-                        new Wrap(() => ReleaseAlly())) | new Wrap(() => ReleaseAlly());
+                Tree = new Select(
+                    new Sequence(
+                        new Domain(() => !Ally.IsDead && Ally.Stats.Health.IsDissatisfied(),
+                            new GoToEntityAct(Ally.Physics, Agent)),
+                            new Wrap(() => PickupAlly()),
+                            new Wrap(() => HealAlly()) { Name = "Do CPR." }),
+                        new Wrap(() => ReleaseAlly()),
+                new Wrap(() => ReleaseAlly()));
             }
             else
             {
@@ -100,7 +102,8 @@ namespace DwarfCorp
                                         new GoToEntityAct(closestBed, Agent)) { ReturnOnAllSucces = false }),
                             new Domain(() => !Ally.IsDead && Ally.Stats.Health.IsDissatisfied(), 
                                 new Wrap(() => PlaceOnBed(closestBed))),
-                            new Wrap(() => HealAlly()) {  Name = "Do CPR."}, new Wrap(() => ReleaseAlly())),
+                            new Wrap(() => HealAlly()) {  Name = "Do CPR."}, 
+                            new Wrap(() => ReleaseAlly())),
                         new Wrap(() => ReleaseAlly()));
             }
 

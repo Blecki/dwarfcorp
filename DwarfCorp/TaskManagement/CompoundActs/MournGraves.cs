@@ -93,11 +93,14 @@ namespace DwarfCorp
         {
             Creature.OverrideCharacterMode = false;
 
-            Tree = new Sequence(new ClearBlackboardData(Creature.AI, "grave-object"),
-                                new Wrap(() => Creature.FindAndReserve("Grave", "grave-object")),
-                                new GoToTaggedObjectAct(Creature.AI) { Teleport = false, TeleportOffset = new Vector3(1.0f, 0.0f, 0), ObjectBlackboardName = "grave-object" },
-                                new Wrap(WaitUntilBored),
-                                new Wrap(() => Creature.Unreserve("grave-object"))) | new Wrap(() => Creature.Unreserve("grave-object"));
+            Tree = new Select(
+                new Sequence(
+                    new ClearBlackboardData(Creature.AI, "grave-object"),
+                    new Wrap(() => Creature.FindAndReserve("Grave", "grave-object")),
+                    new GoToTaggedObjectAct(Creature.AI) { Teleport = false, TeleportOffset = new Vector3(1.0f, 0.0f, 0), ObjectBlackboardName = "grave-object" },
+                    new Wrap(WaitUntilBored),
+                    new Wrap(() => Creature.Unreserve("grave-object"))),
+                new Wrap(() => Creature.Unreserve("grave-object")));
             base.Initialize();
         }
 

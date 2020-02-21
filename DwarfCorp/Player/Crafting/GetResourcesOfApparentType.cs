@@ -80,7 +80,7 @@ namespace DwarfCorp
                         new Sequence(children.ToArray()),
                         new Sequence(
                             new Wrap(Agent.Creature.RestockAll),
-                            false));
+                            new Always(Status.Fail)));
                 }
             }
             else

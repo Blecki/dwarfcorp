@@ -141,9 +141,16 @@ namespace DwarfCorp
             if (BuildRoom.ResourcesReservedFor != null && BuildRoom.ResourcesReservedFor.IsDead)
                 BuildRoom.ResourcesReservedFor = null;
 
-            Tree = new Sequence(new Select(new Domain(buildRoom.MeetsBuildRequirements() || buildRoom.ResourcesReservedFor != null, true), 
-                                           new Domain(!buildRoom.MeetsBuildRequirements() && (buildRoom.ResourcesReservedFor == null || buildRoom.ResourcesReservedFor == Agent), new Sequence(new Wrap(Reserve), new GetResourcesWithTag(Agent, Resources) { BlackboardEntry = "zone_resources" })),
-                                           new Domain(buildRoom.MeetsBuildRequirements() || buildRoom.ResourcesReservedFor != null, true)),
+            Tree = new Sequence(
+                new Select(
+                    new Domain(buildRoom.MeetsBuildRequirements() || buildRoom.ResourcesReservedFor != null, 
+                        new Always(Status.Success)), 
+                    new Domain(!buildRoom.MeetsBuildRequirements() && (buildRoom.ResourcesReservedFor == null || buildRoom.ResourcesReservedFor == Agent), 
+                        new Sequence(
+                            new Wrap(Reserve), 
+                            new GetResourcesWithTag(Agent, Resources) { BlackboardEntry = "zone_resources" })),
+                    new Domain(buildRoom.MeetsBuildRequirements() || buildRoom.ResourcesReservedFor != null, 
+                        new Always(Status.Success))),
                 new Select(
                     new Domain(() => IsRoomBuildOrder(buildRoom) && !buildRoom.IsBuilt && !buildRoom.IsDestroyed && ValidResourceState(), 
                         new Sequence(

@@ -122,14 +122,18 @@ namespace DwarfCorp
             Act getResources = null;
 
             getResources = new Select(
-                new Domain(() => Item.HasResources || Item.SelectedResource != null, true),
+                new Domain(() => Item.HasResources || Item.SelectedResource != null, 
+                    new Always(Status.Success)),
                 new Domain(() => !Item.HasResources && (Item.SelectedResource == null || Item.SelectedResource.ReservedFor == Agent || Item.SelectedResource.ReservedFor == null),
-                    new Sequence(
-                        new Wrap(LocateResources),
-                        new Wrap(AcquireResources)
-                    ) | (new Wrap(UnReserve))
-                                            & false),
-                    new Domain(() => Item.SelectedResource != null && (Item.HasResources || Item.SelectedResource.ReservedFor != null), true));
+                    new Sequence(    
+                        new Select(
+                            new Sequence(
+                                new Wrap(LocateResources),
+                                new Wrap(AcquireResources)),
+                            new Wrap(UnReserve)),
+                        new Always(Status.Fail))),
+                    new Domain(() => Item.SelectedResource != null && (Item.HasResources || Item.SelectedResource.ReservedFor != null), 
+                        new Always(Status.Success)));
             Act buildAct = null;
 
             buildAct = new Wrap(() => Creature.HitAndWait(true, () => 1.0f,
@@ -137,20 +141,23 @@ namespace DwarfCorp
                                 () => Item.Location.WorldPosition + Vector3.One * 0.5f, "Craft"))
             { Name = "Construct object." };
 
-            Tree = new Domain(IsNotCancelled, new Sequence(
-                new ClearBlackboardData(Agent, "ResourcesStashed"),
-                getResources,
-                new Sequence(new Domain(ResourceStateValid,
+            Tree = new Select(
+                new Domain(IsNotCancelled, 
                     new Sequence(
-                        new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
-                        new Wrap(() => DestroyResources(() => Item.Location.WorldPosition)),
-                        new Wrap(WaitForResources) { Name = "Wait for resources." },
-                        buildAct,
-                        new Wrap(FinallyPlaceObject) { Name = "Place the object." }
-                    )
-                ))
-                )) |
-                new Sequence(new Wrap(Creature.RestockAll), unreserveAct, false);
+                        new ClearBlackboardData(Agent, "ResourcesStashed"),
+                        getResources,
+                        new Sequence(
+                            new Domain(ResourceStateValid,
+                                new Sequence(
+                                    new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
+                                    new Wrap(() => DestroyResources(() => Item.Location.WorldPosition)),
+                                    new Wrap(WaitForResources) { Name = "Wait for resources." },
+                                    buildAct,
+                                    new Wrap(FinallyPlaceObject) { Name = "Place the object." }))))),
+                new Sequence(
+                    new Wrap(Creature.RestockAll),
+                    unreserveAct,
+                    new Always(Status.Fail)));
 
             base.Initialize();
         }

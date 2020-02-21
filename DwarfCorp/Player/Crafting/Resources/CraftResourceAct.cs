@@ -166,16 +166,19 @@ namespace DwarfCorp
         {
             var unreserveAct = new Wrap(UnReserve);
             var time = 3 * (ItemType.BaseCraftTime / Creature.AI.Stats.Intelligence);
-            var getResources = new Select(new Domain(() => Des.HasResources || Des.ResourcesReservedFor != null, true),
-                                          new Domain(() => !Des.HasResources && (Des.ResourcesReservedFor == Agent || Des.ResourcesReservedFor == null),
-                                                new Sequence(      
-                                                    new Select(
-                                                        new Sequence(
-                                                            new Wrap(ReserveResources),
-                                                            new GetResourcesOfApparentType(Agent, RawMaterials) { BlackboardEntry = "stashed-materials" }),
-                                                        (new Wrap(UnReserve))),
-                                                        false)),
-                                            new Domain(() => Des.HasResources || Des.ResourcesReservedFor != null, true));
+            var getResources = new Select(
+                new Domain(() => Des.HasResources || Des.ResourcesReservedFor != null, 
+                    new Always(Status.Success)),
+                new Domain(() => !Des.HasResources && (Des.ResourcesReservedFor == Agent || Des.ResourcesReservedFor == null),
+                    new Sequence(      
+                        new Select(
+                            new Sequence(
+                                new Wrap(ReserveResources),
+                                new GetResourcesOfApparentType(Agent, RawMaterials) { BlackboardEntry = "stashed-materials" }),
+                            (new Wrap(UnReserve))),
+                        new Always(Status.Fail))),
+                new Domain(() => Des.HasResources || Des.ResourcesReservedFor != null, 
+                    new Always(Status.Success)));
 
             if (!String.IsNullOrEmpty(ItemType.CraftLocation))
             {
@@ -227,9 +230,15 @@ namespace DwarfCorp
                             new Wrap(() => CreateResources()),
                             new Wrap(Creature.RestockAll)
                             )),
-                            new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false))
+                            new Sequence(
+                                unreserveAct,
+                                new Wrap(Creature.RestockAll), 
+                                new Always(Status.Fail)))
                         ),
-                        new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false));
+                        new Sequence(
+                            unreserveAct, 
+                            new Wrap(Creature.RestockAll), 
+                            new Always(Status.Fail)));
             }
             else
             {
@@ -243,7 +252,10 @@ namespace DwarfCorp
                         new Wrap(() => Creature.HitAndWait(time, true, () => Creature.Physics.Position)) { Name = "Construct object." },
                         new Wrap(() => CreateResources()))
                     )
-                ), new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false));
+                ), new Sequence(
+                    unreserveAct, 
+                    new Wrap(Creature.RestockAll), 
+                    new Always(Status.Fail)));
             }
 
             base.Initialize();

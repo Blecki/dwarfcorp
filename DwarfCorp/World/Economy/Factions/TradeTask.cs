@@ -36,7 +36,9 @@ namespace DwarfCorp
 
         public override MaybeNull<Act> CreateScript(Creature agent)
         {
-            return new GoToZoneAct(agent.AI, TradePort) | new Wrap(() => RecallEnvoyOnFail());
+            return new Select(
+                new GoToZoneAct(agent.AI, TradePort),
+                new Wrap(() => RecallEnvoyOnFail()));
         }
 
     }

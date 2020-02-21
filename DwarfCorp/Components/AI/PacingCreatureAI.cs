@@ -26,7 +26,9 @@ namespace DwarfCorp
 
         public override Act ActOnWander()
         {
-            return new WanderAct(this, 6, 0.5f + MathFunctions.Rand(-0.25f, 0.25f), 1.0f) & new LongWanderAct(this) { PathLength = 10, Radius = 50 };
+            return new Sequence(
+                new WanderAct(this, 6, 0.5f + MathFunctions.Rand(-0.25f, 0.25f), 1.0f),
+                new LongWanderAct(this) { PathLength = 10, Radius = 50 });
         }
     }
    

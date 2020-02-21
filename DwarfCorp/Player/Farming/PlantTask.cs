@@ -81,8 +81,11 @@ namespace DwarfCorp
 
         public override MaybeNull<Act> CreateScript(Creature agent)
         {
-            return (new PlantAct(agent.AI, Farm) 
-            | new Wrap(() => Cleanup(agent.AI))) & new Wrap(() => Cleanup(agent.AI));
+            return new Sequence(
+                new Select(
+                    new PlantAct(agent.AI, Farm),
+                    new Wrap(() => Cleanup(agent.AI))),
+                new Wrap(() => Cleanup(agent.AI)));
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

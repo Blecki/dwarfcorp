@@ -56,8 +56,10 @@ namespace DwarfCorp
                             unreserveAct),
                         new Sequence(
                             unreserveAct,
-                            false))),
-                new Sequence(unreserveAct, false));
+                            new Always(Status.Fail)))),
+                new Sequence(
+                    unreserveAct, 
+                    new Always(Status.Fail)));
 
             base.Initialize();
         }
