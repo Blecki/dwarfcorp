@@ -45,7 +45,14 @@ namespace DwarfCorp.Play.EmployeeInfo
                 Resources = new ResourceSet(),
                 OnIconClicked = (sender, args) =>
                 {
+                    foreach (var icon in ContentsPanel.Children.OfType<ResourceIcon>())
+                    {
+                        icon.Hilite = null;
+                        icon.Invalidate();
+                    }
                     SelectedEquipIcon.Resource = (sender as ResourceIcon).Resource;
+                    (sender as ResourceIcon).Hilite = new TileReference("equipment_sheet", 2);
+                    sender.Invalidate();
                     EquipButton.Hidden = false;
                     EquipButton.Invalidate();
                 }
@@ -70,7 +77,7 @@ namespace DwarfCorp.Play.EmployeeInfo
             var comparisonPanel = currentEquipPanel.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockFill,
-                Border = "border-one"
+                Border = "border-thin"
             });
 
             var bottomBar = comparisonPanel.AddChild(new Widget
@@ -81,8 +88,7 @@ namespace DwarfCorp.Play.EmployeeInfo
 
             RemoveButton = bottomBar.AddChild(new Widget
             {
-                Text = "REMOVE",
-                Border = "border-one",
+                Text = "remove",
                 TextVerticalAlign = VerticalAlign.Center,
                 MinimumSize = new Point(64, 32),
                 MaximumSize = new Point(64, 32),
@@ -98,8 +104,7 @@ namespace DwarfCorp.Play.EmployeeInfo
 
             EquipButton = bottomBar.AddChild(new Widget
             {
-                Text = "EQUIP",
-                Border = "border-one",
+                Text = "equip",
                 TextVerticalAlign = VerticalAlign.Center,
                 MinimumSize = new Point(64, 32),
                 MaximumSize = new Point(64, 32),
@@ -125,6 +130,7 @@ namespace DwarfCorp.Play.EmployeeInfo
                         SelectedSlot = sender.Tag as EquipmentSlotType;
                         SelectedEquipIcon.Resource = null;
                         EquipButton.Hidden = true;
+                        EquipButton.Invalidate();
                     },
                     OverrideTooltip = true
                 }) as ResourceIcon;
@@ -168,6 +174,7 @@ namespace DwarfCorp.Play.EmployeeInfo
                         SelectedSlotIcon.Resource = null;
                         RemoveButton.Hidden = true;
                     }
+                    RemoveButton.Invalidate();
 
                     foreach (var slot in ResourceIcons)
                     {
