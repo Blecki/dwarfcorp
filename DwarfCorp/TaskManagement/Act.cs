@@ -43,16 +43,6 @@ namespace DwarfCorp
             Children = new List<Act>();
         }
 
-        /*
-        public static implicit operator Act(Func<bool> enumerator)
-        {
-            return enumerator.GetAct();
-        }
-
-        public static implicit operator Act(bool condition) => new Condition(() => condition);
-
-        public static implicit operator Act(Act.Status status) => new Always(status);
-        */
         public Status Tick()
         {
             if(Enumerator == null)
