@@ -288,6 +288,11 @@ namespace DwarfCorp
             return OverworldImageOperations.GetValue(Map, v, fieldType);
         }
 
+        public float GetOverworldValueAt(int OverworldX, int OverworldY, OverworldField fieldType)
+        {
+            return OverworldImageOperations.GetValue(Map, new Vector2(OverworldX, OverworldY), fieldType);
+        }
+
         public float Height(int x, int y)
         {
             return Map[x, y].Height;

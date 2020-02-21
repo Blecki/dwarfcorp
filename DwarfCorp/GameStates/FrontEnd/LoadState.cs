@@ -135,7 +135,17 @@ namespace DwarfCorp.GameStates
                 if (LoadType == LoadTypes.GenerateOverworld)
                 {
                     if (Generator.CurrentState == OverworldGenerator.GenerationState.Finished && World == null)
+                    {
+                        // World generation is finished!
+                        LoadTicker.AddMessage("Checking spawn position...");
+                        while (InitialCell.Bounds.Width == 8 && InitialCell.Bounds.Height == 8 && !IsGoodSpawn())
+                        {
+                            LoadTicker.AddMessage("Selecting new spawn...");
+                            InitialCell = Settings.ColonyCells.EnumerateCells().Where(c => c.Bounds.Width == 8 && c.Bounds.Height == 8).SelectRandom();
+                        }
+
                         CreateWorld();
+                    }
                     else
                     {
                         if (!LoadTicker.HasMesssage(Generator.LoadingMessage))
@@ -185,6 +195,16 @@ namespace DwarfCorp.GameStates
             }
 
             base.Update(gameTime);
+        }
+
+        private bool IsGoodSpawn()
+        {
+            var oceanFound = 0;
+            for (var x = InitialCell.Bounds.X; x < InitialCell.Bounds.X + InitialCell.Bounds.Width; ++x)
+                for (var y = InitialCell.Bounds.Y; y < InitialCell.Bounds.Y + InitialCell.Bounds.Height; ++y)
+                    if (Settings.Map.GetOverworldValueAt(x, y, OverworldField.Height) < Settings.GenerationSettings.SeaLevel)
+                        oceanFound += 1;
+            return oceanFound < (InitialCell.Bounds.Width * InitialCell.Bounds.Height) / 2;
         }
 
         public override void Render(DwarfTime gameTime)

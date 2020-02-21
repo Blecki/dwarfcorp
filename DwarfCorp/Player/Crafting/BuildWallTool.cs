@@ -50,6 +50,8 @@ namespace DwarfCorp
                     {
                         if (Library.GetVoxelType(Arguments.VoxelType).HasValue(out VoxelType vType))
                         {
+                            List<Task> assignments = new List<Task>();
+
                             foreach (var r in voxels)
                             {
                                 if (r.Type == vType)
@@ -66,14 +68,26 @@ namespace DwarfCorp
                                     World.TaskManager.CancelTask(digDes.Task);
 
                                 if (r.IsEmpty)
-                                    World.TaskManager.AddTask(new BuildVoxelTask(r, vType.Name));
+                                    assignments.Add(new BuildVoxelTask(r, vType.Name) { Hidden = true });
                                 else
                                 {
-                                    var sequentialTask = new SequentialTask("Put voxel", TaskCategory.Dig, TaskPriority.Medium);
+                                    var sequentialTask = new SequentialTask("Put voxel", TaskCategory.Dig, TaskPriority.Medium) { Hidden = true };
                                     sequentialTask.AddSubTask(new KillVoxelTask(r) { Hidden = true });
                                     sequentialTask.AddSubTask(new BuildVoxelTask(r, vType.Name) { Hidden = true });
-                                    World.TaskManager.AddTask(sequentialTask);
+                                    assignments.Add(sequentialTask);
                                 }
+                            }
+
+                            if (assignments.Count > 0)
+                            {
+                                World.TaskManager.AddTasks(assignments);
+
+                                var compoundTask = new CompoundTask("Build Voxels", TaskCategory.BuildBlock, TaskPriority.Medium);
+                                compoundTask.AddSubTasks(assignments);
+                                World.TaskManager.AddTask(compoundTask);
+
+                                var minions = Faction.FilterMinionsWithCapability(World.PersistentData.SelectedMinions, TaskCategory.BuildBlock);
+                                OnConfirm(minions);
                             }
                         }
                         break;

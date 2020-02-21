@@ -25,12 +25,15 @@ namespace DwarfCorp
         {
             SubTasks.Add(Task);
             Category = Task.Category;
+            Task.FailureRecord = this.FailureRecord;
         }
 
         public void AddSubTasks(IEnumerable<Task> Tasks)
         {
             SubTasks.AddRange(Tasks);
             Category = SubTasks[0].Category;
+            foreach (var task in SubTasks)
+                task.FailureRecord = this.FailureRecord;
         }
 
         public override MaybeNull<Act> CreateScript(Creature creature)
