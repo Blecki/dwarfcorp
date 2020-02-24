@@ -70,5 +70,32 @@ namespace DwarfCorp
                             Sprite.AddLayer(layer, DwarfSprites.LayerLibrary.BasePalette);
                     }
         }
+
+        public override void Die()
+        {
+            if (Active)
+                DropAll();
+
+            base.Die();
+        }
+
+        public void DropAll()
+        {
+            var parentBody = GetRoot();
+            var myBox = GetBoundingBox();
+            var box = parentBody == null ? GetBoundingBox() : new BoundingBox(myBox.Min - myBox.Center() + parentBody.Position, myBox.Max - myBox.Center() + parentBody.Position);
+            var inventory = GetComponent<Inventory>();
+            var flammable = GetComponent<Flammable>();
+
+            foreach (var item in EquippedItems)
+            {
+                var resource = new ResourceEntity(Manager, item.Value, MathFunctions.RandVector3Box(box));
+                if (inventory.HasValue(out var inv) && inv.Attacker != null && !inv.Attacker.IsDead)
+                    inv.Attacker.Creature.Gather(resource);
+                if (flammable.HasValue(out var flames) && flames.Heat >= flames.Flashpoint)
+                       if (resource.GetRoot().GetComponent<Flammable>().HasValue(out var itemFlames))
+                            itemFlames.Heat = flames.Heat;
+            }            
+        }
     }
 }

@@ -122,6 +122,12 @@ namespace DwarfCorp
             foreach (GameComponent body in toKill)
                 body.Die();
 
+            foreach (var voxel in Voxels)
+            {
+                var v = new VoxelHandle(voxel.Chunk.Manager, voxel.Coordinate);
+                v.DecalType = 0;
+            }
+
             var voxelsToKill = new List<VoxelHandle>();
             voxelsToKill.AddRange(Voxels);
             foreach (var voxel in voxelsToKill)

@@ -24,6 +24,8 @@ namespace DwarfCorp.Play
                 if (!Object.ReferenceEquals(_Resource, value))
                 {
                     _Resource = value;
+                    if (CachedDynamicSheet != null)
+                        CachedDynamicSheet.Discard();
                     CachedDynamicSheet = null;
                     Invalidate();
                 }
@@ -33,18 +35,6 @@ namespace DwarfCorp.Play
             {
                 return _Resource;
             }
-        }
-
-        private Gui.TextureAtlas.SpriteAtlasEntry GetDynamicSheet()
-        {
-            var sheetName = ResourceGraphicsHelper.GetUniqueGraphicsIdentifier(Resource);
-            var tex = ResourceGraphicsHelper.GetResourceTexture(Root.RenderData.Device, Resource.Gui_Graphic, Resource.Gui_Palette);
-            return Root.SpriteAtlas.AddDynamicSheet(sheetName, new TileSheetDefinition
-            {
-                TileHeight = Resource.Gui_Graphic.FrameSize.Y,
-                TileWidth = Resource.Gui_Graphic.FrameSize.X,
-                Type = TileSheetType.TileSheet
-            }, tex);
         }
 
         public override void Construct()
@@ -68,9 +58,15 @@ namespace DwarfCorp.Play
             {
                 if (Resource != null && Resource.Gui_NewStyle && CachedDynamicSheet == null)
                 {
-                    CachedDynamicSheet = GetDynamicSheet();
+                    CachedDynamicSheet = ResourceGraphicsHelper.GetDynamicSheet(Root, Resource);
                     Invalidate();
                 }
+            };
+
+            OnClose = (sender) =>
+            {
+                if (CachedDynamicSheet != null)
+                    CachedDynamicSheet.Discard();
             };
 
             Root.RegisterForUpdate(this);

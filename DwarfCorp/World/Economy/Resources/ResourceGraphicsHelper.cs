@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Runtime.Serialization;
+using DwarfCorp.Gui;
 
 namespace DwarfCorp
 {
@@ -26,6 +27,18 @@ namespace DwarfCorp
         public static String GetUniqueGraphicsIdentifier(Resource Resource)
         {
             return Resource.TypeName + "&" + Resource.Gui_Graphic.GetSheetIdentifier() + "&" + Resource.Gui_Palette;
+        }
+
+        public static Gui.TextureAtlas.SpriteAtlasEntry GetDynamicSheet(Gui.Root Root, Resource Resource)
+        {
+            var sheetName = ResourceGraphicsHelper.GetUniqueGraphicsIdentifier(Resource);
+            var tex = ResourceGraphicsHelper.GetResourceTexture(Root.RenderData.Device, Resource.Gui_Graphic, Resource.Gui_Palette);
+            return Root.SpriteAtlas.AddDynamicSheet(sheetName, new TileSheetDefinition
+            {
+                TileHeight = Resource.Gui_Graphic.FrameSize.Y,
+                TileWidth = Resource.Gui_Graphic.FrameSize.X,
+                Type = TileSheetType.TileSheet
+            }, tex);
         }
     }
 }

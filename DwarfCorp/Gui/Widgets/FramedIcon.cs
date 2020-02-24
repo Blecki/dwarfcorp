@@ -17,6 +17,7 @@ namespace DwarfCorp.Gui.Widgets
         public Vector4 DisabledTextColor = new Vector4(0.15f, 0.15f, 0.15f, 1);
         public bool ChangeTextColorOnEnable = true;
         public TileReference Icon = null;
+
         private bool _enabled = true;
         public bool Enabled
         {

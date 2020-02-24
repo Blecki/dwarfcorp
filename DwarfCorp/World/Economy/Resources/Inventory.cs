@@ -37,7 +37,7 @@ namespace DwarfCorp
         }
 
         [JsonIgnore]
-        private CreatureAI Attacker = null;
+        public CreatureAI Attacker = null;
 
         public void SetLastAttacker(CreatureAI Creature)
         {

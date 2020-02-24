@@ -227,6 +227,12 @@ namespace DwarfCorp.Play.EmployeeInfo
                                 ContentsPanel.Resources.Add(res.Resource);
                         }
 
+                        if (SelectedEquipIcon.Resource != null && !ContentsPanel.Resources.Contains(SelectedEquipIcon.Resource))
+                        {
+                            SelectedEquipIcon.Resource = null;
+                            EquipButton.Hidden = true;
+                        }
+
                         ContentsPanel.Invalidate();
                     }
                     else
