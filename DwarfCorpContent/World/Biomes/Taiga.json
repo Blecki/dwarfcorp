@@ -13,7 +13,17 @@
       "SizeVariance": 0.5,
       "VerticalOffset": 1.7,
       "NoiseOffset": 164.433014,
-      "SpawnProbability": 0.04
+      "SpawnProbability": 0.08
+    },
+    {
+      "Name": "Mushroom",
+      "ClumpSize": 35.0,
+      "ClumpThreshold": 0.8,
+      "MeanSize": 1.0,
+      "SizeVariance": 1.0,
+      "VerticalOffset": 0.2,
+      "NoiseOffset": 290.818359,
+      "SpawnProbability": 0.02
     }
   ],
   "Motes": [
@@ -72,7 +82,7 @@
   "ClumpGrass": false,
   "ClumpSize": 30.0,
   "ClumpTreshold": 0.75,
-  "MapColor": [ 211, 230, 211, 255 ],
+  "MapColor": [ 124, 146, 123, 255 ],
   "Height": 0.5,
   "Temp": 0.2,
   "Rain": 0.3

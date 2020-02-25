@@ -14,7 +14,7 @@
       "SizeVariance": 1.0,
       "VerticalOffset": 0.2,
       "NoiseOffset": 265.476837,
-      "SpawnProbability": 0.02
+      "SpawnProbability": 0.04
     },
     {
       "Name": "Palm Tree",
@@ -24,7 +24,7 @@
       "SizeVariance": 1.0,
       "VerticalOffset": 1.7,
       "NoiseOffset": 108.457794,
-      "SpawnProbability": 0.06
+      "SpawnProbability": 0.12
     },
     {
       "Name": "Berry Bush",
@@ -34,7 +34,7 @@
       "SizeVariance": 0.1,
       "VerticalOffset": 0.6,
       "NoiseOffset": 280.887939,
-      "SpawnProbability": 0.04
+      "SpawnProbability": 0.08
     }
   ],
   "Motes": [
@@ -104,7 +104,7 @@
   "ClumpGrass": false,
   "ClumpSize": 30.0,
   "ClumpTreshold": 0.75,
-  "MapColor": [ 0, 30, 0, 255 ],
+  "MapColor": [ 4, 94, 0, 255 ],
   "Height": 0.5,
   "Temp": 0.8,
   "Rain": 0.75

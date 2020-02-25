@@ -105,7 +105,7 @@
   "ClumpGrass": true,
   "ClumpSize": 30.0,
   "ClumpTreshold": 0.75,
-  "MapColor": [ 160, 140, 100, 255 ],
+  "MapColor": [ 191, 177, 101, 255 ],
   "Height": 0.2,
   "Temp": 0.65,
   "Rain": 0.05

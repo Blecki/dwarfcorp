@@ -13,7 +13,7 @@
       "SizeVariance": 0.5,
       "VerticalOffset": 1.7,
       "NoiseOffset": 164.433014,
-      "SpawnProbability": 0.05
+      "SpawnProbability": 0.010
     },
     {
       "Name": "Snow Pine Tree",
@@ -23,7 +23,7 @@
       "SizeVariance": 0.5,
       "VerticalOffset": 1.7,
       "NoiseOffset": 294.433014,
-      "SpawnProbability": 0.02
+      "SpawnProbability": 0.04
     }
   ],
   "Motes": [
@@ -97,8 +97,8 @@
   "ClumpGrass": false,
   "ClumpSize": 30.0,
   "ClumpTreshold": 0.75,
-  "MapColor": [ 199, 230, 255, 255 ],
-  "Height": 0.0,
+  "MapColor": [ 252, 150, 150, 255 ],
+  "Height": 0.5,
   "Temp": 0.0,
   "Rain": 1.0
 }
