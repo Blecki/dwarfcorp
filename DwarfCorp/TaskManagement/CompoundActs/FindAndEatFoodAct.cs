@@ -62,7 +62,7 @@ namespace DwarfCorp
             if (FoodBody != null)
             {
                 FoodBody.Active = true;
-                Agent.Creature.Gather(FoodBody);
+                Agent.Creature.Gather(FoodBody, TaskPriority.Urgent);
             }
 
             base.OnCanceled();

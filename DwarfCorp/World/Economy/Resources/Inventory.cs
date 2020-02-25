@@ -191,7 +191,7 @@ namespace DwarfCorp
 
             if (Attacker != null && !Attacker.IsDead)
                 foreach (var item in piles)
-                    Attacker.Creature.Gather(item);
+                    Attacker.Creature.Gather(item, TaskPriority.Eventually);
 
             Resources.Clear();
 

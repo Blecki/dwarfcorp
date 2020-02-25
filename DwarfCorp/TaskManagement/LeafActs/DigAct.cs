@@ -133,7 +133,7 @@ namespace DwarfCorp
 
                         if (items != null)
                             foreach (GameComponent item in items)
-                                Creature.Gather(item);
+                                Creature.Gather(item, TaskPriority.Eventually);
 
                         yield return Act.Status.Success;
                     }

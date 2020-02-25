@@ -449,10 +449,10 @@ namespace DwarfCorp
                 Inventory.Pickup(item, restockType);
         }
 
-        public void Gather(GameComponent item)
+        public void Gather(GameComponent item, TaskPriority Priority)
         {
 
-            var task = new GatherItemTask(item) { Priority = TaskPriority.High };
+            var task = new GatherItemTask(item) { Priority = Priority };
             if (AI.Faction == World.PlayerFaction)
                 World.TaskManager.AddTask(task);
             else

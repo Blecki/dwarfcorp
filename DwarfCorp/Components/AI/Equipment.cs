@@ -91,7 +91,7 @@ namespace DwarfCorp
             {
                 var resource = new ResourceEntity(Manager, item.Value, MathFunctions.RandVector3Box(box));
                 if (inventory.HasValue(out var inv) && inv.Attacker != null && !inv.Attacker.IsDead)
-                    inv.Attacker.Creature.Gather(resource);
+                    inv.Attacker.Creature.Gather(resource, TaskPriority.Eventually);
                 if (flammable.HasValue(out var flames) && flames.Heat >= flames.Flashpoint)
                        if (resource.GetRoot().GetComponent<Flammable>().HasValue(out var itemFlames))
                             itemFlames.Heat = flames.Heat;
