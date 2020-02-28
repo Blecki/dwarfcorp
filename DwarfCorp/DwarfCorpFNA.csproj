@@ -140,6 +140,7 @@
     <Compile Include="Entities\Fixtures\Cart.cs" />
     <Compile Include="Entities\Fixtures\CraftTable.cs" />
     <Compile Include="Entities\Fixtures\IronDoor.cs" />
+    <Compile Include="Entities\Fixtures\Jack-O-Lantern.cs" />
     <Compile Include="Entities\Fixtures\StoneDoor.cs" />
     <Compile Include="Entities\Fixtures\IronLadder.cs" />
     <Compile Include="Entities\Fixtures\TrainingEquipment\PunchingBag.cs" />

@@ -2086,6 +2086,14 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <None Include="Entities\Animals\Snake\pumpking_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>pumpking_animation</Name>
+    </None>
+    <None Include="Entities\Animals\Snake\pumpking_tail_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>pumpking_tail_animation</Name>
+    </None>
     <None Include="Entities\Dwarf\Layers\layer-types.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>layer-types</Name>
@@ -2181,6 +2189,10 @@
     <None Include="World\CraftItems\IronPick.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>IronPick</Name>
+    </None>
+    <None Include="World\CraftItems\Jack-O-Lantern.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Jack-O-Lantern</Name>
     </None>
     <None Include="World\CraftItems\StoneHoe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2345,6 +2357,10 @@
     <None Include="World\ResourceItems\IronHoe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>IronHoe</Name>
+    </None>
+    <None Include="World\ResourceItems\Jack-O-Lantern.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Jack-O-Lantern</Name>
     </None>
     <None Include="World\ResourceItems\Musket.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -5416,6 +5432,13 @@
     </Compile>
     <Compile Include="Entities\Plants\cotton.png">
       <Name>cotton</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\jack-o-lantern.png">
+      <Name>jack-o-lantern</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

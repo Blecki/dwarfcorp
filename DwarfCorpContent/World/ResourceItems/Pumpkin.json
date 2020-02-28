@@ -16,7 +16,8 @@
     "Edible",
     "Gourd",
     "Bakeable",
-    "RawFood"
+    "RawFood",
+    "Pumpkin"
   ],
   "FoodContent": 50.0,
   "CompositeLayers": [

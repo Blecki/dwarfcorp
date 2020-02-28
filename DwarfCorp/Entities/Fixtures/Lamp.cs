@@ -131,7 +131,7 @@ namespace DwarfCorp
 
             CreateSprite();
 
-            AddChild(new LightEmitter(Manager, "light", Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 255, 16)
+            AddChild(new LightEmitter(Manager, "light", Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 255, 24)
             {
                 HasMoved = true
             }).SetFlag(Flag.ShouldSerialize, false);

@@ -10,12 +10,12 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    public class Snake : Creature
+    public class Pumpking : Creature
     {
-        [EntityFactory("Snake")]
+        [EntityFactory("Pumpking")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Snake(Position, Manager, "Snake").Physics;
+            return new Pumpking(Position, Manager, "Pumpking").Physics;
         }
 
         public class TailSegment
@@ -27,11 +27,11 @@ namespace DwarfCorp
         [JsonIgnore]
         public List<TailSegment> Tail;
 
-        public Snake()
+        public Pumpking()
         {
         }
 
-        public Snake(Vector3 position, ComponentManager manager, string name) :
+        public Pumpking(Vector3 position, ComponentManager manager, string name) :
             base
             (
                 manager,
@@ -77,12 +77,12 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager Manager)
         {
-            CreateSprite(ContentPaths.Entities.Animals.Snake.snake_animation, Manager, 0.35f);
+            CreateSprite("Entities\\Animals\\Snake\\pumpking_animation.json", Manager, 0.35f);
 
             #region Create Tail Pieces
 
             Tail = new List<TailSegment>();
-            var tailAnimations = Library.LoadCompositeAnimationSet(ContentPaths.Entities.Animals.Snake.tail_animation, "Snake");
+            var tailAnimations = Library.LoadCompositeAnimationSet("Entities\\Animals\\Snake\\pumpking_tail_animation.json", "Pumpking");
 
             for (int i = 0; i < 10; ++i)
             {
@@ -105,8 +105,7 @@ namespace DwarfCorp
                 var inventory = tailPiece.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset)) as Inventory;
                 inventory.SetFlag(Flag.ShouldSerialize, false);
 
-                inventory.AddResource(new Resource("Meat") { DisplayName = Stats.CurrentClass.Name + " Meat" });
-                inventory.AddResource(new Resource("Bone") { DisplayName = Stats.CurrentClass.Name + " Bone" });
+                inventory.AddResource(new Resource("Pumpkin") { DisplayName = "Flesh of the Pumpking" });
             }
 
             #endregion
