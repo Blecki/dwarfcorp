@@ -34,8 +34,8 @@
       {
          "$id" : "1",
          "AssetName" : "Entities\\jack-o-lantern",
-         "FrameHeight" : 48,
-         "FrameWidth" : 40
+         "FrameHeight" : 32,
+         "FrameWidth" : 32
       }
    ],
    "Tints" : [ "255, 255, 255, 255"]

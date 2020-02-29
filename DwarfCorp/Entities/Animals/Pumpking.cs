@@ -35,7 +35,7 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats("Snake", "Snake", 0)
+                new CreatureStats("Pumpking", "Pumpking", 0)
                 {
                 },
                 manager.World.Factions.Factions["Evil"],
@@ -69,8 +69,9 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
             AI.Movement.SetCan(MoveType.ClimbWalls, true);
             AI.Movement.SetCan(MoveType.Dig, true);
-            AI.Stats.FullName = "Giant Snake";
+            AI.Stats.FullName = "Pumpking";
             AI.Stats.LevelIndex = 0;
+            AI.Stats.BaseSize = 4;
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
         }
@@ -86,11 +87,11 @@ namespace DwarfCorp
 
             for (int i = 0; i < 10; ++i)
             {
-                var tailPiece = new CharacterSprite(Manager, "Sprite", Matrix.CreateTranslation(0, 0.25f, 0));
+                var tailPiece = new CharacterSprite(Manager, "Sprite", Matrix.CreateTranslation(0, 0.5f, 0));
                 tailPiece.SetAnimations(tailAnimations);
 
                 tailPiece.SetFlag(Flag.ShouldSerialize, false);
-                tailPiece.Name = "Snake Tail";
+                tailPiece.Name = "Pumpking Tail";
 
                 Tail.Add(
                     new TailSegment()

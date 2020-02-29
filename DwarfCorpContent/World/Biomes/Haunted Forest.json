@@ -14,7 +14,7 @@
       "SizeVariance": 0.1,
       "VerticalOffset": 0.2,
       "NoiseOffset": 265.476837,
-      "SpawnProbability": 0.6
+      "SpawnProbability": 0.3
     },
     {
       "Name": "Haunted Tree",
@@ -24,7 +24,7 @@
       "SizeVariance": 1.0,
       "VerticalOffset": 1.7,
       "NoiseOffset": 57.248703,
-      "SpawnProbability": 0.4
+      "SpawnProbability": 0.2
     },
     {
       "Name": "Mushroom",

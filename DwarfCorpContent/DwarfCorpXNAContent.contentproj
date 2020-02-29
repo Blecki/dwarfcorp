@@ -2138,6 +2138,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Manager</Name>
     </None>
+    <None Include="World\Classes\Pumpking.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Pumpking</Name>
+    </None>
     <None Include="World\corporate.conv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>corporate</Name>
@@ -2693,6 +2697,10 @@
     <None Include="World\Species\BrownRabbit.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>BrownRabbit</Name>
+    </None>
+    <None Include="World\Species\Pumpking.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Pumpking</Name>
     </None>
     <None Include="World\Species\Turkey.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
