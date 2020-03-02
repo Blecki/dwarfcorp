@@ -63,7 +63,9 @@ namespace DwarfCorp
             try
 #endif
             {
+#if !DCMONO
                 fbDeprofiler.DeProfiler.Load();
+#endif
 
                 using (DwarfGame game = new DwarfGame())
                 {
@@ -106,8 +108,12 @@ namespace DwarfCorp
 
         public static bool ShowErrorDialog(String Message)
         {
+#if DCMONO
+            return true;
+#else
             var report = GameSettings.Current.AllowReporting ? "This was automatically reported to the devs to help us debug!" : "You have opted out of automatic crash reporting.";
             return System.Windows.Forms.MessageBox.Show(Message + "\n" + report, "ERROR!", System.Windows.Forms.MessageBoxButtons.RetryCancel) == System.Windows.Forms.DialogResult.Cancel;
+#endif
         }
 
         public static void WriteExceptionLog(Exception exception)

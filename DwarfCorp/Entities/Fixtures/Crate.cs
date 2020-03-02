@@ -39,7 +39,7 @@ namespace DwarfCorp
             if (SharedPrimitive == null)
             {
                 var spriteSheet = new NamedImageFrame("Terrain\\terrain_tiles");
-                SharedPrimitive = new OldBoxPrimitive(DwarfGame.GuiSkin.Device, 0.9f, 0.9f, 0.9f,
+                SharedPrimitive = new OldBoxPrimitive(DwarfGame.GuiSkin.Device, 0.8f, 0.8f, 0.8f,
                         new OldBoxPrimitive.BoxTextureCoords(spriteSheet.SafeGetImage().Width, spriteSheet.SafeGetImage().Height,
                             new OldBoxPrimitive.FaceData(new Rectangle(224, 0, 32, 32), true),
                             new OldBoxPrimitive.FaceData(new Rectangle(224, 0, 32, 32), true),
