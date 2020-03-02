@@ -71,6 +71,11 @@
       "Name": "Slime - Blue",
       "SpawnProbability": 0.0005,
       "MaxPopulation": 100
+    },
+    {
+      "Name": "Pumpking",
+      "SpawnProbability": 0.0005,
+      "MaxPopulation": 2
     }
   ],
   "SoilLayer": {
