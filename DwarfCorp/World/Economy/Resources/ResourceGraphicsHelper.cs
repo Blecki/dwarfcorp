@@ -24,19 +24,19 @@ namespace DwarfCorp
             return r;
         }
 
-        public static String GetUniqueGraphicsIdentifier(Resource Resource)
-        {
-            return Resource.TypeName + "&" + Resource.Gui_Graphic.GetSheetIdentifier();
-        }
-
         public static Gui.TextureAtlas.SpriteAtlasEntry GetDynamicSheet(Gui.Root Root, Resource Resource)
         {
-            var sheetName = ResourceGraphicsHelper.GetUniqueGraphicsIdentifier(Resource);
-            var tex = ResourceGraphicsHelper.GetResourceTexture(Root.RenderData.Device, Resource.Gui_Graphic);
+            return GetDynamicSheet(Root, Resource.Gui_Graphic);
+        }
+
+        public static Gui.TextureAtlas.SpriteAtlasEntry GetDynamicSheet(Gui.Root Root, ResourceType.GuiGraphic Graphic)
+        {
+            var sheetName = Graphic.GetSheetIdentifier();
+            var tex = ResourceGraphicsHelper.GetResourceTexture(Root.RenderData.Device, Graphic);
             return Root.SpriteAtlas.AddDynamicSheet(sheetName, new TileSheetDefinition
             {
-                TileHeight = Resource.Gui_Graphic.FrameSize.Y,
-                TileWidth = Resource.Gui_Graphic.FrameSize.X,
+                TileHeight = Graphic.FrameSize.Y,
+                TileWidth = Graphic.FrameSize.X,
                 Type = TileSheetType.TileSheet
             }, tex);
         }

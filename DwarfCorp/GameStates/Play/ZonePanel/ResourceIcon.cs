@@ -67,6 +67,7 @@ namespace DwarfCorp.Play
             {
                 if (CachedDynamicSheet != null)
                     CachedDynamicSheet.Discard();
+                CachedDynamicSheet = null;
             };
 
             Root.RegisterForUpdate(this);

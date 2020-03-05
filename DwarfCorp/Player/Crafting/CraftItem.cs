@@ -10,7 +10,8 @@ namespace DwarfCorp
     public interface CraftableRecord // Todo: This is horrible. To eleminate - need to get rid of craft items. Everything crafted is a resource.
     {
         String DisplayName { get; }
-        Gui.TileReference Icon { get; } 
+        Gui.TileReference Icon { get; }
+        ResourceType.GuiGraphic NewStyleIcon { get; }
         String GetCategory { get; }
     }
 
@@ -29,6 +30,7 @@ namespace DwarfCorp
 
         public List<ResourceTagAmount> RequiredResources = new List<ResourceTagAmount>();
         public Gui.TileReference Icon { get; set; }
+        public ResourceType.GuiGraphic NewStyleIcon { get; set; }
         public float BaseCraftTime = 0.0f;
         public string Description = "";
         public int CraftedResultsCount = 1;

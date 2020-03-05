@@ -19,6 +19,7 @@ namespace DwarfCorp.Gui.Widgets
         public TileReference Icon = null;
 
         public ResourceType.GuiGraphic NewStyleIcon = null;
+        private Gui.TextureAtlas.SpriteAtlasEntry CachedDynamicSheet = null;
 
         private bool _enabled = true;
         public bool Enabled
@@ -100,7 +101,6 @@ namespace DwarfCorp.Gui.Widgets
                 OnClick = (sender, args) => { if (Enabled) lambdaOnClick(sender, args); };
             }
 
-
             OnMouseEnter += (widget, action) =>
             {
                 MouseIsOver = true;
@@ -109,6 +109,16 @@ namespace DwarfCorp.Gui.Widgets
             OnMouseLeave += (widget, action) =>
             {
                 MouseIsOver = false;
+            };
+
+            if (NewStyleIcon != null && CachedDynamicSheet == null)
+                CachedDynamicSheet = ResourceGraphicsHelper.GetDynamicSheet(Root, NewStyleIcon);
+
+            OnClose = (sender) =>
+            {
+                if (CachedDynamicSheet != null)
+                    CachedDynamicSheet.Discard();
+                CachedDynamicSheet = null;
             };
         }
 
@@ -140,7 +150,18 @@ namespace DwarfCorp.Gui.Widgets
                 interior = Rect.Interior(4, 4, 4, 4);
             }
 
-            if (Icon != null)
+            if (NewStyleIcon != null)
+            {
+
+                if (CachedDynamicSheet != null)
+                    mesh.QuadPart()
+                        .Scale(CachedDynamicSheet.TileSheet.TileWidth, CachedDynamicSheet.TileSheet.TileHeight)
+                        .Translate(Rect.X + (Rect.Width / 2) - (CachedDynamicSheet.TileSheet.TileWidth / 2),
+                            Rect.Y + (Rect.Height / 2) - (CachedDynamicSheet.TileSheet.TileHeight / 2))
+                        .Colorize(BackgroundColor)
+                        .Texture(CachedDynamicSheet.TileSheet.TileMatrix(0));
+            }
+            else if (Icon != null)
             {
                 var iconSheet = Root.GetTileSheet(Icon.Sheet);
 

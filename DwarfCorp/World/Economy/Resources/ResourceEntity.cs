@@ -65,7 +65,7 @@ namespace DwarfCorp
 
             if (Resource.Gui_Graphic != null)
             {
-                var sheetName = ResourceGraphicsHelper.GetUniqueGraphicsIdentifier(Resource);
+                var sheetName = Resource.Gui_Graphic.GetSheetIdentifier();
                 var tiledInstanceGroup = Manager.World.Renderer.InstanceRenderer.GetCombinedTiledInstance();
 
                 Texture2D fixedTex = null;

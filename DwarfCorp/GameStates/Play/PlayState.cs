@@ -1744,6 +1744,7 @@ namespace DwarfCorp.GameStates
                 (data) => new FlatToolTray.Icon
                 {
                     Icon = data.Icon,
+                    NewStyleIcon = data.NewStyleIcon != null ? data.NewStyleIcon : (Library.GetResourceType((data as CraftItem).ResourceCreated).HasValue(out var res) ? res.Gui_Graphic : null),
                     Tooltip = Library.GetString("craft", data.DisplayName),
                     KeepChildVisible = true, // So the player can interact with the popup.
                     ExpandChildWhenDisabled = true,
@@ -1813,6 +1814,7 @@ namespace DwarfCorp.GameStates
                 (data) => new FlatToolTray.Icon
                 {
                     Icon = data.Icon,
+                    NewStyleIcon = data.NewStyleIcon,
                     Tooltip = Library.GetString("craft", data.DisplayName),
                     ExpandChildWhenDisabled = true,
                     Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
@@ -2047,6 +2049,7 @@ namespace DwarfCorp.GameStates
                         {
                             // Todo: Should support apparent type grouping.
                             Icon = (group.Prototype.HasValue(out var res) && res.GuiLayers != null) ? res.GuiLayers[0] : null, // Menu icons need to support new dynamic resource gui icons.
+                            NewStyleIcon = (group.Prototype.HasValue(out var _res) ? _res.Gui_Graphic : null),
                             Tooltip = "Plant " + group.ApparentType,
                             Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
                             Text = group.ApparentType,

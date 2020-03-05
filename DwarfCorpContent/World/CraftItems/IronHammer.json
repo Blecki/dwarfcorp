@@ -26,5 +26,13 @@
   "SpawnOffset": "0, 0.45, 0",
   "AddToOwnedPool": true,
   "CraftActBehavior": "Normal",
-  "Tutorial": "Dwarves need need hammers to craft items."
+  "Tutorial": "Dwarves need need hammers to craft items.",
+
+  "NewStyleIcon": {
+    "AssetPath": "Entities/Dwarf/ToolIcons/equipment",
+    "Palette": "Iron Equipment",
+    "FrameSize": "32, 32",
+    "Frame": "2, 0"
+  }
+
 }
