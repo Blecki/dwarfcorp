@@ -13,11 +13,11 @@ namespace DwarfCorp
 {
     public class ResourceGraphicsHelper
     {
-        public static Texture2D GetResourceTexture(GraphicsDevice Device, ResourceType.GuiGraphic Graphic, String Palette)
+        public static Texture2D GetResourceTexture(GraphicsDevice Device, ResourceType.GuiGraphic Graphic)
         {
             Texture2D r = null;
             var rawAsset = AssetManager.GetContentTexture(Graphic.AssetPath);
-            if (Palette != "None" && DwarfSprites.LayerLibrary.FindPalette(Palette).HasValue(out var palette))
+            if (Graphic.Palette != "None" && DwarfSprites.LayerLibrary.FindPalette(Graphic.Palette).HasValue(out var palette))
                 r = TextureTool.CropAndColorSprite(Device, rawAsset, Graphic.FrameSize, Graphic.Frame, DwarfSprites.LayerLibrary.BasePalette.CachedPalette, palette.CachedPalette);
             else
                 r = TextureTool.CropSprite(Device, rawAsset, Graphic.FrameSize, Graphic.Frame);
@@ -26,13 +26,13 @@ namespace DwarfCorp
 
         public static String GetUniqueGraphicsIdentifier(Resource Resource)
         {
-            return Resource.TypeName + "&" + Resource.Gui_Graphic.GetSheetIdentifier() + "&" + Resource.Gui_Palette;
+            return Resource.TypeName + "&" + Resource.Gui_Graphic.GetSheetIdentifier();
         }
 
         public static Gui.TextureAtlas.SpriteAtlasEntry GetDynamicSheet(Gui.Root Root, Resource Resource)
         {
             var sheetName = ResourceGraphicsHelper.GetUniqueGraphicsIdentifier(Resource);
-            var tex = ResourceGraphicsHelper.GetResourceTexture(Root.RenderData.Device, Resource.Gui_Graphic, Resource.Gui_Palette);
+            var tex = ResourceGraphicsHelper.GetResourceTexture(Root.RenderData.Device, Resource.Gui_Graphic);
             return Root.SpriteAtlas.AddDynamicSheet(sheetName, new TileSheetDefinition
             {
                 TileHeight = Resource.Gui_Graphic.FrameSize.Y,

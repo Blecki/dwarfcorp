@@ -54,12 +54,10 @@
   "Equipment_LayerName": "axe",
   "Equipment_Slot": "Tool",
 
-  "Gui_NewStyle": true,
   "Gui_Graphic": {
     "AssetPath": "Entities/Dwarf/ToolIcons/equipment",
+    "Palette": "Wood Equipment",
     "FrameSize": "32, 32",
     "Frame": "1, 1"
-  },
-  "Gui_Palette": "Wood Equipment"
-
+  }
 }

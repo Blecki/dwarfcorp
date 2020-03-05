@@ -53,12 +53,10 @@
   "Equipment_Slot": "Clothing",
   "Equipment_Palette": "Armor and Tabard",
 
-  "Gui_NewStyle": true,
   "Gui_Graphic": {
     "AssetPath": "Entities/Dwarf/ToolIcons/equipment",
+    "Palette": "Armor and Tabard",
     "FrameSize": "32, 32",
     "Frame": "1, 5"
-  },
-  "Gui_Palette": "Armor and Tabard"
-
+  }
 }

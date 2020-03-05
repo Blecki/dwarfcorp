@@ -54,12 +54,10 @@
   "Equipment_LayerName": "hoe",
   "Equipment_Slot": "Tool",
 
-  "Gui_NewStyle": true,
   "Gui_Graphic": {
     "AssetPath": "Entities/Dwarf/ToolIcons/equipment",
+    "Palette": "Copper Equipment",
     "FrameSize": "32, 32",
     "Frame": "1, 0"
-  },
-  "Gui_Palette": "Copper Equipment"
-
+  }
 }

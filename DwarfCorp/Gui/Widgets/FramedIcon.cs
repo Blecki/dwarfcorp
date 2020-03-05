@@ -18,6 +18,8 @@ namespace DwarfCorp.Gui.Widgets
         public bool ChangeTextColorOnEnable = true;
         public TileReference Icon = null;
 
+        public ResourceType.GuiGraphic NewStyleIcon = null;
+
         private bool _enabled = true;
         public bool Enabled
         {

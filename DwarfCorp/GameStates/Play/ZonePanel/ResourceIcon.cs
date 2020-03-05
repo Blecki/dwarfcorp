@@ -56,7 +56,7 @@ namespace DwarfCorp.Play
 
             OnUpdate = (sender, time) =>
             {
-                if (Resource != null && Resource.Gui_NewStyle && CachedDynamicSheet == null)
+                if (Resource != null && Resource.Gui_Graphic != null && CachedDynamicSheet == null)
                 {
                     CachedDynamicSheet = ResourceGraphicsHelper.GetDynamicSheet(Root, Resource);
                     Invalidate();
@@ -76,6 +76,8 @@ namespace DwarfCorp.Play
 
         protected override Mesh Redraw()
         {
+            var s = Text; // Remove any set text so that it is not drawn behind the icon.
+            Text = "";
             var r = base.Redraw();
 
             if (Hilite != null)
@@ -86,7 +88,7 @@ namespace DwarfCorp.Play
 
             if (_Resource != null)
             {
-                if (_Resource.Gui_NewStyle)
+                if (_Resource.Gui_Graphic != null)
                 {
                     if (CachedDynamicSheet != null)
                         r.QuadPart()
@@ -108,6 +110,10 @@ namespace DwarfCorp.Play
                 if (OverrideTooltip)
                     Tooltip = String.Format("{0}\n{1}\nWear: {2:##.##}%", _Resource.DisplayName, _Resource.Description, (_Resource.Tool_Wear / _Resource.Tool_Durability) * 100.0f);
             }
+
+            Text = s; // If we had some text, restore it and draw it above the icon.
+            if (!String.IsNullOrEmpty(Text))
+                GetTextMeshPart(r);
 
             return r;
         }

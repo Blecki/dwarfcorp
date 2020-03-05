@@ -54,12 +54,10 @@
   "Equipment_LayerName": "hammer",
   "Equipment_Slot": "Tool",
 
-  "Gui_NewStyle": true,
   "Gui_Graphic": {
     "AssetPath": "Entities/Dwarf/ToolIcons/equipment",
+    "Palette": "Stone Equipment",
     "FrameSize": "32, 32",
     "Frame": "2, 0"
-  },
-  "Gui_Palette": "Stone Equipment"
-
+  }
 }

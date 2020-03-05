@@ -53,11 +53,10 @@
   "Equipment_Slot": "Clothing",
   "Equipment_Palette": "Orange Equipment",
 
-  "Gui_NewStyle": true,
   "Gui_Graphic": {
     "AssetPath": "Entities/Dwarf/ToolIcons/equipment",
+    "Palette": "Orange Equipment",
     "FrameSize": "32, 32",
     "Frame": "0, 4"
-  },
-  "Gui_Palette": "Orange Equipment"
+  }
 }

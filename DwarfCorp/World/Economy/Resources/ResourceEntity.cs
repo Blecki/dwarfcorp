@@ -63,14 +63,14 @@ namespace DwarfCorp
         {
             base.CreateCosmeticChildren(manager);
 
-            if (Resource.Gui_NewStyle)
+            if (Resource.Gui_Graphic != null)
             {
                 var sheetName = ResourceGraphicsHelper.GetUniqueGraphicsIdentifier(Resource);
                 var tiledInstanceGroup = Manager.World.Renderer.InstanceRenderer.GetCombinedTiledInstance();
 
                 Texture2D fixedTex = null;
                 if (!tiledInstanceGroup.DoesInstanceSheetExist(sheetName))
-                    fixedTex = ResourceGraphicsHelper.GetResourceTexture(manager.World.Renderer.GraphicsDevice, Resource.Gui_Graphic, Resource.Gui_Palette);
+                    fixedTex = ResourceGraphicsHelper.GetResourceTexture(manager.World.Renderer.GraphicsDevice, Resource.Gui_Graphic);
 
                 var sheet = new SpriteSheet(fixedTex) // The tiled instance renderer will automatically grab the texture from this.
                 {

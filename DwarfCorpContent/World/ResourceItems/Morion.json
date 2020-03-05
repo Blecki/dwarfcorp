@@ -53,12 +53,10 @@
   "Equipment_Slot": "Hat",
   "Equipment_Palette": "Iron Equipment",
 
-  "Gui_NewStyle": true,
   "Gui_Graphic": {
     "AssetPath": "Entities/Dwarf/ToolIcons/equipment",
+    "Palette": "Iron Equipment",
     "FrameSize": "32, 32",
     "Frame": "0, 3"
-  },
-  "Gui_Palette": "Iron Equipment"
-
+  }
 }

@@ -24,13 +24,14 @@ namespace DwarfCorp
 
         public class GuiGraphic
         {
-            public string AssetPath;
+            public string AssetPath = null;
+            public string Palette = null;
             public Point FrameSize;
             public Point Frame;
 
             public String GetSheetIdentifier()
             {
-                return AssetPath + String.Format("/{0}-{1}/{2}-{3}", FrameSize.X, FrameSize.Y, Frame.X, Frame.Y);
+                return AssetPath + String.Format("/{0}-{1}/{2}-{3}/{4}", FrameSize.X, FrameSize.Y, Frame.X, Frame.Y, Palette);
             }
         }
 
@@ -53,9 +54,7 @@ namespace DwarfCorp
         public String GetCategory => Category;
 
         #region Gui
-        public bool Gui_NewStyle = false;
         public GuiGraphic Gui_Graphic = null;
-        public String Gui_Palette = null;
         #endregion
 
         #region Tool
