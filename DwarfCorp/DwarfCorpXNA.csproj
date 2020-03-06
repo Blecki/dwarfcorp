@@ -196,6 +196,7 @@
     <Compile Include="GameStates\DebugStates\GuiDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\GuiDebugState.cs" />
     <Compile Include="GameStates\FrontEnd\CheckMegaWorldState.cs" />
+    <Compile Include="GameStates\Play\CategoryIcon.cs" />
     <Compile Include="GameStates\Play\TaskListPanel.cs" />
     <Compile Include="GameStates\Play\ZonePanel\DraggedResourceIcon.cs" />
     <Compile Include="Graphics\Cameras\CameraPositionSnapshot.cs" />
@@ -205,6 +206,7 @@
     <Compile Include="Gui\Geo\PartBasics.cs" />
     <Compile Include="Gui\RenderData.cs" />
     <Compile Include="Gui\SpriteAtlasEntry.cs" />
+    <Compile Include="Library\CategoryIconLibrary.cs" />
     <Compile Include="Library\EquipmentLibrary.cs" />
     <Compile Include="Components\AI\EquipmentSlotType.cs" />
     <Compile Include="Components\AI\FairyAI.cs" />

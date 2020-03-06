@@ -3,8 +3,7 @@
     "Category": "Food",
     "Label": "Cook",
     "Tooltip": "Prepare meals, brew ale, and bake bread.",
-    "Icon":
-    {
+    "Icon": {
       "Sheet": "tool-icons",
       "Tile": 27
     }

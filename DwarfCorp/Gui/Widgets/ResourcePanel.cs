@@ -70,7 +70,7 @@ namespace DwarfCorp.Gui.Widgets
 
             foreach (var res in Stockpile)
             {
-                var entry = GetOrAddCategory(dict, res.Sample.Category);
+                var entry = GetOrAddCategory(dict, (String.IsNullOrEmpty(res.Sample.Category) ? res.Sample.TypeName : res.Sample.Category));
                 entry.InStockpile += res.Count;
                 entry.StockpileMembers.Add(res);
                 if (entry.Sample == null)
@@ -79,7 +79,7 @@ namespace DwarfCorp.Gui.Widgets
 
             foreach (var res in Minion)
             {
-                var entry = GetOrAddCategory(dict, res.Sample.Category);
+                var entry = GetOrAddCategory(dict, (String.IsNullOrEmpty(res.Sample.Category) ? res.Sample.TypeName : res.Sample.Category));
                 entry.InBackpacks += res.Count;
                 if (entry.Sample == null)
                     entry.Sample = res;

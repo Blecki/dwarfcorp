@@ -206,13 +206,6 @@
     "TileHeight": 32
   },
   {
-    "Name": "jack-o-lantern",
-    "Texture": "Entities/jack-o-lantern",
-    "TileWidth": 32,
-    "TileHeight": 32
-  },
-
-  {
     "Name": "tray-border",
     "Texture": "newgui/tray-border",
     "TileWidth": 32,

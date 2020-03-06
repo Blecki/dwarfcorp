@@ -159,6 +159,7 @@
     <Compile Include="GameStates\DebugStates\GuiTextDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\GuiTextureDebugPanel.cs" />
     <Compile Include="GameStates\FrontEnd\CheckMegaWorldState.cs" />
+    <Compile Include="GameStates\Play\CategoryIcon.cs" />
     <Compile Include="GameStates\Play\ContentsPanel.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\ApplicantInfo.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\EconomyState.cs" />

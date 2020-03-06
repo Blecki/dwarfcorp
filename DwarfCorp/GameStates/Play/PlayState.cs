@@ -16,14 +16,6 @@ using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace DwarfCorp.GameStates
 {
-    public class CategoryIcon
-    {
-        public String Category;
-        public String Label;
-        public Gui.TileReference Icon;
-        public String Tooltip;
-    }
-
     public class PlayState : GameState
     {
         private bool IsShuttingDown { get; set; }
@@ -87,7 +79,6 @@ namespace DwarfCorp.GameStates
         public String CurrentToolMode = "SelectUnits";
         private Dictionary<uint, WorldPopup> LastWorldPopup = new Dictionary<uint, WorldPopup>();
         private List<Widget> TogglePanels = new List<Widget>();
-        private List<CategoryIcon> CategoryIcons;
 
         public void ChangeTool(String Mode, Object Arguments = null)
         {
@@ -227,8 +218,6 @@ namespace DwarfCorp.GameStates
             if (!IsInitialized)
             {
                 EnterTime = DateTime.Now;
-
-                CategoryIcons = FileUtils.LoadJsonListFromMultipleSources<CategoryIcon>("category-icons.json", null, (i) => i.Category);
 
                 // Setup tool list.
                 Tools = new Dictionary<String, PlayerTool>();
@@ -2206,6 +2195,15 @@ namespace DwarfCorp.GameStates
             public FlatToolTray.Icon MenuIcon;
         }
 
+        private static ResourceType.GuiGraphic GetDynamicIcon(CraftableRecord Craftable)
+        {
+            if (Craftable is CraftItem craft)
+                return craft.NewStyleIcon;
+            if (Craftable is ResourceType res)
+                return res.Gui_Graphic;
+            return null;
+        }
+
         private SubCategoryMenuCreationResult CreateCategorySubMenu(
             IEnumerable<CraftableRecord> Crafts, 
             Func<CraftableRecord, bool> Filter,
@@ -2236,18 +2234,21 @@ namespace DwarfCorp.GameStates
                 }
             };
 
-            var categoryInfo = CategoryIcons.FirstOrDefault(i => i.Category == Category);
+            var categoryInfo = Library.GetCategoryIcon(Category).HasValue(out var catIcon) ? catIcon : null;
             if (categoryInfo == null)
-                categoryInfo = new CategoryIcon
+                categoryInfo = new CategoryIcon // Category icons need to support the new style icons as well.
                 {
                     Label = Category,
                     Icon = Crafts.Where(item => item.GetCategory == Category).First().Icon,
+                    DynamicIcon = Crafts.Where(item => item.GetCategory == Category).Select(item => item.NewStyleIcon != null ? item.NewStyleIcon : GetDynamicIcon(item)).Where(icon => icon != null).FirstOrDefault(),
                     Tooltip = "Craft items in the " + Category + " category."
                 };
+
 
             var menuIcon = new FlatToolTray.Icon
             {
                 Icon = categoryInfo.Icon,
+                NewStyleIcon = categoryInfo.DynamicIcon,
                 Tooltip = categoryInfo.Tooltip,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 ReplacementMenu = menu,

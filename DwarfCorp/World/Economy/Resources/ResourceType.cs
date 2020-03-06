@@ -37,7 +37,7 @@ namespace DwarfCorp
 
         public string TypeName;
         public string DisplayName { get; set; }
-        public Gui.TileReference Icon { get => GuiLayers[0]; }
+        public Gui.TileReference Icon { get => GuiLayers != null ? GuiLayers[0] : null; }
         GuiGraphic CraftableRecord.NewStyleIcon { get => Gui_Graphic; }
 
         public DwarfBux MoneyValue;
