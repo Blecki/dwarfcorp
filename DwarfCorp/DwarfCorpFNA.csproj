@@ -160,6 +160,7 @@
     <Compile Include="GameStates\DebugStates\GuiTextureDebugPanel.cs" />
     <Compile Include="GameStates\FrontEnd\CheckMegaWorldState.cs" />
     <Compile Include="GameStates\Play\CategoryIcon.cs" />
+    <Compile Include="GameStates\Play\CategoryMenuBuilder.cs" />
     <Compile Include="GameStates\Play\ContentsPanel.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\ApplicantInfo.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\EconomyState.cs" />
@@ -173,6 +174,10 @@
     <Compile Include="GameStates\Play\EmployeeInfoPanel\StatsPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\TaskListPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\TaskPanel.cs" />
+    <Compile Include="GameStates\Play\PlayState-GUI.cs" />
+    <Compile Include="GameStates\Play\PlayState-Input.cs" />
+    <Compile Include="GameStates\Play\PlayState-Render.cs" />
+    <Compile Include="GameStates\Play\PlayState-Tools.cs" />
     <Compile Include="GameStates\Play\ZonePanel\DraggedResourceIcon.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ResourceFilterPanel.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ResourceIcon.cs" />
@@ -197,6 +202,7 @@
     <Compile Include="Gui\Widgets\DefaultTaskPriority.cs" />
     <Compile Include="Gui\Widgets\StatsTracker.cs" />
     <Compile Include="Gui\Widgets\MarketPanel.cs" />
+    <Compile Include="Library\CategoryIconLibrary.cs" />
     <Compile Include="Library\ClassLibrary.cs" />
     <Compile Include="Library\CraftLibrary.cs" />
     <Compile Include="Library\DesignationLibrary.cs" />

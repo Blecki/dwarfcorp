@@ -333,6 +333,8 @@
     <Compile Include="GameStates\ModManagement\Steam\UGCUnsubscribe.cs" />
     <Compile Include="GameStates\ModManagement\Steam\UGCUpload.cs" />
     <Compile Include="GameStates\PaginatedChooserState.cs" />
+    <Compile Include="GameStates\Play\CategoryIcon.cs" />
+    <Compile Include="GameStates\Play\CategoryMenuBuilder.cs" />
     <Compile Include="GameStates\Play\ContentsPanel.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\ApplicantInfo.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\EconomyState.cs" />
@@ -348,6 +350,10 @@
     <Compile Include="GameStates\Play\EmployeeInfoPanel\TaskPanel.cs" />
     <Compile Include="GameStates\Play\FactionViewState.cs" />
     <Compile Include="GameStates\Play\GodMenu.cs" />
+    <Compile Include="GameStates\Play\PlayState-GUI.cs" />
+    <Compile Include="GameStates\Play\PlayState-Input.cs" />
+    <Compile Include="GameStates\Play\PlayState-Render.cs" />
+    <Compile Include="GameStates\Play\PlayState-Tools.cs" />
     <Compile Include="GameStates\Play\PlayState.cs" />
     <Compile Include="GameStates\Play\TaskListPanel.cs" />
     <Compile Include="GameStates\Play\WorldPopup.cs" />
@@ -538,6 +544,7 @@
     <Compile Include="Gui\Widgets\VerticalScrollBar.cs" />
     <Compile Include="Gui\Widgets\WidgetListView.cs" />
     <Compile Include="Library\BiomeLibrary.cs" />
+    <Compile Include="Library\CategoryIconLibrary.cs" />
     <Compile Include="Library\ClassLibrary.cs" />
     <Compile Include="Library\CraftLibrary.cs" />
     <Compile Include="Library\DesignationLibrary.cs" />
