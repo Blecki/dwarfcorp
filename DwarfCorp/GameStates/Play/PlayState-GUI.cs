@@ -1,16 +1,9 @@
-using System.IO;
-using System.Net.Mime;
-using DwarfCorp.Gui.Widgets;
 using DwarfCorp.Gui;
-using DwarfCorp.Gui.Input;
+using DwarfCorp.Gui.Widgets;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Content;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Point = Microsoft.Xna.Framework.Point;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
@@ -52,6 +45,147 @@ namespace DwarfCorp.GameStates
         private Widget MarksIcon;
         private Dictionary<uint, WorldPopup> LastWorldPopup = new Dictionary<uint, WorldPopup>();
         private List<Widget> TogglePanels = new List<Widget>();
+
+        public Gui.MousePointer MousePointer = new Gui.MousePointer("mouse", 1, 0);
+
+        public void ShowTooltip(String Text)
+        {
+            Gui.ShowTooltip(Gui.MousePosition, Text);
+        }
+
+        public void ShowInfo(UInt32 EntityID, String Text)
+        {
+            InfoTray.AddMessage(EntityID, Text);
+        }
+
+        public void ShowToolPopup(String Text)
+        {
+            if (String.IsNullOrEmpty(Text))
+            {
+                if (Gui.TooltipItem != null)
+                {
+                    Gui.DestroyWidget(Gui.TooltipItem);
+                }
+                Gui.TooltipItem = null;
+            }
+            else
+            {
+                Gui.RootItem.AddChild(
+                  new Gui.Widgets.ToolPopup
+                  {
+                      Text = Text,
+                      Rect = new Rectangle(Gui.MousePosition.X - 16, Gui.MousePosition.Y - 16, 128, 64)
+                  });
+            }
+        }
+
+        public void SetMouse(MousePointer Mouse)
+        {
+            Gui.MousePointer = Mouse;
+        }
+
+        public void SetMouseOverlay(String Mouse, int Frame)
+        {
+            Gui.MouseOverlaySheet = new TileReference(Mouse, Frame);
+        }
+
+        public bool IsMouseOverGui
+        {
+            get
+            {
+                return Gui.HoverItem != null || Gui.Dragging;
+                // Don't detect tooltips and tool popups.
+            }
+        }
+
+        public WorldPopup MakeWorldPopup(string text, GameComponent body, float screenOffset = -10, float time = 30.0f)
+        {
+            return MakeWorldPopup(new Events.TimedIndicatorWidget() { Text = text, DeathTimer = new Timer(time, true, Timer.TimerMode.Real) }, body, new Vector2(0, screenOffset));
+        }
+
+        public WorldPopup MakeWorldPopup(Widget widget, GameComponent body, Vector2 ScreenOffset)
+        {
+            if (LastWorldPopup.ContainsKey(body.GlobalID))
+                Gui.DestroyWidget(LastWorldPopup[body.GlobalID].Widget);
+
+            Gui.RootItem.AddChild(widget);
+
+            // Todo: Uh - what cleans these up if the body is destroyed?
+            LastWorldPopup[body.GlobalID] = new WorldPopup()
+            {
+                Widget = widget,
+                BodyToTrack = body,
+                ScreenOffset = ScreenOffset
+            };
+
+            Gui.RootItem.SendToBack(widget);
+
+            return LastWorldPopup[body.GlobalID];
+        }
+
+        private void UpdateGui(DwarfTime gameTime)
+        {
+            #region World Popups
+
+            if (LastWorldPopup != null)
+            {
+                var removals = new List<uint>();
+                foreach (var popup in LastWorldPopup)
+                {
+                    popup.Value.Update(gameTime, World.Renderer.Camera, Game.GraphicsDevice.Viewport);
+                    if (popup.Value.Widget == null || !Gui.RootItem.Children.Contains(popup.Value.Widget) || popup.Value.BodyToTrack == null || popup.Value.BodyToTrack.IsDead)
+                        removals.Add(popup.Key);
+                }
+
+                foreach (var removal in removals)
+                {
+                    if (LastWorldPopup[removal].Widget != null && Gui.RootItem.Children.Contains(LastWorldPopup[removal].Widget))
+                        Gui.DestroyWidget(LastWorldPopup[removal].Widget);
+                    LastWorldPopup.Remove(removal);
+                }
+            }
+
+            #endregion
+
+            #region Update time label
+            TimeLabel.Text = String.Format("{0} {1}",
+                World.Time.CurrentDate.ToShortDateString(),
+                World.Time.CurrentDate.ToShortTimeString());
+            TimeLabel.Invalidate();
+            #endregion
+
+            #region Update money, stock, and supervisor labels
+            var pulse = 0.25f * (float)Math.Sin(gameTime.TotalRealTime.TotalSeconds * 4) + 0.25f;
+            MoneyLabel.Text = World.PlayerFaction.Economy.Funds.ToString();
+            MoneyLabel.TextColor = World.PlayerFaction.Economy.Funds > 1.0m ? Color.White.ToVector4() : new Vector4(1.0f, pulse, pulse, 1.0f);
+            MoneyLabel.Invalidate();
+            int availableSpace = World.ComputeRemainingStockpileSpace();
+            int totalSpace = World.ComputeTotalStockpileSpace();
+            StocksLabel.Text = String.Format("    Stocks: {0}/{1}", totalSpace - availableSpace, totalSpace);
+            StocksLabel.TextColor = availableSpace > 0 ? Color.White.ToVector4() : new Vector4(1.0f, pulse, pulse, 1.0f);
+            StocksLabel.Invalidate();
+            LevelLabel.Text = String.Format("{0}/{1}", World.Renderer.PersistentSettings.MaxViewingLevel, World.WorldSizeInVoxels.Y);
+            LevelLabel.Invalidate();
+            SupervisionLabel.Text = String.Format("{0}/{1}", World.CalculateSupervisedEmployees(), World.CalculateSupervisionCap());
+            SupervisionLabel.Invalidate();
+            #endregion
+
+            BottomBar.Layout();
+
+            if (GameSpeedControls.CurrentSpeed != (int)DwarfTime.LastTime.Speed)
+                World.Tutorial("time");
+
+            GameSpeedControls.CurrentSpeed = (int)DwarfTime.LastTime.Speed;
+
+            if (PausedWidget.Hidden == World.Paused)
+            {
+                PausedWidget.Hidden = !World.Paused;
+                PausedWidget.Invalidate();
+            }
+
+            // Really just handles mouse pointer animation.
+            Gui.Update(gameTime.ToRealTime());
+        }
 
         private void HideTogglePanels()
         {

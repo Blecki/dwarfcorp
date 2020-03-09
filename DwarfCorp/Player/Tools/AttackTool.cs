@@ -42,9 +42,9 @@ namespace DwarfCorp
             
         }
 
-        public bool CanAttack(GameComponent other)
+        public static bool CanAttack(WorldManager World, GameComponent Target)
         {
-            var creature = other.EnumerateAll().OfType<Creature>().FirstOrDefault();
+            var creature = Target.EnumerateAll().OfType<Creature>().FirstOrDefault();
             if (creature == null)
                 return false;
 

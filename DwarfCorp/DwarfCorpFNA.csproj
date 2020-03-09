@@ -191,6 +191,8 @@
     <Compile Include="GameStates\WorldGeneration\OverworldPreviewMesh.cs" />
     <Compile Include="Graphics\Cameras\CameraPositionSnapshot.cs" />
     <Compile Include="Graphics\Cameras\TrailerCameraController.cs" />
+    <Compile Include="Graphics\Primitives\BoxFace.cs" />
+    <Compile Include="Graphics\Primitives\OldBoxPrimitive.cs" />
     <Compile Include="Gui\DragAndDrop.cs" />
     <Compile Include="Gui\Geo\PartBasics.cs" />
     <Compile Include="Gui\Geo\MeshPart.cs" />
@@ -754,6 +756,9 @@
     <Compile Include="World\LanguageGenerator\Verb.cs" />
     <Compile Include="World\Voxels\DecalLibrary.cs" />
     <Compile Include="World\Voxels\DecalType.cs" />
+    <Compile Include="World\Voxels\VoxelListPrimitive-CalculateVertexLight.cs" />
+    <Compile Include="World\Voxels\VoxelListPrimitive-Ramps.cs" />
+    <Compile Include="World\Voxels\VoxelListPrimitive-TransitionTextures.cs" />
     <Compile Include="World\Zones\BuildZoneOrder.cs" />
     <Compile Include="Player\InputManager.cs" />
     <Compile Include="Player\IVoxelBrush.cs" />

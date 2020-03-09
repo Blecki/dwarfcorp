@@ -45,7 +45,7 @@ namespace DwarfCorp
 
         void InputManager_MouseClickedCallback(InputManager.MouseButton button)
         {
-            if(button != InputManager.MouseButton.Right || World.UserInterface.CurrentTool != this || KeyManager.RotationEnabled(World.Renderer.Camera))
+            if(button != InputManager.MouseButton.Right || KeyManager.RotationEnabled(World.Renderer.Camera))
                 return;
 
             var mouseState = KeyManager.TrueMousePos;

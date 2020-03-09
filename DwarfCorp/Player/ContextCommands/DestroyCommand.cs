@@ -22,7 +22,7 @@ namespace DwarfCorp.ContextCommands
 
         public override bool CanBeAppliedTo(GameComponent Entity, WorldManager World)
         {
-            return (World.UserInterface.Tools["DeconstructObject"] as DeconstructObjectTool).CanDestroy(Entity);
+            return DeconstructObjectTool.CanDestroy(Entity);
         }
 
         public override void Apply(GameComponent Entity, WorldManager World)

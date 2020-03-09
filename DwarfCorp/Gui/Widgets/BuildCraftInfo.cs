@@ -13,7 +13,11 @@ namespace DwarfCorp.Gui.Widgets
         private ComboBox NumCombo = null;
         private Widget BottomBar;
         private Widget Button;
+        private Widget PlaceButton;
         public Action<Widget, InputEventArgs> BuildAction = null;
+
+        public Func<bool> CanPlace = null;
+        public Action<Widget, InputEventArgs> PlaceAction = null;
 
         private class ResourceCombo
         {
@@ -202,6 +206,12 @@ namespace DwarfCorp.Gui.Widgets
                 MinimumSize = new Point(64, 28),
             });
 
+            PlaceButton = BottomBar.AddChild(new Button()
+            {
+                Text = "Place",
+                Hidden = true
+            });
+
             OnUpdate += (sender, time) =>
             {
                 if (Hidden)
@@ -263,6 +273,11 @@ namespace DwarfCorp.Gui.Widgets
                         }
                     }
                 }
+
+                PlaceButton.Hidden = true;
+
+                if (CanPlace != null && CanPlace())
+                    PlaceButton.Hidden = false;
             };
 
             Root.RegisterForUpdate(this);

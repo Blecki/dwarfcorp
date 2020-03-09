@@ -30,24 +30,24 @@ namespace DwarfCorp
 
         }
 
-        public bool CanCatch(GameComponent animal, bool print=false)
+        public static bool CanCatch(WorldManager World, GameComponent Animal, bool Print)
         {
-            if (animal.GetRoot().GetComponent<Creature>().HasValue(out var creature))
+            if (Animal.GetRoot().GetComponent<Creature>().HasValue(out var creature))
             {
-                if (!animal.GetRoot().Tags.Contains("DomesticAnimal"))
+                if (!Animal.GetRoot().Tags.Contains("DomesticAnimal"))
                     return false;
 
                 var pens = World.EnumerateZones().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.IsBuilt && pen.CanHold(creature.Stats.SpeciesName));
 
                 if (pens.Any())
                 {
-                    if (print)
+                    if (Print)
                         World.UserInterface.ShowTooltip("Will wrangle this " + creature.Stats.SpeciesName);
                     return true;
                 }
                 else
                 {
-                    if (print)
+                    if (Print)
                         World.UserInterface.ShowTooltip("Can't wrangle this " + creature.Stats.SpeciesName + " : need more animal pens.");
                 }
             }
@@ -66,7 +66,7 @@ namespace DwarfCorp
                 switch (button)
                 {
                     case InputManager.MouseButton.Left:
-                        if (CanCatch(animal, true) && animal.GetRoot().GetComponent<Creature>().HasValue(out var creature))
+                        if (CanCatch(World, animal, true) && animal.GetRoot().GetComponent<Creature>().HasValue(out var creature))
                             tasks.Add(new WrangleAnimalTask(creature) { Priority = TaskPriority.Medium });
                         break;
                     case InputManager.MouseButton.Right:

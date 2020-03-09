@@ -1,17 +1,10 @@
-using System.IO;
-using System.Net.Mime;
-using DwarfCorp.Gui.Widgets;
 using DwarfCorp.Gui;
-using DwarfCorp.Gui.Input;
+using DwarfCorp.Gui.Widgets;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Content;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Point = Microsoft.Xna.Framework.Point;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace DwarfCorp.GameStates
@@ -32,22 +25,19 @@ namespace DwarfCorp.GameStates
         private Timer sliceUpTimer = new Timer(0.5f, true, Timer.TimerMode.Real);
         private int rememberedViewValue = 0;
 
-
         private float timeOnLastClick = 0.0f;
         private float doubleClickThreshold = 0.25f;
 
-        /// <summary>
-        /// Called every frame
-        /// </summary>
-        /// <param name="gameTime">The current time</param>
+        public bool IsCameraRotationModeActive()
+        {
+            return KeyManager.RotationEnabled(World.Renderer.Camera);
+        }
+
         public override void Update(DwarfTime gameTime)
         {
-            // If this playstate is not supposed to be running,
-            // just exit.
+            // If this playstate is not supposed to be running, just exit.
             if (!IsActiveState || IsShuttingDown)
-            {
                 return;
-            }
 
             if (QuitOnNextUpdate)
             {
@@ -75,12 +65,10 @@ namespace DwarfCorp.GameStates
             else
                 BottomToolBar.RefreshVisibleTray();
 
-            #region Input for GUI
+            #region Handle keyboard input
 
             DwarfGame.GumInput.FireActions(Gui, (@event, args) =>
             {
-                // Let old input handle mouse interaction for now. Will eventually need to be replaced.
-
                 if (DwarfGame.IsConsoleVisible)
                     return;
 
@@ -119,8 +107,8 @@ namespace DwarfCorp.GameStates
 
                             if (availableCommands.Count() > 0)
                             {
-                                    // Show context menu.
-                                    ContextMenu = Gui.ConstructWidget(new ContextMenu
+                                // Show context menu.
+                                ContextMenu = Gui.ConstructWidget(new ContextMenu
                                 {
                                     Commands = availableCommands.ToList(),
                                     Body = contextBody,
@@ -134,8 +122,9 @@ namespace DwarfCorp.GameStates
                     }
                 }
 
-                else if (@event == DwarfCorp.Gui.InputEvents.KeyUp)
+                else if (@event == InputEvents.KeyUp)
                 {
+                    // Camera position hotkeys
                     if (args.KeyValue >= '0' && args.KeyValue <= '9' && (args.Control || args.Shift))
                     {
                         var savedPositionSlot = args.KeyValue - '0';
@@ -162,6 +151,7 @@ namespace DwarfCorp.GameStates
                             };
                         }
                     }
+                    // Main Toolbar Hotkeys
                     else if (FlatToolTray.Tray.Hotkeys.Contains((Keys)args.KeyValue))
                     {
                         if (PausePanel == null || PausePanel.Hidden)
@@ -245,16 +235,12 @@ namespace DwarfCorp.GameStates
                     else if ((Keys)args.KeyValue == ControlSettings.Mappings.TimeForward)
                     {
                         if (PausePanel == null || PausePanel.Hidden)
-                        {
                             GameSpeedControls.CurrentSpeed += 1;
-                        }
                     }
                     else if ((Keys)args.KeyValue == ControlSettings.Mappings.TimeBackward)
                     {
                         if (PausePanel == null || PausePanel.Hidden)
-                        {
                             GameSpeedControls.CurrentSpeed -= 1;
-                        }
                     }
                     else if ((Keys)args.KeyValue == ControlSettings.Mappings.ToggleGUI)
                     {
@@ -272,17 +258,13 @@ namespace DwarfCorp.GameStates
                     else if ((Keys)args.KeyValue == ControlSettings.Mappings.Marks && (PausePanel == null || PausePanel.Hidden))
                         Gui.SafeCall(MarksIcon.OnClick, MarksIcon, new InputEventArgs());
                     else if ((Keys)args.KeyValue == ControlSettings.Mappings.Xray)
-                    {
                         Xray.CheckState = !Xray.CheckState;
-                    }
                     else if ((Keys)args.KeyValue == ControlSettings.Mappings.GodMode)
                     {
                         if (PausePanel == null || PausePanel.Hidden)
                         {
                             if (!GodMenu.Hidden)
-                            {
                                 ChangeTool("SelectUnits");
-                            }
                             GodMenu.Hidden = !GodMenu.Hidden;
                             GodMenu.Invalidate();
                         }
@@ -348,7 +330,7 @@ namespace DwarfCorp.GameStates
 
             #endregion
 
-            #region Slice hotkeys
+            #region Handle slice hotkeys being held down
 
             if (sliceDownheld)
             {
@@ -387,66 +369,9 @@ namespace DwarfCorp.GameStates
             Input.Update();
             CurrentTool.Update(Game, gameTime);
 
-            #region World Popups
+            
 
-            if (LastWorldPopup != null)
-            {
-                var removals = new List<uint>();
-                foreach (var popup in LastWorldPopup)
-                {
-                    popup.Value.Update(gameTime, World.Renderer.Camera, Game.GraphicsDevice.Viewport);
-                    if (popup.Value.Widget == null || !Gui.RootItem.Children.Contains(popup.Value.Widget) || popup.Value.BodyToTrack == null || popup.Value.BodyToTrack.IsDead)
-                        removals.Add(popup.Key);
-                }
-
-                foreach (var removal in removals)
-                {
-                    if (LastWorldPopup[removal].Widget != null && Gui.RootItem.Children.Contains(LastWorldPopup[removal].Widget))
-                        Gui.DestroyWidget(LastWorldPopup[removal].Widget);
-                    LastWorldPopup.Remove(removal);
-                }
-            }
-
-            #endregion
-
-            #region Update time label
-            TimeLabel.Text = String.Format("{0} {1}",
-                World.Time.CurrentDate.ToShortDateString(),
-                World.Time.CurrentDate.ToShortTimeString());
-            TimeLabel.Invalidate();
-            #endregion
-
-            #region Update money, stock, and supervisor labels
-            var pulse = 0.25f * (float)Math.Sin(gameTime.TotalRealTime.TotalSeconds * 4) + 0.25f;
-            MoneyLabel.Text = World.PlayerFaction.Economy.Funds.ToString();
-            MoneyLabel.TextColor = World.PlayerFaction.Economy.Funds > 1.0m ? Color.White.ToVector4() : new Vector4(1.0f, pulse, pulse, 1.0f);
-            MoneyLabel.Invalidate();
-            int availableSpace = World.ComputeRemainingStockpileSpace();
-            int totalSpace = World.ComputeTotalStockpileSpace();
-            StocksLabel.Text = String.Format("    Stocks: {0}/{1}", totalSpace - availableSpace, totalSpace);
-            StocksLabel.TextColor = availableSpace > 0 ? Color.White.ToVector4() : new Vector4(1.0f, pulse, pulse, 1.0f);
-            StocksLabel.Invalidate();
-            LevelLabel.Text = String.Format("{0}/{1}", World.Renderer.PersistentSettings.MaxViewingLevel, World.WorldSizeInVoxels.Y);
-            LevelLabel.Invalidate();
-            SupervisionLabel.Text = String.Format("{0}/{1}", World.CalculateSupervisedEmployees(), World.CalculateSupervisionCap());
-            SupervisionLabel.Invalidate();
-            #endregion
-
-            BottomBar.Layout();
-
-            if (GameSpeedControls.CurrentSpeed != (int)DwarfTime.LastTime.Speed)
-                World.Tutorial("time");
-
-            GameSpeedControls.CurrentSpeed = (int)DwarfTime.LastTime.Speed;
-
-            if (PausedWidget.Hidden == World.Paused)
-            {
-                PausedWidget.Hidden = !World.Paused;
-                PausedWidget.Invalidate();
-            }
-
-            // Really just handles mouse pointer animation.
-            Gui.Update(gameTime.ToRealTime());
+            UpdateGui(gameTime);
 
             AutoSaveTimer.Update(gameTime);
 

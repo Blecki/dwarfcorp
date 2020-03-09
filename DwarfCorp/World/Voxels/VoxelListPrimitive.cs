@@ -14,9 +14,9 @@ namespace DwarfCorp
     /// Represents a collection of voxels with a surface mesh. Efficiently culls away
     /// invisible voxels, and properly constructs ramps.
     /// </summary>
-    public class VoxelListPrimitive : GeometricPrimitive
+    public partial class VoxelListPrimitive : GeometricPrimitive
     {
-        private static Vector3[] FaceDeltas = null;
+        private static GlobalVoxelOffset[] NeighborVoxelCoordinateDeltas = null;
 
         // Describes which top face verts to grab for aligning fringe.
         private static int[,] FringeIndicies = new int[,]
@@ -47,15 +47,15 @@ namespace DwarfCorp
 
         protected void InitializeStatics()
         {
-            if (FaceDeltas == null)
+            if (NeighborVoxelCoordinateDeltas == null)
             {
-                FaceDeltas = new Vector3[6];
-                FaceDeltas[(int)BoxFace.Back] = new Vector3(0, 0, 1);
-                FaceDeltas[(int)BoxFace.Front] = new Vector3(0, 0, -1);
-                FaceDeltas[(int)BoxFace.Left] = new Vector3(-1, 0, 0);
-                FaceDeltas[(int)BoxFace.Right] = new Vector3(1, 0, 0);
-                FaceDeltas[(int)BoxFace.Top] = new Vector3(0, 1, 0);
-                FaceDeltas[(int)BoxFace.Bottom] = new Vector3(0, -1, 0);
+                NeighborVoxelCoordinateDeltas = new GlobalVoxelOffset[6];
+                NeighborVoxelCoordinateDeltas[(int)BoxFace.Back] = new GlobalVoxelOffset(0, 0, 1);
+                NeighborVoxelCoordinateDeltas[(int)BoxFace.Front] = new GlobalVoxelOffset(0, 0, -1);
+                NeighborVoxelCoordinateDeltas[(int)BoxFace.Left] = new GlobalVoxelOffset(-1, 0, 0);
+                NeighborVoxelCoordinateDeltas[(int)BoxFace.Right] = new GlobalVoxelOffset(1, 0, 0);
+                NeighborVoxelCoordinateDeltas[(int)BoxFace.Top] = new GlobalVoxelOffset(0, 1, 0);
+                NeighborVoxelCoordinateDeltas[(int)BoxFace.Bottom] = new GlobalVoxelOffset(0, -1, 0);
             }
         }
 
@@ -251,7 +251,6 @@ namespace DwarfCorp
             DesignationSet DesignationSet,
             WorldManager World)
         {
-
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
                     BuildVoxelGeometry(sliceGeometry, x, LocalY, z, chunk, Cache, DesignationSet, World);
@@ -325,59 +324,66 @@ namespace DwarfCorp
             if (v.Type.HasTransitionTextures && v.IsExplored)
                 uvs = ComputeTransitionTexture(new VoxelHandle(v.Chunk.Manager, v.Coordinate));
 
-            BuildVoxelTopFaceGeometry(Into, Chunk, Cache, primitive, v, uvs, 0);
+            BuildVoxelTopFaceGeometry(Into, Chunk, Cache, primitive, v, uvs);
 
             for (int i = 1; i < 6; i++)
-                BuildVoxelFaceGeometry(Into, Chunk, Cache, primitive, v, tint, uvs, Matrix.Identity, i, true);
+                BuildVoxelFaceGeometry(Into, Chunk, Cache, primitive, v, tint, uvs, Matrix.Identity, (BoxFace)i, true);
         }
 
         private static void BuildDesignationGeometry(RawPrimitive Into, VoxelChunk Chunk, Cache Cache, DesignationSet Designations, WorldManager World, VoxelHandle v)
         {
-            var designations = Designations == null ? new List<DesignationSet.VoxelDesignation>() : Designations.EnumerateDesignations(v).ToList();
-            int maxViewingLevel = World.Renderer.PersistentSettings.MaxViewingLevel;
-            foreach (var designation in designations)
+            // Todo: Store designations per chunk.
+            foreach (var designation in Designations == null ? new List<DesignationSet.VoxelDesignation>() : Designations.EnumerateDesignations(v).ToList())
             {
-                if ((designation.Type & World.Renderer.PersistentSettings.VisibleTypes) == designation.Type)
+                if ((designation.Type & World.Renderer.PersistentSettings.VisibleTypes) != designation.Type) // If hidden by player, do not draw.
+                    return;
+
+                var designationProperties = Library.GetDesignationTypeProperties(designation.Type).Value;
+                var designationVisible = false;
+
+                if (designation.Type == DesignationType.Put)
+                    designationVisible = v.Coordinate.Y < World.Renderer.PersistentSettings.MaxViewingLevel;
+                else
+                    designationVisible = VoxelHelpers.DoesVoxelHaveVisibleSurface(World, v);
+
+                if (designationVisible
+                    && Library.GetVoxelPrimitive(Library.DesignationVoxelType).HasValue(out BoxPrimitive designationPrimitive))
                 {
-                    var props = Library.GetDesignationTypeProperties(designation.Type).Value;
-                    var designationVisible = false;
-
-                    if (designation.Type == DesignationType.Put)
-                        designationVisible = v.Coordinate.Y < maxViewingLevel;
-                    else
-                        designationVisible = VoxelHelpers.DoesVoxelHaveVisibleSurface(World, v);
-
-                    if (designationVisible)
+                    switch (designationProperties.DrawType)
                     {
-                        if (Library.GetVoxelPrimitive(Library.DesignationVoxelType).HasValue(out BoxPrimitive desPrim))
-                        {
-                            switch (props.DrawType)
+                        case DesignationDrawType.FullBox:
+                            for (int i = 0; i < 6; i++)
+                                BuildVoxelFaceGeometry(Into, Chunk, Cache, designationPrimitive, v, designationProperties.Color, designationPrimitive.UVs, DesignationTransform, (BoxFace)i, false);
+                            break;
+
+                        case DesignationDrawType.TopBox:
+                            BuildVoxelFaceGeometry(Into, Chunk, Cache, designationPrimitive, v, designationProperties.Color, designationPrimitive.UVs, DesignationTransform, 0, false);
+                            break;
+
+                        case DesignationDrawType.PreviewVoxel:
                             {
-                                case DrawBoxType.FullBox:
+                                if (Library.GetVoxelType(designation.Tag.ToString()).HasValue(out VoxelType voxelType)
+                                    && Library.GetVoxelPrimitive(voxelType).HasValue(out BoxPrimitive previewPrimitive))
+                                {
+                                    var offsetMatrix = Matrix.Identity;
+                                    if (!v.IsEmpty)
+                                        offsetMatrix = Matrix.CreateTranslation(0.0f, 0.1f, 0.0f);
                                     for (int i = 0; i < 6; i++)
-                                        BuildVoxelFaceGeometry(Into, Chunk, Cache, desPrim, v, props.Color, desPrim.UVs, DesignationTransform, i, false);
-                                    break;
-                                case DrawBoxType.TopBox:
-                                    BuildVoxelFaceGeometry(Into, Chunk, Cache, desPrim, v, props.Color, desPrim.UVs, DesignationTransform, 0, false);
-                                    break;
-                                case DrawBoxType.PreviewVoxel:
-                                    {
-                                        if (Library.GetVoxelType(designation.Tag.ToString()).HasValue(out VoxelType vType))
-                                            if (Library.GetVoxelPrimitive(vType).HasValue(out BoxPrimitive previewPrim))
-                                            {
-                                                var offsetMatrix = Matrix.Identity;
-                                                if (!v.IsEmpty)
-                                                    offsetMatrix = Matrix.CreateTranslation(0.0f, 0.1f, 0.0f);
-                                                for (int i = 0; i < 6; i++)
-                                                    BuildVoxelFaceGeometry(Into, Chunk, Cache, previewPrim, v, props.Color, previewPrim.UVs, offsetMatrix, i, false);
-                                            }
-                                    }
-                                    break;
+                                        BuildVoxelFaceGeometry(Into, Chunk, Cache, previewPrimitive, v, designationProperties.Color, previewPrimitive.UVs, offsetMatrix, (BoxFace)i, false);
+                                }
                             }
-                        }
+                            break;
                     }
+
                 }
             }
+        }
+
+        private static bool IsFaceVisible(VoxelHandle V, BoxFace Face, ChunkManager Chunks, out VoxelHandle Neighbor)
+        {
+            var delta = NeighborVoxelCoordinateDeltas[(int)Face];
+            Neighbor = new VoxelHandle(Chunks, V.Coordinate + delta);
+            return IsFaceVisible(V, Neighbor, Face);
         }
 
         private static void BuildVoxelFaceGeometry(
@@ -389,24 +395,19 @@ namespace DwarfCorp
             Color Tint,
             BoxPrimitive.BoxTextureCoords UVs,
             Matrix VertexTransform,
-            int i,
+            BoxFace BoxFace,
             bool ApplyLighting)
         {
-            var face = (BoxFace)i;
-            var delta = FaceDeltas[i];
-
-            var faceVoxel = new VoxelHandle(Chunk.Manager, V.Coordinate + GlobalVoxelOffset.FromVector3(delta));
-
-            if (!IsFaceVisible(V, faceVoxel, face))
+            if (!IsFaceVisible(V, BoxFace, Chunk.Manager, out var neighbor))
                 return;
 
-            var faceDescriptor = Primitive.GetFace(face);
+            var faceDescriptor = Primitive.GetFace(BoxFace);
             var indexOffset = Into.VertexCount;
 
             for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; faceVertex++)
             {
                 var vertex = Primitive.Vertices[faceDescriptor.VertexOffset + faceVertex];
-                var voxelVertex = Primitive.Deltas[faceDescriptor.VertexOffset + faceVertex];
+                var voxelVertex = Primitive.VertexClassifications[faceDescriptor.VertexOffset + faceVertex];
                 var vertexColor = new VertexColorInfo
                 {
                     SunColor = 255,
@@ -426,7 +427,7 @@ namespace DwarfCorp
 
                     Cache.AmbientValues[faceVertex] = vertexColor.AmbientColor;
 
-                    if (!V.IsExplored && !faceVoxel.IsValid)
+                    if (!V.IsExplored && !neighbor.IsValid) // Turns the outside of the world black when it's not explored.
                         Tint = new Color(0.0f, 0.0f, 0.0f, 1.0f);
                 }
 
@@ -446,6 +447,7 @@ namespace DwarfCorp
                     UVs.Bounds[faceDescriptor.IndexOffset / 6]));
             }
 
+            // Sometimes flip the quad to smooth out lighting.
             bool flippedQuad = ApplyLighting && (Cache.AmbientValues[0] + Cache.AmbientValues[2] >
                               Cache.AmbientValues[1] + Cache.AmbientValues[3]);
 
@@ -464,18 +466,12 @@ namespace DwarfCorp
             Cache Cache,
             BoxPrimitive Primitive,
             VoxelHandle V,
-            BoxPrimitive.BoxTextureCoords UVs,
-            int i)
+            BoxPrimitive.BoxTextureCoords UVs)
         {
-            var face = (BoxFace)i;
-            var delta = FaceDeltas[i];
-
-            var faceVoxel = new VoxelHandle(Chunk.Manager, V.Coordinate + GlobalVoxelOffset.FromVector3(delta));
-
-            if (!IsFaceVisible(V, faceVoxel, face))
+            if (!IsFaceVisible(V, BoxFace.Top, Chunk.Manager, out var _))
                 return;
 
-            var faceDescriptor = Primitive.GetFace(face);
+            var faceDescriptor = Primitive.GetFace(BoxFace.Top);
             int exploredVerts = 0;
             var vertexColors = new VertexColorInfo[4];
             var vertexTint = new Color[4];
@@ -486,7 +482,7 @@ namespace DwarfCorp
             for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; faceVertex++)
             {
                 var vertex = Primitive.Vertices[faceDescriptor.VertexOffset + faceVertex];
-                var voxelVertex = Primitive.Deltas[faceDescriptor.VertexOffset + faceVertex];
+                var voxelVertex = Primitive.VertexClassifications[faceDescriptor.VertexOffset + faceVertex];
 
                 var rampOffset = Vector3.Zero;
                 if (V.IsExplored && V.Type.CanRamp && ShouldRamp(voxelVertex, V.RampType))
@@ -498,15 +494,16 @@ namespace DwarfCorp
                 vertexPositions[faceVertex] = worldPosition;
             }
 
+            // Figure out if this vertex is adjacent to any explored voxel.
             if (V.IsExplored)
                 exploredVerts = 4;
             else
             {
                 for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; ++faceVertex)
                 {
-                    var voxelVertex = Primitive.Deltas[faceDescriptor.VertexOffset + faceVertex];
+                    var voxelVertex = Primitive.VertexClassifications[faceDescriptor.VertexOffset + faceVertex];
                     var cacheKey = GetCacheKey(V, voxelVertex);
-                    bool anyNeighborExplored = true;
+                    var anyNeighborExplored = true;
 
                     if (!Cache.ExploredCache.TryGetValue(cacheKey, out anyNeighborExplored))
                     {
@@ -516,7 +513,6 @@ namespace DwarfCorp
                         Cache.ExploredCache.Add(cacheKey, anyNeighborExplored);
                     }
 
-
                     if (anyNeighborExplored)
                         exploredVerts += 1;
                 }
@@ -525,7 +521,7 @@ namespace DwarfCorp
 
             for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; ++faceVertex)
             {
-                var voxelVertex = Primitive.Deltas[faceDescriptor.VertexOffset + faceVertex];
+                var voxelVertex = Primitive.VertexClassifications[faceDescriptor.VertexOffset + faceVertex];
                 var cacheKey = GetCacheKey(V, voxelVertex);
 
                 VertexColorInfo vertexColor;
@@ -538,9 +534,11 @@ namespace DwarfCorp
                 vertexColors[faceVertex] = vertexColor;
 
                 vertexTint[faceVertex] = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+
+                // Turn face solid black if there are no explored neighbors - this is an optimization; it means we do not need to apply a solid black decal.
                 if (exploredVerts != 4)
                 {
-                    bool anyNeighborExplored = true;
+                    var anyNeighborExplored = true;
                     if (!Cache.ExploredCache.TryGetValue(cacheKey, out anyNeighborExplored))
                         throw new InvalidProgramException("Failed cache lookup");
 
@@ -556,7 +554,7 @@ namespace DwarfCorp
 
                 var baseUVBounds = new Vector4(baseUVs.X + 0.001f, baseUVs.Y + 0.001f, baseUVs.X + (1.0f / 16.0f) - 0.001f, baseUVs.Y + (1.0f / 16.0f) - 0.001f);
 
-                // Draw central top tile.
+                // Draw the base voxel
                 AddTopFaceGeometry(Into,
                     Cache.AmbientValues, Primitive,
                     faceDescriptor,
@@ -567,14 +565,15 @@ namespace DwarfCorp
                     baseUVs, baseUVBounds);
 
                 if (V.GrassType != 0)
-                    BuildGrassFringeGeometry(Into, Chunk, Cache, Primitive, V, vertexColors,
-                        vertexTint, vertexPositions, faceDescriptor, exploredVerts);
+                    BuildGrassFringeGeometry(Into, Chunk, Cache, Primitive, V, vertexColors, vertexTint, vertexPositions, faceDescriptor);
 
                 if (V.DecalType != 0)
                     BuildDecalGeometry(Into, Chunk, Cache, Primitive, V, vertexColors, vertexTint, vertexPositions, faceDescriptor, exploredVerts);
             }
             else
             {
+                // Apparently being unexplored hides all grass and decals. Is that the behavior we actually want?
+
                 if (!Debugger.Switches.HideSliceTop)
                 {
                     var indexOffset = Into.VertexCount;
@@ -616,14 +615,13 @@ namespace DwarfCorp
 
             var decalType = Library.GetDecalType(V.DecalType);
 
-            AddDecalGeometry(Into, Cache.AmbientValues, Primitive, V, Face, ExploredVerts, VertexPositions, VertexColors, VertexTint, decalType);
+            AddDecalGeometry(Into, Cache.AmbientValues, Primitive, Face, ExploredVerts, VertexPositions, VertexColors, VertexTint, decalType);
         }
 
         private static void AddDecalGeometry(
             RawPrimitive Into,
             int[] AmbientScratchSpace,
             BoxPrimitive Primitive,
-            VoxelHandle V,
             BoxPrimitive.FaceDescriptor faceDescriptor,
             int exploredVerts,
             Vector3[] VertexPositions,
@@ -649,8 +647,7 @@ namespace DwarfCorp
                     UVBounds));
             }
 
-            bool flippedQuad = AmbientScratchSpace[0] + AmbientScratchSpace[2] >
-                              AmbientScratchSpace[1] + AmbientScratchSpace[3];
+            bool flippedQuad = AmbientScratchSpace[0] + AmbientScratchSpace[2] > AmbientScratchSpace[1] + AmbientScratchSpace[3];
 
             for (int idx = faceDescriptor.IndexOffset; idx < faceDescriptor.IndexCount +
                 faceDescriptor.IndexOffset; idx++)
@@ -670,14 +667,13 @@ namespace DwarfCorp
             VertexColorInfo[] VertexColors,
             Color[] VertexTint,
             Vector3[] VertexPositions,
-            BoxPrimitive.FaceDescriptor Face,
-            int ExploredVerts)
+            BoxPrimitive.FaceDescriptor Face)
         {
             if (V.GrassType == 0) return;
 
             var decalType = Library.GetGrassType(V.GrassType);
 
-            AddGrassGeometry(Into, Cache.AmbientValues, Primitive, V, Face, ExploredVerts, VertexPositions, VertexColors, VertexTint, decalType);
+            AddGrassGeometry(Into, Cache.AmbientValues, Primitive, Face, VertexPositions, VertexColors, VertexTint, decalType);
 
             // Draw fringe
             if (decalType.FringeTransitionUVs == null) return;
@@ -874,8 +870,7 @@ namespace DwarfCorp
                     UVBounds));
             }
 
-            bool flippedQuad = AmbientScratchSpace[0] + AmbientScratchSpace[2] >
-                              AmbientScratchSpace[1] + AmbientScratchSpace[3];
+            bool flippedQuad = AmbientScratchSpace[0] + AmbientScratchSpace[2] > AmbientScratchSpace[1] + AmbientScratchSpace[3];
 
             for (int idx = faceDescriptor.IndexOffset; idx < faceDescriptor.IndexCount +
                 faceDescriptor.IndexOffset; idx++)
@@ -890,9 +885,7 @@ namespace DwarfCorp
             RawPrimitive Into,
             int[] AmbientScratchSpace,
             BoxPrimitive Primitive,
-            VoxelHandle V,
             BoxPrimitive.FaceDescriptor faceDescriptor,
-            int exploredVerts,
             Vector3[] VertexPositions,
             VertexColorInfo[] VertexColors,
             Color[] VertexTints,
@@ -916,259 +909,14 @@ namespace DwarfCorp
                     UVBounds));
             }
 
-            bool flippedQuad = AmbientScratchSpace[0] + AmbientScratchSpace[2] >
-                              AmbientScratchSpace[1] + AmbientScratchSpace[3];
+            bool flippedQuad = (AmbientScratchSpace[0] + AmbientScratchSpace[2]) > (AmbientScratchSpace[1] + AmbientScratchSpace[3]);
 
-            for (int idx = faceDescriptor.IndexOffset; idx < faceDescriptor.IndexCount +
-                faceDescriptor.IndexOffset; idx++)
+            for (int idx = faceDescriptor.IndexOffset; idx < faceDescriptor.IndexCount + faceDescriptor.IndexOffset; ++idx)
             {
                 ushort offset = flippedQuad ? Primitive.FlippedIndexes[idx] : Primitive.Indexes[idx];
                 ushort offset0 = flippedQuad ? Primitive.FlippedIndexes[faceDescriptor.IndexOffset] : Primitive.Indexes[faceDescriptor.IndexOffset];
                 Into.AddIndex((short)(indexOffset + offset - offset0));
             }
-        }
-
-        public static bool ShouldRamp(VoxelVertex vertex, RampType rampType)
-        {
-            bool toReturn = false;
-
-            if ((rampType & RampType.TopFrontRight) == RampType.TopFrontRight)
-                toReturn = (vertex == VoxelVertex.FrontTopRight);
-
-            if ((rampType & RampType.TopBackRight) == RampType.TopBackRight)
-                toReturn = toReturn || (vertex == VoxelVertex.BackTopRight);
-
-            if ((rampType & RampType.TopFrontLeft) == RampType.TopFrontLeft)
-                toReturn = toReturn || (vertex == VoxelVertex.FrontTopLeft);
-
-            if ((rampType & RampType.TopBackLeft) == RampType.TopBackLeft)
-                toReturn = toReturn || (vertex == VoxelVertex.BackTopLeft);
-
-            return toReturn;
-        }
-
-        private static VoxelVertex[] TopVerticies = new VoxelVertex[]
-            {
-                VoxelVertex.FrontTopLeft,
-                VoxelVertex.FrontTopRight,
-                VoxelVertex.BackTopLeft,
-                VoxelVertex.BackTopRight
-            };
-
-        private static float GetAmbienceBoost(VoxelVertex vertex)
-        {
-            switch (vertex)
-            {
-                case VoxelVertex.FrontTopLeft:
-                case VoxelVertex.FrontTopRight:
-                case VoxelVertex.BackTopLeft:
-                case VoxelVertex.BackTopRight:
-                    return 0.25f;
-                case VoxelVertex.BackBottomRight:
-                case VoxelVertex.FrontBottomRight:
-                    return 0.15f;
-                default:
-                    return 0.0f;
-            }
-        }
-
-        private static void UpdateVoxelRamps(ChunkManager Chunks, VoxelHandle V)
-        {
-            if (!V.IsValid) return;
-
-            if (V.IsEmpty || !V.IsVisible || V.Type == null || !V.Type.CanRamp)
-            {
-                V.RampType = RampType.None;
-                return;
-            }
-
-            var vAbove = VoxelHelpers.GetVoxelAbove(V);
-            if (vAbove.IsValid && !vAbove.IsEmpty)
-            {
-                V.RampType = RampType.None;
-                return;
-            }
-
-            var compositeRamp = RampType.None;
-
-            foreach (var vertex in TopVerticies)
-            {
-                // If there are no empty neighbors, no slope.
-                if (!VoxelHelpers.EnumerateVertexNeighbors2D(V.Coordinate, vertex)
-                    .Any(n =>
-                    {
-                        var handle = Chunks.CreateVoxelHandle(n);
-                        if (handle.IsValid)
-                            return handle.IsEmpty;
-                        return false;
-                    }))
-                    continue;
-
-                switch (vertex)
-                {
-                    case VoxelVertex.FrontTopLeft:
-                        compositeRamp |= RampType.TopFrontLeft;
-                        break;
-                    case VoxelVertex.FrontTopRight:
-                        compositeRamp |= RampType.TopFrontRight;
-                        break;
-                    case VoxelVertex.BackTopLeft:
-                        compositeRamp |= RampType.TopBackLeft;
-                        break;
-                    case VoxelVertex.BackTopRight:
-                        compositeRamp |= RampType.TopBackRight;
-                        break;
-                }
-            }
-
-            V.RampType = compositeRamp;
-        }
-
-        public static void UpdateCornerRamps(ChunkManager Chunks, VoxelChunk Chunk, int LocalY)
-        {
-            for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
-                for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
-                    UpdateVoxelRamps(Chunks, VoxelHandle.UnsafeCreateLocalHandle(Chunk, new LocalVoxelCoordinate(x, LocalY, z)));               
-        }
-
-        private static void UpdateNeighborEdgeRamps(ChunkManager Chunks, VoxelChunk Chunk, int LocalY)
-        {
-            var startChunkCorner = new GlobalVoxelCoordinate(Chunk.ID, new LocalVoxelCoordinate(0, 0, 0))  + new GlobalVoxelOffset(-1, 0, -1);
-            var endChunkCorner = new GlobalVoxelCoordinate(Chunk.ID, new LocalVoxelCoordinate(0, 0, 0)) + new GlobalVoxelOffset(VoxelConstants.ChunkSizeX, 0, VoxelConstants.ChunkSizeZ);
-
-            for (int x = startChunkCorner.X; x <= endChunkCorner.X; ++x)
-            {
-                var v1 = new VoxelHandle(Chunk.Manager, new GlobalVoxelCoordinate(x, Chunk.Origin.Y + LocalY, startChunkCorner.Z));
-                if (v1.IsValid) UpdateVoxelRamps(Chunks, v1);
-
-                var v2 = new VoxelHandle(Chunk.Manager, new GlobalVoxelCoordinate(x, Chunk.Origin.Y + LocalY, endChunkCorner.Z));
-                if (v2.IsValid) UpdateVoxelRamps(Chunks, v2);
-            }
-
-            for (int z = startChunkCorner.Z + 1; z < endChunkCorner.Z; ++z)
-            {
-                var v1 = new VoxelHandle(Chunk.Manager, new GlobalVoxelCoordinate(startChunkCorner.X, Chunk.Origin.Y + LocalY, z));
-                if (v1.IsValid) UpdateVoxelRamps(Chunks, v1);
-
-                var v2 = new VoxelHandle(Chunk.Manager, new GlobalVoxelCoordinate(endChunkCorner.X, Chunk.Origin.Y + LocalY, z));
-                if (v2.IsValid) UpdateVoxelRamps(Chunks, v2);
-            }
-        }
-
-        private struct VertexColorInfo
-        {
-            public int SunColor;
-            public int AmbientColor;
-            public int DynamicColor;
-
-            public Color AsColor()
-            {
-                return new Color(SunColor, AmbientColor, DynamicColor);
-            }
-        }
-
-        private static VertexColorInfo CalculateVertexLight(VoxelHandle Vox, VoxelVertex Vertex,
-            ChunkManager chunks)
-        {
-            int neighborsEmpty = 0;
-            int neighborsChecked = 0;
-
-            var color = new VertexColorInfo();
-            color.DynamicColor = 0;
-            color.SunColor = 0;
-
-            foreach (var c in VoxelHelpers.EnumerateVertexNeighbors(Vox.Coordinate, Vertex))
-            {
-                var v = new VoxelHandle(chunks, c);
-                if (!v.IsValid) continue;
-
-                color.SunColor += v.Sunlight ? 255 : 0;
-                if (!v.IsEmpty || !v.IsExplored)
-                {
-                    if (v.Type.EmitsLight) color.DynamicColor = 255;
-                    neighborsEmpty += 1;
-                    neighborsChecked += 1;
-                }
-                else
-                    neighborsChecked += 1;
-            }
-
-            var boost = GetAmbienceBoost(Vertex);
-            float proportionHit = (float)neighborsEmpty / (float)neighborsChecked;
-            color.AmbientColor = (int)Math.Min((1.0f - proportionHit) * 255.0f, 255);
-            color.SunColor = (int)Math.Min((float)color.SunColor / (float)neighborsChecked + boost * 255.0f, 255);
-
-            return color;
-        }
-
-        private static BoxPrimitive.BoxTextureCoords ComputeTransitionTexture(VoxelHandle V)
-        {
-            var type = V.Type;
-
-            if (Library.GetVoxelPrimitive(type).HasValue(out BoxPrimitive primitive))
-            {
-                if (!type.HasTransitionTextures)
-                    return primitive.UVs;
-                else
-                {
-                    var transition = ComputeTransitions(V.Chunk.Manager, V, type);
-                    return type.TransitionTextures[transition];
-                }
-            }
-            else
-                return null;
-        }
-
-        private static BoxTransition ComputeTransitions(
-            ChunkManager Data,
-            VoxelHandle V,
-            VoxelType Type)
-        {
-            if (Type.Transitions == VoxelType.TransitionType.Horizontal)
-            {
-                var value = ComputeTransitionValueOnPlane(
-                    VoxelHelpers.EnumerateManhattanNeighbors2D(V.Coordinate)
-                    .Select(c => new VoxelHandle(Data, c)), Type);
-
-                return new BoxTransition()
-                {
-                    Top = (TransitionTexture)value
-                };
-            }
-            else
-            {
-                var transitionFrontBack = ComputeTransitionValueOnPlane(VoxelHelpers.EnumerateManhattanNeighbors2D_Z(V.Coordinate)
-                    .Select(c => new VoxelHandle(Data, c)),
-                    Type);
-
-                var transitionLeftRight = ComputeTransitionValueOnPlane(VoxelHelpers.EnumerateManhattanNeighbors2D_X(V.Coordinate)
-                    .Select(c => new VoxelHandle(Data, c)),
-                    Type);
-
-                return new BoxTransition()
-                {
-                    Front = (TransitionTexture)transitionFrontBack,
-                    Back = (TransitionTexture)transitionFrontBack,
-                    Left = (TransitionTexture)transitionLeftRight,
-                    Right = (TransitionTexture)transitionLeftRight
-                };
-            }
-        }
-
-        // Todo: Reorder 2d neighbors to make this unecessary.
-        private static int[] TransitionMultipliers = new int[] { 1, 2, 4, 8 };
-
-        private static int ComputeTransitionValueOnPlane(IEnumerable<VoxelHandle> Neighbors, VoxelType Type)
-        {
-            int index = 0;
-            int accumulator = 0;
-            foreach (var v in Neighbors)
-            {
-                if (v.IsValid && !v.IsEmpty && v.Type == Type)
-                    accumulator += TransitionMultipliers[index];
-                index += 1;
-            }
-            return accumulator;
         }
     }
 }

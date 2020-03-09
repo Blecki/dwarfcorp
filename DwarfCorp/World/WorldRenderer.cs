@@ -420,15 +420,6 @@ namespace DwarfCorp
                 ComponentRenderer.WaterRenderType.None, lastWaterHeight);
             InstanceRenderer.Flush(GraphicsDevice, DefaultShader, Camera, InstanceRenderMode.Normal);
 
-            if (World.UserInterface.CurrentToolMode == "BuildZone" // Todo: ??
-                || World.UserInterface.CurrentToolMode == "BuildWall")
-            {
-                DefaultShader.View = Camera.ViewMatrix;
-                DefaultShader.Projection = Camera.ProjectionMatrix;
-                DefaultShader.SetTexturedTechnique();
-                GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-            }
-
             WaterRenderer.DrawWater(
                 GraphicsDevice,
                 (float)gameTime.TotalGameTime.TotalSeconds,

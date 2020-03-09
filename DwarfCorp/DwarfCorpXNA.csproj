@@ -206,6 +206,8 @@
     <Compile Include="GameStates\Play\ZonePanel\DraggedResourceIcon.cs" />
     <Compile Include="Graphics\Cameras\CameraPositionSnapshot.cs" />
     <Compile Include="Graphics\Cameras\TrailerCameraController.cs" />
+    <Compile Include="Graphics\Primitives\BoxFace.cs" />
+    <Compile Include="Graphics\Primitives\OldBoxPrimitive.cs" />
     <Compile Include="Gui\DragAndDrop.cs" />
     <Compile Include="Gui\Geo\MeshPart.cs" />
     <Compile Include="Gui\Geo\PartBasics.cs" />
@@ -826,6 +828,9 @@
     <Compile Include="World\Voxels\VoxelHelpers\FindValidVoxelNear.cs" />
     <Compile Include="World\Voxels\VoxelHelpers\GetVoxelBelow.cs" />
     <Compile Include="World\Voxels\VoxelHelpers\KillVoxel.cs" />
+    <Compile Include="World\Voxels\VoxelListPrimitive-Ramps.cs" />
+    <Compile Include="World\Voxels\VoxelListPrimitive-TransitionTextures.cs" />
+    <Compile Include="World\Voxels\VoxelListPrimitive-CalculateVertexLight.cs" />
     <Compile Include="World\Voxels\VoxelListPrimitive.cs" />
     <Compile Include="Graphics\SelectionBuffer.cs" />
     <Compile Include="Gui\Widgets\AudioMixerWidget.cs" />

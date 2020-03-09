@@ -35,9 +35,9 @@ namespace DwarfCorp
             World.UserInterface.VoxSelector.Clear();
         }
 
-        public bool CanDestroy(GameComponent body)
+        public static bool CanDestroy(GameComponent Body)
         {
-            return body.Tags.Any(tag => tag == "Deconstructable") && !body.IsReserved;
+            return Body.Tags.Any(tag => tag == "Deconstructable") && !Body.IsReserved;
         }
 
         public override void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)

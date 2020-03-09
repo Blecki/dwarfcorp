@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public enum DrawBoxType
+    public enum DesignationDrawType
     {
         FullBox,
         TopBox,
@@ -21,6 +21,6 @@ namespace DwarfCorp
         public String Name;
         public Color Color;
         public float LineWidth = 0.1f;
-        public DrawBoxType DrawType;
+        public DesignationDrawType DrawType;
     }
 }

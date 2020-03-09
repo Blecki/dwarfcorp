@@ -63,7 +63,7 @@ namespace DwarfCorp
         private static BoxPrimitive CreateVoxelPrimitive(Texture2D textureMap, int width, int height, Point top, Point sides, Point bottom)
         {
             BoxPrimitive.BoxTextureCoords coords = new BoxPrimitive.BoxTextureCoords(textureMap.Width, textureMap.Height, width, height, sides, sides, top, bottom, sides, sides);
-            BoxPrimitive cube = new BoxPrimitive(1.0f, 1.0f, 1.0f, coords);
+            BoxPrimitive cube = new BoxPrimitive(coords);
 
             return cube;
         }
@@ -205,7 +205,7 @@ namespace DwarfCorp
                     if (maybePrimitive.HasValue(out BoxPrimitive primitive))
                     {
                         if (type.HasTransitionTextures)
-                            primitive = new BoxPrimitive(1, 1, 1, type.TransitionTextures[new BoxTransition()]);
+                            primitive = new BoxPrimitive(type.TransitionTextures[new BoxTransition()]);
 
                         device.Viewport = new Viewport(col * Sheet.TileWidth, row * Sheet.TileWidth, Sheet.TileWidth, Sheet.TileWidth);
                         Matrix viewMatrix = Matrix.CreateLookAt(new Vector3(-1.2f, 1.0f, -1.5f), Vector3.Zero, Vector3.Up);

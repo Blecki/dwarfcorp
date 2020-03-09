@@ -22,7 +22,7 @@ namespace DwarfCorp.ContextCommands
 
         public override bool CanBeAppliedTo(GameComponent Entity, WorldManager World)
         {
-            return (World.UserInterface.Tools["Gather"] as GatherTool).CanGather(Entity);
+            return GatherTool.CanGather(World, Entity);
         }
 
         public override void Apply(GameComponent Entity, WorldManager World)

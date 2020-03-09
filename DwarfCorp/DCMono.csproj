@@ -441,6 +441,8 @@
     <Compile Include="Graphics\ParticleEffects\ParticleTrigger.cs" />
     <Compile Include="Graphics\Primitives\BatchBillboardPrimitive.cs" />
     <Compile Include="Graphics\Primitives\BillboardPrimitive.cs" />
+    <Compile Include="Graphics\Primitives\BoxFace.cs" />
+    <Compile Include="Graphics\Primitives\OldBoxPrimitive.cs" />
     <Compile Include="Graphics\Primitives\BoxPrimitive.cs" />
     <Compile Include="Graphics\Primitives\ExtendedVertex.cs" />
     <Compile Include="Graphics\Primitives\GeometricPrimitive.cs" />
@@ -896,6 +898,9 @@
     <Compile Include="World\Voxels\VoxelHelpers\Neighbors.cs" />
     <Compile Include="World\Voxels\VoxelHelpers\Reveal.cs" />
     <Compile Include="World\Voxels\VoxelHelpers\VoxelIsCompletelySurrounded.cs" />
+    <Compile Include="World\Voxels\VoxelListPrimitive-CalculateVertexLight.cs" />
+    <Compile Include="World\Voxels\VoxelListPrimitive-Ramps.cs" />
+    <Compile Include="World\Voxels\VoxelListPrimitive-TransitionTextures.cs" />
     <Compile Include="World\Voxels\VoxelListPrimitive.cs" />
     <Compile Include="World\Voxels\VoxelType.cs" />
     <Compile Include="World\Water\LiquidAsset.cs" />

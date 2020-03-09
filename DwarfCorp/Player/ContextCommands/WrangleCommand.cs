@@ -14,7 +14,7 @@
 
         public override bool CanBeAppliedTo(GameComponent Entity, WorldManager World)
         {
-            return (World.UserInterface.Tools["Wrangle"] as WrangleTool).CanCatch(Entity);
+            return WrangleTool.CanCatch(World, Entity, false);
         }
 
         public override void Apply(GameComponent Entity, WorldManager World)

@@ -105,7 +105,7 @@ namespace DwarfCorp
                 caches = new List<LiquidRebuildCache>();
 
                 StaticsInitialized = true;
-                primitive = new BoxPrimitive(1.0f, 1.0f, 1.0f, new BoxPrimitive.BoxTextureCoords(32, 32, 32, 32, Point.Zero, Point.Zero, Point.Zero, Point.Zero, Point.Zero, Point.Zero));
+                primitive = new BoxPrimitive(new BoxPrimitive.BoxTextureCoords(32, 32, 32, 32, Point.Zero, Point.Zero, Point.Zero, Point.Zero, Point.Zero, Point.Zero));
             }
         }
 
@@ -428,7 +428,7 @@ namespace DwarfCorp
 
                 for (int vertOffset = 0; vertOffset < faceDescriptor.VertexCount; vertOffset++)
                 {
-                    VoxelVertex currentVertex = primitive.Deltas[faceDescriptor.VertexOffset + vertOffset];
+                    VoxelVertex currentVertex = primitive.VertexClassifications[faceDescriptor.VertexOffset + vertOffset];
 
                     // These will be filled out before being used   lh  .
                     //float foaminess1;
