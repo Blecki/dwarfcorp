@@ -13,7 +13,7 @@ namespace DwarfCorp
         public ChunkManager Manager { get; set; }
         public VoxelData Data { get; set; }
 
-        private VoxelListPrimitive Primitive = null;
+        private GeometricPrimitive Primitive = null;
         public int RenderCycleWhenLastVisible = 0;
         public bool Visible = false;
         public Mutex PrimitiveMutex { get; set; }
@@ -107,8 +107,17 @@ namespace DwarfCorp
             if (g == null || g.IsDisposed)
                 return;
 
-            var primitive = new VoxelListPrimitive();
-            primitive.InitializeFromChunk(this, Manager.World.PersistentData.Designations, Manager.World);
+            GeometricPrimitive primitive = null;
+
+            if (Debugger.Switches.UseNewVoxelGeoGen)
+            {
+                primitive = Voxels.GeometryBuilder.CreateFromChunk(this, Manager.World);
+            }
+            else
+            {
+                primitive = new VoxelListPrimitive();
+                (primitive as VoxelListPrimitive).InitializeFromChunk(this, Manager.World);
+            }
 
             PrimitiveMutex.WaitOne();
             if (Primitive != null)

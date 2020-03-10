@@ -34,6 +34,7 @@ namespace DwarfCorp
             public static bool DrawInvisible = false;
             public static bool ShowEntityInfo = false;
             public static bool DrawTiledInstanceAtlas = false;
+            public static bool UseNewVoxelGeoGen = false;
         }
 
         public class Switch

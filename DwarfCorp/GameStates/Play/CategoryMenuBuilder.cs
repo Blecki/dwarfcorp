@@ -91,6 +91,14 @@ namespace DwarfCorp.GameStates
             };
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Crafts">The source of items to list.</param>
+        /// <param name="Filter">Filter determines which items to include.</param>
+        /// <param name="IconFactory"></param>
+        /// <param name="OnReturnClicked"></param>
+        /// <returns></returns>
         public static CategoryMenuCreationResult CreateCategoryMenu(
             IEnumerable<CraftableRecord> Crafts, 
             Func<CraftableRecord, bool> Filter,
@@ -119,31 +127,32 @@ namespace DwarfCorp.GameStates
 
             menu.OnRefresh = (sender) =>
             {
-                Dictionary<string, bool> placeCategoryExists = new Dictionary<string, bool>();
-                var placeRootObjects = new List<FlatToolTray.Icon>();
+                var categoryExists = new Dictionary<string, bool>();
+                var rootObjects = new List<FlatToolTray.Icon>();
 
                 foreach (var item in icons.Where(data => Filter(data.Tag as CraftableRecord)))
                     if (item.Tag is CraftableRecord craft)
-                        if (string.IsNullOrEmpty(craft.GetCategory) || !placeCategoryExists.ContainsKey(craft.GetCategory))
+                        if (string.IsNullOrEmpty(craft.GetCategory) || !categoryExists.ContainsKey(craft.GetCategory))
                         {
-                            placeRootObjects.Add(item);
+                            rootObjects.Add(item);
                             if (!string.IsNullOrEmpty(craft.GetCategory))
-                                placeCategoryExists[craft.GetCategory] = true;
+                                categoryExists[craft.GetCategory] = true;
                         }
 
-                    (sender as IconTray).ItemSource = (new Widget[] { returnIcon }).Concat(placeRootObjects.Select(data =>
+                (sender as IconTray).ItemSource = (new Widget[] { returnIcon }).Concat(rootObjects.Select(data =>
+                {
+                    if (data.Tag is CraftableRecord craft)
                     {
-                        if (data.Tag is CraftableRecord craft)
-                        {
-                            if (string.IsNullOrEmpty(craft.GetCategory))
-                                return data;
+                        if (string.IsNullOrEmpty(craft.GetCategory) || Crafts.Count(c => c.GetCategory == craft.GetCategory) == 1)
+                            return data;
 
-                            var r = CreateCategorySubMenu(Crafts, Filter, craft.GetCategory, IconFactory, OnReturnClicked);
-                            r.ReturnIcon.ReplacementMenu = menu;
-                            return r.MenuIcon;
-                        }
-                        throw new InvalidOperationException();
-                    }));
+                        var r = CreateCategorySubMenu(Crafts, Filter, craft.GetCategory, IconFactory, OnReturnClicked);
+                        r.ReturnIcon.ReplacementMenu = menu;
+
+                        return r.MenuIcon;
+                    }
+                    throw new InvalidOperationException();
+                }));
 
                 (sender as IconTray).ResetItemsFromSource();
             };

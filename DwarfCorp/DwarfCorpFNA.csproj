@@ -754,6 +754,7 @@
     <Compile Include="Player\BodySelector.cs" />
     <Compile Include="Player\BoxBrush.cs" />
     <Compile Include="World\LanguageGenerator\Verb.cs" />
+    <Compile Include="World\Voxels\AlternativeVoxelPrimitive.cs" />
     <Compile Include="World\Voxels\DecalLibrary.cs" />
     <Compile Include="World\Voxels\DecalType.cs" />
     <Compile Include="World\Voxels\VoxelListPrimitive-CalculateVertexLight.cs" />

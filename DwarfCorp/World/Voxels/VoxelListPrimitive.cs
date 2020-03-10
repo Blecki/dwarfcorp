@@ -180,16 +180,15 @@ namespace DwarfCorp
             }
         }
 
-        public void InitializeFromChunk(VoxelChunk chunk, DesignationSet DesignationSet, WorldManager World)
+        public void InitializeFromChunk(VoxelChunk chunk, WorldManager World)
         {
             DebugHelper.AssertNotNull(chunk);
-            DebugHelper.AssertNotNull(DesignationSet);
             DebugHelper.AssertNotNull(World);
 
-            //BoxPrimitive bedrockModel = Library.GetVoxelPrimitive("Bedrock");
             var sliceStack = new List<RawPrimitive>();
             var cache = new Cache();
             int maxViewingLevel = World.Renderer.PersistentSettings.MaxViewingLevel;
+
             for (var localY = 0; localY < maxViewingLevel - chunk.Origin.Y && localY < VoxelConstants.ChunkSizeY; ++localY)
             {
                 RawPrimitive sliceGeometry = null;
@@ -229,7 +228,7 @@ namespace DwarfCorp
                     chunk.RebuildMoteLayer(localY);
 
                 DebugHelper.AssertNotNull(sliceGeometry);
-                BuildSliceGeometry(chunk, cache, localY, sliceGeometry, DesignationSet, World);
+                BuildSliceGeometry(chunk, cache, localY, sliceGeometry, World.PersistentData.Designations, World);
 
                 sliceStack.Add(sliceGeometry);
             }

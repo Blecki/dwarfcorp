@@ -11,10 +11,6 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// Simple class representing a geometric object with verticies, textures, and whatever else.
-    /// </summary>
-    [JsonObject(IsReference = true)]
     public class GeometricPrimitive : IDisposable
     {
         public int IndexCount = 0;

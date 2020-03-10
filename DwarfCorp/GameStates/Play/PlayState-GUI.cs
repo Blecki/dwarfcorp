@@ -46,6 +46,8 @@ namespace DwarfCorp.GameStates
         private Dictionary<uint, WorldPopup> LastWorldPopup = new Dictionary<uint, WorldPopup>();
         private List<Widget> TogglePanels = new List<Widget>();
 
+
+
         public Gui.MousePointer MousePointer = new Gui.MousePointer("mouse", 1, 0);
 
         public void ShowTooltip(String Text)
@@ -1229,7 +1231,6 @@ namespace DwarfCorp.GameStates
                                 World.TaskManager.AddTask(new CraftResourceTask((data as CraftItem), 1, 1, buildInfo.GetSelectedResources()));
 
                             ShowToolPopup((data as CraftItem).Verb.PresentTense + " " + numRepeats.ToString() + " " + (numRepeats == 1 ? data.DisplayName : (data as CraftItem).PluralDisplayName));
-                            
                         }
                     }
                 },

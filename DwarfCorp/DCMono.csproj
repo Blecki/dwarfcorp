@@ -864,7 +864,9 @@
     <Compile Include="World\Rail\RailHelper.cs" />
     <Compile Include="World\Rail\RailPiece.cs" />
     <Compile Include="World\UpdateSystemFactoryAttribute.cs" />
+    <Compile Include="World\Voxels\AlternativeVoxelPrimitive.cs" />
     <Compile Include="World\Voxels\BoxTransition.cs" />
+    <Compile Include="World\Voxels\ChunkBuilder\Face.cs" />
     <Compile Include="World\Voxels\ChunkManager-Data.cs" />
     <Compile Include="World\Voxels\ChunkManager.cs" />
     <Compile Include="World\Voxels\ChunkRenderer.cs" />

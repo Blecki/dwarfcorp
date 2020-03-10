@@ -330,6 +330,10 @@ namespace DwarfCorp.GameStates
 
             #endregion
 
+            // Close the bottom menu if the only icon is the return icon.
+            if (BottomToolBar.Children.First(w => w.Hidden == false).Children.Count(c => c.Hidden == false) == 1)
+                (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(FlatToolTray.Tray.Hotkeys[0]);
+
             #region Handle slice hotkeys being held down
 
             if (sliceDownheld)
