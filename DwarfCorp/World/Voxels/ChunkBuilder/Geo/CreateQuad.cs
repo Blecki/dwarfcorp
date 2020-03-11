@@ -16,6 +16,14 @@ namespace DwarfCorp.Voxels.Geo
             return r;
         }
 
+        public static Mesh Quad(Vector3 bottomLeft, Vector3 topLeft, Vector3 bottomRight, Vector3 topRight)
+        {
+            var r = Mesh.EmptyMesh();
+            r.QuadPart(bottomLeft, topLeft, bottomRight, topRight);
+            return r;
+        }
+
+
         private void AddIndicies(int BaseIndex, params short[] Indicies)
         {
             var indexBase = IndexCount;
@@ -48,7 +56,7 @@ namespace DwarfCorp.Voxels.Geo
         }
 
 
-        public MeshPart QuadPart(Vector2 bottomLeft, Vector2 topLeft, Vector2 bottomRight, Vector2 topRight)
+        public MeshPart QuadPart(Vector3 bottomLeft, Vector3 topLeft, Vector3 bottomRight, Vector3 topRight)
         {
             var result = new MeshPart
             {
@@ -61,10 +69,10 @@ namespace DwarfCorp.Voxels.Geo
 
             GrowVerticies(4); 
 
-            Verticies[baseIndex + 0] = new ExtendedVertex(new Vector3(topLeft, 0.0f), Color.White, Color.White, new Vector2(0.0f, 0.0f), new Vector4(0, 0, 1, 1));
-            Verticies[baseIndex + 1] = new ExtendedVertex(new Vector3(topRight, 0.0f), Color.White, Color.White, new Vector2(1.0f, 0.0f), new Vector4(0, 0, 1, 1));
-            Verticies[baseIndex + 2] = new ExtendedVertex(new Vector3(bottomRight, 0.0f), Color.White, Color.White, new Vector2(1.0f, 1.0f), new Vector4(0, 0, 1, 1));
-            Verticies[baseIndex + 3] = new ExtendedVertex(new Vector3(bottomLeft, 0.0f), Color.White, Color.White, new Vector2(0.0f, 1.0f), new Vector4(0, 0, 1, 1));
+            Verticies[baseIndex + 0] = new ExtendedVertex(topLeft, Color.White, Color.White, new Vector2(0.0f, 0.0f), new Vector4(0, 0, 1, 1));
+            Verticies[baseIndex + 1] = new ExtendedVertex(topRight, Color.White, Color.White, new Vector2(1.0f, 0.0f), new Vector4(0, 0, 1, 1));
+            Verticies[baseIndex + 2] = new ExtendedVertex(bottomRight, Color.White, Color.White, new Vector2(1.0f, 1.0f), new Vector4(0, 0, 1, 1));
+            Verticies[baseIndex + 3] = new ExtendedVertex(bottomLeft, Color.White, Color.White, new Vector2(0.0f, 1.0f), new Vector4(0, 0, 1, 1));
 
             AddIndicies(baseIndex, 0, 1, 2, 3, 0, 2);
 

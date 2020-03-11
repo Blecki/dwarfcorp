@@ -12,10 +12,28 @@ namespace DwarfCorp.Voxels
 {
     public static class GeometryBuilder
     {
-        public static VoxelPrimitive Cube = VoxelPrimitive.MakeCube();
+        public static VoxelPrimitive Cube = null;
 
         public static GeometricPrimitive CreateFromChunk(VoxelChunk Chunk, WorldManager World)
         {
+            if (Cube == null)
+            {
+                var terrainSheet = new Gui.TileSheet(16 * 32, 16 * 32, new Rectangle(0, 0, 16 * 32, 16 * 32), 32, 32, false);
+                Cube = VoxelPrimitive.MakeCube();
+                foreach (var face in Cube.Faces)
+                {
+                    if (face.Orientation == FaceOrientation.East)
+                        face.Mesh.EntireMeshAsPart().Texture(terrainSheet.TileMatrix(5)); // Need to set texture bounds as well.
+
+                    else if (face.Orientation == FaceOrientation.South)
+                        face.Mesh.EntireMeshAsPart().Texture(terrainSheet.TileMatrix(1)); // Need to set texture bounds as well.
+                    else
+                        face.Mesh.EntireMeshAsPart().Texture(terrainSheet.TileMatrix(2)); // Need to set texture bounds as well.
+
+                }
+            }
+
+
             DebugHelper.AssertNotNull(Chunk);
             DebugHelper.AssertNotNull(World);
 
@@ -82,13 +100,23 @@ namespace DwarfCorp.Voxels
             if (Voxel.IsEmpty) return;
 
             var voxelTransform = Matrix.CreateTranslation(Voxel.Coordinate.ToVector3());
-            var primitive = Cube;//Lookup the primitive;
+            var primitive = Cube; //Lookup the primitive;
 
             foreach (var face in Cube.Faces)
+                GenerateFaceGeometry(Into, Voxel, face, voxelTransform, World);
+        }
+
+        public static void GenerateFaceGeometry(Geo.Mesh Into, VoxelHandle Voxel, Face Face, Matrix VoxelTransform, WorldManager World)
+        {
+            if (Face.CullType == FaceCullType.Cull)
             {
-                var facePart = Into.Concat(face.Mesh);
-                facePart.Transform(voxelTransform);
-            }            
+                var neighborVoxel = World.ChunkManager.CreateVoxelHandle(Voxel.Coordinate + OrientationHelper.GetFaceNeighborOffset(Face.Orientation));
+                if (neighborVoxel.IsValid && !neighborVoxel.IsEmpty)
+                    return;
+            }
+
+            var facePart = Into.Concat(Face.Mesh);
+            facePart.Transform(VoxelTransform);
         }
     }
 }

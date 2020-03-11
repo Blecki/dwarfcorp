@@ -48,11 +48,6 @@ namespace DwarfCorp.Voxels.Geo
             return this;
         }
 
-        public MeshPart TileScaleAndTexture(Gui.ITileSheet Sheet, int T)
-        {
-            return this.Scale(Sheet.TileWidth, Sheet.TileHeight).Texture(Sheet.TileMatrix(T));
-        }
-
         public MeshPart Colorize(Color Color)
         {
             return Colorize(Color, 0, VertexCount);
