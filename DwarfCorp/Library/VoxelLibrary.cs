@@ -18,6 +18,7 @@ namespace DwarfCorp
         private static Dictionary<string, VoxelType> VoxelTypes = new Dictionary<string, VoxelType>();
         private static List<VoxelType> VoxelTypeList = null;
         private static Dictionary<String, BoxPrimitive> VoxelPrimitives = new Dictionary<String, BoxPrimitive>();
+        private static Dictionary<String, Voxels.VoxelShapeTemplate> NewVoxelPrimitives = new Dictionary<string, Voxels.VoxelShapeTemplate>();
 
         private static bool VoxelsInitialized = false;
 
@@ -75,13 +76,14 @@ namespace DwarfCorp
 
             var cubeTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
             VoxelTypeList = FileUtils.LoadJsonListFromDirectory<VoxelType>(ContentPaths.voxel_types, null, v => v.Name);
+            var terrainTiles = new Gui.TileSheet(cubeTexture.Width, cubeTexture.Height, cubeTexture.Bounds, 32, 32, false);
 
             short id = 2;
             foreach (VoxelType type in VoxelTypeList)
             {
                 VoxelTypes[type.Name] = type;
-
-                    VoxelPrimitives[type.Name] = CreateVoxelPrimitive(cubeTexture, 32, 32, type.Top, type.Bottom, type.Sides);
+                VoxelPrimitives[type.Name] = CreateVoxelPrimitive(cubeTexture, 32, 32, type.Top, type.Bottom, type.Sides);
+                NewVoxelPrimitives[type.Name] = Voxels.VoxelShapeTemplate.MakeVoxelCube(type.Top, type.Sides, type.Bottom, terrainTiles);
                 if (type.Name == "_empty")
                 {
                     _EmptyVoxelType = type;
@@ -134,6 +136,15 @@ namespace DwarfCorp
 
             if (VoxelPrimitives.ContainsKey(type.Name))
                 return VoxelPrimitives[type.Name];
+            return null;
+        }
+
+        public static MaybeNull<Voxels.VoxelShapeTemplate> GetNewVoxelPrimitive(VoxelType Type)
+        {
+            InitializeVoxels();
+
+            if (NewVoxelPrimitives.ContainsKey(Type.Name))
+                return NewVoxelPrimitives[Type.Name];
             return null;
         }
 

@@ -10,40 +10,21 @@ using System.Collections.Concurrent;
 
 namespace DwarfCorp.Voxels
 {
-    public static class GeometryBuilder
+    public static partial class GeometryBuilder
     {
-        public static VoxelPrimitive Cube = null;
-
         public static GeometricPrimitive CreateFromChunk(VoxelChunk Chunk, WorldManager World)
         {
-            if (Cube == null)
-            {
-                var terrainSheet = new Gui.TileSheet(16 * 32, 16 * 32, new Rectangle(0, 0, 16 * 32, 16 * 32), 32, 32, false);
-                Cube = VoxelPrimitive.MakeCube();
-                foreach (var face in Cube.Faces)
-                {
-                    if (face.Orientation == FaceOrientation.East)
-                        face.Mesh.EntireMeshAsPart().Texture(terrainSheet.TileMatrix(5)); // Need to set texture bounds as well.
-
-                    else if (face.Orientation == FaceOrientation.South)
-                        face.Mesh.EntireMeshAsPart().Texture(terrainSheet.TileMatrix(1)); // Need to set texture bounds as well.
-                    else
-                        face.Mesh.EntireMeshAsPart().Texture(terrainSheet.TileMatrix(2)); // Need to set texture bounds as well.
-
-                }
-            }
-
-
             DebugHelper.AssertNotNull(Chunk);
             DebugHelper.AssertNotNull(World);
 
-            var sliceStack = new List<Geo.Mesh>();
+            var sliceStack = new List<RawPrimitive>();
 
             int maxViewingLevel = World.Renderer.PersistentSettings.MaxViewingLevel;
+            var terrainTileSheet = new TerrainTileSheet(512, 512, 32, 32);
 
             for (var localY = 0; localY < maxViewingLevel - Chunk.Origin.Y && localY < VoxelConstants.ChunkSizeY; ++localY)
             {
-                Geo.Mesh sliceGeometry = null;
+                RawPrimitive sliceGeometry = null;
 
                 lock (Chunk.Data.SliceCache)
                 {
@@ -51,7 +32,7 @@ namespace DwarfCorp.Voxels
 
                     if (cachedSlice != null)
                     {
-                        sliceStack.Add(Geo.Mesh.FromRawPrimitive(cachedSlice)); // Todo: Get rid of the raw primitive / geometric primitive bullshit entirely
+                        sliceStack.Add(cachedSlice); // Todo: Get rid of the raw primitive / geometric primitive bullshit entirely
 
                         if (GameSettings.Current.GrassMotes)
                             Chunk.RebuildMoteLayerIfNull(localY);
@@ -59,54 +40,65 @@ namespace DwarfCorp.Voxels
                         continue;
                     }
 
-                    sliceGeometry = Geo.Mesh.EmptyMesh();
+                    sliceGeometry = new RawPrimitive();
 
-                    Chunk.Data.SliceCache[localY] = sliceGeometry.AsRawPrimitive(); // Copying it in means our additions later won't take, doesn't it?
+                    Chunk.Data.SliceCache[localY] = sliceGeometry; // Copying it in means our additions later won't take, doesn't it?
                 }
 
                 if (GameSettings.Current.GrassMotes)
                     Chunk.RebuildMoteLayer(localY);
 
                 DebugHelper.AssertNotNull(sliceGeometry);
-                GenerateSliceGeometry(sliceGeometry, Chunk, localY, World);
+                GenerateSliceGeometry(sliceGeometry, Chunk, localY, terrainTileSheet, World);
 
                 sliceStack.Add(sliceGeometry);
             }
 
-            var chunkGeo = Geo.Mesh.Merge(sliceStack.ToArray());
+            var chunkGeo = RawPrimitive.Concat(sliceStack);
 
             var r = new GeometricPrimitive();
-            r.Vertices = chunkGeo.Verticies;
+            r.Vertices = chunkGeo.Vertices;
             r.VertexCount = chunkGeo.VertexCount;
-            r.Indexes = chunkGeo.Indicies.Select(c => (ushort)c).ToArray();
+            r.Indexes = chunkGeo.Indexes.Select(c => (ushort)c).ToArray();
             r.IndexCount = chunkGeo.IndexCount;
 
             return r;
         }
 
         private static void GenerateSliceGeometry(
-            Geo.Mesh Into,
+            RawPrimitive Into,
             VoxelChunk Chunk,
             int LocalY,
+            TerrainTileSheet TileSheet,
             WorldManager World)
         {
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
-                    GenerateVoxelGeometry(Into, VoxelHandle.UnsafeCreateLocalHandle(Chunk, new LocalVoxelCoordinate(x, LocalY, z)), World);
+                    GenerateVoxelGeometry(Into, VoxelHandle.UnsafeCreateLocalHandle(Chunk, new LocalVoxelCoordinate(x, LocalY, z)), TileSheet, World);
         }
 
-        public static void GenerateVoxelGeometry(Geo.Mesh Into, VoxelHandle Voxel, WorldManager World)
+        public static void GenerateVoxelGeometry(
+            RawPrimitive Into, 
+            VoxelHandle Voxel, 
+            TerrainTileSheet TileSheet,
+            WorldManager World)
         {
             if (Voxel.IsEmpty) return;
 
             var voxelTransform = Matrix.CreateTranslation(Voxel.Coordinate.ToVector3());
-            var primitive = Cube; //Lookup the primitive;
 
-            foreach (var face in Cube.Faces)
-                GenerateFaceGeometry(Into, Voxel, face, voxelTransform, World);
+            if (Library.GetNewVoxelPrimitive(Voxel.Type).HasValue(out var primitive))
+                foreach (var face in primitive.Faces)
+                    GenerateFaceGeometry(Into, Voxel, face, TileSheet, voxelTransform, World);
         }
 
-        public static void GenerateFaceGeometry(Geo.Mesh Into, VoxelHandle Voxel, Face Face, Matrix VoxelTransform, WorldManager World)
+        public static void GenerateFaceGeometry(
+            RawPrimitive Into,
+            VoxelHandle Voxel,
+            VoxelFaceTemplate Face,
+            TerrainTileSheet TileSheet,
+            Matrix VoxelTransform,
+            WorldManager World)
         {
             if (Face.CullType == FaceCullType.Cull)
             {
@@ -115,8 +107,18 @@ namespace DwarfCorp.Voxels
                     return;
             }
 
-            var facePart = Into.Concat(Face.Mesh);
-            facePart.Transform(VoxelTransform);
+            Into.AddOffsetIndicies(Face.Mesh.Indicies, Into.VertexCount);
+            var tile = SelectTile(Voxel.Type, Face.Orientation);
+
+            foreach (var vertex in Face.Mesh.Verticies)
+            {
+                Into.AddVertex(new ExtendedVertex
+                {
+                    Position = Vector3.Transform(vertex.Position, VoxelTransform),
+                    TextureCoordinate = TileSheet.MapTileUVs(vertex.TextureCoordinate, tile),
+                    TextureBounds = TileSheet.GetTileBounds(tile)
+                });
+            }
         }
     }
 }

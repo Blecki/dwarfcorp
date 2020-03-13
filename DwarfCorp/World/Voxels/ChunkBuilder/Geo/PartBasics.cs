@@ -47,19 +47,7 @@ namespace DwarfCorp.Voxels.Geo
                 Mesh.Verticies[VertexOffset + i].TextureCoordinate = Vector2.Transform(Mesh.Verticies[VertexOffset + i].TextureCoordinate, M);
             return this;
         }
-
-        public MeshPart Colorize(Color Color)
-        {
-            return Colorize(Color, 0, VertexCount);
-        }
-
-        public MeshPart Colorize(Color Color, int StartIndex, int Count)
-        {
-            for (int i = StartIndex; i < StartIndex + Count; ++i)
-                Mesh.Verticies[VertexOffset + i].Color = Color;
-            return this;
-        }
-
+               
         public MeshPart Morph(Func<Vector3, Vector3> func)
         {
             for (int i = 0; i < VertexCount; ++i)
@@ -67,7 +55,7 @@ namespace DwarfCorp.Voxels.Geo
             return this;
         }
 
-        public MeshPart MorphEx(Func<ExtendedVertex, ExtendedVertex> func)
+        public MeshPart MorphEx(Func<Vertex, Vertex> func)
         {
             for (int i = 0; i < VertexCount; ++i)
                 Mesh.Verticies[VertexOffset + i] = func(Mesh.Verticies[VertexOffset + i]);

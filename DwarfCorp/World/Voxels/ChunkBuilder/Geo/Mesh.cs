@@ -7,9 +7,9 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Voxels.Geo
 {
-    public partial class Mesh // Todo - move entire geo bit over to the graphics namespace. Merge with raw primitive.
+    public partial class Mesh
     {
-        public ExtendedVertex[] Verticies;
+        public Vertex[] Verticies;
         public int VertexCount { get; private set; }
 
         public short[] Indicies;
@@ -27,7 +27,7 @@ namespace DwarfCorp.Voxels.Geo
         {
             return new Mesh()
             {
-                Verticies = new ExtendedVertex[0],
+                Verticies = new Vertex[0],
                 VertexCount = 0,
                 Indicies = new short[0],
                 IndexCount = 0
@@ -45,7 +45,7 @@ namespace DwarfCorp.Voxels.Geo
             VertexCount += by;
             if (Verticies.Length < VertexCount)
             {
-                var newVerts = new ExtendedVertex[(int)Math.Ceiling(VertexCount * 1.5)];
+                var newVerts = new Vertex[(int)Math.Ceiling(VertexCount * 1.5)];
                 Verticies.CopyTo(newVerts, 0);
                 Verticies = newVerts;
             }
@@ -86,7 +86,7 @@ namespace DwarfCorp.Voxels.Geo
         {
             var result = new Mesh();
 
-            result.Verticies = new ExtendedVertex[parts.Sum((p) => p.VertexCount)];
+            result.Verticies = new Vertex[parts.Sum((p) => p.VertexCount)];
             result.Indicies = new short[parts.Sum((p) => p.IndexCount)];
             result.VertexCount = result.Verticies.Length;
             result.IndexCount = result.Indicies.Length;
@@ -116,28 +116,6 @@ namespace DwarfCorp.Voxels.Geo
             for (int i = 0; i < Other.IndexCount; ++i) this.Indicies[i + indexStart] = (short)(Other.Indicies[i] + result.VertexOffset);
 
             return result;
-        }
-
-        public RawPrimitive AsRawPrimitive()
-        {
-            return new RawPrimitive
-            {
-                Vertices = Verticies,
-                VertexCount = VertexCount,
-                Indexes = Indicies,
-                IndexCount = IndexCount
-            };
-        }
-
-        public static Mesh FromRawPrimitive(RawPrimitive Prim)
-        {
-            return new Mesh
-            {
-                Verticies = Prim.Vertices,
-                VertexCount = Prim.VertexCount,
-                Indicies = Prim.Indexes,
-                IndexCount = Prim.IndexCount
-            };
         }
     }
 }

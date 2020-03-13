@@ -45,10 +45,10 @@ namespace DwarfCorp.Voxels.Geo
 
             GrowVerticies(4);
 
-            Verticies[baseIndex + 0] = new ExtendedVertex(new Vector3(0.0f, 0.0f, 0.0f), Color.White, Color.White, new Vector2(0.0f, 0.0f), new Vector4(0, 0, 1, 1));
-            Verticies[baseIndex + 1] = new ExtendedVertex(new Vector3(1.0f, 0.0f, 0.0f), Color.White, Color.White, new Vector2(1.0f, 0.0f), new Vector4(0, 0, 1, 1));
-            Verticies[baseIndex + 2] = new ExtendedVertex(new Vector3(1.0f, 1.0f, 0.0f), Color.White, Color.White, new Vector2(1.0f, 1.0f), new Vector4(0, 0, 1, 1));
-            Verticies[baseIndex + 3] = new ExtendedVertex(new Vector3(0.0f, 1.0f, 0.0f), Color.White, Color.White, new Vector2(0.0f, 1.0f), new Vector4(0, 0, 1, 1));
+            Verticies[baseIndex + 0] = new Vertex(new Vector3(0.0f, 0.0f, 0.0f), new Vector2(0.0f, 0.0f));
+            Verticies[baseIndex + 1] = new Vertex(new Vector3(1.0f, 0.0f, 0.0f), new Vector2(1.0f, 0.0f));
+            Verticies[baseIndex + 2] = new Vertex(new Vector3(1.0f, 1.0f, 0.0f), new Vector2(1.0f, 1.0f));
+            Verticies[baseIndex + 3] = new Vertex(new Vector3(0.0f, 1.0f, 0.0f), new Vector2(0.0f, 1.0f));
 
             AddIndicies(baseIndex, 0, 1, 2, 3, 0, 2);
 
@@ -67,12 +67,12 @@ namespace DwarfCorp.Voxels.Geo
 
             var baseIndex = VertexCount;
 
-            GrowVerticies(4); 
+            GrowVerticies(4);
 
-            Verticies[baseIndex + 0] = new ExtendedVertex(topLeft, Color.White, Color.White, new Vector2(0.0f, 0.0f), new Vector4(0, 0, 1, 1));
-            Verticies[baseIndex + 1] = new ExtendedVertex(topRight, Color.White, Color.White, new Vector2(1.0f, 0.0f), new Vector4(0, 0, 1, 1));
-            Verticies[baseIndex + 2] = new ExtendedVertex(bottomRight, Color.White, Color.White, new Vector2(1.0f, 1.0f), new Vector4(0, 0, 1, 1));
-            Verticies[baseIndex + 3] = new ExtendedVertex(bottomLeft, Color.White, Color.White, new Vector2(0.0f, 1.0f), new Vector4(0, 0, 1, 1));
+            Verticies[baseIndex + 0] = new Vertex(topLeft, new Vector2(0.0f, 0.0f));
+            Verticies[baseIndex + 1] = new Vertex(topRight, new Vector2(1.0f, 0.0f));
+            Verticies[baseIndex + 2] = new Vertex(bottomRight, new Vector2(1.0f, 1.0f));
+            Verticies[baseIndex + 3] = new Vertex(bottomLeft, new Vector2(0.0f, 1.0f));
 
             AddIndicies(baseIndex, 0, 1, 2, 3, 0, 2);
 
