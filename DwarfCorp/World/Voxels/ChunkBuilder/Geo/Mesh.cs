@@ -17,12 +17,6 @@ namespace DwarfCorp.Voxels.Geo
 
         private Mesh() { }
 
-        public void Render(GraphicsDevice Device)
-        {
-            if (VertexCount != 0)
-                Device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, Verticies, 0, VertexCount, Indicies, 0, IndexCount / 3);
-        }
-
         public static Mesh EmptyMesh()
         {
             return new Mesh()
