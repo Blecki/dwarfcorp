@@ -2138,6 +2138,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Manager</Name>
     </None>
+    <None Include="World\Classes\Farmer.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Farmer</Name>
+    </None>
     <None Include="World\Classes\Pumpking.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Pumpking</Name>
@@ -2350,6 +2354,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>CopperHoe</Name>
     </None>
+    <None Include="World\ResourceItems\StrawHat.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>StrawHat</Name>
+    </None>
     <None Include="World\ResourceItems\GreenApron.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>GreenApron</Name>
@@ -2509,6 +2517,10 @@
     <None Include="World\ResourceItems\AATestResource.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>AATestResource</Name>
+    </None>
+    <None Include="World\ResourceItems\PattyHat.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>PattyHat</Name>
     </None>
     <None Include="World\ResourceItems\WizardHat.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

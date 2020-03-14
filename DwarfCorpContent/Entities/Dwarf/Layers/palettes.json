@@ -231,7 +231,7 @@
   },
 
   {
-    "Name": "Straw",
+    "Name": "Straw Equipment",
     "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
     "Row": 32,
     "Type": "Equipment"
