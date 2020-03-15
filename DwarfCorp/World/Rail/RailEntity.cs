@@ -509,7 +509,7 @@ namespace DwarfCorp.Rail
                             new Vector2(sideUvs[0].X + uvDelta * (uvStep * (i - 1)), sideUvs[2].Y),
                             sideBounds));
 
-                        Primitive.AddOffsetIndicies(new short[] { 0, 1, 3, 1, 2, 3 }, baseIndex);
+                        Primitive.AddOffsetIndicies(new short[] { 0, 1, 3, 1, 2, 3 }, baseIndex, 6);
                     }
                 }
         }

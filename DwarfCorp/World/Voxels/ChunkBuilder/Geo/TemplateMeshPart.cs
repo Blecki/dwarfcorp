@@ -10,11 +10,11 @@ namespace DwarfCorp.Voxels.Geo
     /// <summary>
     /// Abstract 'slice' of a mesh - allows manipulation of a certain range of verticies.
     /// </summary>
-    public partial class MeshPart
+    public partial class TemplateMeshPart
     {
         public int VertexOffset = 0;
         public int VertexCount = 0;
-        public Mesh Mesh = null;
+        public TemplateMesh Mesh = null;
 
         public void End()
         {

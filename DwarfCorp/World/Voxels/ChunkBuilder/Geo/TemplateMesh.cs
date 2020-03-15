@@ -7,21 +7,21 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Voxels.Geo
 {
-    public partial class Mesh
+    public partial class TemplateMesh
     {
-        public Vertex[] Verticies;
+        public TemplateVertex[] Verticies;
         public int VertexCount { get; private set; }
 
         public short[] Indicies;
         public int IndexCount { get; private set; }
 
-        private Mesh() { }
+        private TemplateMesh() { }
 
-        public static Mesh EmptyMesh()
+        public static TemplateMesh EmptyMesh()
         {
-            return new Mesh()
+            return new TemplateMesh()
             {
-                Verticies = new Vertex[0],
+                Verticies = new TemplateVertex[0],
                 VertexCount = 0,
                 Indicies = new short[0],
                 IndexCount = 0
@@ -39,7 +39,7 @@ namespace DwarfCorp.Voxels.Geo
             VertexCount += by;
             if (Verticies.Length < VertexCount)
             {
-                var newVerts = new Vertex[(int)Math.Ceiling(VertexCount * 1.5)];
+                var newVerts = new TemplateVertex[(int)Math.Ceiling(VertexCount * 1.5)];
                 Verticies.CopyTo(newVerts, 0);
                 Verticies = newVerts;
             }
@@ -56,19 +56,19 @@ namespace DwarfCorp.Voxels.Geo
             }
         }
 
-        public MeshPart BeginPart()
+        public TemplateMeshPart BeginPart()
         {
             return GetPart(VertexCount, 0);
         }
 
-        public MeshPart EntireMeshAsPart()
+        public TemplateMeshPart EntireMeshAsPart()
         {
             return GetPart(0, VertexCount);
         }
 
-        public MeshPart GetPart(int VertexOffset, int VertexCount)
+        public TemplateMeshPart GetPart(int VertexOffset, int VertexCount)
         {
-            return new MeshPart
+            return new TemplateMeshPart
             {
                 Mesh = this,
                 VertexOffset = VertexOffset,
@@ -76,11 +76,11 @@ namespace DwarfCorp.Voxels.Geo
             };
         }
 
-        public static Mesh Merge(params Mesh[] parts)
+        public static TemplateMesh Merge(params TemplateMesh[] parts)
         {
-            var result = new Mesh();
+            var result = new TemplateMesh();
 
-            result.Verticies = new Vertex[parts.Sum((p) => p.VertexCount)];
+            result.Verticies = new TemplateVertex[parts.Sum((p) => p.VertexCount)];
             result.Indicies = new short[parts.Sum((p) => p.IndexCount)];
             result.VertexCount = result.Verticies.Length;
             result.IndexCount = result.Indicies.Length;
@@ -97,7 +97,7 @@ namespace DwarfCorp.Voxels.Geo
             return result;
         }
 
-        public MeshPart Concat(Mesh Other)
+        public TemplateMeshPart Concat(TemplateMesh Other)
         {
             var result = this.BeginPart();
             result.VertexCount = Other.VertexCount;

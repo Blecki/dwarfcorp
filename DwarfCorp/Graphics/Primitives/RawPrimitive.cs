@@ -70,10 +70,10 @@ namespace DwarfCorp
             }
         }
 
-        public void AddOffsetIndicies(short[] Indicies, int BaseIndex)
+        public void AddOffsetIndicies(short[] Indicies, int BaseIndex, int Count)
         {
-            EnsureSpace(ref Indexes, IndexCount + Indicies.Length);
-            for (var i = 0; i < Indicies.Length; ++i)
+            EnsureSpace(ref Indexes, IndexCount + Count);
+            for (var i = 0; i < Count; ++i)
             {
                 Indexes[IndexCount] = (short)(Indicies[i] + BaseIndex);
                 IndexCount += 1;
@@ -88,7 +88,7 @@ namespace DwarfCorp
             AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(0.5f, 0.0f, -0.5f), Transform), Color, VertColor, Uvs[2], Bounds));
             AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(-0.5f, 0.0f, -0.5f), Transform), Color, VertColor, Uvs[3], Bounds));
 
-            AddOffsetIndicies(new short[] { 0, 1, 3, 1, 2, 3 }, baseIndex);
+            AddOffsetIndicies(new short[] { 0, 1, 3, 1, 2, 3 }, baseIndex, 6);
         }
 
         public void Reset()

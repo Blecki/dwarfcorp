@@ -12,8 +12,13 @@ namespace DwarfCorp.Voxels
 {
     public static partial class GeometryBuilder
     {
+        public static VoxelShapeTemplate Cube;
+
         public static GeometricPrimitive CreateFromChunk(VoxelChunk Chunk, WorldManager World)
         {
+            if (Cube == null)
+                Cube = VoxelShapeTemplate.MakeCube();
+
             DebugHelper.AssertNotNull(Chunk);
             DebugHelper.AssertNotNull(World);
 
@@ -87,8 +92,7 @@ namespace DwarfCorp.Voxels
 
             var voxelTransform = Matrix.CreateTranslation(Voxel.Coordinate.ToVector3());
 
-            if (Library.GetNewVoxelPrimitive(Voxel.Type).HasValue(out var primitive))
-                foreach (var face in primitive.Faces)
+                foreach (var face in Cube.Faces)
                     GenerateFaceGeometry(Into, Voxel, face, TileSheet, voxelTransform, World);
         }
 
@@ -107,18 +111,16 @@ namespace DwarfCorp.Voxels
                     return;
             }
 
-            Into.AddOffsetIndicies(Face.Mesh.Indicies, Into.VertexCount);
+            Into.AddOffsetIndicies(Face.Mesh.Indicies, Into.VertexCount, Face.Mesh.IndexCount);
             var tile = SelectTile(Voxel.Type, Face.Orientation);
 
-            foreach (var vertex in Face.Mesh.Verticies)
-            {
+            for (var vertex = 0; vertex < Face.Mesh.VertexCount; ++vertex)
                 Into.AddVertex(new ExtendedVertex
                 {
-                    Position = Vector3.Transform(vertex.Position, VoxelTransform),
-                    TextureCoordinate = TileSheet.MapTileUVs(vertex.TextureCoordinate, tile),
+                    Position = Vector3.Transform(Face.Mesh.Verticies[vertex].Position, VoxelTransform),
+                    TextureCoordinate = TileSheet.MapTileUVs(Face.Mesh.Verticies[vertex].TextureCoordinate, tile),
                     TextureBounds = TileSheet.GetTileBounds(tile)
                 });
-            }
         }
     }
 }

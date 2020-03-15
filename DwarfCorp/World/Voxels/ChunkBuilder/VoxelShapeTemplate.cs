@@ -31,50 +31,35 @@ namespace DwarfCorp.Voxels
                     new VoxelFaceTemplate
                     {
                         Orientation = FaceOrientation.South,
-                        Mesh = Geo.Mesh.Quad(bottomWestSouth, topWestSouth, bottomEastSouth, topEastSouth)
+                        Mesh = Geo.TemplateMesh.Quad(bottomWestSouth, topWestSouth, bottomEastSouth, topEastSouth)
                     },
                     new VoxelFaceTemplate
                     {
                         Orientation = FaceOrientation.North,
-                        Mesh = Geo.Mesh.Quad(bottomEastNorth, topEastNorth, bottomWestNorth, topWestNorth)
+                        Mesh = Geo.TemplateMesh.Quad(bottomEastNorth, topEastNorth, bottomWestNorth, topWestNorth)
                     },
                     new VoxelFaceTemplate
                     {
                         Orientation = FaceOrientation.Top,
-                        Mesh = Geo.Mesh.Quad(topWestSouth, topWestNorth, topEastSouth, topEastNorth)
+                        Mesh = Geo.TemplateMesh.Quad(topWestSouth, topWestNorth, topEastSouth, topEastNorth)
                     },
                     new VoxelFaceTemplate
                     {
                         Orientation = FaceOrientation.Bottom,
-                        Mesh = Geo.Mesh.Quad(bottomEastNorth, bottomEastSouth, bottomWestNorth, bottomWestSouth)
+                        Mesh = Geo.TemplateMesh.Quad(bottomEastNorth, bottomEastSouth, bottomWestNorth, bottomWestSouth)
                     },
                     new VoxelFaceTemplate
                     {
                         Orientation = FaceOrientation.West,
-                        Mesh = Geo.Mesh.Quad(bottomWestNorth, topWestNorth, bottomWestSouth, topWestSouth)
+                        Mesh = Geo.TemplateMesh.Quad(bottomWestNorth, topWestNorth, bottomWestSouth, topWestSouth)
                     },
                     new VoxelFaceTemplate
                     {
                         Orientation = FaceOrientation.East,
-                        Mesh = Geo.Mesh.Quad(bottomEastSouth, topEastSouth, bottomEastNorth, topEastNorth)
+                        Mesh = Geo.TemplateMesh.Quad(bottomEastSouth, topEastSouth, bottomEastNorth, topEastNorth)
                     }
                 }
             };
-        }
-
-        public static VoxelShapeTemplate MakeVoxelCube(Point TopTile, Point SideTile, Point BottomTile, Gui.TileSheet Sheet)
-        {
-            var r = VoxelShapeTemplate.MakeCube();
-
-            foreach (var face in r.Faces)
-                if (face.Orientation == FaceOrientation.Top)
-                    face.Mesh.EntireMeshAsPart().Texture(Sheet.TileMatrix(TopTile.X, TopTile.Y)); // Need to set texture bounds as well.
-                else if (face.Orientation == FaceOrientation.Bottom)
-                    face.Mesh.EntireMeshAsPart().Texture(Sheet.TileMatrix(BottomTile.X, BottomTile.Y)); // Need to set texture bounds as well.
-                else
-                    face.Mesh.EntireMeshAsPart().Texture(Sheet.TileMatrix(SideTile.X, SideTile.Y)); // Need to set texture bounds as well.
-
-            return r;
         }
     }
 }

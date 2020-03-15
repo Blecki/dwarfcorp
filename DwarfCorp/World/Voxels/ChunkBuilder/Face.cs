@@ -17,7 +17,7 @@ namespace DwarfCorp.Voxels
 
     public class VoxelFaceTemplate
     {
-        public Geo.Mesh Mesh;
+        public Geo.TemplateMesh Mesh;
         public FaceOrientation Orientation;
         public FaceCullType CullType = FaceCullType.Cull;
     }
