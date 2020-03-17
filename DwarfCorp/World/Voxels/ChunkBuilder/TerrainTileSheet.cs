@@ -9,6 +9,8 @@ namespace DwarfCorp.Voxels
 {
     public class TerrainTileSheet
     {
+        public const float BoundsFudge = 0.001f;
+
         public int TextureWidth { get; set; }
         public int TextureHeight { get; set; }
         public int TileWidth { get; private set; }
@@ -57,7 +59,7 @@ namespace DwarfCorp.Voxels
 
         public Vector4 GetTileBounds(Point Tile)
         {
-            return new Vector4(ColumnU(Tile.X), RowV(Tile.Y), ColumnU(Tile.X + 1), RowV(Tile.Y + 1));
+            return new Vector4(ColumnU(Tile.X) + BoundsFudge, RowV(Tile.Y) + BoundsFudge, ColumnU(Tile.X + 1) - BoundsFudge, RowV(Tile.Y + 1) - BoundsFudge);
         }
     }
 }

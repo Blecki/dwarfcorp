@@ -6,11 +6,18 @@ namespace DwarfCorp.Voxels.Geo
     {
         public Vector3 Position;
         public Vector2 TextureCoordinate;
+        public VoxelVertex LogicalVertex;
+        public bool ApplySlope = false;
 
-        public TemplateVertex(Vector3 position, Vector2 textureCoordinate)
+        public TemplateVertex WithTextCoordinate(Vector2 Coord)
         {
-            Position = position;
-            TextureCoordinate = textureCoordinate;
+            return new TemplateVertex
+            {
+                Position = this.Position,
+                TextureCoordinate = Coord,
+                LogicalVertex = this.LogicalVertex,
+                ApplySlope = this.ApplySlope
+            };
         }
     }
 }

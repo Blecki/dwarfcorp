@@ -13,16 +13,24 @@ namespace DwarfCorp.Voxels
     {
         public List<VoxelFaceTemplate> Faces = new List<VoxelFaceTemplate>();
 
+        private static Dictionary<VoxelVertex, Geo.TemplateVertex> GetCubeVerticies()
+        {
+            return new Dictionary<VoxelVertex, Geo.TemplateVertex>
+            {
+                { VoxelVertex.FrontTopLeft,     new Geo.TemplateVertex { Position = new Vector3(0.0f, 1.0f, 1.0f), LogicalVertex = VoxelVertex.FrontTopLeft, ApplySlope = true } },
+                { VoxelVertex.BackTopLeft,      new Geo.TemplateVertex { Position = new Vector3(0.0f, 1.0f, 0.0f), LogicalVertex = VoxelVertex.BackTopLeft, ApplySlope = true } },
+                { VoxelVertex.FrontTopRight,    new Geo.TemplateVertex { Position = new Vector3(1.0f, 1.0f, 1.0f), LogicalVertex = VoxelVertex.FrontTopRight, ApplySlope = true } },
+                { VoxelVertex.BackTopRight,     new Geo.TemplateVertex { Position = new Vector3(1.0f, 1.0f, 0.0f), LogicalVertex = VoxelVertex.BackTopRight, ApplySlope = true } },
+                { VoxelVertex.FrontBottomLeft,  new Geo.TemplateVertex { Position = new Vector3(0.0f, 0.0f, 1.0f), LogicalVertex = VoxelVertex.FrontBottomLeft } },
+                { VoxelVertex.BackBottomLeft,   new Geo.TemplateVertex { Position = new Vector3(0.0f, 0.0f, 0.0f), LogicalVertex = VoxelVertex.BackBottomLeft } },
+                { VoxelVertex.FrontBottomRight, new Geo.TemplateVertex { Position = new Vector3(1.0f, 0.0f, 1.0f), LogicalVertex = VoxelVertex.FrontBottomRight } },
+                { VoxelVertex.BackBottomRight,  new Geo.TemplateVertex { Position = new Vector3(1.0f, 0.0f, 0.0f), LogicalVertex = VoxelVertex.BackBottomRight } }
+            };
+        }
+
         public static VoxelShapeTemplate MakeCube()
         {
-            Vector3 topWestSouth = new Vector3(1.0f, 1.0f, 0.0f);
-            Vector3 topWestNorth = new Vector3(1.0f, 1.0f, 1.0f);
-            Vector3 topEastSouth = new Vector3(0.0f, 1.0f, 0.0f);
-            Vector3 topEastNorth = new Vector3(0.0f, 1.0f, 1.0f);
-            Vector3 bottomWestSouth = new Vector3(1.0f, 0.0f, 0.0f);
-            Vector3 bottomWestNorth = new Vector3(1.0f, 0.0f, 1.0f);
-            Vector3 bottomEastSouth = new Vector3(0.0f, 0.0f, 0.0f);
-            Vector3 bottomEastNorth = new Vector3(0.0f, 0.0f, 1.0f);
+            var verts = GetCubeVerticies();
 
             return new VoxelShapeTemplate
             {
@@ -31,32 +39,32 @@ namespace DwarfCorp.Voxels
                     new VoxelFaceTemplate
                     {
                         Orientation = FaceOrientation.South,
-                        Mesh = Geo.TemplateMesh.Quad(bottomWestSouth, topWestSouth, bottomEastSouth, topEastSouth)
+                        Mesh = Geo.TemplateMesh.Quad(verts[VoxelVertex.FrontBottomLeft], verts[VoxelVertex.FrontTopLeft], verts[VoxelVertex.FrontBottomRight], verts[VoxelVertex.FrontTopRight])
                     },
                     new VoxelFaceTemplate
                     {
                         Orientation = FaceOrientation.North,
-                        Mesh = Geo.TemplateMesh.Quad(bottomEastNorth, topEastNorth, bottomWestNorth, topWestNorth)
+                        Mesh = Geo.TemplateMesh.Quad(verts[VoxelVertex.BackBottomRight], verts[VoxelVertex.BackTopRight], verts[VoxelVertex.BackBottomLeft], verts[VoxelVertex.BackTopLeft])
                     },
                     new VoxelFaceTemplate
                     {
                         Orientation = FaceOrientation.Top,
-                        Mesh = Geo.TemplateMesh.Quad(topWestSouth, topWestNorth, topEastSouth, topEastNorth)
+                        Mesh = Geo.TemplateMesh.Quad(verts[VoxelVertex.FrontTopLeft], verts[VoxelVertex.BackTopLeft], verts[VoxelVertex.FrontTopRight], verts[VoxelVertex.BackTopRight])
                     },
                     new VoxelFaceTemplate
                     {
                         Orientation = FaceOrientation.Bottom,
-                        Mesh = Geo.TemplateMesh.Quad(bottomEastNorth, bottomEastSouth, bottomWestNorth, bottomWestSouth)
+                        Mesh = Geo.TemplateMesh.Quad(verts[VoxelVertex.BackBottomRight], verts[VoxelVertex.FrontBottomRight], verts[VoxelVertex.BackBottomLeft], verts[VoxelVertex.FrontBottomLeft])
                     },
                     new VoxelFaceTemplate
                     {
                         Orientation = FaceOrientation.West,
-                        Mesh = Geo.TemplateMesh.Quad(bottomWestNorth, topWestNorth, bottomWestSouth, topWestSouth)
+                        Mesh = Geo.TemplateMesh.Quad(verts[VoxelVertex.BackBottomLeft], verts[VoxelVertex.BackTopLeft], verts[VoxelVertex.FrontBottomLeft], verts[VoxelVertex.FrontTopLeft])
                     },
                     new VoxelFaceTemplate
                     {
                         Orientation = FaceOrientation.East,
-                        Mesh = Geo.TemplateMesh.Quad(bottomEastSouth, topEastSouth, bottomEastNorth, topEastNorth)
+                        Mesh = Geo.TemplateMesh.Quad(verts[VoxelVertex.FrontBottomRight], verts[VoxelVertex.FrontTopRight], verts[VoxelVertex.BackBottomRight], verts[VoxelVertex.BackTopRight])
                     }
                 }
             };

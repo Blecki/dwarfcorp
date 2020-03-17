@@ -30,13 +30,13 @@ namespace DwarfCorp.Voxels
                 case FaceOrientation.Bottom:
                     return new GlobalVoxelOffset(0, -1, 0);
                 case FaceOrientation.North:
-                    return new GlobalVoxelOffset(0, 0, 1);
-                case FaceOrientation.East:
-                    return new GlobalVoxelOffset(-1, 0, 0);
-                case FaceOrientation.South:
                     return new GlobalVoxelOffset(0, 0, -1);
-                case FaceOrientation.West:
+                case FaceOrientation.East:
                     return new GlobalVoxelOffset(1, 0, 0);
+                case FaceOrientation.South:
+                    return new GlobalVoxelOffset(0, 0, 1);
+                case FaceOrientation.West:
+                    return new GlobalVoxelOffset(-1, 0, 0);
                 default:
                     return new GlobalVoxelOffset(0, 0, 0);
             }

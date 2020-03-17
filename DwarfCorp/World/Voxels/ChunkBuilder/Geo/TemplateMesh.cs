@@ -34,7 +34,7 @@ namespace DwarfCorp.Voxels.Geo
             IndexCount = 0;
         }
 
-        public void GrowVerticies(int by)
+        private void GrowVerticies(int by)
         {
             VertexCount += by;
             if (Verticies.Length < VertexCount)
@@ -45,7 +45,7 @@ namespace DwarfCorp.Voxels.Geo
             }
         }
 
-        public void GrowIndicies(int by)
+        private void GrowIndicies(int by)
         {
             IndexCount += by;
             if (Indicies.Length < IndexCount)
