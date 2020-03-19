@@ -12,7 +12,7 @@ namespace DwarfCorp.Voxels
 {
     public static partial class GeometryBuilder
     {
-        private static int GetVoxelVertexExploredNeighbors(VoxelHandle V, VoxelFaceTemplate Face, SliceCache Cache)
+        private static int GetVoxelVertexExploredNeighbors(VoxelHandle V, Geo.TemplateFace Face, SliceCache Cache)
         {
             var exploredVerts = 0;
 

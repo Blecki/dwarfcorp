@@ -16,6 +16,8 @@ namespace DwarfCorp.Voxels
         public Dictionary<GlobalVoxelCoordinate, VertexLighting.VertexColorInfo> LightCache = new Dictionary<GlobalVoxelCoordinate, VertexLighting.VertexColorInfo>();
         public Dictionary<GlobalVoxelCoordinate, bool> ExploredCache = new Dictionary<GlobalVoxelCoordinate, bool>();
         public Dictionary<VoxelVertex, bool> ShouldSlope = new Dictionary<VoxelVertex, bool>();
+        public ExtendedVertex[] FaceGeometry = new ExtendedVertex[4];
+        public ExtendedVertex[] TempVerticies = new ExtendedVertex[4];
 
         public void ClearSliceCache()
         {

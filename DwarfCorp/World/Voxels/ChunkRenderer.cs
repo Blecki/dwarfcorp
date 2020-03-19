@@ -53,6 +53,8 @@ namespace DwarfCorp
         {
             if (RenderList != null && !Debugger.Switches.HideTerrain)
             {
+                graphicsDevice.RasterizerState = new RasterizerState { CullMode = CullMode.None };
+
                 foreach (VoxelChunk chunk in RenderList)
                 {
                     effect.SetTexturedTechnique();

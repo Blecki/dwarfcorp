@@ -12,19 +12,19 @@ namespace DwarfCorp.Voxels
 {
     public static partial class GeometryBuilder
     {
-        private static bool IsSideFace(VoxelFaceTemplate face)
+        private static bool IsSideFace(Geo.TemplateFace face)
         {
             return face.Orientation != FaceOrientation.Top && face.Orientation != FaceOrientation.Bottom;
         }
 
-        private static bool IsFaceVisible(VoxelHandle V, VoxelFaceTemplate Face, ChunkManager Chunks, out VoxelHandle Neighbor)
+        private static bool IsFaceVisible(VoxelHandle V, Geo.TemplateFace Face, ChunkManager Chunks, out VoxelHandle Neighbor)
         {
             var delta = OrientationHelper.GetFaceNeighborOffset(Face.Orientation);
             Neighbor = new VoxelHandle(Chunks, V.Coordinate + delta);
             return IsFaceVisible(V, Neighbor, Face);
         }
 
-        private static bool IsFaceVisible(VoxelHandle voxel, VoxelHandle neighbor, VoxelFaceTemplate face)
+        private static bool IsFaceVisible(VoxelHandle voxel, VoxelHandle neighbor, Geo.TemplateFace face)
         {
             if (!voxel.IsValid)
                 return false;
