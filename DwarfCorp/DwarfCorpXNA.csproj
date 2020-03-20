@@ -695,10 +695,10 @@
     <Compile Include="World\Overworld\OverworldGenerator.cs" />
     <Compile Include="World\Potions\GatherPotionsTask.cs" />
     <Compile Include="World\Potions\Potion.cs" />
+    <Compile Include="World\Voxels\ChunkBuilder\GeometryBuilder-Fringe.cs" />
     <Compile Include="World\Voxels\ChunkBuilder\GeometryBuilder-Culling.cs" />
     <Compile Include="World\Voxels\ChunkBuilder\GeometryBuilder-SelectTile.cs" />
     <Compile Include="World\Voxels\ChunkBuilder\GeometryBuilder.cs" />
-    <Compile Include="World\Voxels\ChunkBuilder\Geo\TemplateMeshPart.cs" />
     <Compile Include="World\Voxels\ChunkBuilder\Geo\TemplateVertex.cs" />
     <Compile Include="World\Voxels\ChunkBuilder\Exploration.cs" />
     <Compile Include="World\Voxels\ChunkBuilder\TerrainTileSheet.cs" />
@@ -710,7 +710,6 @@
     <Compile Include="World\Voxels\ChunkBuilder\Geo\TemplateFace.cs" />
     <Compile Include="World\Voxels\ChunkBuilder\Geo\CreateQuad.cs" />
     <Compile Include="World\Voxels\ChunkBuilder\Geo\TemplateMesh.cs" />
-    <Compile Include="World\Voxels\ChunkBuilder\Geo\PartBasics.cs" />
     <Compile Include="World\Voxels\ChunkManager-Data.cs" />
     <Compile Include="Entities\Plants\Pumpkin.cs" />
     <Compile Include="Entities\Plants\Cactus.cs" />

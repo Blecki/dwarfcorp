@@ -15,6 +15,7 @@ namespace DwarfCorp.Voxels
         public static Geo.TemplateSolid Cube;
         public static Point BlackTile = new Point(12, 0);
         private static short[] QuadIndicies = { 0, 1, 2, 3, 0, 2 };
+        private static short[] FlippedQuadIndicies = { 0, 1, 3, 3, 1, 2 };
 
         public static GeometricPrimitive CreateFromChunk(VoxelChunk Chunk, WorldManager World)
         {
@@ -142,108 +143,20 @@ namespace DwarfCorp.Voxels
             {
                 var decalType = Library.GetGrassType(Voxel.GrassType);
                 PrepVerticies(World, Voxel, Face, Cache, GetVoxelVertexExploredNeighbors(Voxel, Face, Cache), TileSheet, decalType.Tile, ApplyLighting);
-                AddQuad(Into, Cache.FaceGeometry, QuadIndicies);
 
-                // Add grass fringe.
-
-                if (Face.Edges != null)
-                    for (var e = 0; e < Face.Edges.Length; ++e)
-                    {
-                        var fringeNeighbor = VoxelHelpers.GetNeighbor(Voxel, OrientationHelper.GetFaceNeighborOffset(Face.Edges[e].Orientation));
-                        if (fringeNeighbor.IsValid)
-                        {
-                            if (fringeNeighbor.IsEmpty)
-                                GenerateHangingFringe(Into, Face, TileSheet, Cache, decalType, Face.Edges[e]);
-                            else
-                            {
-                                var above = VoxelHelpers.GetVoxelAbove(fringeNeighbor);
-                                if (above.IsValid && !above.IsEmpty)
-                                    GenerateStandingFringe(Into, Face, TileSheet, Cache, decalType, Face.Edges[e]);
-                                if (fringeNeighbor.GrassType == 0 || (fringeNeighbor.GrassType != Voxel.GrassType && Library.GetGrassType(fringeNeighbor.GrassType).FringePrecedence < decalType.FringePrecedence))
-                                    GenerateTransitionFringe(Into, Face, TileSheet, Cache, decalType, Face.Edges[e]);
-                            }
-                        }
-                    }
+                GenerateGrassFringe(Into, Voxel, Face, TileSheet, Cache, decalType);
             }
             else
             {
                 PrepVerticies(World, Voxel, Face, Cache, GetVoxelVertexExploredNeighbors(Voxel, Face, Cache), TileSheet, SelectTile(Voxel.Type, Face.Orientation), ApplyLighting);
-                AddQuad(Into, Cache.FaceGeometry, QuadIndicies);
+                
             }
+
+            bool flippedQuad = ApplyLighting && (Cache.AmbientValues[0] + Cache.AmbientValues[2] >
+                              Cache.AmbientValues[1] + Cache.AmbientValues[3]);
+
+            AddQuad(Into, Cache.FaceGeometry, flippedQuad ? FlippedQuadIndicies : QuadIndicies);
         }
-
-        private static void GenerateHangingFringe(RawPrimitive Into, Geo.TemplateFace Face, TerrainTileSheet TileSheet, SliceCache Cache, GrassType decalType, Geo.TemplateEdge Edge)
-        {
-            var start = Cache.FaceGeometry[Edge.Start];
-            var end = Cache.FaceGeometry[Edge.End];
-
-            Cache.TempVerticies[0] = new ExtendedVertex(start.Position,
-                start.Color, start.VertColor,
-                TileSheet.MapTileUVs(new Vector2(0.0f, 0.0f), decalType.FringeTiles[0]), TileSheet.GetTileBounds(decalType.FringeTiles[0]));
-
-            Cache.TempVerticies[1] = new ExtendedVertex(end.Position,
-                end.Color, end.VertColor,
-                TileSheet.MapTileUVs(new Vector2(1.0f, 0.0f), decalType.FringeTiles[0]), TileSheet.GetTileBounds(decalType.FringeTiles[0]));
-
-            Cache.TempVerticies[2] = new ExtendedVertex(end.Position + OrientationHelper.GetFaceNeighborOffset(Edge.Orientation).AsVector3() * 0.5f + new Vector3(0.0f, -0.5f, 0.0f),
-                end.Color, end.VertColor,
-                TileSheet.MapTileUVs(new Vector2(1.0f, 0.5f), decalType.FringeTiles[0]), TileSheet.GetTileBounds(decalType.FringeTiles[0]));
-
-            Cache.TempVerticies[3] = new ExtendedVertex(start.Position + OrientationHelper.GetFaceNeighborOffset(Edge.Orientation).AsVector3() * 0.5f + new Vector3(0.0f, -0.5f, 0.0f),
-                start.Color, start.VertColor,
-                TileSheet.MapTileUVs(new Vector2(0.0f, 0.5f), decalType.FringeTiles[0]), TileSheet.GetTileBounds(decalType.FringeTiles[0]));
-
-            AddQuad(Into, Cache.TempVerticies, QuadIndicies);
-        }
-
-        private static void GenerateTransitionFringe(RawPrimitive Into, Geo.TemplateFace Face, TerrainTileSheet TileSheet, SliceCache Cache, GrassType decalType, Geo.TemplateEdge Edge)
-        {
-            var start = Cache.FaceGeometry[Edge.Start];
-            var end = Cache.FaceGeometry[Edge.End];
-
-            Cache.TempVerticies[0] = new ExtendedVertex(start.Position,
-                start.Color, start.VertColor,
-                TileSheet.MapTileUVs(new Vector2(0.0f, 0.0f), decalType.FringeTiles[0]), TileSheet.GetTileBounds(decalType.FringeTiles[0]));
-
-            Cache.TempVerticies[1] = new ExtendedVertex(end.Position,
-                end.Color, end.VertColor,
-                TileSheet.MapTileUVs(new Vector2(1.0f, 0.0f), decalType.FringeTiles[0]), TileSheet.GetTileBounds(decalType.FringeTiles[0]));
-
-            Cache.TempVerticies[2] = new ExtendedVertex(end.Position + OrientationHelper.GetFaceNeighborOffset(Edge.Orientation).AsVector3() * 0.5f + new Vector3(0.0f, 0.1f, 0.0f),
-                end.Color, end.VertColor,
-                TileSheet.MapTileUVs(new Vector2(1.0f, 0.5f), decalType.FringeTiles[0]), TileSheet.GetTileBounds(decalType.FringeTiles[0]));
-
-            Cache.TempVerticies[3] = new ExtendedVertex(start.Position + OrientationHelper.GetFaceNeighborOffset(Edge.Orientation).AsVector3() * 0.5f + new Vector3(0.0f, 0.1f, 0.0f),
-                start.Color, start.VertColor,
-                TileSheet.MapTileUVs(new Vector2(0.0f, 0.5f), decalType.FringeTiles[0]), TileSheet.GetTileBounds(decalType.FringeTiles[0]));
-
-            AddQuad(Into, Cache.TempVerticies, QuadIndicies);
-        }
-
-        private static void GenerateStandingFringe(RawPrimitive Into, Geo.TemplateFace Face, TerrainTileSheet TileSheet, SliceCache Cache, GrassType decalType, Geo.TemplateEdge Edge)
-        {
-            var start = Cache.FaceGeometry[Edge.Start];
-            var end = Cache.FaceGeometry[Edge.End];
-
-            Cache.TempVerticies[0] = new ExtendedVertex(start.Position,
-                start.Color, start.VertColor,
-                TileSheet.MapTileUVs(new Vector2(0.0f, 0.0f), decalType.FringeTiles[0]), TileSheet.GetTileBounds(decalType.FringeTiles[0]));
-
-            Cache.TempVerticies[1] = new ExtendedVertex(end.Position,
-                end.Color, end.VertColor,
-                TileSheet.MapTileUVs(new Vector2(1.0f, 0.0f), decalType.FringeTiles[0]), TileSheet.GetTileBounds(decalType.FringeTiles[0]));
-
-            Cache.TempVerticies[2] = new ExtendedVertex(end.Position + OrientationHelper.GetFaceNeighborOffset(Edge.Orientation).AsVector3() * -0.1f + new Vector3(0.0f, 0.5f, 0.0f),
-                end.Color, end.VertColor,
-                TileSheet.MapTileUVs(new Vector2(1.0f, 0.5f), decalType.FringeTiles[0]), TileSheet.GetTileBounds(decalType.FringeTiles[0]));
-
-            Cache.TempVerticies[3] = new ExtendedVertex(start.Position + OrientationHelper.GetFaceNeighborOffset(Edge.Orientation).AsVector3() * -0.1f + new Vector3(0.0f, 0.5f, 0.0f),
-                start.Color, start.VertColor,
-                TileSheet.MapTileUVs(new Vector2(0.0f, 0.5f), decalType.FringeTiles[0]), TileSheet.GetTileBounds(decalType.FringeTiles[0]));
-
-            AddQuad(Into, Cache.TempVerticies, QuadIndicies);
-        }
-
 
         private static void PrepVerticies(
             WorldManager World,
@@ -266,13 +179,15 @@ namespace DwarfCorp.Voxels
                 if (Face.Mesh.Verticies[vertex].ApplySlope && ShouldVoxelVertexSlope(World.ChunkManager, Voxel, Face.Mesh.Verticies[vertex].LogicalVertex, Cache))
                     slopeOffset = new Vector3(0.0f, -0.5f, 0.0f);
 
-                Cache.AmbientValues[vertex] = lighting.AmbientColor; // Todo: Use ambient to flip indicies.
+                Cache.AmbientValues[vertex] = lighting.AmbientColor;
+                var voxelPosition = Face.Mesh.Verticies[vertex].Position + slopeOffset + Voxel.WorldPosition;
+                voxelPosition += VertexNoise.GetNoiseVectorFromRepeatingTexture(voxelPosition);
 
                 if (ExploredVertexCount == 0)
                 {
                     Cache.FaceGeometry[vertex] = new ExtendedVertex
                     {
-                        Position = Face.Mesh.Verticies[vertex].Position + slopeOffset + Voxel.WorldPosition,
+                        Position = voxelPosition,
                         TextureCoordinate = TileSheet.MapTileUVs(Face.Mesh.Verticies[vertex].TextureCoordinate, BlackTile),
                         TextureBounds = TileSheet.GetTileBounds(BlackTile),
                         VertColor = new Color(0.0f, 0.0f, 0.0f, 1.0f),
@@ -287,7 +202,7 @@ namespace DwarfCorp.Voxels
 
                     Cache.FaceGeometry[vertex] = new ExtendedVertex
                     {
-                        Position = Face.Mesh.Verticies[vertex].Position + slopeOffset + Voxel.WorldPosition,
+                        Position = voxelPosition,
                         TextureCoordinate = TileSheet.MapTileUVs(Face.Mesh.Verticies[vertex].TextureCoordinate, Tile),
                         TextureBounds = TileSheet.GetTileBounds(Tile),
                         VertColor = anyNeighborExplored ? new Color(1.0f, 1.0f, 1.0f, 1.0f) : new Color(0.0f, 0.0f, 0.0f, 1.0f),

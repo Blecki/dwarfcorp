@@ -46,6 +46,13 @@ namespace DwarfCorp.Voxels.Geo
                             new TemplateEdge { Start = 1, End = 2, EdgeType = EdgeType.Exterior, Orientation = FaceOrientation.East },
                             new TemplateEdge { Start = 2, End = 3, EdgeType = EdgeType.Exterior, Orientation = FaceOrientation.South },
                             new TemplateEdge { Start = 3, End = 0, EdgeType = EdgeType.Exterior, Orientation = FaceOrientation.West }
+                        },
+                        Corners = new TemplateCorner[]
+                        {
+                            new TemplateCorner { Vertex = 0, EdgeType = EdgeType.Exterior, EdgeA = 3, EdgeB = 0 },
+                            new TemplateCorner { Vertex = 1, EdgeType = EdgeType.Exterior, EdgeA = 0, EdgeB = 1 },
+                            new TemplateCorner { Vertex = 2, EdgeType = EdgeType.Exterior, EdgeA = 1, EdgeB = 2 },
+                            new TemplateCorner { Vertex = 3, EdgeType = EdgeType.Exterior, EdgeA = 2, EdgeB = 3 }
                         }
                     },
                     new TemplateFace

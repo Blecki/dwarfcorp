@@ -215,6 +215,11 @@ namespace DwarfCorp
         {
             return new Vector3(X, Y, Z);
         }
+
+        public static GlobalVoxelOffset operator +(GlobalVoxelOffset B, GlobalVoxelOffset A)
+        {
+            return new GlobalVoxelOffset(A.X + B.X, A.Y + B.Y, A.Z + B.Z);
+        }
     }
 
     [Serializable]

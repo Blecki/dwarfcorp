@@ -16,15 +16,8 @@ namespace DwarfCorp.Voxels.Geo
             return r;
         }
 
-        public TemplateMeshPart QuadPart(TemplateVertex bottomLeft, TemplateVertex topLeft, TemplateVertex bottomRight, TemplateVertex topRight)
+        public void QuadPart(TemplateVertex bottomLeft, TemplateVertex topLeft, TemplateVertex bottomRight, TemplateVertex topRight)
         {
-            var result = new TemplateMeshPart
-            {
-                VertexOffset = VertexCount,
-                VertexCount = 4,
-                Mesh = this
-            };
-
             var baseIndex = VertexCount;
 
             GrowVerticies(4);
@@ -33,9 +26,6 @@ namespace DwarfCorp.Voxels.Geo
             Verticies[baseIndex + 1] = topRight.WithTextCoordinate(new Vector2(1.0f, 0.0f));
             Verticies[baseIndex + 2] = bottomRight.WithTextCoordinate(new Vector2(1.0f, 1.0f));
             Verticies[baseIndex + 3] = bottomLeft.WithTextCoordinate(new Vector2(0.0f, 1.0f));
-
-            return result;
         }
-
     }
 }

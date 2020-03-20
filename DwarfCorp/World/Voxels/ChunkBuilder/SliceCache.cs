@@ -18,6 +18,21 @@ namespace DwarfCorp.Voxels
         public Dictionary<VoxelVertex, bool> ShouldSlope = new Dictionary<VoxelVertex, bool>();
         public ExtendedVertex[] FaceGeometry = new ExtendedVertex[4];
         public ExtendedVertex[] TempVerticies = new ExtendedVertex[4];
+        
+        public class EdgeFringeOuterVerticies
+        {
+            public bool Set = false;
+            public Vector3 Start;
+            public Vector3 End;
+        }
+
+        public EdgeFringeOuterVerticies[] EdgeFringeTempVerticies = new EdgeFringeOuterVerticies[]
+        {
+            new EdgeFringeOuterVerticies(),
+            new EdgeFringeOuterVerticies(),
+            new EdgeFringeOuterVerticies(),
+            new EdgeFringeOuterVerticies()
+        };
 
         public void ClearSliceCache()
         {

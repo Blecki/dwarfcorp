@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Voxels.Geo
 {
-    public partial class TemplateMesh
+    public partial class TemplateMesh // Todo: Redundant pointless class.
     {
         public TemplateVertex[] Verticies;
         public int VertexCount { get; private set; }
@@ -32,26 +32,6 @@ namespace DwarfCorp.Voxels.Geo
                 Verticies.CopyTo(newVerts, 0);
                 Verticies = newVerts;
             }
-        }
-
-        public TemplateMeshPart BeginPart()
-        {
-            return GetPart(VertexCount, 0);
-        }
-
-        public TemplateMeshPart EntireMeshAsPart()
-        {
-            return GetPart(0, VertexCount);
-        }
-
-        public TemplateMeshPart GetPart(int VertexOffset, int VertexCount)
-        {
-            return new TemplateMeshPart
-            {
-                Mesh = this,
-                VertexOffset = VertexOffset,
-                VertexCount = VertexCount
-            };
         }
     }
 }

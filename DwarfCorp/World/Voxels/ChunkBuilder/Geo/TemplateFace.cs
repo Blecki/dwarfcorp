@@ -25,9 +25,16 @@ namespace DwarfCorp.Voxels.Geo
     {
         public int Start;
         public int End;
-        public EdgeType EdgeType;
+        public EdgeType EdgeType; // Use for deciding if we should draw fringe or not.
         public FaceOrientation Orientation;
-        public int FringeUVs = 0;
+    }
+
+    public class TemplateCorner
+    {
+        public int Vertex;
+        public EdgeType EdgeType; // Even though it's a corner??
+        public int EdgeA;
+        public int EdgeB;
     }
 
     public class TemplateFace
@@ -36,5 +43,6 @@ namespace DwarfCorp.Voxels.Geo
         public FaceOrientation Orientation;
         public FaceCullType CullType = FaceCullType.Cull;
         public TemplateEdge[] Edges;
+        public TemplateCorner[] Corners;
     }
 }
