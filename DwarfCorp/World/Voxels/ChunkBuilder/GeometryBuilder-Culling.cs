@@ -70,6 +70,13 @@ namespace DwarfCorp.Voxels
                     if (neighbor.Type.IsTransparent && !voxel.Type.IsTransparent)
                         return true;
 
+                    if (neighbor.Type.CanRamp
+                       && neighbor.RampType != RampType.None
+                       && IsSideFace(face)
+                       && ShouldDrawFace(face.Orientation, neighbor.RampType, voxel.RampType)
+                       && neighbor.IsExplored)
+                        return true;
+
                     return false;
                 }
             }

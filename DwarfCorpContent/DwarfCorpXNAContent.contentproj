@@ -4409,6 +4409,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>default</Name>
     </None>
+    <None Include="World\Voxels\Blue Tile Slab.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Blue Tile Slab</Name>
+    </None>
     <None Include="World\Voxels\Dark Blue Tile.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Dark Blue Tile</Name>

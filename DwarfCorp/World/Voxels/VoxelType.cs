@@ -46,11 +46,13 @@ namespace DwarfCorp
         public float Rarity = 1.0f;
         public bool SpawnClusters = false;
         public bool IsSoil = false;
-        public bool IsSurface = false;
+        public bool IsSurface = false; // Todo: Cleanup
         public bool IsInvincible = false;
         public bool GrassSpreadsHere = false;
         public Color Tint = Color.White;
         //public bool UseBiomeGrassTint = false;
+
+        public Voxels.TemplateSolidShapes TemplateSolid = Voxels.TemplateSolidShapes.HardCube;
                 
         public bool SpawnOnSurface = false;
         public bool IsTransparent = false;

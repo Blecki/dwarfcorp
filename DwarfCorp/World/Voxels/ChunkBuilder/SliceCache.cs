@@ -12,10 +12,8 @@ namespace DwarfCorp.Voxels
 {
     public class SliceCache
     {
-        public int[] AmbientValues = new int[4];
         public Dictionary<GlobalVoxelCoordinate, VertexLighting.VertexColorInfo> LightCache = new Dictionary<GlobalVoxelCoordinate, VertexLighting.VertexColorInfo>();
         public Dictionary<GlobalVoxelCoordinate, bool> ExploredCache = new Dictionary<GlobalVoxelCoordinate, bool>();
-        public Dictionary<VoxelVertex, bool> ShouldSlope = new Dictionary<VoxelVertex, bool>();
         public ExtendedVertex[] FaceGeometry = new ExtendedVertex[4];
         public ExtendedVertex[] TempVerticies = new ExtendedVertex[4];
         
@@ -54,11 +52,6 @@ namespace DwarfCorp.Voxels
                 coord = new GlobalVoxelCoordinate(coord.X + 1, coord.Y, coord.Z);
 
             return coord;
-        }
-
-        public void ClearVoxelCache()
-        {
-            ShouldSlope.Clear();
         }
     }
 }

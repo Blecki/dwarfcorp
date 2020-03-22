@@ -49,7 +49,7 @@ namespace DwarfCorp
 
             DecalTypeList = decals.OrderBy(v => v.ID).ToList();
 
-            Console.WriteLine("Loaded Grass Library.");
+            Console.WriteLine("Loaded Decal Library.");
         }
 
         public static DecalType GetDecalType(byte id)

@@ -31,7 +31,7 @@ namespace DwarfCorp.Voxels
                             if (above.IsValid && !above.IsEmpty)
                                 GenerateEdgeFringe(Into, Face, e, TileSheet, Cache, decalType, new Vector3(0.0f, 0.5f, 0.0f), -0.1f);
                             else if (fringeNeighbor.GrassType == 0 || (fringeNeighbor.GrassType != Voxel.GrassType && Library.GetGrassType(fringeNeighbor.GrassType).FringePrecedence < decalType.FringePrecedence))
-                                GenerateEdgeFringe(Into, Face, e, TileSheet, Cache, decalType, new Vector3(0.0f, 0.1f, 0.0f), 0.5f);
+                                GenerateEdgeFringe(Into, Face, e, TileSheet, Cache, decalType, new Vector3(0.0f, 0.2f, 0.0f), 0.5f);
                         }
                     }
                 }
@@ -40,6 +40,17 @@ namespace DwarfCorp.Voxels
                 for (var c = 0; c < Face.Corners.Length; ++c)
                 {
                     var cornerNeighbor = VoxelHelpers.GetNeighbor(Voxel, OrientationHelper.GetFaceNeighborOffset(Face.Edges[Face.Corners[c].EdgeA].Orientation) + OrientationHelper.GetFaceNeighborOffset(Face.Edges[Face.Corners[c].EdgeB].Orientation));
+
+                    var manhattanA = VoxelHelpers.GetNeighbor(Voxel, OrientationHelper.GetFaceNeighborOffset(Face.Edges[Face.Corners[c].EdgeA].Orientation));
+                    var manhattanB = VoxelHelpers.GetNeighbor(Voxel, OrientationHelper.GetFaceNeighborOffset(Face.Edges[Face.Corners[c].EdgeB].Orientation));
+
+                    if (manhattanA.IsValid && !manhattanA.IsEmpty && manhattanA.GrassType == Voxel.GrassType)
+                        continue;
+
+                    if (manhattanB.IsValid && !manhattanB.IsEmpty && manhattanB.GrassType == Voxel.GrassType)
+                        continue;
+
+
                     if (cornerNeighbor.IsValid)
                     {
                         if (cornerNeighbor.IsEmpty) // Todo: Do not generate fringe if horizontal neighbors are occupied. 

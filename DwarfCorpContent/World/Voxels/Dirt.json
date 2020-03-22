@@ -33,5 +33,6 @@
     "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_3"
   ],
   "GrassSpreadsHere": true,
-  "MinimapColor": "127,91,71,255"
+  "MinimapColor": "127,91,71,255",
+  "TemplateSolid": "SoftCube"
 }

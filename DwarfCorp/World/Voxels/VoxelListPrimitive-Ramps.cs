@@ -39,7 +39,6 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        // Todo: Instead of calculating and storing the ramp status; detect if the voxel should ramp during generation automatically.
         private static void UpdateVoxelRamps(ChunkManager Chunks, VoxelHandle V)
         {
             if (!V.IsValid) return;

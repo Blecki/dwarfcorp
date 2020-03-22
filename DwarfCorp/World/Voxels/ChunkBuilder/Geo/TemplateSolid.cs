@@ -13,14 +13,14 @@ namespace DwarfCorp.Voxels.Geo
     {
         public List<TemplateFace> Faces = new List<TemplateFace>();
 
-        private static Dictionary<VoxelVertex, Geo.TemplateVertex> GetCubeVerticies()
+        private static Dictionary<VoxelVertex, Geo.TemplateVertex> GetCubeVerticies(bool AllowSloping)
         {
             return new Dictionary<VoxelVertex, Geo.TemplateVertex>
             {
-                { VoxelVertex.FrontTopLeft,     new Geo.TemplateVertex { Position = new Vector3(0.0f, 1.0f, 1.0f), LogicalVertex = VoxelVertex.FrontTopLeft, ApplySlope = true } },
-                { VoxelVertex.BackTopLeft,      new Geo.TemplateVertex { Position = new Vector3(0.0f, 1.0f, 0.0f), LogicalVertex = VoxelVertex.BackTopLeft, ApplySlope = true } },
-                { VoxelVertex.FrontTopRight,    new Geo.TemplateVertex { Position = new Vector3(1.0f, 1.0f, 1.0f), LogicalVertex = VoxelVertex.FrontTopRight, ApplySlope = true } },
-                { VoxelVertex.BackTopRight,     new Geo.TemplateVertex { Position = new Vector3(1.0f, 1.0f, 0.0f), LogicalVertex = VoxelVertex.BackTopRight, ApplySlope = true } },
+                { VoxelVertex.FrontTopLeft,     new Geo.TemplateVertex { Position = new Vector3(0.0f, 1.0f, 1.0f), LogicalVertex = VoxelVertex.FrontTopLeft, ApplySlope = AllowSloping } },
+                { VoxelVertex.BackTopLeft,      new Geo.TemplateVertex { Position = new Vector3(0.0f, 1.0f, 0.0f), LogicalVertex = VoxelVertex.BackTopLeft, ApplySlope = AllowSloping } },
+                { VoxelVertex.FrontTopRight,    new Geo.TemplateVertex { Position = new Vector3(1.0f, 1.0f, 1.0f), LogicalVertex = VoxelVertex.FrontTopRight, ApplySlope = AllowSloping } },
+                { VoxelVertex.BackTopRight,     new Geo.TemplateVertex { Position = new Vector3(1.0f, 1.0f, 0.0f), LogicalVertex = VoxelVertex.BackTopRight, ApplySlope = AllowSloping } },
                 { VoxelVertex.FrontBottomLeft,  new Geo.TemplateVertex { Position = new Vector3(0.0f, 0.0f, 1.0f), LogicalVertex = VoxelVertex.FrontBottomLeft } },
                 { VoxelVertex.BackBottomLeft,   new Geo.TemplateVertex { Position = new Vector3(0.0f, 0.0f, 0.0f), LogicalVertex = VoxelVertex.BackBottomLeft } },
                 { VoxelVertex.FrontBottomRight, new Geo.TemplateVertex { Position = new Vector3(1.0f, 0.0f, 1.0f), LogicalVertex = VoxelVertex.FrontBottomRight } },
@@ -28,9 +28,13 @@ namespace DwarfCorp.Voxels.Geo
             };
         }
 
-        public static TemplateSolid MakeCube()
+        public static TemplateSolid MakeCube(bool AllowSloping, Matrix VertexTransform, TemplateFaceShapes SideFaceShape)
         {
-            var verts = GetCubeVerticies();
+            var verts = GetCubeVerticies(AllowSloping);
+            foreach (var v in verts)
+                v.Value.Position = Vector3.Transform(v.Value.Position, VertexTransform);
+
+            // Todo - pass the face shape to the sides
 
             return new TemplateSolid
             {

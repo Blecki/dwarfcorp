@@ -12,16 +12,12 @@ namespace DwarfCorp.Voxels
 {
     public static partial class GeometryBuilder
     {
-        public static Geo.TemplateSolid Cube;
         public static Point BlackTile = new Point(12, 0);
         private static short[] QuadIndicies = { 0, 1, 2, 3, 0, 2 };
         private static short[] FlippedQuadIndicies = { 0, 1, 3, 3, 1, 2 };
 
         public static GeometricPrimitive CreateFromChunk(VoxelChunk Chunk, WorldManager World)
         {
-            if (Cube == null)
-                Cube = Geo.TemplateSolid.MakeCube();
-
             DebugHelper.AssertNotNull(Chunk);
             DebugHelper.AssertNotNull(World);
 
@@ -55,6 +51,9 @@ namespace DwarfCorp.Voxels
                     Chunk.Data.SliceCache[localY] = sliceGeometry;
                 }
 
+                if (GameSettings.Current.CalculateRamps)
+                    PrecomputeVoxelSlopesSlice(World.ChunkManager, Chunk, localY);
+
                 if (GameSettings.Current.GrassMotes)
                     Chunk.RebuildMoteLayer(localY);
 
@@ -85,7 +84,7 @@ namespace DwarfCorp.Voxels
         {
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
-                    GenerateVoxelGeometry(Into, VoxelHandle.UnsafeCreateLocalHandle(Chunk, new LocalVoxelCoordinate(x, LocalY, z)), TileSheet, World, Cache, true);
+                    GenerateVoxelGeometry(Into, VoxelHandle.UnsafeCreateLocalHandle(Chunk, new LocalVoxelCoordinate(x, LocalY, z)), TileSheet, World, Cache);
         }
 
         public static void GenerateVoxelGeometry(
@@ -93,20 +92,15 @@ namespace DwarfCorp.Voxels
             VoxelHandle Voxel, 
             TerrainTileSheet TileSheet,
             WorldManager World,
-            SliceCache Cache,
-            bool ApplyLighting)
+            SliceCache Cache)
         {
+            BuildDesignationGeometry(Into, Voxel, Cache, TileSheet, World);
             if (Voxel.IsEmpty && Voxel.IsExplored) return;
 
-            Cache.ClearVoxelCache();
+            var templateSolid = TemplateSolidLibrary.GetTemplateSolid(Voxel.Type.TemplateSolid);
 
-            var voxelTransform = Matrix.CreateTranslation(Voxel.Coordinate.ToVector3());
-
-            foreach (var face in Cube.Faces)
-                if (face.Orientation == FaceOrientation.Top)
-                    GenerateTopFaceGeometry(Into, Voxel, face, TileSheet, voxelTransform, World, Cache, ApplyLighting);
-                else
-                    GenerateFaceGeometry(Into, Voxel, face, TileSheet, voxelTransform, World, Cache, ApplyLighting);
+            foreach (var face in templateSolid.Faces)
+                GenerateFaceGeometry(Into, Voxel, face, TileSheet, World, Cache);
         }
 
         public static void GenerateFaceGeometry(
@@ -114,48 +108,128 @@ namespace DwarfCorp.Voxels
             VoxelHandle Voxel,
             Geo.TemplateFace Face,
             TerrainTileSheet TileSheet,
-            Matrix VoxelTransform,
             WorldManager World,
-            SliceCache Cache,
-            bool ApplyLighting)
+            SliceCache Cache)
         {
             if (Face.CullType == Geo.FaceCullType.Cull && !IsFaceVisible(Voxel, Face, World.ChunkManager, out var neighbor))
                 return;
 
-            PrepVerticies(World, Voxel, Face, Cache, GetVoxelVertexExploredNeighbors(Voxel, Face, Cache), TileSheet, SelectTile(Voxel.Type, Face.Orientation), ApplyLighting);
-            AddQuad(Into, Cache.FaceGeometry, QuadIndicies);
-        }
-
-        public static void GenerateTopFaceGeometry(
-            RawPrimitive Into,
-            VoxelHandle Voxel,
-            Geo.TemplateFace Face,
-            TerrainTileSheet TileSheet,
-            Matrix VoxelTransform,
-            WorldManager World,
-            SliceCache Cache,
-            bool ApplyLighting)
-        {
-            if (Face.CullType == Geo.FaceCullType.Cull && !IsFaceVisible(Voxel, Face, World.ChunkManager, out var neighbor))
-                return;
-
-            if (Voxel.GrassType != 0)
+            if (Face.Orientation == FaceOrientation.Top)
             {
-                var decalType = Library.GetGrassType(Voxel.GrassType);
-                PrepVerticies(World, Voxel, Face, Cache, GetVoxelVertexExploredNeighbors(Voxel, Face, Cache), TileSheet, decalType.Tile, ApplyLighting);
+                if (Voxel.GrassType != 0)
+                {
+                    var decalType = Library.GetGrassType(Voxel.GrassType);
+                    PrepVerticies(World, Voxel, Face, Cache, GetVoxelVertexExploredNeighbors(Voxel, Face, Cache), TileSheet, decalType.Tile, true, 0.0f);
 
-                GenerateGrassFringe(Into, Voxel, Face, TileSheet, Cache, decalType);
+                    GenerateGrassFringe(Into, Voxel, Face, TileSheet, Cache, decalType);
+                }
+                else
+                    PrepVerticies(World, Voxel, Face, Cache, GetVoxelVertexExploredNeighbors(Voxel, Face, Cache), TileSheet, SelectTile(Voxel.Type, Face.Orientation), true, 0.0f);
+
+                AddQuad(Into, Cache.FaceGeometry, QuadIndicies);
+
+                if (Voxel.DecalType != 0)
+                {
+                    var decalType = Library.GetDecalType(Voxel.DecalType);
+                    PrepVerticies(World, Voxel, Face, Cache, GetVoxelVertexExploredNeighbors(Voxel, Face, Cache), TileSheet, decalType.Tile, true, 0.02f);
+                    AddQuad(Into, Cache.FaceGeometry, QuadIndicies);
+                }
             }
             else
             {
-                PrepVerticies(World, Voxel, Face, Cache, GetVoxelVertexExploredNeighbors(Voxel, Face, Cache), TileSheet, SelectTile(Voxel.Type, Face.Orientation), ApplyLighting);
-                
+                PrepVerticies(World, Voxel, Face, Cache, GetVoxelVertexExploredNeighbors(Voxel, Face, Cache), TileSheet, SelectTile(Voxel.Type, Face.Orientation), true, 0.0f);
+                AddQuad(Into, Cache.FaceGeometry, QuadIndicies);
             }
+        }
 
-            bool flippedQuad = ApplyLighting && (Cache.AmbientValues[0] + Cache.AmbientValues[2] >
-                              Cache.AmbientValues[1] + Cache.AmbientValues[3]);
+        private static void SetVertexTint(ExtendedVertex[] Verticies, Color Tint)
+        {
+            for (var i = 0; i < Verticies.Length; ++i)
+                Verticies[i].VertColor = Tint;
+        }
 
-            AddQuad(Into, Cache.FaceGeometry, flippedQuad ? FlippedQuadIndicies : QuadIndicies);
+        private static void BuildDesignationGeometry(
+            RawPrimitive Into,
+            VoxelHandle Voxel,
+            SliceCache Cache,
+            TerrainTileSheet TileSheet,
+            WorldManager World)
+        {
+            // Todo: Store designations per chunk.
+            foreach (var designation in World.PersistentData.Designations.EnumerateDesignations(Voxel).ToList())
+            {
+                if ((designation.Type & World.Renderer.PersistentSettings.VisibleTypes) != designation.Type) // If hidden by player, do not draw.
+                    return;
+
+                var designationProperties = Library.GetDesignationTypeProperties(designation.Type).Value;
+                var designationVisible = false;
+
+                if (designationProperties.DrawType == DesignationDrawType.PreviewVoxel)
+                    designationVisible = Voxel.Coordinate.Y < World.Renderer.PersistentSettings.MaxViewingLevel;
+                else
+                    designationVisible = VoxelHelpers.DoesVoxelHaveVisibleSurface(World, Voxel);
+
+                if (designationVisible
+                    && Library.GetVoxelPrimitive(Library.DesignationVoxelType).HasValue(out BoxPrimitive designationPrimitive))
+                {
+                    switch (designationProperties.DrawType)
+                    {
+                        case DesignationDrawType.FullBox:
+                            {
+                                var solid = TemplateSolidLibrary.GetTemplateSolid(Voxel.Type.TemplateSolid);
+                                for (var f = 0; f < solid.Faces.Count; ++f)
+                                {
+                                    var face = solid.Faces[f];
+                                    if (face.CullType == Geo.FaceCullType.Cull && !IsFaceVisible(Voxel, face, World.ChunkManager, out var neighbor))
+                                        continue;
+
+                                    PrepVerticies(World, Voxel, face, Cache, GetVoxelVertexExploredNeighbors(Voxel, face, Cache), TileSheet, new Point(0, 0), false, 0.02f);
+                                    SetVertexTint(Cache.FaceGeometry, designationProperties.Color);
+                                    AddQuad(Into, Cache.FaceGeometry, QuadIndicies);
+                                }
+                            }
+                            break;
+
+                        case DesignationDrawType.TopBox:
+                            {
+                                var solid = TemplateSolidLibrary.GetTemplateSolid(Voxel.Type.TemplateSolid);
+                                for (var f = 0; f < solid.Faces.Count; ++f)
+                                {
+                                    var face = solid.Faces[f];
+                                    if (face.Orientation != FaceOrientation.Top)
+                                        continue;
+                                    if (face.CullType == Geo.FaceCullType.Cull && !IsFaceVisible(Voxel, face, World.ChunkManager, out var neighbor))
+                                        continue;
+
+                                    PrepVerticies(World, Voxel, face, Cache, GetVoxelVertexExploredNeighbors(Voxel, face, Cache), TileSheet, new Point(0, 0), false, 0.02f);
+                                    SetVertexTint(Cache.FaceGeometry, designationProperties.Color);
+                                    AddQuad(Into, Cache.FaceGeometry, QuadIndicies);
+                                }
+                            }
+                            break;
+
+                        case DesignationDrawType.PreviewVoxel:
+                            {
+                                if (Library.GetVoxelType(designation.Tag.ToString()).HasValue(out VoxelType voxelType))
+                                {
+                                    var solid = TemplateSolidLibrary.GetTemplateSolid(voxelType.TemplateSolid);
+                                    for (var f = 0; f < solid.Faces.Count; ++f)
+                                    {
+                                        var face = solid.Faces[f];
+                                        if (face.CullType == Geo.FaceCullType.Cull && !IsFaceVisible(Voxel, face, World.ChunkManager, out var neighbor))
+                                            continue;
+
+                                        PrepVerticies(World, Voxel, face, Cache, GetVoxelVertexExploredNeighbors(Voxel, face, Cache), TileSheet, SelectTile(voxelType, face.Orientation), false, 0.0f);
+                                        SetVertexTint(Cache.FaceGeometry, designationProperties.Color);
+                                        AddQuad(Into, Cache.FaceGeometry, QuadIndicies);
+                                    }
+                                }
+                            }
+                            break;
+                    }
+
+                }
+            }
         }
 
         private static void PrepVerticies(
@@ -166,7 +240,8 @@ namespace DwarfCorp.Voxels
             int ExploredVertexCount,
             TerrainTileSheet TileSheet,
             Point Tile,
-            bool ApplyLighting)
+            bool ApplyLighting,
+            float explodeOffset)
         {
             for (var vertex = 0; vertex < Face.Mesh.VertexCount; ++vertex) // Blows up if face has more than 4 verticies.
             {
@@ -176,12 +251,12 @@ namespace DwarfCorp.Voxels
                     lighting = VertexLighting.CalculateVertexLight(Voxel, Face.Mesh.Verticies[vertex].LogicalVertex, World.ChunkManager, Cache);
 
                 var slopeOffset = Vector3.Zero;
-                if (Face.Mesh.Verticies[vertex].ApplySlope && ShouldVoxelVertexSlope(World.ChunkManager, Voxel, Face.Mesh.Verticies[vertex].LogicalVertex, Cache))
+                if (Face.Mesh.Verticies[vertex].ApplySlope && ShouldSlope(Face.Mesh.Verticies[vertex].LogicalVertex, Voxel))
                     slopeOffset = new Vector3(0.0f, -0.5f, 0.0f);
 
-                Cache.AmbientValues[vertex] = lighting.AmbientColor;
                 var voxelPosition = Face.Mesh.Verticies[vertex].Position + slopeOffset + Voxel.WorldPosition;
                 voxelPosition += VertexNoise.GetNoiseVectorFromRepeatingTexture(voxelPosition);
+                voxelPosition += explodeOffset * OrientationHelper.GetFaceNeighborOffset(Face.Orientation).AsVector3();
 
                 if (ExploredVertexCount == 0)
                 {
