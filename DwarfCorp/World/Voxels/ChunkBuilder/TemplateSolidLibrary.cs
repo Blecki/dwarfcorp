@@ -18,9 +18,9 @@ namespace DwarfCorp.Voxels
             if (TemplateSolidLibraryInitialized) return;
             TemplateSolidLibraryInitialized = true;
 
-            SolidTypes.Add(TemplateSolidShapes.SoftCube, Geo.TemplateSolid.MakeCube(true, Matrix.Identity, TemplateFaceShapes.SoftSquare));
-            SolidTypes.Add(TemplateSolidShapes.HardCube, Geo.TemplateSolid.MakeCube(false, Matrix.Identity, TemplateFaceShapes.Square));
-            SolidTypes.Add(TemplateSolidShapes.LowerSlab, Geo.TemplateSolid.MakeCube(false, Matrix.CreateScale(1.0f, 0.5f, 1.0f), TemplateFaceShapes.LowerSlab));
+            SolidTypes.Add(TemplateSolidShapes.SoftCube, Geo.TemplateSolid.MakeCube(true, TemplateFaceShapes.SoftSquare));
+            SolidTypes.Add(TemplateSolidShapes.HardCube, Geo.TemplateSolid.MakeCube(false, TemplateFaceShapes.Square));
+            SolidTypes.Add(TemplateSolidShapes.LowerSlab, Geo.TemplateSolid.MakeLowerSlab());
 
             Console.WriteLine("Loaded Template Solid Library.");
         }

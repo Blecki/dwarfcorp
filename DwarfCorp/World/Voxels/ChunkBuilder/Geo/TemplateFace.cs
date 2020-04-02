@@ -44,5 +44,6 @@ namespace DwarfCorp.Voxels.Geo
         public FaceCullType CullType = FaceCullType.Cull;
         public TemplateEdge[] Edges;
         public TemplateCorner[] Corners;
+        public TemplateFaceShapes FaceShape = TemplateFaceShapes.Square;
     }
 }

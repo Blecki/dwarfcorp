@@ -70,6 +70,13 @@ namespace DwarfCorp.Voxels
                     if (neighbor.Type.IsTransparent && !voxel.Type.IsTransparent)
                         return true;
 
+                    var neighborSideOrientation = OrientationHelper.GetOppositeFace(face.Orientation);
+                    var neighborSolid = TemplateSolidLibrary.GetTemplateSolid(neighbor.Type.TemplateSolid);
+                    var neighborSide = neighborSolid.Faces.FirstOrDefault(s => s.Orientation == neighborSideOrientation);
+                    if (neighborSide == null) return true;
+                    if (neighborSide.FaceShape == TemplateFaceShapes.LowerSlab && face.FaceShape != TemplateFaceShapes.LowerSlab)
+                        return true;
+
                     if (neighbor.Type.CanRamp
                        && neighbor.RampType != RampType.None
                        && IsSideFace(face)

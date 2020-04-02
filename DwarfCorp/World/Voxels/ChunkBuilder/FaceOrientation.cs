@@ -41,5 +41,26 @@ namespace DwarfCorp.Voxels
                     return new GlobalVoxelOffset(0, 0, 0);
             }
         }
+
+        public static FaceOrientation GetOppositeFace(FaceOrientation Orientation)
+        {
+            switch (Orientation)
+            {
+                case FaceOrientation.Top:
+                    return FaceOrientation.Bottom;
+                case FaceOrientation.Bottom:
+                    return FaceOrientation.Top;
+                case FaceOrientation.North:
+                    return FaceOrientation.South;
+                case FaceOrientation.East:
+                    return FaceOrientation.West;
+                case FaceOrientation.South:
+                    return FaceOrientation.North;
+                case FaceOrientation.West:
+                    return FaceOrientation.East;
+                default:
+                    return FaceOrientation.Top;
+            }
+        }
     }
 }
