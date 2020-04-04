@@ -38,5 +38,21 @@
     255,
     255
   ],
-  "AleName": ""
+  "AleName": "",
+
+  "Craft_Craftable": true,
+  "Craft_Ingredients": [
+    {
+      "Tag": "Material",
+      "Count": 3
+    }
+  ],
+  "Craft_ResultsCount": 1,
+  "Craft_BaseCraftTime": 48.0,
+  "Craft_Location": "Craft Table",
+  "Craft_TaskCategory": "CraftItem",
+  "Craft_Noise": "Craft",
+  "Craft_MetaResourceFactory": "Trinket",
+
+  "Tutorial": "Trinkets are merely objects that craftsdwarves make for their trade value. Dwarfs cannot use trinkets for any other purpose. Skilled craftsdwarves produce more valuable trinkets. Trinkets made from more valuable goods are also more valuable."
 }

@@ -43,5 +43,21 @@
     255,
     255
   ],
-  "AleName": ""
+  "AleName": "",
+
+  "Craft_Craftable": true,
+  "Craft_Ingredients": [
+    {
+      "Tag": "Sand",
+      "Count": 1
+    }
+  ],
+  "Craft_ResultsCount": 1,
+  "Craft_BaseCraftTime": 8.0,
+  "Craft_Location": "Forge",
+  "Craft_TaskCategory": "CraftItem",
+  "Craft_Noise": "Craft",
+  "Craft_MetaResourceFactory": "Normal",
+
+  "Tutorial": "Convert sand into glass at a Forge. Use glass to build glass blocks or windows."
 }

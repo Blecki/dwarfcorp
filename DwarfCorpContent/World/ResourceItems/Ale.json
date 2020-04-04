@@ -35,5 +35,26 @@
     255,
     255
   ],
-  "AleName": ""
+  "AleName": "",
+
+  "Craft_Craftable": true,
+  "Craft_Ingredients": [
+    {
+      "Tag": "Brewable",
+      "Count": 1
+    }
+  ],
+  "Craft_ResultsCount": 1,
+  "Craft_BaseCraftTime": 8.0,
+  "Craft_Location": "Barrel",
+  "Craft_Verb": {
+    "Base": "brew",
+    "PastTense": "brewed",
+    "PresentTense": "brewing"
+  },
+  "Craft_TaskCategory": "Brew",
+  "Craft_Noise": "Cook",
+  "Craft_MetaResourceFactory": "Ale",
+
+  "Tutorial": "Ale can be brewed from mushrooms, grain, and many other foodstuffs."
 }

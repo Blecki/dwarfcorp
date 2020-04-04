@@ -22,7 +22,7 @@
     "Base": "burn",
     "PastTense": "burned",
     "PresentTense": "burning"
-  },  
+  },
   "AllowHeterogenous": true,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": false,

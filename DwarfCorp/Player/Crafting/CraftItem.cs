@@ -17,12 +17,6 @@ namespace DwarfCorp
 
     public class CraftItem : CraftableRecord
     {
-        public enum CraftPrereq
-        {
-            OnGround,
-            NearWall
-        }
-
         public string Name = "";
 
         public String DisplayName { get; set; }
@@ -38,9 +32,9 @@ namespace DwarfCorp
         public string CraftLocation = "Anvil";
         public Verb Verb = new Verb { Base = "Craft", PastTense = "Crafted", PresentTense = "Crafting" };
         public Vector3 SpawnOffset = new Vector3(0.0f, 0.5f, 0.0f); // Only used by god mode tool apparently
-        public bool AddToOwnedPool = false;
-        public bool Deconstructable = true;
-        public String CraftActBehavior = "Normal";
+        public bool AddToOwnedPool = false; // Only used by god tool
+        public bool Deconstructable = true; // Only used by god tool
+        public String CraftActBehavior = "Normal"; // Rename to MetaResourceFactory - Going to be difficult to roll into ResourceType I think.
         public string Category = "";
         public String GetCategory => Category;
         public string Tutorial = "";
@@ -54,24 +48,6 @@ namespace DwarfCorp
             DisplayName = Library.TransformDataString(DisplayName, Name);
             PluralDisplayName = Library.TransformDataString(PluralDisplayName, DisplayName + "s"); // Default to appending an s if the plural name is not specified.
             Description = Library.TransformDataString(Description, Description);
-        }
-
-        private IEnumerable<ResourceTypeAmount> MergeResources(IEnumerable<ResourceTypeAmount> resources)
-        {
-            Dictionary<String, int> counts = new Dictionary<String, int>();
-            foreach(var resource in resources)
-            {
-                if(!counts.ContainsKey(resource.Type))
-                {
-                    counts.Add(resource.Type, 0);
-                }
-                counts[resource.Type] += resource.Count;
-            }
-
-            foreach(var count in counts)
-            {
-                yield return new ResourceTypeAmount(count.Key, count.Value);
-            }
         }
     }
 }

@@ -43,5 +43,26 @@
     255,
     255
   ],
-  "AleName": ""
+  "AleName": "",
+
+  "Craft_Craftable": true,
+  "Craft_Ingredients": [
+    {
+      "Tag": "Soil",
+      "Count": 1
+    }
+  ],
+  "Craft_Verb": {
+    "Base": "bake",
+    "PastTense": "baked",
+    "PresentTense": "baking"
+  },
+  "Craft_ResultsCount": 1,
+  "Craft_BaseCraftTime": 4.0,
+  "Craft_Location": "Forge",
+  "Craft_TaskCategory": "CraftItem",
+  "Craft_Noise": "Craft",
+  "Craft_MetaResourceFactory": "Normal",
+
+  "Tutorial": "Using a forge, dwars can turn dirt into bricks. Bricks can be used to place brick blocks or floors."
 }

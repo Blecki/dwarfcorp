@@ -37,5 +37,25 @@
     255,
     255
   ],
-  "AleName": ""
+  "AleName": "",
+
+  "Craft_Craftable": true,
+  "Craft_Ingredients": [
+    {
+      "Tag": "Encrustable",
+      "Count": 1
+    },
+    {
+      "Tag": "Gem",
+      "Count": 1
+    }
+  ],
+  "Craft_ResultsCount": 1,
+  "Craft_BaseCraftTime": 64.0,
+  "Craft_Location": "Anvil",
+  "Craft_TaskCategory": "CraftItem",
+  "Craft_Noise": "Craft",
+  "Craft_MetaResourceFactory": "GemTrinket",
+
+  "Tutorial": "Combine a trinket with a gem to create a gem-set trinket. These are more valuable than regular trinkets."
 }

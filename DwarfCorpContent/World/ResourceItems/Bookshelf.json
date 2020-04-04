@@ -44,5 +44,21 @@
   "Placement_SpawnOffset": "0, 0, 0",
   "Placement_AddToOwnedPool": true,
   "Placement_MarkDestructable": true,
-  "Placement_PlacementRequirement": "OnGround"
+  "Placement_PlacementRequirement": "OnGround",
+
+  "Craft_Craftable": true,
+  "Craft_Ingredients": [
+    {
+      "Tag": "Magical",
+      "Count": 4
+    }
+  ],
+  "Craft_ResultsCount": 1,
+  "Craft_BaseCraftTime": 54.0,
+  "Craft_Location": "Craft Table",
+  "Craft_TaskCategory": "Research",
+  "Craft_Noise": "Craft",
+  "Craft_MetaResourceFactory": "Normal",
+
+  "Tutorial": "Bookshelves are used by wizards to do magical research. This increases their XP and allows them to level up. When wizards level up, they automatically learn new spells."
 }

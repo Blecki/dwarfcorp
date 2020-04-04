@@ -59,5 +59,25 @@
     "Palette": "Iron Equipment",
     "FrameSize": "32, 32",
     "Frame": "2, 0"
-  }
+  },
+
+  "Craft_Craftable": true,
+  "Craft_Ingredients": [
+    {
+      "Tag": "Wood",
+      "Count": 1
+    },
+    {
+      "Tag": "Iron",
+      "Count": 1
+    }
+  ],
+  "Craft_ResultsCount": 1,
+  "Craft_BaseCraftTime": 16.0,
+  "Craft_Location": "Anvil",
+  "Craft_TaskCategory": "CraftItem",
+  "Craft_Noise": "Craft",
+  "Craft_MetaResourceFactory": "Normal",
+
+  "Tutorial": "Dwarves need need hammers to craft items."
 }

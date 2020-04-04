@@ -42,5 +42,26 @@
     255,
     255
   ],
-  "AleName": ""
+  "AleName": "",
+
+  "Craft_Craftable": true,
+  "Craft_Ingredients": [
+    {
+      "Tag": "Wood",
+      "Count": 2
+    }
+  ],
+  "Craft_Verb": {
+    "Base": "burn",
+    "PastTense": "burned",
+    "PresentTense": "burning"
+  },
+  "Craft_ResultsCount": 1,
+  "Craft_BaseCraftTime": 32.0,
+  "Craft_Location": "Forge",
+  "Craft_TaskCategory": "CraftItem",
+  "Craft_Noise": "Craft",
+  "Craft_MetaResourceFactory": "Normal",
+
+  "Tutorial": "Burn wood in a forge to make charcoal."
 }

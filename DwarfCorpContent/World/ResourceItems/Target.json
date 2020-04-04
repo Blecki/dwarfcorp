@@ -44,5 +44,25 @@
   "Placement_SpawnOffset": "0, 0.5, 0",
   "Placement_AddToOwnedPool": true,
   "Placement_MarkDestructable": true,
-  "Placement_PlacementRequirement": "OnGround"
+  "Placement_PlacementRequirement": "OnGround",
+
+  "Craft_Craftable": true,
+  "Craft_Ingredients": [
+    {
+      "Tag": "Wood",
+      "Count": 2
+    },
+    {
+      "Tag": "Grain",
+      "Count": 3
+    }
+  ],
+  "Craft_ResultsCount": 1,
+  "Craft_BaseCraftTime": 32.0,
+  "Craft_Location": "Craft Table",
+  "Craft_TaskCategory": "CraftItem",
+  "Craft_Noise": "Craft",
+  "Craft_MetaResourceFactory": "Normal",
+
+  "Tutorial": "Musket dwarfs train and earn XP by attacking targets. The target is destroyed by the musket dwarf."
 }

@@ -35,8 +35,11 @@ namespace DwarfCorp
             }
         }
 
+        public bool Disable = false;
+
         public string TypeName;
         public string DisplayName { get; set; }
+        public String PluralDisplayName = null;
         public Gui.TileReference Icon { get => GuiLayers != null ? GuiLayers[0] : null; }
         GuiGraphic CraftableRecord.NewStyleIcon { get => Gui_Graphic; }
 
@@ -53,6 +56,7 @@ namespace DwarfCorp
         public Potion PotionType = null;
         public string Category = "";
         public String GetCategory => Category;
+        public String Tutorial = "";
 
         #region Gui
         public GuiGraphic Gui_Graphic = null;
@@ -99,12 +103,27 @@ namespace DwarfCorp
 
         #region Crafting
         public bool Craft_Craftable = false;
-
+        public List<ResourceTagAmount> Craft_Ingredients = new List<ResourceTagAmount>();
+        public float Craft_BaseCraftTime = 0.0f;
+        public int Craft_ResultsCount = 1;
+        public String Craft_Location = "Anvil";
+        public Verb Craft_Verb = new Verb { Base = "Craft", PastTense = "Crafted", PresentTense = "Crafting" };
+        public TaskCategory Craft_TaskCategory = TaskCategory.CraftItem;
+        public String Craft_Noise = "Craft";
+        public String Craft_MetaResourceFactory = "Normal";
         #endregion
 
         public ResourceType()
         {
 
         }
+
+        public void InitializeStrings()
+        {
+            DisplayName = Library.TransformDataString(DisplayName, TypeName);
+            PluralDisplayName = Library.TransformDataString(PluralDisplayName, DisplayName + "s"); // Default to appending an s if the plural name is not specified.
+            Description = Library.TransformDataString(Description, Description);
+        }
+
     }
 }
