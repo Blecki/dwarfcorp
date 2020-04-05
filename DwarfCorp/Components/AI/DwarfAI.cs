@@ -201,7 +201,7 @@ namespace DwarfCorp
                         {
                             var resources = new List<Resource>();
                             var allow = true;
-                            foreach (var resource in item.RequiredResources)
+                            foreach (var resource in item.Craft_Ingredients)
                             {
                                 var available = AI.World.GetResourcesWithTag(resource.Tag);
                                 if (available.Count == 0)

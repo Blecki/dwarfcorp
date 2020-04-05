@@ -7,7 +7,7 @@ namespace DwarfCorp.Gui.Widgets
 {
     public class BuildCraftInfo : Widget
     {
-        public CraftItem Data;
+        public ResourceType Data;
         public WorldManager World;
         private List<ResourceCombo> ResourceCombos = new List<ResourceCombo>();
         private ComboBox NumCombo = null;
@@ -39,9 +39,9 @@ namespace DwarfCorp.Gui.Widgets
                 MinimumSize = new Point(0, 34),
             });
 
-            for (var i = 0; i < Data.RequiredResources.Count; ++i)
+            for (var i = 0; i < Data.Craft_Ingredients.Count; ++i)
             { 
-                var resource = Library.EnumerateResourceTypesWithTag(Data.RequiredResources[i].Tag).FirstOrDefault();
+                var resource = Library.EnumerateResourceTypesWithTag(Data.Craft_Ingredients[i].Tag).FirstOrDefault();
                 if (resource != null)
                     titleBar.AddChild(new Widget
                     {
@@ -49,15 +49,15 @@ namespace DwarfCorp.Gui.Widgets
                         MaximumSize = new Point(32, 32),
                         Background = resource.GuiLayers[0],
                         AutoLayout = AutoLayout.DockLeft,
-                        Text = Data.RequiredResources[i].Count.ToString(),
+                        Text = Data.Craft_Ingredients[i].Count.ToString(),
                         TextHorizontalAlign = HorizontalAlign.Right,
                         TextVerticalAlign = VerticalAlign.Bottom,
                         Font = "font10-outline-numsonly",
                         TextColor = Color.White.ToVector4(),
-                        Tooltip = Data.RequiredResources[i].Tag
+                        Tooltip = Data.Craft_Ingredients[i].Tag
                     });
 
-                if (i < Data.RequiredResources.Count - 1)
+                if (i < Data.Craft_Ingredients.Count - 1)
                 {
                     titleBar.AddChild(new Widget
                     {
@@ -91,7 +91,7 @@ namespace DwarfCorp.Gui.Widgets
                 MaximumSize = new Point(32, 32),
                 Background = Data.Icon,
                 AutoLayout = AutoLayout.DockLeft,
-                Text = Data.CraftedResultsCount.ToString(),
+                Text = Data.Craft_ResultsCount.ToString(),
                 Font = "font10-outline-numsonly",
                 TextHorizontalAlign = HorizontalAlign.Right,
                 TextVerticalAlign = VerticalAlign.Bottom,
@@ -100,7 +100,7 @@ namespace DwarfCorp.Gui.Widgets
 
             titleBar.AddChild(new Widget
             {
-                Text = " " + Data.Name,
+                Text = " " + Data.DisplayName,
                 Font = "font16",
                 AutoLayout = AutoLayout.DockLeft,
                 TextVerticalAlign = VerticalAlign.Center,
@@ -115,7 +115,7 @@ namespace DwarfCorp.Gui.Widgets
                 AutoResizeToTextHeight = true
             });
 
-            foreach (var resourceAmount in Data.RequiredResources)
+            foreach (var resourceAmount in Data.Craft_Ingredients)
             {
                 var child = AddChild(new Widget()
                 {
@@ -195,8 +195,8 @@ namespace DwarfCorp.Gui.Widgets
 
             Button = BottomBar.AddChild(new Button()
             {
-                Text = Library.GetString("craft-new", Data.Verb.Base),
-                Tooltip = Library.GetString("craft-new-tooltip", Data.Verb.PresentTense, Data.DisplayName),
+                Text = Library.GetString("craft-new", Data.Craft_Verb.Base),
+                Tooltip = Library.GetString("craft-new-tooltip", Data.Craft_Verb.PresentTense, Data.DisplayName),
                 OnClick = (widget, args) =>
                 {
                     if (Button.Hidden) return;
@@ -259,13 +259,13 @@ namespace DwarfCorp.Gui.Widgets
                     BottomBar.Text = "You don't have enough resources.";
                 else
                 {
-                    if (!World.PlayerFaction.Minions.Any(m => m.Stats.IsTaskAllowed(Data.CraftTaskCategory)))
-                        BottomBar.Text = String.Format("You need a minion capable of {0} tasks to {1} this.", Data.CraftTaskCategory, Data.Verb.PresentTense);
+                    if (!World.PlayerFaction.Minions.Any(m => m.Stats.IsTaskAllowed(Data.Craft_TaskCategory)))
+                        BottomBar.Text = String.Format("You need a minion capable of {0} tasks to {1} this.", Data.Craft_TaskCategory, Data.Craft_Verb.PresentTense);
                     else
                     {
-                        var nearestBuildLocation = World.PlayerFaction.FindNearestItemWithTags(Data.CraftLocation, Vector3.Zero, false, null);
-                        if (!String.IsNullOrEmpty(Data.CraftLocation) && nearestBuildLocation == null)
-                            BottomBar.Text = String.Format("Needs {0} to {1}!", Data.CraftLocation, Data.Verb.Base);
+                        var nearestBuildLocation = World.PlayerFaction.FindNearestItemWithTags(Data.Craft_Location, Vector3.Zero, false, null);
+                        if (!String.IsNullOrEmpty(Data.Craft_Location) && nearestBuildLocation == null)
+                            BottomBar.Text = String.Format("Needs {0} to {1}!", Data.Craft_Location, Data.Craft_Verb.Base);
                         else
                         {
                             Button.Hidden = false;
@@ -306,8 +306,8 @@ namespace DwarfCorp.Gui.Widgets
 
         public bool CanBuild()
         {
-            if (!String.IsNullOrEmpty(Data.CraftLocation))
-                return World.PlayerFaction.FindNearestItemWithTags(Data.CraftLocation, Vector3.Zero, false, null) != null;
+            if (!String.IsNullOrEmpty(Data.Craft_Location))
+                return World.PlayerFaction.FindNearestItemWithTags(Data.Craft_Location, Vector3.Zero, false, null) != null;
             
             return true;
         }
@@ -315,8 +315,8 @@ namespace DwarfCorp.Gui.Widgets
         public List<ResourceApparentTypeAmount> GetSelectedResources()
         {
             var r = new List<ResourceApparentTypeAmount>();
-            for (var i = 0; i < Data.RequiredResources.Count && i < ResourceCombos.Count; ++i)
-                r.Add(new ResourceApparentTypeAmount(ResourceCombos[i].Combo.SelectedItem, Data.RequiredResources[i].Count));
+            for (var i = 0; i < Data.Craft_Ingredients.Count && i < ResourceCombos.Count; ++i)
+                r.Add(new ResourceApparentTypeAmount(ResourceCombos[i].Combo.SelectedItem, Data.Craft_Ingredients[i].Count));
             return r;
         }
 

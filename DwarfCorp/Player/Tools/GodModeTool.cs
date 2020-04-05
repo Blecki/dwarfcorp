@@ -83,8 +83,8 @@ namespace DwarfCorp
                     {
                         var offset = Vector3.Zero;
 
-                        if (Library.GetCraftable(type).HasValue(out var craftItem))
-                            offset = craftItem.SpawnOffset;
+                        if (Library.GetResourceType(type).HasValue(out var craftItem))
+                            offset = craftItem.Placement_SpawnOffset;
 
                         var body = EntityFactory.CreateEntity<GameComponent>(type, vox.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + offset);
                         if (body != null)
@@ -93,10 +93,10 @@ namespace DwarfCorp
 
                             if (craftItem != null)
                             {
-                                if (craftItem.AddToOwnedPool)
+                                if (craftItem.Placement_AddToOwnedPool)
                                     World.PlayerFaction.OwnedObjects.Add(body);
 
-                                if (craftItem.Deconstructable)
+                                if (craftItem.Placement_MarkDestructable)
                                     body.Tags.Add("Deconstructable"); // Todo: Should not need to set tag every time item is created. Inherint?
                             }
                         }

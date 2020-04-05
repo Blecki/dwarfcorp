@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace DwarfCorp
 {
-    public class ResourceType : CraftableRecord
+    public class ResourceType
     {
         public struct TrinketInfo
         {
@@ -41,7 +41,6 @@ namespace DwarfCorp
         public string DisplayName { get; set; }
         public String PluralDisplayName = null;
         public Gui.TileReference Icon { get => GuiLayers != null ? GuiLayers[0] : null; }
-        GuiGraphic CraftableRecord.NewStyleIcon { get => Gui_Graphic; }
 
         public DwarfBux MoneyValue;
         public string Description;
@@ -55,7 +54,6 @@ namespace DwarfCorp
         public string AleName = "";
         public Potion PotionType = null;
         public string Category = "";
-        public String GetCategory => Category;
         public String Tutorial = "";
 
         #region Gui

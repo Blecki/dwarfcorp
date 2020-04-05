@@ -21,23 +21,14 @@ namespace DwarfCorp.GameStates
             public FlatToolTray.Icon MenuIcon;
         }
 
-        public static ResourceType.GuiGraphic GetDynamicIcon(CraftableRecord Craftable)
-        {
-            if (Craftable is CraftItem craft)
-                return craft.NewStyleIcon;
-            if (Craftable is ResourceType res)
-                return res.Gui_Graphic;
-            return null;
-        }
-
         public static SubCategoryMenuCreationResult CreateCategorySubMenu(
-            IEnumerable<CraftableRecord> Crafts, 
-            Func<CraftableRecord, bool> Filter,
+            IEnumerable<ResourceType> Crafts, 
+            Func<ResourceType, bool> Filter,
             String Category,
-            Func<CraftableRecord, FlatToolTray.Icon> IconFactory, 
+            Func<ResourceType, FlatToolTray.Icon> IconFactory, 
             Action<Widget, InputEventArgs> OnReturnClicked)
         {
-            var icons = Crafts.Where(item => item.GetCategory == Category).Select(data =>
+            var icons = Crafts.Where(item => item.Category == Category).Select(data =>
             {
                 var icon = IconFactory(data);
                 icon.Tag = data;
@@ -56,18 +47,18 @@ namespace DwarfCorp.GameStates
             {
                 OnRefresh = (sender) =>
                 {
-                    (sender as IconTray).ItemSource = (new Widget[] { returnIcon }).Concat(icons.Where(icon => Filter(icon.Tag as CraftableRecord))).ToList();
+                    (sender as IconTray).ItemSource = (new Widget[] { returnIcon }).Concat(icons.Where(icon => Filter(icon.Tag as ResourceType))).ToList();
                     (sender as IconTray).ResetItemsFromSource();
                 }
             };
 
             var categoryInfo = Library.GetCategoryIcon(Category).HasValue(out var catIcon) ? catIcon : null;
             if (categoryInfo == null)
-                categoryInfo = new CategoryIcon // Category icons need to support the new style icons as well.
+                categoryInfo = new CategoryIcon
                 {
                     Label = Category,
-                    Icon = Crafts.Where(item => item.GetCategory == Category).First().Icon,
-                    DynamicIcon = Crafts.Where(item => item.GetCategory == Category).Select(item => item.NewStyleIcon != null ? item.NewStyleIcon : GetDynamicIcon(item)).Where(icon => icon != null).FirstOrDefault(),
+                    Icon = Crafts.Where(item => item.Category == Category).First().Icon,
+                    DynamicIcon = Crafts.Where(item => item.Category == Category).Select(item => item.Gui_Graphic).Where(icon => icon != null).FirstOrDefault(),
                     Tooltip = "Craft items in the " + Category + " category."
                 };
 
@@ -100,9 +91,9 @@ namespace DwarfCorp.GameStates
         /// <param name="OnReturnClicked"></param>
         /// <returns></returns>
         public static CategoryMenuCreationResult CreateCategoryMenu(
-            IEnumerable<CraftableRecord> Crafts, 
-            Func<CraftableRecord, bool> Filter,
-            Func<CraftableRecord, FlatToolTray.Icon> IconFactory,
+            IEnumerable<ResourceType> Crafts, 
+            Func<ResourceType, bool> Filter,
+            Func<ResourceType, FlatToolTray.Icon> IconFactory,
             Action<Widget, InputEventArgs> OnReturnClicked)
         {
             var icons = Crafts.Select(data =>
@@ -130,23 +121,23 @@ namespace DwarfCorp.GameStates
                 var categoryExists = new Dictionary<string, bool>();
                 var rootObjects = new List<FlatToolTray.Icon>();
 
-                foreach (var item in icons.Where(data => Filter(data.Tag as CraftableRecord)))
-                    if (item.Tag is CraftableRecord craft)
-                        if (string.IsNullOrEmpty(craft.GetCategory) || !categoryExists.ContainsKey(craft.GetCategory))
+                foreach (var item in icons.Where(data => Filter(data.Tag as ResourceType)))
+                    if (item.Tag is ResourceType craft)
+                        if (string.IsNullOrEmpty(craft.Category) || !categoryExists.ContainsKey(craft.Category))
                         {
                             rootObjects.Add(item);
-                            if (!string.IsNullOrEmpty(craft.GetCategory))
-                                categoryExists[craft.GetCategory] = true;
+                            if (!string.IsNullOrEmpty(craft.Category))
+                                categoryExists[craft.Category] = true;
                         }
 
                 (sender as IconTray).ItemSource = (new Widget[] { returnIcon }).Concat(rootObjects.Select(data =>
                 {
-                    if (data.Tag is CraftableRecord craft)
+                    if (data.Tag is ResourceType craft)
                     {
-                        if (string.IsNullOrEmpty(craft.GetCategory) || Crafts.Count(c => c.GetCategory == craft.GetCategory) == 1)
+                        if (string.IsNullOrEmpty(craft.Category) || Crafts.Count(c => c.Category == craft.Category) == 1)
                             return data;
 
-                        var r = CreateCategorySubMenu(Crafts, Filter, craft.GetCategory, IconFactory, OnReturnClicked);
+                        var r = CreateCategorySubMenu(Crafts, Filter, craft.Category, IconFactory, OnReturnClicked);
                         r.ReturnIcon.ReplacementMenu = menu;
 
                         return r.MenuIcon;

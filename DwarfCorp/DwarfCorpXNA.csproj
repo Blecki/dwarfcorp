@@ -900,7 +900,6 @@
     <Compile Include="Player\Crafting\Objects\CraftDetails.cs" />
     <Compile Include="Player\Crafting\Objects\CraftedBody.cs" />
     <Compile Include="Player\Crafting\Objects\CraftedFixture.cs" />
-    <Compile Include="Player\Crafting\CraftItem.cs" />
     <Compile Include="Library\CraftLibrary.cs" />
     <Compile Include="World\EngineModule.cs" />
     <Compile Include="World\CompanyInformation.cs" />

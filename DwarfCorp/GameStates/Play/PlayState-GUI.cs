@@ -1188,12 +1188,12 @@ namespace DwarfCorp.GameStates
             };
 
             var menu_CraftTypes = CategoryMenuBuilder.CreateCategoryMenu(
-                Library.EnumerateCraftables().ToList(),
+                Library.EnumerateResourceTypes().Where(r => r.Craft_Craftable).ToList(),
                 (data) => true,
                 (data) => new FlatToolTray.Icon
                 {
                     Icon = data.Icon,
-                    NewStyleIcon = data.NewStyleIcon != null ? data.NewStyleIcon : (Library.GetResourceType((data as CraftItem).ResourceCreated).HasValue(out var res) ? res.Gui_Graphic : null),
+                    NewStyleIcon = data.Gui_Graphic,
                     Tooltip = Library.GetString("craft", data.DisplayName),
                     KeepChildVisible = true, // So the player can interact with the popup.
                     ExpandChildWhenDisabled = true,
@@ -1204,10 +1204,10 @@ namespace DwarfCorp.GameStates
                     OnShown = (sender) => World.Tutorial("build crafts"),
                     PopupChild = new BuildCraftInfo
                     {
-                        Data = data as CraftItem,
+                        Data = data as ResourceType,
                         Rect = new Rectangle(0, 0, 450, 200),
                         World = World,
-                        OnShown = (sender) => World.Tutorial((data as CraftItem).Name),
+                        OnShown = (sender) => World.Tutorial((data as ResourceType).TypeName),
                         BuildAction = (sender, args) =>
                         {
                             var buildInfo = (sender as Gui.Widgets.BuildCraftInfo);
@@ -1220,17 +1220,17 @@ namespace DwarfCorp.GameStates
                             if (numRepeats > 1)
                             {
                                 var subTasks = new List<Task>();
-                                var compositeTask = new CompoundTask(String.Format("Craft {0} {1}", numRepeats, (data as CraftItem).PluralDisplayName), TaskCategory.CraftItem, TaskPriority.Medium);
+                                var compositeTask = new CompoundTask(String.Format("Craft {0} {1}", numRepeats, (data as ResourceType).PluralDisplayName), TaskCategory.CraftItem, TaskPriority.Medium);
                                 for (var i = 0; i < numRepeats; ++i)
-                                    subTasks.Add(new CraftResourceTask((data as CraftItem), i + 1, numRepeats, buildInfo.GetSelectedResources()) { Hidden = true });
+                                    subTasks.Add(new CraftResourceTask((data as ResourceType), i + 1, numRepeats, buildInfo.GetSelectedResources()) { Hidden = true });
                                 World.TaskManager.AddTasks(subTasks);
                                 compositeTask.AddSubTasks(subTasks);
                                 World.TaskManager.AddTask(compositeTask);
                             }
                             else
-                                World.TaskManager.AddTask(new CraftResourceTask((data as CraftItem), 1, 1, buildInfo.GetSelectedResources()));
+                                World.TaskManager.AddTask(new CraftResourceTask((data as ResourceType), 1, 1, buildInfo.GetSelectedResources()));
 
-                            ShowToolPopup((data as CraftItem).Verb.PresentTense + " " + numRepeats.ToString() + " " + (numRepeats == 1 ? data.DisplayName : (data as CraftItem).PluralDisplayName));
+                            ShowToolPopup((data as ResourceType).Craft_Verb.PresentTense + " " + numRepeats.ToString() + " " + (numRepeats == 1 ? data.DisplayName : (data as ResourceType).PluralDisplayName));
                         }
                     }
                 },
@@ -1263,7 +1263,7 @@ namespace DwarfCorp.GameStates
                 (data) => new FlatToolTray.Icon
                 {
                     Icon = data.Icon,
-                    NewStyleIcon = data.NewStyleIcon,
+                    NewStyleIcon = data.Gui_Graphic,
                     Tooltip = Library.GetString("craft", data.DisplayName),
                     ExpandChildWhenDisabled = true,
                     Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,

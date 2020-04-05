@@ -349,9 +349,9 @@ namespace DwarfCorp
             TutorialManager.TutorialEnabled = !GameSettings.Current.TutorialDisabledGlobally;
             Tutorial("new game start");
 
-            foreach (var item in Library.EnumerateCraftables())
+            foreach (var item in Library.EnumerateResourceTypes().Where(r => r.Craft_Craftable))
                 if (!String.IsNullOrEmpty(item.Tutorial))
-                    TutorialManager.AddTutorial(item.Name, item.Tutorial, item.Icon);
+                    TutorialManager.AddTutorial(item.TypeName, item.Tutorial, item.Icon);
 
             Renderer.Camera.World = this;
             //Drawer3D.Camera = Camera;

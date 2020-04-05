@@ -15,7 +15,7 @@ namespace DwarfCorp
         public int NumRepeats;
         public int CurrentRepeat;
         public List<ResourceApparentTypeAmount> RawMaterials;
-        public CraftItem ItemType;
+        public ResourceType ItemType;
         public ResourceDes Des;
 
         public CraftResourceTask()
@@ -26,7 +26,7 @@ namespace DwarfCorp
             MaxAssignable = 1;
         }
 
-        public CraftResourceTask(CraftItem ItemType, int CurrentRepeat, int NumRepeats, List<ResourceApparentTypeAmount> RawMaterials, int id = -1)
+        public CraftResourceTask(ResourceType ItemType, int CurrentRepeat, int NumRepeats, List<ResourceApparentTypeAmount> RawMaterials, int id = -1)
         {
             this.CurrentRepeat = CurrentRepeat;
             this.NumRepeats = NumRepeats;
@@ -37,10 +37,10 @@ namespace DwarfCorp
             this.RawMaterials = RawMaterials;
             this.ItemType = ItemType;
 
-            Name = String.Format("{4} order {0}: {1}/{2} {3}", TaskID, CurrentRepeat, NumRepeats, ItemType.PluralDisplayName, ItemType.Verb.Base);
+            Name = String.Format("{4} order {0}: {1}/{2} {3}", TaskID, CurrentRepeat, NumRepeats, ItemType.PluralDisplayName, ItemType.Craft_Verb.Base);
             Priority = TaskPriority.Medium;
 
-            Category = ItemType.CraftTaskCategory;
+            Category = ItemType.Craft_TaskCategory;
 
             AutoRetry = true;
             BoredomIncrease = GameSettings.Current.Boredom_NormalTask;
@@ -66,8 +66,8 @@ namespace DwarfCorp
 
         private bool HasLocation(Creature agent)
         {
-            if (ItemType.CraftLocation != ""
-                && !agent.Faction.OwnedObjects.Any(o => o.Tags.Contains(ItemType.CraftLocation) && (!o.IsReserved || o.ReservedFor == agent.AI)))
+            if (ItemType.Craft_Location != ""
+                && !agent.Faction.OwnedObjects.Any(o => o.Tags.Contains(ItemType.Craft_Location) && (!o.IsReserved || o.ReservedFor == agent.AI)))
                     return false;
             return true;
         }
@@ -97,7 +97,7 @@ namespace DwarfCorp
             return new Select(
                 new Sequence(new CraftResourceAct(creature.AI, ItemType, RawMaterials, Des)
                 {
-                    Noise = ItemType.CraftNoise
+                    Noise = ItemType.Craft_Noise
                 }),
                 new Wrap(() => Cleanup(creature.AI)));
         }

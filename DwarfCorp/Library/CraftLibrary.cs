@@ -9,61 +9,19 @@ namespace DwarfCorp
 {
     public static partial class Library
     {
-        private static Dictionary<string, CraftItem> CraftItems = null;
-        private static bool CraftLibraryInitialized = false;
-
-        public static IEnumerable<CraftItem> EnumerateCraftables()
+        // Todo: Move to callsite?
+        public static MaybeNull<ResourceType> GetRandomApplicableCraftable(Faction faction, WorldManager World)
         {
-            InitializeCraftLibrary();
-            return CraftItems.Values;
-        }
-
-        public static MaybeNull<CraftItem> GetCraftable(string Name)
-        {
-            InitializeCraftLibrary();
-            if (CraftItems.ContainsKey(Name))
-                return CraftItems[Name];
-            return null;
-        }
-
-        public static void AddCraftable(CraftItem craft)
-        {
-            InitializeCraftLibrary();
-            CraftItems[craft.Name] = craft;
-        }
-
-        private static void InitializeCraftLibrary()
-        {
-            if (CraftLibraryInitialized)
-                return;
-            CraftLibraryInitialized = true;
-
-            var craftList = FileUtils.LoadJsonListFromDirectory<CraftItem>(ContentPaths.craft_items, null, c => c.Name);
-            CraftItems = new Dictionary<string, CraftItem>();
-
-            foreach (var type in craftList.Where(c => !c.Disable))
-            {
-                type.InitializeStrings();
-                CraftItems.Add(type.Name, type);
-            }
-
-            Console.WriteLine("Loaded Craft Library.");
-        }
-
-        public static MaybeNull<CraftItem> GetRandomApplicableCraftable(Faction faction, WorldManager World)
-        {
-            InitializeCraftLibrary();
-
             const int maxIters = 100;
 
             for (int i = 0; i < maxIters; i++)
             {
-                var item = Datastructures.SelectRandom(CraftItems);
-                if (!World.HasResourcesWithTags(item.Value.RequiredResources))
+                var item = Datastructures.SelectRandom(Library.EnumerateResourceTypes().Where(r => r.Craft_Craftable));
+                if (!World.HasResourcesWithTags(item.Craft_Ingredients))
                     continue;
-                if (!faction.OwnedObjects.Any(o => o.Tags.Contains(item.Value.CraftLocation)))
+                if (!faction.OwnedObjects.Any(o => o.Tags.Contains(item.Craft_Location)))
                     continue;
-                return item.Value;
+                return item;
             }
 
             return null;

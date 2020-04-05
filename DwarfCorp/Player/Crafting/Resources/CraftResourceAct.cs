@@ -9,7 +9,7 @@ namespace DwarfCorp
 {
     internal class CraftResourceAct : CompoundCreatureAct
     {
-        public CraftItem ItemType;
+        public ResourceType ItemType;
         public List<ResourceApparentTypeAmount> RawMaterials;
         public string Noise { get; set; }
         public ResourceDes Des;
@@ -21,7 +21,7 @@ namespace DwarfCorp
                 Des.ResourcesReservedFor = null;
         }
 
-        public CraftResourceAct(CreatureAI creature, CraftItem CraftItem, List<ResourceApparentTypeAmount> RawMaterials, ResourceDes Des) :
+        public CraftResourceAct(CreatureAI creature, ResourceType CraftItem, List<ResourceApparentTypeAmount> RawMaterials, ResourceDes Des) :
             base(creature)
         {
             this.ItemType = CraftItem;
@@ -110,7 +110,7 @@ namespace DwarfCorp
                 yield break;
             }
 
-            ActualCreatedResource = Library.CreateMetaResource(ItemType.CraftActBehavior, Agent, new Resource(ItemType.ResourceCreated), Agent.Blackboard.GetData<List<Resource>>("stashed-materials"));
+            ActualCreatedResource = Library.CreateMetaResource(ItemType.Craft_MetaResourceFactory, Agent, new Resource(ItemType), Agent.Blackboard.GetData<List<Resource>>("stashed-materials"));
             
             if (ActualCreatedResource.HasValue(out var res))
                 yield return Status.Success;
@@ -134,9 +134,9 @@ namespace DwarfCorp
 
             if (ActualCreatedResource.HasValue(out var res))
             {
-                for (var i = 0; i < ItemType.CraftedResultsCount; ++i)
+                for (var i = 0; i < ItemType.Craft_ResultsCount; ++i)
                     Creature.Inventory.AddResource(res);
-                Creature.AI.AddXP((int)ItemType.BaseCraftTime);
+                Creature.AI.AddXP((int)ItemType.Craft_BaseCraftTime);
                 ActHelper.ApplyWearToTool(Creature.AI, GameSettings.Current.Wear_Craft);
                 Des.Finished = true;
                 yield return Status.Success;
@@ -155,7 +155,7 @@ namespace DwarfCorp
             if (!valid)
                 Agent.SetTaskFailureReason("Resource state not valid.");
 
-            var location = Creature.AI.Blackboard.GetData<GameComponent>(ItemType.CraftLocation);
+            var location = Creature.AI.Blackboard.GetData<GameComponent>(ItemType.Craft_Location);
             if (location != null && location.IsDead)
                 return false;
 
@@ -165,7 +165,7 @@ namespace DwarfCorp
         public override void Initialize()
         {
             var unreserveAct = new Wrap(UnReserve);
-            var time = 3 * (ItemType.BaseCraftTime / Creature.AI.Stats.Intelligence);
+            var time = 3 * (ItemType.Craft_BaseCraftTime / Creature.AI.Stats.Intelligence);
             var getResources = new Select(
                 new Domain(() => Des.HasResources || Des.ResourcesReservedFor != null, 
                     new Always(Status.Success)),
@@ -180,10 +180,10 @@ namespace DwarfCorp
                 new Domain(() => Des.HasResources || Des.ResourcesReservedFor != null, 
                     new Always(Status.Success)));
 
-            if (!String.IsNullOrEmpty(ItemType.CraftLocation))
+            if (!String.IsNullOrEmpty(ItemType.Craft_Location))
             {
                 Tree = new Select(new Sequence(
-                    new Wrap(() => Creature.FindAndReserve(ItemType.CraftLocation, "craft-location")),
+                    new Wrap(() => Creature.FindAndReserve(ItemType.Craft_Location, "craft-location")),
                     new ClearBlackboardData(Agent, "ResourcesStashed"),
                     getResources,
                     new Select(new Domain(ResourceStateValid,
@@ -203,7 +203,7 @@ namespace DwarfCorp
                                 () => Des.Progress, // Current Progress
                                 () =>
                                 { // Increment Progress
-                                    var location = Creature.AI.Blackboard.GetData<GameComponent>(ItemType.CraftLocation);
+                                    var location = Creature.AI.Blackboard.GetData<GameComponent>(ItemType.Craft_Location);
 
                                     float workstationBuff = 1.0f;
                                     if (location != null)
@@ -215,11 +215,11 @@ namespace DwarfCorp
 
                                     // Todo: Account for environment buff & 'anvil' buff.
 
-                                    Des.Progress += (Creature.Stats.BuildSpeed * workstationBuff) / ItemType.BaseCraftTime;
+                                    Des.Progress += (Creature.Stats.BuildSpeed * workstationBuff) / ItemType.Craft_BaseCraftTime;
                                 },
                                 () =>
                                 { // Get Position
-                                    var location = Creature.AI.Blackboard.GetData<GameComponent>(ItemType.CraftLocation);
+                                    var location = Creature.AI.Blackboard.GetData<GameComponent>(ItemType.Craft_Location);
                                     if (location != null)
                                         return location.Position;
                                     return Agent.Position;
@@ -266,7 +266,7 @@ namespace DwarfCorp
         {
             Creature.Physics.Active = true;
             Creature.Physics.IsSleeping = false;
-            foreach (var statuses in Creature.Unreserve(ItemType.CraftLocation))
+            foreach (var statuses in Creature.Unreserve(ItemType.Craft_Location))
                 continue;
 
             if (Des.ResourcesReservedFor == Agent)
