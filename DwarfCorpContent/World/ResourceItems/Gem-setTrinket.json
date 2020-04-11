@@ -4,33 +4,12 @@
   "Description": "A crafted item.",
   "Category": "Trinkets",
   "Aggregate": false,
-  "GuiLayers": [
-    {
-      "Sheet": "resources",
-      "Tile": 0
-    }
-  ],
   "Tags": [
     "Craft"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "newgui\\crafts",
-      "FrameSize": "32, 32",
-      "Frame": "0, 0"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Gem-set Trinket",
   "PlantToGenerate": null,
-  "CanCraft": false,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,

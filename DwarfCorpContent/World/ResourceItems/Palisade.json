@@ -3,34 +3,13 @@
   "MoneyValue": 15.0,
   "Description": "A defensive barrier.",
   "Category": "Furniture",
-  "GuiLayers": [
-    {
-      "Sheet": "furniture",
-      "Tile": 34
-    }
-  ],
   "Tags": [
     "Defense",
     "Palisade"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "entities\\Furniture\\interior_furniture",
-      "FrameSize": "32, 32",
-      "Frame": "4, 2"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Palisade",
   "PlantToGenerate": null,
-  "CanCraft": true,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,
@@ -38,6 +17,7 @@
     255
   ],
   "AleName": null,
+
   "Placement_Placeable": true,
   "Placement_EntityToCreate": "Palisade",
   "Placement_AllowRotation": true,

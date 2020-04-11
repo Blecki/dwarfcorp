@@ -4,12 +4,6 @@
   "MoneyValue": 5.0,
   "Description": "Bamboo. A fantastic and cheap building material.",
   "Category": "Wood",
-  "GuiLayers": [
-    {
-      "Sheet": "resources",
-      "Tile": 47
-    }
-  ],
   "Tags": [
     "Wood",
     "Material",
@@ -17,23 +11,8 @@
     "HardMaterial"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "newgui\\resources",
-      "FrameSize": "32, 32",
-      "Frame": "7, 5"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": "newgui\\trinkets-carve",
-    "EncrustingAsset": "newgui\\trinkets-carve-insets",
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Bamboo",
   "PlantToGenerate": null,
-  "CanCraft": false,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,

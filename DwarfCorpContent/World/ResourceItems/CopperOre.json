@@ -4,33 +4,12 @@
   "MaterialStrength": 80.0,
   "Description": "Needed to build things.",
   "Category": "Ore",
-  "GuiLayers": [
-    {
-      "Sheet": "resources",
-      "Tile": 53
-    }
-  ],
   "Tags": [
     "CopperOre"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "newgui\\resources",
-      "FrameSize": "32, 32",
-      "Frame": "5, 6"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Copper Ore",
   "PlantToGenerate": null,
-  "CanCraft": false,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,

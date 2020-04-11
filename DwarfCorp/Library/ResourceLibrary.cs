@@ -155,7 +155,7 @@ namespace DwarfCorp
                         gemResource = ingredient;
                 }
 
-            if (baseResource == null || gemResource == null || baseResource.EncrustingDataEx == null || baseResource.EncrustingDataEx.EncrustingGraphic == null)
+            if (baseResource == null || gemResource == null || baseResource.EncrustingData == null || baseResource.EncrustingData.EncrustingGraphic == null)
                 return null;
 
             var r = new Resource(Base.TypeName);
@@ -165,7 +165,7 @@ namespace DwarfCorp
                 r.MoneyValue = baseResource.MoneyValue + gem.MoneyValue * 2m;
 
             r.Gui_Graphic = baseResource.Gui_Graphic.Clone();
-            r.Gui_Graphic.NextLayer = baseResource.EncrustingDataEx.EncrustingGraphic.Clone();
+            r.Gui_Graphic.NextLayer = baseResource.EncrustingData.EncrustingGraphic.Clone();
             r.Gui_Graphic.NextLayer.Palette = gemResource.Trinket_JewellPalette;
 
             return r;
@@ -176,10 +176,10 @@ namespace DwarfCorp
         {
             InitializeResources();
 
-            if (Ingredients.Count == 0 || Ingredients[0].TrinketDataEx == null)
+            if (Ingredients.Count == 0 || Ingredients[0].TrinketData == null)
                 return null;
 
-            var item = Ingredients[0].TrinketDataEx.SelectRandom();
+            var item = Ingredients[0].TrinketData.SelectRandom();
 
             var quality = Agent != null ? (Agent.Stats.Dexterity + Agent.Stats.Intelligence) / 15.0f * MathFunctions.Rand(0.5f, 1.75f) : MathFunctions.Rand(0.1f, 3.0f);
 
@@ -204,7 +204,7 @@ namespace DwarfCorp
 
             r.MoneyValue =item.Value * Ingredients[0].MoneyValue * 3m * quality;
             r.Tint = Ingredients[0].Tint;
-            r.EncrustingDataEx = item;
+            r.EncrustingData = item;
             r.Gui_Graphic = item.Graphic.Clone();
 
             return r;

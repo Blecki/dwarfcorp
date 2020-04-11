@@ -3,35 +3,14 @@
   "MoneyValue": 5.0,
   "Description": "An egg",
   "Category": "Meat",
-  "GuiLayers": [
-    {
-      "Sheet": "resources",
-      "Tile": 23
-    }
-  ],
   "Tags": [
     "Edible",
     "AnimalProduct",
     "RawFood"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "newgui\\resources",
-      "FrameSize": "32, 32",
-      "Frame": "7, 2"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Egg",
   "PlantToGenerate": null,
-  "CanCraft": false,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,

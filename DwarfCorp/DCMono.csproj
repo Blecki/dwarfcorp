@@ -359,6 +359,7 @@
     <Compile Include="GameStates\Play\WorldPopup.cs" />
     <Compile Include="GameStates\Play\ZonePanel\DraggedResourceIcon.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ResourceFilterPanel.cs" />
+    <Compile Include="GameStates\Play\ZonePanel\ResourceGuiGraphicIcon.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ResourceIcon.cs" />
     <Compile Include="GameStates\Play\ZonePanel\StockpilePropertiesDialog.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ZoneListPanel.cs" />

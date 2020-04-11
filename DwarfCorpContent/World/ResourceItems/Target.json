@@ -3,33 +3,12 @@
   "MoneyValue": 15.0,
   "Description": "A place for thugs to train when there's nothing around to kill.",
   "Category": "Furniture",
-  "GuiLayers": [
-    {
-      "Sheet": "furniture",
-      "Tile": 40
-    }
-  ],
   "Tags": [
     "Train"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "entities\\Furniture\\interior_furniture",
-      "FrameSize": "32, 32",
-      "Frame": "0, 5"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Target",
   "PlantToGenerate": null,
-  "CanCraft": true,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,
@@ -37,6 +16,7 @@
     255
   ],
   "AleName": null,
+
   "Placement_Placeable": true,
   "Placement_EntityToCreate": "Target",
   "Placement_AllowRotation": true,

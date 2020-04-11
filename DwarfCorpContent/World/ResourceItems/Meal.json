@@ -3,35 +3,14 @@
   "MoneyValue": 10.0,
   "Description": "A nutritious dwarf meal.",
   "Category": "Food",
-  "GuiLayers": [
-    {
-      "Sheet": "resources",
-      "Tile": 21
-    }
-  ],
   "Tags": [
     "Edible",
     "Flammable",
     "PreparedFood"
   ],
   "FoodContent": 500.0,
-  "CompositeLayers": [
-    {
-      "Asset": "newgui\\resources",
-      "FrameSize": "32, 32",
-      "Frame": "5, 2"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Meal",
   "PlantToGenerate": null,
-  "CanCraft": false,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,

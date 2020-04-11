@@ -3,33 +3,12 @@
   "MoneyValue": 100.0,
   "Description": "Keeps the sun off.",
   "Category": "Clothing",
-  "GuiLayers": [
-    {
-      "Sheet": "unknown-resource",
-      "Tile": 0
-    }
-  ],
   "Tags": [
     "Clothing"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "Entities/Dwarf/ToolIcons/unknown",
-      "FrameSize": "32, 32",
-      "Frame": "0, 0"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Straw Hat",
   "PlantToGenerate": "",
-  "CanCraft": false,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,

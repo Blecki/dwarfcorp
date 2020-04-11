@@ -3,12 +3,6 @@
   "MoneyValue": 25.0,
   "Description": "Came from an animal.",
   "Category": "Meat",
-  "GuiLayers": [
-    {
-      "Sheet": "resources",
-      "Tile": 29
-    }
-  ],
   "Tags": [
     "Edible",
     "AnimalProduct",
@@ -16,23 +10,8 @@
     "RawFood"
   ],
   "FoodContent": 150.0,
-  "CompositeLayers": [
-    {
-      "Asset": "newgui\\resources",
-      "FrameSize": "32, 32",
-      "Frame": "5, 3"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Bird Meat",
   "PlantToGenerate": null,
-  "CanCraft": false,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,

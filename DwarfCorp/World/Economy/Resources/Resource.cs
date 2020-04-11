@@ -90,14 +90,13 @@ namespace DwarfCorp
         [JsonIgnore] public String DisplayName { get { return GetProperty<String>("DisplayName", TypeName); } set { SetProperty<String>("DisplayName", value); } }
         [JsonIgnore] public String Category { get { return GetProperty<String>("Category", ""); } set { SetProperty<String>("Category", value); } }
         [JsonIgnore] public List<Gui.TileReference> GuiLayers { get => GetProperty<List<Gui.TileReference>>("GuiLayers", null); set => SetProperty<List<Gui.TileReference>>("GuiLayers", value); }
-        [JsonIgnore] public List<ResourceType.CompositeLayer> CompositeLayers { get => GetProperty<List<ResourceType.CompositeLayer>>("CompositeLayers", new List<ResourceType.CompositeLayer>()); set => SetProperty<List<ResourceType.CompositeLayer>>("CompositeLayers", value); }
         [JsonIgnore] public String Description { get => GetProperty<String>("Description", ""); set => SetProperty<String>("Description", value); }
         [JsonIgnore] public float FoodContent { get => GetProperty<float>("FoodContent", 0.0f); set => SetProperty<float>("FoodContent", value); }
         [JsonIgnore] public DwarfBux MoneyValue { get => GetProperty<DwarfBux>("MoneyValue", 0u); set => SetProperty<DwarfBux>("MoneyValue", value); }
-        [JsonIgnore] public ResourceType.TrinketInfo TrinketData { get => GetProperty<ResourceType.TrinketInfo>("TrinketData", new ResourceType.TrinketInfo()); set => SetProperty<ResourceType.TrinketInfo>("TrinketData", value); }
         [JsonIgnore] public Color Tint { get => GetProperty<Color>("Tint", new Color(1.0f, 1.0f, 1.0f, 1.0f)); set => SetProperty<Color>("Tint", value); }
-        [JsonIgnore] public List<ResourceType._TrinketData> TrinketDataEx { get => GetProperty<List<ResourceType._TrinketData>>("TrinketDataEx", null); set => SetProperty<List<ResourceType._TrinketData>>("TrinketDataEx", value); }
-        [JsonIgnore] public ResourceType._TrinketData EncrustingDataEx { get => GetProperty<ResourceType._TrinketData>("EncrustingDataEx", null); set => SetProperty<ResourceType._TrinketData>("EncrustingDataEx", value); }
+
+        [JsonIgnore] public List<ResourceType.TrinketInfo> Trinket_TrinketData { get => GetProperty<List<ResourceType.TrinketInfo>>("Trinket_TrinketData", null); set => SetProperty<List<ResourceType.TrinketInfo>>("Trinket_TrinketData", value); }
+        [JsonIgnore] public ResourceType.TrinketInfo Trinket_EncrustingData { get => GetProperty<ResourceType.TrinketInfo>("Trinket_EncrustingData", null); set => SetProperty<ResourceType.TrinketInfo>("Trinket_EncrustingData", value); }
         [JsonIgnore] public String Trinket_JewellPalette { get => GetProperty<String>("Trinket_JewellPalette", "None"); set => SetProperty<String>("Trinket_JewellPalette", value); }
         
         [JsonIgnore] public float Tool_Durability { get => GetProperty<float>("Tool_Durability", 1.0f); set => SetProperty<float>("Tool_Durability", value); }

@@ -5,34 +5,13 @@
   "MoneyValue": 15.0,
   "Description": "Anvil with steam powered hammer attachment.",
   "Category": "Steam",
-  "GuiLayers": [
-    {
-      "Sheet": "furniture",
-      "Tile": 34
-    }
-  ],
   "Tags": [
     "Steam",
     "Anvil"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "entities\\Furniture\\interior_furniture",
-      "FrameSize": "32, 32",
-      "Frame": "4, 2"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Power Anvil",
   "PlantToGenerate": null,
-  "CanCraft": true,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,
@@ -40,6 +19,7 @@
     255
   ],
   "AleName": null,
+
   "Placement_Placeable": true,
   "Placement_EntityToCreate": "Power Anvil",
   "Placement_AllowRotation": true,

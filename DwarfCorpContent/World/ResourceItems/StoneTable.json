@@ -3,33 +3,12 @@
   "MoneyValue": 15.0,
   "Description": "Fancy like an elegant granite countertop.",
   "Category": "Furniture",
-  "GuiLayers": [
-    {
-      "Sheet": "furniture",
-      "Tile": 70
-    }
-  ],
   "Tags": [
     "Table"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "entities\\Furniture\\interior_furniture",
-      "FrameSize": "32, 32",
-      "Frame": "8, 5"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Stone Table",
   "PlantToGenerate": null,
-  "CanCraft": true,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,
@@ -37,6 +16,7 @@
     255
   ],
   "AleName": null,
+
   "Placement_Placeable": true,
   "Placement_EntityToCreate": "Stone Table",
   "Placement_AllowRotation": true,

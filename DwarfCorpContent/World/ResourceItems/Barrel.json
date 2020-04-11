@@ -3,33 +3,12 @@
   "MoneyValue": 50.0,
   "Description": "Use the Barrel to brew ale from grain, fruits or mushrooms.",
   "Category": "Furniture",
-  "GuiLayers": [
-    {
-      "Sheet": "furniture",
-      "Tile": 1
-    }
-  ],
   "Tags": [
     "Barrel"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "entities\\Furniture\\interior_furniture",
-      "FrameSize": "32, 32",
-      "Frame": "1, 0"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Barrel",
   "PlantToGenerate": null,
-  "CanCraft": true,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,
@@ -37,6 +16,7 @@
     255
   ],
   "AleName": null,
+
   "Placement_Placeable": true,
   "Placement_EntityToCreate": "Barrel",
   "Placement_AllowRotation": false,

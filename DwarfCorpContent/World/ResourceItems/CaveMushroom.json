@@ -3,12 +3,6 @@
   "MoneyValue": 3.5,
   "Description": "Dwarves can eat these.",
   "Category": "Seeds",
-  "GuiLayers": [
-    {
-      "Sheet": "resources",
-      "Tile": 12
-    }
-  ],
   "Tags": [
     "SelfIlluminating",
     "Edible",
@@ -20,23 +14,8 @@
     "BelowGroundPlant"
   ],
   "FoodContent": 30.0,
-  "CompositeLayers": [
-    {
-      "Asset": "newgui\\resources",
-      "FrameSize": "32, 32",
-      "Frame": "4, 1"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Cave Mushroom",
   "PlantToGenerate": "Cave Mushroom Sprout",
-  "CanCraft": false,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,

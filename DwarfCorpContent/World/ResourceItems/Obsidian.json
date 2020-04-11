@@ -4,12 +4,6 @@
   "MoneyValue": 10.0,
   "Description": "Obsidian forms when lava is cooled very quickly.",
   "Category": "Stone",
-  "GuiLayers": [
-    {
-      "Sheet": "resources",
-      "Tile": 49
-    }
-  ],
   "Tags": [
     "Stone",
     "Material",
@@ -17,23 +11,8 @@
     "Obsidian"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "newgui\\resources",
-      "FrameSize": "32, 32",
-      "Frame": "1, 6"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": "newgui\\trinkets-sculpt",
-    "EncrustingAsset": "newgui\\trinkets-sculpt-insets",
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Obsidian",
   "PlantToGenerate": null,
-  "CanCraft": false,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,

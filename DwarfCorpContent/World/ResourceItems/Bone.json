@@ -3,12 +3,6 @@
   "MoneyValue": 15.0,
   "Description": "Came from an animal.",
   "Category": "Bone",
-  "GuiLayers": [
-    {
-      "Sheet": "resources",
-      "Tile": 27
-    }
-  ],
   "Tags": [
     "Bone",
     "Material",
@@ -16,23 +10,8 @@
     "HardMaterial"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "newgui\\resources",
-      "FrameSize": "32, 32",
-      "Frame": "3, 3"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": "newgui\\trinkets-carve",
-    "EncrustingAsset": "newgui\\trinkets-carve-insets-bone",
-    "SpriteRow": 1,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Bone",
   "PlantToGenerate": null,
-  "CanCraft": false,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,

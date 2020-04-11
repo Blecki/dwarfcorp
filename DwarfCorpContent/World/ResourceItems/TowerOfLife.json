@@ -3,33 +3,12 @@
   "MoneyValue": 15.0,
   "Description": "Emits a aura of growth.",
   "Category": "Magic",
-  "GuiLayers": [
-    {
-      "Sheet": "furniture",
-      "Tile": 21
-    }
-  ],
   "Tags": [
     "Magic"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "entities\\Furniture\\interior_furniture",
-      "FrameSize": "32, 32",
-      "Frame": "2, 5"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Tower of Life",
   "PlantToGenerate": null,
-  "CanCraft": true,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,
@@ -37,6 +16,7 @@
     255
   ],
   "AleName": null,
+
   "Placement_Placeable": true,
   "Placement_EntityToCreate": "Tower of Life",
   "Placement_AllowRotation": true,

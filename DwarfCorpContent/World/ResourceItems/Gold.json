@@ -4,12 +4,6 @@
   "MoneyValue": 800.0,
   "Description": "Shiny!",
   "Category": "Metal",
-  "GuiLayers": [
-    {
-      "Sheet": "resources",
-      "Tile": 46
-    }
-  ],
   "Tags": [
     "Material",
     "Metal",
@@ -17,28 +11,8 @@
     "HardMaterial"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "newgui\\resources",
-      "FrameSize": "32, 32",
-      "Frame": "6, 5"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": "newgui\\trinkets-cast",
-    "EncrustingAsset": "newgui\\trinkets-cast-insets",
-    "SpriteRow": 1,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Gold",
   "PlantToGenerate": null,
-  "CanCraft": true,
-  "CraftPrerequisites": [
-    {
-      "Type": "GoldOre",
-      "Count": 1
-    }
-  ],
   "Tint": [
     255,
     255,

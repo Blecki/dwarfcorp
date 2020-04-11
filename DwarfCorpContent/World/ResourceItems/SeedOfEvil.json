@@ -3,12 +3,6 @@
   "MoneyValue": 3.0,
   "Description": "Grows haunted trees.",
   "Category": "Seeds",
-  "GuiLayers": [
-    {
-      "Sheet": "resources",
-      "Tile": 31
-    }
-  ],
   "Tags": [
     "Seed",
     "Plantable",
@@ -16,23 +10,8 @@
     "Evil"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "newgui\\resources",
-      "FrameSize": "32, 32",
-      "Frame": "7, 3"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Seed of Evil",
   "PlantToGenerate": "Haunted Tree Sprout",
-  "CanCraft": false,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,

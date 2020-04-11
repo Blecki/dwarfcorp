@@ -4,12 +4,6 @@
   "MaterialStrength": 100.0,
   "Description": "Needed to build things.",
   "Category": "Metal",
-  "GuiLayers": [
-    {
-      "Sheet": "resources",
-      "Tile": 7
-    }
-  ],
   "Tags": [
     "Metal",
     "Material",
@@ -17,23 +11,8 @@
     "Iron"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "newgui\\resources",
-      "FrameSize": "32, 32",
-      "Frame": "7, 0"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": "newgui\\trinkets-cast",
-    "EncrustingAsset": "newgui\\trinkets-cast-insets",
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Iron",
   "PlantToGenerate": null,
-  "CanCraft": false,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,

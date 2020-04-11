@@ -3,34 +3,13 @@
   "MoneyValue": 15.0,
   "Description": "A hammer made of stone.",
   "Category": "Tools",
-  "GuiLayers": [
-    {
-      "Sheet": "hammer-resources",
-      "Tile": 1
-    }
-  ],
   "Tags": [
     "Tool",
     "Hammer"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "Entities/Dwarf/ToolIcons/hammer",
-      "FrameSize": "32, 32",
-      "Frame": "1, 0"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Stone Hammer",
   "PlantToGenerate": "",
-  "CanCraft": false,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,

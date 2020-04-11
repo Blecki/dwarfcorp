@@ -3,31 +3,12 @@
   "DisplayName": "Ale",
   "MoneyValue": 15.0,
   "Description": "All dwarves need to drink.",
-  "GuiLayers": [
-    {
-      "Sheet": "resources",
-      "Tile": 20
-    }
-  ],
   "Tags": [
     "Edible",
     "Alcohol",
     "Flammable"
   ],
   "FoodContent": 150.0,
-  "CompositeLayers": [
-    {
-      "Asset": "newgui\\resources",
-      "FrameSize": "32, 32",
-      "Frame": "4, 2"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "PlantToGenerate": null,
   "Tint": [
     255,

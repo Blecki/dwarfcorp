@@ -4,12 +4,6 @@
   "MaterialStrength": 80.0,
   "Description": "Needed to build things.",
   "Category": "Metal",
-  "GuiLayers": [
-    {
-      "Sheet": "resources",
-      "Tile": 54
-    }
-  ],
   "Tags": [
     "Metal",
     "Material",
@@ -18,28 +12,8 @@
     "Copper"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "newgui\\resources",
-      "FrameSize": "32, 32",
-      "Frame": "6, 6"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": "newgui\\trinkets-cast",
-    "EncrustingAsset": "newgui\\trinkets-cast-insets",
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Copper",
   "PlantToGenerate": null,
-  "CanCraft": true,
-  "CraftPrerequisites": [
-    {
-      "Type": "CopperOre",
-      "Count": 1
-    }
-  ],
   "Tint": [
     255,
     255,

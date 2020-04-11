@@ -3,33 +3,12 @@
   "MoneyValue": 5.0,
   "Description": "Needed for crafting many items.",
   "Category": "Furniture",
-  "GuiLayers": [
-    {
-      "Sheet": "furniture",
-      "Tile": 7
-    }
-  ],
   "Tags": [
     "CraftTable"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "entities\\Furniture\\interior_furniture",
-      "FrameSize": "32, 32",
-      "Frame": "7, 0"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Craft Table",
   "PlantToGenerate": null,
-  "CanCraft": true,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,
@@ -37,6 +16,7 @@
     255
   ],
   "AleName": null,
+
   "Placement_Placeable": true,
   "Placement_EntityToCreate": "Craft Table",
   "Placement_AllowRotation": true,

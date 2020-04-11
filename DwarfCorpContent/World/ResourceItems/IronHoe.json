@@ -3,34 +3,13 @@
   "MoneyValue": 100.0,
   "Description": "A hoe made of iron.",
   "Category": "Tools",
-  "GuiLayers": [
-    {
-      "Sheet": "pick-resources",
-      "Tile": 2
-    }
-  ],
   "Tags": [
     "Tool",
     "Hoe"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "Entities/Dwarf/ToolIcons/pick",
-      "FrameSize": "32, 32",
-      "Frame": "2, 0"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Iron Hoe",
   "PlantToGenerate": "",
-  "CanCraft": false,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,

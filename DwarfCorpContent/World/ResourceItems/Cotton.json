@@ -11,16 +11,8 @@
   ],
   "FoodContent": 0.0,
   
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Cotton",
   "PlantToGenerate": "Cotton Sprout",
-  "CanCraft": false,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,

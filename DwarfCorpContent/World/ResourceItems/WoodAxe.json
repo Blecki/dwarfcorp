@@ -3,34 +3,13 @@
   "MoneyValue": 15.0,
   "Description": "An axe made of wood. There's something sadistic about this.",
   "Category": "Tools",
-  "GuiLayers": [
-    {
-      "Sheet": "axe-resources",
-      "Tile": 0
-    }
-  ],
   "Tags": [
     "Tool",
     "Axe"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "Entities/Dwarf/ToolIcons/axe",
-      "FrameSize": "32, 32",
-      "Frame": "0, 0"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Wood Axe",
   "PlantToGenerate": "",
-  "CanCraft": false,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,

@@ -2,12 +2,6 @@
   "TypeName": "Glass",
   "MoneyValue": 8.0,
   "Description": "Made from sand. Allows light to pass through.",
-  "GuiLayers": [
-    {
-      "Sheet": "resources",
-      "Tile": 4
-    }
-  ],
   "Tags": [
     "Material",
     "HardMaterial",
@@ -15,28 +9,8 @@
     "Glass"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "newgui\\resources",
-      "FrameSize": "32, 32",
-      "Frame": "4, 0"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": "newgui\\trinkets-cast",
-    "EncrustingAsset": "newgui\\trinkets-cast-insets",
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Glass",
   "PlantToGenerate": null,
-  "CanCraft": true,
-  "CraftPrerequisites": [
-    {
-      "Type": "Sand",
-      "Count": 1
-    }
-  ],
   "Tint": [
     255,
     255,

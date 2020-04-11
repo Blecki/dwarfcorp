@@ -8,16 +8,8 @@
     "Jack-O-Lantern"
   ],
   "FoodContent": 0.0,
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Jack-O-Lantern",
   "PlantToGenerate": null,
-  "CanCraft": true,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,
@@ -25,6 +17,7 @@
     255
   ],
   "AleName": null,
+
   "Placement_Placeable": true,
   "Placement_EntityToCreate": "Jack-O-Lantern",
   "Placement_AllowRotation": true,

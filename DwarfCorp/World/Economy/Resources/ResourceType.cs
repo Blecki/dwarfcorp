@@ -7,27 +7,12 @@ namespace DwarfCorp
 {
     public class ResourceType
     {
-        public class _TrinketData
+        public class TrinketInfo
         {
             public String Name;
             public float Value;
             public GuiGraphic Graphic;
             public GuiGraphic EncrustingGraphic;
-        }
-
-        public struct TrinketInfo
-        {
-            public string BaseAsset;
-            public string EncrustingAsset;
-            public int SpriteRow;
-            public int SpriteColumn;
-        }
-
-        public struct CompositeLayer
-        {
-            public string Asset;
-            public Point FrameSize;
-            public Point Frame;
         }
 
         public class GuiGraphic
@@ -59,8 +44,8 @@ namespace DwarfCorp
             }
         }
 
-        public List<_TrinketData> TrinketDataEx = null;
-        public _TrinketData EncrustingDataEx = null;
+        public List<TrinketInfo> Trinket_TrinketData = null;
+        public TrinketInfo Trinket_EncrustingData = null;
         public string Trinket_JewellPalette = "None";
 
         public bool Disable = false;
@@ -68,15 +53,11 @@ namespace DwarfCorp
         public string TypeName;
         public string DisplayName { get; set; }
         public String PluralDisplayName = null;
-        public Gui.TileReference Icon { get => GuiLayers != null ? GuiLayers[0] : null; }
 
         public DwarfBux MoneyValue;
         public string Description;
-        public List<TileReference> GuiLayers; // Todo: Would like to combine the different graphics options
         public List<String> Tags;
         public float FoodContent;
-        public List<CompositeLayer> CompositeLayers;
-        public TrinketInfo TrinketData;
         public string PlantToGenerate;
         public Color Tint;
         public string AleName = "";

@@ -3,12 +3,6 @@
   "MoneyValue": 2.0,
   "Description": "Grows pine trees.",
   "Category": "Seeds",
-  "GuiLayers": [
-    {
-      "Sheet": "resources",
-      "Tile": 14
-    }
-  ],
   "Tags": [
     "Seed",
     "Plantable",
@@ -16,23 +10,8 @@
     "AboveGroundPlant"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "newgui\\resources",
-      "FrameSize": "32, 32",
-      "Frame": "6, 1"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Pine Cone",
   "PlantToGenerate": "Pine Tree Sprout",
-  "CanCraft": false,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,

@@ -4,12 +4,6 @@
   "MoneyValue": 5.0,
   "Description": "Sometimes hard to come by! Comes from trees.",
   "Category": "Wood",
-  "GuiLayers": [
-    {
-      "Sheet": "resources",
-      "Tile": 11
-    }
-  ],
   "Tags": [
     "Wood",
     "Material",
@@ -17,7 +11,7 @@
     "HardMaterial",
     "TrinketMaterial"
   ],
-  "TrinketDataEx": [
+  "Trinket_TrinketData": [
     {
       "Name": "Ring",
       "Value": 1.5,
@@ -132,23 +126,8 @@
     }
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "newgui\\resources",
-      "FrameSize": "32, 32",
-      "Frame": "3, 1"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": "newgui\\trinkets-carve",
-    "EncrustingAsset": "newgui\\trinkets-carve-insets",
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Wood",
   "PlantToGenerate": null,
-  "CanCraft": false,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,

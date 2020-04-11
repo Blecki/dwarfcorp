@@ -3,34 +3,13 @@
   "MoneyValue": 200.0,
   "Description": "When placed, gets to work immediately.",
   "Category": "Magic",
-  "GuiLayers": [
-    {
-      "Sheet": "tool-icons",
-      "Tile": 20
-    }
-  ],
   "Tags": [
     "Magic",
     "Fairy"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "newgui\\icons",
-      "FrameSize": "32, 32",
-      "Frame": "2, 4"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Fairy",
   "PlantToGenerate": null,
-  "CanCraft": true,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,
@@ -38,6 +17,7 @@
     255
   ],
   "AleName": null,
+
   "Placement_Placeable": true,
   "Placement_EntityToCreate": "Fairy",
   "Placement_AllowRotation": true,

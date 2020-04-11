@@ -4,12 +4,6 @@
   "MoneyValue": 25.0,
   "Description": "Goop from a green slime.",
   "Category": "Meat",
-  "GuiLayers": [
-    {
-      "Sheet": "slime",
-      "Tile": 1
-    }
-  ],
   "Tags": [
     "Slime",
     "Edible",
@@ -17,23 +11,8 @@
     "Brewable"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "Entities\\Animals\\Slimes\\Slime_Goo",
-      "FrameSize": "32, 32",
-      "Frame": "1, 0"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Green Slime",
   "PlantToGenerate": null,
-  "CanCraft": false,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,

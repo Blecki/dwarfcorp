@@ -90,52 +90,6 @@ namespace DwarfCorp
                 sprite.LightRamp = Resource.Tint;
                 sprite.SetFlag(Flag.ShouldSerialize, false);
             }
-            else
-            {
-                var compositeLayers = Resource.CompositeLayers;
-                var tint = Resource.Tint;
-
-                Tinter sprite = null;
-
-                // Minor optimization for single layer resources.
-                if (compositeLayers.Count == 1)
-                {
-                    var layer = compositeLayers[0];
-                    sprite = AddChild(new SimpleBobber(Manager, "Sprite",
-                        Matrix.CreateTranslation(Vector3.UnitY * 0.25f),
-                        new SpriteSheet(layer.Asset, layer.FrameSize.X, layer.FrameSize.Y),
-                        layer.Frame, 0.15f, MathFunctions.Rand() + 2.0f, MathFunctions.Rand() * 3.0f)
-                    {
-                        OrientationType = SimpleSprite.OrientMode.Spherical,
-                        WorldHeight = 0.75f,
-                        WorldWidth = 0.75f,
-                    }) as Tinter;
-                    sprite.LocalTransform = Matrix.CreateTranslation(Vector3.UnitY * 0.25f + MathFunctions.RandVector3Cube() * 0.1f);
-                }
-                else
-                {
-                    var layers = new List<LayeredSimpleSprite.Layer>();
-
-                    foreach (var layer in compositeLayers)
-                        layers.Add(new LayeredSimpleSprite.Layer
-                        {
-                            Sheet = new SpriteSheet(layer.Asset, layer.FrameSize.X, layer.FrameSize.Y),
-                            Frame = layer.Frame
-                        });
-
-                    sprite = AddChild(new LayeredBobber(Manager, "Sprite",
-                        Matrix.CreateTranslation(Vector3.UnitY * 0.25f + MathFunctions.RandVector3Cube() * 0.1f),
-                        layers, 0.15f, MathFunctions.Rand() + 2.0f, MathFunctions.Rand() * 3.0f)
-                    {
-                        OrientationType = LayeredSimpleSprite.OrientMode.Spherical,
-                        WorldHeight = 0.75f,
-                        WorldWidth = 0.75f,
-                    }) as Tinter;
-                }
-
-                sprite.LightRamp = tint;
-                sprite.SetFlag(Flag.ShouldSerialize, false);
-            }
         }
     }
 }

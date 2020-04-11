@@ -43,11 +43,11 @@ namespace DwarfCorp.Gui.Widgets
             { 
                 var resource = Library.EnumerateResourceTypesWithTag(Data.Craft_Ingredients[i].Tag).FirstOrDefault();
                 if (resource != null)
-                    titleBar.AddChild(new Widget
+                    titleBar.AddChild(new Play.ResourceGuiGraphicIcon
                     {
+                        Resource = resource.Gui_Graphic,
                         MinimumSize = new Point(32, 32),
                         MaximumSize = new Point(32, 32),
-                        Background = resource.GuiLayers[0],
                         AutoLayout = AutoLayout.DockLeft,
                         Text = Data.Craft_Ingredients[i].Count.ToString(),
                         TextHorizontalAlign = HorizontalAlign.Right,
@@ -88,6 +88,7 @@ namespace DwarfCorp.Gui.Widgets
             titleBar.AddChild(new Play.ResourceIcon
             {
                 Resource = new Resource(Data),
+                MinimumSize = new Point(32, 32),
                 AutoLayout = AutoLayout.DockLeft,
                 Text = Data.Craft_ResultsCount.ToString(),
                 Font = "font10-outline-numsonly",

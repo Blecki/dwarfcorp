@@ -3,34 +3,13 @@
   "MoneyValue": 100.0,
   "Description": "Dwarfs drink this potion to get a bit faster.",
   "Category": "Potions",
-  "GuiLayers": [
-    {
-      "Sheet": "resources",
-      "Tile": 45
-    }
-  ],
   "Tags": [
     "Potion"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "newgui\\resources",
-      "FrameSize": "32, 32",
-      "Frame": "5, 5"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
-  "Generated": true,
   "DisplayName": "Potion Of Speed",
   "MaterialStrength": 5.0,
   "PlantToGenerate": null,
-  "CanCraft": true,
   "Tint": [
     255,
     255,
@@ -38,7 +17,6 @@
     255
   ],
   "AleName": "",
-  "CraftItemType": "Potion Of Speed",
   "PotionType": {
     "TypeName": "Potion Of Speed",
     "Description": "Dwarfs drink this potion to get a bit faster.",

@@ -3,33 +3,12 @@
   "MoneyValue": 0.0,
   "Description": "Dead carcass. Should be buried.",
   "Category": "corpse",
-  "GuiLayers": [
-    {
-      "Sheet": "resources",
-      "Tile": 35
-    }
-  ],
   "Tags": [
     "Corpse"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "newgui\\resources",
-      "FrameSize": "32, 32",
-      "Frame": "3, 4"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Corpse",
   "PlantToGenerate": null,
-  "CanCraft": false,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,

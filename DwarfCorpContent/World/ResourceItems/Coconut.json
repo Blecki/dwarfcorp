@@ -3,12 +3,6 @@
   "MoneyValue": 6.0,
   "Description": "Grows palm trees.",
   "Category": "Seeds",
-  "GuiLayers": [
-    {
-      "Sheet": "resources",
-      "Tile": 13
-    }
-  ],
   "Tags": [
     "Fruit",
     "Plantable",
@@ -18,23 +12,8 @@
     "RawFood"
   ],
   "FoodContent": 50.0,
-  "CompositeLayers": [
-    {
-      "Asset": "newgui\\resources",
-      "FrameSize": "32, 32",
-      "Frame": "5, 1"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": null,
-    "EncrustingAsset": null,
-    "SpriteRow": 0,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Coconut",
   "PlantToGenerate": "Palm Tree Sprout",
-  "CanCraft": false,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,

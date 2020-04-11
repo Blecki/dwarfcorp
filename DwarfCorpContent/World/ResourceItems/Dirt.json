@@ -3,34 +3,13 @@
   "MoneyValue": 1.0,
   "Description": "Can be used to make bricks.",
   "Category": "Stone",
-  "GuiLayers": [
-    {
-      "Sheet": "resources",
-      "Tile": 8
-    }
-  ],
   "Tags": [
     "Soil",
     "Material"
   ],
   "FoodContent": 0.0,
-  "CompositeLayers": [
-    {
-      "Asset": "newgui\\resources",
-      "FrameSize": "32, 32",
-      "Frame": "0, 1"
-    }
-  ],
-  "TrinketData": {
-    "BaseAsset": "newgui\\trinkets-sculpt",
-    "EncrustingAsset": "newgui\\trinkets-sculpt-insets",
-    "SpriteRow": 1,
-    "SpriteColumn": 0
-  },
   "DisplayName": "Dirt",
   "PlantToGenerate": null,
-  "CanCraft": false,
-  "CraftPrerequisites": [],
   "Tint": [
     255,
     255,
