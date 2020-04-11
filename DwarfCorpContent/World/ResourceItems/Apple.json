@@ -42,5 +42,13 @@
     255,
     255
   ],
-  "AleName": "Cider"
+  "AleName": "Cider",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "4, 3"
+  }
+
 }

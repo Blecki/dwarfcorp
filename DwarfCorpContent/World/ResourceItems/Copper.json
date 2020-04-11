@@ -67,5 +67,13 @@
   "Craft_Noise": "Craft",
   "Craft_MetaResourceFactory": "Normal",
 
-  "Tutorial": "Copper Ore needs to be refined into pure copper before it can be used to construct items."
+  "Tutorial": "Copper Ore needs to be refined into pure copper before it can be used to construct items.",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "6, 6"
+  }
+
 }

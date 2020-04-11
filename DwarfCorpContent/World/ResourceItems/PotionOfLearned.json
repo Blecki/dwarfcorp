@@ -109,5 +109,13 @@
   "Craft_Noise": "Craft",
   "Craft_MetaResourceFactory": "Normal",
 
-  "Tutorial": "Dwarfs drink this potion to get a cognitive boost."
+  "Tutorial": "Dwarfs drink this potion to get a cognitive boost.",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "5, 5"
+  }
+
 }

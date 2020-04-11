@@ -196,6 +196,26 @@ namespace DwarfCorp
             }
         }
 
+        public static void AlphaBlit(MemoryTexture From, Rectangle SourceRect, MemoryTexture To, Point DestPoint)
+        {
+            if (From == null || To == null)
+                return;
+
+            for (var y = 0; y < SourceRect.Height; ++y)
+            {
+                if (y + DestPoint.Y < 0 || y + DestPoint.Y >= To.Height) continue; // This is ineffecient as all hell.
+                if (y + SourceRect.Y < 0 || y + SourceRect.Y >= From.Height) continue;
+                for (var x = 0; x < SourceRect.Width; ++x) // Actually can anyone even read this on the stream? All 1 of you lol
+                {
+                    if (x + DestPoint.X < 0 || x + DestPoint.X >= To.Width) continue;
+                    if (x + SourceRect.X < 0 || x + SourceRect.X >= From.Width) continue;
+                    var fromColor = From.Data[From.Index(x + SourceRect.X, y + SourceRect.Y)];
+                    if (fromColor.A != 0)
+                        To.Data[To.Index(x + DestPoint.X, y + DestPoint.Y)] = fromColor;
+                }
+            }
+        }
+
         public static void Blit(MemoryTexture From, Rectangle SourceRect, MemoryTexture To, Rectangle DestRect)
         {
             if (From == null || To == null)

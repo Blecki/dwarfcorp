@@ -61,5 +61,13 @@
   "Craft_Noise": "Craft",
   "Craft_MetaResourceFactory": "Normal",
 
-  "Tutorial": "Wizards can spawn a magic helper using the Summoning Circle. The fairy is a temporary employee that lasts for 24 hours. The fairy has very low health, but is quite fast."
+  "Tutorial": "Wizards can spawn a magic helper using the Summoning Circle. The fairy is a temporary employee that lasts for 24 hours. The fairy has very low health, but is quite fast.",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui\\icons",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "2, 4"
+  }
+
 }

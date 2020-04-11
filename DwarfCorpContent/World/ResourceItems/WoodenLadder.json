@@ -60,5 +60,13 @@
   "Craft_Noise": "Craft",
   "Craft_MetaResourceFactory": "Normal",
 
-  "Tutorial": "Ladders can be used to climb up or down one block. Dwarfs climb much faster on ladders than on stone walls."
+  "Tutorial": "Ladders can be used to climb up or down one block. Dwarfs climb much faster on ladders than on stone walls.",
+
+  "Gui_Graphic": {
+    "AssetPath": "entities\\Furniture\\interior_furniture",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "2, 0"
+  }
+
 }

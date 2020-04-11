@@ -60,6 +60,13 @@
   "Craft_Noise": "Craft",
   "Craft_MetaResourceFactory": "Normal",
 
-  "Tutorial": "Use the Apothecary to brew potions. Only one wizard may use an Apothecary at a time. They require magic (mana rocks or refined mana) to build."
+  "Tutorial": "Use the Apothecary to brew potions. Only one wizard may use an Apothecary at a time. They require magic (mana rocks or refined mana) to build.",
+
+  "Gui_Graphic": {
+    "AssetPath": "entities\\Furniture\\interior_furniture",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "1, 4"
+  }
 
 }

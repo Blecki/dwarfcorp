@@ -100,5 +100,13 @@
   "Craft_Noise": "Craft",
   "Craft_MetaResourceFactory": "Normal",
 
-  "Tutorial": "Dwarfs drink this potion when they take damage."
+  "Tutorial": "Dwarfs drink this potion when they take damage.",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "4, 5"
+  }
+
 }

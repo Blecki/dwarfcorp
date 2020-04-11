@@ -60,5 +60,13 @@
   "Craft_Noise": "Craft",
   "Craft_MetaResourceFactory": "Normal",
 
-  "Tutorial": "Dwarfs sleep in beds. Only one dwarf can sleep in a bed at a time. Sleeping in beds makes dwarfs happier than sleeping on the ground. Dwarfs heal from damage more quickly while sleeping in a bed as well."
+  "Tutorial": "Dwarfs sleep in beds. Only one dwarf can sleep in a bed at a time. Sleeping in beds makes dwarfs happier than sleeping on the ground. Dwarfs heal from damage more quickly while sleeping in a bed as well.",
+
+  "Gui_Graphic": {
+    "AssetPath": "entities\\Furniture\\interior_furniture",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "3, 0"
+  }
+
 }

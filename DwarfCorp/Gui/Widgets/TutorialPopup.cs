@@ -41,9 +41,9 @@ namespace DwarfCorp.Gui.Widgets
             }
             else if (Message.Icon != null)
             {
-                AddChild(new Widget()
+                AddChild(new Play.ResourceGuiGraphicIcon()
                 {
-                    Background = Message.Icon,
+                    Resource = Message.Icon,
                     MinimumSize = new Point(128, 128),
                     MaximumSize = new Point(128, 128),
                     AutoLayout = AutoLayout.DockTop

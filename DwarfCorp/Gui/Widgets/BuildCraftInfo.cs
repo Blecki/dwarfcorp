@@ -85,11 +85,9 @@ namespace DwarfCorp.Gui.Widgets
                 }
             }
 
-            titleBar.AddChild(new Widget
+            titleBar.AddChild(new Play.ResourceIcon
             {
-                MinimumSize = new Point(32, 32),
-                MaximumSize = new Point(32, 32),
-                Background = Data.Icon,
+                Resource = new Resource(Data),
                 AutoLayout = AutoLayout.DockLeft,
                 Text = Data.Craft_ResultsCount.ToString(),
                 Font = "font10-outline-numsonly",

@@ -126,7 +126,7 @@ namespace DwarfCorp.GameStates
 
                         if (icon.ImageSource == null && tutorial.Value.Icon != null)
                         {
-                            icon.Background = tutorial.Value.Icon;
+                            icon.Background = null;// tutorial.Value.Icon;
                             icon.MinimumSize = new Point(128, 128);
                             icon.MaximumSize = new Point(128, 128);
                         }

@@ -1192,7 +1192,6 @@ namespace DwarfCorp.GameStates
                 (data) => true,
                 (data) => new FlatToolTray.Icon
                 {
-                    Icon = data.Icon,
                     NewStyleIcon = data.Gui_Graphic,
                     Tooltip = Library.GetString("craft", data.DisplayName),
                     KeepChildVisible = true, // So the player can interact with the popup.
@@ -1262,7 +1261,6 @@ namespace DwarfCorp.GameStates
                 },
                 (data) => new FlatToolTray.Icon
                 {
-                    Icon = data.Icon,
                     NewStyleIcon = data.Gui_Graphic,
                     Tooltip = Library.GetString("craft", data.DisplayName),
                     ExpandChildWhenDisabled = true,

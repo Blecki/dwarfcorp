@@ -45,5 +45,13 @@
   "Tool_AttackAnimation": "Attacking",
   "Tool_AttackTriggerFrame": 2,
   "Tool_AttackDamage": 1,
-  "Tool_AttackHitEffect": "Effects\\hit"
+  "Tool_AttackHitEffect": "Effects\\hit",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "0, 0"
+  }
+
 }

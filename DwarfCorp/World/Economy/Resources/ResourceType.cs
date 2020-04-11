@@ -7,6 +7,14 @@ namespace DwarfCorp
 {
     public class ResourceType
     {
+        public class _TrinketData
+        {
+            public String Name;
+            public float Value;
+            public GuiGraphic Graphic;
+            public GuiGraphic EncrustingGraphic;
+        }
+
         public struct TrinketInfo
         {
             public string BaseAsset;
@@ -25,15 +33,35 @@ namespace DwarfCorp
         public class GuiGraphic
         {
             public string AssetPath = null;
-            public string Palette = null;
+            public string Palette = "None";
             public Point FrameSize;
             public Point Frame;
+            public GuiGraphic NextLayer = null;
 
             public String GetSheetIdentifier()
             {
-                return AssetPath + String.Format("/{0}-{1}/{2}-{3}/{4}", FrameSize.X, FrameSize.Y, Frame.X, Frame.Y, Palette);
+                var r = AssetPath + String.Format("/{0}-{1}/{2}-{3}/{4}", FrameSize.X, FrameSize.Y, Frame.X, Frame.Y, Palette);
+                if (NextLayer != null)
+                    r += "/" + NextLayer.GetSheetIdentifier();
+                return r;
+            }
+
+            public GuiGraphic Clone()
+            {
+                var r = new GuiGraphic();
+                r.AssetPath = AssetPath;
+                r.Palette = Palette;
+                r.FrameSize = FrameSize;
+                r.Frame = Frame;
+                if (NextLayer != null)
+                    r.NextLayer = NextLayer.Clone();
+                return r;
             }
         }
+
+        public List<_TrinketData> TrinketDataEx = null;
+        public _TrinketData EncrustingDataEx = null;
+        public string Trinket_JewellPalette = "None";
 
         public bool Disable = false;
 

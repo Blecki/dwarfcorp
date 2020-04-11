@@ -64,5 +64,13 @@
   "Craft_Noise": "Craft",
   "Craft_MetaResourceFactory": "Normal",
 
-  "Tutorial": "The tower of life should be built near seedlings. It automatically makes seedlings grow faster. It must be recharged by a wizard."
+  "Tutorial": "The tower of life should be built near seedlings. It automatically makes seedlings grow faster. It must be recharged by a wizard.",
+
+  "Gui_Graphic": {
+    "AssetPath": "entities\\Furniture\\interior_furniture",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "2, 5"
+  }
+
 }

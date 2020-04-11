@@ -59,5 +59,13 @@
   "Craft_Noise": "Craft",
   "Craft_MetaResourceFactory": "Normal",
 
-  "Tutorial": "Bear traps trigger on enemy creatures, dealing massive damage and then blowing up. They cannot be reset."
+  "Tutorial": "Bear traps trigger on enemy creatures, dealing massive damage and then blowing up. They cannot be reset.",
+
+
+  "Gui_Graphic": {
+    "AssetPath": "entities\\DwarfObject\\beartrap",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "0, 0"
+  }
 }

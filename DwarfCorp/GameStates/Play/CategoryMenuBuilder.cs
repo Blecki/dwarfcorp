@@ -57,7 +57,6 @@ namespace DwarfCorp.GameStates
                 categoryInfo = new CategoryIcon
                 {
                     Label = Category,
-                    Icon = Crafts.Where(item => item.Category == Category).First().Icon,
                     DynamicIcon = Crafts.Where(item => item.Category == Category).Select(item => item.Gui_Graphic).Where(icon => icon != null).FirstOrDefault(),
                     Tooltip = "Craft items in the " + Category + " category."
                 };
@@ -65,7 +64,6 @@ namespace DwarfCorp.GameStates
 
             var menuIcon = new FlatToolTray.Icon
             {
-                Icon = categoryInfo.Icon,
                 NewStyleIcon = categoryInfo.DynamicIcon,
                 Tooltip = categoryInfo.Tooltip,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,

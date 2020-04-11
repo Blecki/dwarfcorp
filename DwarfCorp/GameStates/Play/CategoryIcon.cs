@@ -20,7 +20,6 @@ namespace DwarfCorp.GameStates // Needs to be in Play
     {
         public String Category;
         public String Label;
-        public Gui.TileReference Icon;
         public ResourceType.GuiGraphic DynamicIcon;
         public String Tooltip;
     }

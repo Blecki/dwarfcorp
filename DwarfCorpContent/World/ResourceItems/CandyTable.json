@@ -61,5 +61,13 @@
   "Craft_Noise": "Craft",
   "Craft_MetaResourceFactory": "Normal",
 
-  "Tutorial": "Dwarfs prefer to eat on chairs near tables, and will gamble there as well."
+  "Tutorial": "Dwarfs prefer to eat on chairs near tables, and will gamble there as well.",
+
+  "Gui_Graphic": {
+    "AssetPath": "entities\\Furniture\\interior_furniture",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "7, 4"
+  }
+
 }

@@ -351,7 +351,7 @@ namespace DwarfCorp
 
             foreach (var item in Library.EnumerateResourceTypes().Where(r => r.Craft_Craftable))
                 if (!String.IsNullOrEmpty(item.Tutorial))
-                    TutorialManager.AddTutorial(item.TypeName, item.Tutorial, item.Icon);
+                    TutorialManager.AddTutorial(item.TypeName, item.Tutorial, item.Gui_Graphic);
 
             Renderer.Camera.World = this;
             //Drawer3D.Camera = Camera;

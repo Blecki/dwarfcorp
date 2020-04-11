@@ -40,5 +40,13 @@
     255,
     255
   ],
-  "AleName": "Wine"
+  "AleName": "Wine",
+
+
+  "Gui_Graphic": {
+    "AssetPath": "Entities\\Animals\\Slimes\\Slime_Goo",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "1, 0"
+  }
 }

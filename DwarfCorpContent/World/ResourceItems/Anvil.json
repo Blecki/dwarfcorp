@@ -60,5 +60,13 @@
   "Craft_Noise": "Craft",
   "Craft_MetaResourceFactory": "Normal",
 
-  "Tutorial": "Build anvils to let your dwarfs construct other objects and crafts. Only one dwarf can use an anvil at a time."
+  "Tutorial": "Build anvils to let your dwarfs construct other objects and crafts. Only one dwarf can use an anvil at a time.",
+
+  "Gui_Graphic": {
+    "AssetPath": "entities\\Furniture\\interior_furniture",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "0, 3"
+  }
+
 }

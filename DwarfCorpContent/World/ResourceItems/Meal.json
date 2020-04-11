@@ -63,5 +63,13 @@
   "Craft_Noise": "Cook",
   "Craft_MetaResourceFactory": "Meal",
 
-  "Tutorial": "Meals can be created at cutting boards from two raw foods. Meals relieve more hunger than raw foods."
+  "Tutorial": "Meals can be created at cutting boards from two raw foods. Meals relieve more hunger than raw foods.",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "5, 2"
+  }
+
 }

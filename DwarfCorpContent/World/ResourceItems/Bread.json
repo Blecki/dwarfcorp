@@ -59,5 +59,13 @@
   "Craft_Noise": "Cook",
   "Craft_MetaResourceFactory": "Bread",
 
-  "Tutorial": "Bread can be created by baking a bakeable resource (such as grain) in a stove. Bread satifies more hunger than raw foods."
+  "Tutorial": "Bread can be created by baking a bakeable resource (such as grain) in a stove. Bread satifies more hunger than raw foods.",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "6, 2"
+  }
+
 }

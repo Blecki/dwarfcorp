@@ -96,7 +96,10 @@ namespace DwarfCorp
         [JsonIgnore] public DwarfBux MoneyValue { get => GetProperty<DwarfBux>("MoneyValue", 0u); set => SetProperty<DwarfBux>("MoneyValue", value); }
         [JsonIgnore] public ResourceType.TrinketInfo TrinketData { get => GetProperty<ResourceType.TrinketInfo>("TrinketData", new ResourceType.TrinketInfo()); set => SetProperty<ResourceType.TrinketInfo>("TrinketData", value); }
         [JsonIgnore] public Color Tint { get => GetProperty<Color>("Tint", new Color(1.0f, 1.0f, 1.0f, 1.0f)); set => SetProperty<Color>("Tint", value); }
-
+        [JsonIgnore] public List<ResourceType._TrinketData> TrinketDataEx { get => GetProperty<List<ResourceType._TrinketData>>("TrinketDataEx", null); set => SetProperty<List<ResourceType._TrinketData>>("TrinketDataEx", value); }
+        [JsonIgnore] public ResourceType._TrinketData EncrustingDataEx { get => GetProperty<ResourceType._TrinketData>("EncrustingDataEx", null); set => SetProperty<ResourceType._TrinketData>("EncrustingDataEx", value); }
+        [JsonIgnore] public String Trinket_JewellPalette { get => GetProperty<String>("Trinket_JewellPalette", "None"); set => SetProperty<String>("Trinket_JewellPalette", value); }
+        
         [JsonIgnore] public float Tool_Durability { get => GetProperty<float>("Tool_Durability", 1.0f); set => SetProperty<float>("Tool_Durability", value); }
         [JsonIgnore] public float Tool_Wear { get => GetProperty<float>("Tool_Wear", 0.0f); set => SetProperty<float>("Tool_Wear", value); }
         [JsonIgnore] public bool Tool_Breakable { get => GetProperty<bool>("Tool_Breakable", false); set => SetProperty<bool>("Tool_Breakable", value); }

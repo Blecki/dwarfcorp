@@ -40,5 +40,13 @@
     255,
     255
   ],
-  "AleName": ""
+  "AleName": "",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "7, 5"
+  }
+
 }

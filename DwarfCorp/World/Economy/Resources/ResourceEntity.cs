@@ -80,7 +80,12 @@ namespace DwarfCorp
                 };
 
                 var sprite = AddChild(new SimpleBobber(Manager, "Sprite", Matrix.CreateTranslation(Vector3.UnitY * 0.25f), sheet, Point.Zero, 0.15f, 
-                    MathFunctions.Rand() + 2.0f, MathFunctions.Rand() * 3.0f)) as Tinter;
+                    MathFunctions.Rand() + 2.0f, MathFunctions.Rand() * 3.0f)
+                    {
+                    OrientationType = SimpleSprite.OrientMode.Spherical,
+                        WorldHeight = 0.75f,
+                        WorldWidth = 0.75f,
+                    }) as Tinter;
                 sprite.LocalTransform = Matrix.CreateTranslation(Vector3.UnitY * 0.25f + MathFunctions.RandVector3Cube() * 0.1f);
                 sprite.LightRamp = Resource.Tint;
                 sprite.SetFlag(Flag.ShouldSerialize, false);

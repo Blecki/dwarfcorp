@@ -57,5 +57,13 @@
   "Craft_Noise": "Craft",
   "Craft_MetaResourceFactory": "Normal",
 
-  "Tutorial": "Rails are needed to build railways. One metal can be turned into four rails. Dwarfs move faster on railways."
+  "Tutorial": "Rails are needed to build railways. One metal can be turned into four rails. Dwarfs move faster on railways.",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "6, 4"
+  }
+
 }

@@ -235,5 +235,47 @@
     "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
     "Row": 32,
     "Type": "Equipment"
+  },
+
+  {
+    "Name": "Ruby",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 33,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Garnet",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 34,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Citrine",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 35,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Emerald",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 36,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Sapphire",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 37,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Amethyst",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 38,
+    "Type": "Equipment"
   }
 ]

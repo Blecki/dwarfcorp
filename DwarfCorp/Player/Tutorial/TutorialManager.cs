@@ -16,7 +16,7 @@ namespace DwarfCorp.Tutorial
             public String GuiHilite;
             public bool Popup = false;
             public String Name;
-            public TileReference Icon;
+            public ResourceType.GuiGraphic Icon;
             public String NextTutorial;
         }
 
@@ -44,7 +44,7 @@ namespace DwarfCorp.Tutorial
                 });
         }
 
-        public void AddTutorial(string name, string text, TileReference icon = null)
+        public void AddTutorial(string name, string text, ResourceType.GuiGraphic Icon = null)
         {
             Entries[name] = new TutorialEntry()
             {
@@ -52,7 +52,7 @@ namespace DwarfCorp.Tutorial
                 Title = name,
                 Shown = false,
                 Popup = false,
-                Icon = icon
+                Icon = Icon
             };
         }
 

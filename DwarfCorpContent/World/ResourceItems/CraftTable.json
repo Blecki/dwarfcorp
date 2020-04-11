@@ -60,5 +60,13 @@
   "Craft_Noise": "Craft",
   "Craft_MetaResourceFactory": "Normal",
 
-  "Tutorial": "Dwarves create a variety of items at craft tables."
+  "Tutorial": "Dwarves create a variety of items at craft tables.",
+
+  "Gui_Graphic": {
+    "AssetPath": "entities\\Furniture\\interior_furniture",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "7, 0"
+  }
+
 }

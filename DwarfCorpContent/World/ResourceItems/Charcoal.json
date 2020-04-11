@@ -63,5 +63,13 @@
   "Craft_Noise": "Craft",
   "Craft_MetaResourceFactory": "Normal",
 
-  "Tutorial": "Burn wood in a forge to make charcoal."
+  "Tutorial": "Burn wood in a forge to make charcoal.",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "2, 2"
+  }
+
 }

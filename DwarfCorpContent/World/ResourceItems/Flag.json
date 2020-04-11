@@ -64,5 +64,13 @@
   "Craft_Noise": "Craft",
   "Craft_MetaResourceFactory": "Normal",
 
-  "Tutorial": "Flags display the insignia of your company. Dwarfs gather at flags when they have nothing else to do."
+  "Tutorial": "Flags display the insignia of your company. Dwarfs gather at flags when they have nothing else to do.",
+
+  "Gui_Graphic": {
+    "AssetPath": "entities\\Furniture\\interior_furniture",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "2, 1"
+  }
+
 }

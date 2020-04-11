@@ -13,15 +13,24 @@ namespace DwarfCorp
 {
     public class ResourceGraphicsHelper
     {
-        public static Texture2D GetResourceTexture(GraphicsDevice Device, ResourceType.GuiGraphic Graphic)
+        private static MemoryTexture _GetResourceTexture(GraphicsDevice Device, ResourceType.GuiGraphic Graphic)
         {
-            Texture2D r = null;
+            MemoryTexture r = null;
             var rawAsset = AssetManager.GetContentTexture(Graphic.AssetPath);
             if (Graphic.Palette != "None" && DwarfSprites.LayerLibrary.FindPalette(Graphic.Palette).HasValue(out var palette))
                 r = TextureTool.CropAndColorSprite(Device, rawAsset, Graphic.FrameSize, Graphic.Frame, DwarfSprites.LayerLibrary.BasePalette.CachedPalette, palette.CachedPalette);
             else
                 r = TextureTool.CropSprite(Device, rawAsset, Graphic.FrameSize, Graphic.Frame);
+
+            if (Graphic.NextLayer != null)
+                TextureTool.AlphaBlit(_GetResourceTexture(Device, Graphic.NextLayer), new Rectangle(0, 0, Graphic.NextLayer.FrameSize.X, Graphic.NextLayer.FrameSize.Y),
+                    r, new Point(0, 0));
             return r;
+        }
+
+        public static Texture2D GetResourceTexture(GraphicsDevice Device, ResourceType.GuiGraphic Graphic)
+        {
+            return TextureTool.Texture2DFromMemoryTexture(Device, _GetResourceTexture(Device, Graphic));
         }
 
         public static Gui.TextureAtlas.SpriteAtlasEntry GetDynamicSheet(Gui.Root Root, Resource Resource)

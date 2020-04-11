@@ -149,45 +149,24 @@ namespace DwarfCorp
             foreach (var ingredient in Ingredients)
                 if (ingredient.ResourceType.HasValue(out var res))
                 {
-                    if (res.Tags.Contains("Craft"))
+                    if (res.Tags.Contains("Encrustable"))
                         baseResource = ingredient;
                     else if (res.Tags.Contains("Gem"))
                         gemResource = ingredient;
                 }
 
-            if (baseResource == null || gemResource == null)
+            if (baseResource == null || gemResource == null || baseResource.EncrustingDataEx == null || baseResource.EncrustingDataEx.EncrustingGraphic == null)
                 return null;
 
             var r = new Resource(Base.TypeName);
-            r.DisplayName = gemResource.TypeName + "-encrusted " + baseResource.DisplayName;
+            r.DisplayName = gemResource.DisplayName + "-encrusted " + baseResource.DisplayName;
 
             if (gemResource.ResourceType.HasValue(out var gem))
                 r.MoneyValue = baseResource.MoneyValue + gem.MoneyValue * 2m;
 
-            var compositeLayers = new List<ResourceType.CompositeLayer>();
-            compositeLayers.AddRange(baseResource.CompositeLayers);
-
-            var guiLayers = new List<TileReference>();
-            guiLayers.AddRange(baseResource.GuiLayers);
-
-            var trinketData = baseResource.TrinketData;
-
-            if (gemResource.ResourceType.HasValue(out var gemRes))
-            {
-                if (trinketData.EncrustingAsset != null)
-                    compositeLayers.Add(
-                            new ResourceType.CompositeLayer
-                            {
-                                Asset = trinketData.EncrustingAsset,
-                                FrameSize = new Point(32, 32),
-                                Frame = new Point(trinketData.SpriteColumn, gemRes.TrinketData.SpriteRow)
-                            });
-
-                guiLayers.Add(new TileReference(trinketData.EncrustingAsset, gemRes.TrinketData.SpriteRow * 7 + trinketData.SpriteColumn));
-            }
-
-            r.CompositeLayers = compositeLayers;
-            r.GuiLayers = guiLayers;
+            r.Gui_Graphic = baseResource.Gui_Graphic.Clone();
+            r.Gui_Graphic.NextLayer = baseResource.EncrustingDataEx.EncrustingGraphic.Clone();
+            r.Gui_Graphic.NextLayer.Palette = gemResource.Trinket_JewellPalette;
 
             return r;
         }
@@ -197,25 +176,12 @@ namespace DwarfCorp
         {
             InitializeResources();
 
-            if (Ingredients.Count == 0)
+            if (Ingredients.Count == 0 || Ingredients[0].TrinketDataEx == null)
                 return null;
 
+            var item = Ingredients[0].TrinketDataEx.SelectRandom();
+
             var quality = Agent != null ? (Agent.Stats.Dexterity + Agent.Stats.Intelligence) / 15.0f * MathFunctions.Rand(0.5f, 1.75f) : MathFunctions.Rand(0.1f, 3.0f);
-
-            string[] names =
-            {
-                "Ring",
-                "Bracer",
-                "Pendant",
-                "Figure",
-                "Earrings",
-                "Staff",
-                "Crown"
-            };
-
-            int[] tiles = { 0, 1, 2, 3, 4, 5, 6 };
-
-            float[] values = { 1.5f, 1.8f, 1.6f, 3.0f, 2.0f, 3.5f, 4.0f };
 
             string qualityType = "";
             if (quality < 0.5f)
@@ -233,37 +199,13 @@ namespace DwarfCorp
             else
                 qualityType = "Legendary";
 
-            var item = MathFunctions.Random.Next(names.Count());
-
             var r = new Resource(Base.TypeName);
-            r.DisplayName = Ingredients[0].DisplayName + " " + names[item] + " (" + qualityType + ")";
+            r.DisplayName = Ingredients[0].DisplayName + " " + item.Name + " (" + qualityType + ")";
 
-            r.MoneyValue = values[item] * Ingredients[0].MoneyValue * 3m * quality;
+            r.MoneyValue =item.Value * Ingredients[0].MoneyValue * 3m * quality;
             r.Tint = Ingredients[0].Tint;
-
-            var tile = new Point(tiles[item], Ingredients[0].TrinketData.SpriteRow);
-
-            r.CompositeLayers = new List<ResourceType.CompositeLayer>(new ResourceType.CompositeLayer[]
-            {
-                    new ResourceType.CompositeLayer
-                    {
-                        Asset = Ingredients[0].TrinketData.BaseAsset,
-                        FrameSize = new Point(32, 32),
-                        Frame = tile
-                    }
-            });
-
-            var trinketInfo = new ResourceType.TrinketInfo
-            {
-                BaseAsset = Ingredients[0].TrinketData.BaseAsset,
-                EncrustingAsset = Ingredients[0].TrinketData.EncrustingAsset,
-                SpriteColumn = tile.X,
-                SpriteRow = Ingredients[0].TrinketData.SpriteRow
-            };
-
-            r.TrinketData = trinketInfo;
-
-            r.GuiLayers = new List<TileReference>() { new TileReference(Ingredients[0].TrinketData.BaseAsset, tile.Y * 7 + tile.X) };
+            r.EncrustingDataEx = item;
+            r.Gui_Graphic = item.Graphic.Clone();
 
             return r;
         }

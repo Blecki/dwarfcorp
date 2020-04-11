@@ -43,7 +43,7 @@
   "Craft_Craftable": true,
   "Craft_Ingredients": [
     {
-      "Tag": "Material",
+      "Tag": "TrinketMaterial",
       "Count": 3
     }
   ],
@@ -54,5 +54,13 @@
   "Craft_Noise": "Craft",
   "Craft_MetaResourceFactory": "Trinket",
 
-  "Tutorial": "Trinkets are merely objects that craftsdwarves make for their trade value. Dwarfs cannot use trinkets for any other purpose. Skilled craftsdwarves produce more valuable trinkets. Trinkets made from more valuable goods are also more valuable."
+  "Tutorial": "Trinkets are merely objects that craftsdwarves make for their trade value. Dwarfs cannot use trinkets for any other purpose. Skilled craftsdwarves produce more valuable trinkets. Trinkets made from more valuable goods are also more valuable.",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui\\crafts",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "0, 0"
+  }
+
 }

@@ -14,7 +14,7 @@ namespace DwarfCorp
         [EntityFactory("RandTrinket")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            var materialResource = new Resource(Datastructures.SelectRandom(Library.EnumerateResourceTypesWithTag("Material")));
+            var materialResource = new Resource(Datastructures.SelectRandom(Library.EnumerateResourceTypesWithTag("TrinketMaterial")));
             var trinketResource = Library.CreateMetaResource("Trinket", null, new Resource("Trinket"), new List<Resource> { materialResource });
 
             if (trinketResource.HasValue(out var _trinketResource) && MathFunctions.RandEvent(0.5f))

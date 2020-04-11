@@ -64,5 +64,13 @@
   "Craft_Noise": "Craft",
   "Craft_MetaResourceFactory": "Normal",
 
-  "Tutorial": "Musket dwarfs train and earn XP by attacking targets. The target is destroyed by the musket dwarf."
+  "Tutorial": "Musket dwarfs train and earn XP by attacking targets. The target is destroyed by the musket dwarf.",
+
+  "Gui_Graphic": {
+    "AssetPath": "entities\\Furniture\\interior_furniture",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "0, 5"
+  }
+
 }

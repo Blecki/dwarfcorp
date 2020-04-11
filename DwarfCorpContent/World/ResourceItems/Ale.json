@@ -56,5 +56,13 @@
   "Craft_Noise": "Cook",
   "Craft_MetaResourceFactory": "Ale",
 
-  "Tutorial": "Ale can be brewed from mushrooms, grain, and many other foodstuffs."
+  "Tutorial": "Ale can be brewed from mushrooms, grain, and many other foodstuffs.",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "4, 2"
+  }
+
 }
