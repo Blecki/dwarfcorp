@@ -8,7 +8,8 @@
     "Material",
     "Metal",
     "Precious",
-    "HardMaterial"
+    "HardMaterial",
+    "TrinketMaterial"
   ],
   "FoodContent": 0.0,
   "DisplayName": "Gold",
@@ -47,6 +48,120 @@
     "Palette": "None",
     "FrameSize": "32, 32",
     "Frame": "6, 5"
-  }
+  },
 
+  "Trinket_TrinketData": [
+    {
+      "Name": "Ring",
+      "Value": 1.5,
+      "Graphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "Straw Equipment",
+        "FrameSize": "32, 32",
+        "Frame": "0, 1"
+      },
+      "EncrustingGraphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "None",
+        "FrameSize": "32, 32",
+        "Frame": "0, 5"
+      }
+    },
+    {
+      "Name": "Bracer",
+      "Value": 1.8,
+      "Graphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "Straw Equipment",
+        "FrameSize": "32, 32",
+        "Frame": "1, 1"
+      },
+      "EncrustingGraphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "None",
+        "FrameSize": "32, 32",
+        "Frame": "1, 5"
+      }
+    },
+    {
+      "Name": "Pendant",
+      "Value": 1.6,
+      "Graphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "Straw Equipment",
+        "FrameSize": "32, 32",
+        "Frame": "2, 1"
+      },
+      "EncrustingGraphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "None",
+        "FrameSize": "32, 32",
+        "Frame": "2, 5"
+      }
+    },
+    {
+      "Name": "Figure",
+      "Value": 3.0,
+      "Graphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "Straw Equipment",
+        "FrameSize": "32, 32",
+        "Frame": "3, 1"
+      },
+      "EncrustingGraphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "None",
+        "FrameSize": "32, 32",
+        "Frame": "3, 5"
+      }
+    },
+    {
+      "Name": "Earrings",
+      "Value": 2.0,
+      "Graphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "Straw Equipment",
+        "FrameSize": "32, 32",
+        "Frame": "4, 1"
+      },
+      "EncrustingGraphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "None",
+        "FrameSize": "32, 32",
+        "Frame": "4, 5"
+      }
+    },
+    {
+      "Name": "Staff",
+      "Value": 3.5,
+      "Graphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "Straw Equipment",
+        "FrameSize": "32, 32",
+        "Frame": "5, 1"
+      },
+      "EncrustingGraphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "None",
+        "FrameSize": "32, 32",
+        "Frame": "5, 5"
+      }
+    },
+    {
+      "Name": "Crown",
+      "Value": 4.0,
+      "Graphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "Straw Equipment",
+        "FrameSize": "32, 32",
+        "Frame": "6, 1"
+      },
+      "EncrustingGraphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "None",
+        "FrameSize": "32, 32",
+        "Frame": "6, 5"
+      }
+    }
+  ]
 }

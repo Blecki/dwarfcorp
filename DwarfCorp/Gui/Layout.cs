@@ -41,7 +41,7 @@ namespace DwarfCorp.Gui
 
         // Todo: 'Flow' options. Pack widgets up in rows until full, flow...
         // Must track rects in each corner used for flow.
-        private static Rectangle LayoutChild(Rectangle Inside, Margin Padding, Widget Child)
+        public static Rectangle LayoutChild(Rectangle Inside, Margin Padding, Widget Child)
         {
             Rectangle newPos;
 

@@ -46,6 +46,9 @@ namespace DwarfCorp.Play
 
         public override void Construct()
         {
+            EnableScrolling = true;
+            base.Construct();
+
             ItemSize = new Point(32, 48);
             Root.RegisterForUpdate(this);
             if (String.IsNullOrEmpty(Border))
@@ -55,39 +58,45 @@ namespace DwarfCorp.Play
             {
                 if (Resources == null)
                 {
+                    var ScrollBar = Children[0];
                     Children.Clear();
+                    Children.Add(ScrollBar);
                     return;
                 }
-
-                var existingResourceEntries = new List<Widget>(Children);
-                Children.Clear();
-
-                foreach (var resource in AggregateByType())
+                else
                 {
-                    var icon = existingResourceEntries.FirstOrDefault(w => w is ResourceIcon  resIcon && Object.ReferenceEquals(resIcon.Resource, resource.Sample));
+                    var existingResourceEntries = new List<Widget>(Children);
+                    var ScrollBar = Children[0];
+                    Children.Clear();
+                    Children.Add(ScrollBar);
 
-                    if (icon == null)
+                    foreach (var resource in AggregateByType())
                     {
-                        icon = AddChild(new ResourceIcon()
+                        var icon = existingResourceEntries.FirstOrDefault(w => w is ResourceIcon resIcon && Object.ReferenceEquals(resIcon.Resource, resource.Sample));
+
+                        if (icon == null)
                         {
-                            Resource = resource.Sample,
-                            EnableDragAndDrop = EnableDragAndDrop,
-                            CreateDraggableItem = CreateDraggableItem,
-                            OnClick = OnIconClicked
-                        });
+                            icon = AddChild(new ResourceIcon()
+                            {
+                                Resource = resource.Sample,
+                                EnableDragAndDrop = EnableDragAndDrop,
+                                CreateDraggableItem = CreateDraggableItem,
+                                OnClick = OnIconClicked
+                            });
 
-                    }
-                    else
-                    {
-                        if (!Children.Contains(icon))
-                            AddChild(icon);
+                        }
+                        else
+                        {
+                            if (!Children.Contains(icon))
+                                AddChild(icon);
+                        }
+
+                        icon.Text = resource.Count.ToString();
+                        icon.Invalidate();
                     }
 
-                    icon.Text = resource.Count.ToString();
-                    icon.Invalidate();
+                    Layout();
                 }
-
-                Layout();
             };
         }
     }

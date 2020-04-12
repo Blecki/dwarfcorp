@@ -15,33 +15,6 @@ namespace DwarfCorp.Play
 
         public override void Construct()
         {
-            List<String> blacklistableResources = new List<String>()
-            {
-                "Alcohol", // Todo: Need a central clearing house for all resource tags. Do they need to be an actual object rather than an enum?
-                "Meat",
-                "Metal",
-                "Gem",
-                "Magical",
-                "Wood",
-                "Soil",
-                "Sand",
-                "Fruit",
-                "Gourd",
-                "Grain",
-                "Fungus",
-                "Fuel",
-                "Craft",
-                "CraftItem",
-                "Bone",
-                "Potion",
-                "PreparedFood",
-                "Rail",
-                "Seed",
-                "Edible",
-                "AnimalProduct",
-                "Stone"
-            }.OrderBy(t => t.ToString()).ToList();
-
             Font = "font10";
 
             var bottom = AddChild(new Widget()
@@ -58,7 +31,7 @@ namespace DwarfCorp.Play
             }) as GridPanel;
 
             var boxes = new List<CheckBox>();
-            foreach (var tagType in blacklistableResources)
+            foreach (var tagType in Library.EnumerateDistinctResourceTags())
             {
                 var resource = Library.EnumerateResourceTypesWithTag(tagType).FirstOrDefault();
                 var resources = Library.EnumerateResourceTypesWithTag(tagType);

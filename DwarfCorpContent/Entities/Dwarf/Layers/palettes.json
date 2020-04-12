@@ -277,5 +277,40 @@
     "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
     "Row": 38,
     "Type": "Equipment"
+  },
+
+  {
+    "Name": "Bamboo Equipment",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 39,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Brick",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 40,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Ice",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 41,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Obsidian Equipment",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 42,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Peppermint Equipment",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 43,
+    "Type": "Equipment"
   }
 ]

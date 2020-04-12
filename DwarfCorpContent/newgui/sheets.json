@@ -170,6 +170,25 @@
     "TileHeight": 40
   },
   {
+    "Name": "tool-icons",
+    "Texture": "newgui/icons",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "resources",
+    "Texture": "newgui/resources",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "dwarves",
+    "Texture": "newgui/dwarves",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+
+  {
     "Name": "equipment",
     "Texture": "newgui/equipment",
     "TileWidth": 64,

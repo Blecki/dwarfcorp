@@ -8,6 +8,8 @@ namespace DwarfCorp.Gui.Widgets
 {
     public class VerticalScrollBar : Widget
     {
+        public bool SupressOnScroll = false;
+
         private int _scrollArea;
         public int ScrollArea
         {
@@ -37,6 +39,12 @@ namespace DwarfCorp.Gui.Widgets
             if (_scrollPosition < 0) _scrollPosition = 0;
             
             Invalidate();
+
+            if (SupressOnScroll)
+            {
+                SupressOnScroll = false;
+                return;
+            }
 
             // Could be called during construction - before Root is set.
             if (Root != null) Root.SafeCall(OnScrollValueChanged, this);

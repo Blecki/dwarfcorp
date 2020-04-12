@@ -100,6 +100,13 @@ namespace DwarfCorp.Gui.Widgets
       
         public override void Construct()
         {
+            EnableScrolling = false;
+            OverflowBottom = true;
+
+            Transparent = true;
+
+            base.Construct();
+
             ItemSize = new Point(32, 64);
             Root.RegisterForUpdate(this);
             Background = new TileReference("basic", 0);

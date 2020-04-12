@@ -9,6 +9,7 @@ namespace DwarfCorp
     public static partial class Library
     {
         private static Dictionary<String, ResourceType> Resources = null;
+        private static List<String> PossibleTags = null;
         private static bool ResourcesInitialized = false;
 
         private static void InitializeResources()
@@ -22,17 +23,9 @@ namespace DwarfCorp
             var resourceList = FileUtils.LoadJsonListFromDirectory<ResourceType>("World\\ResourceItems", null, r => r.TypeName);
 
             foreach (var resource in resourceList)
-            {
                 Resources[resource.TypeName] = resource;
 
-                //if (resource.Tags.Contains("Money"))
-                //    EntityFactory.RegisterEntity(resource.TypeName + " Resource", (position, data) => new CoinPile(EntityFactory.World.ComponentManager, position)
-                //    {
-                //        Money = data.Has("Money") ? data.GetData<DwarfBux>("Money") : (DwarfBux)64m
-                //    });
-                //else
-                //    EntityFactory.RegisterEntity(resource.TypeName + " Resource", (position, data) => new ResourceEntity(EntityFactory.World.ComponentManager, new Resource(resource.TypeName), position));
-            }
+            PossibleTags = resourceList.SelectMany(r => r.Tags).Distinct().OrderBy(t => t).ToList();
 
             Console.WriteLine("Loaded Resource Library.");
         }
@@ -53,6 +46,12 @@ namespace DwarfCorp
         {
             InitializeResources();
             return Resources.Values;
+        }
+
+        public static IEnumerable<String> EnumerateDistinctResourceTags()
+        {
+            InitializeResources();
+            return PossibleTags;
         }
 
         [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
@@ -155,7 +154,7 @@ namespace DwarfCorp
                         gemResource = ingredient;
                 }
 
-            if (baseResource == null || gemResource == null || baseResource.EncrustingData == null || baseResource.EncrustingData.EncrustingGraphic == null)
+            if (baseResource == null || gemResource == null || baseResource.Trinket_EncrustingData == null || baseResource.Trinket_EncrustingData.EncrustingGraphic == null)
                 return null;
 
             var r = new Resource(Base.TypeName);
@@ -165,7 +164,7 @@ namespace DwarfCorp
                 r.MoneyValue = baseResource.MoneyValue + gem.MoneyValue * 2m;
 
             r.Gui_Graphic = baseResource.Gui_Graphic.Clone();
-            r.Gui_Graphic.NextLayer = baseResource.EncrustingData.EncrustingGraphic.Clone();
+            r.Gui_Graphic.NextLayer = baseResource.Trinket_EncrustingData.EncrustingGraphic.Clone();
             r.Gui_Graphic.NextLayer.Palette = gemResource.Trinket_JewellPalette;
 
             return r;
@@ -176,10 +175,10 @@ namespace DwarfCorp
         {
             InitializeResources();
 
-            if (Ingredients.Count == 0 || Ingredients[0].TrinketData == null)
+            if (Ingredients.Count == 0 || Ingredients[0].Trinket_TrinketData == null)
                 return null;
 
-            var item = Ingredients[0].TrinketData.SelectRandom();
+            var item = Ingredients[0].Trinket_TrinketData.SelectRandom();
 
             var quality = Agent != null ? (Agent.Stats.Dexterity + Agent.Stats.Intelligence) / 15.0f * MathFunctions.Rand(0.5f, 1.75f) : MathFunctions.Rand(0.1f, 3.0f);
 
@@ -204,7 +203,7 @@ namespace DwarfCorp
 
             r.MoneyValue =item.Value * Ingredients[0].MoneyValue * 3m * quality;
             r.Tint = Ingredients[0].Tint;
-            r.EncrustingData = item;
+            r.Trinket_EncrustingData = item;
             r.Gui_Graphic = item.Graphic.Clone();
 
             return r;
