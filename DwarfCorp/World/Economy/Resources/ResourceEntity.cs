@@ -51,12 +51,7 @@ namespace DwarfCorp
 
             LifeTimer.Update(gameTime);
             if (LifeTimer.HasTriggered)
-            {
                 Die();
-            }
-            var tint = Library.GetResourceType(this.Resource.TypeName).HasValue(out var res) ? res.Tint : Color.White;
-            if (tint != Color.White)
-                this.SetVertexColorRecursive(tint);
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
@@ -87,7 +82,7 @@ namespace DwarfCorp
                         WorldWidth = 0.75f,
                     }) as Tinter;
                 sprite.LocalTransform = Matrix.CreateTranslation(Vector3.UnitY * 0.25f + MathFunctions.RandVector3Cube() * 0.1f);
-                sprite.LightRamp = Resource.Tint;
+                sprite.LightRamp = new Color(255, 255, 255, 255);
                 sprite.SetFlag(Flag.ShouldSerialize, false);
             }
         }

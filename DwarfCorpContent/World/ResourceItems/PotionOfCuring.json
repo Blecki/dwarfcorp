@@ -81,10 +81,10 @@
   "Tutorial": "Dwarfs drink this potion to cure all disease.",
 
   "Gui_Graphic": {
-    "AssetPath": "newgui/resources",
+    "AssetPath": "Entities\\potions",
     "Palette": "None",
     "FrameSize": "32, 32",
-    "Frame": "4, 5"
+    "Frame": "1, 0"
   }
 
 }

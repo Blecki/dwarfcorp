@@ -209,6 +209,7 @@ namespace DwarfCorp.Gui
         public PopupDestructionType PopupDestructionType = PopupDestructionType.Keep;
 
         private Mesh CachedRenderMesh = null;
+        private int RenderMeshInvalidation = 0;
         internal List<Widget> Children = new List<Widget>();
         public Widget Parent { get; private set; }
         public Root Root { get; internal set; }
@@ -658,7 +659,7 @@ namespace DwarfCorp.Gui
         /// Get the render mesh to draw this widget.
         /// </summary>
         /// <returns></returns>
-        public Mesh GetRenderMesh()
+        public Mesh GetRenderMesh(int Invalidation)
         {
             if (Hidden) return Mesh.EmptyMesh();
 
@@ -667,31 +668,20 @@ namespace DwarfCorp.Gui
                 var r = new Mesh[1 + Children.Count];
                 r[0] = Redraw();
                 for (var i = 0; i < Children.Count; ++i)
-                    r[i + 1] = Children[i].GetRenderMesh();
+                    r[i + 1] = Children[i].GetRenderMesh(Invalidation);
                 return Mesh.Merge(r);
             }
 
-            if (CachedRenderMesh == null)
+            if (CachedRenderMesh == null || Invalidation > RenderMeshInvalidation)
             {
                 var r = new Mesh[1 + Children.Count];
                 r[0] = Redraw();
                 for (var i = 0; i < Children.Count; ++i)
-                    r[i + 1] = Children[i].GetRenderMesh();
+                    r[i + 1] = Children[i].GetRenderMesh(Invalidation);
                 CachedRenderMesh = Mesh.Merge(r); // This is the heart of the in-place mesh generation... can't kill merge yet!
+                RenderMeshInvalidation = Invalidation;
             }
 
-            return CachedRenderMesh;
-        }
-
-        public Mesh ForceRenderMeshUpdate()
-        {
-            if (Hidden) return Mesh.EmptyMesh();
-
-            var r = new Mesh[1 + Children.Count];
-            r[0] = Redraw();
-            for (var i = 0; i < Children.Count; ++i)
-                r[i + 1] = Children[i].ForceRenderMeshUpdate();
-            CachedRenderMesh = Mesh.Merge(r);
             return CachedRenderMesh;
         }
 

@@ -266,7 +266,7 @@ namespace DwarfCorp.Gui.Widgets
                 MaximumSize = new Point(32, 32),
                 Resource = Resource.Prototype,
                 AutoLayout = AutoLayout.DockLeft,
-                BackgroundColor = Resource.Count > 0 ? Resource.Prototype.Tint.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
+                BackgroundColor = Resource.Count > 0 ? new Vector4(1.0f, 1.0f, 1.0f, 1.0f) : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
                 TextColor = Color.White.ToVector4(),
                 TextHorizontalAlign = HorizontalAlign.Right,
                 TextVerticalAlign = VerticalAlign.Bottom
@@ -336,7 +336,7 @@ namespace DwarfCorp.Gui.Widgets
                             : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
                     }
                     LineItem.GetChild(i).BackgroundColor = Resource.Count > 0
-                        ? Resource.Prototype.Tint.ToVector4()
+                        ? new Vector4(1.0f, 1.0f, 1.0f, 1.0f)
                         : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
                     LineItem.GetChild(i).Tooltip = Resource.Prototype.DisplayName + "\n" + Resource.Prototype.Description;
                     LineItem.GetChild(i).Invalidate();

@@ -42,7 +42,7 @@ namespace DwarfCorp
                         new SetBlackboardData<Resource>(Agent, "GatheredResource", ItemToStock),
                         new SearchFreeStockpileAct(Agent, "TargetStockpile", "FreeVoxel", ItemToStock),
                         new GoToNamedVoxelAct("FreeVoxel", PlanAct.PlanType.Adjacent, Agent),
-                        new PutResourceInZone(Agent, "TargetStockpile", "FreeVoxel", "GatheredResource"));
+                        new PutResourceInZone(Agent, "TargetStockpile", "GatheredResource"));
 
                     Tree.Initialize();
             }

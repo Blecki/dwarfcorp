@@ -202,7 +202,6 @@ namespace DwarfCorp
             r.DisplayName = Ingredients[0].DisplayName + " " + item.Name + " (" + qualityType + ")";
 
             r.MoneyValue =item.Value * Ingredients[0].MoneyValue * 3m * quality;
-            r.Tint = Ingredients[0].Tint;
             r.Trinket_EncrustingData = item;
             r.Gui_Graphic = item.Graphic.Clone();
 

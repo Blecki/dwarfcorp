@@ -209,7 +209,7 @@ namespace DwarfCorp.GameStates
                     MaximumSize = new Point(32 + 16, 32 + 16),
                     Resource = new Resource(res),
                     AutoLayout = AutoLayout.DockLeft,
-                    BackgroundColor = Resource.Count > 0 ? res.Tint.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
+                    BackgroundColor = Resource.Count > 0 ? new Vector4(1.0f, 1.0f, 1.0f, 1.0f) : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
                     TextColor = Color.White.ToVector4(),
                     TextHorizontalAlign = HorizontalAlign.Right,
                     TextVerticalAlign = VerticalAlign.Bottom
@@ -264,7 +264,7 @@ namespace DwarfCorp.GameStates
                 {
                     if (i > 0)
                         LineItem.GetChild(i).TextColor = Resource.Count > 0 ? Color.Black.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
-                    LineItem.GetChild(i).BackgroundColor = Resource.Count > 0 ? Resource.Prototype.Tint.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
+                    LineItem.GetChild(i).BackgroundColor = Resource.Count > 0 ? new Vector4(1.0f, 1.0f, 1.0f, 1.0f) : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
                     LineItem.GetChild(i).Tooltip = LineItem.Tooltip;
                     LineItem.GetChild(i).Invalidate();
                 }

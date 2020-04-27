@@ -82,10 +82,10 @@
   "Tutorial": "Dwarfs drink this potion when they are feeling down.",
 
   "Gui_Graphic": {
-    "AssetPath": "newgui/resources",
+    "AssetPath": "Entities\\potions",
     "Palette": "None",
     "FrameSize": "32, 32",
-    "Frame": "5, 5"
+    "Frame": "2, 0"
   }
 
 }

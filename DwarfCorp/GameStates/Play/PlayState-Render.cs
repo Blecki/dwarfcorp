@@ -60,7 +60,7 @@ namespace DwarfCorp.GameStates
                 {
                     Gui.Draw(new Point(0, 0), false);
                     MinimapRenderer.Render(new Rectangle(MinimapFrame.Rect.X, MinimapFrame.Rect.Bottom - 192, 192, 192), Gui);
-                    Gui.DrawMesh(MinimapFrame.GetRenderMesh(), Gui.SpriteAtlas.Texture);
+                    Gui.DrawMesh(MinimapFrame.GetRenderMesh(Gui.RenderMeshInvalidation), Gui.SpriteAtlas.Texture);
                     Gui.RedrawPopups();
                     Gui.DrawMouse();
                 }

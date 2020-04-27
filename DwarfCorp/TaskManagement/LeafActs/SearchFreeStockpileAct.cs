@@ -6,49 +6,19 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// A creature looks for the nearest, free stockpile and puts that information onto the blackboard.
-    /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class SearchFreeStockpileAct : CreatureAct
     {
-        public string StockpileName { get; set; }
-        public string VoxelName { get; set; }
+        public string StockpileBlackboardName;
+        public string VoxelBlackboardName;
+        public Resource Item;
 
-        // Todo: Most of these properties are useless cruft.
-        public Zone Stockpile { get { return GetStockpile(); } set { SetStockpile(value);} }
-
-        public VoxelHandle Voxel { get { return GetVoxel(); } set { SetVoxel(value);} }
-
-        public Resource Item { get; set; }
-
-        public SearchFreeStockpileAct(CreatureAI creature, string stockName, string voxName, Resource itemToStock) :
+        public SearchFreeStockpileAct(CreatureAI creature, string StockpileBlackboardName, string VoxelBlackboardName, Resource itemToStock) :
             base(creature)
         {
-            Name = "Search Stockpile " + stockName;
-            StockpileName = stockName;
-            VoxelName = voxName;
+            Name = "Search Stockpile " + StockpileBlackboardName;
+            this.StockpileBlackboardName = StockpileBlackboardName;
+            this.VoxelBlackboardName = VoxelBlackboardName;
             Item = itemToStock;
-        }
-
-        public VoxelHandle GetVoxel()
-        {
-            return Agent.Blackboard.GetData<VoxelHandle>(VoxelName);
-        }
-
-        public void SetVoxel(VoxelHandle value)
-        {
-            Agent.Blackboard.SetData(VoxelName, value);
-        }
-
-        public Zone GetStockpile()
-        {
-            return Agent.Blackboard.GetData<Stockpile>(StockpileName);
-        }
-
-        public void SetStockpile(Zone value)
-        {
-            Agent.Blackboard.SetData(StockpileName, value);
         }
 
         public int CompareStockpiles(Zone A, Zone B)
@@ -89,8 +59,8 @@ namespace DwarfCorp
                 if(!v.IsValid || v.IsEmpty)
                     continue;
 
-                Voxel = v;
-                Stockpile = s;
+                Agent.Blackboard.SetData<VoxelHandle>(VoxelBlackboardName, v);
+                Agent.Blackboard.SetData<Zone>(StockpileBlackboardName, s);
 
                 validTargetFound = true;
                 break;

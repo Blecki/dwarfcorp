@@ -50,13 +50,13 @@ namespace DwarfCorp
         [OnDeserialized]
         void OnDeserializing(StreamingContext context)
         {
-            if (MetaData != null)
+            /*if (MetaData != null)
                 foreach (var entry in MetaData.Data.Keys.ToList())
                 {
                     var value = MetaData[entry];
                     if (value.Data != null && value.Data.GetType() == typeof(double))
                         value.Data = (float)(double)value.Data;
-                }
+                }*/
         }
 
         [JsonIgnore] private MaybeNull<ResourceType> _cachedResourceType = null;
@@ -93,7 +93,6 @@ namespace DwarfCorp
         [JsonIgnore] public String Description { get => GetProperty<String>("Description", ""); set => SetProperty<String>("Description", value); }
         [JsonIgnore] public float FoodContent { get => GetProperty<float>("FoodContent", 0.0f); set => SetProperty<float>("FoodContent", value); }
         [JsonIgnore] public DwarfBux MoneyValue { get => GetProperty<DwarfBux>("MoneyValue", 0u); set => SetProperty<DwarfBux>("MoneyValue", value); }
-        [JsonIgnore] public Color Tint { get => GetProperty<Color>("Tint", new Color(1.0f, 1.0f, 1.0f, 1.0f)); set => SetProperty<Color>("Tint", value); }
 
         [JsonIgnore] public List<ResourceType.TrinketInfo> Trinket_TrinketData { get => GetProperty<List<ResourceType.TrinketInfo>>("Trinket_TrinketData", null); set => SetProperty<List<ResourceType.TrinketInfo>>("Trinket_TrinketData", value); }
         [JsonIgnore] public ResourceType.TrinketInfo Trinket_EncrustingData { get => GetProperty<ResourceType.TrinketInfo>("Trinket_EncrustingData", null); set => SetProperty<ResourceType.TrinketInfo>("Trinket_EncrustingData", value); }

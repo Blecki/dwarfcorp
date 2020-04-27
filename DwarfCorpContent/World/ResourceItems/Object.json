@@ -16,7 +16,7 @@
   "AleName": "",
 
   "Gui_Graphic": {
-    "AssetPath": "newgui/resources",
+    "AssetPath": "Entities/Dwarf/ToolIcons/unknown",
     "Palette": "None",
     "FrameSize": "32, 32",
     "Frame": "0, 0"

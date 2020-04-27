@@ -59,7 +59,6 @@ namespace DwarfCorp
         public List<String> Tags;
         public float FoodContent;
         public string PlantToGenerate;
-        public Color Tint;
         public string AleName = "";
         public Potion PotionType = null;
         public string Category = "";

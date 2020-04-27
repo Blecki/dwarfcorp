@@ -52,7 +52,7 @@ namespace DwarfCorp.Gui.Widgets
             var visibleRows = VisibleItems(ItemSize.Y, ItemSpacing.Y, inside.Height);
 
             if (itemsAcross <= 0) return;
-            if (visibleRows <= 0) return;
+            if (!OverflowBottom && visibleRows <= 0) return;
 
             var rows = totalItems / itemsAcross;
             if (totalItems % itemsAcross != 0)

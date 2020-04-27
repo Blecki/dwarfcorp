@@ -49,6 +49,8 @@ namespace DwarfCorp.Gui
 
         public bool SetMetrics = true;
 
+        public int RenderMeshInvalidation = 0;
+
         public void ClearSpecials()
         {
             SpecialIndicator = null;
@@ -659,7 +661,9 @@ namespace DwarfCorp.Gui
             PerformanceMonitor.PushFrame("GUI Mesh Gen");
 
             var spriteAtlasPrerenderResult = SpriteAtlas.Prerender();
-            var mesh = spriteAtlasPrerenderResult == SpriteAtlas.PrerenderResult.RebuiltAtlas ? RootItem.ForceRenderMeshUpdate() : RootItem.GetRenderMesh();
+            if (spriteAtlasPrerenderResult == SpriteAtlas.PrerenderResult.RebuiltAtlas)
+                RenderMeshInvalidation += 1;
+            var mesh = RootItem.GetRenderMesh(RenderMeshInvalidation);
 
             PerformanceMonitor.PopFrame();
 
@@ -738,7 +742,7 @@ namespace DwarfCorp.Gui
             RenderData.Effect.CurrentTechnique.Passes[0].Apply();
 
             foreach (var item in PopupStack)
-                item.GetRenderMesh().Render(RenderData.Device);
+                item.GetRenderMesh(RenderMeshInvalidation).Render(RenderData.Device);
         }
 
         public void DrawMouse()

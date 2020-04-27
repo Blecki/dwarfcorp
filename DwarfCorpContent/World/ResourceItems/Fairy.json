@@ -10,12 +10,6 @@
   "FoodContent": 0.0,
   "DisplayName": "Fairy",
   "PlantToGenerate": null,
-  "Tint": [
-    255,
-    255,
-    255,
-    255
-  ],
   "AleName": null,
 
   "Placement_Placeable": true,
@@ -44,10 +38,10 @@
   "Tutorial": "Wizards can spawn a magic helper using the Summoning Circle. The fairy is a temporary employee that lasts for 24 hours. The fairy has very low health, but is quite fast.",
 
   "Gui_Graphic": {
-    "AssetPath": "newgui\\icons",
+    "AssetPath": "Entities\\Dwarf\\Sprites\\fairy",
     "Palette": "None",
     "FrameSize": "32, 32",
-    "Frame": "2, 4"
+    "Frame": "0, 0"
   }
 
 }

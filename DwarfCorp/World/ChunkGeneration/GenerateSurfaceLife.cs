@@ -79,10 +79,12 @@ namespace DwarfCorp.Generation
                                 veg.NoiseOffset, voxel.Coordinate.Z / veg.ClumpSize) >= veg.ClumpThreshold)
                             {
                                 var treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
+                                var blackboard = new Blackboard();
+                                blackboard.SetData("Scale", treeSize);
 
                                 EntityFactory.CreateEntity<Plant>(veg.Name,
                                     voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
-                                    Blackboard.Create("Scale", treeSize));
+                                    blackboard);
 
                                 break;
                             }

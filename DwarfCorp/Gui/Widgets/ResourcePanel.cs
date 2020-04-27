@@ -152,7 +152,7 @@ namespace DwarfCorp.Gui.Widgets
                 var width = Root.RenderData.VirtualScreen.Width - ItemSpacing.X;
                 var itemsThatFit = width / (ItemSize.X + ItemSpacing.X);
                 var sensibleWidth = (Math.Min(Children.Count, itemsThatFit) * (ItemSize.X + ItemSpacing.X)) + ItemSpacing.X;
-                Rect = new Rectangle((Root.RenderData.VirtualScreen.Width / 2 - sensibleWidth / 2), 0, sensibleWidth, 32);
+                Rect = new Rectangle((Root.RenderData.VirtualScreen.Width / 2 - sensibleWidth / 2), 0, sensibleWidth, 0);
                 Layout();
             };
         }        

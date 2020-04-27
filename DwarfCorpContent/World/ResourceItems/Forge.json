@@ -9,12 +9,6 @@
   "FoodContent": 0.0,
   "DisplayName": "Forge",
   "PlantToGenerate": null,
-  "Tint": [
-    255,
-    255,
-    255,
-    255
-  ],
   "AleName": null,
 
   "Placement_Placeable": true,
@@ -50,7 +44,7 @@
     "AssetPath": "entities\\Furniture\\interior_furniture",
     "Palette": "None",
     "FrameSize": "32, 32",
-    "Frame": "3, 1"
+    "Frame": "1, 3"
   }
 
 }

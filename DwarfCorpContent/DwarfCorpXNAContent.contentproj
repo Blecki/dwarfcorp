@@ -4101,6 +4101,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Blue Tile Slab</Name>
     </None>
+    <None Include="World\Voxels\CarvedStoneInset.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>CarvedStoneInset</Name>
+    </None>
     <None Include="World\Voxels\Dark Blue Tile.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Dark Blue Tile</Name>
@@ -4109,13 +4113,41 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>CarvedStone</Name>
     </None>
+    <None Include="World\Voxels\GraniteBricks.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>GraniteBricks</Name>
+    </None>
     <None Include="World\Voxels\Green Tile.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Green Tile</Name>
     </None>
+    <None Include="World\Voxels\MarbleBricks.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>MarbleBricks</Name>
+    </None>
+    <None Include="World\Voxels\ObsidianBricks.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>ObsidianBricks</Name>
+    </None>
     <None Include="World\Voxels\Red Tile.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Red Tile</Name>
+    </None>
+    <None Include="World\Voxels\SpiralStoneInset.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>SpiralStoneInset</Name>
+    </None>
+    <None Include="World\Voxels\ShaleBricks.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>ShaleBricks</Name>
+    </None>
+    <None Include="World\Voxels\SlateBricks.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>SlateBricks</Name>
+    </None>
+    <None Include="World\Voxels\SandstoneBricks.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>SandstoneBricks</Name>
     </None>
     <None Include="World\Voxels\White Tile.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -5152,6 +5184,13 @@
   <ItemGroup>
     <Compile Include="newgui\trinkets-new.png">
       <Name>trinkets-new</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\potions.png">
+      <Name>potions</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

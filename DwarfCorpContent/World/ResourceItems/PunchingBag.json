@@ -51,7 +51,6 @@
     "AssetPath": "entities\\Furniture\\interior_furniture",
     "Palette": "None",
     "FrameSize": "32, 32",
-    "Frame": "5, 2"
+    "Frame": "2, 5"
   }
-
 }

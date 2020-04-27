@@ -43,7 +43,7 @@
 
 
   "Gui_Graphic": {
-    "AssetPath": "entities\\DwarfObject\\beartrap",
+    "AssetPath": "entities\\DwarfObjects\\beartrap",
     "Palette": "None",
     "FrameSize": "32, 32",
     "Frame": "0, 0"

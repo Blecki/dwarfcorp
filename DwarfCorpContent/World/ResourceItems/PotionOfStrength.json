@@ -90,10 +90,10 @@
   "Tutorial": "Dwarfs drink this potion to get strong.",
 
   "Gui_Graphic": {
-    "AssetPath": "newgui/resources",
+    "AssetPath": "Entities\\potions",
     "Palette": "None",
     "FrameSize": "32, 32",
-    "Frame": "4, 5"
+    "Frame": "5, 0"
   }
 
 }

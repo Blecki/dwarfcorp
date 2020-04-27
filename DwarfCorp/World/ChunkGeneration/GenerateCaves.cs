@@ -126,18 +126,21 @@ namespace DwarfCorp.Generation
                 var plantSize = MathFunctions.Rand() * floraType.SizeVariance + floraType.MeanSize;
                 var lambdaFloraType = floraType;
 
-                    if (!GameSettings.Current.FogofWar)
-                        EntityFactory.CreateEntity<GameComponent>(
-                            lambdaFloraType.Name,
-                            CaveFloor.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
-                            Blackboard.Create("Scale", plantSize));
-                    else
-                        Settings.World.ComponentManager.RootComponent.AddChild(new SpawnOnExploredTrigger(Settings.World.ComponentManager, CaveFloor)
-                        {
-                            EntityToSpawn = lambdaFloraType.Name,
-                            SpawnLocation = CaveFloor.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
-                            BlackboardData = Blackboard.Create("Scale", plantSize)
-                        });
+                var blackboard = new Blackboard();
+                blackboard.SetData("Scale", plantSize);
+
+                if (!GameSettings.Current.FogofWar)
+                    EntityFactory.CreateEntity<GameComponent>(
+                        lambdaFloraType.Name,
+                        CaveFloor.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
+                        blackboard);
+                else
+                    Settings.World.ComponentManager.RootComponent.AddChild(new SpawnOnExploredTrigger(Settings.World.ComponentManager, CaveFloor)
+                    {
+                        EntityToSpawn = lambdaFloraType.Name,
+                        SpawnLocation = CaveFloor.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
+                        BlackboardData = blackboard
+                    });
 
                 break; // Don't risk spawning multiple plants in the same spot.
             }
