@@ -44,7 +44,7 @@ namespace DwarfCorp
 
         private Vector3 GetPathPoint(VoxelHandle Voxel)
         {
-            return Voxel.WorldPosition + new Vector3(0.5f, Agent.Physics.BoundingBoxSize.Y, 0.5f);
+            return Voxel.WorldPosition + new Vector3(0.5f, (Agent.Physics.BoundingBoxSize.Y * 0.5f) - Agent.Physics.LocalBoundingBoxOffset.Y, 0.5f);
         }
 
         public IEnumerable<Status> PerformStep(MoveAction Step)

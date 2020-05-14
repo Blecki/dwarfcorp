@@ -94,6 +94,12 @@ namespace DwarfCorp.Play
 
                 new HorizontalMenuTray.MenuItem
                 {
+                    Text = "ENTITY INSPECTOR",
+                    OnClick = (sender, args) => World.UserInterface.ChangeTool("EntityInspector")
+                },
+
+                new HorizontalMenuTray.MenuItem
+                {
                     Text = "SPAWN",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {

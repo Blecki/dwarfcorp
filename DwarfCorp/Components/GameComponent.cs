@@ -17,6 +17,7 @@ namespace DwarfCorp
     {
         public string Name { get; set; }
         public uint GlobalID { get; set; }
+        public Gui.Widget GuiTag = null;
 
         [JsonProperty] private uint ParentID = ComponentManager.InvalidID;
         [JsonIgnore] private GameComponent CachedParent = null;

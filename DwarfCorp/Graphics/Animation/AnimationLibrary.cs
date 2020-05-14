@@ -128,6 +128,7 @@ namespace DwarfCorp
                                 Frames = a.CompositeFrames.Select(f => f.Cells[0].Tile).ToList(),
                             };
                         }
+
                         a.PushFrames();
                         return a as Animation;
                         
@@ -165,7 +166,8 @@ namespace DwarfCorp
                     Name = descriptor.Name,
                     Speeds = descriptor.Speed,
                     Loops = !descriptor.PlayOnce,
-                    YOffset = descriptor.YOffset
+                    YOffset = descriptor.YOffset,
+                    FrameHZ = 5.0f
                 }).ToList();
         }
 

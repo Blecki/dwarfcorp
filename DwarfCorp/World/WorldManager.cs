@@ -288,7 +288,7 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        selectionCircle = creature.GetRoot().AddChild(new SelectionCircle(creature.Manager)) as SelectionCircle;
+                        selectionCircle = creature.GetRoot().AddChild(new SelectionCircle(creature.Manager, creature.Creature.Physics)) as SelectionCircle;
                         selectionCircle.SetFlag(GameComponent.Flag.ShouldSerialize, false);
                         selectionCircle.SetFlagRecursive(GameComponent.Flag.Visible, true);
                     }

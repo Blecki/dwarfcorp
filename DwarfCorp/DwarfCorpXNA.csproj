@@ -239,6 +239,8 @@
     <Compile Include="Player\Crafting\DeconstructObjectTool.cs" />
     <Compile Include="Player\Crafting\GetResourcesOfApparentType.cs" />
     <Compile Include="Player\Crafting\Resources\ResourceDes.cs" />
+    <Compile Include="Player\Tools\EntityInspector\EntityInspector.cs" />
+    <Compile Include="Player\Tools\EntityInspector\EntityInspectorPanel.cs" />
     <Compile Include="TaskManagement\ActHelper-CreateEquipmentCheckAct.cs" />
     <Compile Include="TaskManagement\Always.cs" />
     <Compile Include="TaskManagement\ActHelper-ApplyWearToTool.cs" />

@@ -16,23 +16,20 @@ namespace DwarfCorp
         {
         }
 
-        public SelectionCircle(ComponentManager manager) :
+        public SelectionCircle(ComponentManager manager, GameComponent Creature) :
             base(manager, "Selection", Matrix.CreateRotationX((float)Math.PI), Vector3.One, Vector3.Zero)
         {
-            var shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
-            shadowTransform.Translation = new Vector3(0.0f, -0.25f, 0.0f);
-
-            LocalTransform = shadowTransform;
+            FitToCreature(Creature);
             CreateCosmeticChildren(manager);
             SetFlagRecursive(Flag.Visible, false);
         }
 
-        public void FitToParent()
+        public void FitToCreature(GameComponent Parent)
         {
             var shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
             var bbox = (Parent as GameComponent).GetBoundingBox();
-            shadowTransform.Translation = new Vector3(0.0f, -0.5f * (bbox.Max.Y - bbox.Min.Y), 0.0f);
-            float scale = bbox.Max.X - bbox.Min.X;
+            shadowTransform.Translation = new Vector3(0.0f, (Parent.BoundingBoxSize.Y * -0.5f) - Parent.LocalBoundingBoxOffset.Y, 0.0f);
+            float scale = Parent.BoundingBoxSize.X * 2;
             shadowTransform = shadowTransform * Matrix.CreateScale(scale);
             LocalTransform = shadowTransform;
         }

@@ -52,7 +52,7 @@
             [ 0, 0, 0, 1 ]
          ],
          "Name" : "WalkingFORWARD",
-         "Speed" : [0.15]
+         "Speed" : [ 1 ]
       },
       {
          "Frames" : [
@@ -66,7 +66,7 @@
             [ 0, 1, 0, 1 ]
          ],
          "Name" : "WalkingLEFT",
-         "Speed" : [0.15]
+         "Speed" : [ 1 ]
       },
       {
          "Frames" : [
@@ -80,7 +80,7 @@
             [ 0, 2, 0, 1 ]
          ],
          "Name" : "WalkingRIGHT",
-         "Speed" : [0.15]
+         "Speed" : [ 1 ]
       },
       {
          "Frames" : [
@@ -94,7 +94,7 @@
             [ 0, 3, 0, 1 ]
          ],
          "Name" : "WalkingBACKWARD",
-         "Speed" : [0.15]
+         "Speed" : [ 1 ]
       },
 
       {
@@ -208,7 +208,7 @@
          "$id" : "1",
          "AssetName" : "Entities\\Elf\\Sprites\\elf",
          "FrameHeight" : 48,
-         "FrameWidth" : 32
+         "FrameWidth" : 40
       },
       {
          "$id" : "2",
