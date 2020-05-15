@@ -157,6 +157,11 @@ namespace DwarfCorp
                 InspectorGui.Rect = new Rectangle(0, 0, 256, 512);
                 InspectorGui.Layout();
                 World.UserInterface.Gui.RootItem.AddChild(InspectorGui);
+                InspectorGui.OnClose = (sender) =>
+                {
+                    InspectorGui = null;
+                    World.UserInterface.ChangeTool("SelectUnits");
+                };
             }
             InspectorGui.SelectedEntity = SelectedEntity;
         }

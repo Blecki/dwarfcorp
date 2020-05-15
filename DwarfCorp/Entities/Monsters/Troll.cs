@@ -22,6 +22,13 @@ namespace DwarfCorp
                 Position).Physics;
         }
 
+        [EntityFactory("Player Troll")]
+        private static GameComponent __factory5(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            var toReturn = new Troll(new CreatureStats("Troll", "Troll", 0), Manager.World.PlayerFaction, Manager, "Troll", Position);
+            return toReturn.Physics;
+        }
+
         public Troll()
         {
 

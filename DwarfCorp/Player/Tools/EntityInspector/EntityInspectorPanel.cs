@@ -12,16 +12,33 @@ namespace DwarfCorp
     public class EntityInspectionPanel : Widget
     {
         private WidgetListView ListView;
+        private Widget ComponentProperties;
 
         public GameComponent SelectedEntity;
+        public GameComponent SelectedComponent;
 
         public override void Construct()
         {
-            Border = "border-fancy";
+            Border = "border-one";
             Font = "font10";
             OnConstruct = (sender) =>
             {
                 sender.Root.RegisterForUpdate(sender);
+
+                AddChild(new Widget
+                {
+                    AutoLayout = AutoLayout.DockBottom,
+                    MinimumSize = new Point(0, 32),
+                    Text = "CLOSE",
+                    ChangeColorOnHover = true,
+                    OnClick = (sender1, args) => sender.Close()
+                });
+
+                ComponentProperties = AddChild(new Widget
+                {
+                    AutoLayout = AutoLayout.DockBottom,
+                    MinimumSize = new Point(0, 128),
+                });
 
                 ListView = AddChild(new WidgetListView
                 {
@@ -40,6 +57,7 @@ namespace DwarfCorp
                 if (sender.Hidden) return;
                 if (SelectedEntity == null)
                 {
+                    SelectedComponent = null;
                     ListView.ClearItems();
                     return;
                 }
@@ -66,52 +84,15 @@ namespace DwarfCorp
                             MinimumSize = new Point(0, 16),
                             Padding = new Margin(0, 0, 4, 4),
                             TextVerticalAlign = VerticalAlign.Center,
-                            Background = new TileReference("basic", 0),
-                            BackgroundColor = i % 2 == 0 ? new Vector4(0.0f, 0.0f, 0.0f, 0.1f) : new Vector4(0, 0, 0, 0.25f)
+                            Tag = lambdaCopy
                         });
 
-                        tag.OnUpdate = (sender1, args) =>
+                        tag.OnClick = (sender1, args) =>
                         {
                             if (tag.IsAnyParentHidden())
                                 return;
-
-                            if (sender1.ComputeBoundingChildRect().Contains(Root.MousePosition))
-                                Drawer3D.DrawBox(lambdaCopy.GetBoundingBox(), Color.White, 0.1f, true);
+                            SelectedComponent = lambdaCopy;
                         };
-
-                        Root.RegisterForUpdate(tag);
-
-                        //tag.AddChild(new Button
-                        //{
-                        //    Text = "Destroy",
-                        //    AutoLayout = AutoLayout.DockRight,
-                        //    MinimumSize = new Point(16, 0),
-                        //    ChangeColorOnHover = true,
-                        //    TextVerticalAlign = VerticalAlign.Center,
-                        //    OnClick = (_sender, args) =>
-                        //    {
-                        //        World.UserInterface.Gui.ShowModalPopup(new Gui.Widgets.Confirm
-                        //        {
-                        //            Text = "Do you want to destroy this " + lambdaCopy.Type.Name + "?",
-                        //            OnClose = (_sender2) => DestroyZoneTool.DestroyRoom((_sender2 as Gui.Widgets.Confirm).DialogResult, lambdaCopy, World)
-                        //        });
-                        //    }
-                        //});
-
-                        //tag.AddChild(new Widget { MinimumSize = new Point(4, 0), AutoLayout = AutoLayout.DockRight });
-
-                        //tag.AddChild(new Button
-                        //{
-                        //    Text = "Go to",
-                        //    AutoLayout = AutoLayout.DockRight,
-                        //    ChangeColorOnHover = true,
-                        //    MinimumSize = new Point(16, 0),
-                        //    TextVerticalAlign = VerticalAlign.Center,
-                        //    OnClick = (_sender, args) =>
-                        //    {
-                        //        World.Renderer.Camera.SetZoomTarget(lambdaCopy.GetBoundingBox().Center());
-                        //    }
-                        //});
 
                         #endregion
 
@@ -121,22 +102,22 @@ namespace DwarfCorp
                 }
 
                 ListView.Invalidate();
+
+                if (SelectedComponent != null)
+                {
+                    Drawer3D.DrawBox(SelectedComponent.GetBoundingBox(), Color.White, 0.1f, true);
+                    ComponentProperties.Text = SelectedComponent.GetType().Name
+                        + "\n" + SelectedComponent.Position.ToString() 
+                        + "\nBB Extents: " + SelectedComponent.BoundingBoxSize.ToString() 
+                        + "\nBB Offset: " + SelectedComponent.LocalBoundingBoxOffset.ToString();
+                }
+                else
+                {
+                    ComponentProperties.Text = "";
+                }
             };
 
             base.Construct();
-        }
-
-        private static string SplitCamelCase(string str)
-        {
-            return Regex.Replace(
-                Regex.Replace(
-                    str,
-                    @"(\P{Ll})(\P{Ll}\p{Ll})",
-                    "$1 $2"
-                ),
-                @"(\p{Ll})(\P{Ll})",
-                "$1 $2"
-            );
         }
     }
 }
