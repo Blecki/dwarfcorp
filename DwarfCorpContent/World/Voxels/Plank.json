@@ -5,7 +5,7 @@
   "Bottom": "4, 0",
   "Sides": "4, 0",
   "Transitions": 1,
-  "HasTransitionTextures": true,
+  "HasTransitionTextures": false,
   "TransitionTiles": [
     "0, 9",
     "9, 0",

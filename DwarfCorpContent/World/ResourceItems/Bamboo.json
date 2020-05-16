@@ -9,7 +9,8 @@
     "Material",
     "Flammable",
     "HardMaterial",
-    "TrinketMaterial"
+    "TrinketMaterial",
+    "Bamboo"
   ],
   "FoodContent": 0.0,
   "DisplayName": "Bamboo",

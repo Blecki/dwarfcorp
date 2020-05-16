@@ -1,13 +1,14 @@
 {
-  "TypeName": "Apron",
+  "TypeName": "Bamboo Hoe",
   "MoneyValue": 100.0,
-  "Description": "Dirty apron, clean sleeves.",
-  "Category": "Clothing",
+  "Description": "A hoe made of bamboo.",
+  "Category": "Tools",
   "Tags": [
-    "Clothing"
+    "Tool",
+    "Hoe"
   ],
   "FoodContent": 0.0,
-  "DisplayName": "Apron",
+  "DisplayName": "Bamboo Hoe",
   "PlantToGenerate": "",
   "Tint": [
     255,
@@ -18,7 +19,7 @@
   "AleName": "",
 
   "Tool_Breakable": false,
-  "Tool_Durability": 4,
+  "Tool_Durability": 192,
   "Tool_Wear": 0,
   "Tool_Effectiveness": 1.0,
   "Tool_AttackAnimation": "Attacking",
@@ -27,32 +28,32 @@
   "Tool_AttackHitEffect": "Effects\\hit",
 
   "Equipable": true,
-  "Equipment_LayerType": "Clothing",
-  "Equipment_LayerName": "apron",
-  "Equipment_Slot": "Clothing",
-  "Equipment_Palette": "Orange Equipment",
+  "Equipment_LayerType": "Tool",
+  "Equipment_Palette": "Bamboo Equipment",
+  "Equipment_LayerName": "hoe",
+  "Equipment_Slot": "Tool",
 
   "Gui_Graphic": {
     "AssetPath": "Entities/Dwarf/ToolIcons/equipment",
-    "Palette": "Orange Equipment",
+    "Palette": "Bamboo Equipment",
     "FrameSize": "32, 32",
-    "Frame": "0, 4"
+    "Frame": "1, 0"
   },
 
   "Craft_Craftable": true,
   "Craft_Ingredients": [
     {
-      "Tag": "Cotton",
+      "Tag": "Bamboo",
       "Count": 2
     }
   ],
   "Craft_ResultsCount": 1,
-  "Craft_BaseCraftTime": 32.0,
+  "Craft_BaseCraftTime": 16.0,
   "Craft_Location": "Craft Table",
   "Craft_TaskCategory": "CraftItem",
   "Craft_Noise": "Craft",
-  "Craft_MetaResourceFactory": "Normal"
+  "Craft_MetaResourceFactory": "Normal",
 
-
+  "Tutorial": "Dwarves need hoes to plant crops."
 
 }

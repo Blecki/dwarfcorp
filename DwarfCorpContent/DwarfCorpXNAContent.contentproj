@@ -2254,6 +2254,22 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Apothecary</Name>
     </None>
+    <None Include="World\ResourceItems\BambooAxe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>BambooAxe</Name>
+    </None>
+    <None Include="World\ResourceItems\BambooHammer.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>BambooHammer</Name>
+    </None>
+    <None Include="World\ResourceItems\BambooHoe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>BambooHoe</Name>
+    </None>
+    <None Include="World\ResourceItems\BambooPick.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>BambooPick</Name>
+    </None>
     <None Include="World\ResourceItems\Cotton.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Cotton</Name>
@@ -4113,6 +4129,22 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>CarvedStone</Name>
     </None>
+    <None Include="World\Voxels\GlassD.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>GlassD</Name>
+    </None>
+    <None Include="World\Voxels\GlassB.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>GlassB</Name>
+    </None>
+    <None Include="World\Voxels\GlassC.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>GlassC</Name>
+    </None>
+    <None Include="World\Voxels\GlassE.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>GlassE</Name>
+    </None>
     <None Include="World\Voxels\GraniteBricks.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>GraniteBricks</Name>
@@ -4301,9 +4333,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Mana</Name>
     </None>
-    <None Include="World\Voxels\Glass.json">
+    <None Include="World\Voxels\GlassA.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Glass</Name>
+      <Name>GlassA</Name>
     </None>
     <None Include="World\Voxels\Dirt.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

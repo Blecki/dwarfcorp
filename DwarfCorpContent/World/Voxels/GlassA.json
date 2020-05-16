@@ -1,20 +1,14 @@
 {
   "ID": 0,
-  "Name": "Cobble",
-  "Top": "4, 1",
-  "Bottom": "9, 0",
-  "Sides": "4, 1",
-  "Transitions": 1,
+  "Name": "GlassA",
+  "Top": "0, 14",
+  "Bottom": "0, 14",
+  "Sides": "0, 14",
+  "Transitions": 2,
   "HasTransitionTextures": false,
-  "TransitionTiles": [
-    "0, 8",
-    "9, 0",
-    "4, 1"
-  ],
   "ReleasesResource": true,
-  "ResourceToRelease": "Stone",
-  "BuildRequirements": [ "Stone" ],
-  "StartingHealth": 100.0,
+  "ResourceToRelease": "Glass",
+  "StartingHealth": 1.0,
   "ProbabilityOfRelease": 1.0,
   "CanRamp": false,
   "IsBuildable": true,
@@ -30,12 +24,12 @@
   "IsInvincible": false,
   "Tint": "255, 255, 255, 255",
   "SpawnOnSurface": false,
-  "IsTransparent": false,
-  "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_stone_destroy",
+  "IsTransparent": true,
+  "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_metal_destroy",
   "HitSoundResources": [
     "Audio\\oscar\\sfx_ic_dwarf_pick_stone_1",
     "Audio\\oscar\\sfx_ic_dwarf_pick_stone_2",
     "Audio\\oscar\\sfx_ic_dwarf_pick_stone_3"
   ],
-  "MinimapColor": "128,108,83,255"
+  "MinimapColor": "255,255,255,255"
 }

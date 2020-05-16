@@ -1,11 +1,11 @@
 {
   "ID": 0,
-  "Name": "Glass",
-  "Top": "3, 14",
-  "Bottom": "3, 14",
-  "Sides": "3, 14",
+  "Name": "GlassE",
+  "Top": "4, 14",
+  "Bottom": "4, 14",
+  "Sides": "4, 14",
   "Transitions": 2,
-  "HasTransitionTextures": true,
+  "HasTransitionTextures": false,
   "TransitionTiles": [
     "0, 14",
     "0, 14",
