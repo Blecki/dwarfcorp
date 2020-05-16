@@ -1,0 +1,59 @@
+{
+  "TypeName": "Peppermint Axe",
+  "MoneyValue": 100.0,
+  "Description": "An axe made of peppermint...?",
+  "Category": "Tools",
+  "Tags": [
+    "Tool",
+    "Axe"
+  ],
+  "FoodContent": 0.0,
+  "DisplayName": "Peppermint Axe",
+  "PlantToGenerate": "",
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "",
+
+  "Tool_Breakable": true,
+  "Tool_Durability": 50,
+  "Tool_Wear": 0,
+  "Tool_Effectiveness": 1.0,
+  "Tool_AttackAnimation": "Attacking",
+  "Tool_AttackTriggerFrame": 2,
+  "Tool_AttackDamage": 1,
+  "Tool_AttackHitEffect": "Effects\\hit",
+
+  "Equipable": true,
+  "Equipment_LayerType": "Tool",
+  "Equipment_Palette": "Peppermint Equipment",
+  "Equipment_LayerName": "axe",
+  "Equipment_Slot": "Tool",
+
+  "Gui_Graphic": {
+    "AssetPath": "Entities/Dwarf/ToolIcons/equipment",
+    "Palette": "Peppermint Equipment",
+    "FrameSize": "32, 32",
+    "Frame": "1, 1"
+  },
+
+  "Craft_Craftable": true,
+  "Craft_Ingredients": [
+    {
+      "Tag": "Peppermint",
+      "Count": 2
+    }
+  ],
+  "Craft_ResultsCount": 1,
+  "Craft_BaseCraftTime": 16.0,
+  "Craft_Location": "Craft Table",
+  "Craft_TaskCategory": "CraftItem",
+  "Craft_Noise": "Craft",
+  "Craft_MetaResourceFactory": "Normal",
+
+  "Tutorial": "Dwarves need axes to fell trees."
+
+}

@@ -2254,17 +2254,33 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Apothecary</Name>
     </None>
+    <None Include="World\ResourceItems\PeppermintAxe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>PeppermintAxe</Name>
+    </None>
     <None Include="World\ResourceItems\BambooAxe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>BambooAxe</Name>
+    </None>
+    <None Include="World\ResourceItems\PeppermintHammer.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>PeppermintHammer</Name>
     </None>
     <None Include="World\ResourceItems\BambooHammer.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>BambooHammer</Name>
     </None>
+    <None Include="World\ResourceItems\PeppermintHoe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>PeppermintHoe</Name>
+    </None>
     <None Include="World\ResourceItems\BambooHoe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>BambooHoe</Name>
+    </None>
+    <None Include="World\ResourceItems\PeppermintPick.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>PeppermintPick</Name>
     </None>
     <None Include="World\ResourceItems\BambooPick.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
