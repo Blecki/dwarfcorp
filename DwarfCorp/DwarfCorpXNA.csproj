@@ -180,7 +180,6 @@
     <Compile Include="AssetManagement\GameSave\OverworldMetaData.cs" />
     <Compile Include="AssetManagement\IndexedTexture.cs" />
     <Compile Include="AssetManagement\IndexedDecomposition.cs" />
-    <Compile Include="AssetManagement\JsonConverters\DifficultyConverter.cs" />
     <Compile Include="AssetManagement\ModMetaData.cs" />
     <Compile Include="AssetManagement\ObjLoader.cs" />
     <Compile Include="AssetManagement\StringLibrary.cs" />

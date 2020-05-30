@@ -3566,7 +3566,7 @@
         {
           "$id": "269",
           "ID": 311,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Look for items that dont fall into any of the categories on the stockpile resource filter",
           "Tags": [
@@ -3575,7 +3575,7 @@
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-05T19:02:59.5320273-04:00",
-          "CompletionTime": "2019-09-05T19:02:59.5320273-04:00",
+          "CompletionTime": "2020-05-15T22:11:09.7595886-04:00",
           "Notes": ""
         },
         {
@@ -3869,14 +3869,14 @@
         {
           "$id": "292",
           "ID": 335,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Place Object Tool sets the objects own resource type as the original resources it was crafted from",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-16T16:00:13.6881366-04:00",
-          "CompletionTime": "2019-09-16T16:00:13.6881366-04:00",
+          "CompletionTime": "2020-05-15T22:11:49.5268501-04:00",
           "Notes": ""
         },
         {
@@ -3897,14 +3897,14 @@
         {
           "$id": "294",
           "ID": 338,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Filter stockpiles based on catagories not tags?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-27T05:34:39.0690525-04:00",
-          "CompletionTime": "2019-09-27T05:34:39.0690525-04:00",
+          "CompletionTime": "2020-05-15T22:11:57.5844643-04:00",
           "Notes": ""
         },
         {
@@ -5954,7 +5954,7 @@
             {
               "$id": "449",
               "ID": 361,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "Merge craft items and resource types",
               "Tags": [],
@@ -5962,20 +5962,20 @@
                 {
                   "$id": "450",
                   "ID": 177,
-                  "Status": "-",
+                  "Status": "✓",
                   "Priority": 0,
                   "Description": "Craft preregs in resources used?",
                   "Tags": [],
                   "Children": [],
                   "Preregs": [],
                   "CreationTime": "2019-08-17T14:25:11.8469202-04:00",
-                  "CompletionTime": "2019-08-17T14:25:11.8469202-04:00",
+                  "CompletionTime": "2020-05-15T22:12:39.8446961-04:00",
                   "Notes": ""
                 }
               ],
               "Preregs": [],
               "CreationTime": "2019-12-14T08:51:21.8232031-05:00",
-              "CompletionTime": "2019-12-14T08:51:21.8232031-05:00",
+              "CompletionTime": "2020-05-15T22:12:47.5652252-04:00",
               "Notes": ""
             },
             {
@@ -6022,14 +6022,14 @@
             {
               "$id": "454",
               "ID": 442,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "craft clothes from cotton",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-01-27T06:47:18.4832742-05:00",
-              "CompletionTime": "2020-01-27T06:47:18.4832742-05:00",
+              "CompletionTime": "2020-05-15T22:12:58.8352134-04:00",
               "Notes": ""
             }
           ],
@@ -6306,14 +6306,14 @@
         {
           "$id": "475",
           "ID": 402,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "trolls kinda float",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-01-06T07:20:50.459742-05:00",
-          "CompletionTime": "2020-01-06T07:20:50.459742-05:00",
+          "CompletionTime": "2020-05-15T22:13:41.5770041-04:00",
           "Notes": ""
         },
         {
@@ -6527,14 +6527,14 @@
         {
           "$id": "492",
           "ID": 457,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "crafting menu needs to use new resource icons",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-02-21T07:07:59.0915013-05:00",
-          "CompletionTime": "2020-02-21T07:07:59.0915013-05:00",
+          "CompletionTime": "2020-05-15T22:14:48.488603-04:00",
           "Notes": ""
         },
         {
@@ -6579,7 +6579,7 @@
         {
           "$id": "496",
           "ID": 467,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "parallel implementation of voxel geometry builder",
           "Tags": [],
@@ -6587,33 +6587,33 @@
             {
               "$id": "497",
               "ID": 468,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "switch geometry builder with debug flag",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-03-09T17:18:21.1677059-04:00",
-              "CompletionTime": "2020-03-09T17:18:21.1677059-04:00",
+              "CompletionTime": "2020-05-15T22:14:58.1528577-04:00",
               "Notes": ""
             },
             {
               "$id": "498",
               "ID": 469,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "first just output a bare boring voxel",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-03-09T17:18:47.4649105-04:00",
-              "CompletionTime": "2020-03-09T17:18:47.4649105-04:00",
+              "CompletionTime": "2020-05-15T22:15:04.7352603-04:00",
               "Notes": ""
             }
           ],
           "Preregs": [],
           "CreationTime": "2020-03-09T17:18:09.925575-04:00",
-          "CompletionTime": "2020-03-09T17:18:09.925575-04:00",
+          "CompletionTime": "2020-05-15T22:15:10.5180498-04:00",
           "Notes": ""
         },
         {
@@ -6645,40 +6645,40 @@
         {
           "$id": "501",
           "ID": 472,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:09.4766925-04:00",
-          "CompletionTime": "2020-04-11T16:52:09.4766925-04:00",
+          "CompletionTime": "2020-05-15T22:15:43.2650764-04:00",
           "Notes": ""
         },
         {
           "$id": "502",
           "ID": 473,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "obsidian trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:15.3962328-04:00",
-          "CompletionTime": "2020-04-11T16:52:15.3962328-04:00",
+          "CompletionTime": "2020-05-15T22:15:29.0022654-04:00",
           "Notes": ""
         },
         {
           "$id": "503",
           "ID": 474,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo tools",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:19.9435919-04:00",
-          "CompletionTime": "2020-04-11T16:52:19.9435919-04:00",
+          "CompletionTime": "2020-05-15T22:15:34.9281614-04:00",
           "Notes": ""
         },
         {
@@ -10672,14 +10672,14 @@
         {
           "$id": "803",
           "ID": 335,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Place Object Tool sets the objects own resource type as the original resources it was crafted from",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-16T16:00:13.6881366-04:00",
-          "CompletionTime": "2019-09-16T16:00:13.6881366-04:00",
+          "CompletionTime": "2020-05-15T22:11:49.5268501-04:00",
           "Notes": ""
         },
         {
@@ -10700,14 +10700,14 @@
         {
           "$id": "805",
           "ID": 338,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Filter stockpiles based on catagories not tags?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-27T05:34:39.0690525-04:00",
-          "CompletionTime": "2019-09-27T05:34:39.0690525-04:00",
+          "CompletionTime": "2020-05-15T22:11:57.5844643-04:00",
           "Notes": ""
         },
         {
@@ -12757,7 +12757,7 @@
             {
               "$id": "960",
               "ID": 361,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "Merge craft items and resource types",
               "Tags": [],
@@ -12765,20 +12765,20 @@
                 {
                   "$id": "961",
                   "ID": 177,
-                  "Status": "-",
+                  "Status": "✓",
                   "Priority": 0,
                   "Description": "Craft preregs in resources used?",
                   "Tags": [],
                   "Children": [],
                   "Preregs": [],
                   "CreationTime": "2019-08-17T14:25:11.8469202-04:00",
-                  "CompletionTime": "2019-08-17T14:25:11.8469202-04:00",
+                  "CompletionTime": "2020-05-15T22:12:39.8446961-04:00",
                   "Notes": ""
                 }
               ],
               "Preregs": [],
               "CreationTime": "2019-12-14T08:51:21.8232031-05:00",
-              "CompletionTime": "2019-12-14T08:51:21.8232031-05:00",
+              "CompletionTime": "2020-05-15T22:12:47.5652252-04:00",
               "Notes": ""
             },
             {
@@ -12825,14 +12825,14 @@
             {
               "$id": "965",
               "ID": 442,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "craft clothes from cotton",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-01-27T06:47:18.4832742-05:00",
-              "CompletionTime": "2020-01-27T06:47:18.4832742-05:00",
+              "CompletionTime": "2020-05-15T22:12:58.8352134-04:00",
               "Notes": ""
             }
           ],
@@ -13109,14 +13109,14 @@
         {
           "$id": "986",
           "ID": 402,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "trolls kinda float",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-01-06T07:20:50.459742-05:00",
-          "CompletionTime": "2020-01-06T07:20:50.459742-05:00",
+          "CompletionTime": "2020-05-15T22:13:41.5770041-04:00",
           "Notes": ""
         },
         {
@@ -13330,14 +13330,14 @@
         {
           "$id": "1003",
           "ID": 457,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "crafting menu needs to use new resource icons",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-02-21T07:07:59.0915013-05:00",
-          "CompletionTime": "2020-02-21T07:07:59.0915013-05:00",
+          "CompletionTime": "2020-05-15T22:14:48.488603-04:00",
           "Notes": ""
         },
         {
@@ -13382,7 +13382,7 @@
         {
           "$id": "1007",
           "ID": 467,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "parallel implementation of voxel geometry builder",
           "Tags": [],
@@ -13390,33 +13390,33 @@
             {
               "$id": "1008",
               "ID": 468,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "switch geometry builder with debug flag",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-03-09T17:18:21.1677059-04:00",
-              "CompletionTime": "2020-03-09T17:18:21.1677059-04:00",
+              "CompletionTime": "2020-05-15T22:14:58.1528577-04:00",
               "Notes": ""
             },
             {
               "$id": "1009",
               "ID": 469,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "first just output a bare boring voxel",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-03-09T17:18:47.4649105-04:00",
-              "CompletionTime": "2020-03-09T17:18:47.4649105-04:00",
+              "CompletionTime": "2020-05-15T22:15:04.7352603-04:00",
               "Notes": ""
             }
           ],
           "Preregs": [],
           "CreationTime": "2020-03-09T17:18:09.925575-04:00",
-          "CompletionTime": "2020-03-09T17:18:09.925575-04:00",
+          "CompletionTime": "2020-05-15T22:15:10.5180498-04:00",
           "Notes": ""
         },
         {
@@ -13448,40 +13448,40 @@
         {
           "$id": "1012",
           "ID": 472,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:09.4766925-04:00",
-          "CompletionTime": "2020-04-11T16:52:09.4766925-04:00",
+          "CompletionTime": "2020-05-15T22:15:43.2650764-04:00",
           "Notes": ""
         },
         {
           "$id": "1013",
           "ID": 473,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "obsidian trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:15.3962328-04:00",
-          "CompletionTime": "2020-04-11T16:52:15.3962328-04:00",
+          "CompletionTime": "2020-05-15T22:15:29.0022654-04:00",
           "Notes": ""
         },
         {
           "$id": "1014",
           "ID": 474,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo tools",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:19.9435919-04:00",
-          "CompletionTime": "2020-04-11T16:52:19.9435919-04:00",
+          "CompletionTime": "2020-05-15T22:15:34.9281614-04:00",
           "Notes": ""
         },
         {
@@ -13500,14 +13500,14 @@
         {
           "$id": "1016",
           "ID": 476,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "unify resource item graphics into single field",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:39.9734871-04:00",
-          "CompletionTime": "2020-04-11T16:52:39.9734871-04:00",
+          "CompletionTime": "2020-05-15T22:15:48.1311604-04:00",
           "Notes": ""
         },
         {
@@ -14566,14 +14566,14 @@
         {
           "$id": "1096",
           "ID": 80,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Quit to overworld button",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4247456-04:00",
+          "CompletionTime": "2020-05-19T18:04:40.8971199-04:00",
           "Notes": ""
         },
         {
@@ -17503,14 +17503,14 @@
         {
           "$id": "1316",
           "ID": 338,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Filter stockpiles based on catagories not tags?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-27T05:34:39.0690525-04:00",
-          "CompletionTime": "2019-09-27T05:34:39.0690525-04:00",
+          "CompletionTime": "2020-05-15T22:11:57.5844643-04:00",
           "Notes": ""
         },
         {
@@ -19560,7 +19560,7 @@
             {
               "$id": "1471",
               "ID": 361,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "Merge craft items and resource types",
               "Tags": [],
@@ -19568,20 +19568,20 @@
                 {
                   "$id": "1472",
                   "ID": 177,
-                  "Status": "-",
+                  "Status": "✓",
                   "Priority": 0,
                   "Description": "Craft preregs in resources used?",
                   "Tags": [],
                   "Children": [],
                   "Preregs": [],
                   "CreationTime": "2019-08-17T14:25:11.8469202-04:00",
-                  "CompletionTime": "2019-08-17T14:25:11.8469202-04:00",
+                  "CompletionTime": "2020-05-15T22:12:39.8446961-04:00",
                   "Notes": ""
                 }
               ],
               "Preregs": [],
               "CreationTime": "2019-12-14T08:51:21.8232031-05:00",
-              "CompletionTime": "2019-12-14T08:51:21.8232031-05:00",
+              "CompletionTime": "2020-05-15T22:12:47.5652252-04:00",
               "Notes": ""
             },
             {
@@ -19628,14 +19628,14 @@
             {
               "$id": "1476",
               "ID": 442,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "craft clothes from cotton",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-01-27T06:47:18.4832742-05:00",
-              "CompletionTime": "2020-01-27T06:47:18.4832742-05:00",
+              "CompletionTime": "2020-05-15T22:12:58.8352134-04:00",
               "Notes": ""
             }
           ],
@@ -19912,14 +19912,14 @@
         {
           "$id": "1497",
           "ID": 402,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "trolls kinda float",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-01-06T07:20:50.459742-05:00",
-          "CompletionTime": "2020-01-06T07:20:50.459742-05:00",
+          "CompletionTime": "2020-05-15T22:13:41.5770041-04:00",
           "Notes": ""
         },
         {
@@ -20133,14 +20133,14 @@
         {
           "$id": "1514",
           "ID": 457,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "crafting menu needs to use new resource icons",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-02-21T07:07:59.0915013-05:00",
-          "CompletionTime": "2020-02-21T07:07:59.0915013-05:00",
+          "CompletionTime": "2020-05-15T22:14:48.488603-04:00",
           "Notes": ""
         },
         {
@@ -20185,7 +20185,7 @@
         {
           "$id": "1518",
           "ID": 467,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "parallel implementation of voxel geometry builder",
           "Tags": [],
@@ -20193,33 +20193,33 @@
             {
               "$id": "1519",
               "ID": 468,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "switch geometry builder with debug flag",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-03-09T17:18:21.1677059-04:00",
-              "CompletionTime": "2020-03-09T17:18:21.1677059-04:00",
+              "CompletionTime": "2020-05-15T22:14:58.1528577-04:00",
               "Notes": ""
             },
             {
               "$id": "1520",
               "ID": 469,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "first just output a bare boring voxel",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-03-09T17:18:47.4649105-04:00",
-              "CompletionTime": "2020-03-09T17:18:47.4649105-04:00",
+              "CompletionTime": "2020-05-15T22:15:04.7352603-04:00",
               "Notes": ""
             }
           ],
           "Preregs": [],
           "CreationTime": "2020-03-09T17:18:09.925575-04:00",
-          "CompletionTime": "2020-03-09T17:18:09.925575-04:00",
+          "CompletionTime": "2020-05-15T22:15:10.5180498-04:00",
           "Notes": ""
         },
         {
@@ -20251,40 +20251,40 @@
         {
           "$id": "1523",
           "ID": 472,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:09.4766925-04:00",
-          "CompletionTime": "2020-04-11T16:52:09.4766925-04:00",
+          "CompletionTime": "2020-05-15T22:15:43.2650764-04:00",
           "Notes": ""
         },
         {
           "$id": "1524",
           "ID": 473,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "obsidian trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:15.3962328-04:00",
-          "CompletionTime": "2020-04-11T16:52:15.3962328-04:00",
+          "CompletionTime": "2020-05-15T22:15:29.0022654-04:00",
           "Notes": ""
         },
         {
           "$id": "1525",
           "ID": 474,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo tools",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:19.9435919-04:00",
-          "CompletionTime": "2020-04-11T16:52:19.9435919-04:00",
+          "CompletionTime": "2020-05-15T22:15:34.9281614-04:00",
           "Notes": ""
         },
         {
@@ -20303,14 +20303,14 @@
         {
           "$id": "1527",
           "ID": 476,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "unify resource item graphics into single field",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:39.9734871-04:00",
-          "CompletionTime": "2020-04-11T16:52:39.9734871-04:00",
+          "CompletionTime": "2020-05-15T22:15:48.1311604-04:00",
           "Notes": ""
         },
         {
@@ -21369,14 +21369,14 @@
         {
           "$id": "1607",
           "ID": 80,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Quit to overworld button",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4247456-04:00",
+          "CompletionTime": "2020-05-19T18:04:40.8971199-04:00",
           "Notes": ""
         },
         {
@@ -21846,14 +21846,14 @@
         {
           "$id": "1642",
           "ID": 126,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Furniture sheet is full - should things be split up? Only GUI icons on that sheet?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-11T09:39:48.1785463-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+          "CompletionTime": "2020-05-19T18:05:22.5903947-04:00",
           "Notes": ""
         },
         {
@@ -26363,7 +26363,7 @@
             {
               "$id": "1982",
               "ID": 361,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "Merge craft items and resource types",
               "Tags": [],
@@ -26371,20 +26371,20 @@
                 {
                   "$id": "1983",
                   "ID": 177,
-                  "Status": "-",
+                  "Status": "✓",
                   "Priority": 0,
                   "Description": "Craft preregs in resources used?",
                   "Tags": [],
                   "Children": [],
                   "Preregs": [],
                   "CreationTime": "2019-08-17T14:25:11.8469202-04:00",
-                  "CompletionTime": "2019-08-17T14:25:11.8469202-04:00",
+                  "CompletionTime": "2020-05-15T22:12:39.8446961-04:00",
                   "Notes": ""
                 }
               ],
               "Preregs": [],
               "CreationTime": "2019-12-14T08:51:21.8232031-05:00",
-              "CompletionTime": "2019-12-14T08:51:21.8232031-05:00",
+              "CompletionTime": "2020-05-15T22:12:47.5652252-04:00",
               "Notes": ""
             },
             {
@@ -26431,14 +26431,14 @@
             {
               "$id": "1987",
               "ID": 442,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "craft clothes from cotton",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-01-27T06:47:18.4832742-05:00",
-              "CompletionTime": "2020-01-27T06:47:18.4832742-05:00",
+              "CompletionTime": "2020-05-15T22:12:58.8352134-04:00",
               "Notes": ""
             }
           ],
@@ -26715,14 +26715,14 @@
         {
           "$id": "2008",
           "ID": 402,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "trolls kinda float",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-01-06T07:20:50.459742-05:00",
-          "CompletionTime": "2020-01-06T07:20:50.459742-05:00",
+          "CompletionTime": "2020-05-15T22:13:41.5770041-04:00",
           "Notes": ""
         },
         {
@@ -26936,14 +26936,14 @@
         {
           "$id": "2025",
           "ID": 457,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "crafting menu needs to use new resource icons",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-02-21T07:07:59.0915013-05:00",
-          "CompletionTime": "2020-02-21T07:07:59.0915013-05:00",
+          "CompletionTime": "2020-05-15T22:14:48.488603-04:00",
           "Notes": ""
         },
         {
@@ -26988,7 +26988,7 @@
         {
           "$id": "2029",
           "ID": 467,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "parallel implementation of voxel geometry builder",
           "Tags": [],
@@ -26996,33 +26996,33 @@
             {
               "$id": "2030",
               "ID": 468,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "switch geometry builder with debug flag",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-03-09T17:18:21.1677059-04:00",
-              "CompletionTime": "2020-03-09T17:18:21.1677059-04:00",
+              "CompletionTime": "2020-05-15T22:14:58.1528577-04:00",
               "Notes": ""
             },
             {
               "$id": "2031",
               "ID": 469,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "first just output a bare boring voxel",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-03-09T17:18:47.4649105-04:00",
-              "CompletionTime": "2020-03-09T17:18:47.4649105-04:00",
+              "CompletionTime": "2020-05-15T22:15:04.7352603-04:00",
               "Notes": ""
             }
           ],
           "Preregs": [],
           "CreationTime": "2020-03-09T17:18:09.925575-04:00",
-          "CompletionTime": "2020-03-09T17:18:09.925575-04:00",
+          "CompletionTime": "2020-05-15T22:15:10.5180498-04:00",
           "Notes": ""
         },
         {
@@ -27054,40 +27054,40 @@
         {
           "$id": "2034",
           "ID": 472,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:09.4766925-04:00",
-          "CompletionTime": "2020-04-11T16:52:09.4766925-04:00",
+          "CompletionTime": "2020-05-15T22:15:43.2650764-04:00",
           "Notes": ""
         },
         {
           "$id": "2035",
           "ID": 473,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "obsidian trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:15.3962328-04:00",
-          "CompletionTime": "2020-04-11T16:52:15.3962328-04:00",
+          "CompletionTime": "2020-05-15T22:15:29.0022654-04:00",
           "Notes": ""
         },
         {
           "$id": "2036",
           "ID": 474,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo tools",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:19.9435919-04:00",
-          "CompletionTime": "2020-04-11T16:52:19.9435919-04:00",
+          "CompletionTime": "2020-05-15T22:15:34.9281614-04:00",
           "Notes": ""
         },
         {
@@ -27106,14 +27106,14 @@
         {
           "$id": "2038",
           "ID": 476,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "unify resource item graphics into single field",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:39.9734871-04:00",
-          "CompletionTime": "2020-04-11T16:52:39.9734871-04:00",
+          "CompletionTime": "2020-05-15T22:15:48.1311604-04:00",
           "Notes": ""
         },
         {
@@ -28172,14 +28172,14 @@
         {
           "$id": "2118",
           "ID": 80,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Quit to overworld button",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4247456-04:00",
+          "CompletionTime": "2020-05-19T18:04:40.8971199-04:00",
           "Notes": ""
         },
         {
@@ -28649,14 +28649,14 @@
         {
           "$id": "2153",
           "ID": 126,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Furniture sheet is full - should things be split up? Only GUI icons on that sheet?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-11T09:39:48.1785463-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+          "CompletionTime": "2020-05-19T18:05:22.5903947-04:00",
           "Notes": ""
         },
         {
@@ -29995,14 +29995,14 @@
         {
           "$id": "2253",
           "ID": 246,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Console command to find specific entity",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-31T18:38:46.3230458-04:00",
-          "CompletionTime": "2019-08-31T18:38:46.3230458-04:00",
+          "CompletionTime": "2020-05-19T18:07:11.1182178-04:00",
           "Notes": ""
         },
         {
@@ -33166,7 +33166,7 @@
             {
               "$id": "2493",
               "ID": 361,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "Merge craft items and resource types",
               "Tags": [],
@@ -33187,7 +33187,7 @@
               ],
               "Preregs": [],
               "CreationTime": "2019-12-14T08:51:21.8232031-05:00",
-              "CompletionTime": "2019-12-14T08:51:21.8232031-05:00",
+              "CompletionTime": "2020-05-15T22:12:47.5652252-04:00",
               "Notes": ""
             },
             {
@@ -33234,14 +33234,14 @@
             {
               "$id": "2498",
               "ID": 442,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "craft clothes from cotton",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-01-27T06:47:18.4832742-05:00",
-              "CompletionTime": "2020-01-27T06:47:18.4832742-05:00",
+              "CompletionTime": "2020-05-15T22:12:58.8352134-04:00",
               "Notes": ""
             }
           ],
@@ -33518,14 +33518,14 @@
         {
           "$id": "2519",
           "ID": 402,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "trolls kinda float",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-01-06T07:20:50.459742-05:00",
-          "CompletionTime": "2020-01-06T07:20:50.459742-05:00",
+          "CompletionTime": "2020-05-15T22:13:41.5770041-04:00",
           "Notes": ""
         },
         {
@@ -33739,14 +33739,14 @@
         {
           "$id": "2536",
           "ID": 457,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "crafting menu needs to use new resource icons",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-02-21T07:07:59.0915013-05:00",
-          "CompletionTime": "2020-02-21T07:07:59.0915013-05:00",
+          "CompletionTime": "2020-05-15T22:14:48.488603-04:00",
           "Notes": ""
         },
         {
@@ -33791,7 +33791,7 @@
         {
           "$id": "2540",
           "ID": 467,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "parallel implementation of voxel geometry builder",
           "Tags": [],
@@ -33799,33 +33799,33 @@
             {
               "$id": "2541",
               "ID": 468,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "switch geometry builder with debug flag",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-03-09T17:18:21.1677059-04:00",
-              "CompletionTime": "2020-03-09T17:18:21.1677059-04:00",
+              "CompletionTime": "2020-05-15T22:14:58.1528577-04:00",
               "Notes": ""
             },
             {
               "$id": "2542",
               "ID": 469,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "first just output a bare boring voxel",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-03-09T17:18:47.4649105-04:00",
-              "CompletionTime": "2020-03-09T17:18:47.4649105-04:00",
+              "CompletionTime": "2020-05-15T22:15:04.7352603-04:00",
               "Notes": ""
             }
           ],
           "Preregs": [],
           "CreationTime": "2020-03-09T17:18:09.925575-04:00",
-          "CompletionTime": "2020-03-09T17:18:09.925575-04:00",
+          "CompletionTime": "2020-05-15T22:15:10.5180498-04:00",
           "Notes": ""
         },
         {
@@ -33857,40 +33857,40 @@
         {
           "$id": "2545",
           "ID": 472,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:09.4766925-04:00",
-          "CompletionTime": "2020-04-11T16:52:09.4766925-04:00",
+          "CompletionTime": "2020-05-15T22:15:43.2650764-04:00",
           "Notes": ""
         },
         {
           "$id": "2546",
           "ID": 473,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "obsidian trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:15.3962328-04:00",
-          "CompletionTime": "2020-04-11T16:52:15.3962328-04:00",
+          "CompletionTime": "2020-05-15T22:15:29.0022654-04:00",
           "Notes": ""
         },
         {
           "$id": "2547",
           "ID": 474,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo tools",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:19.9435919-04:00",
-          "CompletionTime": "2020-04-11T16:52:19.9435919-04:00",
+          "CompletionTime": "2020-05-15T22:15:34.9281614-04:00",
           "Notes": ""
         },
         {
@@ -33909,14 +33909,14 @@
         {
           "$id": "2549",
           "ID": 476,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "unify resource item graphics into single field",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:39.9734871-04:00",
-          "CompletionTime": "2020-04-11T16:52:39.9734871-04:00",
+          "CompletionTime": "2020-05-15T22:15:48.1311604-04:00",
           "Notes": ""
         },
         {
@@ -34975,14 +34975,14 @@
         {
           "$id": "2629",
           "ID": 80,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Quit to overworld button",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4247456-04:00",
+          "CompletionTime": "2020-05-19T18:04:40.8971199-04:00",
           "Notes": ""
         },
         {
@@ -35452,14 +35452,14 @@
         {
           "$id": "2664",
           "ID": 126,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Furniture sheet is full - should things be split up? Only GUI icons on that sheet?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-11T09:39:48.1785463-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+          "CompletionTime": "2020-05-19T18:05:22.5903947-04:00",
           "Notes": ""
         },
         {
@@ -36798,14 +36798,14 @@
         {
           "$id": "2764",
           "ID": 246,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Console command to find specific entity",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-31T18:38:46.3230458-04:00",
-          "CompletionTime": "2019-08-31T18:38:46.3230458-04:00",
+          "CompletionTime": "2020-05-19T18:07:11.1182178-04:00",
           "Notes": ""
         },
         {
@@ -36824,14 +36824,14 @@
         {
           "$id": "2766",
           "ID": 248,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Console command to delete specific entity",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-31T18:39:01.5788727-04:00",
-          "CompletionTime": "2019-08-31T18:39:01.5788727-04:00",
+          "CompletionTime": "2020-05-19T18:07:16.4354377-04:00",
           "Notes": ""
         },
         {
@@ -40037,14 +40037,14 @@
             {
               "$id": "3009",
               "ID": 442,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "craft clothes from cotton",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-01-27T06:47:18.4832742-05:00",
-              "CompletionTime": "2020-01-27T06:47:18.4832742-05:00",
+              "CompletionTime": "2020-05-15T22:12:58.8352134-04:00",
               "Notes": ""
             }
           ],
@@ -40321,14 +40321,14 @@
         {
           "$id": "3030",
           "ID": 402,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "trolls kinda float",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-01-06T07:20:50.459742-05:00",
-          "CompletionTime": "2020-01-06T07:20:50.459742-05:00",
+          "CompletionTime": "2020-05-15T22:13:41.5770041-04:00",
           "Notes": ""
         },
         {
@@ -40542,14 +40542,14 @@
         {
           "$id": "3047",
           "ID": 457,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "crafting menu needs to use new resource icons",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-02-21T07:07:59.0915013-05:00",
-          "CompletionTime": "2020-02-21T07:07:59.0915013-05:00",
+          "CompletionTime": "2020-05-15T22:14:48.488603-04:00",
           "Notes": ""
         },
         {
@@ -40594,7 +40594,7 @@
         {
           "$id": "3051",
           "ID": 467,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "parallel implementation of voxel geometry builder",
           "Tags": [],
@@ -40602,33 +40602,33 @@
             {
               "$id": "3052",
               "ID": 468,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "switch geometry builder with debug flag",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-03-09T17:18:21.1677059-04:00",
-              "CompletionTime": "2020-03-09T17:18:21.1677059-04:00",
+              "CompletionTime": "2020-05-15T22:14:58.1528577-04:00",
               "Notes": ""
             },
             {
               "$id": "3053",
               "ID": 469,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "first just output a bare boring voxel",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-03-09T17:18:47.4649105-04:00",
-              "CompletionTime": "2020-03-09T17:18:47.4649105-04:00",
+              "CompletionTime": "2020-05-15T22:15:04.7352603-04:00",
               "Notes": ""
             }
           ],
           "Preregs": [],
           "CreationTime": "2020-03-09T17:18:09.925575-04:00",
-          "CompletionTime": "2020-03-09T17:18:09.925575-04:00",
+          "CompletionTime": "2020-05-15T22:15:10.5180498-04:00",
           "Notes": ""
         },
         {
@@ -40660,40 +40660,40 @@
         {
           "$id": "3056",
           "ID": 472,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:09.4766925-04:00",
-          "CompletionTime": "2020-04-11T16:52:09.4766925-04:00",
+          "CompletionTime": "2020-05-15T22:15:43.2650764-04:00",
           "Notes": ""
         },
         {
           "$id": "3057",
           "ID": 473,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "obsidian trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:15.3962328-04:00",
-          "CompletionTime": "2020-04-11T16:52:15.3962328-04:00",
+          "CompletionTime": "2020-05-15T22:15:29.0022654-04:00",
           "Notes": ""
         },
         {
           "$id": "3058",
           "ID": 474,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo tools",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:19.9435919-04:00",
-          "CompletionTime": "2020-04-11T16:52:19.9435919-04:00",
+          "CompletionTime": "2020-05-15T22:15:34.9281614-04:00",
           "Notes": ""
         },
         {
@@ -40712,14 +40712,14 @@
         {
           "$id": "3060",
           "ID": 476,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "unify resource item graphics into single field",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:39.9734871-04:00",
-          "CompletionTime": "2020-04-11T16:52:39.9734871-04:00",
+          "CompletionTime": "2020-05-15T22:15:48.1311604-04:00",
           "Notes": ""
         },
         {
@@ -41778,14 +41778,14 @@
         {
           "$id": "3140",
           "ID": 80,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Quit to overworld button",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4247456-04:00",
+          "CompletionTime": "2020-05-19T18:04:40.8971199-04:00",
           "Notes": ""
         },
         {
@@ -42255,14 +42255,14 @@
         {
           "$id": "3175",
           "ID": 126,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Furniture sheet is full - should things be split up? Only GUI icons on that sheet?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-11T09:39:48.1785463-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+          "CompletionTime": "2020-05-19T18:05:22.5903947-04:00",
           "Notes": ""
         },
         {
@@ -43601,14 +43601,14 @@
         {
           "$id": "3275",
           "ID": 246,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Console command to find specific entity",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-31T18:38:46.3230458-04:00",
-          "CompletionTime": "2019-08-31T18:38:46.3230458-04:00",
+          "CompletionTime": "2020-05-19T18:07:11.1182178-04:00",
           "Notes": ""
         },
         {
@@ -43627,14 +43627,14 @@
         {
           "$id": "3277",
           "ID": 248,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Console command to delete specific entity",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-31T18:39:01.5788727-04:00",
-          "CompletionTime": "2019-08-31T18:39:01.5788727-04:00",
+          "CompletionTime": "2020-05-19T18:07:16.4354377-04:00",
           "Notes": ""
         },
         {
@@ -44109,14 +44109,14 @@
         {
           "$id": "3314",
           "ID": 288,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Stop pre-empting find bed and sleep",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-02T15:06:24.4540531-04:00",
-          "CompletionTime": "2019-09-02T15:06:24.4540531-04:00",
+          "CompletionTime": "2020-05-19T18:10:07.1631182-04:00",
           "Notes": ""
         },
         {
@@ -47124,14 +47124,14 @@
         {
           "$id": "3541",
           "ID": 402,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "trolls kinda float",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-01-06T07:20:50.459742-05:00",
-          "CompletionTime": "2020-01-06T07:20:50.459742-05:00",
+          "CompletionTime": "2020-05-15T22:13:41.5770041-04:00",
           "Notes": ""
         },
         {
@@ -47345,14 +47345,14 @@
         {
           "$id": "3558",
           "ID": 457,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "crafting menu needs to use new resource icons",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-02-21T07:07:59.0915013-05:00",
-          "CompletionTime": "2020-02-21T07:07:59.0915013-05:00",
+          "CompletionTime": "2020-05-15T22:14:48.488603-04:00",
           "Notes": ""
         },
         {
@@ -47397,7 +47397,7 @@
         {
           "$id": "3562",
           "ID": 467,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "parallel implementation of voxel geometry builder",
           "Tags": [],
@@ -47405,33 +47405,33 @@
             {
               "$id": "3563",
               "ID": 468,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "switch geometry builder with debug flag",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-03-09T17:18:21.1677059-04:00",
-              "CompletionTime": "2020-03-09T17:18:21.1677059-04:00",
+              "CompletionTime": "2020-05-15T22:14:58.1528577-04:00",
               "Notes": ""
             },
             {
               "$id": "3564",
               "ID": 469,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "first just output a bare boring voxel",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-03-09T17:18:47.4649105-04:00",
-              "CompletionTime": "2020-03-09T17:18:47.4649105-04:00",
+              "CompletionTime": "2020-05-15T22:15:04.7352603-04:00",
               "Notes": ""
             }
           ],
           "Preregs": [],
           "CreationTime": "2020-03-09T17:18:09.925575-04:00",
-          "CompletionTime": "2020-03-09T17:18:09.925575-04:00",
+          "CompletionTime": "2020-05-15T22:15:10.5180498-04:00",
           "Notes": ""
         },
         {
@@ -47463,40 +47463,40 @@
         {
           "$id": "3567",
           "ID": 472,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:09.4766925-04:00",
-          "CompletionTime": "2020-04-11T16:52:09.4766925-04:00",
+          "CompletionTime": "2020-05-15T22:15:43.2650764-04:00",
           "Notes": ""
         },
         {
           "$id": "3568",
           "ID": 473,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "obsidian trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:15.3962328-04:00",
-          "CompletionTime": "2020-04-11T16:52:15.3962328-04:00",
+          "CompletionTime": "2020-05-15T22:15:29.0022654-04:00",
           "Notes": ""
         },
         {
           "$id": "3569",
           "ID": 474,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo tools",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:19.9435919-04:00",
-          "CompletionTime": "2020-04-11T16:52:19.9435919-04:00",
+          "CompletionTime": "2020-05-15T22:15:34.9281614-04:00",
           "Notes": ""
         },
         {
@@ -47515,14 +47515,14 @@
         {
           "$id": "3571",
           "ID": 476,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "unify resource item graphics into single field",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:39.9734871-04:00",
-          "CompletionTime": "2020-04-11T16:52:39.9734871-04:00",
+          "CompletionTime": "2020-05-15T22:15:48.1311604-04:00",
           "Notes": ""
         },
         {
@@ -48581,14 +48581,14 @@
         {
           "$id": "3651",
           "ID": 80,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Quit to overworld button",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4247456-04:00",
+          "CompletionTime": "2020-05-19T18:04:40.8971199-04:00",
           "Notes": ""
         },
         {
@@ -49058,14 +49058,14 @@
         {
           "$id": "3686",
           "ID": 126,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Furniture sheet is full - should things be split up? Only GUI icons on that sheet?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-11T09:39:48.1785463-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+          "CompletionTime": "2020-05-19T18:05:22.5903947-04:00",
           "Notes": ""
         },
         {
@@ -50404,14 +50404,14 @@
         {
           "$id": "3786",
           "ID": 246,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Console command to find specific entity",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-31T18:38:46.3230458-04:00",
-          "CompletionTime": "2019-08-31T18:38:46.3230458-04:00",
+          "CompletionTime": "2020-05-19T18:07:11.1182178-04:00",
           "Notes": ""
         },
         {
@@ -50430,14 +50430,14 @@
         {
           "$id": "3788",
           "ID": 248,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Console command to delete specific entity",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-31T18:39:01.5788727-04:00",
-          "CompletionTime": "2019-08-31T18:39:01.5788727-04:00",
+          "CompletionTime": "2020-05-19T18:07:16.4354377-04:00",
           "Notes": ""
         },
         {
@@ -50912,14 +50912,14 @@
         {
           "$id": "3825",
           "ID": 288,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Stop pre-empting find bed and sleep",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-02T15:06:24.4540531-04:00",
-          "CompletionTime": "2019-09-02T15:06:24.4540531-04:00",
+          "CompletionTime": "2020-05-19T18:10:07.1631182-04:00",
           "Notes": ""
         },
         {
@@ -50977,14 +50977,14 @@
         {
           "$id": "3830",
           "ID": 293,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Market giving full price on some items?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-02T15:44:39.0935916-04:00",
-          "CompletionTime": "2019-09-02T15:44:39.0935916-04:00",
+          "CompletionTime": "2020-05-19T18:10:19.0185411-04:00",
           "Notes": ""
         },
         {
@@ -54148,14 +54148,14 @@
         {
           "$id": "4069",
           "ID": 457,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "crafting menu needs to use new resource icons",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-02-21T07:07:59.0915013-05:00",
-          "CompletionTime": "2020-02-21T07:07:59.0915013-05:00",
+          "CompletionTime": "2020-05-15T22:14:48.488603-04:00",
           "Notes": ""
         },
         {
@@ -54200,7 +54200,7 @@
         {
           "$id": "4073",
           "ID": 467,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "parallel implementation of voxel geometry builder",
           "Tags": [],
@@ -54208,33 +54208,33 @@
             {
               "$id": "4074",
               "ID": 468,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "switch geometry builder with debug flag",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-03-09T17:18:21.1677059-04:00",
-              "CompletionTime": "2020-03-09T17:18:21.1677059-04:00",
+              "CompletionTime": "2020-05-15T22:14:58.1528577-04:00",
               "Notes": ""
             },
             {
               "$id": "4075",
               "ID": 469,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "first just output a bare boring voxel",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-03-09T17:18:47.4649105-04:00",
-              "CompletionTime": "2020-03-09T17:18:47.4649105-04:00",
+              "CompletionTime": "2020-05-15T22:15:04.7352603-04:00",
               "Notes": ""
             }
           ],
           "Preregs": [],
           "CreationTime": "2020-03-09T17:18:09.925575-04:00",
-          "CompletionTime": "2020-03-09T17:18:09.925575-04:00",
+          "CompletionTime": "2020-05-15T22:15:10.5180498-04:00",
           "Notes": ""
         },
         {
@@ -54266,40 +54266,40 @@
         {
           "$id": "4078",
           "ID": 472,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:09.4766925-04:00",
-          "CompletionTime": "2020-04-11T16:52:09.4766925-04:00",
+          "CompletionTime": "2020-05-15T22:15:43.2650764-04:00",
           "Notes": ""
         },
         {
           "$id": "4079",
           "ID": 473,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "obsidian trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:15.3962328-04:00",
-          "CompletionTime": "2020-04-11T16:52:15.3962328-04:00",
+          "CompletionTime": "2020-05-15T22:15:29.0022654-04:00",
           "Notes": ""
         },
         {
           "$id": "4080",
           "ID": 474,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo tools",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:19.9435919-04:00",
-          "CompletionTime": "2020-04-11T16:52:19.9435919-04:00",
+          "CompletionTime": "2020-05-15T22:15:34.9281614-04:00",
           "Notes": ""
         },
         {
@@ -54318,14 +54318,14 @@
         {
           "$id": "4082",
           "ID": 476,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "unify resource item graphics into single field",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:39.9734871-04:00",
-          "CompletionTime": "2020-04-11T16:52:39.9734871-04:00",
+          "CompletionTime": "2020-05-15T22:15:48.1311604-04:00",
           "Notes": ""
         },
         {
@@ -55384,14 +55384,14 @@
         {
           "$id": "4162",
           "ID": 80,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Quit to overworld button",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4247456-04:00",
+          "CompletionTime": "2020-05-19T18:04:40.8971199-04:00",
           "Notes": ""
         },
         {
@@ -55861,14 +55861,14 @@
         {
           "$id": "4197",
           "ID": 126,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Furniture sheet is full - should things be split up? Only GUI icons on that sheet?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-11T09:39:48.1785463-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+          "CompletionTime": "2020-05-19T18:05:22.5903947-04:00",
           "Notes": ""
         },
         {
@@ -57207,14 +57207,14 @@
         {
           "$id": "4297",
           "ID": 246,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Console command to find specific entity",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-31T18:38:46.3230458-04:00",
-          "CompletionTime": "2019-08-31T18:38:46.3230458-04:00",
+          "CompletionTime": "2020-05-19T18:07:11.1182178-04:00",
           "Notes": ""
         },
         {
@@ -57233,14 +57233,14 @@
         {
           "$id": "4299",
           "ID": 248,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Console command to delete specific entity",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-31T18:39:01.5788727-04:00",
-          "CompletionTime": "2019-08-31T18:39:01.5788727-04:00",
+          "CompletionTime": "2020-05-19T18:07:16.4354377-04:00",
           "Notes": ""
         },
         {
@@ -57715,14 +57715,14 @@
         {
           "$id": "4336",
           "ID": 288,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Stop pre-empting find bed and sleep",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-02T15:06:24.4540531-04:00",
-          "CompletionTime": "2019-09-02T15:06:24.4540531-04:00",
+          "CompletionTime": "2020-05-19T18:10:07.1631182-04:00",
           "Notes": ""
         },
         {
@@ -57780,14 +57780,14 @@
         {
           "$id": "4341",
           "ID": 293,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Market giving full price on some items?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-02T15:44:39.0935916-04:00",
-          "CompletionTime": "2019-09-02T15:44:39.0935916-04:00",
+          "CompletionTime": "2020-05-19T18:10:19.0185411-04:00",
           "Notes": ""
         },
         {
@@ -57832,14 +57832,14 @@
         {
           "$id": "4345",
           "ID": 298,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Why do they sometimes spawn so low?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-05T06:21:09.7311627-04:00",
-          "CompletionTime": "2019-09-05T06:21:09.7311627-04:00",
+          "CompletionTime": "2020-05-19T18:10:31.0208682-04:00",
           "Notes": ""
         },
         {
@@ -61003,7 +61003,7 @@
         {
           "$id": "4584",
           "ID": 467,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "parallel implementation of voxel geometry builder",
           "Tags": [],
@@ -61011,33 +61011,33 @@
             {
               "$id": "4585",
               "ID": 468,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "switch geometry builder with debug flag",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-03-09T17:18:21.1677059-04:00",
-              "CompletionTime": "2020-03-09T17:18:21.1677059-04:00",
+              "CompletionTime": "2020-05-15T22:14:58.1528577-04:00",
               "Notes": ""
             },
             {
               "$id": "4586",
               "ID": 469,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "first just output a bare boring voxel",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-03-09T17:18:47.4649105-04:00",
-              "CompletionTime": "2020-03-09T17:18:47.4649105-04:00",
+              "CompletionTime": "2020-05-15T22:15:04.7352603-04:00",
               "Notes": ""
             }
           ],
           "Preregs": [],
           "CreationTime": "2020-03-09T17:18:09.925575-04:00",
-          "CompletionTime": "2020-03-09T17:18:09.925575-04:00",
+          "CompletionTime": "2020-05-15T22:15:10.5180498-04:00",
           "Notes": ""
         },
         {
@@ -61069,40 +61069,40 @@
         {
           "$id": "4589",
           "ID": 472,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:09.4766925-04:00",
-          "CompletionTime": "2020-04-11T16:52:09.4766925-04:00",
+          "CompletionTime": "2020-05-15T22:15:43.2650764-04:00",
           "Notes": ""
         },
         {
           "$id": "4590",
           "ID": 473,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "obsidian trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:15.3962328-04:00",
-          "CompletionTime": "2020-04-11T16:52:15.3962328-04:00",
+          "CompletionTime": "2020-05-15T22:15:29.0022654-04:00",
           "Notes": ""
         },
         {
           "$id": "4591",
           "ID": 474,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo tools",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:19.9435919-04:00",
-          "CompletionTime": "2020-04-11T16:52:19.9435919-04:00",
+          "CompletionTime": "2020-05-15T22:15:34.9281614-04:00",
           "Notes": ""
         },
         {
@@ -61121,14 +61121,14 @@
         {
           "$id": "4593",
           "ID": 476,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "unify resource item graphics into single field",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:39.9734871-04:00",
-          "CompletionTime": "2020-04-11T16:52:39.9734871-04:00",
+          "CompletionTime": "2020-05-15T22:15:48.1311604-04:00",
           "Notes": ""
         },
         {
@@ -62187,14 +62187,14 @@
         {
           "$id": "4673",
           "ID": 80,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Quit to overworld button",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4247456-04:00",
+          "CompletionTime": "2020-05-19T18:04:40.8971199-04:00",
           "Notes": ""
         },
         {
@@ -62664,14 +62664,14 @@
         {
           "$id": "4708",
           "ID": 126,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Furniture sheet is full - should things be split up? Only GUI icons on that sheet?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-11T09:39:48.1785463-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+          "CompletionTime": "2020-05-19T18:05:22.5903947-04:00",
           "Notes": ""
         },
         {
@@ -64010,14 +64010,14 @@
         {
           "$id": "4808",
           "ID": 246,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Console command to find specific entity",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-31T18:38:46.3230458-04:00",
-          "CompletionTime": "2019-08-31T18:38:46.3230458-04:00",
+          "CompletionTime": "2020-05-19T18:07:11.1182178-04:00",
           "Notes": ""
         },
         {
@@ -64036,14 +64036,14 @@
         {
           "$id": "4810",
           "ID": 248,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Console command to delete specific entity",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-31T18:39:01.5788727-04:00",
-          "CompletionTime": "2019-08-31T18:39:01.5788727-04:00",
+          "CompletionTime": "2020-05-19T18:07:16.4354377-04:00",
           "Notes": ""
         },
         {
@@ -64518,14 +64518,14 @@
         {
           "$id": "4847",
           "ID": 288,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Stop pre-empting find bed and sleep",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-02T15:06:24.4540531-04:00",
-          "CompletionTime": "2019-09-02T15:06:24.4540531-04:00",
+          "CompletionTime": "2020-05-19T18:10:07.1631182-04:00",
           "Notes": ""
         },
         {
@@ -64583,14 +64583,14 @@
         {
           "$id": "4852",
           "ID": 293,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Market giving full price on some items?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-02T15:44:39.0935916-04:00",
-          "CompletionTime": "2019-09-02T15:44:39.0935916-04:00",
+          "CompletionTime": "2020-05-19T18:10:19.0185411-04:00",
           "Notes": ""
         },
         {
@@ -64635,14 +64635,14 @@
         {
           "$id": "4856",
           "ID": 298,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Why do they sometimes spawn so low?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-05T06:21:09.7311627-04:00",
-          "CompletionTime": "2019-09-05T06:21:09.7311627-04:00",
+          "CompletionTime": "2020-05-19T18:10:31.0208682-04:00",
           "Notes": ""
         },
         {
@@ -64847,14 +64847,14 @@
         {
           "$id": "4872",
           "ID": 315,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Remember to remove difficulty loading hack",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-06T06:30:22.217056-04:00",
-          "CompletionTime": "2019-09-06T06:30:22.217056-04:00",
+          "CompletionTime": "2020-05-19T18:13:33.8493898-04:00",
           "Notes": ""
         },
         {
@@ -67806,7 +67806,7 @@
         {
           "$id": "5095",
           "ID": 467,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "parallel implementation of voxel geometry builder",
           "Tags": [],
@@ -67827,20 +67827,20 @@
             {
               "$id": "5097",
               "ID": 469,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "first just output a bare boring voxel",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2020-03-09T17:18:47.4649105-04:00",
-              "CompletionTime": "2020-03-09T17:18:47.4649105-04:00",
+              "CompletionTime": "2020-05-15T22:15:04.7352603-04:00",
               "Notes": ""
             }
           ],
           "Preregs": [],
           "CreationTime": "2020-03-09T17:18:09.925575-04:00",
-          "CompletionTime": "2020-03-09T17:18:09.925575-04:00",
+          "CompletionTime": "2020-05-15T22:15:10.5180498-04:00",
           "Notes": ""
         },
         {
@@ -67872,40 +67872,40 @@
         {
           "$id": "5100",
           "ID": 472,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:09.4766925-04:00",
-          "CompletionTime": "2020-04-11T16:52:09.4766925-04:00",
+          "CompletionTime": "2020-05-15T22:15:43.2650764-04:00",
           "Notes": ""
         },
         {
           "$id": "5101",
           "ID": 473,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "obsidian trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:15.3962328-04:00",
-          "CompletionTime": "2020-04-11T16:52:15.3962328-04:00",
+          "CompletionTime": "2020-05-15T22:15:29.0022654-04:00",
           "Notes": ""
         },
         {
           "$id": "5102",
           "ID": 474,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo tools",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:19.9435919-04:00",
-          "CompletionTime": "2020-04-11T16:52:19.9435919-04:00",
+          "CompletionTime": "2020-05-15T22:15:34.9281614-04:00",
           "Notes": ""
         },
         {
@@ -67924,14 +67924,14 @@
         {
           "$id": "5104",
           "ID": 476,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "unify resource item graphics into single field",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:39.9734871-04:00",
-          "CompletionTime": "2020-04-11T16:52:39.9734871-04:00",
+          "CompletionTime": "2020-05-15T22:15:48.1311604-04:00",
           "Notes": ""
         },
         {
@@ -68990,14 +68990,14 @@
         {
           "$id": "5184",
           "ID": 80,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Quit to overworld button",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4247456-04:00",
+          "CompletionTime": "2020-05-19T18:04:40.8971199-04:00",
           "Notes": ""
         },
         {
@@ -69467,14 +69467,14 @@
         {
           "$id": "5219",
           "ID": 126,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Furniture sheet is full - should things be split up? Only GUI icons on that sheet?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-11T09:39:48.1785463-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+          "CompletionTime": "2020-05-19T18:05:22.5903947-04:00",
           "Notes": ""
         },
         {
@@ -70813,14 +70813,14 @@
         {
           "$id": "5319",
           "ID": 246,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Console command to find specific entity",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-31T18:38:46.3230458-04:00",
-          "CompletionTime": "2019-08-31T18:38:46.3230458-04:00",
+          "CompletionTime": "2020-05-19T18:07:11.1182178-04:00",
           "Notes": ""
         },
         {
@@ -70839,14 +70839,14 @@
         {
           "$id": "5321",
           "ID": 248,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Console command to delete specific entity",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-31T18:39:01.5788727-04:00",
-          "CompletionTime": "2019-08-31T18:39:01.5788727-04:00",
+          "CompletionTime": "2020-05-19T18:07:16.4354377-04:00",
           "Notes": ""
         },
         {
@@ -71321,14 +71321,14 @@
         {
           "$id": "5358",
           "ID": 288,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Stop pre-empting find bed and sleep",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-02T15:06:24.4540531-04:00",
-          "CompletionTime": "2019-09-02T15:06:24.4540531-04:00",
+          "CompletionTime": "2020-05-19T18:10:07.1631182-04:00",
           "Notes": ""
         },
         {
@@ -71386,14 +71386,14 @@
         {
           "$id": "5363",
           "ID": 293,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Market giving full price on some items?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-02T15:44:39.0935916-04:00",
-          "CompletionTime": "2019-09-02T15:44:39.0935916-04:00",
+          "CompletionTime": "2020-05-19T18:10:19.0185411-04:00",
           "Notes": ""
         },
         {
@@ -71438,14 +71438,14 @@
         {
           "$id": "5367",
           "ID": 298,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Why do they sometimes spawn so low?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-05T06:21:09.7311627-04:00",
-          "CompletionTime": "2019-09-05T06:21:09.7311627-04:00",
+          "CompletionTime": "2020-05-19T18:10:31.0208682-04:00",
           "Notes": ""
         },
         {
@@ -71650,14 +71650,14 @@
         {
           "$id": "5383",
           "ID": 315,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Remember to remove difficulty loading hack",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-06T06:30:22.217056-04:00",
-          "CompletionTime": "2019-09-06T06:30:22.217056-04:00",
+          "CompletionTime": "2020-05-19T18:13:33.8493898-04:00",
           "Notes": ""
         },
         {
@@ -73932,14 +73932,14 @@
             {
               "$id": "5555",
               "ID": 110,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "Higher level dwarf -> better trinkets",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-              "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+              "CompletionTime": "2020-05-19T18:16:10.4564204-04:00",
               "Notes": ""
             },
             {
@@ -74609,7 +74609,7 @@
         {
           "$id": "5606",
           "ID": 467,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "parallel implementation of voxel geometry builder",
           "Tags": [],
@@ -74643,7 +74643,7 @@
           ],
           "Preregs": [],
           "CreationTime": "2020-03-09T17:18:09.925575-04:00",
-          "CompletionTime": "2020-03-09T17:18:09.925575-04:00",
+          "CompletionTime": "2020-05-15T22:15:10.5180498-04:00",
           "Notes": ""
         },
         {
@@ -74675,40 +74675,40 @@
         {
           "$id": "5611",
           "ID": 472,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:09.4766925-04:00",
-          "CompletionTime": "2020-04-11T16:52:09.4766925-04:00",
+          "CompletionTime": "2020-05-15T22:15:43.2650764-04:00",
           "Notes": ""
         },
         {
           "$id": "5612",
           "ID": 473,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "obsidian trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:15.3962328-04:00",
-          "CompletionTime": "2020-04-11T16:52:15.3962328-04:00",
+          "CompletionTime": "2020-05-15T22:15:29.0022654-04:00",
           "Notes": ""
         },
         {
           "$id": "5613",
           "ID": 474,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo tools",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:19.9435919-04:00",
-          "CompletionTime": "2020-04-11T16:52:19.9435919-04:00",
+          "CompletionTime": "2020-05-15T22:15:34.9281614-04:00",
           "Notes": ""
         },
         {
@@ -74727,14 +74727,14 @@
         {
           "$id": "5615",
           "ID": 476,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "unify resource item graphics into single field",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:39.9734871-04:00",
-          "CompletionTime": "2020-04-11T16:52:39.9734871-04:00",
+          "CompletionTime": "2020-05-15T22:15:48.1311604-04:00",
           "Notes": ""
         },
         {
@@ -75793,14 +75793,14 @@
         {
           "$id": "5695",
           "ID": 80,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Quit to overworld button",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4247456-04:00",
+          "CompletionTime": "2020-05-19T18:04:40.8971199-04:00",
           "Notes": ""
         },
         {
@@ -76270,14 +76270,14 @@
         {
           "$id": "5730",
           "ID": 126,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Furniture sheet is full - should things be split up? Only GUI icons on that sheet?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-11T09:39:48.1785463-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+          "CompletionTime": "2020-05-19T18:05:22.5903947-04:00",
           "Notes": ""
         },
         {
@@ -77616,14 +77616,14 @@
         {
           "$id": "5830",
           "ID": 246,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Console command to find specific entity",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-31T18:38:46.3230458-04:00",
-          "CompletionTime": "2019-08-31T18:38:46.3230458-04:00",
+          "CompletionTime": "2020-05-19T18:07:11.1182178-04:00",
           "Notes": ""
         },
         {
@@ -77642,14 +77642,14 @@
         {
           "$id": "5832",
           "ID": 248,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Console command to delete specific entity",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-31T18:39:01.5788727-04:00",
-          "CompletionTime": "2019-08-31T18:39:01.5788727-04:00",
+          "CompletionTime": "2020-05-19T18:07:16.4354377-04:00",
           "Notes": ""
         },
         {
@@ -78124,14 +78124,14 @@
         {
           "$id": "5869",
           "ID": 288,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Stop pre-empting find bed and sleep",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-02T15:06:24.4540531-04:00",
-          "CompletionTime": "2019-09-02T15:06:24.4540531-04:00",
+          "CompletionTime": "2020-05-19T18:10:07.1631182-04:00",
           "Notes": ""
         },
         {
@@ -78189,14 +78189,14 @@
         {
           "$id": "5874",
           "ID": 293,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Market giving full price on some items?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-02T15:44:39.0935916-04:00",
-          "CompletionTime": "2019-09-02T15:44:39.0935916-04:00",
+          "CompletionTime": "2020-05-19T18:10:19.0185411-04:00",
           "Notes": ""
         },
         {
@@ -78241,14 +78241,14 @@
         {
           "$id": "5878",
           "ID": 298,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Why do they sometimes spawn so low?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-05T06:21:09.7311627-04:00",
-          "CompletionTime": "2019-09-05T06:21:09.7311627-04:00",
+          "CompletionTime": "2020-05-19T18:10:31.0208682-04:00",
           "Notes": ""
         },
         {
@@ -78453,14 +78453,14 @@
         {
           "$id": "5894",
           "ID": 315,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Remember to remove difficulty loading hack",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-06T06:30:22.217056-04:00",
-          "CompletionTime": "2019-09-06T06:30:22.217056-04:00",
+          "CompletionTime": "2020-05-19T18:13:33.8493898-04:00",
           "Notes": ""
         },
         {
@@ -80735,14 +80735,14 @@
             {
               "$id": "6066",
               "ID": 110,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "Higher level dwarf -> better trinkets",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-              "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+              "CompletionTime": "2020-05-19T18:16:10.4564204-04:00",
               "Notes": ""
             },
             {
@@ -80774,14 +80774,14 @@
             {
               "$id": "6069",
               "ID": 147,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "Training equipment is destroyed permanently",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2019-08-14T07:28:08.8222957-04:00",
-              "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+              "CompletionTime": "2020-05-19T18:20:45.3665011-04:00",
               "Notes": ""
             },
             {
@@ -81478,40 +81478,40 @@
         {
           "$id": "6122",
           "ID": 472,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:09.4766925-04:00",
-          "CompletionTime": "2020-04-11T16:52:09.4766925-04:00",
+          "CompletionTime": "2020-05-15T22:15:43.2650764-04:00",
           "Notes": ""
         },
         {
           "$id": "6123",
           "ID": 473,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "obsidian trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:15.3962328-04:00",
-          "CompletionTime": "2020-04-11T16:52:15.3962328-04:00",
+          "CompletionTime": "2020-05-15T22:15:29.0022654-04:00",
           "Notes": ""
         },
         {
           "$id": "6124",
           "ID": 474,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo tools",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:19.9435919-04:00",
-          "CompletionTime": "2020-04-11T16:52:19.9435919-04:00",
+          "CompletionTime": "2020-05-15T22:15:34.9281614-04:00",
           "Notes": ""
         },
         {
@@ -81530,14 +81530,14 @@
         {
           "$id": "6126",
           "ID": 476,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "unify resource item graphics into single field",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:39.9734871-04:00",
-          "CompletionTime": "2020-04-11T16:52:39.9734871-04:00",
+          "CompletionTime": "2020-05-15T22:15:48.1311604-04:00",
           "Notes": ""
         },
         {
@@ -82596,14 +82596,14 @@
         {
           "$id": "6206",
           "ID": 80,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Quit to overworld button",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4247456-04:00",
+          "CompletionTime": "2020-05-19T18:04:40.8971199-04:00",
           "Notes": ""
         },
         {
@@ -83073,14 +83073,14 @@
         {
           "$id": "6241",
           "ID": 126,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Furniture sheet is full - should things be split up? Only GUI icons on that sheet?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-11T09:39:48.1785463-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+          "CompletionTime": "2020-05-19T18:05:22.5903947-04:00",
           "Notes": ""
         },
         {
@@ -84419,14 +84419,14 @@
         {
           "$id": "6341",
           "ID": 246,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Console command to find specific entity",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-31T18:38:46.3230458-04:00",
-          "CompletionTime": "2019-08-31T18:38:46.3230458-04:00",
+          "CompletionTime": "2020-05-19T18:07:11.1182178-04:00",
           "Notes": ""
         },
         {
@@ -84445,14 +84445,14 @@
         {
           "$id": "6343",
           "ID": 248,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Console command to delete specific entity",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-31T18:39:01.5788727-04:00",
-          "CompletionTime": "2019-08-31T18:39:01.5788727-04:00",
+          "CompletionTime": "2020-05-19T18:07:16.4354377-04:00",
           "Notes": ""
         },
         {
@@ -84927,14 +84927,14 @@
         {
           "$id": "6380",
           "ID": 288,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Stop pre-empting find bed and sleep",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-02T15:06:24.4540531-04:00",
-          "CompletionTime": "2019-09-02T15:06:24.4540531-04:00",
+          "CompletionTime": "2020-05-19T18:10:07.1631182-04:00",
           "Notes": ""
         },
         {
@@ -84992,14 +84992,14 @@
         {
           "$id": "6385",
           "ID": 293,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Market giving full price on some items?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-02T15:44:39.0935916-04:00",
-          "CompletionTime": "2019-09-02T15:44:39.0935916-04:00",
+          "CompletionTime": "2020-05-19T18:10:19.0185411-04:00",
           "Notes": ""
         },
         {
@@ -85044,14 +85044,14 @@
         {
           "$id": "6389",
           "ID": 298,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Why do they sometimes spawn so low?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-05T06:21:09.7311627-04:00",
-          "CompletionTime": "2019-09-05T06:21:09.7311627-04:00",
+          "CompletionTime": "2020-05-19T18:10:31.0208682-04:00",
           "Notes": ""
         },
         {
@@ -85256,14 +85256,14 @@
         {
           "$id": "6405",
           "ID": 315,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Remember to remove difficulty loading hack",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-06T06:30:22.217056-04:00",
-          "CompletionTime": "2019-09-06T06:30:22.217056-04:00",
+          "CompletionTime": "2020-05-19T18:13:33.8493898-04:00",
           "Notes": ""
         },
         {
@@ -87538,14 +87538,14 @@
             {
               "$id": "6577",
               "ID": 110,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "Higher level dwarf -> better trinkets",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-              "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+              "CompletionTime": "2020-05-19T18:16:10.4564204-04:00",
               "Notes": ""
             },
             {
@@ -87577,14 +87577,14 @@
             {
               "$id": "6580",
               "ID": 147,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "Training equipment is destroyed permanently",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2019-08-14T07:28:08.8222957-04:00",
-              "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+              "CompletionTime": "2020-05-19T18:20:45.3665011-04:00",
               "Notes": ""
             },
             {
@@ -87955,14 +87955,14 @@
         {
           "$id": "6608",
           "ID": 403,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "some kind of invisible resource in trade screen",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-01-06T07:22:35.6748078-05:00",
-          "CompletionTime": "2020-01-06T07:22:35.6748078-05:00",
+          "CompletionTime": "2020-05-19T18:22:10.8155427-04:00",
           "Notes": ""
         },
         {
@@ -88288,33 +88288,33 @@
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:09.4766925-04:00",
-          "CompletionTime": "2020-05-15T22:15:19.0004823-04:00",
+          "CompletionTime": "2020-05-15T22:15:43.2650764-04:00",
           "Notes": ""
         },
         {
           "$id": "6634",
           "ID": 473,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "obsidian trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:15.3962328-04:00",
-          "CompletionTime": "2020-04-11T16:52:15.3962328-04:00",
+          "CompletionTime": "2020-05-15T22:15:29.0022654-04:00",
           "Notes": ""
         },
         {
           "$id": "6635",
           "ID": 474,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo tools",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:19.9435919-04:00",
-          "CompletionTime": "2020-04-11T16:52:19.9435919-04:00",
+          "CompletionTime": "2020-05-15T22:15:34.9281614-04:00",
           "Notes": ""
         },
         {
@@ -88333,14 +88333,14 @@
         {
           "$id": "6637",
           "ID": 476,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "unify resource item graphics into single field",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:39.9734871-04:00",
-          "CompletionTime": "2020-04-11T16:52:39.9734871-04:00",
+          "CompletionTime": "2020-05-15T22:15:48.1311604-04:00",
           "Notes": ""
         },
         {
@@ -89399,14 +89399,14 @@
         {
           "$id": "6717",
           "ID": 80,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Quit to overworld button",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4247456-04:00",
+          "CompletionTime": "2020-05-19T18:04:40.8971199-04:00",
           "Notes": ""
         },
         {
@@ -89876,14 +89876,14 @@
         {
           "$id": "6752",
           "ID": 126,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Furniture sheet is full - should things be split up? Only GUI icons on that sheet?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-11T09:39:48.1785463-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+          "CompletionTime": "2020-05-19T18:05:22.5903947-04:00",
           "Notes": ""
         },
         {
@@ -91222,14 +91222,14 @@
         {
           "$id": "6852",
           "ID": 246,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Console command to find specific entity",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-31T18:38:46.3230458-04:00",
-          "CompletionTime": "2019-08-31T18:38:46.3230458-04:00",
+          "CompletionTime": "2020-05-19T18:07:11.1182178-04:00",
           "Notes": ""
         },
         {
@@ -91248,14 +91248,14 @@
         {
           "$id": "6854",
           "ID": 248,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Console command to delete specific entity",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-31T18:39:01.5788727-04:00",
-          "CompletionTime": "2019-08-31T18:39:01.5788727-04:00",
+          "CompletionTime": "2020-05-19T18:07:16.4354377-04:00",
           "Notes": ""
         },
         {
@@ -91730,14 +91730,14 @@
         {
           "$id": "6891",
           "ID": 288,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Stop pre-empting find bed and sleep",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-02T15:06:24.4540531-04:00",
-          "CompletionTime": "2019-09-02T15:06:24.4540531-04:00",
+          "CompletionTime": "2020-05-19T18:10:07.1631182-04:00",
           "Notes": ""
         },
         {
@@ -91795,14 +91795,14 @@
         {
           "$id": "6896",
           "ID": 293,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Market giving full price on some items?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-02T15:44:39.0935916-04:00",
-          "CompletionTime": "2019-09-02T15:44:39.0935916-04:00",
+          "CompletionTime": "2020-05-19T18:10:19.0185411-04:00",
           "Notes": ""
         },
         {
@@ -91847,14 +91847,14 @@
         {
           "$id": "6900",
           "ID": 298,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Why do they sometimes spawn so low?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-05T06:21:09.7311627-04:00",
-          "CompletionTime": "2019-09-05T06:21:09.7311627-04:00",
+          "CompletionTime": "2020-05-19T18:10:31.0208682-04:00",
           "Notes": ""
         },
         {
@@ -92059,14 +92059,14 @@
         {
           "$id": "6916",
           "ID": 315,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Remember to remove difficulty loading hack",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-06T06:30:22.217056-04:00",
-          "CompletionTime": "2019-09-06T06:30:22.217056-04:00",
+          "CompletionTime": "2020-05-19T18:13:33.8493898-04:00",
           "Notes": ""
         },
         {
@@ -94341,14 +94341,14 @@
             {
               "$id": "7088",
               "ID": 110,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "Higher level dwarf -> better trinkets",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-              "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+              "CompletionTime": "2020-05-19T18:16:10.4564204-04:00",
               "Notes": ""
             },
             {
@@ -94380,14 +94380,14 @@
             {
               "$id": "7091",
               "ID": 147,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "Training equipment is destroyed permanently",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2019-08-14T07:28:08.8222957-04:00",
-              "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+              "CompletionTime": "2020-05-19T18:20:45.3665011-04:00",
               "Notes": ""
             },
             {
@@ -94667,6 +94667,19 @@
               "CreationTime": "2020-01-25T14:09:12.0068264-05:00",
               "CompletionTime": "2020-01-25T14:09:12.0068264-05:00",
               "Notes": ""
+            },
+            {
+              "$id": "7113",
+              "ID": 438,
+              "Status": "-",
+              "Priority": 0,
+              "Description": "select what stats advance when promoting dwarves",
+              "Tags": [],
+              "Children": [],
+              "Preregs": [],
+              "CreationTime": "2020-01-25T14:08:31.1747926-05:00",
+              "CompletionTime": "2020-01-25T14:08:31.1747926-05:00",
+              "Notes": ""
             }
           ],
           "Preregs": [],
@@ -94675,7 +94688,7 @@
           "Notes": ""
         },
         {
-          "$id": "7113",
+          "$id": "7114",
           "ID": 113,
           "Status": "-",
           "Priority": 0,
@@ -94688,7 +94701,7 @@
           "Notes": ""
         },
         {
-          "$id": "7114",
+          "$id": "7115",
           "ID": 371,
           "Status": "-",
           "Priority": 0,
@@ -94696,7 +94709,7 @@
           "Tags": [],
           "Children": [
             {
-              "$id": "7115",
+              "$id": "7116",
               "ID": 62,
               "Status": "-",
               "Priority": 0,
@@ -94715,7 +94728,7 @@
           "Notes": ""
         },
         {
-          "$id": "7116",
+          "$id": "7117",
           "ID": 392,
           "Status": "-",
           "Priority": 0,
@@ -94728,7 +94741,7 @@
           "Notes": ""
         },
         {
-          "$id": "7117",
+          "$id": "7118",
           "ID": 396,
           "Status": "-",
           "Priority": 0,
@@ -94743,7 +94756,7 @@
           "Notes": ""
         },
         {
-          "$id": "7118",
+          "$id": "7119",
           "ID": 402,
           "Status": "✓",
           "Priority": 0,
@@ -94756,20 +94769,20 @@
           "Notes": ""
         },
         {
-          "$id": "7119",
+          "$id": "7120",
           "ID": 403,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "some kind of invisible resource in trade screen",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-01-06T07:22:35.6748078-05:00",
-          "CompletionTime": "2020-01-06T07:22:35.6748078-05:00",
+          "CompletionTime": "2020-05-19T18:22:10.8155427-04:00",
           "Notes": ""
         },
         {
-          "$id": "7120",
+          "$id": "7121",
           "ID": 405,
           "Status": "-",
           "Priority": 0,
@@ -94782,7 +94795,7 @@
           "Notes": ""
         },
         {
-          "$id": "7121",
+          "$id": "7122",
           "ID": 406,
           "Status": "-",
           "Priority": 0,
@@ -94795,7 +94808,7 @@
           "Notes": ""
         },
         {
-          "$id": "7122",
+          "$id": "7123",
           "ID": 407,
           "Status": "-",
           "Priority": 0,
@@ -94808,7 +94821,7 @@
           "Notes": ""
         },
         {
-          "$id": "7123",
+          "$id": "7124",
           "ID": 408,
           "Status": "-",
           "Priority": 0,
@@ -94821,7 +94834,7 @@
           "Notes": ""
         },
         {
-          "$id": "7124",
+          "$id": "7125",
           "ID": 413,
           "Status": "-",
           "Priority": 0,
@@ -94834,7 +94847,7 @@
           "Notes": ""
         },
         {
-          "$id": "7125",
+          "$id": "7126",
           "ID": 414,
           "Status": "-",
           "Priority": 0,
@@ -94847,7 +94860,7 @@
           "Notes": ""
         },
         {
-          "$id": "7126",
+          "$id": "7127",
           "ID": 415,
           "Status": "-",
           "Priority": 0,
@@ -94860,7 +94873,7 @@
           "Notes": ""
         },
         {
-          "$id": "7127",
+          "$id": "7128",
           "ID": 416,
           "Status": "-",
           "Priority": 0,
@@ -94873,7 +94886,7 @@
           "Notes": ""
         },
         {
-          "$id": "7128",
+          "$id": "7129",
           "ID": 421,
           "Status": "-",
           "Priority": 0,
@@ -94886,7 +94899,7 @@
           "Notes": ""
         },
         {
-          "$id": "7129",
+          "$id": "7130",
           "ID": 422,
           "Status": "-",
           "Priority": 0,
@@ -94896,19 +94909,6 @@
           "Preregs": [],
           "CreationTime": "2020-01-14T16:43:32.7409161-05:00",
           "CompletionTime": "2020-01-14T16:43:32.7409161-05:00",
-          "Notes": ""
-        },
-        {
-          "$id": "7130",
-          "ID": 438,
-          "Status": "-",
-          "Priority": 0,
-          "Description": "select what stats advance when promoting dwarves",
-          "Tags": [],
-          "Children": [],
-          "Preregs": [],
-          "CreationTime": "2020-01-25T14:08:31.1747926-05:00",
-          "CompletionTime": "2020-01-25T14:08:31.1747926-05:00",
           "Notes": ""
         },
         {
@@ -95091,7 +95091,7 @@
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:09.4766925-04:00",
-          "CompletionTime": "2020-05-15T22:15:19.0004823-04:00",
+          "CompletionTime": "2020-05-15T22:15:43.2650764-04:00",
           "Notes": ""
         },
         {
@@ -95110,14 +95110,14 @@
         {
           "$id": "7146",
           "ID": 474,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "bamboo tools",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:19.9435919-04:00",
-          "CompletionTime": "2020-04-11T16:52:19.9435919-04:00",
+          "CompletionTime": "2020-05-15T22:15:34.9281614-04:00",
           "Notes": ""
         },
         {
@@ -95136,14 +95136,14 @@
         {
           "$id": "7148",
           "ID": 476,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "unify resource item graphics into single field",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:39.9734871-04:00",
-          "CompletionTime": "2020-04-11T16:52:39.9734871-04:00",
+          "CompletionTime": "2020-05-15T22:15:48.1311604-04:00",
           "Notes": ""
         },
         {
@@ -96202,14 +96202,14 @@
         {
           "$id": "7228",
           "ID": 80,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Quit to overworld button",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4247456-04:00",
+          "CompletionTime": "2020-05-19T18:04:40.8971199-04:00",
           "Notes": ""
         },
         {
@@ -96679,14 +96679,14 @@
         {
           "$id": "7263",
           "ID": 126,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Furniture sheet is full - should things be split up? Only GUI icons on that sheet?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-11T09:39:48.1785463-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+          "CompletionTime": "2020-05-19T18:05:22.5903947-04:00",
           "Notes": ""
         },
         {
@@ -98025,14 +98025,14 @@
         {
           "$id": "7363",
           "ID": 246,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Console command to find specific entity",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-31T18:38:46.3230458-04:00",
-          "CompletionTime": "2019-08-31T18:38:46.3230458-04:00",
+          "CompletionTime": "2020-05-19T18:07:11.1182178-04:00",
           "Notes": ""
         },
         {
@@ -98051,14 +98051,14 @@
         {
           "$id": "7365",
           "ID": 248,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Console command to delete specific entity",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-31T18:39:01.5788727-04:00",
-          "CompletionTime": "2019-08-31T18:39:01.5788727-04:00",
+          "CompletionTime": "2020-05-19T18:07:16.4354377-04:00",
           "Notes": ""
         },
         {
@@ -98533,14 +98533,14 @@
         {
           "$id": "7402",
           "ID": 288,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Stop pre-empting find bed and sleep",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-02T15:06:24.4540531-04:00",
-          "CompletionTime": "2019-09-02T15:06:24.4540531-04:00",
+          "CompletionTime": "2020-05-19T18:10:07.1631182-04:00",
           "Notes": ""
         },
         {
@@ -98598,14 +98598,14 @@
         {
           "$id": "7407",
           "ID": 293,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Market giving full price on some items?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-02T15:44:39.0935916-04:00",
-          "CompletionTime": "2019-09-02T15:44:39.0935916-04:00",
+          "CompletionTime": "2020-05-19T18:10:19.0185411-04:00",
           "Notes": ""
         },
         {
@@ -98650,14 +98650,14 @@
         {
           "$id": "7411",
           "ID": 298,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Why do they sometimes spawn so low?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-05T06:21:09.7311627-04:00",
-          "CompletionTime": "2019-09-05T06:21:09.7311627-04:00",
+          "CompletionTime": "2020-05-19T18:10:31.0208682-04:00",
           "Notes": ""
         },
         {
@@ -98862,14 +98862,14 @@
         {
           "$id": "7427",
           "ID": 315,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Remember to remove difficulty loading hack",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-06T06:30:22.217056-04:00",
-          "CompletionTime": "2019-09-06T06:30:22.217056-04:00",
+          "CompletionTime": "2020-05-19T18:13:33.8493898-04:00",
           "Notes": ""
         },
         {
@@ -101144,14 +101144,14 @@
             {
               "$id": "7599",
               "ID": 110,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "Higher level dwarf -> better trinkets",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-              "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+              "CompletionTime": "2020-05-19T18:16:10.4564204-04:00",
               "Notes": ""
             },
             {
@@ -101183,14 +101183,14 @@
             {
               "$id": "7602",
               "ID": 147,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "Training equipment is destroyed permanently",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2019-08-14T07:28:08.8222957-04:00",
-              "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+              "CompletionTime": "2020-05-19T18:20:45.3665011-04:00",
               "Notes": ""
             },
             {
@@ -101470,6 +101470,19 @@
               "CreationTime": "2020-01-25T14:09:12.0068264-05:00",
               "CompletionTime": "2020-01-25T14:09:12.0068264-05:00",
               "Notes": ""
+            },
+            {
+              "$id": "7624",
+              "ID": 438,
+              "Status": "-",
+              "Priority": 0,
+              "Description": "select what stats advance when promoting dwarves",
+              "Tags": [],
+              "Children": [],
+              "Preregs": [],
+              "CreationTime": "2020-01-25T14:08:31.1747926-05:00",
+              "CompletionTime": "2020-01-25T14:08:31.1747926-05:00",
+              "Notes": ""
             }
           ],
           "Preregs": [],
@@ -101478,7 +101491,7 @@
           "Notes": ""
         },
         {
-          "$id": "7624",
+          "$id": "7625",
           "ID": 113,
           "Status": "-",
           "Priority": 0,
@@ -101491,7 +101504,7 @@
           "Notes": ""
         },
         {
-          "$id": "7625",
+          "$id": "7626",
           "ID": 371,
           "Status": "-",
           "Priority": 0,
@@ -101499,7 +101512,7 @@
           "Tags": [],
           "Children": [
             {
-              "$id": "7626",
+              "$id": "7627",
               "ID": 62,
               "Status": "-",
               "Priority": 0,
@@ -101518,7 +101531,7 @@
           "Notes": ""
         },
         {
-          "$id": "7627",
+          "$id": "7628",
           "ID": 392,
           "Status": "-",
           "Priority": 0,
@@ -101531,7 +101544,7 @@
           "Notes": ""
         },
         {
-          "$id": "7628",
+          "$id": "7629",
           "ID": 396,
           "Status": "-",
           "Priority": 0,
@@ -101546,7 +101559,7 @@
           "Notes": ""
         },
         {
-          "$id": "7629",
+          "$id": "7630",
           "ID": 402,
           "Status": "✓",
           "Priority": 0,
@@ -101559,20 +101572,20 @@
           "Notes": ""
         },
         {
-          "$id": "7630",
+          "$id": "7631",
           "ID": 403,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "some kind of invisible resource in trade screen",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-01-06T07:22:35.6748078-05:00",
-          "CompletionTime": "2020-01-06T07:22:35.6748078-05:00",
+          "CompletionTime": "2020-05-19T18:22:10.8155427-04:00",
           "Notes": ""
         },
         {
-          "$id": "7631",
+          "$id": "7632",
           "ID": 405,
           "Status": "-",
           "Priority": 0,
@@ -101585,7 +101598,7 @@
           "Notes": ""
         },
         {
-          "$id": "7632",
+          "$id": "7633",
           "ID": 406,
           "Status": "-",
           "Priority": 0,
@@ -101598,7 +101611,7 @@
           "Notes": ""
         },
         {
-          "$id": "7633",
+          "$id": "7634",
           "ID": 407,
           "Status": "-",
           "Priority": 0,
@@ -101611,7 +101624,7 @@
           "Notes": ""
         },
         {
-          "$id": "7634",
+          "$id": "7635",
           "ID": 408,
           "Status": "-",
           "Priority": 0,
@@ -101624,7 +101637,7 @@
           "Notes": ""
         },
         {
-          "$id": "7635",
+          "$id": "7636",
           "ID": 413,
           "Status": "-",
           "Priority": 0,
@@ -101637,7 +101650,7 @@
           "Notes": ""
         },
         {
-          "$id": "7636",
+          "$id": "7637",
           "ID": 414,
           "Status": "-",
           "Priority": 0,
@@ -101650,7 +101663,7 @@
           "Notes": ""
         },
         {
-          "$id": "7637",
+          "$id": "7638",
           "ID": 415,
           "Status": "-",
           "Priority": 0,
@@ -101663,7 +101676,7 @@
           "Notes": ""
         },
         {
-          "$id": "7638",
+          "$id": "7639",
           "ID": 416,
           "Status": "-",
           "Priority": 0,
@@ -101676,7 +101689,7 @@
           "Notes": ""
         },
         {
-          "$id": "7639",
+          "$id": "7640",
           "ID": 421,
           "Status": "-",
           "Priority": 0,
@@ -101689,7 +101702,7 @@
           "Notes": ""
         },
         {
-          "$id": "7640",
+          "$id": "7641",
           "ID": 422,
           "Status": "-",
           "Priority": 0,
@@ -101699,19 +101712,6 @@
           "Preregs": [],
           "CreationTime": "2020-01-14T16:43:32.7409161-05:00",
           "CompletionTime": "2020-01-14T16:43:32.7409161-05:00",
-          "Notes": ""
-        },
-        {
-          "$id": "7641",
-          "ID": 438,
-          "Status": "-",
-          "Priority": 0,
-          "Description": "select what stats advance when promoting dwarves",
-          "Tags": [],
-          "Children": [],
-          "Preregs": [],
-          "CreationTime": "2020-01-25T14:08:31.1747926-05:00",
-          "CompletionTime": "2020-01-25T14:08:31.1747926-05:00",
           "Notes": ""
         },
         {
@@ -101894,7 +101894,7 @@
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:09.4766925-04:00",
-          "CompletionTime": "2020-05-15T22:15:19.0004823-04:00",
+          "CompletionTime": "2020-05-15T22:15:43.2650764-04:00",
           "Notes": ""
         },
         {
@@ -101926,27 +101926,27 @@
         {
           "$id": "7658",
           "ID": 475,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "peppermint trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:28.719687-04:00",
-          "CompletionTime": "2020-04-11T16:52:28.719687-04:00",
+          "CompletionTime": "2020-05-19T18:22:46.9377293-04:00",
           "Notes": ""
         },
         {
           "$id": "7659",
           "ID": 476,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "unify resource item graphics into single field",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:39.9734871-04:00",
-          "CompletionTime": "2020-04-11T16:52:39.9734871-04:00",
+          "CompletionTime": "2020-05-15T22:15:48.1311604-04:00",
           "Notes": ""
         },
         {
@@ -103005,14 +103005,14 @@
         {
           "$id": "7739",
           "ID": 80,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Quit to overworld button",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4247456-04:00",
+          "CompletionTime": "2020-05-19T18:04:40.8971199-04:00",
           "Notes": ""
         },
         {
@@ -103482,14 +103482,14 @@
         {
           "$id": "7774",
           "ID": 126,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Furniture sheet is full - should things be split up? Only GUI icons on that sheet?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-11T09:39:48.1785463-04:00",
-          "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+          "CompletionTime": "2020-05-19T18:05:22.5903947-04:00",
           "Notes": ""
         },
         {
@@ -104828,14 +104828,14 @@
         {
           "$id": "7874",
           "ID": 246,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Console command to find specific entity",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-31T18:38:46.3230458-04:00",
-          "CompletionTime": "2019-08-31T18:38:46.3230458-04:00",
+          "CompletionTime": "2020-05-19T18:07:11.1182178-04:00",
           "Notes": ""
         },
         {
@@ -104854,14 +104854,14 @@
         {
           "$id": "7876",
           "ID": 248,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Console command to delete specific entity",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-08-31T18:39:01.5788727-04:00",
-          "CompletionTime": "2019-08-31T18:39:01.5788727-04:00",
+          "CompletionTime": "2020-05-19T18:07:16.4354377-04:00",
           "Notes": ""
         },
         {
@@ -105336,14 +105336,14 @@
         {
           "$id": "7913",
           "ID": 288,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Stop pre-empting find bed and sleep",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-02T15:06:24.4540531-04:00",
-          "CompletionTime": "2019-09-02T15:06:24.4540531-04:00",
+          "CompletionTime": "2020-05-19T18:10:07.1631182-04:00",
           "Notes": ""
         },
         {
@@ -105401,14 +105401,14 @@
         {
           "$id": "7918",
           "ID": 293,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Market giving full price on some items?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-02T15:44:39.0935916-04:00",
-          "CompletionTime": "2019-09-02T15:44:39.0935916-04:00",
+          "CompletionTime": "2020-05-19T18:10:19.0185411-04:00",
           "Notes": ""
         },
         {
@@ -105453,14 +105453,14 @@
         {
           "$id": "7922",
           "ID": 298,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Why do they sometimes spawn so low?",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-05T06:21:09.7311627-04:00",
-          "CompletionTime": "2019-09-05T06:21:09.7311627-04:00",
+          "CompletionTime": "2020-05-19T18:10:31.0208682-04:00",
           "Notes": ""
         },
         {
@@ -105665,14 +105665,14 @@
         {
           "$id": "7938",
           "ID": 315,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "Remember to remove difficulty loading hack",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2019-09-06T06:30:22.217056-04:00",
-          "CompletionTime": "2019-09-06T06:30:22.217056-04:00",
+          "CompletionTime": "2020-05-19T18:13:33.8493898-04:00",
           "Notes": ""
         },
         {
@@ -107947,14 +107947,14 @@
             {
               "$id": "8110",
               "ID": 110,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "Higher level dwarf -> better trinkets",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-              "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+              "CompletionTime": "2020-05-19T18:16:10.4564204-04:00",
               "Notes": ""
             },
             {
@@ -107986,14 +107986,14 @@
             {
               "$id": "8113",
               "ID": 147,
-              "Status": "-",
+              "Status": "✓",
               "Priority": 0,
               "Description": "Training equipment is destroyed permanently",
               "Tags": [],
               "Children": [],
               "Preregs": [],
               "CreationTime": "2019-08-14T07:28:08.8222957-04:00",
-              "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+              "CompletionTime": "2020-05-19T18:20:45.3665011-04:00",
               "Notes": ""
             },
             {
@@ -108273,6 +108273,19 @@
               "CreationTime": "2020-01-25T14:09:12.0068264-05:00",
               "CompletionTime": "2020-01-25T14:09:12.0068264-05:00",
               "Notes": ""
+            },
+            {
+              "$id": "8135",
+              "ID": 438,
+              "Status": "-",
+              "Priority": 0,
+              "Description": "select what stats advance when promoting dwarves",
+              "Tags": [],
+              "Children": [],
+              "Preregs": [],
+              "CreationTime": "2020-01-25T14:08:31.1747926-05:00",
+              "CompletionTime": "2020-01-25T14:08:31.1747926-05:00",
+              "Notes": ""
             }
           ],
           "Preregs": [],
@@ -108281,7 +108294,7 @@
           "Notes": ""
         },
         {
-          "$id": "8135",
+          "$id": "8136",
           "ID": 113,
           "Status": "-",
           "Priority": 0,
@@ -108294,7 +108307,7 @@
           "Notes": ""
         },
         {
-          "$id": "8136",
+          "$id": "8137",
           "ID": 371,
           "Status": "-",
           "Priority": 0,
@@ -108302,7 +108315,7 @@
           "Tags": [],
           "Children": [
             {
-              "$id": "8137",
+              "$id": "8138",
               "ID": 62,
               "Status": "-",
               "Priority": 0,
@@ -108321,7 +108334,7 @@
           "Notes": ""
         },
         {
-          "$id": "8138",
+          "$id": "8139",
           "ID": 392,
           "Status": "-",
           "Priority": 0,
@@ -108334,7 +108347,7 @@
           "Notes": ""
         },
         {
-          "$id": "8139",
+          "$id": "8140",
           "ID": 396,
           "Status": "-",
           "Priority": 0,
@@ -108349,7 +108362,7 @@
           "Notes": ""
         },
         {
-          "$id": "8140",
+          "$id": "8141",
           "ID": 402,
           "Status": "✓",
           "Priority": 0,
@@ -108362,20 +108375,20 @@
           "Notes": ""
         },
         {
-          "$id": "8141",
+          "$id": "8142",
           "ID": 403,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "some kind of invisible resource in trade screen",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-01-06T07:22:35.6748078-05:00",
-          "CompletionTime": "2020-01-06T07:22:35.6748078-05:00",
+          "CompletionTime": "2020-05-19T18:22:10.8155427-04:00",
           "Notes": ""
         },
         {
-          "$id": "8142",
+          "$id": "8143",
           "ID": 405,
           "Status": "-",
           "Priority": 0,
@@ -108388,7 +108401,7 @@
           "Notes": ""
         },
         {
-          "$id": "8143",
+          "$id": "8144",
           "ID": 406,
           "Status": "-",
           "Priority": 0,
@@ -108401,7 +108414,7 @@
           "Notes": ""
         },
         {
-          "$id": "8144",
+          "$id": "8145",
           "ID": 407,
           "Status": "-",
           "Priority": 0,
@@ -108414,7 +108427,7 @@
           "Notes": ""
         },
         {
-          "$id": "8145",
+          "$id": "8146",
           "ID": 408,
           "Status": "-",
           "Priority": 0,
@@ -108427,7 +108440,7 @@
           "Notes": ""
         },
         {
-          "$id": "8146",
+          "$id": "8147",
           "ID": 413,
           "Status": "-",
           "Priority": 0,
@@ -108440,7 +108453,7 @@
           "Notes": ""
         },
         {
-          "$id": "8147",
+          "$id": "8148",
           "ID": 414,
           "Status": "-",
           "Priority": 0,
@@ -108453,7 +108466,7 @@
           "Notes": ""
         },
         {
-          "$id": "8148",
+          "$id": "8149",
           "ID": 415,
           "Status": "-",
           "Priority": 0,
@@ -108466,7 +108479,7 @@
           "Notes": ""
         },
         {
-          "$id": "8149",
+          "$id": "8150",
           "ID": 416,
           "Status": "-",
           "Priority": 0,
@@ -108479,7 +108492,7 @@
           "Notes": ""
         },
         {
-          "$id": "8150",
+          "$id": "8151",
           "ID": 421,
           "Status": "-",
           "Priority": 0,
@@ -108492,7 +108505,7 @@
           "Notes": ""
         },
         {
-          "$id": "8151",
+          "$id": "8152",
           "ID": 422,
           "Status": "-",
           "Priority": 0,
@@ -108502,19 +108515,6 @@
           "Preregs": [],
           "CreationTime": "2020-01-14T16:43:32.7409161-05:00",
           "CompletionTime": "2020-01-14T16:43:32.7409161-05:00",
-          "Notes": ""
-        },
-        {
-          "$id": "8152",
-          "ID": 438,
-          "Status": "-",
-          "Priority": 0,
-          "Description": "select what stats advance when promoting dwarves",
-          "Tags": [],
-          "Children": [],
-          "Preregs": [],
-          "CreationTime": "2020-01-25T14:08:31.1747926-05:00",
-          "CompletionTime": "2020-01-25T14:08:31.1747926-05:00",
           "Notes": ""
         },
         {
@@ -108729,40 +108729,40 @@
         {
           "$id": "8169",
           "ID": 475,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "peppermint trinkets",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:28.719687-04:00",
-          "CompletionTime": "2020-04-11T16:52:28.719687-04:00",
+          "CompletionTime": "2020-05-19T18:22:46.9377293-04:00",
           "Notes": ""
         },
         {
           "$id": "8170",
           "ID": 476,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "unify resource item graphics into single field",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:39.9734871-04:00",
-          "CompletionTime": "2020-04-11T16:52:39.9734871-04:00",
+          "CompletionTime": "2020-05-15T22:15:48.1311604-04:00",
           "Notes": ""
         },
         {
           "$id": "8171",
           "ID": 477,
-          "Status": "-",
+          "Status": "✓",
           "Priority": 0,
           "Description": "peppermint tools",
           "Tags": [],
           "Children": [],
           "Preregs": [],
           "CreationTime": "2020-04-11T16:52:45.9575045-04:00",
-          "CompletionTime": "2020-04-11T16:52:45.9575045-04:00",
+          "CompletionTime": "2020-05-19T18:22:53.2295511-04:00",
           "Notes": ""
         },
         {
@@ -109809,14 +109809,14 @@
       {
         "$id": "8250",
         "ID": 80,
-        "Status": "-",
+        "Status": "✓",
         "Priority": 0,
         "Description": "Quit to overworld button",
         "Tags": [],
         "Children": [],
         "Preregs": [],
         "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-        "CompletionTime": "2019-08-15T07:31:28.4247456-04:00",
+        "CompletionTime": "2020-05-19T18:04:40.8971199-04:00",
         "Notes": ""
       },
       {
@@ -110286,14 +110286,14 @@
       {
         "$id": "8285",
         "ID": 126,
-        "Status": "-",
+        "Status": "✓",
         "Priority": 0,
         "Description": "Furniture sheet is full - should things be split up? Only GUI icons on that sheet?",
         "Tags": [],
         "Children": [],
         "Preregs": [],
         "CreationTime": "2019-08-11T09:39:48.1785463-04:00",
-        "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+        "CompletionTime": "2020-05-19T18:05:22.5903947-04:00",
         "Notes": ""
       },
       {
@@ -111632,14 +111632,14 @@
       {
         "$id": "8385",
         "ID": 246,
-        "Status": "-",
+        "Status": "✓",
         "Priority": 0,
         "Description": "Console command to find specific entity",
         "Tags": [],
         "Children": [],
         "Preregs": [],
         "CreationTime": "2019-08-31T18:38:46.3230458-04:00",
-        "CompletionTime": "2019-08-31T18:38:46.3230458-04:00",
+        "CompletionTime": "2020-05-19T18:07:11.1182178-04:00",
         "Notes": ""
       },
       {
@@ -111658,14 +111658,14 @@
       {
         "$id": "8387",
         "ID": 248,
-        "Status": "-",
+        "Status": "✓",
         "Priority": 0,
         "Description": "Console command to delete specific entity",
         "Tags": [],
         "Children": [],
         "Preregs": [],
         "CreationTime": "2019-08-31T18:39:01.5788727-04:00",
-        "CompletionTime": "2019-08-31T18:39:01.5788727-04:00",
+        "CompletionTime": "2020-05-19T18:07:16.4354377-04:00",
         "Notes": ""
       },
       {
@@ -112140,14 +112140,14 @@
       {
         "$id": "8424",
         "ID": 288,
-        "Status": "-",
+        "Status": "✓",
         "Priority": 0,
         "Description": "Stop pre-empting find bed and sleep",
         "Tags": [],
         "Children": [],
         "Preregs": [],
         "CreationTime": "2019-09-02T15:06:24.4540531-04:00",
-        "CompletionTime": "2019-09-02T15:06:24.4540531-04:00",
+        "CompletionTime": "2020-05-19T18:10:07.1631182-04:00",
         "Notes": ""
       },
       {
@@ -112205,14 +112205,14 @@
       {
         "$id": "8429",
         "ID": 293,
-        "Status": "-",
+        "Status": "✓",
         "Priority": 0,
         "Description": "Market giving full price on some items?",
         "Tags": [],
         "Children": [],
         "Preregs": [],
         "CreationTime": "2019-09-02T15:44:39.0935916-04:00",
-        "CompletionTime": "2019-09-02T15:44:39.0935916-04:00",
+        "CompletionTime": "2020-05-19T18:10:19.0185411-04:00",
         "Notes": ""
       },
       {
@@ -112257,14 +112257,14 @@
       {
         "$id": "8433",
         "ID": 298,
-        "Status": "-",
+        "Status": "✓",
         "Priority": 0,
         "Description": "Why do they sometimes spawn so low?",
         "Tags": [],
         "Children": [],
         "Preregs": [],
         "CreationTime": "2019-09-05T06:21:09.7311627-04:00",
-        "CompletionTime": "2019-09-05T06:21:09.7311627-04:00",
+        "CompletionTime": "2020-05-19T18:10:31.0208682-04:00",
         "Notes": ""
       },
       {
@@ -112469,14 +112469,14 @@
       {
         "$id": "8449",
         "ID": 315,
-        "Status": "-",
+        "Status": "✓",
         "Priority": 0,
         "Description": "Remember to remove difficulty loading hack",
         "Tags": [],
         "Children": [],
         "Preregs": [],
         "CreationTime": "2019-09-06T06:30:22.217056-04:00",
-        "CompletionTime": "2019-09-06T06:30:22.217056-04:00",
+        "CompletionTime": "2020-05-19T18:13:33.8493898-04:00",
         "Notes": ""
       },
       {
@@ -114742,153 +114742,6 @@
       },
       {
         "$id": "8620",
-        "ID": 367,
-        "Status": "-",
-        "Priority": 0,
-        "Description": "crafting update",
-        "Tags": [],
-        "Children": [
-          {
-            "$id": "8621",
-            "ID": 110,
-            "Status": "-",
-            "Priority": 0,
-            "Description": "Higher level dwarf -> better trinkets",
-            "Tags": [],
-            "Children": [],
-            "Preregs": [],
-            "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-            "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
-            "Notes": ""
-          },
-          {
-            "$id": "8622",
-            "ID": 111,
-            "Status": "-",
-            "Priority": 0,
-            "Description": "Level requirements for crafting certain items",
-            "Tags": [],
-            "Children": [],
-            "Preregs": [],
-            "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-            "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
-            "Notes": ""
-          },
-          {
-            "$id": "8623",
-            "ID": 112,
-            "Status": "-",
-            "Priority": 0,
-            "Description": "Craftable statues that grant buffs",
-            "Tags": [],
-            "Children": [],
-            "Preregs": [],
-            "CreationTime": "2019-08-10T08:31:34.071755-04:00",
-            "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
-            "Notes": ""
-          },
-          {
-            "$id": "8624",
-            "ID": 147,
-            "Status": "-",
-            "Priority": 0,
-            "Description": "Training equipment is destroyed permanently",
-            "Tags": [],
-            "Children": [],
-            "Preregs": [],
-            "CreationTime": "2019-08-14T07:28:08.8222957-04:00",
-            "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
-            "Notes": ""
-          },
-          {
-            "$id": "8625",
-            "ID": 361,
-            "Status": "✓",
-            "Priority": 0,
-            "Description": "Merge craft items and resource types",
-            "Tags": [],
-            "Children": [
-              {
-                "$id": "8626",
-                "ID": 177,
-                "Status": "✓",
-                "Priority": 0,
-                "Description": "Craft preregs in resources used?",
-                "Tags": [],
-                "Children": [],
-                "Preregs": [],
-                "CreationTime": "2019-08-17T14:25:11.8469202-04:00",
-                "CompletionTime": "2020-05-15T22:12:39.8446961-04:00",
-                "Notes": ""
-              }
-            ],
-            "Preregs": [],
-            "CreationTime": "2019-12-14T08:51:21.8232031-05:00",
-            "CompletionTime": "2020-05-15T22:12:47.5652252-04:00",
-            "Notes": ""
-          },
-          {
-            "$id": "8627",
-            "ID": 339,
-            "Status": "-",
-            "Priority": 0,
-            "Description": "God mode spawned furniture cant be destroyed for resources",
-            "Tags": [
-              "bug"
-            ],
-            "Children": [],
-            "Preregs": [],
-            "CreationTime": "2019-10-04T06:47:24.4584386-04:00",
-            "CompletionTime": "2019-10-04T06:47:24.4584386-04:00",
-            "Notes": ""
-          },
-          {
-            "$id": "8628",
-            "ID": 420,
-            "Status": "-",
-            "Priority": 0,
-            "Description": "resources can specify the required tier of tool needed to craft them",
-            "Tags": [],
-            "Children": [],
-            "Preregs": [],
-            "CreationTime": "2020-01-14T16:38:00.3519298-05:00",
-            "CompletionTime": "2020-01-14T16:38:00.3519298-05:00",
-            "Notes": ""
-          },
-          {
-            "$id": "8629",
-            "ID": 429,
-            "Status": "-",
-            "Priority": 0,
-            "Description": "must craft unique block types before they can be placed",
-            "Tags": [],
-            "Children": [],
-            "Preregs": [],
-            "CreationTime": "2020-01-16T07:02:22.2104736-05:00",
-            "CompletionTime": "2020-01-16T07:02:22.2104736-05:00",
-            "Notes": ""
-          },
-          {
-            "$id": "8630",
-            "ID": 442,
-            "Status": "✓",
-            "Priority": 0,
-            "Description": "craft clothes from cotton",
-            "Tags": [],
-            "Children": [],
-            "Preregs": [],
-            "CreationTime": "2020-01-27T06:47:18.4832742-05:00",
-            "CompletionTime": "2020-05-15T22:12:58.8352134-04:00",
-            "Notes": ""
-          }
-        ],
-        "Preregs": [],
-        "CreationTime": "2019-12-14T16:44:50.6744617-05:00",
-        "CompletionTime": "2019-12-14T16:44:50.6744617-05:00",
-        "Notes": ""
-      },
-      {
-        "$id": "8631",
         "ID": 369,
         "Status": "-",
         "Priority": 0,
@@ -114896,7 +114749,7 @@
         "Tags": [],
         "Children": [
           {
-            "$id": "8632",
+            "$id": "8621",
             "ID": 103,
             "Status": "-",
             "Priority": 0,
@@ -114909,7 +114762,7 @@
             "Notes": ""
           },
           {
-            "$id": "8633",
+            "$id": "8622",
             "ID": 115,
             "Status": "-",
             "Priority": 0,
@@ -114922,7 +114775,7 @@
             "Notes": ""
           },
           {
-            "$id": "8634",
+            "$id": "8623",
             "ID": 114,
             "Status": "-",
             "Priority": 0,
@@ -114935,7 +114788,7 @@
             "Notes": ""
           },
           {
-            "$id": "8635",
+            "$id": "8624",
             "ID": 379,
             "Status": "-",
             "Priority": 0,
@@ -114954,7 +114807,7 @@
         "Notes": ""
       },
       {
-        "$id": "8636",
+        "$id": "8625",
         "ID": 370,
         "Status": "-",
         "Priority": 0,
@@ -114962,7 +114815,7 @@
         "Tags": [],
         "Children": [
           {
-            "$id": "8637",
+            "$id": "8626",
             "ID": 100,
             "Status": "-",
             "Priority": 0,
@@ -114975,7 +114828,7 @@
             "Notes": ""
           },
           {
-            "$id": "8638",
+            "$id": "8627",
             "ID": 101,
             "Status": "-",
             "Priority": 0,
@@ -114988,7 +114841,7 @@
             "Notes": ""
           },
           {
-            "$id": "8639",
+            "$id": "8628",
             "ID": 190,
             "Status": "-",
             "Priority": 0,
@@ -115001,7 +114854,7 @@
             "Notes": ""
           },
           {
-            "$id": "8640",
+            "$id": "8629",
             "ID": 284,
             "Status": "-",
             "Priority": 0,
@@ -115014,7 +114867,7 @@
             "Notes": ""
           },
           {
-            "$id": "8641",
+            "$id": "8630",
             "ID": 285,
             "Status": "-",
             "Priority": 0,
@@ -115027,7 +114880,7 @@
             "Notes": ""
           },
           {
-            "$id": "8642",
+            "$id": "8631",
             "ID": 355,
             "Status": "-",
             "Priority": 0,
@@ -115040,7 +114893,7 @@
             "Notes": ""
           },
           {
-            "$id": "8643",
+            "$id": "8632",
             "ID": 53,
             "Status": "-",
             "Priority": 0,
@@ -115053,7 +114906,7 @@
             "Notes": ""
           },
           {
-            "$id": "8644",
+            "$id": "8633",
             "ID": 59,
             "Status": "-",
             "Priority": 0,
@@ -115066,7 +114919,7 @@
             "Notes": ""
           },
           {
-            "$id": "8645",
+            "$id": "8634",
             "ID": 440,
             "Status": "-",
             "Priority": 0,
@@ -115077,6 +114930,166 @@
             "CreationTime": "2020-01-25T14:09:12.0068264-05:00",
             "CompletionTime": "2020-01-25T14:09:12.0068264-05:00",
             "Notes": ""
+          },
+          {
+            "$id": "8635",
+            "ID": 438,
+            "Status": "-",
+            "Priority": 0,
+            "Description": "select what stats advance when promoting dwarves",
+            "Tags": [],
+            "Children": [],
+            "Preregs": [],
+            "CreationTime": "2020-01-25T14:08:31.1747926-05:00",
+            "CompletionTime": "2020-01-25T14:08:31.1747926-05:00",
+            "Notes": ""
+          },
+          {
+            "$id": "8636",
+            "ID": 367,
+            "Status": "-",
+            "Priority": 0,
+            "Description": "crafting update",
+            "Tags": [],
+            "Children": [
+              {
+                "$id": "8637",
+                "ID": 110,
+                "Status": "✓",
+                "Priority": 0,
+                "Description": "Higher level dwarf -> better trinkets",
+                "Tags": [],
+                "Children": [],
+                "Preregs": [],
+                "CreationTime": "2019-08-10T08:31:34.071755-04:00",
+                "CompletionTime": "2020-05-19T18:16:10.4564204-04:00",
+                "Notes": ""
+              },
+              {
+                "$id": "8638",
+                "ID": 111,
+                "Status": "-",
+                "Priority": 0,
+                "Description": "Level requirements for crafting certain items",
+                "Tags": [],
+                "Children": [],
+                "Preregs": [],
+                "CreationTime": "2019-08-10T08:31:34.071755-04:00",
+                "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+                "Notes": ""
+              },
+              {
+                "$id": "8639",
+                "ID": 112,
+                "Status": "-",
+                "Priority": 0,
+                "Description": "Craftable statues that grant buffs",
+                "Tags": [],
+                "Children": [],
+                "Preregs": [],
+                "CreationTime": "2019-08-10T08:31:34.071755-04:00",
+                "CompletionTime": "2019-08-15T07:31:28.4252197-04:00",
+                "Notes": ""
+              },
+              {
+                "$id": "8640",
+                "ID": 147,
+                "Status": "✓",
+                "Priority": 0,
+                "Description": "Training equipment is destroyed permanently",
+                "Tags": [],
+                "Children": [],
+                "Preregs": [],
+                "CreationTime": "2019-08-14T07:28:08.8222957-04:00",
+                "CompletionTime": "2020-05-19T18:20:45.3665011-04:00",
+                "Notes": ""
+              },
+              {
+                "$id": "8641",
+                "ID": 361,
+                "Status": "✓",
+                "Priority": 0,
+                "Description": "Merge craft items and resource types",
+                "Tags": [],
+                "Children": [
+                  {
+                    "$id": "8642",
+                    "ID": 177,
+                    "Status": "✓",
+                    "Priority": 0,
+                    "Description": "Craft preregs in resources used?",
+                    "Tags": [],
+                    "Children": [],
+                    "Preregs": [],
+                    "CreationTime": "2019-08-17T14:25:11.8469202-04:00",
+                    "CompletionTime": "2020-05-15T22:12:39.8446961-04:00",
+                    "Notes": ""
+                  }
+                ],
+                "Preregs": [],
+                "CreationTime": "2019-12-14T08:51:21.8232031-05:00",
+                "CompletionTime": "2020-05-15T22:12:47.5652252-04:00",
+                "Notes": ""
+              },
+              {
+                "$id": "8643",
+                "ID": 339,
+                "Status": "-",
+                "Priority": 0,
+                "Description": "God mode spawned furniture cant be destroyed for resources",
+                "Tags": [
+                  "bug"
+                ],
+                "Children": [],
+                "Preregs": [],
+                "CreationTime": "2019-10-04T06:47:24.4584386-04:00",
+                "CompletionTime": "2019-10-04T06:47:24.4584386-04:00",
+                "Notes": ""
+              },
+              {
+                "$id": "8644",
+                "ID": 420,
+                "Status": "-",
+                "Priority": 0,
+                "Description": "resources can specify the required tier of tool needed to craft them",
+                "Tags": [],
+                "Children": [],
+                "Preregs": [],
+                "CreationTime": "2020-01-14T16:38:00.3519298-05:00",
+                "CompletionTime": "2020-01-14T16:38:00.3519298-05:00",
+                "Notes": ""
+              },
+              {
+                "$id": "8645",
+                "ID": 429,
+                "Status": "-",
+                "Priority": 0,
+                "Description": "must craft unique block types before they can be placed",
+                "Tags": [],
+                "Children": [],
+                "Preregs": [],
+                "CreationTime": "2020-01-16T07:02:22.2104736-05:00",
+                "CompletionTime": "2020-01-16T07:02:22.2104736-05:00",
+                "Notes": ""
+              },
+              {
+                "$id": "8646",
+                "ID": 442,
+                "Status": "✓",
+                "Priority": 0,
+                "Description": "craft clothes from cotton",
+                "Tags": [],
+                "Children": [],
+                "Preregs": [],
+                "CreationTime": "2020-01-27T06:47:18.4832742-05:00",
+                "CompletionTime": "2020-05-15T22:12:58.8352134-04:00",
+                "Notes": ""
+              }
+            ],
+            "Preregs": [],
+            "CreationTime": "2019-12-14T16:44:50.6744617-05:00",
+            "CompletionTime": "2019-12-14T16:44:50.6744617-05:00",
+            "Notes": ""
           }
         ],
         "Preregs": [],
@@ -115085,7 +115098,7 @@
         "Notes": ""
       },
       {
-        "$id": "8646",
+        "$id": "8647",
         "ID": 113,
         "Status": "-",
         "Priority": 0,
@@ -115098,7 +115111,7 @@
         "Notes": ""
       },
       {
-        "$id": "8647",
+        "$id": "8648",
         "ID": 371,
         "Status": "-",
         "Priority": 0,
@@ -115106,7 +115119,7 @@
         "Tags": [],
         "Children": [
           {
-            "$id": "8648",
+            "$id": "8649",
             "ID": 62,
             "Status": "-",
             "Priority": 0,
@@ -115125,7 +115138,7 @@
         "Notes": ""
       },
       {
-        "$id": "8649",
+        "$id": "8650",
         "ID": 392,
         "Status": "-",
         "Priority": 0,
@@ -115138,7 +115151,7 @@
         "Notes": ""
       },
       {
-        "$id": "8650",
+        "$id": "8651",
         "ID": 396,
         "Status": "-",
         "Priority": 0,
@@ -115153,7 +115166,7 @@
         "Notes": ""
       },
       {
-        "$id": "8651",
+        "$id": "8652",
         "ID": 402,
         "Status": "✓",
         "Priority": 0,
@@ -115166,20 +115179,20 @@
         "Notes": ""
       },
       {
-        "$id": "8652",
+        "$id": "8653",
         "ID": 403,
-        "Status": "-",
+        "Status": "✓",
         "Priority": 0,
         "Description": "some kind of invisible resource in trade screen",
         "Tags": [],
         "Children": [],
         "Preregs": [],
         "CreationTime": "2020-01-06T07:22:35.6748078-05:00",
-        "CompletionTime": "2020-01-06T07:22:35.6748078-05:00",
+        "CompletionTime": "2020-05-19T18:22:10.8155427-04:00",
         "Notes": ""
       },
       {
-        "$id": "8653",
+        "$id": "8654",
         "ID": 405,
         "Status": "-",
         "Priority": 0,
@@ -115192,7 +115205,7 @@
         "Notes": ""
       },
       {
-        "$id": "8654",
+        "$id": "8655",
         "ID": 406,
         "Status": "-",
         "Priority": 0,
@@ -115205,7 +115218,7 @@
         "Notes": ""
       },
       {
-        "$id": "8655",
+        "$id": "8656",
         "ID": 407,
         "Status": "-",
         "Priority": 0,
@@ -115218,7 +115231,7 @@
         "Notes": ""
       },
       {
-        "$id": "8656",
+        "$id": "8657",
         "ID": 408,
         "Status": "-",
         "Priority": 0,
@@ -115231,7 +115244,7 @@
         "Notes": ""
       },
       {
-        "$id": "8657",
+        "$id": "8658",
         "ID": 413,
         "Status": "-",
         "Priority": 0,
@@ -115244,7 +115257,7 @@
         "Notes": ""
       },
       {
-        "$id": "8658",
+        "$id": "8659",
         "ID": 414,
         "Status": "-",
         "Priority": 0,
@@ -115257,7 +115270,7 @@
         "Notes": ""
       },
       {
-        "$id": "8659",
+        "$id": "8660",
         "ID": 415,
         "Status": "-",
         "Priority": 0,
@@ -115270,7 +115283,7 @@
         "Notes": ""
       },
       {
-        "$id": "8660",
+        "$id": "8661",
         "ID": 416,
         "Status": "-",
         "Priority": 0,
@@ -115283,7 +115296,7 @@
         "Notes": ""
       },
       {
-        "$id": "8661",
+        "$id": "8662",
         "ID": 421,
         "Status": "-",
         "Priority": 0,
@@ -115296,7 +115309,7 @@
         "Notes": ""
       },
       {
-        "$id": "8662",
+        "$id": "8663",
         "ID": 422,
         "Status": "-",
         "Priority": 0,
@@ -115306,19 +115319,6 @@
         "Preregs": [],
         "CreationTime": "2020-01-14T16:43:32.7409161-05:00",
         "CompletionTime": "2020-01-14T16:43:32.7409161-05:00",
-        "Notes": ""
-      },
-      {
-        "$id": "8663",
-        "ID": 438,
-        "Status": "-",
-        "Priority": 0,
-        "Description": "select what stats advance when promoting dwarves",
-        "Tags": [],
-        "Children": [],
-        "Preregs": [],
-        "CreationTime": "2020-01-25T14:08:31.1747926-05:00",
-        "CompletionTime": "2020-01-25T14:08:31.1747926-05:00",
         "Notes": ""
       },
       {
@@ -115533,14 +115533,14 @@
       {
         "$id": "8680",
         "ID": 475,
-        "Status": "-",
+        "Status": "✓",
         "Priority": 0,
         "Description": "peppermint trinkets",
         "Tags": [],
         "Children": [],
         "Preregs": [],
         "CreationTime": "2020-04-11T16:52:28.719687-04:00",
-        "CompletionTime": "2020-04-11T16:52:28.719687-04:00",
+        "CompletionTime": "2020-05-19T18:22:46.9377293-04:00",
         "Notes": ""
       },
       {
@@ -115559,14 +115559,14 @@
       {
         "$id": "8682",
         "ID": 477,
-        "Status": "-",
+        "Status": "✓",
         "Priority": 0,
         "Description": "peppermint tools",
         "Tags": [],
         "Children": [],
         "Preregs": [],
         "CreationTime": "2020-04-11T16:52:45.9575045-04:00",
-        "CompletionTime": "2020-04-11T16:52:45.9575045-04:00",
+        "CompletionTime": "2020-05-19T18:22:53.2295511-04:00",
         "Notes": ""
       },
       {

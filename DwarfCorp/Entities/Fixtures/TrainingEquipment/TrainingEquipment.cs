@@ -32,7 +32,7 @@ namespace DwarfCorp
 
             if (GetRoot().GetComponent<Health>().HasValue(out var health))
             {
-                health.MaxHealth = 500;
+                health.MaxHealth = 5000;
                 health.Hp = SourceResource.GetProperty<float>("hp", 5000.0f);
             }
         }
