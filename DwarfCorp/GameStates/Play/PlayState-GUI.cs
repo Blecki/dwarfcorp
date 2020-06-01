@@ -65,9 +65,7 @@ namespace DwarfCorp.GameStates
             if (String.IsNullOrEmpty(Text))
             {
                 if (Gui.TooltipItem != null)
-                {
                     Gui.DestroyWidget(Gui.TooltipItem);
-                }
                 Gui.TooltipItem = null;
             }
             else
