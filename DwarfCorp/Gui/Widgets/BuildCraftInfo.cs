@@ -15,6 +15,7 @@ namespace DwarfCorp.Gui.Widgets
         private Widget Button;
         private Widget PlaceButton;
         public Action<Widget, InputEventArgs> BuildAction = null;
+        public bool DrawBorder = true;
 
         public Func<bool> CanPlace = null;
         public Action<Widget, InputEventArgs> PlaceAction = null;
@@ -321,9 +322,14 @@ namespace DwarfCorp.Gui.Widgets
 
         protected override Mesh Redraw()
         {
-            var borderMesh = Mesh.EmptyMesh();
-            borderMesh.Scale9Part(Rect, Root.GetTileSheet("border-fancy"), Scale9Corners.Top | Scale9Corners.Left | Scale9Corners.Right);
-            return Mesh.Merge(borderMesh, base.Redraw()); // This will be removable when we switch to in place drawing for the whole GUI tree.
+            if (DrawBorder)
+            {
+                var borderMesh = Mesh.EmptyMesh();
+                borderMesh.Scale9Part(Rect, Root.GetTileSheet("border-fancy"), Scale9Corners.Top | Scale9Corners.Left | Scale9Corners.Right);
+                return Mesh.Merge(borderMesh, base.Redraw()); // This will be removable when we switch to in place drawing for the whole GUI tree.
+            }
+            else
+                return base.Redraw();
         }
     }
 }

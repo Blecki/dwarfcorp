@@ -43,6 +43,7 @@ namespace DwarfCorp.GameStates
         private Widget ZonesIcon;
         private Widget TasksIcon;
         private Widget MarksIcon;
+        private Widget CommandsIcon;
         private Dictionary<uint, WorldPopup> LastWorldPopup = new Dictionary<uint, WorldPopup>();
         private List<Widget> TogglePanels = new List<Widget>();
 
@@ -509,6 +510,15 @@ namespace DwarfCorp.GameStates
                 World = this.World
             });
 
+            var commandPanel = Gui.RootItem.AddChild(new Play.CommandPanel
+            {
+                Border = "border-fancy",
+                AutoLayout = AutoLayout.FloatBottomLeft,
+                MinimumSize = new Point(400, 500),
+                Hidden = true,
+                World = this.World
+            });
+
             TogglePanels = new List<Widget>
             {
                 MinimapFrame,
@@ -516,6 +526,7 @@ namespace DwarfCorp.GameStates
                 markerFilter,
                 taskList,
                 roomList,
+                commandPanel,
             };
 
             MinimapIcon = new FramedIcon
@@ -618,6 +629,26 @@ namespace DwarfCorp.GameStates
                 }
             };
 
+            CommandsIcon = new FramedIcon
+            {
+                Icon = new Gui.TileReference("tool-icons", 15),
+                Text = "Commands",
+                Tooltip = "Search all possible commands.",
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Below,
+                EnabledTextColor = Vector4.One,
+                OnClick = (sender, args) =>
+                {
+                    if (commandPanel.Hidden)
+                    {
+                        HideTogglePanels();
+                        commandPanel.Hidden = false;
+                    }
+                    else
+                        commandPanel.Hidden = true;
+                }
+            };
+
             var bottomLeft = secondBar.AddChild(new Gui.Widgets.IconTray
             {
                 Corners = 0,
@@ -631,7 +662,8 @@ namespace DwarfCorp.GameStates
                             EmployeesIcon,
                             MarksIcon,
                             TasksIcon,
-                            ZonesIcon
+                            ZonesIcon,
+                            CommandsIcon
                         },
             });
 
@@ -1627,7 +1659,7 @@ namespace DwarfCorp.GameStates
 
             GodMenu.Hidden = true;
 
-#endregion
+            #endregion
 
             Gui.RootItem.Layout();
 

@@ -7,22 +7,11 @@ using System.Linq;
 using Point = Microsoft.Xna.Framework.Point;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
-namespace DwarfCorp.GameStates
+namespace DwarfCorp.Play
 {
-    public class PossiblePlayerCommand
-    {
-        public String Name;
-        public Action<PossiblePlayerCommand, InputEventArgs> OnClick;
-        public Func<bool> IsAvailable;
-        public String Tooltip;
-        public ResourceType.GuiGraphic Icon;
-        public Gui.TileReference OldStyleIcon;
-        public Widget HoverWidget = null;
-    }
-
     public class PlayerCommandEnumerator
     {
-        public IEnumerable<PossiblePlayerCommand> EnumeratePlayerCommands(WorldManager World)
+        public static IEnumerable<PossiblePlayerCommand> EnumeratePlayerCommands(WorldManager World)
         {
             yield return new PossiblePlayerCommand
             {
@@ -125,6 +114,12 @@ namespace DwarfCorp.GameStates
                 {
                     Name = "Build " + data.Name + " Floor",
                     OldStyleIcon = new Gui.TileReference("voxels", data.ID),
+                    OperationIcon = new ResourceType.GuiGraphic
+                    {
+                        AssetPath = "newgui//icons",
+                        FrameSize = new Point(32,32),
+                        Frame = new Point(2,0)
+                    },
                     HoverWidget = new BuildWallInfo
                     {
                         Data = data,
@@ -153,11 +148,12 @@ namespace DwarfCorp.GameStates
                 yield return new PossiblePlayerCommand
                 {
                     Icon = data.Gui_Graphic,
-                    Tooltip = Library.GetString("craft", data.DisplayName),
-                    Name = objectNameToLabel(data.DisplayName),
+                    Tooltip = data.Craft_Verb.PastTense + " " + objectNameToLabel(data.DisplayName),
+                    Name = data.Craft_Verb.PastTense + " "  + objectNameToLabel(data.DisplayName),
                     HoverWidget = new BuildCraftInfo
                     {
                         Data = data as ResourceType,
+                        DrawBorder = false,
                         Rect = new Rectangle(0, 0, 450, 200),
                         World = World,
                         OnShown = (sender) => World.Tutorial((data as ResourceType).TypeName),
@@ -192,8 +188,8 @@ namespace DwarfCorp.GameStates
                 yield return new PossiblePlayerCommand
                 {
                     Icon = data.Gui_Graphic,
-                    Tooltip = Library.GetString("craft", data.DisplayName),
-                    Name = objectNameToLabel(data.DisplayName),
+                    Tooltip = "Place " + objectNameToLabel(data.DisplayName),
+                    Name = "Place " + objectNameToLabel(data.DisplayName),
                     HoverWidget = new PlaceCraftInfo
                     {
                         Data = data as ResourceType,
@@ -215,7 +211,7 @@ namespace DwarfCorp.GameStates
             foreach (var data in Library.EnumerateRailPatterns())
                 yield return new PossiblePlayerCommand
                 {
-                    Tooltip = "Build " + data.Name,
+                    Tooltip = "Build Rail " + data.Name,
                     Name = data.Name,
                     OldStyleIcon = new TileReference("rail", data.Icon),
                     OnClick = (sender, args) => World.UserInterface.ChangeTool("BuildRail", new Rail.BuildRailTool.Arguments
@@ -283,6 +279,7 @@ namespace DwarfCorp.GameStates
                 {
                     Icon = data.Gui_Graphic,
                     Tooltip = "Plant " + data.DisplayName,
+                    Name = "Plant " + data.DisplayName,
                     OnClick = (sender, args) => World.UserInterface.ChangeTool("Plant", data.TypeName),
                     HoverWidget = new PlantInfo()
                     {
