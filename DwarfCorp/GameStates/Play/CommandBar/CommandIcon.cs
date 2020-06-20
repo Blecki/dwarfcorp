@@ -19,6 +19,9 @@ namespace DwarfCorp.Play
             Tooltip = Resource.Tooltip;
             MinimumSize = new Point(32, 64);
             Border = "border-thin";
+            Background = new TileReference("basic", 1);
+            BackgroundColor = new Vector4(0, 0, 0, 1.0f);
+
 
             if (Resource != null && Resource.Icon != null && CachedDynamicSheet == null)
                 CachedDynamicSheet = ResourceGraphicsHelper.GetDynamicSheet(Root, Resource.Icon);
@@ -50,7 +53,6 @@ namespace DwarfCorp.Play
                         r.QuadPart()
                             .Scale(32, 32)
                             .Translate(Rect.X + (Rect.Width - 32) / 2, Rect.Y + ((Rect.Height / 2) - 32) / 2)
-                            .Colorize(BackgroundColor)
                             .Texture(CachedOperationIconDynamicSheet.TileSheet.TileMatrix(0));
                 }
 
@@ -60,7 +62,6 @@ namespace DwarfCorp.Play
                         r.QuadPart()
                             .Scale(32, 32)
                             .Translate(Rect.X + (Rect.Width - 32) / 2, Rect.Y + 32 + ((Rect.Height / 2) - 32) / 2)
-                            .Colorize(BackgroundColor)
                             .Texture(CachedDynamicSheet.TileSheet.TileMatrix(0));
                 }
                 else
@@ -69,7 +70,6 @@ namespace DwarfCorp.Play
                     r.QuadPart()
                         .Scale(32, 32)
                             .Translate(Rect.X + (Rect.Width - 32) / 2, Rect.Y + 32 + ((Rect.Height / 2) - 32) / 2)
-                        .Colorize(BackgroundColor)
                         .Texture(Root.GetTileSheet(Resource.OldStyleIcon.Sheet).TileMatrix(Resource.OldStyleIcon.Tile));
                 }
             }

@@ -40,14 +40,27 @@ namespace DwarfCorp
 
         public static Gui.TextureAtlas.SpriteAtlasEntry GetDynamicSheet(Gui.Root Root, ResourceType.GuiGraphic Graphic)
         {
-            var sheetName = Graphic.GetSheetIdentifier();
-            var tex = ResourceGraphicsHelper.GetResourceTexture(Root.RenderData.Device, Graphic);
-            return Root.SpriteAtlas.AddDynamicSheet(sheetName, new TileSheetDefinition
+            if (Graphic == null)
             {
-                TileHeight = Graphic.FrameSize.Y,
-                TileWidth = Graphic.FrameSize.X,
-                Type = TileSheetType.TileSheet
-            }, tex);
+                var tex = AssetManager.GetContentTexture("newgui/error");
+                return Root.SpriteAtlas.AddDynamicSheet("error", new TileSheetDefinition
+                {
+                    TileHeight = 32,
+                    TileWidth = 32,
+                    Type = TileSheetType.TileSheet
+                }, tex);
+            }
+            else
+            {
+                var sheetName = Graphic.GetSheetIdentifier();
+                var tex = ResourceGraphicsHelper.GetResourceTexture(Root.RenderData.Device, Graphic);
+                return Root.SpriteAtlas.AddDynamicSheet(sheetName, new TileSheetDefinition
+                {
+                    TileHeight = Graphic.FrameSize.Y,
+                    TileWidth = Graphic.FrameSize.X,
+                    Type = TileSheetType.TileSheet
+                }, tex);
+            }
         }
     }
 }

@@ -15,7 +15,7 @@ namespace DwarfCorp.GameStates // Todo: Why in GameStates?
         public int Width = 128;
         public int Height = 128;
         public string Name = "";
-        public Difficulty Difficulty = Library.GetDifficulty("Normal");
+        public Difficulty Difficulty = null;
         public int Seed = 0;
         public int NumCaveLayers = 8;
         public int zLevels = 4; // This is actually y levels but genre convention is to call depth Z.
@@ -46,6 +46,7 @@ namespace DwarfCorp.GameStates // Todo: Why in GameStates?
             r.Company = new CompanyInformation();
             r.Map = new OverworldMap(r.Width, r.Height);
             r.PlayerCorporationResources = new ResourceSet();
+            r.Difficulty = Library.GetDifficulty("Normal");
 
             r.ColonyCells = new CellSet("World\\colonies");
             r.InstanceSettings = new InstanceSettings(r.ColonyCells.GetCellAt(16, 0), r);

@@ -96,10 +96,18 @@ namespace DwarfCorp
         public static MaybeNull<Resource> CreateMetaResource(String FactoryName, CreatureAI Agent, Resource Base, List<Resource> Ingredients)
         {
             InitializeMetaResourceFactories();
-            if (MetaResourceFactories.ContainsKey(FactoryName))
-                return MetaResourceFactories[FactoryName](Agent, Base, Ingredients);
-            else
+            try
+            {
+                if (MetaResourceFactories.ContainsKey(FactoryName))
+                    return MetaResourceFactories[FactoryName](Agent, Base, Ingredients);
+                else
+                    return null;
+            }
+            catch (Exception e)
+            {
+                Program.CaptureException(new Exception("Exception caught while creating meta-resource: " + FactoryName, e));
                 return null;
+            }
         }
 
         [MetaResourceFactory("Ale")]

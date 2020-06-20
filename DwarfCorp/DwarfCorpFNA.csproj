@@ -110,7 +110,6 @@
     <Compile Include=".\AssetManagement\StringLibrary.cs" />
     <Compile Include=".\AssetManagement\TextureTool.cs" />
     <Compile Include=".\Components\AI\CharacterMode.cs" />
-    <Compile Include="AssetManagement\JsonConverters\DifficultyConverter.cs" />
     <Compile Include="AssetManagement\JsonConverters\BoxConverter.cs" />
     <Compile Include="AssetManagement\JsonConverters\MatrixConverter.cs" />
     <Compile Include="AssetManagement\JsonConverters\RectangleConverter.cs" />
@@ -161,6 +160,10 @@
     <Compile Include="GameStates\FrontEnd\CheckMegaWorldState.cs" />
     <Compile Include="GameStates\Play\CategoryIcon.cs" />
     <Compile Include="GameStates\Play\CategoryMenuBuilder.cs" />
+    <Compile Include="GameStates\Play\CommandBar\CommandIcon.cs" />
+    <Compile Include="GameStates\Play\CommandBar\CommandPanel.cs" />
+    <Compile Include="GameStates\Play\CommandBar\EnumeratePlayerCommands.cs" />
+    <Compile Include="GameStates\Play\CommandBar\PossiblePlayerCommand.cs" />
     <Compile Include="GameStates\Play\ContentsPanel.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\ApplicantInfo.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\EconomyState.cs" />

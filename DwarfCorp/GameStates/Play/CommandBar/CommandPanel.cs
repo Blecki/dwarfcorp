@@ -58,11 +58,26 @@ namespace DwarfCorp.Play
 
         public override void Construct()
         {
+            Padding = new Margin(2, 2, 2, 2);
+
             base.Construct();
 
-            FilterBox = AddChild(new Gui.Widgets.EditableTextField
+            var bar = AddChild(new Widget
             {
-                AutoLayout = AutoLayout.DockTop,
+                MinimumSize = new Point(0, 24),
+                Padding = new Margin(0, 0, 2, 2),
+                AutoLayout = AutoLayout.DockTop
+            });
+
+            bar.AddChild(new Widget
+            {
+                Text = "Filter:",
+                AutoLayout = AutoLayout.DockLeft
+            });
+
+            FilterBox = bar.AddChild(new Gui.Widgets.EditableTextField
+            {
+                AutoLayout = AutoLayout.DockFill,
                 MinimumSize = new Point(0, 24),
                 OnTextChange = (sender) => { Grid.ApplyFilter(FilterBox.Text); }
             }) as Gui.Widgets.EditableTextField;

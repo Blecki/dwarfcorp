@@ -13,7 +13,7 @@ namespace DwarfCorp
     {
         public bool MinecartActive = false;
 
-        public MaybeNull<Task> CurrentTask = null; 
+        public MaybeNull<Task> CurrentTask = null;
         public List<Task> Tasks = new List<Task>();
 
         [JsonIgnore] protected MaybeNull<Act> CurrentAct { get; private set; }
@@ -124,7 +124,7 @@ namespace DwarfCorp
                 newTransform.Translation = value;
                 Creature.Physics.LocalTransform = newTransform;
             }
-        }       
+        }
 
         public bool WasTaskFailed(Task task)
         {
@@ -139,7 +139,7 @@ namespace DwarfCorp
         public void ResetPositionConstraint()
         {
             PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue),
-            new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));            
+            new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
         }
 
         public virtual void AddXP(int amount) { }
@@ -240,12 +240,12 @@ namespace DwarfCorp
         {
             UpdateFailedTasks(World.Time.CurrentDate);
             var badTasks = Tasks.Where(task => task.ShouldDelete(Creature)).ToList();
-            foreach(var task in badTasks)
+            foreach (var task in badTasks)
             {
                 task.OnUnAssign(this);
                 Tasks.Remove(task);
             }
-           
+
         }
 
         public bool IsPositionConstrained()
@@ -292,7 +292,7 @@ namespace DwarfCorp
         {
             if (CurrentAct.HasValue(out Act currentAct))
                 currentAct.OnCanceled();
-                        
+
             CurrentAct = NewAct;
         }
 
@@ -309,7 +309,7 @@ namespace DwarfCorp
         }
 
 
-        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera) 
+        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
 
@@ -433,7 +433,7 @@ namespace DwarfCorp
                 var above = VoxelHelpers.GetVoxelAbove(Physics.CurrentVoxel);
                 var below = VoxelHelpers.GetVoxelBelow(Physics.CurrentVoxel);
                 bool shouldDrown = (above.IsValid && (!above.IsEmpty || above.LiquidLevel > 0));
-                if ((Physics.IsInLiquid || (!Movement.CanSwim && (below.IsValid && (below.LiquidLevel > 5)))) 
+                if ((Physics.IsInLiquid || (!Movement.CanSwim && (below.IsValid && (below.LiquidLevel > 5))))
                     && (!Movement.CanSwim || shouldDrown))
                     Creature.Damage(Movement.CanSwim ? 1.0f : 30.0f, Health.DamageType.Normal);
             }
@@ -470,7 +470,7 @@ namespace DwarfCorp
         /// <summary> Tell the creature to kill the given body. </summary>
         public void Kill(GameComponent entity)
         {
-            var killTask = new KillEntityTask(entity, KillEntityTask.KillType.Auto) { ReassignOnDeath = false } ;
+            var killTask = new KillEntityTask(entity, KillEntityTask.KillType.Auto) { ReassignOnDeath = false };
             if (!Tasks.Contains(killTask))
                 AssignTask(killTask);
         }
@@ -626,7 +626,7 @@ namespace DwarfCorp
                 fear += 0.125f;
 
             // If there are a lot of nearby threats vs allies, we are even more afraid.
-            if (Faction.Threats.Where(threat => threat != null &&  threat.AI != null && !threat.IsDead).Sum(threat => (threat.AI.Position - Position).Length() < 5.0f ? 1 : 0) - 
+            if (Faction.Threats.Where(threat => threat != null && threat.AI != null && !threat.IsDead).Sum(threat => (threat.AI.Position - Position).Length() < 5.0f ? 1 : 0) -
                 Faction.Minions.Where(minion => minion != null && !minion.IsDead).Sum(minion => (minion.Position - Position).Length() < 6.0f ? 1 : 0) > Creature.Stats.Constitution)
                 fear += 0.125f;
 
@@ -643,7 +643,7 @@ namespace DwarfCorp
             if (MathFunctions.RandEvent(1.0f - fear))
                 return FightOrFlightResponse.Fight;
             else
-            { 
+            {
                 Creature.AddThought("I was frightened recently.", new TimeSpan(0, 4, 0, 0), -2.0f);
                 return FightOrFlightResponse.Flee;
             }
@@ -736,10 +736,19 @@ namespace DwarfCorp
             World.Paused = true;
             // Prepare conversation memory for an envoy conversation.
             var cMem = World.ConversationMemory;
+            if (cMem == null
+                || Stats == null
+                || World == null
+                || World.PlayerFaction == null
+                || World.PlayerFaction.Economy == null
+                || World.PlayerFaction.Economy.Information == null
+                || Stats.CurrentClass == null)
+                return;
+
             cMem.SetValue("$world", new Yarn.Value(World));
             cMem.SetValue("$employee", new Yarn.Value(this));
-            cMem.SetValue("$employee_name", new Yarn.Value(Stats.FullName));
-            cMem.SetValue("$employee_status", new Yarn.Value(Stats.GetStatusAdjective()));
+            cMem.SetValue("$employee_name", new Yarn.Value(Stats?.FullName));
+            cMem.SetValue("$employee_status", new Yarn.Value(Stats?.GetStatusAdjective()));
             var timeOfDay = "Morning";
             int hour = World.Time.CurrentDate.Hour;
             if (hour > 12)
@@ -769,8 +778,8 @@ namespace DwarfCorp
             String[] personalities = { "happy", "grumpy", "anxious" };
             var myRandom = new Random(Stats.RandomSeed);
             cMem.SetValue("$personality", new Yarn.Value(personalities[myRandom.Next(0, personalities.Length)]));
-            cMem.SetValue("$motto", new Yarn.Value(World.PlayerFaction.Economy.Information.Motto));
-            cMem.SetValue("$company_name", new Yarn.Value(World.PlayerFaction.Economy.Information.Name));
+            cMem.SetValue("$motto", new Yarn.Value(World?.PlayerFaction?.Economy?.Information?.Motto));
+            cMem.SetValue("$company_name", new Yarn.Value(World?.PlayerFaction?.Economy?.Information?.Name));
             cMem.SetValue("$employee_task", new Yarn.Value(CurrentTask.HasValue(out var currentTask) ? "Nothing" : currentTask.Name));
             cMem.SetValue("$employee_class", new Yarn.Value(Stats.CurrentClass.Name));
             var injuries = TextGenerator.GetListString(Creature.Stats.Buffs.OfType<Disease>().Select(disease => disease.Name));
@@ -781,7 +790,7 @@ namespace DwarfCorp
             cMem.SetValue("$injuries", new Yarn.Value(injuries));
             cMem.SetValue("$employee_pay", new Yarn.Value((float)(decimal)Stats.CurrentLevel.Pay));
             cMem.SetValue("$employee_bonus", new Yarn.Value(4 * (float)(decimal)Stats.CurrentLevel.Pay));
-            cMem.SetValue("$company_money", new Yarn.Value((float)(decimal)Faction.Economy.Funds));
+            cMem.SetValue("$company_money", new Yarn.Value((float)(decimal)Faction?.Economy?.Funds));
 
             if (Physics.GetComponent<Flammable>().HasValue(out var flames))
                 cMem.SetValue("$is_on_fire", new Yarn.Value(flames.IsOnFire));

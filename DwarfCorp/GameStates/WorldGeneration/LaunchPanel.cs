@@ -206,18 +206,25 @@ namespace DwarfCorp.GameStates
 
         private void SetCreateCellInfoText(Widget Widget)
         {
-            Widget.Text = String.Format("\nCorporate Funds: {5}\nWorld Size: {0}x{1}\nLand Cost: {2}\nEmbarkment Cost: {3}\nTotal Cost: {4}",
-                Settings.InstanceSettings.Cell.Bounds.Width * VoxelConstants.ChunkSizeX,
-                Settings.InstanceSettings.Cell.Bounds.Height * VoxelConstants.ChunkSizeZ,
-                Settings.InstanceSettings.CalculateLandValue(),
-                Settings.InstanceSettings.InitalEmbarkment.TotalCost(),
-                Settings.InstanceSettings.TotalCreationCost(),
-                Settings.PlayerCorporationFunds);
+            try
+            {
+                Widget.Text = String.Format("\nCorporate Funds: {5}\nWorld Size: {0}x{1}\nLand Cost: {2}\nEmbarkment Cost: {3}\nTotal Cost: {4}",
+                    Settings.InstanceSettings.Cell.Bounds.Width * VoxelConstants.ChunkSizeX,
+                    Settings.InstanceSettings.Cell.Bounds.Height * VoxelConstants.ChunkSizeZ,
+                    Settings.InstanceSettings.CalculateLandValue(),
+                    Settings.InstanceSettings.InitalEmbarkment.TotalCost(),
+                    Settings.InstanceSettings.TotalCreationCost(),
+                    Settings.PlayerCorporationFunds);
 
-            if (Settings.InstanceSettings.TotalCreationCost() > Settings.PlayerCorporationFunds)
-                Widget.TextColor = new Vector4(1, 0, 0, 1);
-            else
-                Widget.TextColor = new Vector4(0, 0, 0, 1);
+                if (Settings.InstanceSettings.TotalCreationCost() > Settings.PlayerCorporationFunds)
+                    Widget.TextColor = new Vector4(1, 0, 0, 1);
+                else
+                    Widget.TextColor = new Vector4(0, 0, 0, 1);
+            }
+            catch (Exception e)
+            {
+                Widget.Text = "Something went wrong when calculating the embarkment cost.";
+            }
         }
 
         public void DrawZoomedPreview()

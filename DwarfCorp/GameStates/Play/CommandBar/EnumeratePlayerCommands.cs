@@ -92,6 +92,12 @@ namespace DwarfCorp.Play
                 {
                     Name = "Build " + data.Name + " Wall",
                     OldStyleIcon = new Gui.TileReference("voxels", data.ID),
+                    OperationIcon = new ResourceType.GuiGraphic
+                    {
+                        AssetPath = "newgui//icons",
+                        FrameSize = new Point(32, 32),
+                        Frame = new Point(0, 3)
+                    },
                     HoverWidget = new BuildWallInfo
                     {
                         Data = data,
@@ -118,7 +124,7 @@ namespace DwarfCorp.Play
                     {
                         AssetPath = "newgui//icons",
                         FrameSize = new Point(32,32),
-                        Frame = new Point(2,0)
+                        Frame = new Point(1,3)
                     },
                     HoverWidget = new BuildWallInfo
                     {
@@ -150,6 +156,12 @@ namespace DwarfCorp.Play
                     Icon = data.Gui_Graphic,
                     Tooltip = data.Craft_Verb.PastTense + " " + objectNameToLabel(data.DisplayName),
                     Name = data.Craft_Verb.PastTense + " "  + objectNameToLabel(data.DisplayName),
+                    OperationIcon = new ResourceType.GuiGraphic
+                    {
+                        AssetPath = "newgui//icons",
+                        FrameSize = new Point(32, 32),
+                        Frame = new Point(7, 4)
+                    },
                     HoverWidget = new BuildCraftInfo
                     {
                         Data = data as ResourceType,
@@ -214,6 +226,12 @@ namespace DwarfCorp.Play
                     Tooltip = "Build Rail " + data.Name,
                     Name = data.Name,
                     OldStyleIcon = new TileReference("rail", data.Icon),
+                    OperationIcon = new ResourceType.GuiGraphic
+                    {
+                        AssetPath = "newgui//icons",
+                        FrameSize = new Point(32, 32),
+                        Frame = new Point(7, 2)
+                    },
                     OnClick = (sender, args) => World.UserInterface.ChangeTool("BuildRail", new Rail.BuildRailTool.Arguments
                     {
                         Pattern = data,
@@ -278,6 +296,12 @@ namespace DwarfCorp.Play
                 yield return new PossiblePlayerCommand
                 {
                     Icon = data.Gui_Graphic,
+                    OperationIcon = new ResourceType.GuiGraphic
+                    {
+                        AssetPath = "newgui//icons",
+                        FrameSize = new Point(32, 32),
+                        Frame = new Point(5, 1)
+                    },
                     Tooltip = "Plant " + data.DisplayName,
                     Name = "Plant " + data.DisplayName,
                     OnClick = (sender, args) => World.UserInterface.ChangeTool("Plant", data.TypeName),

@@ -217,6 +217,13 @@ namespace DwarfCorp.GameStates
             else
                 r.AddChild(new Widget());
 
+            r.AddChild(new Widget
+            {
+                MinimumSize = new Point(32, 32),
+                TextColor = Color.Black.ToVector4(),
+                AutoLayout = AutoLayout.DockLeft
+            });
+
             r.AddChild(new Gui.Widget
             {
                 AutoLayout = AutoLayout.DockLeft,
@@ -250,17 +257,20 @@ namespace DwarfCorp.GameStates
                     if (128 / GameSettings.Current.GuiScale < measurements.X)
                         LineItem.MinimumSize.Y = font.TileHeight * label.Split('\n').Length;
                 }
-                LineItem.GetChild(1).Text = label;
-                LineItem.GetChild(1).Invalidate();
+                LineItem.GetChild(2).Text = label;
+                LineItem.GetChild(2).Invalidate();
 
-                var counter = LineItem.GetChild(0).Children.Last();
-                counter.Text = Resource.Count.ToString();
-                counter.Invalidate();
+                var counter = LineItem.GetChild(1);//.Children.LastOrDefault();
+                if (counter != null)
+                {
+                    counter.Text = Resource.Count.ToString();
+                    counter.Invalidate();
+                }
 
                 LineItem.GetChild(0).Invalidate();
                 LineItem.Tooltip = Resource.Prototype.DisplayName + "\n" + Resource.Prototype.Description;
 
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < LineItem.Children.Count; i++)
                 {
                     if (i > 0)
                         LineItem.GetChild(i).TextColor = Resource.Count > 0 ? Color.Black.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);

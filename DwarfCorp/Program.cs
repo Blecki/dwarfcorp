@@ -11,8 +11,8 @@ namespace DwarfCorp
 {
     internal static class Program
     {
-        public static string Version = "20.01.05_XNA";
-        public static string[] CompatibleVersions = { "20.01.05_XNA", "20.01.05_FNA" };
+        public static string Version = "20.06.20_XNA";
+        public static string[] CompatibleVersions = { "20.06.20_XNA", "20.06.20_FNA", "20.01.05_XNA", "20.01.05_FNA" };
         public static string Commit = "UNKNOWN";
         public static char DirChar = Path.DirectorySeparatorChar;
         private static RavenClient ravenClient;
@@ -97,6 +97,13 @@ namespace DwarfCorp
             Console.Error.WriteLine(exception.Message);
             if (ravenClient != null)
                 ravenClient.Capture(new SentryEvent(exception));
+        }
+
+        public static void CaptureSentryMessage(String Message)
+        {
+            Console.Error.WriteLine("Reporting to Sentry: " + Message);
+            if (ravenClient != null)
+                ravenClient.Capture(new SentryEvent(Message));
         }
 
         public static void LogSentryBreadcrumb(string category, string message, BreadcrumbLevel level = BreadcrumbLevel.Info)

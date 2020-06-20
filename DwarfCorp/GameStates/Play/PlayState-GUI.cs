@@ -514,7 +514,7 @@ namespace DwarfCorp.GameStates
             {
                 Border = "border-fancy",
                 AutoLayout = AutoLayout.FloatBottomLeft,
-                MinimumSize = new Point(400, 500),
+                MinimumSize = new Point(400, Math.Min(600, Gui.RenderData.VirtualScreen.Height - 100)),
                 Hidden = true,
                 World = this.World
             });
@@ -526,7 +526,7 @@ namespace DwarfCorp.GameStates
                 markerFilter,
                 taskList,
                 roomList,
-                commandPanel,
+                //commandPanel,
             };
 
             MinimapIcon = new FramedIcon
@@ -663,7 +663,7 @@ namespace DwarfCorp.GameStates
                             MarksIcon,
                             TasksIcon,
                             ZonesIcon,
-                            CommandsIcon
+                            //CommandsIcon
                         },
             });
 
