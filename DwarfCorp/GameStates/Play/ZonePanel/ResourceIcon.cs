@@ -56,7 +56,7 @@ namespace DwarfCorp.Play
 
             OnUpdate = (sender, time) =>
             {
-                if (Resource != null && Resource.Gui_Graphic != null && CachedDynamicSheet == null)
+                if (Root != null && Resource != null && Resource.Gui_Graphic != null && CachedDynamicSheet == null)
                 {
                     CachedDynamicSheet = ResourceGraphicsHelper.GetDynamicSheet(Root, Resource);
                     Invalidate();
