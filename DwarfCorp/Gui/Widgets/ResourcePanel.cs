@@ -32,14 +32,16 @@ namespace DwarfCorp.Gui.Widgets
         {
             foreach (var stockpile in World.EnumerateZones().OfType<Stockpile>())
                 foreach (var res in stockpile.Resources.Enumerate())
-                    yield return res;
+                    if (res != null)
+                        yield return res;
         }
 
         private IEnumerable<Resource> EnumerateMinionResources()
         {
             foreach (var creature in World.PlayerFaction.Minions)
                 foreach (var i in creature.Creature.Inventory.Resources)
-                    yield return i.Resource;
+                    if (i != null && i.Resource != null)
+                        yield return i.Resource;
         }
 
         private IEnumerable<AggregatedResource> AggregateResourcesByType(IEnumerable<Resource> Source)
@@ -48,6 +50,8 @@ namespace DwarfCorp.Gui.Widgets
             var unstacked = new List<Resource>();
             foreach (var res in Source)
             {
+                if (res == null) continue;
+
                 if (dict.ContainsKey(res.DisplayName))
                     dict[res.DisplayName].Count += 1;
                 else
@@ -70,6 +74,8 @@ namespace DwarfCorp.Gui.Widgets
 
             foreach (var res in Stockpile)
             {
+                if (res == null) continue;
+
                 var entry = GetOrAddCategory(dict, (String.IsNullOrEmpty(res.Sample.Category) ? res.Sample.TypeName : res.Sample.Category));
                 entry.InStockpile += res.Count;
                 entry.StockpileMembers.Add(res);
@@ -79,6 +85,8 @@ namespace DwarfCorp.Gui.Widgets
 
             foreach (var res in Minion)
             {
+                if (res == null) continue;
+
                 var entry = GetOrAddCategory(dict, (String.IsNullOrEmpty(res.Sample.Category) ? res.Sample.TypeName : res.Sample.Category));
                 entry.InBackpacks += res.Count;
                 if (entry.Sample == null)

@@ -117,7 +117,7 @@ namespace DwarfCorp
         {
             SetFlag(F, Value);
             foreach (var child in Children ?? Enumerable.Empty<GameComponent>())
-                child.SetFlagRecursive(F, Value);
+                if (child != null) child.SetFlagRecursive(F, Value); //A null child is a problem, no?
         }
 
         #endregion

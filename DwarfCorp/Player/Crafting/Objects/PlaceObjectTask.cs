@@ -47,8 +47,11 @@ namespace DwarfCorp
             if (!PlacementDesignation.Finished)
             {
                 if (PlacementDesignation.WorkPile != null) PlacementDesignation.WorkPile.GetRoot().Delete();
-                var resourceEntity = new ResourceEntity(World.ComponentManager, PlacementDesignation.SelectedResource, PlacementDesignation.Entity.GlobalTransform.Translation);
-                World.ComponentManager.RootComponent.AddChild(resourceEntity);
+                if (PlacementDesignation.SelectedResource != null) // Don't try and create an entity if there is no resource.
+                {
+                    var resourceEntity = new ResourceEntity(World.ComponentManager, PlacementDesignation.SelectedResource, PlacementDesignation.Entity.GlobalTransform.Translation);
+                    World.ComponentManager.RootComponent.AddChild(resourceEntity);
+                }
                 PlacementDesignation.Entity.GetRoot().Delete();
             }
 

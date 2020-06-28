@@ -107,10 +107,13 @@ namespace DwarfCorp
         {
             var r = new Dictionary<String, ResourceGroup>();
             foreach (var res in Resources)
+            {
+                if (res == null) continue;
                 if (r.ContainsKey(res.DisplayName))
                     r[res.DisplayName] = r[res.DisplayName].Append(res);
                 else
                     r.Add(res.DisplayName, new ResourceGroup { ApparentType = res.DisplayName, Count = 1, Resources = new List<Resource> { res } });
+            }
             return r.Values;
         }
 
@@ -118,10 +121,14 @@ namespace DwarfCorp
         {
             var r = new Dictionary<String, ResourceGroup>();
             foreach (var res in Resources)
+            {
+                if (res == null) continue;
+
                 if (r.ContainsKey(res.TypeName))
-                    r[res.DisplayName] = r[res.TypeName].Append(res);
+                    r[res.TypeName] = r[res.TypeName].Append(res);
                 else
-                    r.Add(res.DisplayName, new ResourceGroup { ApparentType = res.TypeName, Count = 1, Resources = new List<Resource> { res } });
+                    r.Add(res.TypeName, new ResourceGroup { ApparentType = res.TypeName, Count = 1, Resources = new List<Resource> { res } });
+            }
             return r.Values;
         }
     }

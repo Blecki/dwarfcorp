@@ -27,7 +27,7 @@ namespace DwarfCorp
             Restitution = 0.1f;
             Friction = 0.1f;
 
-            if (Library.GetResourceType(Resource.TypeName).HasValue(out var type))
+            if (Resource != null && Library.GetResourceType(Resource.TypeName).HasValue(out var type))
             {
                 Tags.Add(type.TypeName);
                 Tags.Add("Resource");
@@ -58,7 +58,7 @@ namespace DwarfCorp
         {
             base.CreateCosmeticChildren(manager);
 
-            if (Resource.Gui_Graphic != null)
+            if (Resource != null && Resource.Gui_Graphic != null)
             {
                 var sheetName = Resource.Gui_Graphic.GetSheetIdentifier();
                 var tiledInstanceGroup = Manager.World.Renderer.InstanceRenderer.GetCombinedTiledInstance();

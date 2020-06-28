@@ -100,24 +100,25 @@ namespace DwarfCorp.Gui
 
         public Matrix TileMatrix(int TileID)
         {
+            if (TileID < 0 || TileID >= Glyphs.Count)
+                return Matrix.Identity;
             var entry = Glyphs[TileID];
             return Sheet.TileMatrix(entry.X, entry.Y, entry.Width, entry.Height);
         }
 
-
         public int TileWidth
         {
-            get { return Glyphs[0].Width; }
+            get { return Glyphs.Count > 0 ? Glyphs[0].Width : 1; }
         }
 
         public int TileHeight
         {
-            get { return Glyphs[0].Height; }
+            get { return Glyphs.Count > 0 ? Glyphs[0].Height : 1; }
         }
 
         public Point GlyphSize(int Index)
         {
-            return new Point(Glyphs[Index].Width, Glyphs[Index].Height);
+            return Index >= 0 && Index < Glyphs.Count ? new Point(Glyphs[Index].Width, Glyphs[Index].Height) : new Point(1, 1);
         }
 
         public bool HasGlyph(int Index)

@@ -325,7 +325,7 @@ namespace DwarfCorp
 
             if (BehaviorTimer.HasTriggered)
             {
-                if (Faction.Race.HasValue(out var race))
+                if (Faction != null && Faction.Race.HasValue(out var race))
                 {
                     if (!String.IsNullOrEmpty(race.BecomeWhenEvil) && MathFunctions.RandEvent(0.01f))
                     {
@@ -340,19 +340,20 @@ namespace DwarfCorp
                         Faction.AddMinion(this);
                     }
 
-                    foreach (var body in World.EnumerateIntersectingObjects(Physics.BoundingBox.Expand(3.0f)).OfType<ResourceEntity>().Where(r => r.Active && r.AnimationQueue.Count == 0))
-                    {
-                        if (Library.GetResourceType(body.Resource.TypeName).HasValue(out var resource) && resource.Tags.Contains("Edible"))
+                    if (Physics != null)
+                        foreach (var body in World.EnumerateIntersectingObjects(Physics.BoundingBox.Expand(3.0f)).OfType<ResourceEntity>().Where(r => r != null && r.Active && r.AnimationQueue.Count == 0))
                         {
-                            if ((race.EatsMeat && resource.Tags.Contains("AnimalProduct")) ||
-                                (race.EatsPlants && !resource.Tags.Contains("AnimalProduct")))
+                            if (body.Resource != null && Library.GetResourceType(body.Resource.TypeName).HasValue(out var resource) && resource.Tags.Contains("Edible"))
                             {
-                                Creature.GatherImmediately(body);
-                                AssignTask(new ActWrapperTask(new EatFoodAct(this, false)));
+                                if ((race.EatsMeat && resource.Tags.Contains("AnimalProduct")) ||
+                                    (race.EatsPlants && !resource.Tags.Contains("AnimalProduct")))
+                                {
+                                    Creature.GatherImmediately(body);
+                                    AssignTask(new ActWrapperTask(new EatFoodAct(this, false)));
+                                }
                             }
                         }
                     }
-                }
 
                 OrderEnemyAttack();
             }
@@ -778,7 +779,8 @@ namespace DwarfCorp
             String[] personalities = { "happy", "grumpy", "anxious" };
             var myRandom = new Random(Stats.RandomSeed);
             cMem.SetValue("$personality", new Yarn.Value(personalities[myRandom.Next(0, personalities.Length)]));
-            cMem.SetValue("$motto", new Yarn.Value(World?.PlayerFaction?.Economy?.Information?.Motto));
+            if (World.PlayerFaction.Economy.Information.Motto != null)
+                cMem.SetValue("$motto", new Yarn.Value(World?.PlayerFaction?.Economy?.Information?.Motto));
             cMem.SetValue("$company_name", new Yarn.Value(World?.PlayerFaction?.Economy?.Information?.Name));
             cMem.SetValue("$employee_task", new Yarn.Value(CurrentTask.HasValue(out var currentTask) ? "Nothing" : currentTask.Name));
             cMem.SetValue("$employee_class", new Yarn.Value(Stats.CurrentClass.Name));

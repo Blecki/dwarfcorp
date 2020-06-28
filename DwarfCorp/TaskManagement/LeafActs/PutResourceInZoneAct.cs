@@ -25,6 +25,12 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
+            if (Agent == null || Agent.Blackboard == null || Creature == null || Creature.Inventory == null)
+            {
+                yield return Status.Fail;
+                yield break;
+            }
+
             var zone = Agent.Blackboard.GetData<Zone>(StockpileName);
             var resource = Agent.Blackboard.GetData<Resource>(ResourceName);
 

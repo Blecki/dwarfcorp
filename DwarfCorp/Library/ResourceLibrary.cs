@@ -128,8 +128,7 @@ namespace DwarfCorp
         private static MaybeNull<Resource> _makeMeal(CreatureAI Agent, Resource Base, List<Resource> Ingredients)
         {
             InitializeResources();
-
-            if (Ingredients.Count < 2)
+            if (Base == null || Ingredients == null || Ingredients.Count < 2 || Ingredients.Any(i => i == null))
                 return null;
 
             if (Ingredients[0].ResourceType.HasValue(out var a) && Ingredients[1].ResourceType.HasValue(out var b))
