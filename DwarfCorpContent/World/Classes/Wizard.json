@@ -13,40 +13,12 @@
     },
     {
       "_TypeName": "Wizard Hat"
-    }
-  ],
-  "Weapons": [
+    },
     {
-      "DamageAmount": 1.0,
-      "Name": "Magic Missile",
-      "Range": 5.0,
-      "HitNoise": {
-        "Sounds": [
-          "Audio\\oscar\\sfx_ic_dwarf_spell_cast_1"
-        ],
-        "Volume": 1.0,
-        "RandomPitch": true
-      },
-      "HitColor": [
-        255,
-        255,
-        255,
-        255
-      ],
-      "Mode": "Melee",
-      "RechargeRate": 0.6,
-      "Knockback": 0.5,
-      "AnimationAsset": "Effects\\pierce",
-      "HitParticles": "star_particle",
-      "ProjectileType": "",
-      "LaunchSpeed": 0.0,
-      "HasTriggered": false,
-      "TriggerMode": "Animation",
-      "TriggerFrame": 2,
-      "DiseaseToSpread": null,
-      "ShootLaser": false
+      "_TypeName":  "Wizard Staff"
     }
   ],
+  "Weapons": [ ],
   "Levels": [
     {
       "Index": 0,
@@ -126,36 +98,7 @@
         "Size": 5.0
       },
       "ExtraWeapons": [
-        {
-          "DamageAmount": 5.0,
-          "Name": "Fireball",
-          "Range": 5.0,
-          "HitNoise": {
-            "Sounds": [
-              "Audio\\oscar\\sfx_env_lava_spread"
-            ],
-            "Volume": 1.0,
-            "RandomPitch": true
-          },
-          "HitColor": [
-            255,
-            255,
-            255,
-            255
-          ],
-          "Mode": "Area",
-          "RechargeRate": 3.0,
-          "Knockback": 0.0,
-          "AnimationAsset": "Effects\\explode",
-          "HitParticles": "flame",
-          "ProjectileType": "",
-          "LaunchSpeed": 0.0,
-          "HasTriggered": false,
-          "TriggerMode": "Animation",
-          "TriggerFrame": 2,
-          "DiseaseToSpread": null,
-          "ShootLaser": true
-        }
+        
       ],
       "HealingPower": 5
     }

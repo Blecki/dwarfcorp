@@ -231,7 +231,7 @@ namespace DwarfCorp
         {
             InitializeResources();
 
-            if (Ingredients.Count == 0)
+            if (Ingredients == null || Ingredients.Count == 0)
                 return null;
 
             return Base;

@@ -103,7 +103,7 @@ namespace DwarfCorp
         [JsonIgnore] public bool Tool_Breakable { get => GetProperty<bool>("Tool_Breakable", false); set => SetProperty<bool>("Tool_Breakable", value); }
         [JsonIgnore] public CharacterMode Tool_AttackAnimation { get => GetProperty<CharacterMode>("Tool_AttackAnimation", CharacterMode.Attacking); set => SetProperty<CharacterMode>("Tool_AttackAnimation", value); }
         [JsonIgnore] public int Tool_AttackTriggerFrame { get => GetProperty<int>("Tool_AttackTriggerFrame", 1); set => SetProperty<int>("Tool_AttackTriggerFrame", value); }
-        [JsonIgnore] public float Tool_AttackDamage { get => GetProperty<float>("Tool_AttackDamage", 1); set => SetProperty<float>("Tool_AttackDamage", value); }
+        [JsonIgnore] public float Tool_Effectiveness { get => GetProperty<float>("Tool_Effectiveness", 1); set => SetProperty<float>("Tool_Effectiveness", value); }
         [JsonIgnore] public String Tool_AttackHitParticles { get => GetProperty<String>("Tool_AttackHitParticles", ""); set => SetProperty<String>("Tool_AttackHitParticles", value); }
         [JsonIgnore] public String Tool_AttackHitEffect { get => GetProperty<String>("Tool_AttackHitEffect", ""); set => SetProperty<String>("Tool_AttackHitEffect", value); }
         [JsonIgnore] public Color Tool_AttackHitColor { get => GetProperty<Color>("Tool_AttackHitColor", Color.White); set => SetProperty<Color>("Tool_AttackHitColor", value); }
@@ -113,6 +113,7 @@ namespace DwarfCorp
         [JsonIgnore] public String Equipment_LayerType { get => GetProperty<String>("Equipment_LayerType", "Default"); set => SetProperty<String>("Equipment_LayerType", value); }
         [JsonIgnore] public String Equipment_Slot { get => GetProperty<String>("Equipment_Slot", ""); set => SetProperty<String>("Equipment_Slot", value); }
         [JsonIgnore] public String Equipment_Palette { get => GetProperty<String>("Equipment_Palette", "Base"); set => SetProperty<String>("Equipment_Palette", value); }
+        [JsonIgnore] public Weapon Equipment_Weapon { get => GetProperty<Weapon>("Equipment_Weapon", null); set => SetProperty<Weapon>("Equipment_Weapon", value); }
 
         [JsonIgnore] public ResourceType.GuiGraphic Gui_Graphic { get => GetProperty<ResourceType.GuiGraphic>("Gui_Graphic", null); set => SetProperty<ResourceType.GuiGraphic>("Gui_Graphic", value); }
         #endregion

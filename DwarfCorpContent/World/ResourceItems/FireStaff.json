@@ -1,14 +1,15 @@
 {
-  "TypeName": "Iron Pick",
-  "MoneyValue": 100.0,
-  "Description": "A pick made of iron.",
+  "TypeName": "Fire Staff",
+  "MoneyValue": 1500.0,
+  "Description": "A real wizard's staff, not one of those lame ones.",
   "Category": "Tools",
   "Tags": [
     "Tool",
-    "Pick"
+    "Axe",
+    "Staff"
   ],
   "FoodContent": 0.0,
-  "DisplayName": "Iron Pick",
+  "DisplayName": "Fire Staff",
   "PlantToGenerate": "",
   "Tint": [
     255,
@@ -22,22 +23,23 @@
   "Tool_Durability": 256,
   "Tool_Wear": 0,
   "Tool_Effectiveness": 1.0,
-  "Tool_AttackAnimation": "Attacking",
+  "Tool_AttackAnimation": "Attacking01",
   "Tool_AttackTriggerFrame": 2,
-  "Tool_AttackHitEffect": "Effects\\hit",
+  "Tool_AttackDamage": 1,
+  "Tool_AttackHitEffect": "Effects\\pierce",
 
   "Equipable": true,
   "Equipment_LayerType": "Tool",
-  "Equipment_Palette": "Iron Equipment",
-  "Equipment_LayerName": "pick",
+  "Equipment_Palette": "Ruby",
+  "Equipment_LayerName": "staff",
   "Equipment_Slot": "Tool",
   "Equipment_Weapon": {
-    "DamageAmount": 4.5,
-    "Name": "Pickaxe",
-    "Range": 2.0,
+    "DamageAmount": 25.0,
+    "Name": "Fireball",
+    "Range": 25.0,
     "HitNoise": {
       "Sounds": [
-        "Audio\\pick"
+        "Audio\\oscar\\sfx_env_lava_spread"
       ],
       "Volume": 1.0,
       "RandomPitch": true
@@ -48,45 +50,45 @@
       255,
       255
     ],
-    "Mode": "Melee",
-    "RechargeRate": 0.5,
-    "Knockback": 2.5,
-    "AnimationAsset": "Effects\\hit",
-    "HitParticles": "star_particle",
+    "Mode": "Area",
+    "RechargeRate": 3.0,
+    "Knockback": 0.0,
+    "AnimationAsset": "Effects\\explode",
+    "HitParticles": "flame",
     "ProjectileType": "",
     "LaunchSpeed": 0.0,
     "HasTriggered": false,
     "TriggerMode": "Animation",
     "TriggerFrame": 2,
     "DiseaseToSpread": null,
-    "ShootLaser": false
+    "ShootLaser": true
   },
 
   "Gui_Graphic": {
     "AssetPath": "Entities/Dwarf/ToolIcons/equipment",
-    "Palette": "Iron Equipment",
+    "Palette": "Wood Equipment",
     "FrameSize": "32, 32",
-    "Frame": "0, 0"
+    "Frame": "1, 1"
   },
 
   "Craft_Craftable": true,
   "Craft_Ingredients": [
     {
       "Tag": "Wood",
-      "Count": 1
+      "Count": 2
     },
     {
-      "Tag": "Iron",
-      "Count": 1
+      "Tag": "Mana",
+      "Count": 2
     }
   ],
   "Craft_ResultsCount": 1,
   "Craft_BaseCraftTime": 16.0,
-  "Craft_Location": "Anvil",
+  "Craft_Location": "Craft Table",
   "Craft_TaskCategory": "CraftItem",
   "Craft_Noise": "Craft",
   "Craft_MetaResourceFactory": "Normal",
 
-  "Tutorial": "Dwarves need picks to dig underground."
+  "Tutorial": "The weapon of a real wizard."
 
 }

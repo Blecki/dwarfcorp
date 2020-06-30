@@ -88,10 +88,12 @@ namespace DwarfCorp
 
             PlanAct.PlanType planType = PlanAct.PlanType.Adjacent;
             float radius = 0.0f;
-            if (creature.Creature.Attacks[0].Weapon.Mode == Weapon.AttackMode.Ranged)
+            var defaultAttack = creature.Creature.GetDefaultAttack(); // Should we be creating an attack just to check the weapon's type?
+                // Todo: Maybe choose best attack from all available.
+            if (defaultAttack.HasValue(out var attack) && attack.Weapon.Mode == Weapon.AttackMode.Ranged)
             {
                 planType = PlanAct.PlanType.Radius;
-                radius = creature.Creature.Attacks[0].Weapon.Range;
+                radius = attack.Weapon.Range;
             }
 
             if (creature.Movement.IsSessile)
@@ -103,7 +105,7 @@ namespace DwarfCorp
             }
             else
             {
-                if (creature.Creature.Attacks[0].Weapon.Mode != Weapon.AttackMode.Ranged || 
+                if (!defaultAttack.HasValue(out var _attack) || _attack.Weapon.Mode != Weapon.AttackMode.Ranged || 
                     closestDefensiveStructure == null || (closestDefensiveStructure.Position - creature.Position).Length() > 20.0f)
                 {
                     Tree = new Domain(() => Verify(creature),
@@ -116,7 +118,7 @@ namespace DwarfCorp
                                     Radius = radius
                                 },
                                 new Wrap(() => OnAttackEnd(creature))),
-                            new AttackAct(Agent, entity),
+                            new AttackAct(Agent, entity), // Maybe pass chosen attack in?
                             new Wrap(() => OnAttackEnd(creature))));
                 }
                 else

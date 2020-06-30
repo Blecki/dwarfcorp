@@ -32,6 +32,38 @@
   "Equipment_Palette": "Peppermint Equipment",
   "Equipment_LayerName": "axe",
   "Equipment_Slot": "Tool",
+  "Equipment_Weapon": {
+    "DamageAmount": 3.0,
+    "Name": "Axe",
+    "Range": 2.0,
+    "HitNoise": {
+      "Sounds": [
+        "Audio\\oscar\\sfx_ic_dwarf_attack_sword_1",
+        "Audio\\oscar\\sfx_ic_dwarf_attack_sword_2",
+        "Audio\\oscar\\sfx_ic_dwarf_attack_sword_3"
+      ],
+      "Volume": 1.0,
+      "RandomPitch": true
+    },
+    "HitColor": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "Mode": "Melee",
+    "RechargeRate": 0.4,
+    "Knockback": 10.0,
+    "AnimationAsset": "Effects\\slash",
+    "HitParticles": "",
+    "ProjectileType": "",
+    "LaunchSpeed": 0.0,
+    "HasTriggered": false,
+    "TriggerMode": "Animation",
+    "TriggerFrame": 2,
+    "DiseaseToSpread": null,
+    "ShootLaser": false
+  },
 
   "Gui_Graphic": {
     "AssetPath": "Entities/Dwarf/ToolIcons/equipment",

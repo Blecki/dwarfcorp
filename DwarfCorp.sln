@@ -33,6 +33,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoViewer", "TodoViewer\TodoViewer.csproj", "{D1705E03-3893-4377-8940-B0198B1C7DDB}"
 EndProject
 Global
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Android|Any CPU = Android|Any CPU
 		Android|Mixed Platforms = Android|Mixed Platforms

@@ -2594,6 +2594,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Weights</Name>
     </None>
+    <None Include="World\ResourceItems\WizardStaff.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>WizardStaff</Name>
+    </None>
+    <None Include="World\ResourceItems\FireStaff.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>FireStaff</Name>
+    </None>
     <None Include="World\ResourceItems\WoodenChair.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>WoodenChair</Name>

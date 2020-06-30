@@ -24,7 +24,7 @@ namespace DwarfCorp
         [JsonIgnore] public Inventory Inventory => _get(ref _inventory);
         private Inventory _inventory = null;
         public Timer MigrationTimer { get; set; }
-        [JsonIgnore] public List<Attack> Attacks;
+        //[JsonIgnore] public List<Attack> Attacks;
         public Faction Faction { get; set; }
         public PIDController Controller { get; set; }
         public CreatureStats Stats { get; set; }
@@ -74,9 +74,9 @@ namespace DwarfCorp
 
         private void InitializeAttacks()
         {
-            Attacks = Stats.CurrentClass.Weapons.Select(a => new Attack(a)).ToList();
-            for (var i = 0; i <= Stats.LevelIndex && i < Stats.CurrentClass.Levels.Count; ++i)
-                Attacks.AddRange(Stats.CurrentClass.Levels[i].ExtraWeapons.Select(w => new Attack(w)));
+            //Attacks = Stats.CurrentClass.Weapons.Select(a => new Attack(a)).ToList();
+            //for (var i = 0; i <= Stats.LevelIndex && i < Stats.CurrentClass.Levels.Count; ++i)
+            //    Attacks.AddRange(Stats.CurrentClass.Levels[i].ExtraWeapons.Select(w => new Attack(w)));
         }
 
         private T _get<T>(ref T cached) where T : GameComponent
@@ -314,44 +314,41 @@ namespace DwarfCorp
         }
 
         /// <summary>
+        /// Find the default attack for this creature. Use an equipped tool if they have one and it has an attack, otherwise look at the class.
+        /// </summary>
+        /// <returns></returns>
+        public MaybeNull<Attack> GetDefaultAttack()
+        {
+            if (Equipment.HasValue(out var equipment) && equipment.GetItemInSlot("Tool").HasValue(out var tool) && tool.Equipment_Weapon != null)
+                return new Attack(tool.Equipment_Weapon);
+            if (Stats != null && Stats.CurrentClass != null && Stats.CurrentClass.Weapons.Count > 0)
+                return new Attack(Stats.CurrentClass.Weapons[0]);
+            return null;
+        }
+
+        /// <summary>
         /// Basic Act that causes the creature to wait for the specified time.
         /// Also draws a loading bar above the creature's head when relevant.
         /// </summary>
-        public IEnumerable<Act.Status> HitAndWait(float f, bool loadBar, Func<Vector3> pos)
+        public IEnumerable<Act.Status> HitAndWait( // Todo: Kill the two calls to this.
+            float f,
+            bool loadBar,
+            Func<Vector3> pos)
         {
-            var waitTimer = new Timer(f, true);
-
-            CurrentCharacterMode = Stats.CurrentClass.AttackMode;
-            Sprite.ResetAnimations(CurrentCharacterMode);
-            Sprite.PlayAnimations(CurrentCharacterMode);
-
-            while (!waitTimer.HasTriggered)
-            {
-                waitTimer.Update(DwarfTime.LastTime);
-
-                if (loadBar)
-                    Drawer2D.DrawLoadBar(Manager.World.Renderer.Camera, AI.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4, waitTimer.CurrentTimeSeconds / waitTimer.TargetTimeSeconds);
-
-                Physics.Active = false;
-
-                Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, pos());
-                Physics.Velocity = Vector3.Zero;
-                Sprite.ReloopAnimations(Stats.CurrentClass.AttackMode);
-
-                yield return Act.Status.Running;
-            }
-
-            Sprite.PauseAnimations(Stats.CurrentClass.AttackMode);
-            CurrentCharacterMode = CharacterMode.Idle;
-            Physics.Active = true;
-
-            yield return Act.Status.Success;
-            yield break;
+            var progress = 0.0f;
+            foreach (var x in HitAndWait(loadBar, () => 1.0f, () => progress, () => progress += 1.0f / f, pos))
+                yield return x;
         }
 
-        public IEnumerable<Act.Status> HitAndWait(bool loadBar, Func<float> maxProgress, 
-            Func<float> progress, Action incrementProgress, 
-            Func<Vector3> pos, string playSound = "", Func<bool> continueHitting = null, bool maintainPos = true)
+        public IEnumerable<Act.Status> HitAndWait(
+            bool loadBar, 
+            Func<float> maxProgress, 
+            Func<float> progress, 
+            Action incrementProgress, 
+            Func<Vector3> pos, 
+            string playSound = "", 
+            Func<bool> continueHitting = null, 
+            bool maintainPos = true)
         {
             Vector3 currentPos = Physics.LocalTransform.Translation;
             CurrentCharacterMode = Stats.CurrentClass.AttackMode;
@@ -359,31 +356,26 @@ namespace DwarfCorp
             Sprite.PlayAnimations(CurrentCharacterMode);
             var p_current = pos();
             Timer incrementTimer = new Timer(1.0f, false);
+            var defaultAttack = GetDefaultAttack();
             while (progress() < maxProgress())
             {
                 if (continueHitting != null && !continueHitting())
-                {
                     yield break;
-                }
 
                 if (loadBar)
-                {
-                    Drawer2D.DrawLoadBar(Manager.World.Renderer.Camera, AI.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4,
-                        progress() / maxProgress());
-                }
+                    Drawer2D.DrawLoadBar(Manager.World.Renderer.Camera, AI.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4, progress() / maxProgress());
+
                 Physics.Active = false;
                 Physics.Face(p_current);
-                if(Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, p_current))
-                {
-                    p_current = pos();
-                }
+                if (defaultAttack.HasValue(out var attack))
+                    attack.PerformNoDamage(this, DwarfTime.LastTime, p_current);
+
+                p_current = pos();
                 Physics.Velocity = Vector3.Zero;
 
                 if (!String.IsNullOrEmpty(playSound))
-                {
                     NoiseMaker.MakeNoise(playSound, AI.Position, true);
-                }
-
+                
                 incrementTimer.Update(DwarfTime.LastTime);
                 if (incrementTimer.HasTriggered)
                 {

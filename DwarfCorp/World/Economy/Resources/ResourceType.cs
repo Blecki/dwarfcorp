@@ -74,9 +74,8 @@ namespace DwarfCorp
         public float Tool_Durability = 1.0f;     // How much wear an item can take.
         public float Tool_Wear = 0.0f;
         public float Tool_Effectiveness = 1.0f;  // How effective is the tool at completing tasks?
-        public CharacterMode Tool_AttackAnimation = CharacterMode.Attacking;
+        public CharacterMode Tool_AttackAnimation = CharacterMode.Attacking;    // Todo: This should become like... 'UseAnimation'
         public int Tool_AttackTriggerFrame = 1;
-        public float Tool_AttackDamage = 1;
         public String Tool_AttackHitParticles = "";
         public String Tool_AttackHitEffect = "";
         public Color Tool_AttackHitColor = Color.White;
@@ -88,6 +87,7 @@ namespace DwarfCorp
         public String Equipment_LayerType = "Tool";
         public String Equipment_Palette = "Base";
         public String Equipment_Slot = "";
+        public Weapon Equipment_Weapon = null;
         #endregion
 
         #region Placement

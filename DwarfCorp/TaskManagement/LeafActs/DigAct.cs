@@ -52,7 +52,7 @@ namespace DwarfCorp
                     yield return Act.Status.Running;
                 }
 
-                DigAct.VoxelHealth -= (tool.Tool_AttackDamage + bonus);
+                DigAct.VoxelHealth -= (tool.Tool_Effectiveness + bonus);
                 DigAct.Voxel.Type.HitSound.Play(DigAct.Voxel.WorldPosition);
                 if (!String.IsNullOrEmpty(tool.Tool_AttackHitParticles))
                     performer.Manager.World.ParticleManager.Trigger(tool.Tool_AttackHitParticles, DigAct.Voxel.WorldPosition, Color.White, 5);

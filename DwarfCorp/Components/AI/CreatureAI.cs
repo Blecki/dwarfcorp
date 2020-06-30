@@ -632,14 +632,19 @@ namespace DwarfCorp
                 fear += 0.125f;
 
             // In this case, we have a very very weak weapon in comparison to our enemy.
-            if (Creature.Attacks[0].Weapon.DamageAmount * 20 < creature.Creature.Hp)
-                fear += 0.125f;
+            //if (Creature.Attacks[0].Weapon.DamageAmount * 20 < creature.Creature.Hp)
+            //    fear += 0.125f;
 
             // If the creature has formidible weapons, we're in trouble.
-            if (creature.Creature.Attacks[0].Weapon.DamageAmount * 4 > Creature.Hp)
-                fear += 0.125f;
+            //if (creature.Creature.Attacks[0].Weapon.DamageAmount * 4 > Creature.Hp)
+            //    fear += 0.125f;
+
+            // I have no means of attacking at all. Oh no!
+            if (!Creature.GetDefaultAttack().HasValue(out var attack))
+                fear += 1.0f;
 
             fear = Math.Min(fear, 0.99f);
+
 
             if (MathFunctions.RandEvent(1.0f - fear))
                 return FightOrFlightResponse.Fight;
