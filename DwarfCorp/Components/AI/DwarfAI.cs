@@ -419,29 +419,38 @@ namespace DwarfCorp
 
                 if (processAct && CurrentAct.HasValue(out Act currentAct))
                 {
-                    var status = currentAct.Tick();
-                    var retried = false;
+                    try
+                    {
+                        var status = currentAct.Tick();
+                        var retried = false;
 
-                    if (CurrentAct.HasValue(out Act newCurrentAct))
-                        if (status == Act.Status.Fail)
-                        {
-                            LastFailedAct = newCurrentAct.Name;
+                        if (CurrentAct.HasValue(out Act newCurrentAct))
+                            if (status == Act.Status.Fail)
+                            {
+                                LastFailedAct = newCurrentAct.Name;
 
-                            if (!FailedTasks.Any(task => task.TaskFailure.Equals(currentTask)))
-                                FailedTasks.Add(new FailedTask() { TaskFailure = currentTask, FailedTime = World.Time.CurrentDate });
+                                if (!FailedTasks.Any(task => task.TaskFailure.Equals(currentTask)))
+                                    FailedTasks.Add(new FailedTask() { TaskFailure = currentTask, FailedTime = World.Time.CurrentDate });
 
-                            if (currentTask.ShouldRetry(Creature))
-                                if (!Tasks.Contains(currentTask))
-                                {
-                                    ReassignCurrentTask();
-                                    retried = true;
-                                }
-                        }
+                                if (currentTask.ShouldRetry(Creature))
+                                    if (!Tasks.Contains(currentTask))
+                                    {
+                                        ReassignCurrentTask();
+                                        retried = true;
+                                    }
+                            }
 
-                    if (currentTask.IsComplete(World) || currentTask.WasCancelled)
+                        if (currentTask.IsComplete(World) || currentTask.WasCancelled)
+                            ChangeTask(null);
+                        else if (status != Act.Status.Running && !retried)
+                            ChangeTask(null);
+                    }
+                    catch (Exception e)
+                    {
+                        Program.LogSentryBreadcrumb("Error", currentAct.ToString());
+                        Program.CaptureException(new Exception("Dwarf Act threw", e));
                         ChangeTask(null);
-                    else if (status != Act.Status.Running && !retried)
-                        ChangeTask(null);
+                    }
                 }
             }
             else

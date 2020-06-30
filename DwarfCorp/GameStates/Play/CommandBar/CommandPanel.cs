@@ -26,20 +26,20 @@ namespace DwarfCorp.Play
                 EnableScrolling = true;
                 base.Construct();
 
-                Commands = PlayerCommandEnumerator.EnumeratePlayerCommands(World).ToList();
-                foreach (var command in Commands)
-                    if (command.HoverWidget != null) Root.ConstructWidget(command.HoverWidget);
+                //Commands = PlayerCommandEnumerator.EnumeratePlayerCommands(World).ToList();
+                //foreach (var command in Commands)
+                //    if (command.HoverWidget != null) Root.ConstructWidget(command.HoverWidget);
 
-                ItemSize = new Point(38, 70);
-                foreach (var resource in Commands)
-                {
-                    var lambdaResource = resource;
-                    resource.GuiTag = AddChild(new CommandIcon
-                    {
-                        Resource = resource,
-                        OnClick = (sender, args) => OnCommandClicked(lambdaResource)
-                    });
-                }
+                //ItemSize = new Point(38, 70);
+                //foreach (var resource in Commands)
+                //{
+                //    var lambdaResource = resource;
+                //    resource.GuiTag = AddChild(new CommandIcon
+                //    {
+                //        Resource = resource,
+                //        OnClick = (sender, args) => OnCommandClicked(lambdaResource)
+                //    });
+                //}
             }
 
             public void ApplyFilter(String Text)
