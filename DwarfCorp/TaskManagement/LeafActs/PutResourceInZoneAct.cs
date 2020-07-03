@@ -36,7 +36,7 @@ namespace DwarfCorp
 
             if (zone == null || !(zone is Stockpile) || resource == null)
             {
-                Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
+                if (Creature != null) Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                 yield return Status.Fail;
                 yield break;
             }
@@ -85,5 +85,4 @@ namespace DwarfCorp
             yield return Status.Success;
         }
     }
-
 }
