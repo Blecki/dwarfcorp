@@ -15,10 +15,12 @@
       "_TypeName": "Wizard Hat"
     },
     {
-      "_TypeName":  "Wizard Staff"
+      "_TypeName": "Wizard Staff"
     }
   ],
-  "Weapons": [ ],
+  "Weapons": [],
+  "RequiresTools": true,
+
   "Levels": [
     {
       "Index": 0,
@@ -98,7 +100,7 @@
         "Size": 5.0
       },
       "ExtraWeapons": [
-        
+
       ],
       "HealingPower": 5
     }

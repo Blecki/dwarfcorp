@@ -280,6 +280,10 @@
     <Compile Include="TaskManagement\Tasks\FindAndEquipTask.cs" />
     <Compile Include="TaskManagement\Tasks\GoToZoneTask.cs" />
     <Compile Include="TaskManagement\Tasks\GetHealedTask.cs" />
+    <Compile Include="TaskManagement\Tasks\KillEntity\DwarfKillEntityAct.cs" />
+    <Compile Include="TaskManagement\Tasks\KillEntity\DwarfKillEntityTask.cs" />
+    <Compile Include="TaskManagement\Tasks\KillEntity\KillEntityAct.cs" />
+    <Compile Include="TaskManagement\Tasks\KillEntity\KillEntityTask.cs" />
     <Compile Include="TaskManagement\Tasks\KillVoxel\KillVoxelAct.cs" />
     <Compile Include="TaskManagement\Tasks\KillVoxel\KillVoxelTask.cs" />
     <Compile Include="TaskManagement\Tasks\UnequipTask.cs" />
@@ -712,7 +716,6 @@
     <Compile Include="TaskManagement\CompoundActs\GoToVoxelAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\GoToZoneAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\GoTrainAct.cs" />
-    <Compile Include="TaskManagement\CompoundActs\KillEntityAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\MournGraves.cs" />
     <Compile Include="TaskManagement\CompoundActs\RechargeObjectAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\StockMoneyAct.cs" />
@@ -833,7 +836,6 @@
     <Compile Include="TaskManagement\Tasks\FleeEntityTask.cs" />
     <Compile Include="TaskManagement\Tasks\GatherItemTask.cs" />
     <Compile Include="TaskManagement\Tasks\HealAllyTask.cs" />
-    <Compile Include="TaskManagement\Tasks\KillEntityTask.cs" />
     <Compile Include="TaskManagement\Tasks\LookInterestingTask.cs" />
     <Compile Include="TaskManagement\Tasks\RechargeObjectTask.cs" />
     <Compile Include="TaskManagement\Tasks\SatisfyHungerTask.cs" />

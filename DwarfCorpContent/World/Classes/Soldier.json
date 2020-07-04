@@ -19,6 +19,8 @@
     }
   ],
   "Weapons": [],
+  "RequiresTools": true,
+
   "Levels": [
     {
       "Index": 0,

@@ -142,6 +142,19 @@ namespace DwarfCorp
             new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
         }
 
+        public virtual void OnAttacked(Creature By)
+        {
+            // Make the other creature defend itself.
+            var otherKill = new KillEntityTask(By.Physics, KillEntityTask.KillType.Auto)
+            {
+                AutoRetry = true,
+                ReassignOnDeath = false
+            };
+
+            if (!HasTaskWithName(otherKill))
+                AssignTask(otherKill);
+        }
+
         public virtual void AddXP(int amount) { }
 
         private void Sensor_OnEnemySensed(List<CreatureAI> enemies)
@@ -739,9 +752,10 @@ namespace DwarfCorp
 
         public void Chat()
         {
-            World.Paused = true;
             try
             {
+                World.Paused = true;
+
                 // Prepare conversation memory for an envoy conversation.
                 var cMem = World.ConversationMemory;
                 if (cMem == null

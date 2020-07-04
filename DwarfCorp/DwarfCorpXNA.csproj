@@ -412,7 +412,7 @@
     <Compile Include="TaskManagement\CompoundActs\GoToVoxelAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\GoToZoneAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\GoTrainAct.cs" />
-    <Compile Include="TaskManagement\CompoundActs\KillEntityAct.cs" />
+    <Compile Include="TaskManagement\Tasks\KillEntity\KillEntityAct.cs" />
     <Compile Include="Player\Crafting\GetResourcesOfType.cs" />
     <Compile Include="TaskManagement\Tasks\Harvest\ChopEntityAct.cs" />
     <Compile Include="TaskManagement\Tasks\Harvest\ChopEntityTask.cs" />
@@ -475,7 +475,7 @@
     <Compile Include="TaskManagement\Tasks\FleeEntityTask.cs" />
     <Compile Include="TaskManagement\Tasks\GatherItemTask.cs" />
     <Compile Include="TaskManagement\Tasks\HealAllyTask.cs" />
-    <Compile Include="TaskManagement\Tasks\KillEntityTask.cs" />
+    <Compile Include="TaskManagement\Tasks\KillEntity\KillEntityTask.cs" />
     <Compile Include="TaskManagement\Tasks\KillVoxel\KillVoxelTask.cs" />
     <Compile Include="TaskManagement\Tasks\LookInterestingTask.cs" />
     <Compile Include="Player\Farming\PlantTask.cs" />

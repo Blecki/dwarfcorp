@@ -19,39 +19,10 @@
     }
   ],
   "Weapons": [
-    {
-      "DamageAmount": 20.0,
-      "Name": "Musket",
-      "Range": 10.0,
-      "HitNoise": {
-        "Sounds": [
-          "Audio\\oscar\\sfx_ic_dwarf_attack_musket_1",
-          "Audio\\oscar\\sfx_ic_dwarf_attack_musket_2",
-          "Audio\\oscar\\sfx_ic_dwarf_attack_musket_3"
-        ],
-        "Volume": 1.0,
-        "RandomPitch": true
-      },
-      "HitColor": [
-        255,
-        255,
-        255,
-        255
-      ],
-      "Mode": "Ranged",
-      "RechargeRate": 2.0,
-      "Knockback": 0.0,
-      "AnimationAsset": "Effects\\explode",
-      "HitParticles": "",
-      "ProjectileType": "Bullet",
-      "LaunchSpeed": 30.0,
-      "HasTriggered": false,
-      "TriggerMode": "Animation",
-      "TriggerFrame": 2,
-      "DiseaseToSpread": null,
-      "ShootLaser": false
-    }
+
   ],
+  "RequiresTools": true,
+
   "Levels": [
     {
       "Index": 0,

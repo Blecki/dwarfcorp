@@ -59,15 +59,7 @@ namespace DwarfCorp
                         return new FleeEntityAct(creature.AI) { Entity = EntityToKill, PathLength = 20 };
                     }
 
-                    // Make the other creature defend itself.
-                    var otherKill = new KillEntityTask(creature.Physics, KillType.Auto)
-                    {
-                        AutoRetry = true,
-                        ReassignOnDeath = false
-                    };
-
-                    if (!otherCreature.AI.HasTaskWithName(otherKill))
-                        otherCreature.AI.AssignTask(otherKill);
+                    otherCreature.AI.OnAttacked(creature);
                 }
             }
 

@@ -100,6 +100,7 @@ namespace DwarfCorp
             {
                 Tree = new Domain(() => Verify(creature),
                     new Select(
+                        ActHelper.CreateEquipmentCheckAct(creature, "Tool", ActHelper.EquipmentFallback.AllowDefault, "Weapon"),
                         new AttackAct(Agent, entity),
                         new Wrap(() => OnAttackEnd(creature))));
             }
@@ -110,6 +111,7 @@ namespace DwarfCorp
                 {
                     Tree = new Domain(() => Verify(creature),
                         new Sequence(
+                            ActHelper.CreateEquipmentCheckAct(creature, "Tool", ActHelper.EquipmentFallback.AllowDefault, "Weapon"),
                             new Select(
                                 new GoToEntityAct(entity, creature)
                                 {
@@ -126,6 +128,7 @@ namespace DwarfCorp
                     closestDefensiveStructure.ReservedFor = creature;
                     Tree = new Domain(() => Verify(creature), 
                         new Sequence(
+                            ActHelper.CreateEquipmentCheckAct(creature, "Tool", ActHelper.EquipmentFallback.AllowDefault, "Weapon"),
                             new Select(
                                 new GoToEntityAct(closestDefensiveStructure, creature)
                                 {

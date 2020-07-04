@@ -319,7 +319,8 @@ namespace DwarfCorp
         /// <returns></returns>
         public MaybeNull<Attack> GetDefaultAttack()
         {
-            if (Equipment.HasValue(out var equipment) && equipment.GetItemInSlot("Tool").HasValue(out var tool) && tool.Equipment_Weapon != null)
+            var tool = ActHelper.GetEquippedItem(this, "Tool");
+            if (tool != null && tool.Equipment_Weapon != null)
                 return new Attack(tool.Equipment_Weapon);
             if (Stats != null && Stats.CurrentClass != null && Stats.CurrentClass.Weapons.Count > 0)
                 return new Attack(Stats.CurrentClass.Weapons[0]);

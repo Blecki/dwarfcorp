@@ -41,7 +41,21 @@ namespace DwarfCorp
             public Func<DwarfAI, WorldManager, bool> Available = (_ai, _world) => true;
         }
 
-        private static List<IdleTask> IdleTasks;
+        public override void OnAttacked(Creature By)
+        {
+            // Make the other creature defend itself.
+            var otherKill = new KillEntityTask(By.Physics, KillEntityTask.KillType.Auto)
+            {
+                AutoRetry = true,
+                ReassignOnDeath = false
+            };
+
+            if (!HasTaskWithName(otherKill))
+                AssignTask(otherKill);
+
+        }
+
+    private static List<IdleTask> IdleTasks;
 
         private static void InitializeIdleTasks()
         {

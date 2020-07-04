@@ -30,7 +30,7 @@ namespace DwarfCorp
         public bool RequiresSupervision = true;
         public string FallbackTool = "";
         public string JobDescription = "There is no description for this class.";
-        public bool RequiresTools = true;
+        public bool RequiresTools = false;
         public bool TriggersMourning = true;
         public List<Resource> StartingEquipment = new List<Resource>();
 

@@ -5,7 +5,8 @@
   "Category": "Tools",
   "Tags": [
     "Tool",
-    "Hammer"
+    "Hammer",
+    "Weapon"
   ],
   "FoodContent": 0.0,
   "DisplayName": "Stone Hammer",
@@ -32,7 +33,36 @@
   "Equipment_Palette": "Stone Equipment",
   "Equipment_LayerName": "hammer",
   "Equipment_Slot": "Tool",
-
+  "Equipment_Weapon": {
+    "DamageAmount": 3.0,
+    "Name": "Hammer",
+    "Range": 3.0,
+    "HitNoise": {
+      "Sounds": [
+        "Audio\\hammer"
+      ],
+      "Volume": 1.0,
+      "RandomPitch": true
+    },
+    "HitColor": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "Mode": "Melee",
+    "RechargeRate": 0.5,
+    "Knockback": 2.5,
+    "AnimationAsset": "Effects\\hit",
+    "HitParticles": "",
+    "ProjectileType": "",
+    "LaunchSpeed": 0.0,
+    "HasTriggered": false,
+    "TriggerMode": "Animation",
+    "TriggerFrame": 2,
+    "DiseaseToSpread": null,
+    "ShootLaser": false
+  },
   "Gui_Graphic": {
     "AssetPath": "Entities/Dwarf/ToolIcons/equipment",
     "Palette": "Stone Equipment",
