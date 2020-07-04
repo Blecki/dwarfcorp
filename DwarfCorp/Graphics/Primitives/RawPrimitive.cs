@@ -106,7 +106,7 @@ namespace DwarfCorp
                 device.SamplerStates[3].Filter = TextureFilter.MinLinearMagPointMipLinear;
                 device.SamplerStates[4].Filter = TextureFilter.MinLinearMagPointMipLinear;
 #endif
-                if (Vertices == null || Vertices.Length < 3)
+                if (Vertices == null || VertexCount < 3 || IndexCount < 3)
                     return;
 
             device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList,

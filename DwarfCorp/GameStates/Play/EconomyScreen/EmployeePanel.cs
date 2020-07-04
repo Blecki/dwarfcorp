@@ -74,7 +74,8 @@ namespace DwarfCorp.Gui.Widgets
             {
                 var bar = Root.ConstructWidget(new Widget
                 {
-                    Background = new TileReference("basic", 0)
+                    Background = new TileReference("basic", 0),
+                    Tag = employee
                 });
 
                 if (employee.GetRoot().GetComponent<DwarfSprites.LayeredCharacterSprite>().HasValue(out var employeeSprite))
@@ -150,11 +151,10 @@ namespace DwarfCorp.Gui.Widgets
                 ItemHeight = 64,
                 OnSelectedIndexChanged = (sender) =>
                 {
-                    if ((sender as Gui.Widgets.WidgetListView).SelectedIndex > 0 &&
-                        (sender as Gui.Widgets.WidgetListView).SelectedIndex <= World.PlayerFaction.Minions.Count)
+                    if (sender is Gui.Widgets.WidgetListView list && list.SelectedIndex > 0 && list.SelectedItem.Tag is CreatureAI creature)
                     {
                         right.Hidden = false;
-                        right.Employee = World.PlayerFaction.Minions[(sender as Gui.Widgets.WidgetListView).SelectedIndex - 1];
+                        right.Employee = creature;
                     }
                     else
                         right.Hidden = true;
