@@ -39,6 +39,15 @@ namespace DwarfCorp
             }
         }
 
+        public void InvalidateAllSlices()
+        {
+            lock (Data.SliceCache)
+            {
+                Data.SliceCache = new RawPrimitive[VoxelConstants.ChunkSizeY];
+                Manager.InvalidateChunk(this);
+            }
+        }
+
         public void DiscardPrimitive()
         {
             PrimitiveMutex.WaitOne();

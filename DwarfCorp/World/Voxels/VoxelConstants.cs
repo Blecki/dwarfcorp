@@ -37,11 +37,15 @@ namespace DwarfCorp
         public const Int32 GrassDecayMask = 0x0F;
 
         // Byte - [0001 1111] Decal Type
-        //        [1110 0000] Unused
+        //        [0010 0000] Pathing Hint
+        //        [1100 0000] Unused
         public const Int32 MaximumDecalTypes = 32;
         public const Int32 DecalTypeMask = 0x1F;
         public const Int32 InverseDecalTypeMask = 0xE0;
-        public const Int32 DecalTypeShift = 0x0;        
+        public const Int32 DecalTypeShift = 0x0;
+        public const Int32 PathingHintMask = 0x20;
+        public const Int32 InversePathingHintMask = 0xDF;
+        public const Int32 PathingHintShift = 5;
 
         // Byte - [0001 1111] Ramp Type
         //        [0010 0000] Sunlight

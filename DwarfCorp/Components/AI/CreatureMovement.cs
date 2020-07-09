@@ -420,6 +420,7 @@ namespace DwarfCorp
             }
         }
 
+        // There should be an easier way to do this... Maybe just figure out if the movement is possible and let the path follower figure out the how?
         private IEnumerable<MoveAction> EnumerateSuccessors(
             MoveState state, 
             VoxelHandle voxel, 
@@ -616,7 +617,7 @@ namespace DwarfCorp
                 });
             }
 
-            // If the creature can climb walls and is not blocked by a voxl above.
+            // If the creature can climb walls and is not blocked by a voxel above.
             if (CanClimbWalls && !topCovered)
             {
                 // This monstrosity is unrolling an inner loop so that we don't have to allocate an array or
@@ -631,7 +632,7 @@ namespace DwarfCorp
                 else if (Storage.Neighborhood[1, 1, 0].IsValid && !Storage.Neighborhood[1, 1, 0].IsEmpty)
                     wall = Storage.Neighborhood[1, 1, 0];
                     
-                if (wall.IsValid)
+                if (wall.IsValid && (!IsDwarf || wall.PathingHintSet == 0)) // Dwarves respect pathing hints.
                 {
                     isClimbing = true;
 
@@ -665,7 +666,8 @@ namespace DwarfCorp
             {
                 // If the creature is in water, it can swim. Otherwise, it will walk.
                 var moveType = inWater ? MoveType.Swim : MoveType.Walk;
-                if (Storage.Neighborhood[0, 1, 1].IsValid && Storage.Neighborhood[0, 1, 1].IsEmpty)
+                if (Storage.Neighborhood[0, 1, 1].IsValid && Storage.Neighborhood[0, 1, 1].IsEmpty 
+                    && (!IsDwarf || (Storage.Neighborhood[0,0,1].IsValid && Storage.Neighborhood[0, 0, 1].PathingHintSet == 0)))
                     // +- x
                     yield return(new MoveAction
                     {
@@ -676,8 +678,9 @@ namespace DwarfCorp
                         CostMultiplier = 1.0f
                     });
 
-                if (Storage.Neighborhood[2, 1, 1].IsValid && Storage.Neighborhood[2, 1, 1].IsEmpty)
-                    yield return(new MoveAction
+                if (Storage.Neighborhood[2, 1, 1].IsValid && Storage.Neighborhood[2, 1, 1].IsEmpty
+                    && (!IsDwarf || (Storage.Neighborhood[2, 0, 1].IsValid && Storage.Neighborhood[2, 0, 1].PathingHintSet == 0)))
+                    yield return (new MoveAction
                     {
                         SourceState = state,
                         Diff = new Vector3(2, 1, 1),
@@ -686,9 +689,10 @@ namespace DwarfCorp
                         DestinationVoxel = Storage.Neighborhood[2,1,1]
                     });
 
-                if (Storage.Neighborhood[1, 1, 0].IsValid && Storage.Neighborhood[1, 1, 0].IsEmpty)
+                if (Storage.Neighborhood[1, 1, 0].IsValid && Storage.Neighborhood[1, 1, 0].IsEmpty
+                    && (!IsDwarf || (Storage.Neighborhood[1, 0, 0].IsValid && Storage.Neighborhood[1, 0, 0].PathingHintSet == 0)))
                     // +- z
-                    yield return(new MoveAction
+                    yield return (new MoveAction
                     {
                         SourceState = state,
                         Diff = new Vector3(1, 1, 0),
@@ -697,8 +701,9 @@ namespace DwarfCorp
                         DestinationVoxel = Storage.Neighborhood[1,1,0]
                     });
 
-                if (Storage.Neighborhood[1, 1, 2].IsValid && Storage.Neighborhood[1, 1, 2].IsEmpty)
-                    yield return(new MoveAction
+                if (Storage.Neighborhood[1, 1, 2].IsValid && Storage.Neighborhood[1, 1, 2].IsEmpty
+                    && (!IsDwarf || (Storage.Neighborhood[1, 0, 2].IsValid && Storage.Neighborhood[1, 0, 2].PathingHintSet == 0)))
+                    yield return (new MoveAction
                     {
                         SourceState = state,
                         Diff = new Vector3(1, 1, 2),
@@ -711,9 +716,10 @@ namespace DwarfCorp
                 // no full neighbors around the voxel.
                 if (!hasNeighbors)
                 {
-                    if (Storage.Neighborhood[2, 1, 2].IsValid && Storage.Neighborhood[2, 1, 2].IsEmpty)
+                    if (Storage.Neighborhood[2, 1, 2].IsValid && Storage.Neighborhood[2, 1, 2].IsEmpty
+                    && (!IsDwarf || (Storage.Neighborhood[2, 0, 2].IsValid && Storage.Neighborhood[2, 0, 2].PathingHintSet == 0)))
                         // +x + z
-                        yield return(new MoveAction
+                        yield return (new MoveAction
                         {
                             SourceState = state,
                             Diff = new Vector3(2, 1, 2),
@@ -722,8 +728,9 @@ namespace DwarfCorp
                             DestinationVoxel = Storage.Neighborhood[2,1,2]
                         });
 
-                    if (Storage.Neighborhood[2, 1, 0].IsValid && Storage.Neighborhood[2, 1, 0].IsEmpty)
-                        yield return(new MoveAction
+                    if (Storage.Neighborhood[2, 1, 0].IsValid && Storage.Neighborhood[2, 1, 0].IsEmpty
+                    && (!IsDwarf || (Storage.Neighborhood[2, 0, 0].IsValid && Storage.Neighborhood[2, 0, 0].PathingHintSet == 0)))
+                        yield return (new MoveAction
                         {
                             SourceState = state,
                             Diff = new Vector3(2, 1, 0),
@@ -732,9 +739,10 @@ namespace DwarfCorp
                             DestinationVoxel = Storage.Neighborhood[2,1,0]
                         });
 
-                    if (Storage.Neighborhood[0, 1, 2].IsValid && Storage.Neighborhood[0, 1, 2].IsEmpty)
+                    if (Storage.Neighborhood[0, 1, 2].IsValid && Storage.Neighborhood[0, 1, 2].IsEmpty
+                    && (!IsDwarf || (Storage.Neighborhood[0, 0, 2].IsValid && Storage.Neighborhood[0, 0, 2].PathingHintSet == 0)))
                         // -x -z
-                        yield return(new MoveAction
+                        yield return (new MoveAction
                         {
                             SourceState = state,
                             Diff = new Vector3(0, 1, 2),
@@ -743,8 +751,9 @@ namespace DwarfCorp
                             DestinationVoxel = Storage.Neighborhood[0,1,2]
                         });
 
-                    if (Storage.Neighborhood[0, 1, 0].IsValid && Storage.Neighborhood[0, 1, 0].IsEmpty)
-                        yield return(new MoveAction
+                    if (Storage.Neighborhood[0, 1, 0].IsValid && Storage.Neighborhood[0, 1, 0].IsEmpty
+                    && (!IsDwarf || (Storage.Neighborhood[0, 0, 0].IsValid && Storage.Neighborhood[0, 0, 0].PathingHintSet == 0)))
+                        yield return (new MoveAction
                         {
                             SourceState = state,
                             Diff = new Vector3(0, 1, 0),
@@ -766,7 +775,7 @@ namespace DwarfCorp
                     {
                         if (dx == 1 && dz == 1) continue;
 
-                        if (Storage.Neighborhood[dx, 1, dz].IsValid && !Storage.Neighborhood[dx, 1, dz].IsEmpty)
+                        if (Storage.Neighborhood[dx, 1, dz].IsValid && !Storage.Neighborhood[dx, 1, dz].IsEmpty && (!IsDwarf || Storage.Neighborhood[dx, 1, dz].PathingHintSet == 0))
                         {
                             // Check to see if there is headspace for a higher jump.
 

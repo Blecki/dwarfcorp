@@ -12,7 +12,8 @@ namespace DwarfCorp
         Put     = 32,
         Plant   = 64, 
         PlaceObject   = 128,
+        PathingHint = 256,
 
-        _All     = Dig | Gather | Attack | Wrangle | Chop | Put | Plant | PlaceObject,
+        _All     = Dig | Gather | Attack | Wrangle | Chop | Put | Plant | PlaceObject | PathingHint
     }
 }

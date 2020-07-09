@@ -2194,6 +2194,10 @@
       <Name>Chop</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="World\Designations\PathingHint.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>PathingHint</Name>
+    </None>
     <None Include="World\Designations\PlaceObject.json">
       <Name>PlaceObject</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

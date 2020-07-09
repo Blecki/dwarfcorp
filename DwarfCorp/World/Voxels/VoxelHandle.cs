@@ -291,6 +291,23 @@ namespace DwarfCorp
         }
 
         [JsonIgnore]
+        public byte PathingHintSet
+        {
+            get { return (byte)((_cache_Chunk.Data.Decal[_cache_Index] & VoxelConstants.PathingHintMask) >> VoxelConstants.PathingHintShift); }
+            set
+            {
+                if (value != 0)
+                    _cache_Chunk.Data.PathHints += 1;
+                else
+                    _cache_Chunk.Data.PathHints -= 1;
+
+                _cache_Chunk.Data.Decal[_cache_Index] = (byte)((_cache_Chunk.Data.Decal[_cache_Index] & VoxelConstants.InversePathingHintMask) 
+                    | ((value << VoxelConstants.PathingHintShift) & VoxelConstants.PathingHintMask));
+                InvalidateVoxel(this);
+            }
+        }
+
+        [JsonIgnore]
         public LiquidType LiquidType
         {
             get { return (LiquidType)((_cache_Chunk.Data.Liquid[_cache_Index] & VoxelConstants.LiquidTypeMask) >> VoxelConstants.LiquidTypeShift); }

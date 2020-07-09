@@ -965,9 +965,25 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.LeafIcon,
             };
 
-#endregion
+            #endregion
 
-#region icon_BuildRoom
+            #region icon_PathingHintTool
+
+            var icon_PathingHintTool = new FlatToolTray.Icon
+            {
+                Tag = "select",
+                Text = "Select",
+                TextVerticalAlign = VerticalAlign.Below,
+                Icon = new Gui.TileReference("tool-icons", 5),
+                OnClick = (sender, args) => ChangeTool("PathingHint"),
+                Tooltip = "Select dwarves",
+                Behavior = FlatToolTray.IconBehavior.LeafIcon,
+            };
+
+            #endregion
+
+
+            #region icon_BuildRoom
 
             var icon_menu_RoomTypes_Return = new FlatToolTray.Icon
             {
@@ -1619,6 +1635,7 @@ namespace DwarfCorp.GameStates
                 ItemSource = new Gui.Widget[]
                 {
                     icon_SelectTool,
+                    icon_PathingHintTool,
                     icon_Craft,
                     icon_BuildTool,
                     icon_DigTool,

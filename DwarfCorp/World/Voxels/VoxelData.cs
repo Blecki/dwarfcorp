@@ -22,6 +22,7 @@ namespace DwarfCorp
         public int[] LiquidPresent;         // Storage per-slice
         public int[] VoxelsPresentInSlice;
         public RawPrimitive[] SliceCache;
+        public int PathHints = 0;
         
         public static VoxelData Allocate()
         {

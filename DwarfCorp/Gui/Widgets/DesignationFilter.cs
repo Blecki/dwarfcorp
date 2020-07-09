@@ -73,6 +73,10 @@ namespace DwarfCorp.Gui.Widgets
             World.Renderer.PersistentSettings.VisibleTypes = visibleTypes;
             foreach (var designation in DesignationSet.EnumerateDesignations())
                 designation.Voxel.Invalidate();
+            // Invalidate any chunk that contains pathing hints.
+            foreach (var chunk in World.ChunkManager.ChunkMap)
+                if (chunk.Data.PathHints > 0)
+                    chunk.InvalidateAllSlices();
         }
     }
 }

@@ -310,6 +310,14 @@ namespace DwarfCorp
                 var x = 5;
             }
 
+            if (v.PathingHintSet == 1)
+            {
+                var x = 5;
+            }
+
+            if ((DesignationType.PathingHint & World.Renderer.PersistentSettings.VisibleTypes) == DesignationType.PathingHint && v.PathingHintSet != 0)
+                BuildDesignationGeometryOnVoxel(Into, Chunk, Cache, World, v, DesignationType.PathingHint, null);
+
             if (Library.GetVoxelPrimitive(v.Type).HasValue(out BoxPrimitive primitive))
                 BuildVoxelGeometryFromPrimitive(Into, Chunk, Cache, v, primitive);
             
@@ -336,45 +344,49 @@ namespace DwarfCorp
             {
                 if ((designation.Type & World.Renderer.PersistentSettings.VisibleTypes) != designation.Type) // If hidden by player, do not draw.
                     return;
+                BuildDesignationGeometryOnVoxel(Into, Chunk, Cache, World, v, designation.Type, designation.Tag);
+            }
+        }
 
-                var designationProperties = Library.GetDesignationTypeProperties(designation.Type).Value;
-                var designationVisible = false;
+        private static void BuildDesignationGeometryOnVoxel(RawPrimitive Into, VoxelChunk Chunk, Cache Cache, WorldManager World, VoxelHandle v, DesignationType Type, Object Tag)
+        {
+            var designationProperties = Library.GetDesignationTypeProperties(Type).Value;
+            var designationVisible = false;
 
-                if (designation.Type == DesignationType.Put)
-                    designationVisible = v.Coordinate.Y < World.Renderer.PersistentSettings.MaxViewingLevel;
-                else
-                    designationVisible = VoxelHelpers.DoesVoxelHaveVisibleSurface(World, v);
+            if (Type == DesignationType.Put)
+                designationVisible = v.Coordinate.Y < World.Renderer.PersistentSettings.MaxViewingLevel;
+            else
+                designationVisible = VoxelHelpers.DoesVoxelHaveVisibleSurface(World, v);
 
-                if (designationVisible
-                    && Library.GetVoxelPrimitive(Library.DesignationVoxelType).HasValue(out BoxPrimitive designationPrimitive))
+            if (designationVisible
+                && Library.GetVoxelPrimitive(Library.DesignationVoxelType).HasValue(out BoxPrimitive designationPrimitive))
+            {
+                switch (designationProperties.DrawType)
                 {
-                    switch (designationProperties.DrawType)
-                    {
-                        case DesignationDrawType.FullBox:
-                            for (int i = 0; i < 6; i++)
-                                BuildVoxelFaceGeometry(Into, Chunk, Cache, designationPrimitive, v, designationProperties.Color, designationPrimitive.UVs, DesignationTransform, (BoxFace)i, false);
-                            break;
+                    case DesignationDrawType.FullBox:
+                        for (int i = 0; i < 6; i++)
+                            BuildVoxelFaceGeometry(Into, Chunk, Cache, designationPrimitive, v, designationProperties.Color, designationPrimitive.UVs, DesignationTransform, (BoxFace)i, false);
+                        break;
 
-                        case DesignationDrawType.TopBox:
-                            BuildVoxelFaceGeometry(Into, Chunk, Cache, designationPrimitive, v, designationProperties.Color, designationPrimitive.UVs, DesignationTransform, 0, false);
-                            break;
+                    case DesignationDrawType.TopBox:
+                        BuildVoxelFaceGeometry(Into, Chunk, Cache, designationPrimitive, v, designationProperties.Color, designationPrimitive.UVs, DesignationTransform, 0, false);
+                        break;
 
-                        case DesignationDrawType.PreviewVoxel:
+                    case DesignationDrawType.PreviewVoxel:
+                        {
+                            if (Library.GetVoxelType(Tag.ToString()).HasValue(out VoxelType voxelType)
+                                && Library.GetVoxelPrimitive(voxelType).HasValue(out BoxPrimitive previewPrimitive))
                             {
-                                if (Library.GetVoxelType(designation.Tag.ToString()).HasValue(out VoxelType voxelType)
-                                    && Library.GetVoxelPrimitive(voxelType).HasValue(out BoxPrimitive previewPrimitive))
-                                {
-                                    var offsetMatrix = Matrix.Identity;
-                                    if (!v.IsEmpty)
-                                        offsetMatrix = Matrix.CreateTranslation(0.0f, 0.1f, 0.0f);
-                                    for (int i = 0; i < 6; i++)
-                                        BuildVoxelFaceGeometry(Into, Chunk, Cache, previewPrimitive, v, designationProperties.Color, previewPrimitive.UVs, offsetMatrix, (BoxFace)i, false);
-                                }
+                                var offsetMatrix = Matrix.Identity;
+                                if (!v.IsEmpty)
+                                    offsetMatrix = Matrix.CreateTranslation(0.0f, 0.1f, 0.0f);
+                                for (int i = 0; i < 6; i++)
+                                    BuildVoxelFaceGeometry(Into, Chunk, Cache, previewPrimitive, v, designationProperties.Color, previewPrimitive.UVs, offsetMatrix, (BoxFace)i, false);
                             }
-                            break;
-                    }
-
+                        }
+                        break;
                 }
+
             }
         }
 
