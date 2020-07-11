@@ -1,17 +1,8 @@
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using DwarfCorp.GameStates;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Graphics;
 using System.Threading;
-using Newtonsoft.Json;
-using System.Globalization;
-using System.Collections.Concurrent;
 
 namespace DwarfCorp
 {
@@ -22,7 +13,7 @@ namespace DwarfCorp
     /// </summary>
     public class ComponentManager
     {
-        public class ComponentSaveData //: Saving.ISaveableObject
+        public class ComponentSaveData
         {
             public List<GameComponent> SaveableComponents;
             public uint RootComponent;
@@ -134,15 +125,6 @@ namespace DwarfCorp
             }
 
             StartThreads();
-
-            /*
-            foreach (var component in Components)
-            {
-                if (component.Value.Parent != null && (!HasComponent(component.Value.Parent.GlobalID) || !component.Value.Parent.Children.Contains(component.Value)))
-                {
-                    Console.Error.WriteLine("Component {0} parent: {1} is not in the list of components", component.Value.Name, component.Value.Parent.Name);
-                }
-            */
         }
 
         public ComponentManager(WorldManager state)
@@ -244,33 +226,26 @@ namespace DwarfCorp
             component.ProcessTransformChange();
         }
 
-        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera) // Todo: Camera redundant
+        public void FindComponentsToUpdate(HashSet<GameComponent> Into)
+        {
+            var playerPoint = World.Renderer.Camera.Position;
+            World.EnumerateIntersectingRootEntitiesLoose(playerPoint, GameSettings.Current.EntityUpdateDistance, Into);
+        }
+
+        public void Update(DwarfTime gameTime, ChunkManager chunks, HashSet<GameComponent> ComponentsToUpdate) // Todo: Camera redundant
         {
             PerformanceMonitor.PushFrame("Component Update");
             PerformanceMonitor.SetMetric("COMPONENTS", NumComponents());
 
-
-            var playerPoint = World.Renderer.Camera.Position;
-            // Todo: Make this a sphere?
-            var distanceVec = new Vector3(GameSettings.Current.EntityUpdateDistance, GameSettings.Current.EntityUpdateDistance, GameSettings.Current.EntityUpdateDistance);
-            var updateBox = new BoundingBox(playerPoint - distanceVec, playerPoint + distanceVec);
-            var componentsToUpdate = World.EnumerateIntersectingRootEntitiesLoose(updateBox);
-
             var i = 0;
-            foreach (var body in componentsToUpdate)
+            foreach (var body in ComponentsToUpdate)
             {
                 i += 1;
-                body.Update(gameTime, chunks, camera);
+                body.Update(gameTime, chunks, World.Renderer.Camera);
                 body.ProcessTransformChange();
             }
 
             PerformanceMonitor.SetMetric("ENTITIES UPDATED", i);
-
-
-            if (Debugger.Switches.DrawUpdateBox)
-                foreach (var chunk in World.EnumerateChunksInBounds(updateBox))
-                    Drawer3D.DrawBox(chunk.GetBoundingBox(), Color.Red, 0.4f, false);
-
             PerformanceMonitor.PopFrame();
 
             AddRemove();

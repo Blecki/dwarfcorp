@@ -354,7 +354,7 @@ namespace DwarfCorp
                     }
 
                     if (Physics != null)
-                        foreach (var body in World.EnumerateIntersectingObjects(Physics.BoundingBox.Expand(3.0f)).OfType<ResourceEntity>().Where(r => r != null && r.Active && r.AnimationQueue.Count == 0))
+                        foreach (var body in World.EnumerateIntersectingRootObjects(Physics.BoundingBox.Expand(3.0f)).OfType<ResourceEntity>().Where(r => r != null && r.Active && r.AnimationQueue.Count == 0))
                         {
                             if (body.Resource != null && Library.GetResourceType(body.Resource.TypeName).HasValue(out var resource) && resource.Tags.Contains("Edible"))
                             {

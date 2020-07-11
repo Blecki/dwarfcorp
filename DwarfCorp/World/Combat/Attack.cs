@@ -184,13 +184,14 @@ namespace DwarfCorp
                     {
                         var box = new BoundingBox(performer.AI.Position - Vector3.One * Weapon.Range, performer.AI.Position + Vector3.One * Weapon.Range);
 
-                        foreach (var body in performer.World.EnumerateIntersectingObjects(box, CollisionType.Both).Where(b => b.IsRoot()))
+                        foreach (var body in performer.World.EnumerateIntersectingRootObjects(box, CollisionType.Both))
                         {
-                            if (body.GetRoot().GetComponent<CreatureAI>().HasValue(out var creature))
+                            if (body.GetComponent<CreatureAI>().HasValue(out var creature))
                             {
                                 if (creature.Faction == performer.Faction)
                                     continue;
 
+                                
                                 if (performer.World.Overworld.GetPolitics(creature.Faction.ParentFaction, performer.Faction.ParentFaction).GetCurrentRelationship() != Relationship.Hateful)
                                     continue;
 
@@ -198,7 +199,7 @@ namespace DwarfCorp
                             }
                             else
                             {
-                                if (body.GetRoot().GetComponent<Health>().HasValue(out var health))
+                                if (body.GetComponent<Health>().HasValue(out var health))
                                     DoDamage(performer, body, bonus);
 
                                 continue;

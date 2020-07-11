@@ -58,7 +58,7 @@ namespace DwarfCorp.Elevators
             }
         }
 
-        public override void Update(DwarfTime GameTime)
+        public override void Update(DwarfTime GameTime, WorldManager World)
         {
             // Todo: Limit update rate.
 
@@ -184,7 +184,7 @@ namespace DwarfCorp.Elevators
         {
             Neighbor = null;
 
-            foreach (var entity in Manager.World.EnumerateIntersectingObjects(Bounds, CollisionType.Static))
+            foreach (var entity in Manager.World.EnumerateIntersectingRootObjects(Bounds, CollisionType.Static))
             {
                 if (Object.ReferenceEquals(entity, this)) continue;
                 if (entity is ElevatorShaft found)

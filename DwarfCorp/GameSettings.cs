@@ -169,6 +169,7 @@ namespace DwarfCorp
             public int ChunkDrawDistance = 100;
             public float VertexCullDistance = 1000;
             public int EntityUpdateDistance = 128;
+            public int ChunkLoadDistance = 128;
             public int AntiAliasing = 0;
             public bool Fullscreen = false;
             public bool EnableGlow = true;

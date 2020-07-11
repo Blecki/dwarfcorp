@@ -104,31 +104,58 @@ namespace DwarfCorp
                     }
         }
 
+        private void GetChunksInRadius(Vector3 Point, float Radius, HashSet<VoxelChunk> Chunks)
+        {
+            Chunks.Clear();
+            var minChunk = ChunkData.ConfineToBounds(GlobalVoxelCoordinate.FromVector3(Point - new Vector3(Radius, Radius, Radius)).GetGlobalChunkCoordinate());
+            var maxChunk = ChunkData.ConfineToBounds(GlobalVoxelCoordinate.FromVector3(Point + new Vector3(Radius, Radius, Radius)).GetGlobalChunkCoordinate());
+
+            for (var x = minChunk.X; x <= maxChunk.X; ++x)
+                for (var y = minChunk.Y; y <= maxChunk.Y; ++y)
+                    for (var z = minChunk.Z; z <= maxChunk.Z; ++z)
+                    {
+                        var chunkCoord = new GlobalChunkCoordinate(x, y, z);
+                        Chunks.Add(ChunkData.GetChunk(chunkCoord));
+                    }
+        }
+
         public void Update(DwarfTime gameTime, Camera camera, GraphicsDevice g)
         {
-                
-                var visibleSet = new HashSet<VoxelChunk>();
-                GetChunksIntersecting(camera.GetDrawFrustum(), visibleSet);
-                RenderList = visibleSet.ToList();
-                foreach (var chunk in visibleSet)
+            var visibleSet = new HashSet<VoxelChunk>();
+            GetChunksIntersecting(camera.GetDrawFrustum(), visibleSet);
+            foreach (var chunk in visibleSet)
+            {
+                if (chunk.Visible == false)
                 {
-                    if (chunk.Visible == false)
-                    {
-                        chunk.Visible = true;
-                        chunk.Manager.InvalidateChunk(chunk);
-                    }
-
-                    chunk.RenderCycleWhenLastVisible = RenderCycle;
+                    chunk.Visible = true;
+                    chunk.Manager.InvalidateChunk(chunk);
                 }
 
-                foreach (var chunk in RenderList)
-                {
-                    if (chunk.RenderCycleWhenLastVisible != RenderCycle)
-                        chunk.Visible = false;
-                }
+                chunk.RenderCycleWhenLastVisible = RenderCycle;
+            }
 
-                RenderList = visibleSet.ToList();
-                RenderCycle += 1;
+            foreach (var chunk in RenderList)
+                if (chunk.RenderCycleWhenLastVisible != RenderCycle)
+                    chunk.Visible = false;
+
+            RenderList = visibleSet.ToList();
+
+            //var loadedSet = new HashSet<VoxelChunk>();
+            //GetChunksInRadius(camera.Position, GameSettings.Current.ChunkLoadDistance, loadedSet);
+            //foreach (var chunk in loadedSet)
+            //{
+            //    if (chunk.Data == null)
+            //        chunk.Manager.QueueChunkLoad(chunk);
+            //    chunk.RenderCycleWhenLastLoaded = RenderCycle;
+            //}
+
+            //foreach (var chunk in LiveVoxelList)
+            //    if (chunk.RenderCycleWhenLastLoaded != RenderCycle)
+            //        chunk.Manager.QueueChunkSave(chunk);
+
+            //LiveVoxelList = loadedSet.ToList();
+
+            RenderCycle += 1;
         }
     }
 }

@@ -137,5 +137,11 @@ namespace DwarfCorp
 
             return c;
         }
+
+        public void Write(String SaveDirectory)
+        {
+            var filename = SaveDirectory + System.IO.Path.DirectorySeparatorChar + "Chunks" + System.IO.Path.DirectorySeparatorChar + ID.X + "_" + ID.Y + "_" + ID.Z + ".";
+            FileUtils.SaveJSON(this, filename + ChunkFile.Extension);
+        }
     }
 }

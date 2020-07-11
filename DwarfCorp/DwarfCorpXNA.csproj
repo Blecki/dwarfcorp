@@ -186,6 +186,7 @@
     <Compile Include="AssetManagement\TextureTool-CropAndColorSprite.cs" />
     <Compile Include="AssetManagement\TextureTool-LoadPSD.cs" />
     <Compile Include="Components\AI\Creature-Death.cs" />
+    <Compile Include="Components\Physics\PhysicsSystem.cs" />
     <Compile Include="Entities\Animals\Pumpking.cs" />
     <Compile Include="Entities\Fixtures\Jack-O-Lantern.cs" />
     <Compile Include="Entities\Fixtures\TrainingEquipment\TrainingEquipment.cs" />

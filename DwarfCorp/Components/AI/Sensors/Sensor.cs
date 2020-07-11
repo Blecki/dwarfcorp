@@ -38,7 +38,7 @@ namespace DwarfCorp
 
             FireTimer.Update(gameTime);
             if (FireTimer.HasTriggered && OnSensed != null)
-                OnSensed(Manager.World.EnumerateIntersectingObjects(BoundingBox, CollisionType.Dynamic));
+                OnSensed(Manager.World.EnumerateIntersectingRootObjects(BoundingBox, CollisionType.Dynamic));
         }
     }
 

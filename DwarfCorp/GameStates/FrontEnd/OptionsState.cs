@@ -42,6 +42,7 @@ namespace DwarfCorp.GameStates
         private CheckBox Fullscreen;
         private SliderCombo ChunkDrawDistance;
         private SliderCombo EntityUpdateDistance;
+        private SliderCombo ChunkLoadDistance;
         //private HorizontalFloatSlider VertexCullDistance;
         private CheckBox Glow;
         private Gui.Widgets.ComboBox Antialiasing;
@@ -630,18 +631,26 @@ namespace DwarfCorp.GameStates
 
             ChunkDrawDistance = leftPanel.AddChild(LabelAndDockWidget("Terrain Draw Distance", new SliderCombo
             {
-                ScrollMin = 16,
-                ScrollMax = 1000,
+                ScrollMin = 64,
+                ScrollMax = 1024,
                 OnSliderChanged = OnItemChanged,
                 Tooltip = "Higher values allow you to see more terrain. Lower values will make the game run faster."
             })).GetChild(1) as SliderCombo;
 
             EntityUpdateDistance = leftPanel.AddChild(LabelAndDockWidget("Entity Update Distance", new SliderCombo
             {
-                ScrollMin = 16,
-                ScrollMax = 1000,
+                ScrollMin = 64,
+                ScrollMax = 1024,
                 OnSliderChanged = OnItemChanged,
                 Tooltip = "Controls the distance beyond which entities will not be updated."
+            })).GetChild(1) as SliderCombo;
+
+            ChunkLoadDistance = leftPanel.AddChild(LabelAndDockWidget("Chunk Load Distance", new SliderCombo
+            {
+                ScrollMin = 64,
+                ScrollMax = 1024,
+                OnSliderChanged = OnItemChanged,
+                Tooltip = "Distance at which voxel data is unloaded."
             })).GetChild(1) as SliderCombo;
 
             /*
@@ -966,6 +975,7 @@ namespace DwarfCorp.GameStates
             toReturn.ParticlePhysics = this.ParticlePhysics.CheckState;
             toReturn.GrassMotes = this.Motes.CheckState;
             //toReturn.NumMotes = (int)this.NumMotes.ScrollPosition + 100;
+            toReturn.ChunkLoadDistance = this.ChunkLoadDistance.ScrollPosition;
 
             toReturn.GuiScale = GuiScale.SelectedIndex + 1;
             toReturn.GuiAutoScale = this.GuiAutoScale.CheckState;
@@ -1007,6 +1017,7 @@ namespace DwarfCorp.GameStates
 
             GameSettings.Current.Fullscreen = this.Fullscreen.CheckState;
             GameSettings.Current.ChunkDrawDistance = this.ChunkDrawDistance.ScrollPosition;
+            GameSettings.Current.ChunkLoadDistance = this.ChunkLoadDistance.ScrollPosition;
             GameSettings.Current.EntityUpdateDistance = this.EntityUpdateDistance.ScrollPosition;
             //GameSettings.Default.VertexCullDistance = this.VertexCullDistance.ScrollPosition + 0.1f;
             //GameSettings.Default.ChunkGenerateDistance = this.GenerateDistance.ScrollPosition + 1.0f;
@@ -1114,6 +1125,7 @@ namespace DwarfCorp.GameStates
             SetBestResolution();
             this.Fullscreen.CheckState = GameSettings.Current.Fullscreen;
             this.ChunkDrawDistance.ScrollPosition = GameSettings.Current.ChunkDrawDistance;
+            this.ChunkLoadDistance.ScrollPosition = GameSettings.Current.ChunkLoadDistance;
             this.EntityUpdateDistance.ScrollPosition = GameSettings.Current.EntityUpdateDistance;
             //this.VertexCullDistance.ScrollPosition = GameSettings.Default.VertexCullDistance - 0.1f;
             //this.GenerateDistance.ScrollPosition = GameSettings.Default.ChunkGenerateDistance - 1.0f;

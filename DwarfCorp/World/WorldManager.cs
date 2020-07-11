@@ -35,6 +35,7 @@ namespace DwarfCorp
         private Timer orphanedTaskRateLimiter = new Timer(10.0f, false, Timer.TimerMode.Real);
         public MonsterSpawner MonsterSpawner;
         public Faction PlayerFaction;
+        public HashSet<GameComponent> ComponentUpdateSet = new HashSet<GameComponent>();
 
         #region Tutorial Hooks
 
@@ -219,6 +220,10 @@ namespace DwarfCorp
             // If not paused, we want to just update the rest of the game.
             else
             {
+                // Choose what entities to update.
+                ComponentUpdateSet.Clear();
+                ComponentManager.FindComponentsToUpdate(ComponentUpdateSet);
+
                 ParticleManager.Update(gameTime, this);
                 TutorialManager.Update(UserInterface.Gui);
 
@@ -226,7 +231,7 @@ namespace DwarfCorp
                 {
                     try
                     {
-                        updateSystem.Update(gameTime);
+                        updateSystem.Update(gameTime, this);
                     }
                     catch (Exception) { }
                 }
@@ -309,7 +314,7 @@ namespace DwarfCorp
 
 
 
-                ComponentManager.Update(gameTime, ChunkManager, Renderer.Camera);
+                ComponentManager.Update(gameTime, ChunkManager, ComponentUpdateSet);
                 MonsterSpawner.Update(gameTime);
 
             }

@@ -15,6 +15,7 @@ namespace DwarfCorp
 
         private GeometricPrimitive Primitive = null;
         public int RenderCycleWhenLastVisible = 0;
+        public int RenderCycleWhenLastLoaded = 0;
         public bool Visible = false;
         public Mutex PrimitiveMutex { get; set; }
 

@@ -24,7 +24,6 @@ namespace DwarfCorp
             base(manager, Resource == null ? "INVALID" : Resource.DisplayName, Matrix.CreateTranslation(position), new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0))
         {
             this.Resource = Resource;
-            Restitution = 0.1f;
             Friction = 0.1f;
 
             if (Resource != null && Library.GetResourceType(Resource.TypeName).HasValue(out var type))

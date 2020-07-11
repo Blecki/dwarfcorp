@@ -164,8 +164,9 @@ namespace DwarfCorp
             }
             else if (Command.Contains("Disease"))
             {
-                foreach (var creature in World.EnumerateIntersectingObjects(VoxelHelpers.GetVoxelBoundingBox(refs), CollisionType.Both).OfType<Creature>())
-                    creature.Stats.AcquireDisease(DiseaseLibrary.GetRandomDisease());
+                foreach (var creature in World.EnumerateIntersectingRootObjects(VoxelHelpers.GetVoxelBoundingBox(refs), CollisionType.Both).Select(r => r.GetComponent<Creature>()))
+                    if (creature.HasValue(out var c))
+                        c.Stats.AcquireDisease(DiseaseLibrary.GetRandomDisease());
             }
             else
             {

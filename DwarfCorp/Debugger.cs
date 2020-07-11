@@ -29,7 +29,6 @@ namespace DwarfCorp
             public static bool DrawSelectionBuffer = false;
             public static bool HideSliceTop = false;
             public static bool DebugElevators = false;
-            public static bool DrawUpdateBox = false;
             public static bool DisableWaterUpdate = false;
             public static bool DrawInvisible = false;
             public static bool ShowEntityInfo = false;

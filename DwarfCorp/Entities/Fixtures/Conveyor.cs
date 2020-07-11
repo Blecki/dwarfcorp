@@ -77,7 +77,7 @@ namespace DwarfCorp
             pushVector = Vector3.Transform(pushVector, rot * Quaternion.CreateFromAxisAngle(Vector3.UnitY, -(float)Math.PI / 2.0f));
             pushVector *= (float)Time.ElapsedGameTime.TotalSeconds * 4.0f;
 
-            foreach (var body in Manager.World.EnumerateIntersectingObjects(GetBoundingBox(), CollisionType.Dynamic))
+            foreach (var body in Manager.World.EnumerateIntersectingRootObjects(GetBoundingBox(), CollisionType.Dynamic))
                 if (GetBoundingBox().Contains(body.LocalPosition) == ContainmentType.Contains)
                     body.LocalPosition += pushVector;
         }

@@ -29,7 +29,7 @@ namespace DwarfCorp.SteamPipes
                 Objects.Remove(steamObject);
         }
 
-        public override void Update(DwarfTime GameTime)
+        public override void Update(DwarfTime GameTime, WorldManager World)
         {
             // Todo: Limit update rate.
 

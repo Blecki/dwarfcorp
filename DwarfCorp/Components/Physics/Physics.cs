@@ -14,13 +14,9 @@ namespace DwarfCorp
     /// </summary>
     public class Physics : GameComponent
     {
-        public Vector3 AngularVelocity { get; set; }
         public Vector3 Velocity { get; set; }
         public float Mass { get; set; }
-        public float I { get; set; }
         public float LinearDamping { get; set; }
-        public float AngularDamping { get; set; }
-        public float Restitution { get; set; }
         public float Friction { get; set; }
         public Vector3 Gravity { get; set; }
         public Vector3 PreviousPosition { get; set; }
@@ -80,12 +76,8 @@ namespace DwarfCorp
         {
             Mass = mass;
             Velocity = Vector3.Zero;
-            AngularVelocity = Vector3.Zero;
-            I = i;
             LinearDamping = linearDamping;
-            AngularDamping = angularDamping;
             Gravity = gravity;
-            Restitution = 0.01f;
             Friction = 0.99f;
             IsSleeping = false;
             PreviousPosition = LocalTransform.Translation;
@@ -105,11 +97,15 @@ namespace DwarfCorp
             transform.Translation = newPos;
             LocalTransform = transform;
         }
- 
+
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
 
+        }
+
+        public void PhysicsUpdate(DwarfTime gameTime, ChunkManager chunks)
+        { 
             if (!Active)
                 return;
 
@@ -196,11 +192,8 @@ namespace DwarfCorp
 
 
                     // If we're outside the world, die
-                    if (LocalTransform.Translation.Y < -10 ||
-                        worldBounds.Contains(GetBoundingBox()) == ContainmentType.Disjoint)
-                    {
+                    if (LocalTransform.Translation.Y < -10 || worldBounds.Contains(GetBoundingBox()) == ContainmentType.Disjoint)
                         Die();
-                    }
 
                     // Final check to ensure we're in the world.
                     transform.Translation = ClampToBounds(transform.Translation);
@@ -209,18 +202,15 @@ namespace DwarfCorp
                     // Assume that if velocity is small, we're standing on ground (lol bad assumption)
                     // Apply friction.
                     if (Math.Abs(Velocity.Y) < 0.1f)
-                    {
                         Velocity = new Vector3(Velocity.X * Friction, Velocity.Y, Velocity.Z * Friction);
-                    }
 
                     // Apply gravity.
                     ApplyForce(Gravity, FixedDT / velocityLength);
 
                     // Damp the velocity.
-                    Vector3 dampingForce = -Velocity * (1.0f - LinearDamping);
+                    var dampingForce = -Velocity * (1.0f - LinearDamping);
 
                     Velocity += dampingForce * FixedDT;
-                    AngularVelocity *= AngularDamping;
 
                     // These will get called next time around anyway... -@blecki
                     // No they won't @blecki, this broke everything!! -@mklingen
@@ -230,12 +220,10 @@ namespace DwarfCorp
                     {
                         // Assume all physics are attached to the root.
                         if (Parent != null)
-                            globalTransform = LocalTransform * (Parent as GameComponent).GlobalTransform;
+                            globalTransform = LocalTransform * Parent.GlobalTransform;
                         else
                             globalTransform = LocalTransform;
                         UpdateBoundingBox();
-
-                        //UpdateTransformsRecursive(Parent as Body);
                     }
                 }
 
@@ -643,12 +631,6 @@ namespace DwarfCorp
         public void ApplyForce(Vector3 force, float dt)
         {
             Velocity += (force / Mass) * dt;
-            IsSleeping = false;
-        }
-
-        public void ApplyTorque(Vector3 torque, float dt)
-        {
-            AngularVelocity += (torque / I) / dt;
             IsSleeping = false;
         }
 

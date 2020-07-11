@@ -24,10 +24,7 @@ namespace DwarfCorp
             global::System.IO.Directory.CreateDirectory(directory + System.IO.Path.DirectorySeparatorChar + "Chunks");
 
             foreach (ChunkFile chunk in ChunkData)
-            {
-                var filename = directory + System.IO.Path.DirectorySeparatorChar + "Chunks" + System.IO.Path.DirectorySeparatorChar + chunk.ID.X + "_" + chunk.ID.Y + "_" + chunk.ID.Z + ".";
-                FileUtils.SaveJSON(chunk, filename + ChunkFile.Extension);
-            }
+                chunk.Write(directory);
 
             FileUtils.SaveJSON(this.Metadata, directory + System.IO.Path.DirectorySeparatorChar + "Metadata." + MetaData.Extension);
             FileUtils.SaveJSON(this.PlayData, directory + System.IO.Path.DirectorySeparatorChar + "World." + PlayData.Extension);
