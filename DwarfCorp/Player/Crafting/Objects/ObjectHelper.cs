@@ -68,18 +68,16 @@ namespace DwarfCorp
                 if (Debugger.Switches.DrawToolDebugInfo)
                     Drawer3D.DrawBox(sensorBox, Color.Yellow, 0.1f, false);
 
-                foreach (var intersectingObject in World.EnumerateIntersectingObjects(sensorBox, CollisionType.Static))
+                foreach (var intersectingObject in World.EnumerateIntersectingAnchors(sensorBox))
                 {
                     if (Object.ReferenceEquals(intersectingObject, sensor)) continue;
-                    var objectRoot = intersectingObject.GetRoot() as GameComponent;
-                    if (objectRoot is WorkPile) continue;
-                    if (objectRoot == PreviewBody) continue;
-                    if (objectRoot.IsDead) continue;
-                    if (objectRoot != null && objectRoot.GetRotatedBoundingBox().Intersects(previewBox))
-                    {
-                        World.UserInterface.ShowTooltip("Can't " + Verb + " here: intersects " + objectRoot.Name);
-                        return false;
-                    }
+
+                    if (Debugger.Switches.DrawToolDebugInfo)
+                        Drawer3D.DrawBox(intersectingObject.GetRotatedBoundingBox(), Color.Violet, 0.1f, false);
+
+                    if (intersectingObject.IsDead) continue;
+                    World.UserInterface.ShowTooltip("Can't " + Verb + " here: intersects " + intersectingObject.Name);
+                    return false;
                 }
 
                 bool intersectsWall = VoxelHelpers.EnumerateCoordinatesInBoundingBox

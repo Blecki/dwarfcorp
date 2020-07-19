@@ -218,17 +218,18 @@ namespace DwarfCorp.SteamPipes
         {
             global::System.Diagnostics.Debug.Assert(NeighborPipes.Count == 0);
 
-            foreach (var entity in Manager.World.EnumerateIntersectingObjects(this.BoundingBox.Expand(0.1f), CollisionType.Static))
+            foreach (var entity in Manager.World.EnumerateIntersectingRootObjects(this.BoundingBox.Expand(0.1f), CollisionType.Static))
             {
-                if (Object.ReferenceEquals(entity, this)) continue;
-                var neighborPipe = entity as SteamPoweredObject;
-                if (neighborPipe == null) continue;
+                if (entity.GetComponent<SteamPoweredObject>().HasValue(out var neighborPipe))
+                {
+                    if (Object.ReferenceEquals(neighborPipe, this)) continue;
 
-                var distance = (neighborPipe.Position - Position).Length2D();
-                if (distance > 1.1f) continue;
+                    var distance = (neighborPipe.Position - Position).Length2D();
+                    if (distance > 1.1f) continue;
 
-                AttachNeighbor(neighborPipe.GlobalID);
-                neighborPipe.AttachNeighbor(this.GlobalID);
+                    AttachNeighbor(neighborPipe.GlobalID);
+                    neighborPipe.AttachNeighbor(this.GlobalID);
+                }
             }
 
             Primitive = null;

@@ -52,7 +52,7 @@ namespace DwarfCorp
                 GrowthTimer.Update(Time);
                 if (GrowthTimer.HasTriggered)
                 {
-                    var objects = World.EnumerateIntersectingObjects(new BoundingBox(-Vector3.One * GrowthRadius + Position, Vector3.One * GrowthRadius + Position), CollisionType.Static);
+                    var objects = World.EnumerateIntersectingRootObjects(new BoundingBox(-Vector3.One * GrowthRadius + Position, Vector3.One * GrowthRadius + Position), CollisionType.Static);
                     var seeds = objects.OfType<Seedling>().ToList();
                     foreach (var obj in seeds)
                     {

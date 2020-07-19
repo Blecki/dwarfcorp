@@ -49,19 +49,9 @@ namespace DwarfCorp
                     if (!v.IsValid || (v.IsEmpty && v.IsExplored) || v.Type.IsInvincible)
                         continue;
 
-                    var boundingBox = v.GetBoundingBox().Expand(-0.1f, 0.1f, -0.1f);
+                    var boundingBox = v.GetBoundingBox().Expand(-0.1f, -0.1f, -0.1f);
                     var reject = false;
-                    foreach (var entity in World.EnumerateIntersectingRootObjects(boundingBox, CollisionType.Static))
-                    {
-                        foreach (var component in entity.EnumerateAll().Where(e => e.BoundingBox.Intersects(boundingBox)).OfType<IVoxelListener>())
-                        {
-                            reject = true;
-                            break;
-                        }
-                        if (reject)
-                            break;
-                    }
-                    if (reject)
+                    if (World.EnumerateIntersectingAnchors(boundingBox).Any())
                         continue;
 
                     if (count >= GameSettings.Current.MaxVoxelDesignations)

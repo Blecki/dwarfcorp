@@ -64,8 +64,8 @@ namespace DwarfCorp
             }
 
             var boundingBox = new BoundingBox(voxel.Coordinate.ToVector3() + new Vector3(0.2f, 0.2f, 0.2f), voxel.Coordinate.ToVector3() + new Vector3(0.8f, 0.8f, 0.8f));
-            var entities = World.EnumerateIntersectingObjects(boundingBox, CollisionType.Static).OfType<IVoxelListener>();
-            if (entities.Any())
+            var entities = World.EnumerateIntersectingAnchors(boundingBox);
+            foreach (var blocker in entities)
             {
                 if (Debugger.Switches.DrawToolDebugInfo)
                 {

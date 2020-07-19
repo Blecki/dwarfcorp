@@ -55,10 +55,10 @@ namespace DwarfCorp
                 HealTimer.Update(Time);
                 if (HealTimer.HasTriggered)
                 {
-                    var objects = World.EnumerateIntersectingObjects(new BoundingBox(-Vector3.One * HealRadius + Position, Vector3.One * HealRadius + Position), CollisionType.Dynamic);
+                    var objects = World.EnumerateIntersectingRootObjects(new BoundingBox(-Vector3.One * HealRadius + Position, Vector3.One * HealRadius + Position), CollisionType.Dynamic);
                     foreach (var obj in objects)
                     {
-                        if (obj.GetRoot().GetComponent<Creature>().HasValue(out var creature))
+                        if (obj.GetComponent<Creature>().HasValue(out var creature))
                         {
                             if (creature.AI == null || creature.AI.Faction != creature.World.PlayerFaction || creature.Hp == creature.MaxHealth)
                                 continue;

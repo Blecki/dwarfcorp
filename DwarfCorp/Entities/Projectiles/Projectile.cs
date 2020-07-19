@@ -179,7 +179,7 @@ namespace DwarfCorp
         {
             if (Target == null || Target.IsDead)
             {
-                Matrix transform = LocalTransform;
+                var transform = LocalTransform;
                 transform.Translation -= Velocity;
                 LocalTransform = transform;
 

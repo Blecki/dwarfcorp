@@ -549,7 +549,7 @@ namespace DwarfCorp.Rail
             if (Library.GetRailPiece(Piece.RailPiece).HasValue(out var myPiece))
             {
                 var myEndPoints = GetTransformedConnections().SelectMany(l => new Vector3[] { l.Item1, l.Item2 });
-                foreach (var entity in Manager.World.EnumerateIntersectingObjects(this.BoundingBox.Expand(0.5f), CollisionType.Static))
+                foreach (var entity in Manager.World.EnumerateIntersectingRootObjects(this.BoundingBox.Expand(0.5f), CollisionType.Static))
                 {
                     if (Object.ReferenceEquals(entity, this)) continue;
                     var neighborRail = entity as RailEntity;

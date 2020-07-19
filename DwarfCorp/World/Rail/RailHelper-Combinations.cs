@@ -51,14 +51,14 @@ namespace DwarfCorp.Rail
             if (voxelUnder.IsEmpty) return false;
             var box = actualPosition.GetBoundingBox().Expand(-0.2f);
 
-            foreach (var entity in World.EnumerateIntersectingObjects(box, CollisionType.Static))
+            foreach (var entity in World.EnumerateIntersectingRootObjects(box, CollisionType.Static))
             {
-                if ((entity as GameComponent).IsDead)
+                if (entity.IsDead)
                     continue;
 
                 if (Object.ReferenceEquals(entity, PreviewEntity)) continue;
                 if (Object.ReferenceEquals(entity.GetRoot(), PreviewEntity.GetRoot())) continue;
-                if (entity is GenericVoxelListener) continue;
+                if (entity is GenericVoxelListener) continue; // Are these ever true now?
                 if (entity is WorkPile) continue;
                 if (entity is Health) continue;
                 if (entity is CraftDetails) continue;
@@ -125,9 +125,9 @@ namespace DwarfCorp.Rail
                 var hasResources = false;
                 var finalEntity = body;
 
-                foreach (var entity in World.EnumerateIntersectingObjects(actualPosition.GetBoundingBox().Expand(-0.2f), CollisionType.Static))
+                foreach (var entity in World.EnumerateIntersectingRootObjects(actualPosition.GetBoundingBox().Expand(-0.2f), CollisionType.Static))
                 {
-                    if ((entity as GameComponent).IsDead)
+                    if (entity.IsDead)
                         continue;
                     if ((entity as RailEntity) == null)
                         continue;

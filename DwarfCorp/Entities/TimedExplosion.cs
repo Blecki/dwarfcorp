@@ -94,16 +94,12 @@ namespace DwarfCorp
                         _state = State.Prep;
                         PrepThread.Start();
 
-                            foreach (GameComponent body in Manager.World.EnumerateIntersectingObjects(
+                            foreach (GameComponent body in Manager.World.EnumerateIntersectingRootObjects(
                                 new BoundingBox(LocalPosition - new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f), LocalPosition + new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f)), CollisionType.Both))
                             {
                                 var distance = (body.Position - LocalPosition).Length();
-                                if (distance < (VoxelRadius * 2.0f))
-                                {
-                                    var creature = body.EnumerateAll().OfType<CreatureAI>().FirstOrDefault();
-                                    if (creature != null)
-                                        creature.ChangeTask(new FleeEntityTask(this, VoxelRadius * 2));
-                                }
+                                if (distance < (VoxelRadius * 2.0f) && body.GetComponent<CreatureAI>().HasValue(out var creature))
+                                    creature.ChangeTask(new FleeEntityTask(this, VoxelRadius * 2));
                             }
                         
                         break;
@@ -127,16 +123,12 @@ namespace DwarfCorp
                             Manager.World.ParticleManager.Effects["explode"].Trigger(10, Position, Color.White);
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_trap_destroyed, 0.5f);
 
-                            foreach (GameComponent body in Manager.World.EnumerateIntersectingObjects(
+                            foreach (GameComponent body in Manager.World.EnumerateIntersectingRootObjects(
                                 new BoundingBox(LocalPosition - new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f), LocalPosition + new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f)), CollisionType.Both))
                             {
                                 var distance = (body.Position - LocalPosition).Length();
-                                if (distance <= (VoxelRadius * 2.0f))
-                                {
-                                    var health = body.EnumerateAll().OfType<Health>().FirstOrDefault();
-                                    if (health != null)
-                                        health.Damage(DamageAmount * (1.0f - (distance / (VoxelRadius * 2.0f)))); // Linear fall off on damage.
-                                }
+                                if (distance <= (VoxelRadius * 2.0f) && body.GetComponent<Health>().HasValue(out var health))
+                                    health.Damage(DamageAmount * (1.0f - (distance / (VoxelRadius * 2.0f)))); // Linear fall off on damage.
                             }
                         }
 

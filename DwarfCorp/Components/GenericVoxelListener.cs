@@ -37,5 +37,17 @@ namespace DwarfCorp
         {
             Handler?.Invoke(V);
         }
+
+        public override void OnSpacialStorageUpdate(BoundingBox LastBounds, BoundingBox NewBounds)
+        {
+            World.RemoveEntityAnchor(this, LastBounds);
+            World.AddEntityAnchor(this, NewBounds);
+        }
+
+        public override void RemoveFromOctTree()
+        {
+            base.RemoveFromOctTree();
+            World.RemoveEntityAnchor(this, GetBoundingBox());
+        }
     }
 }

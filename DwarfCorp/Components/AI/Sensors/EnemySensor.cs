@@ -68,7 +68,7 @@ namespace DwarfCorp
 
             var myRoot = GetRoot();
 
-            foreach (var body in Manager.World.EnumerateIntersectingObjects(BoundingBox, b => !Object.ReferenceEquals(b, myRoot) && b.IsRoot()))
+            foreach (var body in Manager.World.EnumerateIntersectingRootObjects(BoundingBox, b => !Object.ReferenceEquals(b, myRoot)))
             {
                 if (body.GetComponent<Flammable>().HasValue(out var flames) && flames.IsOnFire)
                 {

@@ -36,7 +36,7 @@ namespace DwarfCorp
 
             if (AutoGatherTimer.HasTriggered)
             {
-                foreach (var body in World.EnumerateIntersectingObjects(Physics.BoundingBox.Expand(3.0f)).OfType<ResourceEntity>().Where(r => r.Active && r.AnimationQueue.Count == 0))
+                foreach (var body in World.EnumerateIntersectingRootObjects(Physics.BoundingBox.Expand(3.0f)).OfType<ResourceEntity>().Where(r => r.Active && r.AnimationQueue.Count == 0))
                     Creature.GatherImmediately(body, Inventory.RestockType.RestockResource);
 
                 OrderEnemyAttack();

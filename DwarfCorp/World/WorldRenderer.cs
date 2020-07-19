@@ -94,7 +94,7 @@ namespace DwarfCorp
                         SurfaceFormat.Color, DepthFormat.Depth24))
                 {
                     var frustum = Camera.GetDrawFrustum();
-                    var renderables = World.EnumerateIntersectingObjects(frustum)
+                    var renderables = World.EnumerateIntersectingRootObjectsLoose(frustum).SelectMany(r => r.EnumerateAll())
                         .Where(r => r.IsVisible && !World.ChunkManager.IsAboveCullPlane(r.GetBoundingBox()));
 
                     var oldProjection = Camera.ProjectionMatrix;
@@ -288,7 +288,7 @@ namespace DwarfCorp
             }
             ValidateShader();
             var frustum = Camera.GetDrawFrustum();
-            var renderables = World.EnumerateIntersectingObjects(frustum,
+            var renderables = World.EnumerateIntersectingRootObjectsLoose(frustum).SelectMany(r => r.EnumerateAll()).Where(
                 r => (Debugger.Switches.DrawInvisible || r.IsVisible) && !World.ChunkManager.IsAboveCullPlane(r.GetBoundingBox()));
 
             // Controls the sky fog

@@ -44,7 +44,7 @@ namespace DwarfCorp
 
                 var myRoot = GetRoot();
 
-                foreach (var body in Manager.World.EnumerateIntersectingObjects(BoundingBox, b => b.Active && !Object.ReferenceEquals(b, myRoot) && b.IsRoot()))
+                foreach (var body in Manager.World.EnumerateIntersectingRootObjects(BoundingBox, b => b.Active && !Object.ReferenceEquals(b, myRoot)))
                 {
                     if (body.GetComponent<Creature>().HasValue(out var minion))
                     {

@@ -185,19 +185,26 @@ namespace DwarfCorp
 
             if (NeedsSpacialStorageUpdate(LastBounds, BoundingBox))
             {
-                Manager.World.RemoveGameObject(this, LastBounds);
-                Manager.World.AddGameObject(this, BoundingBox);
+                //Manager.World.RemoveGameObject(this, LastBounds);
+                //Manager.World.AddGameObject(this, BoundingBox);
 
                 if (IsRoot() && !IsFlagSet(Flag.DontUpdate))
                 {
                     Manager.World.RemoveRootGameObject(this, LastBounds);
                     Manager.World.AddRootGameObject(this, BoundingBox);
                 }
+
+                this.OnSpacialStorageUpdate(LastBounds, BoundingBox);
             }
 
             LastBounds = BoundingBox;
            
             PerformanceMonitor.PopFrame();
+        }
+
+        public virtual void OnSpacialStorageUpdate(BoundingBox LastBounds, BoundingBox NewBounds)
+        {
+
         }
 
         public void PropogateTransforms()
@@ -250,11 +257,11 @@ namespace DwarfCorp
             LocalTransform = newTransform;
         }
 
-        private void RemoveFromOctTree()
+        public virtual void RemoveFromOctTree()
         {
             if (Manager != null)
             {
-                Manager.World.RemoveGameObject(this, LastBounds);
+                //Manager.World.RemoveGameObject(this, LastBounds);
                 if (IsRoot() && !IsFlagSet(Flag.DontUpdate))
                     Manager.World.RemoveRootGameObject(this, LastBounds);
             }

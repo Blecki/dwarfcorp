@@ -68,9 +68,9 @@ namespace DwarfCorp
         {
             if (Heat > Flashpoint)
             {
-                var insideBodies = World.EnumerateIntersectingObjects(Body.GetBoundingBox());
+                var insideBodies = World.EnumerateIntersectingRootObjects(Body.GetBoundingBox());
 
-                foreach (var body in insideBodies.Where(b => b != Parent && b.Active && b.Parent == Manager.RootComponent))
+                foreach (var body in insideBodies.Where(b => b != Parent && b.Active))
                     if (body.GetComponent<Flammable>().HasValue(out var flames))
                         flames.Heat += 100;
 
@@ -90,13 +90,9 @@ namespace DwarfCorp
                     {
                         if (MathFunctions.RandEvent(0.1f))
                         {
-                            var existingItems = World.EnumerateIntersectingObjects(voxel.GetBoundingBox().Expand(-0.1f));
-
-
+                            var existingItems = World.EnumerateIntersectingRootObjects(voxel.GetBoundingBox().Expand(-0.1f));
                             if (!existingItems.Any(e => e is Fire))
-                            {
                                 EntityFactory.CreateEntity<Fire>("Fire", voxel.GetBoundingBox().Center());
-                            }
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_lava_spread, voxel.GetBoundingBox().Center(), true, 1.0f);
                             VoxelHelpers.KillVoxel(World, voxel);
                         }
@@ -109,7 +105,7 @@ namespace DwarfCorp
                             var box = voxel.GetBoundingBox().Expand(-0.1f);
                             box.Min += Vector3.One; // Todo: Why shifting one on every axis?
                             box.Max += Vector3.One;
-                            if (!World.EnumerateIntersectingObjects(box).Any(e => e is Fire))
+                            if (!World.EnumerateIntersectingRootObjects(box).Any(e => e is Fire))
                                 EntityFactory.CreateEntity<Fire>("Fire", box.Center());
                         }
 

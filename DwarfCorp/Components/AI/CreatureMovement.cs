@@ -342,7 +342,7 @@ namespace DwarfCorp
 
             var neighborHoodBounds = new BoundingBox(Storage.Neighborhood[0, 0, 0].GetBoundingBox().Min, Storage.Neighborhood[2, 2, 2].GetBoundingBox().Max);
             Storage.NeighborObjects.Clear();
-            Parent.World.EnumerateIntersectingObjects(neighborHoodBounds, Storage.NeighborObjects);
+            Parent.World.EnumerateIntersectingRootObjects(neighborHoodBounds, Storage.NeighborObjects); // This works so long as the types we are interested in are their root component.
 
             if (Can(MoveType.Teleport))
                 foreach (var obj in teleportObjects)

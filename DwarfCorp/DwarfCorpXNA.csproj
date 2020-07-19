@@ -210,6 +210,7 @@
     <Compile Include="GameStates\Play\ZonePanel\DraggedResourceIcon.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ResourceGuiGraphicIcon.cs" />
     <Compile Include="Graphics\Cameras\CameraPositionSnapshot.cs" />
+    <Compile Include="Components\Physics\StaticAABBTest.cs" />
     <Compile Include="Graphics\Cameras\TrailerCameraController.cs" />
     <Compile Include="Graphics\Primitives\BoxFace.cs" />
     <Compile Include="Graphics\Primitives\OldBoxPrimitive.cs" />

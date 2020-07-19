@@ -194,7 +194,7 @@ namespace DwarfCorp
 
                 RainDrops[i].IsAlive = false;
 
-                var hitBodies = World.EnumerateIntersectingObjects(new BoundingBox(RainDrops[i].Pos - Vector3.One, RainDrops[i].Pos + Vector3.One));
+                var hitBodies = World.EnumerateIntersectingRootObjects(new BoundingBox(RainDrops[i].Pos - Vector3.One, RainDrops[i].Pos + Vector3.One));
 
                 foreach (var body in hitBodies)
                 {

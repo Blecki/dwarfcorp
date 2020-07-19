@@ -795,12 +795,12 @@ namespace DwarfCorp
                 return false;
             }
 
-            Physics.Contact contact = new Physics.Contact();
+            var contact = new Collision.Contact();
 
             bool testX = !IsNeighborOccupied(voxel, -1, 0, 0) || !IsNeighborOccupied(voxel, 1, 0, 0);
             bool testY = !IsNeighborOccupied(voxel, 0, -1, 0) || !IsNeighborOccupied(voxel, 0, 1, 0);
             bool testZ = !IsNeighborOccupied(voxel, 0, 0, -1) || !IsNeighborOccupied(voxel, 0, 0, 1);
-            if (!Physics.TestStaticAABBAABB(myBox, box, ref contact, testX, testY, testZ))
+            if (!Collision.TestStaticAABBAABB(myBox, box, ref contact, testX, testY, testZ))
             {
                 return false;
             }

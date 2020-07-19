@@ -236,8 +236,9 @@ namespace DwarfCorp
                                 break;
                             case "Fire":
                                 {
-                                    foreach (var flam2 in World.EnumerateIntersectingObjects(vox.GetBoundingBox(), CollisionType.Both).OfType<Flammable>())
-                                        flam2.Heat = flam2.Flashpoint + 1;
+                                    foreach (var flam2 in World.EnumerateIntersectingRootObjects(vox.GetBoundingBox(), CollisionType.Both))
+                                        if (flam2.GetComponent<Flammable>().HasValue(out var flam3))
+                                            flam3.Heat = flam3.Flashpoint + 1;
                                 }
                                 break;
 
@@ -281,7 +282,7 @@ namespace DwarfCorp
             {
                 var location = World.UserInterface.VoxSelector.VoxelUnderMouse;
                 var center = location.GetBoundingBox().Center();
-                foreach (var body in World.EnumerateIntersectingObjects(location.GetBoundingBox(), CollisionType.Dynamic))
+                foreach (var body in World.EnumerateIntersectingRootObjects(location.GetBoundingBox(), CollisionType.Dynamic))
                 {
                     var delta = center - body.Position;
                     delta.Normalize();
