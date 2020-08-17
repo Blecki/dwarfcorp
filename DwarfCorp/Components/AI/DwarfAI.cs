@@ -11,7 +11,8 @@ namespace DwarfCorp
 {
     public class DwarfAI : CreatureAI
     {
-        [JsonProperty] private int lastXPAnnouncement = -1;
+        [JsonProperty] private int lastXPAnnouncement = -1; // Todo: Kill
+        [JsonProperty] private int lastXPAnnouncementStat = -1;
         [JsonProperty] private int NumDaysNotPaid = 0;
         [JsonProperty] private double UnhappinessTime = 0.0f;
 
@@ -111,6 +112,7 @@ namespace DwarfCorp
                     Chance = () => GameSettings.Current.IdleBehavior_Binge,
                     Create = (AI) =>
                     {
+                        if (AI.World.GetResourcesWithTag("Alcohol").Count > 0)
                         return new ActWrapperTask(
                             new Repeat(
                                 new FindAndEatFoodAct(AI, true)
@@ -128,8 +130,13 @@ namespace DwarfCorp
                             BoredomIncrease = GameSettings.Current.Boredom_Eat,
                             EnergyDecrease = GameSettings.Current.Energy_Restful,
                         };
+                        else
+                        {
+                            AI.Creature.AddThought("I need a drink.", new TimeSpan(4, 0, 0), -25f);
+                            return null;
+                        }
                     },
-                    Available = (AI, World) => World.GetResourcesWithTag("Alcohol").Count > 0
+                    //Available = (AI, World) => World.GetResourcesWithTag("Alcohol").Count > 0
                 });
 
                 IdleTasks.Add(new IdleTask
@@ -374,6 +381,38 @@ namespace DwarfCorp
             DeleteBadTasks();
             PreEmptTasks();
 
+            // Check for managerial buff
+            var managerBufferComponent = Parent.GetComponent<RadiusBuffer>();
+            if (Stats.IsManager && !managerBufferComponent.HasValue())
+            {
+                var managerBuffer = new RadiusBuffer(Manager, "Manager Buffer", Matrix.Identity, new Vector3(16, 16, 16), Vector3.Zero)
+                {
+                    SenseRadius = 16,
+                    Buff = new ManagerMotivationStatusEffect(0.1f * Stats.Intelligence)
+                };
+
+                Parent.AddChild(managerBuffer);
+            }
+            else if (!Stats.IsManager && managerBufferComponent.HasValue(out var outdatedBuff))
+                outdatedBuff.Die();
+
+            if (Stats.IsManager)
+                Stats.AddBuff(new BaselineMotivationStatusEffect(1.0f)); // Managers are always highly motivated.
+            else
+            {
+                var employees = World.CalculateSupervisedEmployees();
+                if (employees != 0)
+                {
+                    // Make dwarves unhappy if there is too much supervision; or if there is too little.
+                    var supervisionFactor = (float)World.CalculateSupervisionCap() / (float)employees;
+                    var supervisionDelta = Math.Abs(supervisionFactor - 1);
+                    if (supervisionDelta > 0.25f) Creature.AddThought("Supervision here sucks.", new TimeSpan(4, 0, 0), -25.0f);
+                    if (Stats.Happiness.CurrentValue < 25.0f) Stats.AddBuff(new HappinessMotivationStatusEffect(-0.5f));
+                    if (Stats.Happiness.CurrentValue > 75.0f) Stats.AddBuff(new HappinessMotivationStatusEffect(0.25f));
+                    Stats.AddBuff(new BaselineMotivationStatusEffect(supervisionFactor));
+                }
+            }
+
             // Freak out if on fire!
             if (GetRoot().GetComponent<Flammable>().HasValue(out var flames) && flames.IsOnFire)
                 ChangeTask(new ActWrapperTask(new LongWanderAct(this) { Name = "Freak out!", PathLength = 2, Radius = 5 }));
@@ -409,6 +448,12 @@ namespace DwarfCorp
             // If we're bored, make sure we queue up a boredom reducing task.
             if (Stats.Boredom.IsDissatisfied() && !Tasks.Any(task => task.BoredomIncrease < 0) && ChooseIdleTask(true).HasValue(out var idleTask))
                 AssignGeneratedTask(idleTask);
+
+            // Track unhappiness time.
+            if (Stats.Happiness.IsSatisfied()) 
+                UnhappinessTime = 0.0f;
+            else
+                UnhappinessTime += gameTime.ElapsedGameTime.TotalMinutes;
 
             if (CurrentTask.HasValue(out var currentTask))
             {
@@ -512,8 +557,8 @@ namespace DwarfCorp
                 }
                 else if (Stats.Happiness.IsDissatisfied()) // We aren't on strike, but we hate this place.
                 {
-                    if (MathFunctions.Rand(0, 1) < 0.15f) // We hate it so much that we might just go on strike! This can probably be tweaked. As it stands,
-                                                          // dorfs go on strike almost immediately every time.
+                    UnhappinessTime += gameTime.ElapsedGameTime.TotalMinutes;
+                    if (MathFunctions.Rand(0, 60) < UnhappinessTime) // We hate it so much that we might just go on strike! The longer we are unhappy, the more likely to go on strike.
                     {
                         Manager.World.UserInterface.MakeWorldPopup(String.Format("{0} ({1}) refuses to work!",
                                Stats.FullName, Stats.CurrentClass.Name), Creature.Physics, -10, 10);
@@ -526,8 +571,10 @@ namespace DwarfCorp
                 if (!Stats.IsOnStrike) // We aren't on strike, so find a new task.
                 {
                     var goal = GetEasiestTask(Tasks);
-                    if (goal == null)
-                        goal = World.TaskManager.GetBestTask(this);
+                    if (goal == null) // We don't have a queued task, so lets go get one.
+                        if (MathFunctions.Rand(0, 1) < Stats.Motivation.CurrentValue) // But only if we're motivated. It's pretty hard to not meet this threshold.
+                            goal = World.TaskManager.GetBestTask(this);
+                        // This needs tweaked - in practice they still take on the task immediately.
 
                     if (goal != null)
                     {
@@ -571,6 +618,7 @@ namespace DwarfCorp
             IndicatorManager.DrawIndicator(sign + XP + " XP",
                 Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, XP > 0 ? GameSettings.Current.Colors.GetColor("Positive", Color.Green) : GameSettings.Current.Colors.GetColor("Negative", Color.Red));
 
+            // Todo: Remove this once levels are reworked.
             if (Stats.IsOverQualified && lastXPAnnouncement != Stats.LevelIndex && Faction == Manager.World.PlayerFaction)
             {
                 lastXPAnnouncement = Stats.LevelIndex;
@@ -584,6 +632,21 @@ namespace DwarfCorp
                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
                 Manager.World.Tutorial("level up");
             }
+
+            if (Faction == Manager.World.PlayerFaction && lastXPAnnouncementStat != Stats.GetCurrentLevel() && Stats.CanSpendXP)
+            {
+                lastXPAnnouncementStat = Stats.GetCurrentLevel();
+
+                Manager.World.MakeAnnouncement(new Gui.Widgets.QueuedAnnouncement
+                {
+                    Text = String.Format("{0} is ready to spend some XP!", Stats.FullName),
+                    ClickAction = (gui, sender) => GameStateManager.PushState(new EconomyState(Manager.World.Game, Manager.World)) // This should open the employee view instead.
+                });
+
+                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
+                Manager.World.Tutorial("level up");
+            }
+
         }
 
         protected override void MakeBattleAnnouncement(CreatureAI Enemy)

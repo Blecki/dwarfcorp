@@ -354,11 +354,10 @@ namespace DwarfCorp.Play.EmployeeInfo
 
                 NameLabel.Text = "\n" + Employee.Stats.FullName;
                 TitleEditor.Text = Employee.Stats.Title ?? Employee.Stats.CurrentClass.Name;
-                LevelLabel.Text = String.Format("Level {0} {1}\n({2} xp). {3}",
+                LevelLabel.Text = String.Format("Level {0} {1}\n({2} xp)",
                     Employee.Stats.LevelIndex,
                     Employee.Stats.CurrentClass.Name,
-                    Employee.Stats.XP,
-                    Employee.Creature.Stats.Gender);
+                    Employee.Stats.XP);
 
                 if (Employee.Stats.CurrentClass.Levels.Count > Employee.Stats.LevelIndex + 1)
                 {

@@ -186,6 +186,7 @@
     <Compile Include="AssetManagement\TextureTool-CropAndColorSprite.cs" />
     <Compile Include="AssetManagement\TextureTool-LoadPSD.cs" />
     <Compile Include="Components\AI\Creature-Death.cs" />
+    <Compile Include="Components\AI\StatusEffects\MotivationStatusEffect.cs" />
     <Compile Include="Components\Physics\PhysicsSystem.cs" />
     <Compile Include="Entities\Animals\Pumpking.cs" />
     <Compile Include="Entities\Fixtures\Jack-O-Lantern.cs" />
@@ -201,6 +202,8 @@
     <Compile Include="GameStates\Play\CommandBar\CommandPanel.cs" />
     <Compile Include="GameStates\Play\CommandBar\PossiblePlayerCommand.cs" />
     <Compile Include="GameStates\Play\CommandBar\EnumeratePlayerCommands.cs" />
+    <Compile Include="GameStates\Play\EconomyScreen\PolicyPanel.cs" />
+    <Compile Include="GameStates\Play\EmployeeInfoPanel\LevelUpPanel.cs" />
     <Compile Include="GameStates\Play\PlayState-Tools.cs" />
     <Compile Include="GameStates\Play\PlayState-Render.cs" />
     <Compile Include="GameStates\Play\PlayState-Input.cs" />
@@ -219,6 +222,7 @@
     <Compile Include="Gui\Geo\PartBasics.cs" />
     <Compile Include="Gui\RenderData.cs" />
     <Compile Include="Gui\SpriteAtlasEntry.cs" />
+    <Compile Include="Gui\Widgets\HorizontalFloatSliderCombo.cs" />
     <Compile Include="Library\CategoryIconLibrary.cs" />
     <Compile Include="Library\EquipmentLibrary.cs" />
     <Compile Include="Components\AI\EquipmentSlotType.cs" />
@@ -962,7 +966,7 @@
     <Compile Include="GameStates\Play\EconomyScreen\ApplicantInfo.cs" />
     <Compile Include="Gui\Widgets\HorizontalMenuTray.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGenerationSettingsDialog.cs" />
-    <Compile Include="Gui\Widgets\FinancePanel.cs" />
+    <Compile Include="GameStates\Play\EconomyScreen\FinancePanel.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\EmployeePanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\OverviewPanel.cs" />
     <Compile Include="Gui\Widgets\FramedIcon.cs" />

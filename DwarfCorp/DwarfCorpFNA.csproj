@@ -170,10 +170,13 @@
     <Compile Include="GameStates\Play\EconomyScreen\ApplicantInfo.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\EconomyState.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\EmployeePanel.cs" />
+    <Compile Include="GameStates\Play\EconomyScreen\FinancePanel.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\HireEmployeeDialog.cs" />
+    <Compile Include="GameStates\Play\EconomyScreen\PolicyPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\AllowedTaskFilter.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\DebugPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\EquipmentPanel.cs" />
+    <Compile Include="GameStates\Play\EmployeeInfoPanel\LevelUpPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\OverviewPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\PackPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\StatsPanel.cs" />
@@ -205,6 +208,7 @@
     <Compile Include="Gui\SpriteAtlas.cs" />
     <Compile Include="Gui\SpriteAtlasEntry.cs" />
     <Compile Include="Gui\TileSheetDefinition.cs" />
+    <Compile Include="Gui\Widgets\HorizontalFloatSliderCombo.cs" />
     <Compile Include="Gui\Widgets\SliderCombo.cs" />
     <Compile Include="Gui\Widgets\PlaceCraftInfo.cs" />
     <Compile Include="Gui\Widgets\DefaultTaskPriority.cs" />
@@ -282,8 +286,6 @@
     <Compile Include="TaskManagement\Tasks\FindAndEquipTask.cs" />
     <Compile Include="TaskManagement\Tasks\GoToZoneTask.cs" />
     <Compile Include="TaskManagement\Tasks\GetHealedTask.cs" />
-    <Compile Include="TaskManagement\Tasks\KillEntity\DwarfKillEntityAct.cs" />
-    <Compile Include="TaskManagement\Tasks\KillEntity\DwarfKillEntityTask.cs" />
     <Compile Include="TaskManagement\Tasks\KillEntity\KillEntityAct.cs" />
     <Compile Include="TaskManagement\Tasks\KillEntity\KillEntityTask.cs" />
     <Compile Include="TaskManagement\Tasks\KillVoxel\KillVoxelAct.cs" />
@@ -659,7 +661,6 @@
     <Compile Include=".\Gui\Widgets\DwarfConsole.cs" />
     <Compile Include=".\Gui\Widgets\EditableTextField.cs" />
     <Compile Include=".\Gui\Widgets\EmployeePortrait.cs" />
-    <Compile Include=".\Gui\Widgets\FinancePanel.cs" />
     <Compile Include=".\Gui\Widgets\FlatToolTray.cs" />
     <Compile Include=".\Gui\Widgets\FramedIcon.cs" />
     <Compile Include=".\Gui\Widgets\GameSpeedControls.cs" />

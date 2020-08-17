@@ -36,11 +36,6 @@ namespace DwarfCorp
             return StatAdjustments;
         }
 
-        public void ResetBuffs()
-        {
-            StatAdjustments.RemoveAll(a => a.Name != "base stats");
-        }
-
         public float BaseDexterity { set { FindAdjustment("base stats").Dexterity = value; } }
         public float BaseConstitution { set { FindAdjustment("base stats").Constitution = value; } }
         public float BaseStrength { set { FindAdjustment("base stats").Strength = value; } }
@@ -91,16 +86,32 @@ namespace DwarfCorp
         [JsonIgnore] public CreatureClass CurrentClass { get; private set; }
         [JsonIgnore] public CreatureClass.Level CurrentLevel => CurrentClass.Levels[LevelIndex];
 
+        public int GetCurrentLevel()
+        {
+            var baseStats = FindAdjustment("base stats");
+            if (baseStats != null)
+                return (int)(baseStats.Charisma + baseStats.Constitution + baseStats.Dexterity + baseStats.Intelligence + baseStats.Strength + baseStats.Wisdom);
+            return 0;
+        }
+
+        public static int GetLevelUpCost(int CurrentLevel)
+        {
+            return CurrentLevel * CurrentLevel;
+        }
+
         public String SpeciesName = "";
         [JsonIgnore] public CreatureSpecies Species { get; private set; }
 
         public TaskCategory AllowedTasks = TaskCategory.Attack | TaskCategory.Gather | TaskCategory.Plant | TaskCategory.Harvest | TaskCategory.Chop | TaskCategory.Wrangle | TaskCategory.TillSoil;
         [JsonIgnore] public bool IsOverQualified => CurrentClass != null ? CurrentClass.Levels.Count > LevelIndex + 1 && XP > CurrentClass.Levels[LevelIndex + 1].XP : false;
+        public bool CanSpendXP => GetLevelUpCost(GetCurrentLevel()) <= XP;
         public bool IsAsleep = false;
         public float HungerDamageRate = 10.0f;
         public bool IsOnStrike = false;
         public DwarfBux Money = 0;
         public bool IsFleeing = false;
+
+        public bool IsManager = false; // This creature is flagged as a manager.
 
         public bool IsTaskAllowed(TaskCategory TaskCategory)
         {

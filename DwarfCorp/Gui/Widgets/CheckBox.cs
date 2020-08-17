@@ -36,6 +36,7 @@ namespace DwarfCorp.Gui.Widgets
         public void SilentSetCheckState(bool NewState)
         {
             _checkState = NewState;
+            this.Invalidate();
         }
 
         public Action<Widget> OnCheckStateChange = null;

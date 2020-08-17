@@ -33,7 +33,7 @@ namespace DwarfCorp
 
         public Status Happiness = new Status
         {
-            MaxValue = 100.0f,
+            MaxValue = 100.0f, // Todo: Make this 0 to 1
             MinValue = 0.0f,
             Name = "Happiness",
             Adjective = "Unhappy",
@@ -62,6 +62,17 @@ namespace DwarfCorp
             SatisfiedThreshold = 20.0f,
             DissatisfiedThreshold = 15.0f,
             CurrentValue = 30.0f
+        };
+
+        public Status Motivation = new Status
+        {
+            MaxValue = 1.0f,
+            MinValue = 0.0f,
+            Name = "Motivation",
+            Adjective = "Motivated",
+            SatisfiedThreshold = 50.0f,
+            DissatisfiedThreshold = 10.0f,
+            CurrentValue = 100.0f
         };
         
         private IEnumerable<Status> EnumerateStatuses()

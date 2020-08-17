@@ -9,16 +9,6 @@ namespace DwarfCorp
 {
     public class StatusEffect
     {
-        public StatusEffect()
-        {
-        }
-
-        public StatusEffect(float time)
-        {
-            EffectTime = new Timer(time, true);
-            ParticleTimer = new Timer(0.25f, false, Timer.TimerMode.Real);
-        }
-
         public Timer EffectTime;
 
         [JsonIgnore]
@@ -31,6 +21,21 @@ namespace DwarfCorp
         public Timer ParticleTimer;
         public string SoundOnStart;
         public string SoundOnEnd;
+        
+        public StatusEffect()
+        {
+        }
+
+        public StatusEffect(float time)
+        {
+            EffectTime = new Timer(time, true);
+            ParticleTimer = new Timer(0.25f, false, Timer.TimerMode.Real);
+        }
+
+        public virtual String GetDescription()
+        {
+            return "Generic Status Effect";
+        }
 
         /// <summary> Called when the Buff is added to a Creature </summary>
         public virtual void OnApply(Creature creature)

@@ -23,6 +23,11 @@ namespace DwarfCorp.Play.EmployeeInfo
         private Widget TaskLabel;
         private Widget CancelTask;
 
+        private Widget PayLabel;
+        private Widget AgeLabel;
+
+        private CheckBox ManagerBox;
+
         private String SetLength(String S, int L)
         {
             if (S.Length > L)
@@ -58,6 +63,18 @@ namespace DwarfCorp.Play.EmployeeInfo
         {
             Font = "font8";
 
+            PayLabel = AddChild(new Widget
+            {
+                AutoLayout = AutoLayout.DockTop,
+                MinimumSize = new Point(0, 24)
+            });
+
+            AgeLabel = AddChild(new Widget()
+            {
+                AutoLayout = AutoLayout.DockTop,
+                MinimumSize = new Point(0, 24)
+            });
+
             Bio = AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockTop,
@@ -85,12 +102,88 @@ namespace DwarfCorp.Play.EmployeeInfo
                 TextHorizontalAlign = HorizontalAlign.Right
             });
 
+            var managerBar = AddChild(new Widget
+            {
+                MinimumSize = new Point(0, 24),
+                AutoLayout = AutoLayout.DockBottom
+            });
+
+            ManagerBox = managerBar.AddChild(new CheckBox
+            {
+                AutoLayout = AutoLayout.DockLeft,
+                OnCheckStateChange = (sender) =>
+                {
+                    if (Employee == null)
+                        return;
+
+                    if (!Employee.Stats.IsManager)
+                        Root.ShowModalPopup(Root.ConstructWidget(new Confirm
+                        {
+                            OkayText = "Promote this Dwarf",
+                            CancelText = "Nevermind",
+                            Text = "Are you sure you want to promote this dwarf? Managers are unable to do most tasks.",
+                            Padding = new Margin(32, 10, 10, 10),
+                            MinimumSize = new Point(512, 128),
+                            OnClose = (confirm) =>
+                            {
+                                if ((confirm as Gui.Widgets.Confirm).DialogResult == DwarfCorp.Gui.Widgets.Confirm.Result.OKAY)
+                                {
+                                    SoundManager.PlaySound(ContentPaths.Audio.change, 0.25f);
+
+                                    if (Employee.IsDead)
+                                        return;
+
+                                    Employee.Stats.IsManager = true;
+                                    Employee.World.MakeAnnouncement(String.Format("{0} was promoted to Manager", Employee.Stats.FullName));
+                                    Employee.Creature.AddThought("I got promoted!", new TimeSpan(4, 0, 0), 100);
+
+                                }
+                            }
+                        }));
+                    else
+                    {
+                        // Employee is a manager - we are demoting them.
+
+                        // Check manager capacity... can't demote if we don't have enough managers.
+
+                        Root.ShowModalPopup(Root.ConstructWidget(new Confirm
+                        {
+                            OkayText = "Demote this Dwarf",
+                            CancelText = "Nevermind",
+                            Text = "Are you sure you want to demote this dwarf? They will not be happy about it.",
+                            Padding = new Margin(32, 10, 10, 10),
+                            MinimumSize = new Point(512, 128),
+                            OnClose = (confirm) =>
+                            {
+                                if ((confirm as Gui.Widgets.Confirm).DialogResult == DwarfCorp.Gui.Widgets.Confirm.Result.OKAY)
+                                {
+                                    SoundManager.PlaySound(ContentPaths.Audio.change, 0.25f);
+
+                                    if (Employee.IsDead)
+                                        return;
+
+                                    Employee.Stats.IsManager = false;
+                                    Employee.World.MakeAnnouncement(String.Format("{0} was demoted.", Employee.Stats.FullName));
+                                    Employee.Creature.AddThought("This is bullshit!", new TimeSpan(4, 0, 0), -200);
+                                }
+                            }
+                        }));
+                    }
+                }
+            }) as CheckBox;
+
+            managerBar.AddChild(new Widget
+            {
+                AutoLayout = AutoLayout.DockFill,
+                Text = "Make this employee a manager."
+            });
+
             AddChild(new AllowedTaskFilter
             {
                 FetchEmployee = () => Employee,
                 AutoLayout = AutoLayout.DockFill,
                 Tag = "selected-employee-allowable-tasks"
-            });
+            });           
 
             base.Construct();
         }
@@ -114,7 +207,10 @@ namespace DwarfCorp.Play.EmployeeInfo
             {
                 Hidden = false;
 
+                PayLabel.Text = String.Format("Pay: {0}/day -- Wealth: {1}", Employee.Stats.CurrentLevel.Pay, Employee.Stats.Money);
+                AgeLabel.Text = String.Format("Age: {0}", Employee.Stats.Age);
                 Bio.Text = Employee.Biography;
+                ManagerBox.SilentSetCheckState(Employee.Stats.IsManager);
 
                 if (Employee.CurrentTask.HasValue(out var currentTask))
                 {

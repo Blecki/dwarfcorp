@@ -2,6 +2,6 @@ namespace DwarfCorp
 {
     public partial class PersistentWorldData
     {
-        public DesignationSet Designations = new DesignationSet();
+        public DesignationSet Designations = new DesignationSet();   
     }
 }

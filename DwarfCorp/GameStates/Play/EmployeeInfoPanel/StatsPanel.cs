@@ -31,10 +31,11 @@ namespace DwarfCorp.Play.EmployeeInfo
         private Gui.Widgets.TextProgressBar Happiness;
         private Gui.Widgets.TextProgressBar Health;
         private Gui.Widgets.TextProgressBar Boredom;
+        private Gui.Widgets.TextProgressBar Motivation;
 
         private Widget Thoughts;
-        private Widget PayLabel;
-        private Widget AgeLabel;
+
+        private LevelUpPanel LevelUpPanel;
 
         private String SetLength(String S, int L)
         {
@@ -71,18 +72,6 @@ namespace DwarfCorp.Play.EmployeeInfo
         {
             Font = "font8";
 
-            PayLabel = AddChild(new Widget
-            {
-                AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 24)
-            });
-
-            AgeLabel = AddChild(new Widget()
-            {
-                AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 24)
-            });
-
             var columns = AddChild(new Gui.Widgets.Columns
             {
                 AutoLayout = AutoLayout.DockTop,
@@ -91,8 +80,18 @@ namespace DwarfCorp.Play.EmployeeInfo
             });
             
             var left = columns.AddChild(new Gui.Widget());
-            var right = columns.AddChild(new Gui.Widget());
-            var evenMoreRight = columns.AddChild(new Gui.Widget());
+
+            var right = columns.AddChild(new Gui.Widget
+            {
+                TriggerOnChildClick = true,
+                OnClick = (sender, args) => HandleStatusClick(sender)
+            });
+
+            var evenMoreRight = columns.AddChild(new Gui.Widget
+            {
+                TriggerOnChildClick = true,
+                OnClick = (sender, args) => HandleStatusClick(sender)
+            });
 
             #region Stats
             var statParent = left.AddChild(new Gui.Widgets.Columns
@@ -199,23 +198,47 @@ namespace DwarfCorp.Play.EmployeeInfo
             Happiness = CreateStatusBar(right, "Happiness", "Miserable", "Unhappy", "So So", "Happy", "Euphoric");
             Health = CreateStatusBar(evenMoreRight, "Health", "Near Death", "Critical", "Hurt", "Uncomfortable", "Fine", "Perfect");
             Boredom = CreateStatusBar(evenMoreRight, "Boredom", "Desperate", "Overworked", "Bored", "Meh", "Fine", "Excited");
+            Motivation = CreateStatusBar(evenMoreRight, "Motivation", "Make me", "Nah", "I'd rather not", "I guess", "Sure", "Yes Sir!");
             #endregion           
+
+            LevelUpPanel = AddChild(new LevelUpPanel
+            {
+                FetchEmployee = () => Employee,
+                AutoLayout = AutoLayout.DockTop,
+                MinimumSize = new Point(0, 48)
+            }) as LevelUpPanel;
 
             Thoughts = AddChild(new Widget
             {
-                AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 24)
+                AutoLayout = AutoLayout.DockFill
             });
 
-            var bottomBar = AddChild(new Widget
+
+            this.OnShown = (sender) =>
             {
-                Transparent = true,
-                AutoLayout = AutoLayout.DockBottom,
-                MinimumSize = new Point(0, 32)
-            });
-
+                LevelUpPanel.ResetHiddenStatus();
+            };
 
             base.Construct();
+        }
+
+        private void HandleStatusClick(Gui.Widget Sender)
+        {
+            var employeeInfo = Sender.FindParentOfType<OverviewPanel>();
+            if (employeeInfo != null && employeeInfo.Employee != null)
+            {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.AppendLine("Status modifiers in effect:");
+                foreach (var modifier in employeeInfo.Employee.Creature.Stats.Buffs)
+                    stringBuilder.AppendLine(modifier.GetDescription());
+                Confirm popup = new Confirm()
+                {
+                    CancelText = "",
+                    Text = stringBuilder.ToString()
+                };
+
+                Sender.Root.ShowMinorPopup(popup);
+            }
         }
 
         private Gui.Widgets.TextProgressBar CreateStatusBar(Widget AddTo, String Label, params String[] PercentageLabels)
@@ -237,9 +260,6 @@ namespace DwarfCorp.Play.EmployeeInfo
             {
                 Hidden = false;
 
-                PayLabel.Text = String.Format("Pay: {0}/day -- Wealth: {1}", Employee.Stats.CurrentLevel.Pay, Employee.Stats.Money);
-                AgeLabel.Text = String.Format("Age: {0}", Employee.Stats.Age);
-
                 StatDexterity.Text = String.Format("Dex: {0}", Employee.Stats.Dexterity);
                 StatStrength.Text = String.Format("Str: {0}", Employee.Stats.Strength);
                 StatWisdom.Text = String.Format("Wis: {0}", Employee.Stats.Wisdom);
@@ -252,6 +272,7 @@ namespace DwarfCorp.Play.EmployeeInfo
                 SetStatusBar(Happiness, Employee.Stats.Happiness);
                 SetStatusBar(Health, Employee.Stats.Health);
                 SetStatusBar(Boredom, Employee.Stats.Boredom);
+                SetStatusBar(Motivation, Employee.Stats.Motivation);
 
                 StringBuilder thoughtsBuilder = new StringBuilder();
                 thoughtsBuilder.Append("Thoughts:\n");
@@ -270,6 +291,7 @@ namespace DwarfCorp.Play.EmployeeInfo
                     thoughtsBuilder.AppendLine(disease.Name);
 
                 Thoughts.Text = thoughtsBuilder.ToString();
+
             }
             else
                 Hidden = true;

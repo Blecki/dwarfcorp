@@ -21,6 +21,8 @@ namespace DwarfCorp
 
         public void HandleBuffs(Creature Me, DwarfTime time)
         {
+            Motivation.CurrentValue = 0.0f;
+
             foreach (var newBuff in BuffsToAdd)
             {
                 var matchingBuffs = Buffs.Where(b => b.GetType() == newBuff.GetType()).ToList();

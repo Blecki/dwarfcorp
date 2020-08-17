@@ -16,6 +16,8 @@ namespace DwarfCorp
 
         public List<ApplicantArrival> NewArrivals = new List<ApplicantArrival>();
         public List<CreatureAI> SelectedMinions = new List<CreatureAI>();
+
+        public float CorporateFoodCostPolicy = 1.0f;
     }
 
     public partial class WorldManager
@@ -84,7 +86,7 @@ namespace DwarfCorp
             PlayerFaction.AddMoney(-(decimal)(Employee.Stats.CurrentLevel.Pay * 4));
         }
 
-        public int CalculateSupervisionCap()
+        public int CalculateSupervisionCap() // Todo: Cache these somewhere and only calculate once per frame.
         {
             return PlayerFaction.Minions.Sum(c => c.Stats.CurrentClass.Managerial ? (int)c.Stats.Intelligence : 0) + 4;
         }

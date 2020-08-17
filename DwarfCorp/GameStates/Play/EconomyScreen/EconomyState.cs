@@ -65,10 +65,16 @@ namespace DwarfCorp.GameStates
                 World = World,
             });
 
-            var financePanel = TabPanel.AddTab("Finance", new Gui.Widgets.FinancePanel
+            var financePanel = TabPanel.AddTab("Finance", new FinancePanel
             {
                 Border = "border-thin",
                 Padding = new Margin(4, 4, 0, 0),
+                Faction = World.PlayerFaction,
+                World = World
+            });
+
+            var policyPanel = TabPanel.AddTab("Policy", new PolicyPanel
+            {
                 Faction = World.PlayerFaction,
                 World = World
             });

@@ -5,7 +5,7 @@ using System.Text;
 using DwarfCorp.Gui;
 using Microsoft.Xna.Framework;
 
-namespace DwarfCorp.Gui.Widgets
+namespace DwarfCorp.GameStates
 {
     public class FinancePanel : Gui.Widget
     {
@@ -32,6 +32,7 @@ namespace DwarfCorp.Gui.Widgets
                 Background = new TileReference("basic", 0),
                 BackgroundColor = numrows % 2 == 0 ? new Vector4(0, 0, 0, 0.05f) : new Vector4(0, 0, 0, 0.2f)
             });
+
             numrows++;
             row.AddChild(new Widget()
             {
@@ -82,12 +83,12 @@ namespace DwarfCorp.Gui.Widgets
                 AddRow("Average dwarf happiness:", String.Format("{0}%", (int)(float)Faction.Minions.Sum(m => m.Stats.Happiness.Percentage) / Math.Max(Faction.Minions.Count, 1)));
                 InfoWidget.Layout();
             };
-            var selector = AddChild(new ComboBox()
+            var selector = AddChild(new Gui.Widgets.ComboBox()
             {
                 Items = Faction.World.Stats.GameStats.Keys.ToList(),
                 AutoLayout = AutoLayout.DockTop
-            }) as ComboBox;
-            var graph = AddChild(new Graph() { AutoLayout = AutoLayout.DockFill,  GraphStyle = Graph.Style.LineChart }) as Graph;
+            }) as Gui.Widgets.ComboBox;
+            var graph = AddChild(new Gui.Widgets.Graph() { AutoLayout = AutoLayout.DockFill,  GraphStyle = Gui.Widgets.Graph.Style.LineChart }) as Gui.Widgets.Graph;
             graph.SetFont("font10");
             graph.Values = Faction.World.Stats.GameStats["Money"].Values.Select(v => v.Value).ToList();
 

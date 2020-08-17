@@ -124,10 +124,17 @@ namespace DwarfCorp
 
                         if (MustPay)
                         {
-                            var depositAct = new DepositMoney(Agent, resourceAmount.MoneyValue);
+                            if (Agent.World.PersistentData.CorporateFoodCostPolicy > 1.0f)
+                                Agent.Creature.AddThought("I can't believe I have to pay so much for food.", new TimeSpan(4, 0, 0), -10 * Agent.World.PersistentData.CorporateFoodCostPolicy);
+                            else if (Agent.World.PersistentData.CorporateFoodCostPolicy < 0.6f)
+                                Agent.Creature.AddThought("Food here is cheap!", new TimeSpan(4, 0, 0), 30);
+
+                            var depositAct = new DepositMoney(Agent, resourceAmount.MoneyValue * Agent.World.PersistentData.CorporateFoodCostPolicy);
                             foreach (var result in depositAct.Run())
                                 if (result == Status.Running)
                                     yield return result;
+                            if (Agent.Stats != null && Agent.Stats.Money < 0)
+                                Agent.Creature.AddThought("I'm broke.", new TimeSpan(4, 0, 0), -50);
                         }
                     }
 
