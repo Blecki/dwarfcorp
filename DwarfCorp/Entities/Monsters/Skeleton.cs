@@ -15,7 +15,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Skeleton(
-                new CreatureStats("Skeleton", "Skeleton", 0),
+                new CreatureStats("Skeleton", "Skeleton", null),
                 Manager.World.Factions.Factions["Undead"],
                 Manager,
                 "Skeleton",

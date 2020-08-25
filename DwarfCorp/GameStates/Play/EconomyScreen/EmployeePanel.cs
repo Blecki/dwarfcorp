@@ -27,7 +27,7 @@ namespace DwarfCorp.Gui.Widgets
             builder.Append(Minion.Stats.Gender);
             builder.Append(Minion.Stats.FullName);
             builder.Append(Minion.Stats.CurrentClass.Name);
-            builder.Append(Minion.Stats.CurrentLevel.Name);
+            builder.Append(Minion.Stats.GetCurrentLevel());
             builder.Append(Minion.Stats.Title);
             if (Minion.Stats.IsOverQualified) builder.Append("wants promotion");
             if (Minion.Stats.IsOnStrike) builder.Append("strike");
@@ -93,7 +93,7 @@ namespace DwarfCorp.Gui.Widgets
                     AutoLayout = AutoLayout.DockFill,
                     TextVerticalAlign = VerticalAlign.Center,
                     MinimumSize = new Point(128, 64),
-                    Text = (employee.Stats.IsOverQualified ? employee.Stats.FullName + "*" : employee.Stats.FullName) + " (" + (employee.Stats.Title ?? employee.Stats.CurrentLevel.Name) + ")"
+                    Text = (employee.Stats.IsOverQualified ? employee.Stats.FullName + "*" : employee.Stats.FullName) + " (" + employee.Stats.Title + ")"
                 });
 
                 EmployeeList.AddItem(bar);

@@ -21,10 +21,10 @@ namespace DwarfCorp.Gui.Widgets
         private Button HireButton;
         private Dictionary<String, GeneratedApplicant> Applicants = new Dictionary<string, GeneratedApplicant>();
 
-        public Applicant GenerateApplicant(CompanyInformation info, String type)
+        public Applicant GenerateApplicant(CompanyInformation info, Loadout Loadout)
         {
             Applicant applicant = new Applicant();
-            applicant.GenerateRandom(type, 0, info);
+            applicant.GenerateRandom(Loadout, 0, info);
             return applicant;
         }
 
@@ -43,9 +43,9 @@ namespace DwarfCorp.Gui.Widgets
             int h = Root.RenderData.VirtualScreen.Height;
             Rect = new Rectangle(Root.RenderData.VirtualScreen.Center.X - w / 2, Root.RenderData.VirtualScreen.Center.Y - h/2, w, h);
 
-            var playerClasses = Library.EnumerateClasses().Where(c => c.PlayerClass).ToList();
+            var playerClasses = Library.EnumerateLoadouts().ToList();
             foreach (var job in playerClasses)
-                Applicants.Add(job.Name, new GeneratedApplicant { Applicant = GenerateApplicant(Company, job.Name) });
+                Applicants.Add(job.Name, new GeneratedApplicant { Applicant = GenerateApplicant(Company, job) });
 
             var left = AddChild(new Widget()
             {
@@ -110,7 +110,7 @@ namespace DwarfCorp.Gui.Widgets
                     TextVerticalAlign = VerticalAlign.Bottom,
                     OnClick = (sender, args) =>
                     {
-                        jobDescription.Text = "\n\n" + applicant.Applicant.Class.JobDescription;
+                        jobDescription.Text = "\n\n" + applicant.Applicant.Loadout.Description;
                         jobDescription.Invalidate();
                         applicantInfo.Hidden = false;
                         HireButton.Hidden = false;
@@ -155,7 +155,7 @@ namespace DwarfCorp.Gui.Widgets
                     var applicant = applicantInfo.Applicant;
                     if (applicant != null)
                     {
-                        if (applicant.Level.Pay * 4 > World.PlayerFaction.Economy.Funds)
+                        if (applicant.SigningBonus > World.PlayerFaction.Economy.Funds)
                             Root.ShowModalPopup(Root.ConstructWidget(new Gui.Widgets.Popup
                             {
                                 Text = "We can't afford the signing bonus!",
@@ -164,11 +164,6 @@ namespace DwarfCorp.Gui.Widgets
                             Root.ShowModalPopup(Root.ConstructWidget(new Gui.Widgets.Popup
                             {
                                 Text = "We need a balloon port to hire someone.",
-                            }));
-                        else if (!applicant.Class.Managerial && World.CalculateSupervisedEmployees() >= World.CalculateSupervisionCap())
-                            Root.ShowModalPopup(Root.ConstructWidget(new Gui.Widgets.Popup
-                            {
-                                Text = String.Format("Can't hire any more dwarfs. You need more supervisors!")
                             }));
                         else
                         {
@@ -180,14 +175,14 @@ namespace DwarfCorp.Gui.Widgets
                             {
                                 Text = String.Format("We hired {0}, paying a signing bonus of {1}. They will arrive in about {2} hour(s).",
                                 applicant.Name,
-                                applicant.Level.Pay * 4,
+                                applicant.SigningBonus,
                                 (date - World.Time.CurrentDate).Hours),
                             });
 
-                            var newApplicant = GenerateApplicant(Company, applicant.Class.Name);
-                            Applicants[applicant.Class.Name].Applicant = newApplicant;
-                            Applicants[applicant.Class.Name].Portrait.Sprite = newApplicant.GetLayers();
-                            Applicants[applicant.Class.Name].Portrait.AnimationPlayer = newApplicant.GetAnimationPlayer(Applicants[applicant.Class.Name].Portrait.Sprite);
+                            var newApplicant = GenerateApplicant(Company, applicant.Loadout);
+                            Applicants[applicant.Loadout.Name].Applicant = newApplicant;
+                            Applicants[applicant.Loadout.Name].Portrait.Sprite = newApplicant.GetLayers();
+                            Applicants[applicant.Loadout.Name].Portrait.AnimationPlayer = newApplicant.GetAnimationPlayer(Applicants[applicant.Loadout.Name].Portrait.Sprite);
                         }
                     }
                 },

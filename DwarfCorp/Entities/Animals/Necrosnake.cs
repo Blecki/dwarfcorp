@@ -35,7 +35,7 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats("Necrosnake", "Necrosnake", 0),
+                new CreatureStats("Necrosnake", "Necrosnake", null),
                 manager.World.Factions.Factions["Evil"],
                 name
             )
@@ -68,7 +68,6 @@ namespace DwarfCorp
             AI.Movement.SetCan(MoveType.ClimbWalls, true);
             AI.Movement.SetCan(MoveType.Dig, true);
             AI.Stats.FullName = "Giant Snake";
-            AI.Stats.LevelIndex = 0;
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
         }

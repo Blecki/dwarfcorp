@@ -107,6 +107,7 @@ namespace DwarfCorp
         [JsonIgnore] public String Tool_AttackHitParticles { get => GetProperty<String>("Tool_AttackHitParticles", ""); set => SetProperty<String>("Tool_AttackHitParticles", value); }
         [JsonIgnore] public String Tool_AttackHitEffect { get => GetProperty<String>("Tool_AttackHitEffect", ""); set => SetProperty<String>("Tool_AttackHitEffect", value); }
         [JsonIgnore] public Color Tool_AttackHitColor { get => GetProperty<Color>("Tool_AttackHitColor", Color.White); set => SetProperty<Color>("Tool_AttackHitColor", value); }
+        [JsonIgnore] public bool Tool_Magic { get => GetProperty<bool>("Tool_Magic", false); set => SetProperty<bool>("Tool_Magic", value); }
 
         [JsonIgnore] public bool Equipable { get => GetProperty<bool>("Equipable", false); set => SetProperty<bool>("Equipable", value); }
         [JsonIgnore] public String Equipment_LayerName { get => GetProperty<String>("Equipment_LayerName", ""); set => SetProperty<String>("Equipment_LayerName", value); }

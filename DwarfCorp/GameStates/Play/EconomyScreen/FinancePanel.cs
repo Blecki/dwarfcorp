@@ -74,7 +74,7 @@ namespace DwarfCorp.GameStates
                 AddRow("Material assets:", String.Format("{0} goods valued at ${1}",
                     resources.Count(),
                     resources.Sum(r => r.MoneyValue)));
-                var payPerDay = (DwarfBux)Faction.Minions.Select(m => m.Stats.CurrentLevel.Pay.Value).Sum();
+                var payPerDay = (DwarfBux)Faction.Minions.Select(m => m.Stats.DailyPay.Value).Sum();
                 AddRow("Employees:", String.Format("{0} at {1} per day.", Faction.Minions.Count, payPerDay));
                 AddRow("Runway:", String.Format("{0} day(s).\n", (int)(Faction.Economy.Funds / Math.Max(payPerDay, (decimal)0.01))));
                 var freeStockPile = World.ComputeRemainingStockpileSpace();

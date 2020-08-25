@@ -19,7 +19,7 @@ namespace DwarfCorp
         {
             var r = new NonPlayerDwarf(
                 Manager,
-                new CreatureStats("Dwarf", "Miner", 0)
+                new CreatureStats("Dwarf", "Miner", null)
                 {
                     RandomSeed = MathFunctions.Random.Next(),
                 },
@@ -35,7 +35,7 @@ namespace DwarfCorp
         {
             var r = new NonPlayerDwarf(
                 Manager,
-                new CreatureStats("Dwarf", "Soldier", 0)
+                new CreatureStats("Dwarf", "Soldier", null)
                 {
                     RandomSeed = MathFunctions.Random.Next(),
                 },
@@ -51,7 +51,7 @@ namespace DwarfCorp
         {
             var r = new NonPlayerDwarf(
                 Manager,
-                new CreatureStats("Dwarf", "Crafter", 0)
+                new CreatureStats("Dwarf", "Crafter", null)
                 {
                     RandomSeed = MathFunctions.Random.Next(),
                 },

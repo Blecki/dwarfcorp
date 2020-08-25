@@ -223,7 +223,10 @@
     <Compile Include="Gui\RenderData.cs" />
     <Compile Include="Gui\SpriteAtlasEntry.cs" />
     <Compile Include="Gui\Widgets\HorizontalFloatSliderCombo.cs" />
+    <Compile Include="Gui\Widgets\ScrollingTextBox.cs" />
+    <Compile Include="Gui\Widgets\TextBoxEx.cs" />
     <Compile Include="Library\CategoryIconLibrary.cs" />
+    <Compile Include="Library\LoadoutLibrary.cs" />
     <Compile Include="Library\EquipmentLibrary.cs" />
     <Compile Include="Components\AI\EquipmentSlotType.cs" />
     <Compile Include="Components\AI\FairyAI.cs" />
@@ -248,6 +251,8 @@
     <Compile Include="Player\Crafting\DeconstructObjectTool.cs" />
     <Compile Include="Player\Crafting\GetResourcesOfApparentType.cs" />
     <Compile Include="Player\Crafting\Resources\ResourceDes.cs" />
+    <Compile Include="Player\Loadout.cs" />
+    <Compile Include="Player\Tools\EntityInspector\PropertyPanel.cs" />
     <Compile Include="Player\Tools\PathingHintTool.cs" />
     <Compile Include="Player\Tools\EntityInspector\EntityInspector.cs" />
     <Compile Include="Player\Tools\EntityInspector\EntityInspectorPanel.cs" />
@@ -370,7 +375,6 @@
     <Compile Include="Player\ContextCommands\FireCommand.cs" />
     <Compile Include="Player\ContextCommands\GatherCommand.cs" />
     <Compile Include="Player\ContextCommands\PriorityCommand.cs" />
-    <Compile Include="Player\ContextCommands\PromoteCommand.cs" />
     <Compile Include="Player\ContextCommands\WrangleCommand.cs" />
     <Compile Include="Player\InputManager.cs" />
     <Compile Include="Player\IVoxelBrush.cs" />

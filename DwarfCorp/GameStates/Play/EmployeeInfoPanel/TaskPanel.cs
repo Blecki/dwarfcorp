@@ -207,7 +207,7 @@ namespace DwarfCorp.Play.EmployeeInfo
             {
                 Hidden = false;
 
-                PayLabel.Text = String.Format("Pay: {0}/day -- Wealth: {1}", Employee.Stats.CurrentLevel.Pay, Employee.Stats.Money);
+                PayLabel.Text = String.Format("Pay: {0}/day -- Wealth: {1}", Employee.Stats.DailyPay, Employee.Stats.Money);
                 AgeLabel.Text = String.Format("Age: {0}", Employee.Stats.Age);
                 Bio.Text = Employee.Biography;
                 ManagerBox.SilentSetCheckState(Employee.Stats.IsManager);

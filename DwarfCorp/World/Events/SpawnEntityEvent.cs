@@ -14,8 +14,6 @@ namespace DwarfCorp.Events
         public bool ZoomToEntity;
         public EntitySpawnLocation SpawnLocation;
         public FactionFilter EntityFactionFilter;
-        public int MinEntityLevel = 1;
-        public int MaxEntityLevel = 1;
 
         public SpawnEntityEvent()
         {
@@ -45,7 +43,6 @@ namespace DwarfCorp.Events
                         }
 
                         creature.Faction = world.Factions.Factions[faction];
-                        creature.Stats.LevelIndex = MathFunctions.RandInt(MinEntityLevel, MaxEntityLevel);
                     }
                 }
             }

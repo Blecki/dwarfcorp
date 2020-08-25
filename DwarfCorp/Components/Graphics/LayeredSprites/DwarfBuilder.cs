@@ -101,7 +101,7 @@ namespace DwarfCorp.DwarfSprites
             return sprite;
         }
 
-        public static LayerStack CreateDwarfLayerStack(CreatureStats Stats)
+        public static LayerStack CreateDwarfLayerStack(CreatureStats Stats, Loadout Loadout)
         {
             var sprite = new LayerStack();
 
@@ -114,7 +114,7 @@ namespace DwarfCorp.DwarfSprites
             foreach (var layer in layers)
                 sprite.AddLayer(layer.Layer, layer.Palette);
 
-            foreach (var item in Stats.CurrentClass.StartingEquipment)
+            foreach (var item in Loadout.StartingEquipment)
                 if (!String.IsNullOrEmpty(item.Equipment_LayerName))
                     if (LayerLibrary.FindLayerWithName(item.Equipment_LayerType, item.Equipment_LayerName).HasValue(out var layer))
                     {

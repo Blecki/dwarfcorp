@@ -79,6 +79,7 @@ namespace DwarfCorp
         public String Tool_AttackHitParticles = "";
         public String Tool_AttackHitEffect = "";
         public Color Tool_AttackHitColor = Color.White;
+        public bool Tool_Magic = false;
         #endregion
 
         #region Equipment

@@ -13,7 +13,7 @@ namespace DwarfCorp
         public Embarkment(GameStates.Overworld Overworld)
         {
             foreach (var dwarf in Overworld.Difficulty.Dwarves)
-                Employees.Add(Applicant.Random(dwarf, Overworld.Company));
+                Employees.Add(Applicant.Random(Library.GetLoadout(dwarf), Overworld.Company));
         }
 
         public DwarfBux TotalCost()
@@ -29,14 +29,7 @@ namespace DwarfCorp
                 return InstanceSettings.ValidationResult.Query;
             }
 
-            var supervisionCap = Settings.InstanceSettings.InitalEmbarkment.Employees.Where(e => e.Class.Managerial).Select(e => e.Level.BaseStats.Intelligence).Sum() + 4;
-            var employeeCount = Settings.InstanceSettings.InitalEmbarkment.Employees.Where(e => !e.Class.Managerial).Count();
-
-            if (employeeCount > supervisionCap)
-            {
-                Message = "You do not have enough supervision.";
-                return InstanceSettings.ValidationResult.Reject;
-            }
+            var employeeCount = Settings.InstanceSettings.InitalEmbarkment.Employees.Count();
 
             if (employeeCount == 0)
             {

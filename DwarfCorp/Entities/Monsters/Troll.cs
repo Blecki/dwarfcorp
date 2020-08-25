@@ -15,7 +15,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Troll(
-                new CreatureStats("Troll", "Troll", 0),
+                new CreatureStats("Troll", "Troll", null),
                 Manager.World.Factions.Factions["Goblins"],
                 Manager,
                 "Troll",
@@ -25,7 +25,7 @@ namespace DwarfCorp
         [EntityFactory("Player Troll")]
         private static GameComponent __factory5(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            var toReturn = new Troll(new CreatureStats("Troll", "Troll", 0), Manager.World.PlayerFaction, Manager, "Troll", Position);
+            var toReturn = new Troll(new CreatureStats("Troll", "Troll", null), Manager.World.PlayerFaction, Manager, "Troll", Position);
             return toReturn.Physics;
         }
 

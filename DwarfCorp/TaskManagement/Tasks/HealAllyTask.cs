@@ -139,7 +139,7 @@ namespace DwarfCorp
                 if (healTimer.HasTriggered)
                 {
                     Agent.Creature.Sprite.ReloopAnimations(Agent.Creature.Stats.CurrentClass.AttackMode);
-                    int amount = Agent.Stats.CurrentLevel.HealingPower;
+                    int amount = (int)(Agent.Stats.Wisdom * 4);
                     Ally.Creature.Heal(amount);
                     IndicatorManager.DrawIndicator((amount).ToString() + " HP",
                     Ally.Position, 1.0f,
@@ -184,7 +184,7 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            return agent.AI != Ally && !Ally.IsDead && !Ally.Stats.Health.IsSatisfied() && agent.Stats.CurrentLevel.HealingPower > 0 ? Feasibility.Feasible : Feasibility.Infeasible;
+            return agent.AI != Ally && !Ally.IsDead && !Ally.Stats.Health.IsSatisfied() && agent.Stats.Wisdom > 0 ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override bool IsComplete(WorldManager World)

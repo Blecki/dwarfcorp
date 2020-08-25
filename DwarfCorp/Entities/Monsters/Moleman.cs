@@ -15,7 +15,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Moleman(
-                new CreatureStats("Moleman", "Moleman", 0),
+                new CreatureStats("Moleman", "Moleman", null),
                 Manager.World.Factions.Factions["Molemen"],
                 Manager,
                 "Moleman",
@@ -26,7 +26,7 @@ namespace DwarfCorp
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Moleman(
-                new CreatureStats("Moleman", "Moleman", 0),
+                new CreatureStats("Moleman", "Moleman", null),
                 Manager.World.PlayerFaction,
                 Manager,
                 "Moleman",

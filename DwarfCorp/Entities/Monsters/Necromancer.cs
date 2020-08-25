@@ -15,7 +15,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Necromancer(
-                new CreatureStats("Necromancer", "Necromancer", 0),
+                new CreatureStats("Necromancer", "Necromancer", null),
                 Manager.World.Factions.Factions["Undead"],
                 Manager,
                 "Necromancer",
@@ -26,7 +26,7 @@ namespace DwarfCorp
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Necromancer(
-                new CreatureStats("Necromancer", "Necromancer", 0),
+                new CreatureStats("Necromancer", "Necromancer", null),
                 Manager.World.PlayerFaction,
                 Manager,
                 "Necromancer",

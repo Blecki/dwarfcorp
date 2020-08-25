@@ -134,6 +134,7 @@
     <Compile Include="Components\AI\StatusEffects\DamageResistBuff.cs" />
     <Compile Include="Components\AI\StatusEffects\Disease.cs" />
     <Compile Include="Components\AI\StatusEffects\DiseaseLibrary.cs" />
+    <Compile Include="Components\AI\StatusEffects\MotivationStatusEffect.cs" />
     <Compile Include="Components\AI\StatusEffects\OngoingDamageBuff.cs" />
     <Compile Include="Components\AI\StatusEffects\OngoingHealBuff.cs" />
     <Compile Include="Components\AI\StatusEffects\RadiusBuffer.cs" />
@@ -562,6 +563,7 @@
     <Compile Include="Library\DifficultyLibrary.cs" />
     <Compile Include="Library\EquipmentLibrary.cs" />
     <Compile Include="Library\EventLibrary.cs" />
+    <Compile Include="Library\LoadoutLibrary.cs" />
     <Compile Include="Library\RaceLibrary.cs" />
     <Compile Include="Library\RailLibrary.cs" />
     <Compile Include="Library\ResourceLibrary.cs" />
@@ -583,7 +585,6 @@
     <Compile Include="Player\ContextCommands\FireCommand.cs" />
     <Compile Include="Player\ContextCommands\GatherCommand.cs" />
     <Compile Include="Player\ContextCommands\PriorityCommand.cs" />
-    <Compile Include="Player\ContextCommands\PromoteCommand.cs" />
     <Compile Include="Player\ContextCommands\WrangleCommand.cs" />
     <Compile Include="Player\Crafting\BuildVoxelOrder.cs" />
     <Compile Include="Player\Crafting\BuildVoxelTask.cs" />
@@ -616,6 +617,7 @@
     <Compile Include="Player\InputManager.cs" />
     <Compile Include="Player\IVoxelBrush.cs" />
     <Compile Include="Player\KeyManager.cs" />
+    <Compile Include="Player\Loadout.cs" />
     <Compile Include="Player\ShellBrush.cs" />
     <Compile Include="Player\StairBrush.cs" />
     <Compile Include="Player\Tools\AttackTool.cs" />

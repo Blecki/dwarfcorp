@@ -27,7 +27,7 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats("Deer", "Deer", 0),
+                new CreatureStats("Deer", "Deer", null),
                 manager.World.Factions.Factions["Herbivore"],
                 name
             )

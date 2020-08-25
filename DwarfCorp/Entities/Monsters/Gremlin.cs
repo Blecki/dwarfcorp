@@ -15,7 +15,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Gremlin(
-                new CreatureStats("Gremlin", "Gremlin", 0),
+                new CreatureStats("Gremlin", "Gremlin", null),
                 Manager.World.Factions.Factions["Goblins"],
                 Manager,
                 "Gremlin",

@@ -2134,6 +2134,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Wetlands</Name>
     </None>
+    <None Include="World\Classes\Dwarf.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Dwarf</Name>
+    </None>
     <None Include="World\Classes\Manager.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Manager</Name>
@@ -2249,6 +2253,10 @@
     <None Include="World\DecalTypes\Empty.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Empty</Name>
+    </None>
+    <None Include="World\Loadouts\Crafter.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Crafter</Name>
     </None>
     <None Include="World\Races\Corporate.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

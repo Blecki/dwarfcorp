@@ -68,13 +68,8 @@ namespace DwarfCorp.GameStates
                     var overworldSettings = Overworld.Create();
                     overworldSettings.InstanceSettings.InitalEmbarkment = new Embarkment(overworldSettings);
                     overworldSettings.InstanceSettings.InitalEmbarkment.Funds = 1000u;
-                    overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Crafter", overworldSettings.Company));
-                    overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Manager", overworldSettings.Company));
-                    overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Miner", overworldSettings.Company));
-                    overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Wizard", overworldSettings.Company));
-                    overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Soldier", overworldSettings.Company));
-                    overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random("Musketeer", overworldSettings.Company));
-
+                    foreach (var loadout in Library.EnumerateLoadouts())
+                        overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random(loadout, overworldSettings.Company));
                     GameStateManager.PushState(new LoadState(Game, overworldSettings, LoadTypes.GenerateOverworld));
                 });
 

@@ -43,7 +43,7 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats(Asset, "Fowl", 0),
+                new CreatureStats(Asset, "Fowl", null),
                 manager.World.Factions.Factions["Herbivore"],
                 Asset
             )

@@ -32,5 +32,12 @@ namespace DwarfCorp
         {
             return Object.ReferenceEquals(_Value, Other._Value);
         }
+
+        public override string ToString()
+        {
+            if (_Value == null)
+                return "NULL";
+            return _Value.ToString();
+        }
     }
 }

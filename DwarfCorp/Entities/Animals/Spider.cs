@@ -28,7 +28,7 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats("Spider", "Spider", 0)
+                new CreatureStats("Spider", "Spider", null)
                 {
                     CanEat = true
                 },

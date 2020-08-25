@@ -80,11 +80,9 @@ namespace DwarfCorp
         public int NumThingsKilled = 0;
         public int NumBlocksPlaced = 0;
         public int XP = 0;
-        public int LevelIndex = 0;
 
         public String ClassName = "";
         [JsonIgnore] public CreatureClass CurrentClass { get; private set; }
-        [JsonIgnore] public CreatureClass.Level CurrentLevel => CurrentClass.Levels[LevelIndex];
 
         public int GetCurrentLevel()
         {
@@ -102,9 +100,11 @@ namespace DwarfCorp
         public String SpeciesName = "";
         [JsonIgnore] public CreatureSpecies Species { get; private set; }
 
+        public DwarfBux DailyPay => GameSettings.Current.DwarfBasePay * GetCurrentLevel();
+
         public TaskCategory AllowedTasks = TaskCategory.Attack | TaskCategory.Gather | TaskCategory.Plant | TaskCategory.Harvest | TaskCategory.Chop | TaskCategory.Wrangle | TaskCategory.TillSoil;
-        [JsonIgnore] public bool IsOverQualified => CurrentClass != null ? CurrentClass.Levels.Count > LevelIndex + 1 && XP > CurrentClass.Levels[LevelIndex + 1].XP : false;
-        public bool CanSpendXP => GetLevelUpCost(GetCurrentLevel()) <= XP;
+        [JsonIgnore] public bool IsOverQualified => XP >= GetLevelUpCost(GetCurrentLevel());
+        [JsonIgnore] public bool CanSpendXP => GetLevelUpCost(GetCurrentLevel()) <= XP;
         public bool IsAsleep = false;
         public float HungerDamageRate = 10.0f;
         public bool IsOnStrike = false;
@@ -115,6 +115,8 @@ namespace DwarfCorp
 
         public bool IsTaskAllowed(TaskCategory TaskCategory)
         {
+            if (IsManager && (TaskCategory & (TaskCategory.Attack | TaskCategory.Guard | TaskCategory.Gather | TaskCategory.BuildObject)) != TaskCategory)
+                return false;
             return (AllowedTasks & TaskCategory) == TaskCategory;
         }
 
@@ -134,7 +136,7 @@ namespace DwarfCorp
             Species = Library.GetSpecies(SpeciesName);
         }
 
-        public CreatureStats(String SpeciesName, String ClassName, int level) : this()
+        public CreatureStats(String SpeciesName, String ClassName, Loadout Loadout) : this()
         {
             this.ClassName = ClassName;
             CurrentClass = Library.GetClass(ClassName);
@@ -142,37 +144,32 @@ namespace DwarfCorp
             this.SpeciesName = SpeciesName;
             Species = Library.GetSpecies(SpeciesName);
 
-            AllowedTasks = CurrentClass.Actions;
-            LevelIndex = level;
-            XP = CurrentClass.Levels[level].XP;
+            XP = 0;
 
-            BaseCharisma = CurrentLevel.BaseStats.Charisma;
-            BaseConstitution = CurrentLevel.BaseStats.Constitution;
-            BaseDexterity = CurrentLevel.BaseStats.Dexterity;
-            BaseIntelligence = CurrentLevel.BaseStats.Intelligence;
-            BaseStrength = CurrentLevel.BaseStats.Strength;
-            BaseWisdom = CurrentLevel.BaseStats.Wisdom;
-
-            Title = CurrentLevel.Name;
-        }
-
-        public void LevelUp(Creature Creature)
-        {
-            LevelIndex = Math.Min(LevelIndex + 1, CurrentClass.Levels.Count - 1);
-            StatAdjustments.RemoveAll(a => a.Name == "base stats");
-
-            StatAdjustments.Add(new StatAdjustment
+            if (Loadout == null)
             {
-                Name = "base stats",
-                Dexterity = CurrentLevel.BaseStats.Dexterity,
-                Constitution = CurrentLevel.BaseStats.Constitution,
-                Strength = CurrentLevel.BaseStats.Strength,
-                Wisdom = CurrentLevel.BaseStats.Wisdom,
-                Charisma = CurrentLevel.BaseStats.Charisma,
-                Intelligence = CurrentLevel.BaseStats.Intelligence
-            });
+                AllowedTasks = CurrentClass.Actions;
+                BaseCharisma = CurrentClass.Levels[0].BaseStats.Charisma;
+                BaseConstitution = CurrentClass.Levels[0].BaseStats.Constitution;
+                BaseDexterity = CurrentClass.Levels[0].BaseStats.Dexterity;
+                BaseIntelligence = CurrentClass.Levels[0].BaseStats.Intelligence;
+                BaseStrength = CurrentClass.Levels[0].BaseStats.Strength;
+                BaseWisdom = CurrentClass.Levels[0].BaseStats.Wisdom;
+                Title = CurrentClass.Levels[0].Name;
+            }
+            else
+            {
+                AllowedTasks = Loadout.Actions;
 
-            //Creature.Attacks.AddRange(CurrentLevel.ExtraWeapons.Select(a => new Attack(a)));
+                BaseCharisma = Loadout.StartingStats.Charisma;
+                BaseConstitution = Loadout.StartingStats.Constitution;
+                BaseDexterity = Loadout.StartingStats.Dexterity;
+                BaseIntelligence = Loadout.StartingStats.Intelligence;
+                BaseStrength = Loadout.StartingStats.Strength;
+                BaseWisdom = Loadout.StartingStats.Wisdom;
+
+                Title = Loadout.Name;
+            }
         }
     }
 }

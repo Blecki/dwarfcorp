@@ -15,6 +15,7 @@ namespace DwarfCorp
         [JsonProperty] private int lastXPAnnouncementStat = -1;
         [JsonProperty] private int NumDaysNotPaid = 0;
         [JsonProperty] private double UnhappinessTime = 0.0f;
+        [JsonProperty] private double TimeSinceLastAssignedTask = 0.0f; // The time since this dwarf last took on a task from the order pool.
 
         [JsonIgnore] public bool BreakOnUpdate = false;
 
@@ -208,7 +209,7 @@ namespace DwarfCorp
                             return new MagicHealAllyTask(minion);
                         return null;
                     },
-                    Available = (AI, world) => AI.Stats.CurrentLevel.HealingPower > 0 && AI.Faction.Minions.Any(minion => !minion.Creature.Stats.Health.IsSatisfied())
+                    Available = (AI, world) => AI.Creature.Equipment.HasValue(out var eq) && eq.GetItemInSlot("Tool").HasValue(out var tool) && tool.Tool_Magic && AI.Stats.Wisdom > 0 && AI.Faction.Minions.Any(minion => !minion.Creature.Stats.Health.IsSatisfied())
                 });
 
                 IdleTasks.Add(new IdleTask
@@ -363,6 +364,8 @@ namespace DwarfCorp
             if (!Active)
                 return;
 
+            TimeSinceLastAssignedTask += gameTime.ElapsedGameTime.TotalMinutes;
+
             //SetMessage("");
             Creature.NoiseMaker.BasePitch = Stats.VoicePitch;
 
@@ -437,8 +440,8 @@ namespace DwarfCorp
                 });
 
             // If we haven't gotten paid, don't wait for idle to go collect.
-            if (NumDaysNotPaid > 0 && Faction.Economy.Funds >= Stats.CurrentLevel.Pay)
-                AssignGeneratedTask(new ActWrapperTask(new GetMoneyAct(this, Math.Min(Stats.CurrentLevel.Pay * NumDaysNotPaid, Faction.Economy.Funds)) { IncrementDays = false })
+            if (NumDaysNotPaid > 0 && Faction.Economy.Funds >= Stats.DailyPay) // Todo - Track how much we were owed for the day we weren't paid. Don't assume it's constant.
+                AssignGeneratedTask(new ActWrapperTask(new GetMoneyAct(this, Math.Min(Stats.DailyPay * NumDaysNotPaid, Faction.Economy.Funds)) { IncrementDays = false })
                 {
                     AutoRetry = true,
                     Name = "Get paid.",
@@ -558,7 +561,7 @@ namespace DwarfCorp
                 else if (Stats.Happiness.IsDissatisfied()) // We aren't on strike, but we hate this place.
                 {
                     UnhappinessTime += gameTime.ElapsedGameTime.TotalMinutes;
-                    if (MathFunctions.Rand(0, 60) < UnhappinessTime) // We hate it so much that we might just go on strike! The longer we are unhappy, the more likely to go on strike.
+                    if (MathFunctions.Rand(0, 10) < UnhappinessTime) // We hate it so much that we might just go on strike! The longer we are unhappy, the more likely to go on strike.
                     {
                         Manager.World.UserInterface.MakeWorldPopup(String.Format("{0} ({1}) refuses to work!",
                                Stats.FullName, Stats.CurrentClass.Name), Creature.Physics, -10, 10);
@@ -572,9 +575,11 @@ namespace DwarfCorp
                 {
                     var goal = GetEasiestTask(Tasks);
                     if (goal == null) // We don't have a queued task, so lets go get one.
-                        if (MathFunctions.Rand(0, 1) < Stats.Motivation.CurrentValue) // But only if we're motivated. It's pretty hard to not meet this threshold.
+                    {
+                        var motivationThreshold = 5.0f * (1.0f - Stats.Motivation.CurrentValue); // The higher the value, the more likely they are to pick a new task.
+                        if (TimeSinceLastAssignedTask > motivationThreshold) // The longest a dwarf should wait even when incredibly unmotivated is 5 real life minutes.
                             goal = World.TaskManager.GetBestTask(this);
-                        // This needs tweaked - in practice they still take on the task immediately.
+                    }
 
                     if (goal != null)
                     {
@@ -617,21 +622,6 @@ namespace DwarfCorp
 
             IndicatorManager.DrawIndicator(sign + XP + " XP",
                 Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, XP > 0 ? GameSettings.Current.Colors.GetColor("Positive", Color.Green) : GameSettings.Current.Colors.GetColor("Negative", Color.Red));
-
-            // Todo: Remove this once levels are reworked.
-            if (Stats.IsOverQualified && lastXPAnnouncement != Stats.LevelIndex && Faction == Manager.World.PlayerFaction)
-            {
-                lastXPAnnouncement = Stats.LevelIndex;
-
-                Manager.World.MakeAnnouncement(new Gui.Widgets.QueuedAnnouncement
-                {
-                    Text = String.Format("{0} ({1}) wants a promotion!", Stats.FullName, Stats.CurrentClass.Name),
-                    ClickAction = (gui, sender) => GameStateManager.PushState(new EconomyState(Manager.World.Game, Manager.World))
-                });
-
-                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
-                Manager.World.Tutorial("level up");
-            }
 
             if (Faction == Manager.World.PlayerFaction && lastXPAnnouncementStat != Stats.GetCurrentLevel() && Stats.CanSpendXP)
             {

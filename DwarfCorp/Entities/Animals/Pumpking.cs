@@ -35,7 +35,7 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats("Pumpking", "Pumpking", 0)
+                new CreatureStats("Pumpking", "Pumpking", null)
                 {
                 },
                 manager.World.Factions.Factions["Evil"],
@@ -70,7 +70,6 @@ namespace DwarfCorp
             AI.Movement.SetCan(MoveType.ClimbWalls, true);
             AI.Movement.SetCan(MoveType.Dig, true);
             AI.Stats.FullName = "Pumpking";
-            AI.Stats.LevelIndex = 0;
             AI.Stats.BaseSize = 4;
 
             Physics.AddChild(new Flammable(Manager, "Flames"));

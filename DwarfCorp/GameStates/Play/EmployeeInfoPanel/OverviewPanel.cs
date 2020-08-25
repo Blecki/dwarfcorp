@@ -36,7 +36,6 @@ namespace DwarfCorp.Play.EmployeeInfo
         private Widget EquipmentPanel;
         private Widget PackPanel;
         private Widget DebugPanel;
-        private Widget LevelButton;
 
         private String SetLength(String S, int L)
         {
@@ -241,7 +240,7 @@ namespace DwarfCorp.Play.EmployeeInfo
                     {
                         OkayText = Library.GetString("fire-dwarf"),
                         CancelText = Library.GetString("keep-dwarf"),
-                        Text = String.Format("Really fire {0}? They will collect {1} in severance pay.", Employee.Stats.FullName, Employee.Stats.CurrentLevel.Pay * 4),
+                        Text = String.Format("Really fire {0}? They will collect {1} in severance pay.", Employee.Stats.FullName, Employee.Stats.DailyPay * GameSettings.Current.DwarfSigningBonusFactor),
                         Padding = new Margin(32, 10, 10, 10),
                         MinimumSize = new Point(512, 128),
                         OnClose = (confirm) =>
@@ -279,19 +278,6 @@ namespace DwarfCorp.Play.EmployeeInfo
                             Employee.Chat();
                     }
                 });
-
-            LevelButton = bottomBar.AddChild(new Button()
-            {
-                Text = "Promote!",
-                Border = "border-button",
-                AutoLayout = AutoLayout.DockRight,
-                Tooltip = "Click to promote this dwarf.\nPromoting Dwarves raises their pay and makes them\nmore effective workers.",
-                OnClick = (sender, args) =>
-                {
-                    ContextCommands.PromoteCommand.ImplementPromotion(Employee, Employee.World);
-                    Invalidate();
-                }
-            });
 
             bottomBar.AddChild(new Button()
             {
@@ -355,35 +341,10 @@ namespace DwarfCorp.Play.EmployeeInfo
                 NameLabel.Text = "\n" + Employee.Stats.FullName;
                 TitleEditor.Text = Employee.Stats.Title ?? Employee.Stats.CurrentClass.Name;
                 LevelLabel.Text = String.Format("Level {0} {1}\n({2} xp)",
-                    Employee.Stats.LevelIndex,
+                    Employee.Stats.GetCurrentLevel(),
                     Employee.Stats.CurrentClass.Name,
                     Employee.Stats.XP);
 
-                if (Employee.Stats.CurrentClass.Levels.Count > Employee.Stats.LevelIndex + 1)
-                {
-                    var nextLevel = Employee.Stats.CurrentClass.Levels[Employee.Stats.LevelIndex + 1];
-                    var diff = nextLevel.XP - Employee.Stats.XP;
-
-                    if (diff > 0)
-                    {
-                        //ExperienceLabel.Text = String.Format("XP: {0}\n({1} to next level)",
-                        //    Employee.Stats.XP, diff);
-                        LevelButton.Hidden = true;
-                        LevelButton.Invalidate();
-                    }
-                    else
-                    {
-                        //ExperienceLabel.Text = String.Format("XP: {0}\n({1} to next level)",
-                        //    Employee.Stats.XP, "(Overqualified)");
-                        LevelButton.Hidden = false;
-                        LevelButton.Tooltip = "Promote to " + nextLevel.Name;
-                        LevelButton.Invalidate();
-                    }
-                }
-                else
-                {
-                    //ExperienceLabel.Text = String.Format("XP: {0}", Employee.Stats.XP);
-                }
             }
             else
                 InteriorPanel.Hidden = true;

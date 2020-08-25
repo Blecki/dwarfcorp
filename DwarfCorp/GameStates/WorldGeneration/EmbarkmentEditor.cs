@@ -53,7 +53,7 @@ namespace DwarfCorp.GameStates
             bar.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockFill,
-                Text = String.Format("{0} {1} - {2}", Applicant.SigningBonus, Applicant.Name, Applicant.Class.Name)
+                Text = String.Format("{0} {1} - {2}", Applicant.SigningBonus, Applicant.Name, Applicant.Loadout.Name)
             });
 
             return bar;

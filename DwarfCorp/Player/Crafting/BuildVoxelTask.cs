@@ -35,7 +35,7 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (!agent.AI.Stats.CurrentClass.IsTaskAllowed(TaskCategory.BuildBlock))
+            if (!agent.AI.Stats.IsTaskAllowed(TaskCategory.BuildBlock))
                 return Feasibility.Infeasible;
 
             if (agent.AI.Stats.IsAsleep)

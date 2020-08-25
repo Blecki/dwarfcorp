@@ -77,7 +77,7 @@ namespace DwarfCorp.Play.EmployeeInfo
                 else
                 {
                     checkbox.SilentSetCheckState(Employee.Stats.IsTaskAllowed((TaskCategory)checkbox.Tag));
-                    checkbox.Enabled = Employee.Stats.CurrentClass.IsTaskAllowed((TaskCategory)checkbox.Tag);
+                    checkbox.Enabled = Employee.Stats.IsManager ? ((TaskCategory)checkbox.Tag & (TaskCategory.Attack | TaskCategory.Guard | TaskCategory.Gather | TaskCategory.BuildObject)) == (TaskCategory)checkbox.Tag : true;
                 }
             }
 

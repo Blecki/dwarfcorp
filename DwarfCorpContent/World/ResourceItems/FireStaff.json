@@ -27,6 +27,7 @@
   "Tool_AttackTriggerFrame": 2,
   "Tool_AttackDamage": 1,
   "Tool_AttackHitEffect": "Effects\\pierce",
+  "Tool_Magic": true,
 
   "Equipable": true,
   "Equipment_LayerType": "Tool",

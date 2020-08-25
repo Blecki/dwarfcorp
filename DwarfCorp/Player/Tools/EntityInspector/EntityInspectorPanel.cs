@@ -13,6 +13,7 @@ namespace DwarfCorp
     {
         private WidgetListView ListView;
         private Widget ComponentProperties;
+        private PropertyPanel PropertyPanel;
 
         public GameComponent SelectedEntity;
         public GameComponent SelectedComponent;
@@ -50,11 +51,30 @@ namespace DwarfCorp
                 }) as WidgetListView;
 
                 ListView.Border = null; // Can't make WidgetListView stop defaulting its border without breaking everywhere else its used.
+
+                PropertyPanel = AddChild(new PropertyPanel { Hidden = true }) as PropertyPanel;
+
+            };
+
+            OnLayout = (sender) =>
+            {
+                PropertyPanel.Rect = new Rectangle(sender.Rect.Right, sender.Rect.Top, Root.RenderData.VirtualScreen.Width - sender.Rect.Width, 512);
+                PropertyPanel.Layout();
             };
 
             OnUpdate = (sender, time) =>
             {
-                if (sender.Hidden) return;
+                if (sender.Hidden)
+                {
+                    if (SelectedEntity != null || SelectedComponent != null)
+                    {
+                        SelectedEntity = null;
+                        SelectedComponent = null;
+                        ListView.ClearItems();
+                    }
+                    return;
+                }
+
                 if (SelectedEntity == null)
                 {
                     SelectedComponent = null;
@@ -92,6 +112,7 @@ namespace DwarfCorp
                             if (tag.IsAnyParentHidden())
                                 return;
                             SelectedComponent = lambdaCopy;
+                            PropertyPanel.SelectedComponent = SelectedComponent;
                         };
 
                         #endregion
@@ -110,10 +131,16 @@ namespace DwarfCorp
                         + "\n" + SelectedComponent.Position.ToString() 
                         + "\nBB Extents: " + SelectedComponent.BoundingBoxSize.ToString() 
                         + "\nBB Offset: " + SelectedComponent.LocalBoundingBoxOffset.ToString();
+                    PropertyPanel.SelectedComponent = SelectedComponent;
+                    PropertyPanel.Hidden = false;
+                    PropertyPanel.Invalidate();
                 }
                 else
                 {
                     ComponentProperties.Text = "";
+                    PropertyPanel.SelectedComponent = null;
+                    PropertyPanel.Hidden = true;
+                    PropertyPanel.Invalidate();
                 }
             };
 

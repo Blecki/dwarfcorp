@@ -9,10 +9,7 @@ namespace DwarfCorp
 {
     public class Applicant
     {
-        public CreatureClass Class { get; set; }
-        public String ClassName;
-        public CreatureClass.Level Level => Class.Levels[LevelIndex];
-        public int LevelIndex = 0;
+        public Loadout Loadout { get; set; }
         public string Name { get; set; }
         public string CoverLetter { get; set; }
         public string FormerProfession { get; set; }
@@ -21,7 +18,9 @@ namespace DwarfCorp
         public Gender Gender { get; set; }
         public int RandomSeed { get; set; }
 
-        public DwarfBux SigningBonus => Level.Pay * 4;
+        // Todo: Give a bonus to managers.
+        public DwarfBux SigningBonus = GameSettings.Current.DwarfBasePay * GameSettings.Current.DwarfSigningBonusFactor;
+        public DwarfBux BasePay = GameSettings.Current.DwarfBasePay;
 
         public Applicant()
         {
@@ -40,18 +39,16 @@ namespace DwarfCorp
 
         }
 
-        public static Applicant Random(String ClassName, CompanyInformation info)
+        public static Applicant Random(Loadout Loadout, CompanyInformation info)
         {
             var r = new Applicant();
-            r.GenerateRandom(ClassName, 0, info);
+            r.GenerateRandom(Loadout, 0, info);
             return r;
         }
 
-        public void GenerateRandom(String ClassName, int level, CompanyInformation info)
+        public void GenerateRandom(Loadout Loadout, int level, CompanyInformation info)
         {
-            this.ClassName = ClassName;
-            Class = Library.GetClass(ClassName);
-            LevelIndex = level;
+            this.Loadout = Loadout;
             Gender = Mating.RandomGender();
             Name = TextGenerator.GenerateRandom("$firstname", " ", "$lastname");
             List<string> justifications = new List<string>()
@@ -69,17 +66,10 @@ namespace DwarfCorp
                 TextGenerator.GenerateRandom("${Dear,Hey,Hi,Hello,Sup,Yo}", " " , info.Name , ",\n    ",
                 "${Please,Do}", " ", "${consider,check out,look at,see,view}", " ", "${my,this}", " ",
                 "${application for the position of, resume for, request to be a,offer as}", " " 
-                + Level.Name + ". " + justifications[MathFunctions.Random.Next(justifications.Count)] +" \n",
+                + Loadout.Name + ". " + justifications[MathFunctions.Random.Next(justifications.Count)] +" \n",
                                              "${Thanks,Sincerely,Yours,--,Always}", ",\n    " ,Name);
 
-            if (level > 0)
-            {
-                FormerProfession = Class.Levels[level - 1].Name;
-            }
-            else
-            {
-                FormerProfession = TextGenerator.GenerateRandom("$profession");
-            }
+            FormerProfession = TextGenerator.GenerateRandom("$profession");
 
             
             var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.location);
@@ -91,13 +81,13 @@ namespace DwarfCorp
 
         public DwarfSprites.LayerStack GetLayers()
         {
-            CreatureStats stats = new CreatureStats("Dwarf", ClassName, LevelIndex)
+            CreatureStats stats = new CreatureStats("Dwarf", "Dwarf", Loadout)
             {
                 Gender = this.Gender,
                 RandomSeed = RandomSeed
             };
 
-            return DwarfSprites.DwarfBuilder.CreateDwarfLayerStack(stats);
+            return DwarfSprites.DwarfBuilder.CreateDwarfLayerStack(stats, Loadout);
         }
 
         public AnimationPlayer GetAnimationPlayer(DwarfSprites.LayerStack stack, String Anim = "IdleFORWARD")

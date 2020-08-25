@@ -559,7 +559,7 @@ namespace DwarfCorp
 
         public override string GetDescription()
         {
-            string desc = Stats.FullName + ", level " + Stats.LevelIndex +
+            string desc = Stats.FullName + ", level " + Stats.GetCurrentLevel() +
                           " " +
                           Stats.CurrentClass.Name + ", " + Stats.Gender.ToString() + "\n    " +
                           "Happiness: " + GetHappinessDescription(Stats.Happiness) + ". Health: " + Stats.Health.Percentage +
@@ -811,8 +811,8 @@ namespace DwarfCorp
                     injuries = "no problems";
                 }
                 cMem.SetValue("$injuries", new Yarn.Value(injuries));
-                cMem.SetValue("$employee_pay", new Yarn.Value((float)(decimal)Stats.CurrentLevel.Pay));
-                cMem.SetValue("$employee_bonus", new Yarn.Value(4 * (float)(decimal)Stats.CurrentLevel.Pay));
+                cMem.SetValue("$employee_pay", new Yarn.Value((float)(decimal)Stats.DailyPay));
+                cMem.SetValue("$employee_bonus", new Yarn.Value(4 * (float)(decimal)Stats.DailyPay));
                 cMem.SetValue("$company_money", new Yarn.Value((float)(decimal)Faction?.Economy?.Funds));
 
                 if (Physics.GetComponent<Flammable>().HasValue(out var flames))

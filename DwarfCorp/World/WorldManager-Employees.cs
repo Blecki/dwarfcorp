@@ -18,6 +18,7 @@ namespace DwarfCorp
         public List<CreatureAI> SelectedMinions = new List<CreatureAI>();
 
         public float CorporateFoodCostPolicy = 1.0f;
+        public float CorporatePayScalePolicy = 1.0f;
     }
 
     public partial class WorldManager
@@ -34,7 +35,7 @@ namespace DwarfCorp
                 ArrivalTime = startDate + new TimeSpan(0, delay, 0, 0, 0)
             });
 
-            PlayerFaction.AddMoney(-(decimal)(currentApplicant.Level.Pay * 4));
+            PlayerFaction.AddMoney(-currentApplicant.SigningBonus);
             return PersistentData.NewArrivals.Last().ArrivalTime;
         }
 
@@ -54,23 +55,21 @@ namespace DwarfCorp
 
             var dwarfPhysics = DwarfFactory.GenerateDwarf(
                     spawnLoc,
-                    ComponentManager, currentApplicant.ClassName, currentApplicant.LevelIndex, currentApplicant.Gender, currentApplicant.RandomSeed);
+                    ComponentManager, currentApplicant.Loadout, currentApplicant.Gender, currentApplicant.RandomSeed);
             ComponentManager.RootComponent.AddChild(dwarfPhysics);
 
             var newMinion = dwarfPhysics.EnumerateAll().OfType<Dwarf>().FirstOrDefault();
             Debug.Assert(newMinion != null);
 
-            newMinion.Stats.AllowedTasks = currentApplicant.Class.Actions;
-            newMinion.Stats.LevelIndex = currentApplicant.LevelIndex - 1;
-            newMinion.Stats.LevelUp(newMinion);
+            newMinion.Stats.AllowedTasks = currentApplicant.Loadout.Actions;
             newMinion.Stats.FullName = currentApplicant.Name;
-            newMinion.AI.AddMoney(currentApplicant.Level.Pay * 4m);
+            newMinion.AI.AddMoney(currentApplicant.SigningBonus);
             newMinion.AI.Biography = currentApplicant.Biography;
 
             MakeAnnouncement(
                 new Gui.Widgets.QueuedAnnouncement
                 {
-                    Text = String.Format("{0} was hired as a {1}.", currentApplicant.Name, currentApplicant.Level.Name),
+                    Text = String.Format("{0} was hired as a {1}.", currentApplicant.Name, currentApplicant.Loadout.Name),
                     ClickAction = (gui, sender) => newMinion.AI.ZoomToMe()
                 });
 
@@ -83,17 +82,17 @@ namespace DwarfCorp
         {
             PlayerFaction.Minions.Remove(Employee);
             PersistentData.SelectedMinions.Remove(Employee);
-            PlayerFaction.AddMoney(-(decimal)(Employee.Stats.CurrentLevel.Pay * 4));
+            PlayerFaction.AddMoney(-(decimal)(Employee.Stats.DailyPay * GameSettings.Current.DwarfSigningBonusFactor));
         }
 
         public int CalculateSupervisionCap() // Todo: Cache these somewhere and only calculate once per frame.
         {
-            return PlayerFaction.Minions.Sum(c => c.Stats.CurrentClass.Managerial ? (int)c.Stats.Intelligence : 0) + 4;
+            return PlayerFaction.Minions.Sum(c => c.Stats.IsManager ? (int)c.Stats.Intelligence : 0) + 4;
         }
 
         public int CalculateSupervisedEmployees()
         {
-            return PlayerFaction.Minions.Where(c => c.Stats.CurrentClass.RequiresSupervision).Count() + PersistentData.NewArrivals.Where(c => c.Applicant.Class.RequiresSupervision).Count();
+            return PlayerFaction.Minions.Where(c => !c.Stats.IsManager).Count() + PersistentData.NewArrivals.Where(c => !c.Applicant.Loadout.StartAsManager).Count();
         }
 
         public void PayEmployees()
@@ -108,8 +107,7 @@ namespace DwarfCorp
                 if (creature.Physics.GetComponent<DwarfThoughts>().HasValue(out var thoughts))
                     thoughts.Thoughts.RemoveAll(thought => thought.Description.Contains("paid"));
 
-                DwarfBux pay = creature.Stats.CurrentLevel.Pay;
-                total += pay;
+                total += creature.Stats.DailyPay;
 
                 if (total >= PlayerFaction.Economy.Funds)
                 {
@@ -124,7 +122,7 @@ namespace DwarfCorp
                 else
                     creature.Creature.AddThought("I got paid recently.", new TimeSpan(1, 0, 0, 0), 10.0f);
 
-                creature.AssignTask(new ActWrapperTask(new GetMoneyAct(creature, pay)) { AutoRetry = true, Name = "Get paid.", Priority = TaskPriority.High });
+                creature.AssignTask(new ActWrapperTask(new GetMoneyAct(creature, creature.Stats.DailyPay)) { AutoRetry = true, Name = "Get paid.", Priority = TaskPriority.High });
             }
 
             MakeAnnouncement(String.Format("We paid our employees {0} today.", total));

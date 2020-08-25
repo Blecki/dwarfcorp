@@ -50,7 +50,7 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats("Slime", "Slime", 0),
+                new CreatureStats("Slime", "Slime", null),
                 manager.World.Factions.Factions["Carnivore"],
                 name
             )

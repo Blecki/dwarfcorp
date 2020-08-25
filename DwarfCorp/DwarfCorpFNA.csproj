@@ -121,6 +121,7 @@
     <Compile Include="Components\AI\Equipment.cs" />
     <Compile Include="Components\AI\EquipmentSlotType.cs" />
     <Compile Include="Components\AI\FairyAI.cs" />
+    <Compile Include="Components\AI\StatusEffects\MotivationStatusEffect.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfAnimationProxy.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfBuilder.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfCharacterSprite.cs" />
@@ -220,6 +221,7 @@
     <Compile Include="Library\DesignationLibrary.cs" />
     <Compile Include="Library\EquipmentLibrary.cs" />
     <Compile Include="Library\EventLibrary.cs" />
+    <Compile Include="Library\LoadoutLibrary.cs" />
     <Compile Include="Library\RaceLibrary.cs" />
     <Compile Include="Library\ResourceLibrary.cs" />
     <Compile Include="Library\ZoneLibrary.cs" />
@@ -259,6 +261,7 @@
     <Compile Include="Player\Farming\PlantTool.cs" />
     <Compile Include="Player\Crafting\DeconstructObjectTask.cs" />
     <Compile Include="Player\Crafting\DeconstructObjectAct.cs" />
+    <Compile Include="Player\Loadout.cs" />
     <Compile Include="Player\Tutorial\JsonTutorialSet.cs" />
     <Compile Include="Player\Tutorial\TutorialManager.cs" />
     <Compile Include="Player\Tutorial\TutorialSaveData.cs" />
@@ -374,7 +377,6 @@
     <Compile Include="Player\ContextCommands\FireCommand.cs" />
     <Compile Include="Player\ContextCommands\GatherCommand.cs" />
     <Compile Include="Player\ContextCommands\PriorityCommand.cs" />
-    <Compile Include="Player\ContextCommands\PromoteCommand.cs" />
     <Compile Include="Player\ContextCommands\WrangleCommand.cs" />
     <Compile Include=".\ControlSettings.cs" />
     <Compile Include=".\Debugger.cs" />

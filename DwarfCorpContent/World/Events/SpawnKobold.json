@@ -10,8 +10,6 @@
     "Claim": "Any"
   },
   "SpawnOnTranquil": false,
-  "MinEntityLevel": 1,
-  "MaxEntityLevel": 1,
   "Likelihood": 1,
   "Name": "Spawn Kobold",
   "Difficulty": 5.0,

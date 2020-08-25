@@ -176,10 +176,9 @@ namespace DwarfCorp
             LogStat("Resources", resources.Count());
             LogStat("Resource Value", (float)resources.Sum(r => r.MoneyValue));
             LogStat("Employees", PlayerFaction.Minions.Count);
-            LogStat("Employee Pay", (float)PlayerFaction.Minions.Select(m => m.Stats.CurrentLevel.Pay.Value).Sum());
+            LogStat("Employee Pay", (float)PlayerFaction.Minions.Select(m => m.Stats.DailyPay.Value).Sum());
             LogStat("Furniture",  PlayerFaction.OwnedObjects.Count);
             LogStat("Zones", EnumerateZones().Count());
-            LogStat("Employee Level", PlayerFaction.Minions.Sum(r => r.Stats.LevelIndex));
             LogStat("Employee Happiness", (float)PlayerFaction.Minions.Sum(m => m.Stats.Happiness.Percentage) / Math.Max(PlayerFaction.Minions.Count, 1));
         }
 
