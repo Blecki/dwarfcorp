@@ -454,6 +454,12 @@ namespace DwarfCorp
 
         protected CharacterSprite CreateSprite(string animations, ComponentManager manager, float VerticalOffset)
         {
+            if (Physics == null)
+            {
+                this.Delete();
+                return null;
+            }
+            
             var sprite = new CharacterSprite(manager, "Sprite", Matrix.CreateTranslation(0, VerticalOffset, 0));
 
             Physics.AddChild(sprite);
