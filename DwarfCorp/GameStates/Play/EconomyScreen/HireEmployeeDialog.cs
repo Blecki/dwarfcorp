@@ -21,7 +21,7 @@ namespace DwarfCorp.Gui.Widgets
         private Button HireButton;
         private Dictionary<String, GeneratedApplicant> Applicants = new Dictionary<string, GeneratedApplicant>();
 
-        public Applicant GenerateApplicant(CompanyInformation info, Loadout Loadout)
+        public Applicant GenerateApplicant(CompanyInformation info, MaybeNull<Loadout> Loadout)
         {
             Applicant applicant = new Applicant();
             applicant.GenerateRandom(Loadout, 0, info);
@@ -110,7 +110,7 @@ namespace DwarfCorp.Gui.Widgets
                     TextVerticalAlign = VerticalAlign.Bottom,
                     OnClick = (sender, args) =>
                     {
-                        jobDescription.Text = "\n\n" + applicant.Applicant.Loadout.Description;
+                        jobDescription.Text = "\n\n" + (applicant.Applicant.Loadout.HasValue(out var loadout) ? loadout.Description : "");
                         jobDescription.Invalidate();
                         applicantInfo.Hidden = false;
                         HireButton.Hidden = false;
@@ -179,10 +179,13 @@ namespace DwarfCorp.Gui.Widgets
                                 (date - World.Time.CurrentDate).Hours),
                             });
 
-                            var newApplicant = GenerateApplicant(Company, applicant.Loadout);
-                            Applicants[applicant.Loadout.Name].Applicant = newApplicant;
-                            Applicants[applicant.Loadout.Name].Portrait.Sprite = newApplicant.GetLayers();
-                            Applicants[applicant.Loadout.Name].Portrait.AnimationPlayer = newApplicant.GetAnimationPlayer(Applicants[applicant.Loadout.Name].Portrait.Sprite);
+                            if (applicant.Loadout.HasValue(out var loadout))
+                            {
+                                var newApplicant = GenerateApplicant(Company, loadout);
+                                Applicants[loadout.Name].Applicant = newApplicant;
+                                Applicants[loadout.Name].Portrait.Sprite = newApplicant.GetLayers();
+                                Applicants[loadout.Name].Portrait.AnimationPlayer = newApplicant.GetAnimationPlayer(Applicants[loadout.Name].Portrait.Sprite);
+                            }
                         }
                     }
                 },

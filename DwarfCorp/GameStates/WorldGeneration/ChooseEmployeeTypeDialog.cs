@@ -23,7 +23,7 @@ namespace DwarfCorp.GameStates
         private Button HireButton;
         private Dictionary<String, GeneratedApplicant> Applicants = new Dictionary<string, GeneratedApplicant>();
 
-        public Applicant GenerateApplicant(Loadout Loadout)
+        public Applicant GenerateApplicant(MaybeNull<Loadout> Loadout)
         {
             Applicant applicant = new Applicant();
             applicant.GenerateRandom(Loadout, 0, Settings.Company);
@@ -105,7 +105,7 @@ namespace DwarfCorp.GameStates
                     TextVerticalAlign = VerticalAlign.Bottom,
                     OnClick = (sender, args) =>
                     {
-                        jobDescription.Text = "\n\n" + applicant.Applicant.Loadout.Description;
+                        jobDescription.Text = "\n\n" + (applicant.Applicant.Loadout.HasValue(out var loadout) ? loadout.Description : "");
                         jobDescription.Invalidate();
                         applicantInfo.Hidden = false;
                         HireButton.Hidden = false;
@@ -159,11 +159,14 @@ namespace DwarfCorp.GameStates
                         this.Invalidate();
                         applicantInfo.Invalidate();
                         HireButton.Invalidate();
-                        
-                        var newApplicant = GenerateApplicant(applicant.Loadout);
-                        Applicants[applicant.Loadout.Name].Applicant = newApplicant;
-                        Applicants[applicant.Loadout.Name].Portrait.Sprite = newApplicant.GetLayers();
-                        Applicants[applicant.Loadout.Name].Portrait.AnimationPlayer = newApplicant.GetAnimationPlayer(Applicants[applicant.Loadout.Name].Portrait.Sprite, "WalkingFORWARD");
+
+                        if (applicant.Loadout.HasValue(out var loadout))
+                        {
+                            var newApplicant = GenerateApplicant(applicant.Loadout);
+                            Applicants[loadout.Name].Applicant = newApplicant;
+                            Applicants[loadout.Name].Portrait.Sprite = newApplicant.GetLayers();
+                            Applicants[loadout.Name].Portrait.AnimationPlayer = newApplicant.GetAnimationPlayer(Applicants[loadout.Name].Portrait.Sprite, "WalkingFORWARD");
+                        }
 
                     }
                 },

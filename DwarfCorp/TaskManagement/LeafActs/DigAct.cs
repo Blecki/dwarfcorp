@@ -68,7 +68,8 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         { 
-           Creature.Sprite.ResetAnimations(Creature.Stats.CurrentClass.AttackMode);
+            if (Creature.Stats.CurrentClass.HasValue(out var c))
+                Creature.Sprite.ResetAnimations(c.AttackMode);
 
             // Block since we're in a coroutine.
             while (true)
@@ -97,7 +98,8 @@ namespace DwarfCorp
                 Creature.Physics.Velocity *= 0.01f;
 
                 // Play the attack animations.
-                Creature.CurrentCharacterMode = Creature.Stats.CurrentClass.AttackMode;
+                if (Creature.Stats.CurrentClass.HasValue(out var _c))
+                    Creature.CurrentCharacterMode = _c.AttackMode;
                 Creature.OverrideCharacterMode = true;
                 Creature.Sprite.ResetAnimations(Creature.CurrentCharacterMode);
                 Creature.Sprite.PlayAnimations(Creature.CurrentCharacterMode);

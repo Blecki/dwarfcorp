@@ -560,8 +560,7 @@ namespace DwarfCorp
         public override string GetDescription()
         {
             string desc = Stats.FullName + ", level " + Stats.GetCurrentLevel() +
-                          " " +
-                          Stats.CurrentClass.Name + ", " + Stats.Gender.ToString() + "\n    " +
+                          ", " + Stats.Gender.ToString() + "\n    " +
                           "Happiness: " + GetHappinessDescription(Stats.Happiness) + ". Health: " + Stats.Health.Percentage +
                           ". Hunger: " + (100 - Stats.Hunger.Percentage) + ". Energy: " + Stats.Energy.Percentage +
                           "\n";
@@ -764,7 +763,7 @@ namespace DwarfCorp
                     || World.PlayerFaction == null
                     || World.PlayerFaction.Economy == null
                     || World.PlayerFaction.Economy.Information == null
-                    || Stats.CurrentClass == null)
+                    || !Stats.CurrentClass.HasValue())
                     return;
 
                 cMem.SetValue("$world", new Yarn.Value(World));
@@ -804,7 +803,7 @@ namespace DwarfCorp
                     cMem.SetValue("$motto", new Yarn.Value(World?.PlayerFaction?.Economy?.Information?.Motto));
                 cMem.SetValue("$company_name", new Yarn.Value(World?.PlayerFaction?.Economy?.Information?.Name));
                 cMem.SetValue("$employee_task", new Yarn.Value(CurrentTask.HasValue(out var currentTask) ? "Nothing" : currentTask.Name));
-                cMem.SetValue("$employee_class", new Yarn.Value(Stats.CurrentClass.Name));
+                cMem.SetValue("$employee_class", new Yarn.Value("Dwarf"));
                 var injuries = TextGenerator.GetListString(Creature.Stats.Buffs.OfType<Disease>().Select(disease => disease.Name));
                 if (injuries == "")
                 {

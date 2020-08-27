@@ -69,7 +69,7 @@ namespace DwarfCorp
                     shown = true;
                     continue;
                 }
-                World.UserInterface.ShowTooltip("Click to attack this " + creature.Stats.CurrentClass.Name);
+                World.UserInterface.ShowTooltip("Click to attack this " + (creature.Stats.CurrentClass.HasValue(out var c) ? c.Name : "creature"));
                 shown = true;
             }
 
@@ -131,7 +131,7 @@ namespace DwarfCorp
                 {
                     var task = new KillEntityTask(other, KillEntityTask.KillType.Attack);
                     World.TaskManager.AddTask(task);
-                    World.UserInterface.ShowToolPopup("Will attack this " + creature.Stats.CurrentClass.Name);
+                    World.UserInterface.ShowToolPopup("Will attack this " + (creature.Stats.CurrentClass.HasValue(out var c) ? c.Name : "creature"));
                     OnConfirm(World.PersistentData.SelectedMinions);
                 }
                 else if (button == InputManager.MouseButton.Right)
@@ -139,7 +139,7 @@ namespace DwarfCorp
                     if (World.PersistentData.Designations.GetEntityDesignation(other, DesignationType.Attack).HasValue(out var designation))
                     {
                         World.TaskManager.CancelTask(designation.Task);
-                        World.UserInterface.ShowToolPopup("Attack cancelled for " + creature.Stats.CurrentClass.Name);
+                        World.UserInterface.ShowToolPopup("Attack cancelled for " + (creature.Stats.CurrentClass.HasValue(out var c) ? c.Name : "creature"));
                     }
                 }
             }

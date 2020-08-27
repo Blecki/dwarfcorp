@@ -61,7 +61,8 @@ namespace DwarfCorp
             var newMinion = dwarfPhysics.EnumerateAll().OfType<Dwarf>().FirstOrDefault();
             Debug.Assert(newMinion != null);
 
-            newMinion.Stats.AllowedTasks = currentApplicant.Loadout.Actions;
+            if (currentApplicant.Loadout.HasValue(out var loadout))
+                    newMinion.Stats.AllowedTasks = loadout.Actions;
             newMinion.Stats.FullName = currentApplicant.Name;
             newMinion.AI.AddMoney(currentApplicant.SigningBonus);
             newMinion.AI.Biography = currentApplicant.Biography;
@@ -69,7 +70,7 @@ namespace DwarfCorp
             MakeAnnouncement(
                 new Gui.Widgets.QueuedAnnouncement
                 {
-                    Text = String.Format("{0} was hired as a {1}.", currentApplicant.Name, currentApplicant.Loadout.Name),
+                    Text = String.Format("{0} was hired as a {1}.", currentApplicant.Name, (currentApplicant.Loadout.HasValue(out var _loadout) ? _loadout.Name : "<??>")),
                     ClickAction = (gui, sender) => newMinion.AI.ZoomToMe()
                 });
 
@@ -92,7 +93,7 @@ namespace DwarfCorp
 
         public int CalculateSupervisedEmployees()
         {
-            return PlayerFaction.Minions.Where(c => !c.Stats.IsManager).Count() + PersistentData.NewArrivals.Where(c => !c.Applicant.Loadout.StartAsManager).Count();
+            return PlayerFaction.Minions.Where(c => !c.Stats.IsManager).Count() + PersistentData.NewArrivals.Where(c => c.Applicant.Loadout.HasValue(out var loadout) && !loadout.StartAsManager).Count();
         }
 
         public void PayEmployees()

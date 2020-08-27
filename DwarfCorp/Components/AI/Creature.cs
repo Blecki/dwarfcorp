@@ -114,6 +114,13 @@ namespace DwarfCorp
         {
             base.Update(gameTime, chunks, camera);
 
+            if (!Stats.CurrentClass.HasValue())
+            {
+                // Oh fuck - we have no class! Die of shame.
+                this.Die(); 
+                return;
+            }
+
             if (FirstUpdate)
             {
                 FirstUpdate = false;
@@ -302,15 +309,10 @@ namespace DwarfCorp
             return r;
         }
 
-        /// <summary>
-        /// Updates the creature's animation based on its current state.
-        /// </summary>
         public void UpdateAnimation(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if (CurrentCharacterMode == Stats.CurrentClass.AttackMode)
-                return;
-
-            Physics.Velocity = MathFunctions.ClampXZ(Physics.Velocity, Stats.MaxSpeed);
+            if (Stats.CurrentClass.HasValue(out var c) && c.AttackMode != CurrentCharacterMode)
+                Physics.Velocity = MathFunctions.ClampXZ(Physics.Velocity, Stats.MaxSpeed);
         }
 
         /// <summary>
@@ -322,8 +324,8 @@ namespace DwarfCorp
             var tool = ActHelper.GetEquippedItem(this, "Tool");
             if (tool != null && tool.Equipment_Weapon != null)
                 return new Attack(tool.Equipment_Weapon);
-            if (Stats != null && Stats.CurrentClass != null && Stats.CurrentClass.Weapons.Count > 0)
-                return new Attack(Stats.CurrentClass.Weapons[0]);
+            if (Stats != null && Stats.CurrentClass.HasValue(out var c) && c.Weapons.Count > 0)
+                return new Attack(c.Weapons[0]);
             return null;
         }
 
@@ -351,53 +353,62 @@ namespace DwarfCorp
             Func<bool> continueHitting = null, 
             bool maintainPos = true)
         {
-            Vector3 currentPos = Physics.LocalTransform.Translation;
-            CurrentCharacterMode = Stats.CurrentClass.AttackMode;
-            Sprite.ResetAnimations(CurrentCharacterMode);
-            Sprite.PlayAnimations(CurrentCharacterMode);
-            var p_current = pos();
-            Timer incrementTimer = new Timer(1.0f, false);
-            var defaultAttack = GetDefaultAttack();
-            while (progress() < maxProgress())
+            if (Stats.CurrentClass.HasValue(out var c))
             {
-                if (continueHitting != null && !continueHitting())
-                    yield break;
+                Vector3 currentPos = Physics.LocalTransform.Translation;
 
-                if (loadBar)
-                    Drawer2D.DrawLoadBar(Manager.World.Renderer.Camera, AI.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4, progress() / maxProgress());
-
-                Physics.Active = false;
-                Physics.Face(p_current);
-                if (defaultAttack.HasValue(out var attack))
-                    attack.PerformNoDamage(this, DwarfTime.LastTime, p_current);
-
-                p_current = pos();
-                Physics.Velocity = Vector3.Zero;
-
-                if (!String.IsNullOrEmpty(playSound))
-                    NoiseMaker.MakeNoise(playSound, AI.Position, true);
-                
-                incrementTimer.Update(DwarfTime.LastTime);
-                if (incrementTimer.HasTriggered)
+                CurrentCharacterMode = c.AttackMode;
+                Sprite.ResetAnimations(CurrentCharacterMode);
+                Sprite.PlayAnimations(CurrentCharacterMode);
+                var p_current = pos();
+                Timer incrementTimer = new Timer(1.0f, false);
+                var defaultAttack = GetDefaultAttack();
+                while (progress() < maxProgress())
                 {
-                    Sprite.ReloopAnimations(Stats.CurrentClass.AttackMode);
-                    incrementProgress();
-                }
+                    if (continueHitting != null && !continueHitting())
+                        yield break;
 
-                if (maintainPos)
-                {
-                    var matrix = Physics.LocalTransform;
-                    matrix.Translation = currentPos;
-                    Physics.LocalTransform = matrix;
-                }
+                    if (loadBar)
+                        Drawer2D.DrawLoadBar(Manager.World.Renderer.Camera, AI.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4, progress() / maxProgress());
 
-                yield return Act.Status.Running;
+                    Physics.Active = false;
+                    Physics.Face(p_current);
+                    if (defaultAttack.HasValue(out var attack))
+                        attack.PerformNoDamage(this, DwarfTime.LastTime, p_current);
+
+                    p_current = pos();
+                    Physics.Velocity = Vector3.Zero;
+
+                    if (!String.IsNullOrEmpty(playSound))
+                        NoiseMaker.MakeNoise(playSound, AI.Position, true);
+
+                    incrementTimer.Update(DwarfTime.LastTime);
+                    if (incrementTimer.HasTriggered)
+                    {
+                        Sprite.ReloopAnimations(c.AttackMode);
+                        incrementProgress();
+                    }
+
+                    if (maintainPos)
+                    {
+                        var matrix = Physics.LocalTransform;
+                        matrix.Translation = currentPos;
+                        Physics.LocalTransform = matrix;
+                    }
+
+                    yield return Act.Status.Running;
+                }
+                Sprite.PauseAnimations(c.AttackMode);
+                CurrentCharacterMode = CharacterMode.Idle;
+                Physics.Active = true;
+                yield return Act.Status.Success;
+                yield break;
             }
-            Sprite.PauseAnimations(Stats.CurrentClass.AttackMode);
-            CurrentCharacterMode = CharacterMode.Idle;
-            Physics.Active = true;
-            yield return Act.Status.Success;
-            yield break;
+            else
+            {
+                yield return Act.Status.Fail;
+                yield break;
+            }
         }
 
        

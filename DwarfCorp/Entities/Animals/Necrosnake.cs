@@ -101,7 +101,8 @@ namespace DwarfCorp
 
                 var inventory = tailPiece.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset)) as Inventory;
                 inventory.SetFlag(Flag.ShouldSerialize, false);
-                inventory.AddResource(new Resource("Bone") { DisplayName = Stats.CurrentClass.Name + " Bone" });
+                if (Stats.CurrentClass.HasValue(out var c))
+                    inventory.AddResource(new Resource("Bone") { DisplayName = c.Name + " Bone" });
             }
 
             #endregion

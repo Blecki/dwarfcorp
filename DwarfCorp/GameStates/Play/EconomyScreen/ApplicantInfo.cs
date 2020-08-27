@@ -104,7 +104,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 // Todo: Just use one widget for all the text.
                 NameLabel.Text = Applicant.Name;
-                ClassLabel.Text = Applicant.Loadout.Name;
+                ClassLabel.Text = Applicant.Loadout.HasValue(out var loadout) ? loadout.Name : "Dunno";
                 StartingWageLabel.Text = String.Format("Starts at {0}/day", Applicant.BasePay);
                 SigningBonusLabel.Text = String.Format("{0} signing bonus", Applicant.SigningBonus);
                 LastJobLabel.Text = String.Format("Last job - {0}", Applicant.FormerProfession);

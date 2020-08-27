@@ -31,9 +31,13 @@ namespace DwarfCorp
             Creature.NoiseMaker.MakeNoise("Stockpile", Creature.AI.Position);
             Creature.Stats.NumItemsGathered++;
             Creature.AI.AddXP(1);
-            Creature.CurrentCharacterMode = Creature.Stats.CurrentClass.AttackMode;
-            Creature.Sprite.ResetAnimations(Creature.Stats.CurrentClass.AttackMode);
-            Creature.Sprite.PlayAnimations(Creature.Stats.CurrentClass.AttackMode);
+
+            if (Creature.Stats.CurrentClass.HasValue(out var c))
+            {
+                Creature.CurrentCharacterMode = c.AttackMode;
+                Creature.Sprite.ResetAnimations(c.AttackMode);
+                Creature.Sprite.PlayAnimations(c.AttackMode);
+            }
 
             while (!Creature.Sprite.AnimPlayer.IsDone())
             {

@@ -1,5 +1,5 @@
 {
-  "Name": "Crafter",
+  "Name": "Dwarf",
   "PlayerClass": true,
   "Actions": "Attack, BuildBlock, BuildObject, BuildZone, CraftItem, Cook, TillSoil, Gather, Wrangle, Plant, Brew",
   "AttackMode": "Attacking",

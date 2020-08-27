@@ -102,7 +102,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            CreateDwarfSprite(Stats.CurrentClass, manager);
+            CreateDwarfSprite(manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
             Physics.AddChild(new VoxelRevealer(manager, Physics, 5)).SetFlag(Flag.ShouldSerialize, false);
             Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 0))).SetFlag(Flag.ShouldSerialize, false);
@@ -163,7 +163,7 @@ namespace DwarfCorp
             base.CreateCosmeticChildren(manager);
         }
 
-        protected void CreateDwarfSprite(CreatureClass employeeClass, ComponentManager manager)
+        protected void CreateDwarfSprite(ComponentManager manager)
         {
             if (Physics == null)
             {

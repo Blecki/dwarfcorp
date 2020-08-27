@@ -61,10 +61,13 @@ namespace DwarfCorp
                 component.AnimationQueue.Add(toss);
                 toss.OnComplete += component.Die;
 
-                Agent.Creature.Sprite.ResetAnimations(Creature.Stats.CurrentClass.AttackMode);
+                if (Creature.Stats.CurrentClass.HasValue(out var c))
+                    Agent.Creature.Sprite.ResetAnimations(c.AttackMode);
+
                 while (!waitTimer.HasTriggered)
                 {
-                    Agent.Creature.CurrentCharacterMode = Creature.Stats.CurrentClass.AttackMode;
+                    if (Creature.Stats.CurrentClass.HasValue(out var _c))
+                        Agent.Creature.CurrentCharacterMode = _c.AttackMode;
                     waitTimer.Update(DwarfTime.LastTime);
                     yield return Status.Running;
                 }

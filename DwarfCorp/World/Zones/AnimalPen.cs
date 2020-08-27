@@ -95,8 +95,8 @@ namespace DwarfCorp
             if (animal.GetComponent<CreatureAI>().HasValue(out var animalAI))
                 animalAI.ResetPositionConstraint();
 
-            if (animal.GetComponent<Creature>().HasValue(out var creature))
-                Species = creature.Stats.CurrentClass.Name;
+            if (animal.GetComponent<Creature>().HasValue(out var creature) && creature.Stats.CurrentClass.HasValue(out var c)) 
+                Species = c.Name;
 
             yield return Act.Status.Success;
         }

@@ -165,9 +165,12 @@ namespace DwarfCorp
                 SummonTimer.Update(DwarfTime.LastTime);
                 if (SummonTimer.HasTriggered && Skeletons.Count < MaxSkeletons)
                 {
-                    Creature.CurrentCharacterMode = Creature.Stats.CurrentClass.AttackMode;
-                    Creature.OverrideCharacterMode = true;
-                    Creature.Sprite.ReloopAnimations(Creature.Stats.CurrentClass.AttackMode);
+                    if (Creature.Stats.CurrentClass.HasValue(out var c))
+                    {
+                        Creature.CurrentCharacterMode = c.AttackMode;
+                        Creature.OverrideCharacterMode = true;
+                        Creature.Sprite.ReloopAnimations(c.AttackMode);
+                    }
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_ic_necromancer_summon, Position, true);
                     SummonTimer.Reset(SummonTimer.TargetTimeSeconds);
                     for (int i = Skeletons.Count; i < MaxSkeletons; i+=2)

@@ -50,10 +50,14 @@ namespace DwarfCorp
 
                             Creature.NoiseMaker.MakeNoise("Stockpile", Creature.AI.Position);
                             Creature.Stats.NumItemsGathered++;
-                            Creature.CurrentCharacterMode = Creature.Stats.CurrentClass.AttackMode;
-                            Creature.Sprite.ResetAnimations(Creature.Stats.CurrentClass.AttackMode);
-                            Creature.Sprite.PlayAnimations(Creature.Stats.CurrentClass.AttackMode);
 
+                        if (Creature.Stats.CurrentClass.HasValue(out var c))
+                        {
+                            Creature.CurrentCharacterMode = c.AttackMode;
+                            Creature.Sprite.ResetAnimations(c.AttackMode);
+                            Creature.Sprite.PlayAnimations(c.AttackMode);
+
+                        }
                             while (!Creature.Sprite.AnimPlayer.IsDone())
                                 yield return Status.Running;
 
@@ -84,10 +88,13 @@ namespace DwarfCorp
                 toss.OnComplete += () => newEntity.Die();
 
                 Agent.Creature.Inventory.AddResource(Resource, Inventory.RestockType.None);
-                Agent.Creature.Sprite.ResetAnimations(Creature.Stats.CurrentClass.AttackMode);
+
+                if (Creature.Stats.CurrentClass.HasValue(out var _c))
+                    Agent.Creature.Sprite.ResetAnimations(_c.AttackMode);
                 while (!waitTimer.HasTriggered)
                 {
-                    Agent.Creature.CurrentCharacterMode = Creature.Stats.CurrentClass.AttackMode;
+                    if (Creature.Stats.CurrentClass.HasValue(out var __c))
+                        Agent.Creature.CurrentCharacterMode = __c.AttackMode;
                     waitTimer.Update(DwarfTime.LastTime);
                     yield return Status.Running;
                 }

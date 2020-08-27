@@ -2258,6 +2258,30 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Crafter</Name>
     </None>
+    <None Include="World\Loadouts\Farmer.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Farmer</Name>
+    </None>
+    <None Include="World\Loadouts\Manager.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Manager</Name>
+    </None>
+    <None Include="World\Loadouts\Miner.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Miner</Name>
+    </None>
+    <None Include="World\Loadouts\Musketeer.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Musketeer</Name>
+    </None>
+    <None Include="World\Loadouts\Soldier.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Soldier</Name>
+    </None>
+    <None Include="World\Loadouts\Wizard.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Wizard</Name>
+    </None>
     <None Include="World\Races\Corporate.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Corporate</Name>

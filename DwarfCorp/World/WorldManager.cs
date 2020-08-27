@@ -238,9 +238,9 @@ namespace DwarfCorp
                 UpdateZones(gameTime);
 
                 #region Mourn dead minions
-                foreach (var deadMinion in PlayerFaction.Minions.Where(m => m.IsDead && m.Stats.CurrentClass.TriggersMourning))
+                foreach (var deadMinion in PlayerFaction.Minions.Where(m => m.IsDead && m.Stats.CurrentClass.HasValue(out var c) && c.TriggersMourning))
                 {
-                    MakeAnnouncement(String.Format("{0} ({1}) died!", deadMinion.Stats.FullName, deadMinion.Stats.CurrentClass.Name));
+                    MakeAnnouncement(String.Format("{0} died!", deadMinion.Stats.FullName));
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
                     Tutorial("death");
 

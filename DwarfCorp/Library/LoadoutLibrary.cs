@@ -23,10 +23,12 @@ namespace DwarfCorp
                 Loadouts.Add(item.Name, item);
         }
 
-        public static Loadout GetLoadout(String Name)
+        public static MaybeNull<Loadout> GetLoadout(String Name)
         {
             InitializeLoadouts();
-            return Loadouts[Name];
+            if (Loadouts.ContainsKey(Name))
+                return Loadouts[Name];
+            return null;
         }
 
         public static IEnumerable<Loadout> EnumerateLoadouts()

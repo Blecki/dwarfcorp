@@ -74,7 +74,7 @@ namespace DwarfCorp
 
             var label = Icon.AddChild(new Widget()
             {
-                Text = _employee.Stats.FullName + "\n(" + (_employee.Stats.Title ?? _employee.Stats.CurrentClass.Name) + ")",
+                Text = _employee.Stats.FullName + "\n(" + (_employee.Stats.Title ?? (_employee.Stats.CurrentClass.HasValue(out var c) ? c.Name : "")) + ")",
                 Font = "font10",
                 TextColor = Color.White.ToVector4(),
                 TextVerticalAlign = VerticalAlign.Center,

@@ -13,7 +13,7 @@ namespace DwarfCorp
 
         public static Act CreateEquipmentCheckAct(CreatureAI Agent, String Slot, EquipmentFallback Fallback, params String[] RequiredTags)
         {
-            if (!Agent.Stats.CurrentClass.RequiresTools)
+            if (!Agent.Stats.CurrentClass.HasValue(out var c) || !c.RequiresTools)
                 return new Condition(() => true);
 
             if (Agent.Creature.Equipment.HasValue(out var equipment))

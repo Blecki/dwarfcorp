@@ -51,14 +51,14 @@ namespace DwarfCorp
         public static GameComponent GenerateDwarf(
             Vector3 Position,
             ComponentManager Manager,
-            Loadout Loadout, 
+            MaybeNull<Loadout> Loadout, 
             Gender gender, int seed)
         {
             var toReturn = new Dwarf(Manager, new CreatureStats("Dwarf", "Dwarf", Loadout) { Gender = gender, RandomSeed = seed, VoicePitch  = GetRandomVoicePitch(gender) }, Manager.World.PlayerFaction, "Dwarf", Position);
             toReturn.AddThought("I just arrived to this new land.", new TimeSpan(3, 0, 0, 0), 100.0f);
 
-            if (toReturn.Equipment.HasValue(out var equipment))
-                foreach (var equippedItem in Loadout.StartingEquipment)
+            if (toReturn.Equipment.HasValue(out var equipment) && Loadout.HasValue(out var loadout))
+                foreach (var equippedItem in loadout.StartingEquipment)
                     equipment.EquipItem(new Resource(equippedItem.TypeName));
 
             return toReturn.Physics;

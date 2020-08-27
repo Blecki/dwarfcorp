@@ -9,7 +9,7 @@ namespace DwarfCorp
 {
     public class Applicant
     {
-        public Loadout Loadout { get; set; }
+        public MaybeNull<Loadout> Loadout { get; set; }
         public string Name { get; set; }
         public string CoverLetter { get; set; }
         public string FormerProfession { get; set; }
@@ -39,14 +39,14 @@ namespace DwarfCorp
 
         }
 
-        public static Applicant Random(Loadout Loadout, CompanyInformation info)
+        public static Applicant Random(MaybeNull<Loadout> Loadout, CompanyInformation info)
         {
             var r = new Applicant();
             r.GenerateRandom(Loadout, 0, info);
             return r;
         }
 
-        public void GenerateRandom(Loadout Loadout, int level, CompanyInformation info)
+        public void GenerateRandom(MaybeNull<Loadout> Loadout, int level, CompanyInformation info)
         {
             this.Loadout = Loadout;
             Gender = Mating.RandomGender();
@@ -66,7 +66,7 @@ namespace DwarfCorp
                 TextGenerator.GenerateRandom("${Dear,Hey,Hi,Hello,Sup,Yo}", " " , info.Name , ",\n    ",
                 "${Please,Do}", " ", "${consider,check out,look at,see,view}", " ", "${my,this}", " ",
                 "${application for the position of, resume for, request to be a,offer as}", " " 
-                + Loadout.Name + ". " + justifications[MathFunctions.Random.Next(justifications.Count)] +" \n",
+                + (Loadout.HasValue(out var loadout) ? loadout.Name : "<??>") + ". " + justifications[MathFunctions.Random.Next(justifications.Count)] +" \n",
                                              "${Thanks,Sincerely,Yours,--,Always}", ",\n    " ,Name);
 
             FormerProfession = TextGenerator.GenerateRandom("$profession");

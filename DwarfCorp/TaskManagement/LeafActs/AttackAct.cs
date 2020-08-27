@@ -299,10 +299,14 @@ namespace DwarfCorp
                         Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
                         attack.RechargeTimer.Reset(attack.Weapon.RechargeRate);
 
-                        Creature.Sprite.ResetAnimations(Creature.Stats.CurrentClass.AttackMode);
-                        Creature.Sprite.PlayAnimations(Creature.Stats.CurrentClass.AttackMode);
-                        Creature.CurrentCharacterMode = Creature.Stats.CurrentClass.AttackMode;
-                        Creature.OverrideCharacterMode = true;
+                        if (Creature.Stats.CurrentClass.HasValue(out var c))
+                        {
+                            Creature.Sprite.ResetAnimations(c.AttackMode);
+                            Creature.Sprite.PlayAnimations(c.AttackMode);
+                            Creature.CurrentCharacterMode = c.AttackMode;
+                            Creature.OverrideCharacterMode = true;
+                        }
+
                         var timeout = new Timer(10.0f, true);
 
                         while (!attack.Perform(Creature, Target, DwarfTime.LastTime, Creature.Stats.Strength + Creature.Stats.Size, Creature.AI.Position, Creature.Faction.ParentFaction.Name))

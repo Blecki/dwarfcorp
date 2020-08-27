@@ -221,7 +221,7 @@ namespace DwarfCorp
             public bool DisableWeather = true;
 
             public bool AllowIdleCrafting = false;
-            public int DwarfBasePay = 10;
+            public int DwarfBasePay = 2;
             public int DwarfSigningBonusFactor = 4;
 
             [AutoResetBool(false)] public bool FastGen = false;

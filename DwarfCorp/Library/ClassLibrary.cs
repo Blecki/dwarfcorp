@@ -23,10 +23,12 @@ namespace DwarfCorp
                 Classes.Add(item.Name, item);
         }
 
-        public static CreatureClass GetClass(String Name)
+        public static MaybeNull<CreatureClass> GetClass(String Name)
         {
             InitializeClasses();
-            return Classes[Name];
+            if (Classes.ContainsKey(Name))
+                return Classes[Name];
+            return null;
         }
 
         public static IEnumerable<CreatureClass> EnumerateClasses()

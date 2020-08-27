@@ -9,8 +9,8 @@ namespace DwarfCorp
         {
             if (Creature.Equipment.HasValue(out var equipment) && equipment.GetItemInSlot(Slot).HasValue(out var resource))
                 return resource;
-            else if (!String.IsNullOrEmpty(Creature.Stats.CurrentClass.FallbackTool))
-                return new Resource(Creature.Stats.CurrentClass.FallbackTool);
+            else if (Creature.Stats.CurrentClass.HasValue(out var c) && !String.IsNullOrEmpty(c.FallbackTool))
+                return new Resource(c.FallbackTool);
             else
                 return new Resource("Dwarf Hands");
         }

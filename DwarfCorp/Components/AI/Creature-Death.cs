@@ -28,14 +28,14 @@ namespace DwarfCorp
             if (Stats.Species.HasMeat)
             {
                 var meatResource = new Resource(Stats.Species.BaseMeatResource);
-                meatResource.DisplayName = Stats.CurrentClass.Name + " Meat";
+                meatResource.DisplayName = (Stats.CurrentClass.HasValue(out var c) ? c.Name + " Meat" : "Meat");
                 Inventory.AddResource(meatResource);
             }
 
             if (Stats.Species.HasBones)
             {
                 var generatedResource = new Resource("Bone");
-                generatedResource.DisplayName = Stats.CurrentClass.Name + " Bone";
+                generatedResource.DisplayName = (Stats.CurrentClass.HasValue(out var c) ? c.Name + " Bone" : "Bone");
                 Inventory.AddResource(generatedResource);
             }
 

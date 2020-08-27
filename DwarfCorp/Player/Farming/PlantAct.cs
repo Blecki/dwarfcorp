@@ -34,9 +34,12 @@ namespace DwarfCorp
                 yield return Status.Success;
             else
             {
-                Creature.CurrentCharacterMode = Creature.Stats.CurrentClass.AttackMode;
-                Creature.Sprite.ResetAnimations(Creature.Stats.CurrentClass.AttackMode);
-                Creature.Sprite.PlayAnimations(Creature.Stats.CurrentClass.AttackMode);
+                if (Creature.Stats.CurrentClass.HasValue(out var c))
+                {
+                    Creature.CurrentCharacterMode = c.AttackMode;
+                    Creature.Sprite.ResetAnimations(c.AttackMode);
+                    Creature.Sprite.PlayAnimations(c.AttackMode);
+                }
 
                 while (Farm.Progress < Farm.TargetProgress && !Farm.Finished)
                 {
@@ -73,14 +76,18 @@ namespace DwarfCorp
                     if (MathFunctions.RandEvent(0.01f))
                         Creature.Manager.World.ParticleManager.Trigger("dirt_particle", Creature.AI.Position, Color.White, 1);
                     yield return Status.Running;
-                    Creature.Sprite.ReloopAnimations(Creature.Stats.CurrentClass.AttackMode);
+
+                    if (Creature.Stats.CurrentClass.HasValue(out var __c))
+                        Creature.Sprite.ReloopAnimations(__c.AttackMode);
                 }
 
                 Creature.CurrentCharacterMode = CharacterMode.Idle;
                 Creature.AddThought("I farmed something!", new TimeSpan(0, 4, 0, 0), 1.0f);
                 Creature.AI.AddXP(1);
                 ActHelper.ApplyWearToTool(Creature.AI, GameSettings.Current.Wear_Dig);
-                Creature.Sprite.PauseAnimations(Creature.Stats.CurrentClass.AttackMode);
+
+                if (Creature.Stats.CurrentClass.HasValue(out var _c))
+                    Creature.Sprite.PauseAnimations(_c.AttackMode);
                 yield return Status.Success;
             }
         }

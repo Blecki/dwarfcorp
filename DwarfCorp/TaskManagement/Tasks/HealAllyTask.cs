@@ -134,11 +134,15 @@ namespace DwarfCorp
             while (!Ally.IsDead && !Ally.Stats.Health.IsSatisfied() && (Ally.Position - Agent.Position).Length() < 3)
             {
                 Agent.Physics.Face(Ally.Position);
-                Agent.Creature.CurrentCharacterMode = Agent.Creature.Stats.CurrentClass.AttackMode;
+
+                if (Agent.Creature.Stats.CurrentClass.HasValue(out var c))
+                    Agent.Creature.CurrentCharacterMode = c.AttackMode;
+
                 healTimer.Update(DwarfTime.LastTime);
                 if (healTimer.HasTriggered)
                 {
-                    Agent.Creature.Sprite.ReloopAnimations(Agent.Creature.Stats.CurrentClass.AttackMode);
+                    if (Agent.Creature.Stats.CurrentClass.HasValue(out var _c))
+                        Agent.Creature.Sprite.ReloopAnimations(_c.AttackMode);
                     int amount = (int)(Agent.Stats.Wisdom * 4);
                     Ally.Creature.Heal(amount);
                     IndicatorManager.DrawIndicator((amount).ToString() + " HP",

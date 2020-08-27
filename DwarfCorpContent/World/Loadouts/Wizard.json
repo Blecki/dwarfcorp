@@ -1,0 +1,19 @@
+{
+  "Name": "Wizard",
+  "Actions": "Attack, Hunt, Research, Brew, BuildObject",
+  "Description": "Wizards excel in the archaic arts. They can cast powerful offensive magic, and also are excellent healers.",
+  "StartingEquipment": [
+    {
+      "_TypeName": "Boots"
+    },
+    {
+      "_TypeName": "Wizard Robe"
+    },
+    {
+      "_TypeName": "Wizard Hat"
+    },
+    {
+      "_TypeName": "Wizard Staff"
+    }
+  ]
+}

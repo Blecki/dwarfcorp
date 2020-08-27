@@ -26,7 +26,6 @@ namespace DwarfCorp.Gui.Widgets
             builder.Append(Minion.Stats.Species.Name);
             builder.Append(Minion.Stats.Gender);
             builder.Append(Minion.Stats.FullName);
-            builder.Append(Minion.Stats.CurrentClass.Name);
             builder.Append(Minion.Stats.GetCurrentLevel());
             builder.Append(Minion.Stats.Title);
             if (Minion.Stats.IsOverQualified) builder.Append("wants promotion");

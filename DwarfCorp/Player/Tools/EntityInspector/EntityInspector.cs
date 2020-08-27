@@ -115,7 +115,7 @@ namespace DwarfCorp
 
                 if (bodyList[i].GetComponent<Creature>().HasValue(out var dwarf))
                 {
-                    sb.Append(dwarf.Stats.FullName + " (" + (dwarf.Stats.Title ?? dwarf.Stats.CurrentClass.Name) + ")");
+                    sb.Append(dwarf.Stats.FullName + " (" + (dwarf.Stats.Title ?? (dwarf.Stats.CurrentClass.HasValue(out var c) ? c.Name : "cretin")) + ")");
 
                     if (dwarf.Stats.IsAsleep)
                         sb.Append(" UNCONSCIOUS ");

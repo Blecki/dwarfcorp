@@ -67,11 +67,11 @@ namespace DwarfCorp
             if (Creature.NoiseMaker != null && Creature.AI != null)
                 Creature.NoiseMaker.MakeNoise("Stockpile", Creature.AI.Position);
 
-            if (Creature.Stats != null && Creature.Stats.CurrentClass != null && Creature.Sprite != null)
+            if (Creature.Stats != null && Creature.Stats.CurrentClass.HasValue(out var c) && Creature.Sprite != null)
             {
-                Creature.CurrentCharacterMode = Creature.Stats.CurrentClass.AttackMode;
-                Creature.Sprite.ResetAnimations(Creature.Stats.CurrentClass.AttackMode);
-                Creature.Sprite.PlayAnimations(Creature.Stats.CurrentClass.AttackMode);
+                Creature.CurrentCharacterMode = c.AttackMode;
+                Creature.Sprite.ResetAnimations(c.AttackMode);
+                Creature.Sprite.PlayAnimations(c.AttackMode);
 
                 while (!Creature.Sprite.AnimPlayer.IsDone())
                     yield return Status.Running;

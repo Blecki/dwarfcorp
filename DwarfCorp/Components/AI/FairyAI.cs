@@ -113,7 +113,7 @@ namespace DwarfCorp
         {
             Manager.World.MakeAnnouncement(new Gui.Widgets.QueuedAnnouncement
             {
-                Text = String.Format("{0} is fighting {1}.", Stats.FullName, TextGenerator.IndefiniteArticle(Enemy.Stats.CurrentClass.Name)),
+                Text = String.Format("{0} is fighting {1}.", Stats.FullName, TextGenerator.IndefiniteArticle(Enemy.Stats.CurrentClass.HasValue(out var c) ? c.Name : "cretin")),
                 ClickAction = (gui, sender) => ZoomToMe()
             });
 

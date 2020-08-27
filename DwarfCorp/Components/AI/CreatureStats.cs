@@ -82,7 +82,7 @@ namespace DwarfCorp
         public int XP = 0;
 
         public String ClassName = "";
-        [JsonIgnore] public CreatureClass CurrentClass { get; private set; }
+        [JsonIgnore] public MaybeNull<CreatureClass> CurrentClass { get; private set; }
 
         public int GetCurrentLevel()
         {
@@ -132,11 +132,12 @@ namespace DwarfCorp
         [OnDeserialized]
         void OnDeserializing(StreamingContext context)
         {
-            CurrentClass = Library.GetClass(ClassName);
+            if (Library.GetClass(ClassName).HasValue(out var creatureClass))
+                CurrentClass = creatureClass;
             Species = Library.GetSpecies(SpeciesName);
         }
 
-        public CreatureStats(String SpeciesName, String ClassName, Loadout Loadout) : this()
+        public CreatureStats(String SpeciesName, String ClassName, MaybeNull<Loadout> Loadout) : this()
         {
             this.ClassName = ClassName;
             CurrentClass = Library.GetClass(ClassName);
@@ -146,29 +147,34 @@ namespace DwarfCorp
 
             XP = 0;
 
-            if (Loadout == null)
+            if (Loadout.HasValue(out var loadout))
             {
-                AllowedTasks = CurrentClass.Actions;
-                BaseCharisma = CurrentClass.Levels[0].BaseStats.Charisma;
-                BaseConstitution = CurrentClass.Levels[0].BaseStats.Constitution;
-                BaseDexterity = CurrentClass.Levels[0].BaseStats.Dexterity;
-                BaseIntelligence = CurrentClass.Levels[0].BaseStats.Intelligence;
-                BaseStrength = CurrentClass.Levels[0].BaseStats.Strength;
-                BaseWisdom = CurrentClass.Levels[0].BaseStats.Wisdom;
-                Title = CurrentClass.Levels[0].Name;
+                AllowedTasks = loadout.Actions;
+
+                BaseCharisma = loadout.StartingStats.Charisma;
+                BaseConstitution = loadout.StartingStats.Constitution;
+                BaseDexterity = loadout.StartingStats.Dexterity;
+                BaseIntelligence = loadout.StartingStats.Intelligence;
+                BaseStrength = loadout.StartingStats.Strength;
+                BaseWisdom = loadout.StartingStats.Wisdom;
+
+                Title = loadout.Name;
+                IsManager = loadout.StartAsManager;
+            }
+            else if (CurrentClass.HasValue(out var currentClass))
+            { 
+                AllowedTasks = currentClass.Actions;
+                BaseCharisma = currentClass.Levels[0].BaseStats.Charisma;
+                BaseConstitution = currentClass.Levels[0].BaseStats.Constitution;
+                BaseDexterity = currentClass.Levels[0].BaseStats.Dexterity;
+                BaseIntelligence = currentClass.Levels[0].BaseStats.Intelligence;
+                BaseStrength = currentClass.Levels[0].BaseStats.Strength;
+                BaseWisdom = currentClass.Levels[0].BaseStats.Wisdom;
+                Title = currentClass.Levels[0].Name;
             }
             else
             {
-                AllowedTasks = Loadout.Actions;
 
-                BaseCharisma = Loadout.StartingStats.Charisma;
-                BaseConstitution = Loadout.StartingStats.Constitution;
-                BaseDexterity = Loadout.StartingStats.Dexterity;
-                BaseIntelligence = Loadout.StartingStats.Intelligence;
-                BaseStrength = Loadout.StartingStats.Strength;
-                BaseWisdom = Loadout.StartingStats.Wisdom;
-
-                Title = Loadout.Name;
             }
         }
     }

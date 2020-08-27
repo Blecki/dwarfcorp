@@ -339,10 +339,10 @@ namespace DwarfCorp.Play.EmployeeInfo
                 Icon.Hidden = HideSprite;
 
                 NameLabel.Text = "\n" + Employee.Stats.FullName;
-                TitleEditor.Text = Employee.Stats.Title ?? Employee.Stats.CurrentClass.Name;
+                TitleEditor.Text = Employee.Stats.Title ?? (Employee.Stats.CurrentClass.HasValue(out var c) ? c.Name : "cretin");
                 LevelLabel.Text = String.Format("Level {0} {1}\n({2} xp)",
                     Employee.Stats.GetCurrentLevel(),
-                    Employee.Stats.CurrentClass.Name,
+                    (Employee.Stats.CurrentClass.HasValue(out var _c) ? _c.Name : "cretin"),
                     Employee.Stats.XP);
 
             }
