@@ -302,7 +302,7 @@ namespace DwarfCorp
                         if (Creature.Stats.CurrentClass.HasValue(out var c))
                         {
                             Creature.Sprite.ResetAnimations(c.AttackMode);
-                            Creature.Sprite.PlayAnimations(c.AttackMode);
+                            Creature.Sprite.PlayAnimations();
                             Creature.CurrentCharacterMode = c.AttackMode;
                             Creature.OverrideCharacterMode = true;
                         }
@@ -326,7 +326,7 @@ namespace DwarfCorp
 
                         timeout.Reset();
 
-                        while (!Agent.Creature.Sprite.AnimPlayer.IsDone())
+                        while (!Agent.Creature.Sprite.IsDone())
                         {
                             timeout.Update(DwarfTime.LastTime);
                             if (timeout.HasTriggered)

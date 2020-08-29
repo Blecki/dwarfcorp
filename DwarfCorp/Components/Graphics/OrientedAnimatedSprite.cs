@@ -16,14 +16,6 @@ namespace DwarfCorp
     /// </summary>
     public class OrientedAnimatedSprite : AnimatedSprite
     {
-        public enum Orientation
-        {
-            Right = 0,
-            Left = 1,
-            Forward = 2,
-            Backward = 3
-        }
-
         protected static string[] OrientationStrings =
         {
             "RIGHT",
@@ -32,7 +24,7 @@ namespace DwarfCorp
             "BACKWARD"
         };
 
-        public Orientation CurrentOrientation { get; set; }
+        public SpriteOrientation CurrentOrientation { get; set; }
 
         protected string currentMode = "";
 
@@ -82,15 +74,15 @@ namespace DwarfCorp
             float angle = (float) Math.Atan2(yComponent, xComponent);
 
             if (angle > 3.0f * MathHelper.PiOver4) // 135 degrees
-                CurrentOrientation = Orientation.Right;
+                CurrentOrientation = SpriteOrientation.Right;
             else if (angle > MathHelper.PiOver4) // 45 degrees
-                CurrentOrientation = Orientation.Backward;
+                CurrentOrientation = SpriteOrientation.Backward;
             else if (angle > -MathHelper.PiOver4) // -45 degrees
-                CurrentOrientation = Orientation.Left;
+                CurrentOrientation = SpriteOrientation.Left;
             else if (angle > -3.0f * MathHelper.PiOver4) // -135 degrees
-                CurrentOrientation = Orientation.Forward;
+                CurrentOrientation = SpriteOrientation.Forward;
             else
-                CurrentOrientation = Orientation.Right;
+                CurrentOrientation = SpriteOrientation.Right;
         }
     }
 

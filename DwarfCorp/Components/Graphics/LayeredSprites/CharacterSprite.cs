@@ -8,14 +8,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
-namespace DwarfCorp
+namespace DwarfCorp.DwarfSprites
 {
-    /// <summary>
-    /// This is a special kind of sprite which assumes that it is attached to a character
-    /// which has certain animations and can face in four directions. Also provides interfaces to
-    /// certain effects such as blinking.
-    /// </summary>
-    public class CharacterSprite : OrientedAnimatedSprite, ISprite
+    public class CharacterSprite : AnimatedSprite, ISprite
     {
         [OnSerializing]
         new internal void OnSerializingMethod(StreamingContext context)
@@ -43,7 +38,7 @@ namespace DwarfCorp
             }
             else
             {
-                if (blinkTimer.CurrentTimeSeconds < 0.5f*blinkTimer.TargetTimeSeconds)
+                if (blinkTimer.CurrentTimeSeconds < 0.5f * blinkTimer.TargetTimeSeconds)
                 {
                     VertexColorTint = new Color(new Vector3(1.0f, blinkTimer.CurrentTimeSeconds / blinkTimer.TargetTimeSeconds, blinkTimer.CurrentTimeSeconds / blinkTimer.TargetTimeSeconds));
                 }
@@ -73,24 +68,24 @@ namespace DwarfCorp
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if(isBlinking)
+            if (isBlinking)
             {
                 blinkTimer.Update(gameTime);
                 blinkTrigger.Update(gameTime);
 
-                if(blinkTrigger.HasTriggered)
+                if (blinkTrigger.HasTriggered)
                 {
                     isBlinking = false;
                     isCoolingDown = true;
                 }
             }
 
-            if(isCoolingDown)
+            if (isCoolingDown)
             {
                 VertexColorTint = tintOnBlink;
                 coolDownTimer.Update(gameTime);
 
-                if(coolDownTimer.HasTriggered)
+                if (coolDownTimer.HasTriggered)
                 {
                     isCoolingDown = false;
                 }

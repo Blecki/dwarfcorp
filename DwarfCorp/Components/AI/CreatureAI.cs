@@ -282,23 +282,27 @@ namespace DwarfCorp
         public void HandleReproduction()
         {
             if (CurrentTask.HasValue()) return;
-            if (!Creature.Stats.Species.CanReproduce) return;
-            if (Creature.IsPregnant) return;
-            if (!MathFunctions.RandEvent(0.0002f)) return;
 
-            CreatureAI closestMate = null;
-            float closestDist = float.MaxValue;
-
-            foreach (var ai in Faction.Minions.Where(minion => minion != this && Mating.CanMate(minion.Creature, this.Creature)))
+            if (Creature.Stats.Species.HasValue(out var species))
             {
-                var dist = (ai.Position - Position).LengthSquared();
-                if (!(dist < closestDist)) continue;
-                closestDist = dist;
-                closestMate = ai;
-            }
+                if (!species.CanReproduce) return;
+                if (Creature.IsPregnant) return;
+                if (!MathFunctions.RandEvent(0.0002f)) return;
 
-            if (closestMate != null && closestDist < 30)
-                Tasks.Add(new MateTask(closestMate));
+                CreatureAI closestMate = null;
+                float closestDist = float.MaxValue;
+
+                foreach (var ai in Faction.Minions.Where(minion => minion != this && Mating.CanMate(minion.Creature, this.Creature)))
+                {
+                    var dist = (ai.Position - Position).LengthSquared();
+                    if (!(dist < closestDist)) continue;
+                    closestDist = dist;
+                    closestMate = ai;
+                }
+
+                if (closestMate != null && closestDist < 30)
+                    Tasks.Add(new MateTask(closestMate));
+            }
         }
 
         protected void ChangeAct(MaybeNull<Act> NewAct)
@@ -629,7 +633,7 @@ namespace DwarfCorp
             if (IsDead || creature == null || creature.IsDead)
                 return FightOrFlightResponse.Fight;
 
-            if (!Stats.Species.FeelsFear)
+            if (Stats.Species.HasValue(out var species) && !species.FeelsFear)
                 return FightOrFlightResponse.Fight;
 
             var fear = 0.0f;

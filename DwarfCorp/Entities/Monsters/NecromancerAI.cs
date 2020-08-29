@@ -64,9 +64,12 @@ namespace DwarfCorp
                 skeleton.Faction = this.Faction;
                 this.Faction.AddMinion(skeleton.AI);
                 Skeletons.Add(skeleton);
-                Matrix animatePosition = skeleton.Sprite.LocalTransform;
-                animatePosition.Translation = animatePosition.Translation - new Vector3(0, 1, 0);
-                skeleton.Sprite.AnimationQueue.Add(new EaseMotion(1.0f, animatePosition, skeleton.Sprite.LocalTransform.Translation));
+                if (skeleton.Sprite is GameComponent sprite)
+                {
+                    Matrix animatePosition = sprite.LocalTransform;
+                    animatePosition.Translation = animatePosition.Translation - new Vector3(0, 1, 0);
+                    sprite.AnimationQueue.Add(new EaseMotion(1.0f, animatePosition, sprite.LocalTransform.Translation));
+                }
                 Manager.World.ParticleManager.Trigger("green_flame", pos, Color.White, 10);
                 Manager.World.ParticleManager.Trigger("dirt_particle", pos, Color.White, 10);
 

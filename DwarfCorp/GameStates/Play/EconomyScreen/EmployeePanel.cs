@@ -23,7 +23,8 @@ namespace DwarfCorp.Gui.Widgets
         private string GetMinionDescriptorString(CreatureAI Minion)
         {
             var builder = new StringBuilder();
-            builder.Append(Minion.Stats.Species.Name);
+            if (Minion.Stats.Species.HasValue(out var species))
+                builder.Append(species.Name);
             builder.Append(Minion.Stats.Gender);
             builder.Append(Minion.Stats.FullName);
             builder.Append(Minion.Stats.GetCurrentLevel());

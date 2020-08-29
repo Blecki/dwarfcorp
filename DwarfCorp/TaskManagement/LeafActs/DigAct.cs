@@ -32,7 +32,7 @@ namespace DwarfCorp
             Creature.CurrentCharacterMode = tool.Tool_AttackAnimation;
             Creature.OverrideCharacterMode = true;
             Creature.Sprite.ResetAnimations(Creature.CurrentCharacterMode);
-            Creature.Sprite.PlayAnimations(Creature.CurrentCharacterMode);
+            Creature.Sprite.PlayAnimations();
 
             while (true)
             {
@@ -45,10 +45,10 @@ namespace DwarfCorp
 
                 Drawer2D.DrawLoadBar(performer.World.Renderer.Camera, DigAct.Voxel.WorldPosition + Vector3.One * 0.5f, Color.White, Color.Black, 32, 1, (float)DigAct.VoxelHealth / DigAct.Voxel.Type.StartingHealth);
 
-                while (!performer.Sprite.AnimPlayer.HasValidAnimation() || performer.Sprite.AnimPlayer.CurrentFrame < tool.Tool_AttackTriggerFrame)
+                while (!performer.Sprite.HasValidAnimation() || performer.Sprite.GetCurrentFrame() < tool.Tool_AttackTriggerFrame)
                 {
-                    if (performer.Sprite.AnimPlayer.HasValidAnimation())
-                        performer.Sprite.AnimPlayer.Play();
+                    if (performer.Sprite.HasValidAnimation())
+                        performer.Sprite.PlayAnimations();
                     yield return Act.Status.Running;
                 }
 
@@ -102,7 +102,7 @@ namespace DwarfCorp
                     Creature.CurrentCharacterMode = _c.AttackMode;
                 Creature.OverrideCharacterMode = true;
                 Creature.Sprite.ResetAnimations(Creature.CurrentCharacterMode);
-                Creature.Sprite.PlayAnimations(Creature.CurrentCharacterMode);
+                Creature.Sprite.PlayAnimations();
 
                 // Wait until an attack was successful...
                 foreach (var status in
@@ -142,7 +142,7 @@ namespace DwarfCorp
                 }
 
                 // Wait until the animation is done playing before continuing.
-                while (!Creature.Sprite.AnimPlayer.IsDone() && Creature.Sprite.AnimPlayer.IsPlaying)
+                while (!Creature.Sprite.IsDone())
                 {
                     Creature.Physics.Face(vox.WorldPosition + Vector3.One * 0.5f);
                     Creature.Physics.Velocity *= 0.01f;
@@ -150,7 +150,7 @@ namespace DwarfCorp
                 }
 
                 // Pause the animation and wait for a recharge timer.
-                Creature.Sprite.PauseAnimations(Creature.CurrentCharacterMode);
+                Creature.Sprite.PauseAnimations();
 
                 Creature.CurrentCharacterMode = CharacterMode.Idle;
                 yield return Act.Status.Running;

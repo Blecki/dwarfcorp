@@ -11,9 +11,11 @@ namespace DwarfCorp
         {
             return A.Stats.Gender != Gender.Nonbinary 
                 && A.Stats.Gender != B.Stats.Gender 
-                && A.Stats.Species.CanReproduce
+                && A.Stats.Species.HasValue(out var aSpecies)
+                && aSpecies.CanReproduce
                 && !A.IsPregnant 
-                && B.Stats.Species.CanReproduce 
+                && B.Stats.Species.HasValue(out var bSpecies)
+                && bSpecies.CanReproduce 
                 && (A.Stats.CurrentClass.HasValue(out var aC) && B.Stats.CurrentClass.HasValue(out var bC) && aC.Name == bC.Name)
                 && !B.IsPregnant;
         }
@@ -21,19 +23,16 @@ namespace DwarfCorp
         public static void Mate(Creature A, Creature B, WorldTime time)
         {
             if (A.IsPregnant || B.IsPregnant) return;
-            if (A.Stats.Gender == Gender.Nonbinary) return;
-            // Can this be simplified? Is it even called if CanMate fails?
-            if (A.Stats.Gender == Gender.Male) // Make sure A is the female.
-            {
-                var t = A;
-                A = B;
-                B = t;
-            }
 
-            A.CurrentPregnancy = new Pregnancy()
-            {
-                EndDate = time.CurrentDate + new TimeSpan(0, A.Stats.Species.PregnancyLengthHours, 0, 0)
-            };
+            var mother = A;
+            if (A.Stats.Gender == Gender.Male)
+                mother = B;
+
+            if (A.Stats.Species.HasValue(out var species))
+                A.CurrentPregnancy = new Pregnancy()
+                {
+                    EndDate = time.CurrentDate + new TimeSpan(0, species.PregnancyLengthHours, 0, 0)
+                };
         }
 
         public static string Pronoun(Gender Gender)

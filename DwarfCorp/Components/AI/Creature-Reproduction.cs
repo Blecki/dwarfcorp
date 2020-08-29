@@ -15,10 +15,13 @@ namespace DwarfCorp
 
         public void LayEgg()
         {
-            NoiseMaker.MakeNoise("Lay Egg", AI.Position, true, 1.0f);
-            var eggResource = new Resource("Egg") { DisplayName = (Stats.CurrentClass.HasValue(out var c) ? c.Name + " Egg" : "Egg") };
-            var resourceEntity = Manager.RootComponent.AddChild(new ResourceEntity(Manager, eggResource, Physics.Position));
-            resourceEntity.AddChild(new Egg(resourceEntity, Stats.Species.BabyType, Manager, Physics.Position, AI.PositionConstraint));
+            if (Stats.Species.HasValue(out var species))
+            {
+                NoiseMaker.MakeNoise("Lay Egg", AI.Position, true, 1.0f);
+                var eggResource = new Resource("Egg") { DisplayName = (Stats.CurrentClass.HasValue(out var c) ? c.Name + " Egg" : "Egg") };
+                var resourceEntity = Manager.RootComponent.AddChild(new ResourceEntity(Manager, eggResource, Physics.Position));
+                resourceEntity.AddChild(new Egg(resourceEntity, species.BabyType, Manager, Physics.Position, AI.PositionConstraint));
+            }
         }
 
         private void UpdatePregnancy()
@@ -26,11 +29,11 @@ namespace DwarfCorp
             if (IsPregnant && World.Time.CurrentDate > CurrentPregnancy.EndDate)
             {
                 // Todo: This check really belongs before the creature becomes pregnant.
-                if (World.CanSpawnWithoutExceedingSpeciesLimit(Stats.Species))
+                if (World.CanSpawnWithoutExceedingSpeciesLimit(Stats.Species) && Stats.Species.HasValue(out var species))
                 {
-                    if (EntityFactory.HasEntity(Stats.Species.BabyType))
+                    if (EntityFactory.HasEntity(species.BabyType))
                     {
-                        var baby = EntityFactory.CreateEntity<GameComponent>(Stats.Species.BabyType, Physics.Position);
+                        var baby = EntityFactory.CreateEntity<GameComponent>(species.BabyType, Physics.Position);
 
                         if (baby.GetRoot().GetComponent<CreatureAI>().HasValue(out var ai)) // Set position constraint so baby stays inside pen.
                             ai.PositionConstraint = AI.PositionConstraint;
@@ -42,10 +45,10 @@ namespace DwarfCorp
 
         private void UpdateEggs(DwarfTime gameTime)
         {
-            if (Stats.Species.LaysEggs)
+            if (Stats.Species.HasValue(out var species) && species.LaysEggs)
             {
                 if (EggTimer == null)
-                    EggTimer = new Timer(Stats.Species.EggTime + MathFunctions.Rand(-120, 120), false);
+                    EggTimer = new Timer(species.EggTime + MathFunctions.Rand(-120, 120), false);
 
                 EggTimer.Update(gameTime);
 
@@ -54,7 +57,7 @@ namespace DwarfCorp
                     if (World.CanSpawnWithoutExceedingSpeciesLimit(Stats.Species))
                         LayEgg(); // Todo: Egg rate in species
 
-                    EggTimer = new Timer(Stats.Species.EggTime + MathFunctions.Rand(-120, 120), false);
+                    EggTimer = new Timer(species.EggTime + MathFunctions.Rand(-120, 120), false);
                 }
             }
         }

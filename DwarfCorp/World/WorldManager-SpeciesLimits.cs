@@ -11,18 +11,21 @@ namespace DwarfCorp
     public partial class WorldManager : IDisposable
     {
 
-        public void AddToSpeciesTracking(CreatureSpecies Species)
+        public void AddToSpeciesTracking(MaybeNull<CreatureSpecies> Species)
         {
-            if (!PersistentData.SpeciesCounts.ContainsKey(Species.Name))
-                PersistentData.SpeciesCounts.Add(Species.Name, 0);
+            if (Species.HasValue(out var species))
+            {
+                if (!PersistentData.SpeciesCounts.ContainsKey(species.Name))
+                    PersistentData.SpeciesCounts.Add(species.Name, 0);
 
-            PersistentData.SpeciesCounts[Species.Name] += 1;
+                PersistentData.SpeciesCounts[species.Name] += 1;
+            }
         }
 
-        public void RemoveFromSpeciesTracking(CreatureSpecies Species)
+        public void RemoveFromSpeciesTracking(MaybeNull<CreatureSpecies> Species)
         {
-            if (PersistentData.SpeciesCounts.ContainsKey(Species.Name))
-                PersistentData.SpeciesCounts[Species.Name] = Math.Max(0, PersistentData.SpeciesCounts[Species.Name] - 1);
+            if (Species.HasValue(out var species) && PersistentData.SpeciesCounts.ContainsKey(species.Name))
+                PersistentData.SpeciesCounts[species.Name] = Math.Max(0, PersistentData.SpeciesCounts[species.Name] - 1);
         }
 
         public void DisplaySpeciesCountsInMetrics()
@@ -31,12 +34,17 @@ namespace DwarfCorp
                 PerformanceMonitor.SetMetric(species.Key, species.Value);
         }
 
-        public bool CanSpawnWithoutExceedingSpeciesLimit(CreatureSpecies Species)
+        public bool CanSpawnWithoutExceedingSpeciesLimit(MaybeNull<CreatureSpecies> Species)
         {
-            if (!PersistentData.SpeciesCounts.ContainsKey(Species.Name))
-                return true;
-            var effectiveLimit = Math.Round(Species.SpeciesLimit * GameSettings.Current.SpeciesLimitAdjust);
-            return PersistentData.SpeciesCounts[Species.Name] < effectiveLimit;
+            if (Species.HasValue(out var species))
+            {
+                if (!PersistentData.SpeciesCounts.ContainsKey(species.Name))
+                    return true;
+                var effectiveLimit = Math.Round(species.SpeciesLimit * GameSettings.Current.SpeciesLimitAdjust);
+                return PersistentData.SpeciesCounts[species.Name] < effectiveLimit;
+            }
+            else
+                return true; // Sure spawn null, go ahead.
         }
     }
 }

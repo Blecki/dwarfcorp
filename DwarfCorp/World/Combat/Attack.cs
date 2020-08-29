@@ -36,11 +36,11 @@ namespace DwarfCorp
 
                 Drawer2D.DrawLoadBar(performer.World.Renderer.Camera, DigAct.Voxel.WorldPosition + Vector3.One * 0.5f, Color.White, Color.Black, 32, 1, (float)DigAct.VoxelHealth / DigAct.Voxel.Type.StartingHealth);
 
-                while (!performer.Sprite.AnimPlayer.HasValidAnimation() ||
-                    performer.Sprite.AnimPlayer.CurrentFrame < Weapon.TriggerFrame)
+                while (!performer.Sprite.HasValidAnimation() ||
+                    performer.Sprite.GetCurrentFrame() < Weapon.TriggerFrame)
                 {
-                    if (performer.Sprite.AnimPlayer.HasValidAnimation())
-                        performer.Sprite.AnimPlayer.Play();
+                    if (performer.Sprite.HasValidAnimation())
+                        performer.Sprite.PlayAnimations();
                     yield return Act.Status.Running;
                 }
 
@@ -73,8 +73,8 @@ namespace DwarfCorp
 
         public bool PerformNoDamage(Creature performer, DwarfTime time, Vector3 pos)
         {
-            if (!performer.Sprite.AnimPlayer.HasValidAnimation() ||
-                performer.Sprite.AnimPlayer.CurrentFrame != Weapon.TriggerFrame)
+            if (!performer.Sprite.HasValidAnimation() ||
+                performer.Sprite.GetCurrentFrame() != Weapon.TriggerFrame)
             {
                 HasTriggered = false;
                 return false;
@@ -161,8 +161,8 @@ namespace DwarfCorp
         public bool Perform(Creature performer, GameComponent other, DwarfTime time, float bonus, Vector3 pos, string faction)
         {
 
-            if (!performer.Sprite.AnimPlayer.HasValidAnimation() ||
-                performer.Sprite.AnimPlayer.CurrentFrame != Weapon.TriggerFrame)
+            if (!performer.Sprite.HasValidAnimation() ||
+                performer.Sprite.GetCurrentFrame() != Weapon.TriggerFrame)
             {
                 HasTriggered = false;
                 return false;

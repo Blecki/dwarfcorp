@@ -38,7 +38,7 @@ namespace DwarfCorp
                 {
                     Creature.CurrentCharacterMode = c.AttackMode;
                     Creature.Sprite.ResetAnimations(c.AttackMode);
-                    Creature.Sprite.PlayAnimations(c.AttackMode);
+                    Creature.Sprite.PlayAnimations();
                 }
 
                 while (Farm.Progress < Farm.TargetProgress && !Farm.Finished)
@@ -86,8 +86,7 @@ namespace DwarfCorp
                 Creature.AI.AddXP(1);
                 ActHelper.ApplyWearToTool(Creature.AI, GameSettings.Current.Wear_Dig);
 
-                if (Creature.Stats.CurrentClass.HasValue(out var _c))
-                    Creature.Sprite.PauseAnimations(_c.AttackMode);
+                Creature.Sprite.PauseAnimations();
                 yield return Status.Success;
             }
         }

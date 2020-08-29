@@ -63,8 +63,11 @@ namespace DwarfCorp
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             CreateSprite(ContentPaths.Entities.Dwarf.Sprites.fairy_animation, manager, 0.15f);
-            Sprite.AddChild(new Bobber(Manager, 0.25f, 3.0f, MathFunctions.Rand(), Sprite.LocalTransform.Translation.Y)).SetFlag(Flag.ShouldSerialize, false);
-            Sprite.LightsWithVoxels = false;
+            if (Sprite is Tinter tinter)
+            {
+                tinter.AddChild(new Bobber(Manager, 0.25f, 3.0f, MathFunctions.Rand(), tinter.LocalTransform.Translation.Y)).SetFlag(Flag.ShouldSerialize, false);
+                tinter.LightsWithVoxels = false;
+            }
 
             Physics.AddChild(Shadow.Create(0.75f, manager));
             Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 0))).SetFlag(Flag.ShouldSerialize, false);
@@ -101,7 +104,7 @@ namespace DwarfCorp
             {
                 if (ParticleTimer.HasTriggered)
                 {
-                    Manager.World.ParticleManager.Trigger("star_particle", Sprite.Position, Color.White, 1);
+                    Manager.World.ParticleManager.Trigger("star_particle", Position, Color.White, 1);
                 }
                 DeathTimer.Update(World.Time.CurrentDate);
                 ParticleTimer.Update(gameTime);

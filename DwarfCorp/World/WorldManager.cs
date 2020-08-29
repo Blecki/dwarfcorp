@@ -280,8 +280,8 @@ namespace DwarfCorp
                     if (m.GetRoot().GetComponent<SelectionCircle>().HasValue(out var selectionCircle))
                         selectionCircle.SetFlagRecursive(GameComponent.Flag.Visible, false);
 
-                    m.Creature.Sprite.DrawSilhouette = false;
-                };
+                    m.Creature.Sprite.SetDrawSilhouette(false);
+                }
 
                 foreach (var creature in PersistentData.SelectedMinions)
                 {
@@ -297,7 +297,7 @@ namespace DwarfCorp
                         selectionCircle.SetFlagRecursive(GameComponent.Flag.Visible, true);
                     }
 
-                    creature.Creature.Sprite.DrawSilhouette = true;
+                    creature.Creature.Sprite.SetDrawSilhouette(true);
                 }
                 #endregion
 

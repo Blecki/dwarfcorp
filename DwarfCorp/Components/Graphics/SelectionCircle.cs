@@ -28,7 +28,7 @@ namespace DwarfCorp
         {
             var shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
             var bbox = (Parent as GameComponent).GetBoundingBox();
-            shadowTransform.Translation = new Vector3(0.0f, (Parent.BoundingBoxSize.Y * -0.5f) - Parent.LocalBoundingBoxOffset.Y, 0.0f);
+            shadowTransform.Translation = new Vector3(0.0f, (Parent.BoundingBoxSize.Y * -0.5f) + Parent.LocalBoundingBoxOffset.Y + 0.1f, 0.0f);
             float scale = Parent.BoundingBoxSize.X * 2;
             shadowTransform = shadowTransform * Matrix.CreateScale(scale);
             LocalTransform = shadowTransform;

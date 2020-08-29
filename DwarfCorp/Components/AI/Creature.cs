@@ -16,8 +16,8 @@ namespace DwarfCorp
         [JsonIgnore] public CreatureAI AI => _get(ref _ai);
         private CreatureAI _ai = null;
         public Physics Physics { get; set; }
-        private CharacterSprite _characterSprite = null;
-        [JsonIgnore] public CharacterSprite Sprite => _get(ref _characterSprite);
+        [JsonIgnore] private ISprite _characterSprite = null;
+        [JsonIgnore] public ISprite Sprite => _get(ref _characterSprite);
         [JsonIgnore] public EnemySensor Sensor => _get(ref _sensor);
         private EnemySensor _sensor = null;
         [JsonIgnore] public NoiseMaker NoiseMaker { get; set; }
@@ -79,11 +79,10 @@ namespace DwarfCorp
             //    Attacks.AddRange(Stats.CurrentClass.Levels[i].ExtraWeapons.Select(w => new Attack(w)));
         }
 
-        private T _get<T>(ref T cached) where T : GameComponent
+        private T _get<T>(ref T cached)
         {
             if (cached == null)
                 cached = Parent.EnumerateAll().OfType<T>().FirstOrDefault();
-            //System.Diagnostics.Debug.Assert(cached != null, string.Format("No {0} created on creature.", typeof(T).Name));
             return cached;
         }
 
@@ -102,10 +101,10 @@ namespace DwarfCorp
                 _currentCharacterMode = value;
                 if (Parent != null && Sprite != null)
                 {
-                    if (Sprite.HasAnimation(_currentCharacterMode, OrientedAnimatedSprite.Orientation.Forward))
-                        Sprite.SetCurrentAnimation(value.ToString());
+                    if (Sprite.HasAnimation(_currentCharacterMode, SpriteOrientation.Forward))
+                        Sprite.SetCurrentAnimation(_currentCharacterMode.ToString(), false);
                     else
-                        Sprite.SetCurrentAnimation(_currentCharacterMode != CharacterMode.Walking ? CharacterMode.Walking.ToString() : CharacterMode.Idle.ToString());
+                        Sprite.SetCurrentAnimation(_currentCharacterMode != CharacterMode.Walking ? CharacterMode.Walking.ToString() : CharacterMode.Idle.ToString(), false);
                 }
             }
         }
@@ -114,7 +113,7 @@ namespace DwarfCorp
         {
             base.Update(gameTime, chunks, camera);
 
-            if (!Stats.CurrentClass.HasValue())
+            if (!Stats.CurrentClass.HasValue() || !Stats.Species.HasValue())
             {
                 // Oh fuck - we have no class! Die of shame.
                 this.Die(); 
@@ -178,7 +177,7 @@ namespace DwarfCorp
 
         private void UpdateMigration(DwarfTime gameTime)
         {
-            if (Stats.Species.IsMigratory && !AI.IsPositionConstrained())
+            if (Stats.Species.HasValue(out var species) && species.IsMigratory && !AI.IsPositionConstrained())
             {
                 if (MigrationTimer == null)
                     MigrationTimer = new Timer(3600f + MathFunctions.Rand(-120, 120), false);
@@ -359,7 +358,7 @@ namespace DwarfCorp
 
                 CurrentCharacterMode = c.AttackMode;
                 Sprite.ResetAnimations(CurrentCharacterMode);
-                Sprite.PlayAnimations(CurrentCharacterMode);
+                Sprite.PlayAnimations();
                 var p_current = pos();
                 Timer incrementTimer = new Timer(1.0f, false);
                 var defaultAttack = GetDefaultAttack();
@@ -398,7 +397,7 @@ namespace DwarfCorp
 
                     yield return Act.Status.Running;
                 }
-                Sprite.PauseAnimations(c.AttackMode);
+                Sprite.PauseAnimations();
                 CurrentCharacterMode = CharacterMode.Idle;
                 Physics.Active = true;
                 yield return Act.Status.Success;

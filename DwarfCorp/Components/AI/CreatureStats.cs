@@ -98,7 +98,7 @@ namespace DwarfCorp
         }
 
         public String SpeciesName = "";
-        [JsonIgnore] public CreatureSpecies Species { get; private set; }
+        [JsonIgnore] public MaybeNull<CreatureSpecies> Species { get; private set; }
 
         public DwarfBux DailyPay => GameSettings.Current.DwarfBasePay * GetCurrentLevel();
 
