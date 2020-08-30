@@ -14,14 +14,7 @@ namespace DwarfCorp
     // Todo: Convert all anims to the new format so this can be removed.
     public class CompositeAnimation : Animation
     {
-        [OnSerializing]
-        internal void OnSerializingMethod(StreamingContext context)
-        {
-            //throw new InvalidOperationException();
-        }
-
-        [JsonIgnore]
-        public override bool CanUseInstancing { get { return false; } }
+        [JsonIgnore] public override bool CanUseInstancing { get { return false; } }
         
         [JsonIgnore]
         private Composite _cached_Composite = null;

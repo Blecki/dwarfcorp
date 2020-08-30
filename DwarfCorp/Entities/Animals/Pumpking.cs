@@ -77,12 +77,25 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager Manager)
         {
-            CreateSprite("Entities\\Animals\\Snake\\pumpking_animation.json", Manager, 0.35f);
+            var spriteSheet = new SpriteSheet("Entities\\jack-o-lantern", 32, 32);
+            var sprite = new CharacterSprite(Manager, "Sprite", Matrix.CreateTranslation(0, 0.35f, 0));
+
+            var anims = Library.LoadNewLayeredAnimationFormat("Entities\\Animals\\Snake\\pumpking-animations.json");
+            foreach (var anim in anims)
+                anim.Value.SpriteSheet = spriteSheet;
+            sprite.SetAnimations(anims);
+
+            Physics.AddChild(sprite);
+            sprite.SetFlag(Flag.ShouldSerialize, false);
+
 
             #region Create Tail Pieces
 
             Tail = new List<TailSegment>();
-            var tailAnimations = Library.LoadCompositeAnimationSet("Entities\\Animals\\Snake\\pumpking_tail_animation.json", "Pumpking");
+            var tailAnimations = Library.LoadNewLayeredAnimationFormat("Entities\\Animals\\Snake\\pumpking-tail-animations.json");
+            foreach (var anim in tailAnimations)
+                anim.Value.SpriteSheet = spriteSheet;
+
 
             for (int i = 0; i < 10; ++i)
             {

@@ -455,15 +455,6 @@ namespace DwarfCorp
                     public static string rabbit1_animation = ProgramData.CreatePath("Entities", "Animals", "Rabbit", "rabbit1_animation.json");
                 }
 
-                public class Frog
-                {
-                    public static string frog0 = ProgramData.CreatePath("Entities", "Animals", "Frog", "frog0");
-                    public static string frog1 = ProgramData.CreatePath("Entities", "Animals", "Frog", "frog1");
-                    public static string frog0_animation = ProgramData.CreatePath("Entities", "Animals", "Frog", "frog0_animation.json");
-                    public static string frog1_animation = ProgramData.CreatePath("Entities", "Animals", "Frog", "frog1_animation.json");
-                }
-
-
                 public class Scorpion
                 {
                     public static string scorpion = ProgramData.CreatePath("Entities", "Animals", "scorpion");

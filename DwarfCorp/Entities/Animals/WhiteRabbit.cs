@@ -63,7 +63,17 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            CreateSprite(ContentPaths.Entities.Animals.Rabbit.rabbit1_animation, manager, 0.35f);
+            var spriteSheet = new SpriteSheet("Entities\\Animals\\Rabbit\\white-rabbit", 24, 24);
+            var sprite = new CharacterSprite(manager, "Sprite", Matrix.CreateTranslation(0, 0.35f, 0));
+
+            var anims = Library.LoadNewLayeredAnimationFormat("Entities\\Animals\\Rabbit\\rabbit-animations.json");
+            foreach (var anim in anims)
+                anim.Value.SpriteSheet = spriteSheet;
+            sprite.SetAnimations(anims);
+
+            Physics.AddChild(sprite);
+            sprite.SetFlag(Flag.ShouldSerialize, false);
+
             Physics.AddChild(Shadow.Create(0.3f, manager));
 
             NoiseMaker = new NoiseMaker();

@@ -877,13 +877,13 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Entities\Animals\Rabbit\rabbit0.png">
-      <Name>rabbit0</Name>
+    <Compile Include="Entities\Animals\Rabbit\brown-rabbit.png">
+      <Name>brown-rabbit</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Entities\Animals\Rabbit\rabbit1.png">
-      <Name>rabbit1</Name>
+    <Compile Include="Entities\Animals\Rabbit\white-rabbit.png">
+      <Name>white-rabbit</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -1997,9 +1997,13 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
-    <None Include="Entities\Animals\Chimp\chimp_animation.json">
-      <Name>chimp_animation</Name>
+    <None Include="Entities\Animals\Birds\bird-animations.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bird-animations</Name>
+    </None>
+    <None Include="Entities\Animals\Chimp\chimp-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>chimp-animations</Name>
     </None>
     <Compile Include="newgui\tutorials\trade_balance.png">
       <Name>trade_balance</Name>
@@ -2086,13 +2090,33 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <None Include="Entities\Animals\Snake\pumpking_animation.json">
+    <None Include="Entities\Animals\Deer\deer-animations.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>pumpking_animation</Name>
+      <Name>deer-animations</Name>
     </None>
-    <None Include="Entities\Animals\Snake\pumpking_tail_animation.json">
+    <None Include="Entities\Animals\Frog\frog-animations.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>pumpking_tail_animation</Name>
+      <Name>frog-animations</Name>
+    </None>
+    <None Include="Entities\Animals\Rabbit\rabbit-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>rabbit-animations</Name>
+    </None>
+    <None Include="Entities\Animals\Snake\snake-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>snake-animations</Name>
+    </None>
+    <None Include="Entities\Animals\Snake\pumpking-tail-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>pumpking-tail-animations</Name>
+    </None>
+    <None Include="Entities\Animals\Snake\tail-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>tail-animations</Name>
+    </None>
+    <None Include="Entities\Animals\Snake\pumpking-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>pumpking-animations</Name>
     </None>
     <None Include="Entities\Dwarf\Layers\layer-types.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2149,6 +2173,10 @@
     <None Include="World\Classes\Pumpking.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Pumpking</Name>
+    </None>
+    <None Include="World\Classes\WhiteRabbit.json">
+      <Name>WhiteRabbit</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="World\corporate.conv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2794,10 +2822,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Troll</Name>
     </None>
-    <None Include="World\Species\WhiteRabbit.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>WhiteRabbit</Name>
-    </None>
     <None Include="World\Classes\Fowl.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Fowl</Name>
@@ -2810,10 +2834,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Bat</Name>
     </None>
-    <None Include="World\Classes\WhiteRabbit.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>WhiteRabbit</Name>
-    </None>
     <None Include="World\Classes\Snake.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Snake</Name>
@@ -2822,9 +2842,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Chimp</Name>
     </None>
-    <None Include="World\Classes\BrownRabbit.json">
+    <None Include="World\Classes\Rabbit.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>BrownRabbit</Name>
+      <Name>Rabbit</Name>
     </None>
     <None Include="World\Classes\Frog.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -3378,58 +3398,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>rail-pieces</Name>
     </None>
-    <None Include="Entities\Animals\Birds\bird0_animation.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>bird0_animation</Name>
-    </None>
-    <None Include="Entities\Animals\Birds\bird3_animation.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>bird3_animation</Name>
-    </None>
-    <None Include="Entities\Animals\Birds\bird1_animation.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>bird1_animation</Name>
-    </None>
-    <None Include="Entities\Animals\Birds\bird7_animation.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>bird7_animation</Name>
-    </None>
-    <None Include="Entities\Animals\Birds\bird6_animation.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>bird6_animation</Name>
-    </None>
-    <None Include="Entities\Animals\Birds\bird5_animation.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>bird5_animation</Name>
-    </None>
-    <None Include="Entities\Animals\Birds\bird4_animation.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>bird4_animation</Name>
-    </None>
-    <None Include="Entities\Animals\Birds\bird2_animation.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>bird2_animation</Name>
-    </None>
-    <None Include="Entities\Animals\Deer\deer_animation.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>deer_animation</Name>
-    </None>
-    <None Include="Entities\Animals\Snake\snake_animation.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>snake_animation</Name>
-    </None>
-    <None Include="Entities\Animals\Snake\tail_animation.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>tail_animation</Name>
-    </None>
-    <None Include="Entities\Animals\Snake\bonetail_animation.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>bonetail_animation</Name>
-    </None>
-    <None Include="Entities\Animals\Snake\bonesnake_animation.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>bonesnake_animation</Name>
-    </None>
     <None Include="Entities\Golems\snowgolem_animation.json">
       <Name>snowgolem_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -3551,22 +3519,6 @@
     </None>
     <None Include="Entities\Demon\demon_animation.json">
       <Name>demon_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Entities\Animals\Rabbit\rabbit0_animation.json">
-      <Name>rabbit0_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Entities\Animals\Rabbit\rabbit1_animation.json">
-      <Name>rabbit1_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Entities\Animals\Frog\frog0_animation.json">
-      <Name>frog0_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Entities\Animals\Frog\frog1_animation.json">
-      <Name>frog1_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Entities\Animals\scorpion_animation.json">
@@ -4159,6 +4111,10 @@
     </None>
     <None Include="World\Rooms\Stockpile.json">
       <Name>Stockpile</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="World\Species\WhiteRabbit.json">
+      <Name>WhiteRabbit</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="World\undead.conv">

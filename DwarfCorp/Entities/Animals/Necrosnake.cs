@@ -74,12 +74,24 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager Manager)
         {
-            CreateSprite(ContentPaths.Entities.Animals.Snake.bonesnake_animation, Manager, 0.35f);
+            var spriteSheet = new SpriteSheet("Entities\\Animals\\Snake\\bonesnake", 64, 64);
+            var sprite = new CharacterSprite(Manager, "Sprite", Matrix.CreateTranslation(0, 0.35f, 0));
+
+            var anims = Library.LoadNewLayeredAnimationFormat("Entities\\Animals\\Snake\\snake-animations.json");
+            foreach (var anim in anims)
+                anim.Value.SpriteSheet = spriteSheet;
+            sprite.SetAnimations(anims);
+
+            Physics.AddChild(sprite);
+            sprite.SetFlag(Flag.ShouldSerialize, false);
+
 
             #region Create Tail Pieces
 
             Tail = new List<TailSegment>();
-            var tailAnimations = Library.LoadCompositeAnimationSet(ContentPaths.Entities.Animals.Snake.bonetail_animation, "Necrosnake");
+            var tailAnimations = Library.LoadNewLayeredAnimationFormat("Entities\\Animals\\Snake\\tail-animations.json");
+            foreach (var anim in tailAnimations)
+                anim.Value.SpriteSheet = spriteSheet;
 
             for (int i = 0; i < 10; ++i)
             {

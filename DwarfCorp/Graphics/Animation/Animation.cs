@@ -10,12 +10,6 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-
-    /// <summary>
-    /// An animation flips a billboard sprite between several
-    /// frames on a sprite sheet at a fixed rate.
-    /// </summary>
-    [JsonObject(IsReference = true)]
     public class Animation
     {
 

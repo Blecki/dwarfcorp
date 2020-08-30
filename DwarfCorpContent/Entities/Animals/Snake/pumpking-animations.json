@@ -1,0 +1,35 @@
+[
+  {
+    "Name": "IdleFORWARD",
+    "Frames": [ "5 1 0", "5 2 0", "5 3 0" ]
+  },
+  {
+    "Name": "IdleLEFT",
+    "Frames": [ "1 0 0" ]
+  },
+  {
+    "Name": "IdleRIGHT",
+    "Frames": [ "1 0 0" ]
+  },
+  {
+    "Name": "IdleBACKWARD",
+    "Frames": [ "1 0 0" ]
+  },
+
+  {
+    "Name": "AttackingFORWARD",
+    "Frames": [ "0.15 1 0", "0.15 2 0", "0.55 3 0" ]
+  },
+  {
+    "Name": "AttackingLEFT",
+    "Frames": [ "0.15 1 0" ]
+  },
+  {
+    "Name": "AttackingRIGHT",
+    "Frames": [ "0.15 1 0" ]
+  },
+  {
+    "Name": "AttackingBACKWARD",
+    "Frames": [ "0.15 1 0" ]
+  }
+]

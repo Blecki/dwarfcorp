@@ -15,13 +15,13 @@ namespace DwarfCorp
         [EntityFactory("Frog")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Frog(ContentPaths.Entities.Animals.Frog.frog0_animation, Position, Manager, "Frog");
+            return new Frog("Entities\\Animals\\Frog\\frog0", Position, Manager, "Frog");
         }
 
         [EntityFactory("Tree Frog")]
         private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Frog(ContentPaths.Entities.Animals.Frog.frog1_animation, Position, Manager, "Frog");
+            return new Frog("Entities\\Animals\\Frog\\frog1", Position, Manager, "Frog");
         }
 
         public string SpriteAsset;
@@ -74,7 +74,17 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            CreateSprite(SpriteAsset, manager, 0.35f);
+            var spriteSheet = new SpriteSheet(SpriteAsset, 32, 24);
+            var sprite = new CharacterSprite(manager, "Sprite", Matrix.CreateTranslation(0, 0.35f, 0));
+
+            var anims = Library.LoadNewLayeredAnimationFormat("Entities\\Animals\\Frog\\frog-animations.json");
+            foreach (var anim in anims)
+                anim.Value.SpriteSheet = spriteSheet;
+            sprite.SetAnimations(anims);
+
+            Physics.AddChild(sprite);
+            sprite.SetFlag(Flag.ShouldSerialize, false);
+
             Physics.AddChild(Shadow.Create(0.3f, manager));
 
             NoiseMaker = new NoiseMaker();

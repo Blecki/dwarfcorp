@@ -6,24 +6,279 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
+using DwarfCorp.GameStates;
 
 namespace DwarfCorp.DwarfSprites
 {
-    public class LayeredCharacterSprite : CharacterSprite
+    public class LayeredCharacterSprite : Tinter, ISprite
     {
-        public override void AddAnimation(Animation animation)
+        public SpriteOrientation CurrentOrientation { get; set; }
+        protected string currentMode = "";
+
+        [OnSerializing]
+        internal void OnSerializingMethod(StreamingContext context)
         {
-            base.AddAnimation(Layers.ProxyAnimation(animation));
+            //throw new InvalidOperationException();
         }
 
-        public override void SetAnimations(Dictionary<string, Animation> Animations)
+        protected Dictionary<string, Animation> Animations { get; set; }
+
+        [JsonIgnore] public AnimationPlayer AnimPlayer = new AnimationPlayer();
+
+        public bool DrawSilhouette { get; set; }
+        public Color SilhouetteColor { get; set; }
+        private Vector3 prevDistortion = Vector3.Zero;
+
+        [JsonIgnore]
+        public GraphicsDevice Graphics { get { return GameState.Game.GraphicsDevice; } }
+
+        private Timer blinkTimer = new Timer(0.1f, false);
+        private Timer coolDownTimer = new Timer(1.0f, false);
+        private Timer blinkTrigger = new Timer(0.0f, true);
+        private bool isBlinking = false;
+        private bool isCoolingDown = false;
+        private Color tintOnBlink = Color.White;
+
+        private LayerStack Layers = new LayerStack();
+
+        public LayeredCharacterSprite(ComponentManager Manager, string name, Matrix localTransform) :
+            base(Manager, name, localTransform, Vector3.One, Vector3.Zero)
+        {
+            Animations = new Dictionary<string, Animation>();
+            DrawSilhouette = false;
+            SilhouetteColor = new Color(0.0f, 1.0f, 1.0f, 0.5f);
+            currentMode = "Idle";
+        }
+
+        public LayeredCharacterSprite()
+        {
+        }
+
+        public virtual void AddAnimation(Animation animation)
+        {
+            var anim = Layers.ProxyAnimation(animation);
+            AnimPlayer.Play(anim);
+            Animations[animation.Name] = anim;
+        }
+
+        public virtual void SetAnimations(Dictionary<String, Animation> Animations)
         {
             this.Animations.Clear();
             foreach (var anim in Animations)
                 AddAnimation(anim.Value);
         }
 
-        private LayerStack Layers = new LayerStack();
+        public Animation GetAnimation(string name)
+        {
+            return Animations.ContainsKey(name) ? Animations[name] : null;
+        }
+
+        public virtual void SetCurrentAnimation(string name, bool Play = false)
+        {
+            currentMode = name;
+            var s = currentMode + SpriteOrientationHelper.OrientationStrings[(int)CurrentOrientation];
+            if (Animations.ContainsKey(s))
+                SetCurrentAnimation(Animations[s], Play);
+        }
+
+        public void SetCurrentAnimation(Animation Animation, bool Play = false)
+        {
+            AnimPlayer.ChangeAnimation(Animation, Play ? AnimationPlayer.ChangeAnimationOptions.Play : AnimationPlayer.ChangeAnimationOptions.Stop);
+        }
+
+        public override void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
+            GraphicsDevice graphicsDevice, Shader effect)
+        {
+            if (!IsVisible) return;
+
+            base.RenderSelectionBuffer(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect);
+            RenderBody(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false, InstanceRenderMode.SelectionBuffer);
+        }
+
+        private void RenderBody(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater,
+            InstanceRenderMode Mode)
+        {
+            if (!IsVisible) return;
+            if (!AnimPlayer.HasValidAnimation()) return;
+
+            if (AnimPlayer.Primitive == null) return;
+
+            Color origTint = effect.VertexColorTint;
+            effect.SelectionBufferColor = this.GetGlobalIDColor().ToVector4();
+            effect.World = GetWorldMatrix(camera);
+            var tex = Layers.GetCompositeTexture();
+            if (tex != null && !tex.IsDisposed && !tex.GraphicsDevice.IsDisposed)
+                effect.MainTexture = tex;
+            ApplyTintingToEffect(effect);
+
+            if (DrawSilhouette)
+            {
+                Color oldTint = effect.VertexColorTint;
+                effect.VertexColorTint = SilhouetteColor;
+                graphicsDevice.DepthStencilState = DepthStencilState.None;
+                var oldTechnique = effect.CurrentTechnique;
+                effect.CurrentTechnique = effect.Techniques[Shader.Technique.Silhouette];
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    AnimPlayer.Primitive.Render(graphicsDevice);
+                }
+
+                graphicsDevice.DepthStencilState = DepthStencilState.Default;
+                effect.VertexColorTint = oldTint;
+                effect.CurrentTechnique = oldTechnique;
+            }
+
+            effect.EnableWind = false;
+
+            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                AnimPlayer.Primitive.Render(graphicsDevice);
+            }
+            effect.VertexColorTint = origTint;
+            effect.EnableWind = false;
+            EndDraw(effect);
+        }
+
+        private Matrix GetWorldMatrix(Camera camera)
+        {
+            var currDistortion = VertexNoise.GetNoiseVectorFromRepeatingTexture(GlobalTransform.Translation);
+            var distortion = currDistortion * 0.1f + prevDistortion * 0.9f;
+            prevDistortion = distortion;
+            var frameSize = AnimPlayer.GetCurrentFrameSize();
+            var offsets = AnimPlayer.GetCurrentAnimation().YOffset;
+            float verticalOffset = offsets == null || offsets.Count == 0 ? 0.0f : offsets[Math.Min(AnimPlayer.CurrentFrame, offsets.Count - 1)] * 1.0f / 32.0f;
+            var pos = GlobalTransform.Translation + Vector3.Up * verticalOffset;
+            var bill = Matrix.CreateScale(frameSize.X, frameSize.Y, 1.0f) * Matrix.CreateBillboard(pos, camera.Position, camera.UpVector, null) * Matrix.CreateTranslation(distortion);
+            return bill;
+        }
+
+
+        override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
+            GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
+        {
+            if (!isBlinking)
+                VertexColorTint = tintOnBlink;
+            else
+            {
+                if (blinkTimer.CurrentTimeSeconds < 0.5f * blinkTimer.TargetTimeSeconds)
+                    VertexColorTint = new Color(new Vector3(1.0f, blinkTimer.CurrentTimeSeconds / blinkTimer.TargetTimeSeconds, blinkTimer.CurrentTimeSeconds / blinkTimer.TargetTimeSeconds));
+                else
+                    VertexColorTint = tintOnBlink;
+            }
+
+            RenderBody(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater, InstanceRenderMode.Normal);
+
+            CurrentOrientation = SpriteOrientationHelper.CalculateSpriteOrientation(camera, GlobalTransform);
+
+            var s = currentMode + SpriteOrientationHelper.OrientationStrings[(int)CurrentOrientation];
+            if (Animations.ContainsKey(s))
+            {
+                AnimPlayer.ChangeAnimation(Animations[s], AnimationPlayer.ChangeAnimationOptions.Play);
+                AnimPlayer.Update(gameTime, true);
+            }
+
+            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
+        }
+
+        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        {
+            Layers.Update(chunks.World.GraphicsDevice);
+
+            if (isBlinking)
+            {
+                blinkTimer.Update(gameTime);
+                blinkTrigger.Update(gameTime);
+
+                if (blinkTrigger.HasTriggered)
+                {
+                    isBlinking = false;
+                    isCoolingDown = true;
+                }
+            }
+
+            if (isCoolingDown)
+            {
+                VertexColorTint = tintOnBlink;
+                coolDownTimer.Update(gameTime);
+
+                if (coolDownTimer.HasTriggered)
+                {
+                    isCoolingDown = false;
+                }
+            }
+
+            AnimPlayer.Update(gameTime, !DrawSilhouette); // Can't use instancing if we want the silhouette.
+            base.Update(gameTime, chunks, camera);
+
+
+        }
+
+        bool ISprite.HasAnimation(CharacterMode Mode, SpriteOrientation Orientation)
+        {
+            return Animations.ContainsKey(Mode.ToString() + SpriteOrientationHelper.OrientationStrings[(int)Orientation]);
+        }
+
+        void ISprite.SetCurrentAnimation(string name, bool Play)
+        {
+            this.SetCurrentAnimation(name, Play);
+        }
+
+        void ISprite.Blink(float blinkTime)
+        {
+            if (isBlinking || isCoolingDown)
+            {
+                return;
+            }
+
+            isBlinking = true;
+            tintOnBlink = VertexColorTint;
+            blinkTrigger.Reset(blinkTime);
+        }
+
+        void ISprite.ResetAnimations(CharacterMode mode)
+        {
+            SetCurrentAnimation(mode.ToString());
+            AnimPlayer.Reset();
+        }
+
+        void ISprite.ReloopAnimations(CharacterMode mode)
+        {
+            SetCurrentAnimation(mode.ToString(), true);
+            if (AnimPlayer.IsDone()) AnimPlayer.Reset();
+        }
+
+        void ISprite.PauseAnimations()
+        {
+            AnimPlayer.Pause();
+        }
+
+        void ISprite.PlayAnimations()
+        {
+            AnimPlayer.Play();
+        }
+
+        int ISprite.GetCurrentFrame()
+        {
+            return AnimPlayer.CurrentFrame;
+        }
+
+        bool ISprite.HasValidAnimation()
+        {
+            return AnimPlayer.HasValidAnimation();
+        }
+
+        bool ISprite.IsDone()
+        {
+            return AnimPlayer.IsDone();
+        }
+
+        void ISprite.SetDrawSilhouette(bool DrawSilhouette)
+        {
+            this.DrawSilhouette = DrawSilhouette;
+        }
+
 
         public LayerStack GetLayers()
         {
@@ -38,26 +293,6 @@ namespace DwarfCorp.DwarfSprites
         public void RemoveLayer(String Type)
         {
             Layers.RemoveLayer(Type);
-        }
-
-        public LayeredCharacterSprite()
-        {
-        }
-
-        public LayeredCharacterSprite(ComponentManager manager, string name, Matrix localTransform) :
-                base(manager, name, localTransform)
-        {
-        }
-
-        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
-        {
-            base.Update(gameTime, chunks, camera);
-            Layers.Update(chunks.World.GraphicsDevice);
-        }
-
-        override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
-        {
-            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
         }
     }
 }

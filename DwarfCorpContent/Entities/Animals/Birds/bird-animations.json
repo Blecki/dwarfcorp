@@ -1,0 +1,56 @@
+[
+  {
+    "Name": "IdleFORWARD",
+    "Frames": [ "1 0 0" ]
+  },
+  {
+    "Name": "IdleLEFT",
+    "Frames": [ "1.3 0 1" ]
+  },
+  {
+    "Name": "IdleRIGHT",
+    "Frames": [ "1.3 0 2" ]
+  },
+  {
+    "Name": "IdleBACKWARD",
+    "Frames": [ "1.3 0 3" ]
+  },
+
+  {
+    "Name": "WalkingFORWARD",
+    "Frames": [ "0.15 0 0", "0.15 1 0" ]
+  },
+  {
+    "Name": "WalkingLEFT",
+    "Frames": [ "0.15 0 1", "0.15 1 1" ]
+  },
+  {
+    "Name": "WalkingRIGHT",
+    "Frames": [ "0.15 0 2", "0.15 1 2" ]
+  },
+  {
+    "Name": "WalkingBACKWARD",
+    "Frames": [ "0.15 0 3", "0.15 1 3" ]
+  },
+
+  {
+    "Name": "FlyingFORWARD",
+    "Frames": [ "0.15 0 4", "0.15 1 4", "0.15 2 4" ],
+    "Loops": false
+  },
+  {
+    "Name": "FlyingLEFT",
+    "Frames": [ "0.15 0 5", "0.15 1 5", "0.15 2 5" ],
+    "Loops": false
+  },
+  {
+    "Name": "FlyingRIGHT",
+    "Frames": [ "0.15 0 6", "0.15 1 6", "0.15 2 6" ],
+    "Loops": false
+  },
+  {
+    "Name": "FlyingBACKWARD",
+    "Frames": [ "0.15 0 7", "0.15 1 7", "0.15 2 7" ],
+    "Loops": false
+  },
+]

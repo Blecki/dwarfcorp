@@ -147,7 +147,7 @@ namespace DwarfCorp
                 effect.World = GetWorldMatrix(camera);
                 var tex = AnimPlayer.GetTexture();
                 if (tex != null && !tex.IsDisposed && !tex.GraphicsDevice.IsDisposed)
-                    effect.MainTexture = AnimPlayer.GetTexture();
+                    effect.MainTexture = tex;
                 ApplyTintingToEffect(effect);
 
                 if (DrawSilhouette)

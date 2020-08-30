@@ -188,8 +188,6 @@
     <Compile Include="Components\AI\Creature-Death.cs" />
     <Compile Include="Components\AI\StatusEffects\MotivationStatusEffect.cs" />
     <Compile Include="Components\Graphics\ISprite.cs" />
-    <Compile Include="Components\Graphics\LayeredSprites\AnimatedSprite.cs" />
-    <Compile Include="Components\Graphics\LayeredSprites\CharacterSprite.cs" />
     <Compile Include="Components\Graphics\SpriteOrientation.cs" />
     <Compile Include="Components\Physics\PhysicsSystem.cs" />
     <Compile Include="Entities\Animals\Pumpking.cs" />

@@ -101,7 +101,7 @@ namespace DwarfCorp
 
         bool ISprite.HasAnimation(CharacterMode Mode, SpriteOrientation Orientation)
         {
-            return Animations.ContainsKey(Mode.ToString() + OrientationStrings[(int)Orientation]);
+            return Animations.ContainsKey(Mode.ToString() + SpriteOrientationHelper.OrientationStrings[(int)Orientation]);
         }
 
         void ISprite.SetCurrentAnimation(string name, bool Play)

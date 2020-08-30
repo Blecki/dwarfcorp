@@ -16,13 +16,7 @@ namespace DwarfCorp
     /// </summary>
     public class OrientedAnimatedSprite : AnimatedSprite
     {
-        protected static string[] OrientationStrings =
-        {
-            "RIGHT",
-            "LEFT",
-            "FORWARD",
-            "BACKWARD"
-        };
+        
 
         public SpriteOrientation CurrentOrientation { get; set; }
 
@@ -33,7 +27,7 @@ namespace DwarfCorp
             //if (currentMode != name || Play)
             //{
                 currentMode = name;
-                var s = currentMode + OrientationStrings[(int)CurrentOrientation];
+                var s = currentMode + SpriteOrientationHelper.OrientationStrings[(int)CurrentOrientation];
             if (Animations.ContainsKey(s))
                 SetCurrentAnimation(Animations[s], Play);
             //        AnimPlayer.ChangeAnimation(Animations[s], AnimationPlayer.ChangeAnimationOptions.NoStateChange);
@@ -54,36 +48,14 @@ namespace DwarfCorp
         override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
-            CalculateCurrentOrientation(camera);
+            CurrentOrientation = SpriteOrientationHelper.CalculateSpriteOrientation(camera, GlobalTransform);
 
-
-            var s = currentMode + OrientationStrings[(int)CurrentOrientation];
+            var s = currentMode + SpriteOrientationHelper.OrientationStrings[(int)CurrentOrientation];
             if (Animations.ContainsKey(s))
             {
                 AnimPlayer.ChangeAnimation(Animations[s], AnimationPlayer.ChangeAnimationOptions.Play);
                 AnimPlayer.Update(gameTime, true);
             }
         }
-
-        public void CalculateCurrentOrientation(Camera camera)
-        {
-            float xComponent = Vector3.Dot(camera.ViewMatrix.Forward, GlobalTransform.Left);
-            float yComponent = Vector3.Dot(camera.ViewMatrix.Forward, GlobalTransform.Forward);
-
-            // Todo: There should be a way to do this without trig.
-            float angle = (float) Math.Atan2(yComponent, xComponent);
-
-            if (angle > 3.0f * MathHelper.PiOver4) // 135 degrees
-                CurrentOrientation = SpriteOrientation.Right;
-            else if (angle > MathHelper.PiOver4) // 45 degrees
-                CurrentOrientation = SpriteOrientation.Backward;
-            else if (angle > -MathHelper.PiOver4) // -45 degrees
-                CurrentOrientation = SpriteOrientation.Left;
-            else if (angle > -3.0f * MathHelper.PiOver4) // -135 degrees
-                CurrentOrientation = SpriteOrientation.Forward;
-            else
-                CurrentOrientation = SpriteOrientation.Right;
-        }
     }
-
 }

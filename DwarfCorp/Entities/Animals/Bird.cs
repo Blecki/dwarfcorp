@@ -69,11 +69,8 @@ namespace DwarfCorp
             // The bird can hold one item at a time in its inventory
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
-            // The bird is flammable, and can die when exposed to fire.
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
-            // Tag the physics component with some information 
-            // that can be used later
             Physics.Tags.Add("Bird");
             Physics.Tags.Add("Animal");
             Physics.Tags.Add("DomesticAnimal");
@@ -86,7 +83,17 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            CreateSprite(SpriteAsset + "_animation.json", Manager, 0.35f);
+            var spriteSheet = new SpriteSheet(SpriteAsset, 24, 16);
+            var sprite = new CharacterSprite(manager, "Sprite", Matrix.CreateTranslation(0, 0.35f, 0));
+
+            var anims = Library.LoadNewLayeredAnimationFormat("Entities\\Animals\\Birds\\bird-animations.json");
+            foreach (var anim in anims)
+                anim.Value.SpriteSheet = spriteSheet;
+            sprite.SetAnimations(anims);
+
+            Physics.AddChild(sprite);
+            sprite.SetFlag(Flag.ShouldSerialize, false);
+
             Physics.AddChild(Shadow.Create(0.3f, manager));
 
             NoiseMaker = new NoiseMaker();
