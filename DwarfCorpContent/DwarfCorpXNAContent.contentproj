@@ -1997,6 +1997,10 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
+    <None Include="Entities\Animals\fowl-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>fowl-animations</Name>
+    </None>
     <None Include="Entities\Animals\Birds\bird-animations.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>bird-animations</Name>
@@ -2117,6 +2121,14 @@
     <None Include="Entities\Animals\Snake\pumpking-animations.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>pumpking-animations</Name>
+    </None>
+    <None Include="Entities\Animals\bat-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bat-animations</Name>
+    </None>
+    <None Include="Entities\Animals\Spider\spider-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>spider-animations</Name>
     </None>
     <None Include="Entities\Dwarf\Layers\layer-types.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -3350,14 +3362,6 @@
       <Name>mixer</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Entities\Animals\turkey_animation.json">
-      <Name>turkey_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Entities\Animals\penguin_animation.json">
-      <Name>penguin_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Entities\Kobold\kobold_animation.json">
       <Name>kobold_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -3445,10 +3449,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <None Include="Entities\Animals\chicken_animation.json">
-      <Name>chicken_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <Compile Include="Entities\Golems\mudgolem.png">
       <Name>mudgolem</Name>
       <Importer>TextureImporter</Importer>
@@ -3523,14 +3523,6 @@
     </None>
     <None Include="Entities\Animals\scorpion_animation.json">
       <Name>scorpion_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Entities\Animals\bat_animation.json">
-      <Name>bat_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Entities\Animals\Spider\spider_animation.json">
-      <Name>spider_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="credits.json">
