@@ -58,7 +58,16 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            CreateSprite(ContentPaths.Entities.Kobold.kobold_animations, manager, 0.15f);
+            var spriteSheet = new SpriteSheet("Entities\\Kobold\\kobold", 40, 40);
+            var sprite = new CharacterSprite(manager, "Sprite", Matrix.CreateTranslation(0, 0.15f, 0));
+            sprite.SpriteSheet = spriteSheet;
+
+            var anims = Library.LoadNewLayeredAnimationFormat("Entities\\Kobold\\kobold-animations.json");
+            sprite.SetAnimations(anims);
+
+            Physics.AddChild(sprite);
+            sprite.SetFlag(Flag.ShouldSerialize, false);
+
             Physics.AddChild(Shadow.Create(0.75f, manager));
             Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 5))).SetFlag(Flag.ShouldSerialize, false);
 

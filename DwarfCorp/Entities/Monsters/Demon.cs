@@ -63,7 +63,18 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            CreateSprite(ContentPaths.Entities.Demon.demon_animations, manager, 0.15f);
+            var spriteSheet = new SpriteSheet("Entities\\Demon\\demon", 48, 40);
+            var sprite = new CharacterSprite(manager, "Sprite", Matrix.CreateTranslation(0, 0.15f, 0));
+
+            var anims = Library.LoadNewLayeredAnimationFormat("Entities\\Demon\\demon-animations.json");
+            foreach (var anim in anims)
+                anim.Value.SpriteSheet = spriteSheet;
+            sprite.SetAnimations(anims);
+
+            Physics.AddChild(sprite);
+            sprite.SetFlag(Flag.ShouldSerialize, false);
+
+
             Physics.AddChild(Shadow.Create(0.75f, manager));
             Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 1))).SetFlag(Flag.ShouldSerialize, false);
 

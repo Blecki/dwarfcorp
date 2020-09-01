@@ -67,7 +67,16 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            CreateSprite(ContentPaths.Entities.Elf.Sprites.elf_animation, manager, 0.15f);
+            var spriteSheet = new SpriteSheet("Entities\\Elf\\elf", 40, 48);
+            var sprite = new CharacterSprite(manager, "Sprite", Matrix.CreateTranslation(0, 0.15f, 0));
+            sprite.SpriteSheet = spriteSheet;
+
+            var anims = Library.LoadNewLayeredAnimationFormat("Entities\\Elf\\elf-animations.json");
+            sprite.SetAnimations(anims);
+
+            Physics.AddChild(sprite);
+            sprite.SetFlag(Flag.ShouldSerialize, false);
+
             Physics.AddChild(Shadow.Create(0.75f, manager));
             Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 1, 1))).SetFlag(Flag.ShouldSerialize, false);
 

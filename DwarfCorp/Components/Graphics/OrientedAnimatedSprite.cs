@@ -47,7 +47,6 @@ namespace DwarfCorp
 
         override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
-            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
             CurrentOrientation = SpriteOrientationHelper.CalculateSpriteOrientation(camera, GlobalTransform);
 
             var s = currentMode + SpriteOrientationHelper.OrientationStrings[(int)CurrentOrientation];
@@ -56,6 +55,8 @@ namespace DwarfCorp
                 AnimPlayer.ChangeAnimation(Animations[s], AnimationPlayer.ChangeAnimationOptions.Play);
                 AnimPlayer.Update(gameTime, true);
             }
+
+            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
         }
     }
 }

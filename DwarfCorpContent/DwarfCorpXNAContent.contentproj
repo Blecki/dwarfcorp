@@ -649,13 +649,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entities\Skeleton\necro.png">
-      <Name>necro</Name>
+    <Compile Include="Entities\Skeleton\necromancer.png">
+      <Name>necromancer</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Entities\Skeleton\skele.png">
-      <Name>skele</Name>
+    <Compile Include="Entities\Skeleton\skeleton.png">
+      <Name>skeleton</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -799,12 +799,7 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
-    <Compile Include="Entities\Elf\Sprites\elf-bow.png">
-      <Name>elf-bow</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Entities\Elf\Sprites\elf.png">
+    <Compile Include="Entities\Elf\elf.png">
       <Name>elf</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
@@ -1997,6 +1992,10 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
+    <None Include="Entities\Animals\scorpion-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>scorpion-animations</Name>
+    </None>
     <None Include="Entities\Animals\fowl-animations.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>fowl-animations</Name>
@@ -2130,6 +2129,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>spider-animations</Name>
     </None>
+    <None Include="Entities\Demon\demon-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>demon-animations</Name>
+    </None>
     <None Include="Entities\Dwarf\Layers\layer-types.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>layer-types</Name>
@@ -2154,9 +2157,25 @@
       <Name>test</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Entities\Elf\elf-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>elf-animations</Name>
+    </None>
     <None Include="Entities\Furniture\sm_anvil.obj">
       <Name>sm_anvil</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Entities\Gremlin\gremlin-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>gremlin-animations</Name>
+    </None>
+    <None Include="Entities\Kobold\kobold-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>kobold-animations</Name>
+    </None>
+    <None Include="Entities\Moleman\moleman-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>moleman-animations</Name>
     </None>
     <None Include="Entities\Rail\sm_minecart.obj">
       <Name>sm_minecart</Name>
@@ -2165,6 +2184,14 @@
     <None Include="category-icons.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>category-icons</Name>
+    </None>
+    <None Include="Entities\Skeleton\skeleton-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>skeleton-animations</Name>
+    </None>
+    <None Include="Entities\Skeleton\necromancer-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>necromancer-animations</Name>
     </None>
     <None Include="World\Biomes\Wetlands.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -3083,11 +3110,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Entities\Skeleton\necro-summon.png">
-      <Name>necro-summon</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="newgui\font-10px.bmp">
       <Name>font-10px</Name>
       <Importer>TextureImporter</Importer>
@@ -3222,8 +3244,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Entities\Animals\turkey.png">
-      <Name>turkey</Name>
+    <Compile Include="Entities\Animals\Turkey.png">
+      <Name>Turkey</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -3232,8 +3254,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Entities\Animals\penguin.png">
-      <Name>penguin</Name>
+    <Compile Include="Entities\Animals\Penguin.png">
+      <Name>Penguin</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -3362,10 +3384,6 @@
       <Name>mixer</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Entities\Kobold\kobold_animation.json">
-      <Name>kobold_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Entities\Dwarf\Sprites\crafter_minecart.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>crafter_minecart</Name>
@@ -3385,10 +3403,6 @@
     <None Include="Entities\Dwarf\Sprites\wizard_minecart.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>wizard_minecart</Name>
-    </None>
-    <None Include="Entities\Gremlin\gremlin_animation.json">
-      <Name>gremlin_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Entities\Rail\rail-patterns.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -3463,10 +3477,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <None Include="Entities\Moleman\moleman_animation.json">
-      <Name>moleman_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Entities\Goblin\goblin_classes.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>goblin_classes</Name>
@@ -3491,38 +3501,6 @@
     </Compile>
     <None Include="Entities\Golems\mudgolem_animation.json">
       <Name>mudgolem_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Entities\Skeleton\skele_animation.json">
-      <Name>skele_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Entities\Skeleton\necro_animation.json">
-      <Name>necro_animation</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Entities\Skeleton\skeleton.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>skeleton</Name>
-    </None>
-    <None Include="Entities\Skeleton\skeleton_classes.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>skeleton_classes</Name>
-    </None>
-    <None Include="Entities\Moleman\moleman.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>moleman</Name>
-    </None>
-    <None Include="Entities\Moleman\moleman_classes.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>moleman_classes</Name>
-    </None>
-    <None Include="Entities\Demon\demon_animation.json">
-      <Name>demon_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Entities\Animals\scorpion_animation.json">
-      <Name>scorpion_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="credits.json">
@@ -4497,10 +4475,6 @@
       <Name>wizard_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Entities\Elf\Sprites\elf_animation.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>elf_animation</Name>
-    </None>
     <None Include="Entities\Dwarf\Sprites\fairy_animation.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>fairy_animation</Name>
@@ -4694,8 +4668,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entities\Animals\chicken.png">
-      <Name>chicken</Name>
+    <Compile Include="Entities\Animals\Chicken.png">
+      <Name>Chicken</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

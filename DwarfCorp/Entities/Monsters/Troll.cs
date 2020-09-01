@@ -64,7 +64,13 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            CreateSprite(ContentPaths.Entities.Troll.troll_animation, manager, 0.15f);
+            var spriteSheet = new SpriteSheet("Entities\\Troll\\troll", 32, 40);
+            var sprite = new CharacterSprite(manager, "Sprite", Matrix.CreateTranslation(0, 0.15f, 0));
+            sprite.SpriteSheet = spriteSheet;
+
+            var anims = Library.LoadNewLayeredAnimationFormat("Entities\\Troll\\troll-animations.json");
+            sprite.SetAnimations(anims);
+
             Physics.AddChild(Shadow.Create(0.75f, manager));
             Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 1, 3))).SetFlag(Flag.ShouldSerialize, false);
 

@@ -33,6 +33,7 @@ namespace DwarfCorp
         private Vector3 prevDistortion = Vector3.Zero;
 
         private NewInstanceData InstanceData;
+        [JsonIgnore] public SpriteSheet SpriteSheet = null;
 
         public enum OrientMode
         {
@@ -112,7 +113,15 @@ namespace DwarfCorp
             {
                 InstanceData.VertexColorTint.A = 256 / 2;
             }
-            AnimPlayer.UpdateInstance(InstanceData);
+            if (SpriteSheet == null)
+                AnimPlayer.UpdateInstance(InstanceData);
+            else
+            {
+                var sheet = SpriteSheet;
+                var frame = AnimPlayer.GetCurrentAnimation().Frames[AnimPlayer.CurrentFrame];
+                InstanceData.SpriteBounds = new Rectangle(sheet.FrameWidth * frame.X, sheet.FrameHeight * frame.Y, sheet.FrameWidth, sheet.FrameHeight);
+                InstanceData.TextureAsset = sheet.AssetName;
+            }
         }
 
         override public void Render(DwarfTime gameTime,
@@ -189,10 +198,8 @@ namespace DwarfCorp
             var currDistortion = VertexNoise.GetNoiseVectorFromRepeatingTexture(GlobalTransform.Translation);
             var distortion = currDistortion * 0.1f + prevDistortion * 0.9f;
             prevDistortion = distortion;
-            var frameSize = AnimPlayer.GetCurrentFrameSize();
-            var offsets = AnimPlayer.GetCurrentAnimation().YOffset;
-            float verticalOffset = offsets == null || offsets.Count == 0 ? 0.0f : offsets[Math.Min(AnimPlayer.CurrentFrame, offsets.Count - 1)] * 1.0f / 32.0f;
-            var pos = GlobalTransform.Translation + Vector3.Up * verticalOffset;
+            var frameSize = SpriteSheet == null ? AnimPlayer.GetCurrentFrameSize() : new Vector2(SpriteSheet.FrameWidth / 32.0f, SpriteSheet.FrameHeight / 32.0f);
+            var pos = GlobalTransform.Translation;
             switch (OrientationType)
             {
                 case OrientMode.Spherical:
