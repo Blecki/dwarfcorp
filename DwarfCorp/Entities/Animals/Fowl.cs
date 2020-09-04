@@ -86,7 +86,7 @@ namespace DwarfCorp
             var sprite = new CharacterSprite(manager, "Sprite", Matrix.CreateTranslation(0, 0.5f, 0));
             sprite.SpriteSheet = spriteSheet;
 
-            var anims = Library.LoadNewLayeredAnimationFormat("Entities\\Animals\\fowl-animations.json");
+            var anims = Library.LoadNewLayeredAnimationFormat("Entities\\Animals\\" + Asset + "-animations.json");
             sprite.SetAnimations(anims);
 
             Physics.AddChild(sprite);

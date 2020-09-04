@@ -214,6 +214,8 @@
     <Compile Include="GameStates\Play\TaskListPanel.cs" />
     <Compile Include="GameStates\Play\ZonePanel\DraggedResourceIcon.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ResourceGuiGraphicIcon.cs" />
+    <Compile Include="Graphics\Animation\AnimationDescriptor.cs" />
+    <Compile Include="Graphics\Animation\AnimationFrameConverter.cs" />
     <Compile Include="Graphics\Cameras\CameraPositionSnapshot.cs" />
     <Compile Include="Components\Physics\StaticAABBTest.cs" />
     <Compile Include="Graphics\Cameras\TrailerCameraController.cs" />
@@ -597,7 +599,6 @@
     <Compile Include="World\Economy\Factions\Trading\PlayerTradeEntity.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfPalette.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfLayer.cs" />
-    <Compile Include="Components\Graphics\LayeredSprites\DwarfAnimationProxy.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfLayerStack.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfLayerLibrary.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfCharacterSprite.cs" />
@@ -681,8 +682,6 @@
     <Compile Include="World\Events\SpawnTradeEnvoyEvent.cs" />
     <Compile Include="World\Events\PlagueEvent.cs" />
     <Compile Include="World\Events\TimedIndicatorWidget.cs" />
-    <Compile Include="Graphics\Animation\NewAnimationDescriptor.cs" />
-    <Compile Include="Graphics\Animation\NewAnimationFrameConverter.cs" />
     <Compile Include="Graphics\Drawing\TriangleCache.cs" />
     <Compile Include="Graphics\Instancing\InstanceGroup.cs" />
     <Compile Include="Graphics\Instancing\TiledInstanceGroup.cs" />
@@ -742,10 +741,6 @@
     <Compile Include="Entities\Projectiles\MudProjectile.cs" />
     <Compile Include="Entities\Projectiles\WebProjectile.cs" />
     <Compile Include="Graphics\Animation\AnimationPlayer.cs" />
-    <Compile Include="Graphics\Animation\CompositeAnimation.cs" />
-    <Compile Include="Graphics\Animation\CompositeCell.cs" />
-    <Compile Include="Graphics\Animation\CompositeFrame.cs" />
-    <Compile Include="Graphics\Animation\CompositeLibrary.cs" />
     <Compile Include="Graphics\Animation\AnimationLibrary.cs" />
     <Compile Include="Gui\Widgets\CollapsableStack.cs" />
     <Compile Include="Gui\Widgets\DesignationFilter.cs" />
@@ -853,8 +848,6 @@
     <Compile Include="Graphics\Primitives\BatchBillboardPrimitive.cs" />
     <Compile Include="Graphics\Primitives\BillboardPrimitive.cs" />
     <Compile Include="Graphics\Primitives\BoxPrimitive.cs" />
-    <Compile Include="Graphics\Animation\Composite.cs" />
-    <Compile Include="Graphics\Animation\CompositeAnimationDescriptor.cs" />
     <Compile Include="Graphics\Primitives\ExtendedVertex.cs" />
     <Compile Include="Graphics\Primitives\GeometricPrimitive.cs" />
     <Compile Include="Graphics\Primitives\LiquidPrimitive.cs" />

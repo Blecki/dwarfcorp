@@ -18,8 +18,7 @@ namespace DwarfCorp
         public GameComponent Target { get; set; }
         public float DamageRadius { get; set; }
 
-        [JsonIgnore]
-        public Animation HitAnimation { get; set; }
+        [JsonIgnore] public Library.SimpleAnimationTuple HitAnimation { get; set; }
 
         public Projectile()
         {
@@ -50,11 +49,12 @@ namespace DwarfCorp
                 Sprite = AddChild(new AnimatedSprite(Manager, "Sprite", Matrix.CreateRotationY((float)Math.PI * 0.5f))
                 {
                     OrientationType = AnimatedSprite.OrientMode.Fixed
-                }) as AnimatedSprite;
+                }) as Tinter;
 
                 var anim = Library.CreateSimpleAnimation(asset);
-                anim.Loops = true;
-                (Sprite as AnimatedSprite).AddAnimation(anim);
+                anim.Animation.Loops = true;
+                (Sprite as AnimatedSprite).AddAnimation(anim.Animation);
+                (Sprite as AnimatedSprite).SpriteSheet = anim.SpriteSheet;
 
                 if (singleSprite)
                 {
@@ -89,8 +89,9 @@ namespace DwarfCorp
                     }) as AnimatedSprite;
 
                     var anim = Library.CreateSimpleAnimation(asset);
-                    anim.Loops = true;
-                    (Sprite2 as AnimatedSprite).AddAnimation(anim);
+                    anim.Animation.Loops = true;
+                    (Sprite2 as AnimatedSprite).AddAnimation(anim.Animation);
+                    (Sprite2 as AnimatedSprite).SpriteSheet = anim.SpriteSheet;
                 }
                 else
                 {
@@ -158,7 +159,8 @@ namespace DwarfCorp
                 if (Sprite is AnimatedSprite)
                 {
                     (Sprite as AnimatedSprite).AnimPlayer.Reset();
-                    (Sprite as AnimatedSprite).AnimPlayer.Play(HitAnimation);
+                    (Sprite as AnimatedSprite).AnimPlayer.Play(HitAnimation.Animation);
+                    (Sprite as AnimatedSprite).SpriteSheet = HitAnimation.SpriteSheet;
                 }
 
                 if (Target != null)
@@ -167,8 +169,8 @@ namespace DwarfCorp
                         Manager.World.Renderer.Camera.ProjectionMatrix, Manager.World.Renderer.Camera.ViewMatrix, Matrix.Identity);
                     Vector3 camvelocity1 = GameState.Game.GraphicsDevice.Viewport.Project(Position + Velocity,
                         Manager.World.Renderer.Camera.ProjectionMatrix, Manager.World.Renderer.Camera.ViewMatrix, Matrix.Identity);
-                    IndicatorManager.DrawIndicator(HitAnimation, Target.Position,
-                        HitAnimation.FrameHZ*HitAnimation.Frames.Count + 1.0f, 1.0f, Vector2.Zero, Color.White, camvelocity1.X - camvelocity0.X > 0);
+                    IndicatorManager.DrawIndicator(HitAnimation.SpriteSheet, HitAnimation.Animation, Target.Position,
+                        HitAnimation.Animation.FrameHZ*HitAnimation.Animation.Frames.Count + 1.0f, 1.0f, Vector2.Zero, Color.White, camvelocity1.X - camvelocity0.X > 0);
                 }
             }
             base.Die();

@@ -13,8 +13,8 @@ namespace DwarfCorp
         private NamedImageFrame Soil;
         private NamedImageFrame Grass;
         private Texture2D Balloon;
-        private Texture2D Dwarf;
-        private List<ImageFrame> DwarfFrames;
+        private DwarfSprites.LayerStack Dwarf;
+        private List<Rectangle> DwarfFrames;
         private Vector2 DwarfPosition = new Vector2(-0.6f, 8.0f);
         private float DwarfVelocity = 0.0f;
         private float ScrollSpeed = 6.0f;
@@ -22,8 +22,8 @@ namespace DwarfCorp
         private Point TileSize = new Point(64, 64);
         private Random Random = new Random();
         private Point WorldSize = new Point(1, 1);
-        private NamedImageFrame UpFrame;
-        private NamedImageFrame DownFrame;
+        private Rectangle UpFrame;
+        private Rectangle DownFrame;
         private class Tile
         {
             public bool Solid = false;
@@ -42,30 +42,32 @@ namespace DwarfCorp
             WorldSize = new Point((game.GraphicsDevice.Viewport.Width / TileSize.X) + 4, 10);
             World = new Tile[WorldSize.X, WorldSize.Y];
 
-            String[] sheets =
+            var loadout = Library.EnumerateLoadouts().SelectRandom();
+            var dwarfStats = new CreatureStats("Dwarf", "Dwarf", loadout)
             {
-                ContentPaths.Entities.Dwarf.Sprites.soldier, ContentPaths.Entities.Dwarf.Sprites.worker,
-                ContentPaths.Entities.Dwarf.Sprites.crafter, ContentPaths.Entities.Dwarf.Sprites.wizard,
-                ContentPaths.Entities.Dwarf.Sprites.musket
+                Gender = Gender.Nonbinary,
+                RandomSeed = Random.Next()
             };
+
+            Dwarf = DwarfSprites.DwarfBuilder.CreateDwarfLayerStack(dwarfStats, loadout);
 
             Texture2D tiles = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
             Balloon = AssetManager.GetContentTexture(ContentPaths.Entities.Balloon.Sprites.balloon);
-            Dwarf = AssetManager.GetContentTexture(Datastructures.SelectRandom(sheets));
 
             Soil = new NamedImageFrame(ContentPaths.Terrain.terrain_tiles, 32, 2, 0);
             Grass = new NamedImageFrame(ContentPaths.Terrain.terrain_tiles, 32, 3, 0);
 
-            DwarfFrames = new List<ImageFrame>(new ImageFrame[]
+            DwarfFrames = new List<Rectangle>
             {
-                new ImageFrame(Dwarf, new Rectangle(0, 80, 32, 40)),
-                new ImageFrame(Dwarf, new Rectangle(32, 80, 32, 40)),
-                new ImageFrame(Dwarf, new Rectangle(64, 80, 32, 40)),
-                new ImageFrame(Dwarf, new Rectangle(96, 80, 32, 40)),
-            });
+                new Rectangle(0, 80, 48, 40),
+                new Rectangle(48, 80, 48, 40),
+                new Rectangle(96, 80, 48, 40),
+                new Rectangle(144, 80, 48, 40)
+            };
 
-            UpFrame = new NamedImageFrame(AssetManager.GetContentTexture(Datastructures.SelectRandom(sheets)), new Rectangle(0, 239, 32, 40));
-            DownFrame = new NamedImageFrame(AssetManager.GetContentTexture(Datastructures.SelectRandom(sheets)), new Rectangle(32, 239, 32, 40));
+            UpFrame = new Rectangle(0, 239, 48, 40);
+            DownFrame = new Rectangle(48, 239, 48, 40);
+
             for (var x = 0; x < WorldSize.X; ++x)
                 World[x, 0] = new Tile
                 {
@@ -160,13 +162,15 @@ namespace DwarfCorp
                 return;
             }
 
-            if (Balloon.IsDisposed || Dwarf.IsDisposed)
+            if (Balloon.IsDisposed)
             {
                 Create(GameStates.GameState.Game);
             }
 
             try
             {
+                Dwarf.Update(graphics);
+                
                 sprites.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp,
                     DepthStencilState.Default, RasterizerState.CullNone);
 
@@ -183,19 +187,19 @@ namespace DwarfCorp
                     (float) Math.Sin(time.TotalRealTime.TotalSeconds)*64), null, Color.White, 0.0f, new Vector2(0, 0), 2.0f, SpriteEffects.None, 0.0f);
 
                 var dwarfFrame = (int) (time.TotalRealTime.TotalSeconds*16)%4;
-                var tile = DwarfFrames[dwarfFrame].SourceRect;
+                var tile = DwarfFrames[dwarfFrame];
                 if (GetTileUnderFoot(0.05f) == null)
                 {
                     if (DwarfVelocity > 0.5f)
                     {
-                        tile = UpFrame.SourceRect;
+                        tile = UpFrame;
                     }
                     else if (DwarfVelocity < -0.5f)
                     {
-                        tile = DownFrame.SourceRect;
+                        tile = DownFrame;
                     }
                 }
-                sprites.Draw(Dwarf,
+                sprites.Draw(Dwarf.GetCompositeTexture(),
                     new Rectangle(
                         (int) (DwarfPosition.X*TileSize.X) - (TileSize.X/2),
                         graphics.Viewport.Height - (int) (DwarfPosition.Y*TileSize.Y) - (int) (tile.Height * 2),

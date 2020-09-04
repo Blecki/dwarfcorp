@@ -62,7 +62,16 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            CreateSprite(ContentPaths.Entities.Dwarf.Sprites.fairy_animation, manager, 0.15f);
+            var spriteSheet = new SpriteSheet("Entities\\fairy", 32, 32);
+            var sprite = new CharacterSprite(manager, "Sprite", Matrix.CreateTranslation(0, 0.15f, 0));
+            sprite.SpriteSheet = spriteSheet;
+
+            var anims = Library.LoadNewLayeredAnimationFormat("Entities\\fairy-animations.json");
+            sprite.SetAnimations(anims);
+
+            Physics.AddChild(sprite);
+            sprite.SetFlag(Flag.ShouldSerialize, false);
+
             if (Sprite is Tinter tinter)
             {
                 tinter.AddChild(new Bobber(Manager, 0.25f, 3.0f, MathFunctions.Rand(), tinter.LocalTransform.Translation.Y)).SetFlag(Flag.ShouldSerialize, false);

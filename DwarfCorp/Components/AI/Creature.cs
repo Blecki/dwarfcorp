@@ -461,23 +461,5 @@ namespace DwarfCorp
             else
                 AI.AssignTask(task);
         }
-
-        protected CharacterSprite CreateSprite(string animations, ComponentManager manager, float VerticalOffset)
-        {
-            if (Physics == null)
-            {
-                this.Delete();
-                return null;
-            }
-            
-            var sprite = new CharacterSprite(manager, "Sprite", Matrix.CreateTranslation(0, VerticalOffset, 0));
-
-            Physics.AddChild(sprite);
-            sprite.SetAnimations(Library.LoadCompositeAnimationSet(animations, Name));
-            sprite.SetFlag(Flag.ShouldSerialize, false);
-
-            return sprite;
-        }
-
     }
 }

@@ -51,7 +51,7 @@ namespace DwarfCorp
                     performer.Manager.World.ParticleManager.Trigger(Weapon.HitParticles, DigAct.Voxel.WorldPosition, Color.White, 5);
 
                 if (Weapon.HitAnimation != null)
-                    IndicatorManager.DrawIndicator(Weapon.HitAnimation, DigAct.Voxel.WorldPosition + Vector3.One * 0.5f,
+                    IndicatorManager.DrawIndicator(Weapon.HitAnimation.SpriteSheet, Weapon.HitAnimation.Animation, DigAct.Voxel.WorldPosition + Vector3.One * 0.5f,
                         10.0f, 1.0f, MathFunctions.RandVector2Circle() * 10, Weapon.HitColor, MathFunctions.Rand() > 0.5f);
 
                 yield return Act.Status.Success;
@@ -87,7 +87,7 @@ namespace DwarfCorp
 
                 if (Weapon.HitAnimation != null && !HasTriggered)
                 {
-                    IndicatorManager.DrawIndicator(Weapon.HitAnimation, pos, 10.0f, 1.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
+                    IndicatorManager.DrawIndicator(Weapon.HitAnimation.SpriteSheet, Weapon.HitAnimation.Animation, pos, 10.0f, 1.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
                     PlayNoise(pos);
                 }
             }
@@ -142,7 +142,7 @@ namespace DwarfCorp
             }
 
             if (Weapon.HitAnimation != null)
-                IndicatorManager.DrawIndicator(Weapon.HitAnimation, other.BoundingBox.Center(), 10.0f, 1.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
+                IndicatorManager.DrawIndicator(Weapon.HitAnimation.SpriteSheet, Weapon.HitAnimation.Animation, other.BoundingBox.Center(), 10.0f, 1.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
 
             Physics physics = other as Physics;
 

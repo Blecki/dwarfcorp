@@ -139,8 +139,7 @@ namespace DwarfCorp
             float Width,
             float Height,
             Color Color,
-            Color VertColor,
-            bool Flipped)
+            Color VertColor)
         {
             var texture = Sheet.GetTexture();
             if (texture == null) return;

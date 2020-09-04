@@ -58,8 +58,11 @@ namespace DwarfCorp
                     performer.Manager.World.ParticleManager.Trigger(tool.Tool_AttackHitParticles, DigAct.Voxel.WorldPosition, Color.White, 5);
 
                 if (!String.IsNullOrEmpty(tool.Tool_AttackHitEffect))
-                    IndicatorManager.DrawIndicator(Library.CreateSimpleAnimation(tool.Tool_AttackHitEffect), DigAct.Voxel.WorldPosition + Vector3.One * 0.5f,
+                {
+                    var anim = Library.CreateSimpleAnimation(tool.Tool_AttackHitEffect);
+                    IndicatorManager.DrawIndicator(anim.SpriteSheet, anim.Animation, DigAct.Voxel.WorldPosition + Vector3.One * 0.5f,
                         10.0f, 1.0f, MathFunctions.RandVector2Circle() * 10, tool.Tool_AttackHitColor, MathFunctions.Rand() > 0.5f);
+                }
 
                 yield return Act.Status.Success;
                 yield break;

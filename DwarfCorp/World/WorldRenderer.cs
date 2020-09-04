@@ -297,9 +297,6 @@ namespace DwarfCorp
             DefaultShader.FogColor = new Color(0.32f * x, 0.58f * x, 0.9f * x);
             DefaultShader.LightPositions = LightPositions;
 
-            CompositeLibrary.Render(GraphicsDevice);
-            CompositeLibrary.Update();
-
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
 
@@ -488,15 +485,6 @@ namespace DwarfCorp
                 catch (Exception exception)
                 {
                     DwarfGame.SpriteBatch = new SpriteBatch(GraphicsDevice);
-                }
-            }
-
-            if (Debugger.Switches.DrawComposites)
-            {
-                Vector2 offset = Vector2.Zero;
-                foreach (var composite in CompositeLibrary.Composites)
-                {
-                    offset = composite.Value.DebugDraw(DwarfGame.SpriteBatch, (int)offset.X, (int)offset.Y);
                 }
             }
 

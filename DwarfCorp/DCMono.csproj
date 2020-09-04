@@ -151,8 +151,8 @@
     <Compile Include="Components\Graphics\CharacterSprite.cs" />
     <Compile Include="Components\Graphics\Follower.cs" />
     <Compile Include="Components\Graphics\InstanceMesh.cs" />
+    <Compile Include="Components\Graphics\ISprite.cs" />
     <Compile Include="Components\Graphics\LayeredSimpleSprite.cs" />
-    <Compile Include="Components\Graphics\LayeredSprites\DwarfAnimationProxy.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfBuilder.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfCharacterSprite.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfLayer.cs" />
@@ -169,6 +169,7 @@
     <Compile Include="Components\Graphics\SelectionCircle.cs" />
     <Compile Include="Components\Graphics\Shadow.cs" />
     <Compile Include="Components\Graphics\SimpleSprite.cs" />
+    <Compile Include="Components\Graphics\SpriteOrientation.cs" />
     <Compile Include="Components\Graphics\Tinter.cs" />
     <Compile Include="Components\GUI\MinimapIcon.cs" />
     <Compile Include="Components\IVoxelListener.cs" />
@@ -402,14 +403,8 @@
     <Compile Include="Graphics\Animation\Animation.cs" />
     <Compile Include="Graphics\Animation\AnimationLibrary.cs" />
     <Compile Include="Graphics\Animation\AnimationPlayer.cs" />
-    <Compile Include="Graphics\Animation\Composite.cs" />
-    <Compile Include="Graphics\Animation\CompositeAnimation.cs" />
-    <Compile Include="Graphics\Animation\CompositeAnimationDescriptor.cs" />
-    <Compile Include="Graphics\Animation\CompositeCell.cs" />
-    <Compile Include="Graphics\Animation\CompositeFrame.cs" />
-    <Compile Include="Graphics\Animation\CompositeLibrary.cs" />
-    <Compile Include="Graphics\Animation\NewAnimationDescriptor.cs" />
-    <Compile Include="Graphics\Animation\NewAnimationFrameConverter.cs" />
+    <Compile Include="Graphics\Animation\AnimationDescriptor.cs" />
+    <Compile Include="Graphics\Animation\AnimationFrameConverter.cs" />
     <Compile Include="Graphics\Cameras\Camera.cs" />
     <Compile Include="Graphics\Cameras\CameraPositionSnapshot.cs" />
     <Compile Include="Graphics\Cameras\OrbitCamera.cs" />

@@ -45,7 +45,7 @@ namespace DwarfCorp
                 new Point(3, 0)
             };
 
-            var forgeAnimation = Library.CreateAnimation(spriteSheet, frames, "ConveyorAnimation");
+            var forgeAnimation = Library.CreateAnimation(frames, "ConveyorAnimation");
             forgeAnimation.Loops = true;
 
             var sprite = AddChild(new AnimatedSprite(Manager, "sprite", Matrix.CreateRotationX((float)Math.PI * 0.5f) * Matrix.CreateTranslation(0.0f, -0.4f, 0.0f))
@@ -54,6 +54,7 @@ namespace DwarfCorp
             }) as AnimatedSprite;
 
             sprite.AddAnimation(forgeAnimation);
+            sprite.SpriteSheet = spriteSheet;
             sprite.AnimPlayer.Play(forgeAnimation);
             sprite.SetFlag(Flag.ShouldSerialize, false);
 

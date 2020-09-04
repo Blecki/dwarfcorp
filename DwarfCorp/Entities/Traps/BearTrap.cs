@@ -49,11 +49,12 @@ namespace DwarfCorp
             var spriteSheet = new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap, 32);
 
             var sprite = AddChild(new AnimatedSprite(Manager, "Sprite", Matrix.Identity)) as AnimatedSprite;
+            sprite.SpriteSheet = spriteSheet;
 
-            sprite.AddAnimation(Library.CreateAnimation(spriteSheet, new List<Point> { Point.Zero }, "BearTrapIdle"));
+            sprite.AddAnimation(Library.CreateAnimation(new List<Point> { Point.Zero }, "BearTrapIdle"));
 
             var sprung = Library.CreateAnimation
-                (spriteSheet, new List<Point>
+                (new List<Point>
                 {
                     new Point(0,1),
                     new Point(1,1),
@@ -64,6 +65,7 @@ namespace DwarfCorp
             sprung.FrameHZ = 6.6f;
 
             sprite.AddAnimation(sprung);
+            sprite.SpriteSheet = spriteSheet;
 
             sprite.SetFlag(Flag.ShouldSerialize, false);
             sprite.SetCurrentAnimation("BearTrapIdle", false);

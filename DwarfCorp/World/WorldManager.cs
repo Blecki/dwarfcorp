@@ -279,8 +279,8 @@ namespace DwarfCorp
                 {
                     if (m.GetRoot().GetComponent<SelectionCircle>().HasValue(out var selectionCircle))
                         selectionCircle.SetFlagRecursive(GameComponent.Flag.Visible, false);
-
-                    m.Creature.Sprite.SetDrawSilhouette(false);
+                    if (m.Creature.Sprite != null)
+                        m.Creature.Sprite.SetDrawSilhouette(false);
                 }
 
                 foreach (var creature in PersistentData.SelectedMinions)
@@ -358,11 +358,6 @@ namespace DwarfCorp
 
         public void Dispose()
         {
-            // Todo: Move this to the composite library.
-            foreach(var composite in CompositeLibrary.Composites)
-                composite.Value.Dispose();
-            CompositeLibrary.Composites.Clear();
-
             if (LoadingThread != null && LoadingThread.IsAlive)
                 LoadingThread.Abort();
         }

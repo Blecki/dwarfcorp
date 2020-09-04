@@ -744,51 +744,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entities\Dwarf\Sprites\crafter-hammer.png">
-      <Name>crafter-hammer</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Entities\Dwarf\Sprites\crafter.png">
-      <Name>crafter</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Entities\Dwarf\Sprites\soldier-axe.png">
-      <Name>soldier-axe</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Entities\Dwarf\Sprites\soldier-shield.png">
-      <Name>soldier-shield</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Entities\Dwarf\Sprites\soldier.png">
-      <Name>soldier</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Entities\Dwarf\Sprites\wizard-staff.png">
-      <Name>wizard-staff</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Entities\Dwarf\Sprites\wizard.png">
-      <Name>wizard</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Entities\Dwarf\Sprites\worker-pick.png">
-      <Name>worker-pick</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Entities\Dwarf\Sprites\worker.png">
-      <Name>worker</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="Audio\wurp.wav">
       <Name>wurp</Name>
       <Importer>WavImporter</Importer>
@@ -809,7 +764,7 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Entities\Dwarf\Sprites\fairy.png">
+    <Compile Include="Entities\fairy.png">
       <Name>fairy</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
@@ -842,28 +797,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Entities\Goblin\Sprites\gob-nosword.png">
-      <Name>gob-nosword</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Entities\Goblin\Sprites\gob-swordsonly.png">
-      <Name>gob-swordsonly</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Entities\Dwarf\Sprites\soldier-helmet.png">
-      <Name>soldier-helmet</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Entities\Dwarf\Sprites\wizard-hat.png">
-      <Name>wizard-hat</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Entities\Dwarf\Sprites\worker-helmet.png">
-      <Name>worker-helmet</Name>
+    <Compile Include="Entities\Goblin\goblin.png">
+      <Name>goblin</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -1992,13 +1927,21 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
+    <None Include="Entities\Animals\Penguin-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Penguin-animations</Name>
+    </None>
+    <None Include="Entities\Animals\Turkey-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Turkey-animations</Name>
+    </None>
     <None Include="Entities\Animals\scorpion-animations.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>scorpion-animations</Name>
     </None>
-    <None Include="Entities\Animals\fowl-animations.json">
+    <None Include="Entities\Animals\Chicken-animations.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>fowl-animations</Name>
+      <Name>Chicken-animations</Name>
     </None>
     <None Include="Entities\Animals\Birds\bird-animations.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2165,6 +2108,14 @@
       <Name>sm_anvil</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Entities\Golems\golem-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>golem-animations</Name>
+    </None>
+    <None Include="Entities\Goblin\goblin-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>goblin-animations</Name>
+    </None>
     <None Include="Entities\Gremlin\gremlin-animations.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>gremlin-animations</Name>
@@ -2192,6 +2143,106 @@
     <None Include="Entities\Skeleton\necromancer-animations.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>necromancer-animations</Name>
+    </None>
+    <None Include="Entities\fairy-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>fairy-animations</Name>
+    </None>
+    <None Include="Entities\Troll\troll-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>troll-animations</Name>
+    </None>
+    <None Include="Particles\Definitions\puff.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>puff</Name>
+    </None>
+    <None Include="Particles\Definitions\dwarf_puff.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>dwarf_puff</Name>
+    </None>
+    <None Include="Particles\Definitions\explode.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>explode</Name>
+    </None>
+    <None Include="Particles\Definitions\smoke.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>smoke</Name>
+    </None>
+    <None Include="Particles\Definitions\splash2.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>splash2</Name>
+    </None>
+    <None Include="Particles\Definitions\splat.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>splat</Name>
+    </None>
+    <None Include="Particles\Definitions\heart.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>heart</Name>
+    </None>
+    <None Include="Particles\Definitions\flame.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>flame</Name>
+    </None>
+    <None Include="Particles\Definitions\green_flame.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>green_flame</Name>
+    </None>
+    <None Include="Particles\Definitions\Leaves.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Leaves</Name>
+    </None>
+    <None Include="Particles\Definitions\feather.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>feather</Name>
+    </None>
+    <None Include="Particles\Definitions\dice.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>dice</Name>
+    </None>
+    <None Include="Particles\Definitions\dirt_particle.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>dirt_particle</Name>
+    </None>
+    <None Include="Particles\Definitions\crumbs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>crumbs</Name>
+    </None>
+    <None Include="Particles\Definitions\star_particle.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>star_particle</Name>
+    </None>
+    <None Include="Particles\Definitions\stone_particle.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stone_particle</Name>
+    </None>
+    <None Include="Particles\Definitions\sand_particle.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>sand_particle</Name>
+    </None>
+    <None Include="Particles\Definitions\snow_particle.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>snow_particle</Name>
+    </None>
+    <None Include="Particles\Definitions\blood_particle.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>blood_particle</Name>
+    </None>
+    <None Include="Particles\Definitions\gibs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>gibs</Name>
+    </None>
+    <None Include="Particles\Definitions\spatter.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>spatter</Name>
+    </None>
+    <None Include="Particles\Definitions\rain.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>rain</Name>
+    </None>
+    <None Include="Particles\Definitions\snowflake.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>snowflake</Name>
     </None>
     <None Include="World\Biomes\Wetlands.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -3329,10 +3380,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <None Include="Entities\Troll\troll_animation.json">
-      <Name>troll_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Entities\Dwarf\Layers\dwarf-animations.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>dwarf-animations</Name>
@@ -3384,26 +3431,6 @@
       <Name>mixer</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Entities\Dwarf\Sprites\crafter_minecart.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>crafter_minecart</Name>
-    </None>
-    <None Include="Entities\Dwarf\Sprites\worker_minecart.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>worker_minecart</Name>
-    </None>
-    <None Include="Entities\Dwarf\Sprites\soldier_minecart.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>soldier_minecart</Name>
-    </None>
-    <None Include="Entities\Dwarf\Sprites\musket_minecart.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>musket_minecart</Name>
-    </None>
-    <None Include="Entities\Dwarf\Sprites\wizard_minecart.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>wizard_minecart</Name>
-    </None>
     <None Include="Entities\Rail\rail-patterns.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>rail-patterns</Name>
@@ -3415,10 +3442,6 @@
     <None Include="Entities\Rail\rail-pieces.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>rail-pieces</Name>
-    </None>
-    <None Include="Entities\Golems\snowgolem_animation.json">
-      <Name>snowgolem_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="tutorial.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -3468,27 +3491,11 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <None Include="Entities\Dwarf\Sprites\musket_animation.json">
-      <Name>musket_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <Compile Include="newgui\slider.png">
       <Name>slider</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <None Include="Entities\Goblin\goblin_classes.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>goblin_classes</Name>
-    </None>
-    <None Include="Entities\Goblin\Sprites\goblin_animation.json">
-      <Name>goblin_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Entities\Goblin\goblin.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>goblin</Name>
-    </None>
     <Compile Include="Entities\Plants\cactus.png">
       <Name>cactus</Name>
       <Importer>TextureImporter</Importer>
@@ -3499,10 +3506,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <None Include="Entities\Golems\mudgolem_animation.json">
-      <Name>mudgolem_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="credits.json">
       <Name>credits</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -4459,26 +4462,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Entities\Dwarf\Sprites\worker_animation.json">
-      <Name>worker_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Entities\Dwarf\Sprites\crafter_animation.json">
-      <Name>crafter_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Entities\Dwarf\Sprites\soldier_animation.json">
-      <Name>soldier_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Entities\Dwarf\Sprites\wizard_animation.json">
-      <Name>wizard_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Entities\Dwarf\Sprites\fairy_animation.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>fairy_animation</Name>
-    </None>
     <None Include="World\Biomes\Jolly Forest.json">
       <Name>Jolly Forest</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -4543,23 +4526,6 @@
   <ItemGroup>
     <Compile Include="newgui\gamelogo.png">
       <Name>gamelogo</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Entities\Dwarf\Sprites\musket-helmet.png">
-      <Name>musket-helmet</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Entities\Dwarf\Sprites\musket-musket.png">
-      <Name>musket-musket</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Entities\Dwarf\Sprites\musket.png">
-      <Name>musket</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

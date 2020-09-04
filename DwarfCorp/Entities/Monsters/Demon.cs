@@ -65,10 +65,9 @@ namespace DwarfCorp
         {
             var spriteSheet = new SpriteSheet("Entities\\Demon\\demon", 48, 40);
             var sprite = new CharacterSprite(manager, "Sprite", Matrix.CreateTranslation(0, 0.15f, 0));
+            sprite.SpriteSheet = spriteSheet;
 
             var anims = Library.LoadNewLayeredAnimationFormat("Entities\\Demon\\demon-animations.json");
-            foreach (var anim in anims)
-                anim.Value.SpriteSheet = spriteSheet;
             sprite.SetAnimations(anims);
 
             Physics.AddChild(sprite);

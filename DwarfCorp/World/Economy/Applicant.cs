@@ -94,7 +94,7 @@ namespace DwarfCorp
         {
             foreach (var animation in Library.LoadNewLayeredAnimationFormat(ContentPaths.dwarf_animations))
                 if (animation.Key == Anim)
-                    return new AnimationPlayer(stack.ProxyAnimation(animation.Value));
+                    return new AnimationPlayer(animation.Value);
             return null;
         }
     }

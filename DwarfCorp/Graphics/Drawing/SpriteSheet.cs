@@ -34,6 +34,11 @@ namespace DwarfCorp
         private Texture2D FixedTexture { get; set; }
         public string AssetName { get; set; }
 
+        public void SwapFixedTexture(Texture2D Texture)
+        {
+            this.FixedTexture = Texture; // Better be same size!
+        }
+
         public SpriteSheet()
         {
             FrameWidth = -1;
@@ -190,6 +195,11 @@ namespace DwarfCorp
         public Matrix TileMatrix(int Column, int Row, int ColumnSpan, int RowSpan)
         {
             return Matrix.CreateScale(ColumnSpan, RowSpan, 1.0f) * TileMatrix(Column, Row);
+        }
+
+        public Rectangle GetTileRectangle(Point Tile)
+        {
+            return new Rectangle(Tile.X * FrameWidth, Tile.Y * FrameHeight, FrameWidth, FrameHeight);
         }
     }
 }

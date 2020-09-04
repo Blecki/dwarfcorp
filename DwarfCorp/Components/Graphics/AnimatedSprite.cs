@@ -34,6 +34,8 @@ namespace DwarfCorp
 
         private NewInstanceData InstanceData;
         [JsonIgnore] public SpriteSheet SpriteSheet = null;
+        [JsonIgnore] public BillboardPrimitive Primitive = null;
+
 
         public enum OrientMode
         {
@@ -114,7 +116,14 @@ namespace DwarfCorp
                 InstanceData.VertexColorTint.A = 256 / 2;
             }
             if (SpriteSheet == null)
-                AnimPlayer.UpdateInstance(InstanceData);
+            {
+                if (AnimPlayer.GetCurrentAnimation() != null && AnimPlayer.GetCurrentAnimation().Frames.Count > AnimPlayer.CurrentFrame && AnimPlayer.CurrentFrame >= 0)
+                {
+                    var frame = AnimPlayer.GetCurrentAnimation().Frames[AnimPlayer.CurrentFrame];
+                    InstanceData.SpriteBounds = SpriteSheet.GetTileRectangle(frame);
+                    InstanceData.TextureAsset = SpriteSheet.AssetName;
+                }
+            }
             else
             {
                 var sheet = SpriteSheet;
@@ -149,12 +158,14 @@ namespace DwarfCorp
             }
             else
             {
-                if (AnimPlayer.Primitive == null) return;
+                if (Primitive == null)
+                    Primitive = new BillboardPrimitive();
+                Primitive.SetFrame(SpriteSheet, SpriteSheet.GetTileRectangle(AnimPlayer.GetCurrentAnimation().Frames[AnimPlayer.CurrentFrame]), 1.0f, 1.0f, Color.White, Color.White);
 
                 Color origTint = effect.VertexColorTint;
                 effect.SelectionBufferColor = this.GetGlobalIDColor().ToVector4();
                 effect.World = GetWorldMatrix(camera);
-                var tex = AnimPlayer.GetTexture();
+                var tex = SpriteSheet.GetTexture();
                 if (tex != null && !tex.IsDisposed && !tex.GraphicsDevice.IsDisposed)
                     effect.MainTexture = tex;
                 ApplyTintingToEffect(effect);
@@ -169,7 +180,7 @@ namespace DwarfCorp
                     foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                     {
                         pass.Apply();
-                        AnimPlayer.Primitive.Render(graphicsDevice);
+                        Primitive.Render(graphicsDevice);
                     }
 
                     graphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -185,7 +196,7 @@ namespace DwarfCorp
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    AnimPlayer.Primitive.Render(graphicsDevice);
+                    Primitive.Render(graphicsDevice);
                 }
                 effect.VertexColorTint = origTint;
                 effect.EnableWind = false;
@@ -198,7 +209,7 @@ namespace DwarfCorp
             var currDistortion = VertexNoise.GetNoiseVectorFromRepeatingTexture(GlobalTransform.Translation);
             var distortion = currDistortion * 0.1f + prevDistortion * 0.9f;
             prevDistortion = distortion;
-            var frameSize = SpriteSheet == null ? AnimPlayer.GetCurrentFrameSize() : new Vector2(SpriteSheet.FrameWidth / 32.0f, SpriteSheet.FrameHeight / 32.0f);
+            var frameSize = new Vector2(SpriteSheet.FrameWidth / 32.0f, SpriteSheet.FrameHeight / 32.0f);
             var pos = GlobalTransform.Translation;
             switch (OrientationType)
             {

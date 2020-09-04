@@ -76,10 +76,9 @@ namespace DwarfCorp
         {
             var spriteSheet = new SpriteSheet(SpriteAsset, 32, 24);
             var sprite = new CharacterSprite(manager, "Sprite", Matrix.CreateTranslation(0, 0.35f, 0));
+            sprite.SpriteSheet = spriteSheet;
 
             var anims = Library.LoadNewLayeredAnimationFormat("Entities\\Animals\\Frog\\frog-animations.json");
-            foreach (var anim in anims)
-                anim.Value.SpriteSheet = spriteSheet;
             sprite.SetAnimations(anims);
 
             Physics.AddChild(sprite);

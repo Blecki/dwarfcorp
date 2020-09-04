@@ -76,10 +76,9 @@ namespace DwarfCorp
         {
             var spriteSheet = new SpriteSheet("Entities\\Animals\\Snake\\bonesnake", 64, 64);
             var sprite = new CharacterSprite(Manager, "Sprite", Matrix.CreateTranslation(0, 0.35f, 0));
+            sprite.SpriteSheet = spriteSheet;
 
             var anims = Library.LoadNewLayeredAnimationFormat("Entities\\Animals\\Snake\\snake-animations.json");
-            foreach (var anim in anims)
-                anim.Value.SpriteSheet = spriteSheet;
             sprite.SetAnimations(anims);
 
             Physics.AddChild(sprite);
@@ -90,13 +89,12 @@ namespace DwarfCorp
 
             Tail = new List<TailSegment>();
             var tailAnimations = Library.LoadNewLayeredAnimationFormat("Entities\\Animals\\Snake\\tail-animations.json");
-            foreach (var anim in tailAnimations)
-                anim.Value.SpriteSheet = spriteSheet;
 
             for (int i = 0; i < 10; ++i)
             {
                 var tailPiece = new CharacterSprite(Manager, "Sprite", Matrix.CreateTranslation(0, 0.25f, 0));
                 tailPiece.SetAnimations(tailAnimations);
+                tailPiece.SpriteSheet = spriteSheet;
 
                 tailPiece.SetFlag(Flag.ShouldSerialize, false);
 

@@ -38,6 +38,8 @@ namespace DwarfCorp.DwarfSprites
         private bool isBlinking = false;
         private bool isCoolingDown = false;
         private Color tintOnBlink = Color.White;
+        private SpriteSheet SpriteSheet = null;
+        public BillboardPrimitive Primitive = null;
 
         private LayerStack Layers = new LayerStack();
 
@@ -56,9 +58,8 @@ namespace DwarfCorp.DwarfSprites
 
         public virtual void AddAnimation(Animation animation)
         {
-            var anim = Layers.ProxyAnimation(animation);
-            AnimPlayer.Play(anim);
-            Animations[animation.Name] = anim;
+            AnimPlayer.Play(animation);
+            Animations[animation.Name] = animation;
         }
 
         public virtual void SetAnimations(Dictionary<String, Animation> Animations)
@@ -100,16 +101,23 @@ namespace DwarfCorp.DwarfSprites
         {
             if (!IsVisible) return;
             if (!AnimPlayer.HasValidAnimation()) return;
+            var tex = Layers.GetCompositeTexture();
+            if (tex == null || tex.IsDisposed || tex.GraphicsDevice.IsDisposed)
+                return;
+            if (SpriteSheet == null)
+                SpriteSheet = new SpriteSheet(tex, 48, 40);
+            SpriteSheet.SwapFixedTexture(tex);
 
-            if (AnimPlayer.Primitive == null) return;
 
             Color origTint = effect.VertexColorTint;
             effect.SelectionBufferColor = this.GetGlobalIDColor().ToVector4();
             effect.World = GetWorldMatrix(camera);
-            var tex = Layers.GetCompositeTexture();
-            if (tex != null && !tex.IsDisposed && !tex.GraphicsDevice.IsDisposed)
-                effect.MainTexture = tex;
+            effect.MainTexture = tex;
             ApplyTintingToEffect(effect);
+
+            if (Primitive == null)
+                Primitive = new BillboardPrimitive();
+            Primitive.SetFrame(SpriteSheet, SpriteSheet.GetTileRectangle(AnimPlayer.GetCurrentAnimation().Frames[AnimPlayer.CurrentFrame]), 1.0f, 1.0f, Color.White, Color.White);
 
             if (DrawSilhouette)
             {
@@ -121,7 +129,7 @@ namespace DwarfCorp.DwarfSprites
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    AnimPlayer.Primitive.Render(graphicsDevice);
+                    Primitive.Render(graphicsDevice);
                 }
 
                 graphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -134,7 +142,7 @@ namespace DwarfCorp.DwarfSprites
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                AnimPlayer.Primitive.Render(graphicsDevice);
+                Primitive.Render(graphicsDevice);
             }
             effect.VertexColorTint = origTint;
             effect.EnableWind = false;
@@ -146,11 +154,8 @@ namespace DwarfCorp.DwarfSprites
             var currDistortion = VertexNoise.GetNoiseVectorFromRepeatingTexture(GlobalTransform.Translation);
             var distortion = currDistortion * 0.1f + prevDistortion * 0.9f;
             prevDistortion = distortion;
-            var frameSize = AnimPlayer.GetCurrentFrameSize();
-            var offsets = AnimPlayer.GetCurrentAnimation().YOffset;
-            float verticalOffset = offsets == null || offsets.Count == 0 ? 0.0f : offsets[Math.Min(AnimPlayer.CurrentFrame, offsets.Count - 1)] * 1.0f / 32.0f;
-            var pos = GlobalTransform.Translation + Vector3.Up * verticalOffset;
-            var bill = Matrix.CreateScale(frameSize.X, frameSize.Y, 1.0f) * Matrix.CreateBillboard(pos, camera.Position, camera.UpVector, null) * Matrix.CreateTranslation(distortion);
+            var pos = GlobalTransform.Translation;
+            var bill = Matrix.CreateScale(SpriteSheet.FrameWidth / 32.0f, SpriteSheet.FrameHeight / 32.0f, 1.0f) * Matrix.CreateBillboard(pos, camera.Position, camera.UpVector, null) * Matrix.CreateTranslation(distortion);
             return bill;
         }
 

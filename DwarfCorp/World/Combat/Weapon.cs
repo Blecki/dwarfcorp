@@ -32,8 +32,8 @@ namespace DwarfCorp
         public float Knockback = 0.0f;
         public string AnimationAsset;
 
-        [JsonIgnore] private Animation _hitAnimation = null;
-        [JsonIgnore] public Animation HitAnimation
+        [JsonIgnore] private Library.SimpleAnimationTuple _hitAnimation = null;
+        [JsonIgnore] public Library.SimpleAnimationTuple HitAnimation
         {
             get
             {

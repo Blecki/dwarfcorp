@@ -45,7 +45,7 @@ namespace DwarfCorp
                 new Point(3, 0)
             };
 
-            var jackAnimation = Library.CreateAnimation(spriteSheet, frames, "Jack-O-Lantern Animation");
+            var jackAnimation = Library.CreateAnimation(frames, "Jack-O-Lantern Animation");
             jackAnimation.Loops = true;
 
             var sprite = AddChild(new AnimatedSprite(Manager, "sprite", Matrix.Identity)
@@ -55,6 +55,7 @@ namespace DwarfCorp
             }) as AnimatedSprite;
 
             sprite.AddAnimation(jackAnimation);
+            sprite.SpriteSheet = spriteSheet;
             sprite.AnimPlayer.Play(jackAnimation);
             sprite.SetFlag(Flag.ShouldSerialize, false);
 

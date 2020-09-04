@@ -1,0 +1,71 @@
+{
+  "Name": "splat",
+  "Emitters": [
+    {
+
+      "MaxParticles": 500,
+      "ParticlesPerFrame": 0,
+      "ReleaseOnce": true,
+      "EmissionFrequency": 20.0,
+      "ConstantAccel": "0, 0, 0",
+      "MinScale": 0.85,
+      "MaxScale": 1.1,
+      "GrowthSpeed": 0.0,
+      "Damping": 0.5,
+      "MinAngle": 0.0,
+      "MaxAngle": 0.0,
+      "MinAngular": -0.01,
+      "MaxAngular": 0.01,
+      "AngularDamping": 0.99,
+      "LinearDamping": 0.9,
+      "Animation": {
+        "FrameWidth": 16,
+        "FrameHeight": 16,
+        "Name": "raindrop_splash",
+        "Frames": [
+          "0, 0",
+          "1, 0",
+          "2, 0",
+          "3, 0",
+          "4, 0",
+          "5, 0"
+        ],
+        "CurrentFrame": 0,
+        "LastFrame": 0,
+        "IsPlaying": true,
+        "Loops": false,
+        "Tint": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "FrameHZ": 10.0,
+        "Speeds": [
+          0.0
+        ],
+        "WorldWidth": 0.5,
+        "WorldHeight": 0.5,
+        "Flipped": false,
+        "SpeedMultiplier": 1.0
+      },
+      "SpriteSheet": {
+        "FrameWidth": 16,
+        "FrameHeight": 16,
+        "Width": 96,
+        "Height": 16,
+        "AssetName": "Particles\\raindrop_splash"
+      },
+      "EmissionRadius": 0.01,
+      "EmissionSpeed": 0.0,
+      "ParticleDecay": 1.5,
+      "CollidesWorld": false,
+      "Sleeps": false,
+      "HasLighting": false,
+      "RotatesWithVelocity": false,
+      "Blend": 0,
+      "EmitsLight": false,
+      "UseManualControl": false
+    }
+  ]
+}

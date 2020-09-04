@@ -16,6 +16,7 @@ namespace DwarfCorp
         private Gui.Root GuiRoot;
         private Gui.Widgets.TextBox _Output;
         private Widget ChoicePanel;
+        private SpriteSheet SpeakerSpriteSheet;
         private AnimationPlayer SpeakerAnimationPlayer;
         private Animation SpeakerAnimation;
         private bool SpeakerVisible = false;
@@ -169,8 +170,8 @@ namespace DwarfCorp
 
         public void SetPortrait(String Gfx, int FrameWidth, int FrameHeight, float Speed, List<int> Frames)
         {
-            var sheet = new SpriteSheet(Gfx, FrameWidth, FrameHeight);
-            SpeakerAnimation = Library.CreateAnimation(sheet, Frames.Select(f => new Point(sheet.Column(f), sheet.Row(f))).ToList(), "yarn__" + Gfx);
+            SpeakerSpriteSheet = new SpriteSheet(Gfx, FrameWidth, FrameHeight);
+            SpeakerAnimation = Library.CreateAnimation(Frames.Select(f => new Point(SpeakerSpriteSheet.Column(f), SpeakerSpriteSheet.Row(f))).ToList(), "yarn__" + Gfx);
             SpeakerAnimation.Speeds = new List<float> { 1.0f / Speed };
             SpeakerAnimation.Loops = true;
 
@@ -303,14 +304,13 @@ namespace DwarfCorp
         {
             GuiRoot.Draw();
 
-            if (SpeakerVisible && SpeakerAnimationPlayer != null && !_Output.Hidden)
+            if (SpeakerVisible && SpeakerSpriteSheet != null && SpeakerAnimationPlayer != null && !_Output.Hidden)
             {
-                var sheet = SpeakerAnimationPlayer.GetCurrentAnimation().SpriteSheet;
                 var frame = SpeakerAnimationPlayer.GetCurrentAnimation().Frames[SpeakerAnimationPlayer.CurrentFrame];
                 SpeakerRectangle.EntireMeshAsPart()
                     .ResetQuadTexture()
-                    .Texture(sheet.TileMatrix(frame.X, frame.Y));
-                GuiRoot.DrawMesh(SpeakerRectangle, sheet.GetTexture());
+                    .Texture(SpeakerSpriteSheet.TileMatrix(frame.X, frame.Y));
+                GuiRoot.DrawMesh(SpeakerRectangle, SpeakerSpriteSheet.GetTexture());
             }
 
             base.Render(gameTime);

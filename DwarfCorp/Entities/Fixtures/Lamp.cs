@@ -45,7 +45,7 @@ namespace DwarfCorp
                 new Point(2, 1)
             };
 
-            var lampAnimation = Library.CreateAnimation(spriteSheet, frames, "LampAnimation");
+            var lampAnimation = Library.CreateAnimation(frames, "LampAnimation");
             lampAnimation.Loops = true;
  
             var sprite = AddChild(new AnimatedSprite(Manager, "sprite", Matrix.Identity)
@@ -55,6 +55,7 @@ namespace DwarfCorp
             }) as AnimatedSprite;
 
             sprite.AddAnimation(lampAnimation);
+            sprite.SpriteSheet = spriteSheet;
             sprite.AnimPlayer.Play(lampAnimation);
             sprite.SetFlag(Flag.ShouldSerialize, false);
 

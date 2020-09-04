@@ -122,7 +122,7 @@
     <Compile Include="Components\AI\EquipmentSlotType.cs" />
     <Compile Include="Components\AI\FairyAI.cs" />
     <Compile Include="Components\AI\StatusEffects\MotivationStatusEffect.cs" />
-    <Compile Include="Components\Graphics\LayeredSprites\DwarfAnimationProxy.cs" />
+    <Compile Include="Components\Graphics\ISprite.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfBuilder.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfCharacterSprite.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfLayer.cs" />
@@ -132,6 +132,7 @@
     <Compile Include="Components\Graphics\LayeredSprites\DwarfPalette.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfPaletteType.cs" />
     <Compile Include="Components\Graphics\MeshComponent.cs" />
+    <Compile Include="Components\Graphics\SpriteOrientation.cs" />
     <Compile Include="Components\Physics\Fire.cs" />
     <Compile Include="Components\Physics\PhysicsSystem.cs" />
     <Compile Include="Components\Physics\StaticAABBTest.cs" />
@@ -199,6 +200,8 @@
     <Compile Include="GameStates\WorldGeneration\OverworldTextureGenerator.cs" />
     <Compile Include="GameStates\WorldGeneration\SimpleOrbitCamera.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldPreviewMesh.cs" />
+    <Compile Include="Graphics\Animation\AnimationDescriptor.cs" />
+    <Compile Include="Graphics\Animation\AnimationFrameConverter.cs" />
     <Compile Include="Graphics\Cameras\CameraPositionSnapshot.cs" />
     <Compile Include="Graphics\Cameras\TrailerCameraController.cs" />
     <Compile Include="Graphics\Primitives\BoxFace.cs" />
@@ -564,14 +567,6 @@
     <Compile Include=".\Graphics\Animation\Animation.cs" />
     <Compile Include=".\Graphics\Animation\AnimationLibrary.cs" />
     <Compile Include=".\Graphics\Animation\AnimationPlayer.cs" />
-    <Compile Include=".\Graphics\Animation\Composite.cs" />
-    <Compile Include=".\Graphics\Animation\CompositeAnimation.cs" />
-    <Compile Include=".\Graphics\Animation\CompositeAnimationDescriptor.cs" />
-    <Compile Include=".\Graphics\Animation\CompositeCell.cs" />
-    <Compile Include=".\Graphics\Animation\CompositeFrame.cs" />
-    <Compile Include=".\Graphics\Animation\CompositeLibrary.cs" />
-    <Compile Include=".\Graphics\Animation\NewAnimationDescriptor.cs" />
-    <Compile Include=".\Graphics\Animation\NewAnimationFrameConverter.cs" />
     <Compile Include=".\Graphics\Cameras\Camera.cs" />
     <Compile Include=".\Graphics\Cameras\OrbitCamera.cs" />
     <Compile Include=".\Graphics\Drawing\Drawer2D\DrawCommand2D.cs" />

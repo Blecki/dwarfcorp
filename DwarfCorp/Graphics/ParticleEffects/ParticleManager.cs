@@ -39,11 +39,12 @@ namespace DwarfCorp
         }
     }
 
-    /// <summary>
-    /// This class manages a set of particle effects, and allows them to be triggered
-    /// at locations in 3D space.
-    /// </summary>
-    [JsonObject(IsReference =  true)]
+    public class ParticleEmitterFamily
+    {
+        public String Name;
+        public List<EmitterData> Emitters = new List<EmitterData>();
+    }
+
     public class ParticleManager
     {
         public Dictionary<string, ParticleEffect> Effects { get; set; }
@@ -53,20 +54,17 @@ namespace DwarfCorp
           
         }
 
-        public void Load(ComponentManager Components, Dictionary<string, List<EmitterData>> data)
+        public void Load(ComponentManager Components, List<ParticleEmitterFamily> data)
         {
             Effects.Clear();
             foreach (var effect in data)
-            {
-                RegisterEffect(Components, effect.Key, effect.Value.ToArray());
-            }
+                RegisterEffect(Components, effect.Name, effect.Emitters.ToArray());
         }
 
         public ParticleManager(ComponentManager Components)
         {
-            // Todo: Better modding support - make it a list of named emitters.
             Effects = new Dictionary<string, ParticleEffect>();
-            Load(Components, FileUtils.LoadJsonFromResolvedPath<Dictionary<string, List<EmitterData>>>(ContentPaths.Particles.particles));
+            Load(Components, FileUtils.LoadJsonListFromDirectory<ParticleEmitterFamily>("Particles\\Definitions", null, e => e.Name));
         }
 
         public void Trigger(string emitter, Vector3 position, Color tint, int num)
@@ -105,6 +103,7 @@ namespace DwarfCorp
             {
                 emitters.Add(new ParticleEmitter(Components, name, Matrix.Identity, emitter));
             }
+
             Effects[name] = new ParticleEffect()
             {
                 Emitters = emitters

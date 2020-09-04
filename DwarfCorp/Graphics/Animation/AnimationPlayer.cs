@@ -18,22 +18,11 @@ namespace DwarfCorp
         private bool IsLooping = false;
         private float FrameTimer = 0.0f;
         private Animation CurrentAnimation = null;
-        public BillboardPrimitive Primitive = null;
         public bool InstancingPossible { get; private set; }
 
         public Animation GetCurrentAnimation()
         {
             return CurrentAnimation;
-        }
-
-        public Vector2 GetCurrentFrameSize()
-        {
-            if (CurrentAnimation == null || CurrentAnimation.SpriteSheet == null || CurrentAnimation.SpriteSheet.FrameWidth == 0)
-            {
-                return Vector2.One;
-            }
-
-            return new Vector2(CurrentAnimation.SpriteSheet.FrameWidth / 32.0f, CurrentAnimation.SpriteSheet.FrameHeight / 32.0f);
         }
 
         public AnimationPlayer() { }
@@ -141,9 +130,6 @@ namespace DwarfCorp
             if (!WillUseInstancingIfPossible || !CurrentAnimation.CanUseInstancing)
             {
                 // Todo: Only update when actually needed.
-                if (Primitive == null)
-                    Primitive = new BillboardPrimitive();
-                CurrentAnimation.UpdatePrimitive(Primitive, CurrentFrame);
             }
             else
                 InstancingPossible = true;
@@ -153,22 +139,8 @@ namespace DwarfCorp
         {
             if (InstancingPossible && !CurrentAnimation.CanUseInstancing)
             {
-                if (Primitive == null)
-                    Primitive = new BillboardPrimitive();
-                if (CurrentAnimation != null)
-                    CurrentAnimation.UpdatePrimitive(Primitive, CurrentFrame);
                 InstancingPossible = false;
             }
-        }
-
-        public void UpdateInstance(NewInstanceData InstanceData)
-        {
-            if (CurrentAnimation == null || CurrentAnimation.Frames.Count <= CurrentFrame || CurrentFrame < 0)
-                return;
-            var sheet = CurrentAnimation.SpriteSheet;
-            var frame = CurrentAnimation.Frames[CurrentFrame];
-            InstanceData.SpriteBounds = new Rectangle(sheet.FrameWidth * frame.X, sheet.FrameHeight * frame.Y, sheet.FrameWidth, sheet.FrameHeight);
-            InstanceData.TextureAsset = sheet.AssetName;
         }
 
         public void NextFrame()
@@ -197,13 +169,6 @@ namespace DwarfCorp
                 return (int)(time * CurrentAnimation.FrameHZ) % CurrentAnimation.GetFrameCount();
             else
                 return Math.Min((int)(time * CurrentAnimation.FrameHZ), CurrentAnimation.GetFrameCount() - 1);
-        }
-
-        public Texture2D GetTexture()
-        {
-            if (CurrentAnimation != null)
-                return CurrentAnimation.GetTexture();
-            return null;
         }
 
         public bool HasValidAnimation()

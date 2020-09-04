@@ -22,21 +22,6 @@ namespace DwarfCorp.DwarfSprites
             return Composite;
         }
 
-        public DwarfAnimationProxy ProxyAnimation(Animation animation)
-        {
-            var comp = animation as CompositeAnimation;
-            var proxyAnim = new DwarfAnimationProxy(this)
-            {
-                Frames = comp == null ? animation.Frames : comp.CompositeFrames.Select(c => c.Cells[0].Tile).ToList(),
-                Name = animation.Name,
-                FrameHZ = 0.5f,
-                Speeds = animation.Speeds,
-                Tint = animation.Tint,
-                Loops = animation.Loops
-            };
-            return proxyAnim;
-        }
-
         private List<LayerEntry> Layers = new List<LayerEntry>();
         private bool CompositeValid = false;
         private Texture2D Composite;

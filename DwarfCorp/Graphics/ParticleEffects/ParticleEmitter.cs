@@ -48,6 +48,7 @@ namespace DwarfCorp
         public float MaxAngular;
         public float AngularDamping;
         public float LinearDamping;
+        public SpriteSheet SpriteSheet;
         public Animation Animation;
         public float EmissionRadius;
         public float EmissionSpeed;
@@ -156,9 +157,9 @@ namespace DwarfCorp
             for (var t = 0; t < Data.Animation.GetFrameCount(); ++t)
             {
                 var primitive = new BillboardPrimitive();
-                Data.Animation.UpdatePrimitive(primitive, t);
+                primitive.SetFrame(Data.SpriteSheet, Data.SpriteSheet.GetTileRectangle(Data.Animation.Frames[t]), 1.0f, 1.0f, Color.White, Data.Animation.Tint);
                 Sprites.Add(new FixedInstanceArray(name, primitive,
-                    Data.Animation.SpriteSheet.AssetName,
+                    Data.SpriteSheet.AssetName,
                     Data.MaxParticles, Data.BlendMode));
             }
             AnimPlayer.Play(Data.Animation);
