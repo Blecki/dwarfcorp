@@ -11,6 +11,8 @@ namespace DwarfCorp.DwarfSprites
 { 
     public class LayerStack
     {
+        public static int CompositesRebuilt = 0;
+
         public class LayerEntry
         {
             public Layer Layer;
@@ -25,7 +27,6 @@ namespace DwarfCorp.DwarfSprites
         private List<LayerEntry> Layers = new List<LayerEntry>();
         private bool CompositeValid = false;
         private Texture2D Composite;
-        private MemoryTexture MemoryComposite;
 
         public void AddLayer(Layer Layer, Palette Palette)
         {
@@ -70,8 +71,7 @@ namespace DwarfCorp.DwarfSprites
 
             if (!CompositeValid)
             {
-                if (Composite != null && !Composite.IsDisposed)
-                    Composite.Dispose();
+                CompositesRebuilt += 1;
 
                 CompositeValid = true;
                 Layers.Sort((a, b) => GetLayerPrecedence(a.Layer) - GetLayerPrecedence(b.Layer));
@@ -86,21 +86,21 @@ namespace DwarfCorp.DwarfSprites
 
                 if (maxSize.X == 0 || maxSize.Y == 0) return;
 
-                if (MemoryComposite == null || MemoryComposite.Width != maxSize.X || MemoryComposite.Height != maxSize.Y)
-                    MemoryComposite = new MemoryTexture(maxSize.X, maxSize.Y);
-
-                TextureTool.ClearMemoryTexture(MemoryComposite);
+                var memoryComposite = new MemoryTexture(maxSize.X, maxSize.Y);
 
                 foreach (var layer in Layers)
-                    TextureTool.Blit(layer.Layer.CachedTexture, layer.Palette.CachedPalette, MemoryComposite);
+                    TextureTool.Blit(layer.Layer.CachedTexture, layer.Palette.CachedPalette, memoryComposite);
 
-                Composite = TextureTool.Texture2DFromMemoryTexture(Device, MemoryComposite);
+                if (Composite == null || Composite.IsDisposed || Composite.Width != memoryComposite.Width || Composite.Height != memoryComposite.Height)
+                {
+                    if (Composite != null && !Composite.IsDisposed)
+                        Composite.Dispose();
+
+                    Composite = new Texture2D(Device, memoryComposite.Width, memoryComposite.Height);
+                }
+
+                TextureTool.CopyMemoryTextureToTexture2D(memoryComposite, Composite);
             }
-        }
-
-        internal object GetLayer(String v)
-        {
-            return Layers.Where(l => l.Layer.Type == v).FirstOrDefault();
         }
     }
 }

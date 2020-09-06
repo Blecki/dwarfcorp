@@ -18,7 +18,6 @@ namespace DwarfCorp
         private bool IsLooping = false;
         private float FrameTimer = 0.0f;
         private Animation CurrentAnimation = null;
-        public bool InstancingPossible { get; private set; }
 
         public Animation GetCurrentAnimation()
         {
@@ -56,7 +55,6 @@ namespace DwarfCorp
         public void ChangeAnimation(Animation Animation, ChangeAnimationOptions Options)
         {
             CurrentAnimation = Animation;
-            IsLooping = Animation.Loops;
 
             if ((Options & ChangeAnimationOptions.Reset) == ChangeAnimationOptions.Reset)
                 CurrentFrame = 0;
@@ -69,11 +67,10 @@ namespace DwarfCorp
 
             if (CurrentAnimation != null)
             {
+                IsLooping = Animation.Loops;
                 if (CurrentFrame >= Animation.GetFrameCount())
                     CurrentFrame = Animation.GetFrameCount() - 1;
             }
-
-            OnAnimationChanged();
         }
 
         public void Play(Animation Animation)
@@ -83,7 +80,6 @@ namespace DwarfCorp
                 CurrentFrame = Animation.GetFrameCount() - 1;
             IsPlaying = true;
             IsLooping = Animation.Loops;
-            OnAnimationChanged();
         }
 
         public void Play()
@@ -99,10 +95,8 @@ namespace DwarfCorp
             CurrentFrame = 0;
         }
 
-        public virtual void Update(DwarfTime gameTime, bool WillUseInstancingIfPossible, Timer.TimerMode mode = Timer.TimerMode.Game)
+        public virtual void Update(DwarfTime gameTime, Timer.TimerMode mode = Timer.TimerMode.Game)
         {
-            InstancingPossible = false;
-
             if (CurrentAnimation == null)
                 return;
 
@@ -124,22 +118,6 @@ namespace DwarfCorp
                     NextFrame();
                     FrameTimer = 0;
                 }
-            }
-
-
-            if (!WillUseInstancingIfPossible || !CurrentAnimation.CanUseInstancing)
-            {
-                // Todo: Only update when actually needed.
-            }
-            else
-                InstancingPossible = true;
-        }
-
-        private void OnAnimationChanged()
-        {
-            if (InstancingPossible && !CurrentAnimation.CanUseInstancing)
-            {
-                InstancingPossible = false;
             }
         }
 

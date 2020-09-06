@@ -68,7 +68,7 @@ namespace DwarfCorp
         public CharacterSprite(ComponentManager manager, string name, Matrix localTransform) :
                 base(manager, name, localTransform)
         {
-            currentMode = "Idle";
+            CurrentAnimationName = "Idle";
         }
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)

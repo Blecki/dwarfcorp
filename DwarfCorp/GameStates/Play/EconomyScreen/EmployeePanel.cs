@@ -78,7 +78,7 @@ namespace DwarfCorp.Gui.Widgets
                     Tag = employee
                 });
 
-                if (employee.GetRoot().GetComponent<DwarfSprites.LayeredCharacterSprite>().HasValue(out var employeeSprite))
+                if (employee.GetRoot().GetComponent<DwarfSprites.DwarfCharacterSprite>().HasValue(out var employeeSprite))
                     bar.AddChild(new EmployeePortrait
                     {
                         AutoLayout = AutoLayout.DockLeft,

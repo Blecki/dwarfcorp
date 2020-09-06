@@ -98,9 +98,7 @@ namespace DwarfCorp
                 effect.CurrentTechnique = effect.Techniques[Shader.Technique.Stipple];
             }
             else
-            {
                 previousEffect = null;
-            }
         }
 
         public void EndDraw(Shader shader)

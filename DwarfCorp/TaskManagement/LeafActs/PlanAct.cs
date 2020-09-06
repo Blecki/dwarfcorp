@@ -222,7 +222,7 @@ namespace DwarfCorp
                         Start = voxUnder,
                         MaxExpansions = MaxExpansions,
                         Sender = Agent,
-                        HeuristicWeight = Weights[Timeouts]
+                        HeuristicWeight = Timeouts >= Weights.Count ? 3.0f : Weights[Timeouts]
                     };
 
                     lastId = aspr.ID;

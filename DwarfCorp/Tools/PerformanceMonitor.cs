@@ -118,7 +118,7 @@ namespace DwarfCorp
                 output.Lines.Clear();
                 output.Lines.Add(String.Format("Frame time: {0:000.000}", elapsedMilliseconds));
 
-                foreach (var function in Functions)
+                foreach (var function in Functions.OrderBy(f => f.Value.FrameTicks).Reverse())
                     output.Lines.Add(String.Format("{1:0000} {2:000} {0}\n", function.Value.Name, function.Value.FrameCalls, function.Value.FrameTicks / 1000));
 
                 output.Invalidate();

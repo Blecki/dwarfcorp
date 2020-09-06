@@ -95,8 +95,12 @@ namespace DwarfCorp
         public static void CaptureException(Exception exception)
         {
             Console.Error.WriteLine(exception.Message);
+#if !DEBUG
             if (ravenClient != null)
                 ravenClient.Capture(new SentryEvent(exception));
+#else
+            throw exception;
+#endif
         }
 
         public static void CaptureSentryMessage(String Message)

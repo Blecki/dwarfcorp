@@ -63,7 +63,8 @@ namespace DwarfCorp.Play
                         var popup = Root.ConstructWidget(new GameStates.Debug.GuiDebugPanel
                         {
                             Rect = Root.RenderData.VirtualScreen,
-                            IncludeCloseButton = true
+                            IncludeCloseButton = true,
+                            World = World
                         });
 
                         popup.Layout();

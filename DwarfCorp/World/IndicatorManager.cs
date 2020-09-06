@@ -98,7 +98,7 @@ namespace DwarfCorp
             base.Update(time);
 
             if (!Player.HasValidAnimation()) Player.Play(Animation);
-            Player.Update(time, false);
+            Player.Update(time);
 
             var frame = Animation.Frames[Player.CurrentFrame];
             var frameRect = new Rectangle(frame.X * SpriteSheet.FrameWidth, frame.Y * SpriteSheet.FrameHeight, SpriteSheet.FrameWidth, SpriteSheet.FrameHeight);

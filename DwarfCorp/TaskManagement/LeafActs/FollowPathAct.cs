@@ -493,48 +493,66 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            // Todo: Re-add random offsets?
-            Creature.CurrentCharacterMode = CharacterMode.Walking;
-            Creature.OverrideCharacterMode = false;
-            Agent.Physics.Orientation = Physics.OrientMode.RotateY;
+            try
+            {
+                // Todo: Re-add random offsets?
+                Creature.CurrentCharacterMode = CharacterMode.Walking;
+                Creature.OverrideCharacterMode = false;
+                Agent.Physics.Orientation = Physics.OrientMode.RotateY;
+            }
+            catch (Exception e)
+            {
+                Program.CaptureException(new Exception("REPORT: Exception caught while following path: Setting physics orientation", e));
+            }
+
             if (Path == null || Path.Count == 0)
             {
                 Path = null;
-                Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
+                try
+                {
+                    Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
+                }
+                catch (Exception e)
+                {
+                    Program.CaptureException(new Exception("REPORT: Exception caught while following path: Drawing indicator", e));
+                }
+
                 yield return Act.Status.Success;
             }
 
-            foreach (var step in Path)
-            {
-                if (Agent.MinecartActive && (step.MoveType != MoveType.RideVehicle && step.MoveType != MoveType.EnterVehicle && step.MoveType != MoveType.ExitVehicle))
+                foreach (var step in Path)
                 {
-                    var x = 5;
+#if DEBUG
+                if (Agent.MinecartActive && (step.MoveType != MoveType.RideVehicle && step.MoveType != MoveType.EnterVehicle && step.MoveType != MoveType.ExitVehicle))
+                    {
+                        var x = 5;
+                    }
+#endif
+
+                    foreach (var status in PerformStep(step))
+                    {
+                        //Agent.Physics.PropogateTransforms();
+                        DeltaTime += (float)DwarfTime.LastTime.ElapsedGameTime.TotalSeconds;
+                        Creature.Physics.CollisionType = CollisionType.Dynamic;
+
+                        if (status == Status.Fail)
+                        {
+                            CleanupMinecart();
+                            yield return Status.Fail;
+                        }
+                        else
+                        {
+                            DrawDebugPath();
+                            yield return Status.Running;
+                        }
+                    }
                 }
 
-                foreach (var status in PerformStep(step))
-                { 
-                    //Agent.Physics.PropogateTransforms();
-                    DeltaTime += (float)DwarfTime.LastTime.ElapsedGameTime.TotalSeconds;
-                    Creature.Physics.CollisionType = CollisionType.Dynamic;
-
-                    if (status == Status.Fail)
-                    {
-                        CleanupMinecart();
-                        yield return Status.Fail;
-                    }
-                    else
-                    {
-                        DrawDebugPath();
-                        yield return Status.Running;
-                    }
-                }
-            }
-
-            Creature.OverrideCharacterMode = false;
-            Path = null;
-            Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
-            CleanupMinecart();
-            yield return Status.Success;
+                Creature.OverrideCharacterMode = false;
+                Path = null;
+                Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
+                CleanupMinecart();
+                yield return Status.Success;
         }
 
         private void DrawDebugPath()

@@ -325,7 +325,7 @@ namespace DwarfCorp.Play.EmployeeInfo
             {
                 InteriorPanel.Hidden = false;
 
-                if (Employee.GetRoot().GetComponent<DwarfSprites.LayeredCharacterSprite>().HasValue(out var sprite))
+                if (Employee.GetRoot().GetComponent<DwarfSprites.DwarfCharacterSprite>().HasValue(out var sprite))
                 {
                     Icon.Sprite = sprite.GetLayers();
                     Icon.AnimationPlayer = sprite.AnimPlayer;

@@ -105,7 +105,7 @@ namespace DwarfCorp
             }
             catch (Exception e)
             {
-                Program.CaptureException(new Exception("Exception caught while creating meta-resource: " + FactoryName, e));
+                Program.CaptureException(new Exception("REPORT: Exception caught while creating meta-resource: " + FactoryName, e));
                 return null;
             }
         }

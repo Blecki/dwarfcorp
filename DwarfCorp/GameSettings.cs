@@ -217,6 +217,7 @@ namespace DwarfCorp
             public int MaxLiveChunks = 10; // How many chunks can have geometry saved
             public float SpeciesLimitAdjust = 1.0f;
             public int LandCost = 3;
+            public int MaxDwarfSpriteUpdates = 16;
 
             public bool DisableWeather = true;
 

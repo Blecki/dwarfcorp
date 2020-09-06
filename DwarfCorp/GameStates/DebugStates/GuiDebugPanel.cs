@@ -12,6 +12,7 @@ namespace DwarfCorp.GameStates.Debug
     public class GuiDebugPanel : Gui.Widget
     {
         public bool IncludeCloseButton = false;
+        public WorldManager World;
 
         public override void Construct()
         {
@@ -24,8 +25,18 @@ namespace DwarfCorp.GameStates.Debug
             tabs.AddTab("Texture", new GuiTextureDebugPanel
             {
             });
-
+            
             tabs.AddTab("TEXT", new GuiTextDebugPanel { });
+
+            tabs.AddTab("Tiled Composite", new TiledCompositeTextureDebugPanel
+            {
+                World = World
+            });
+
+            tabs.AddTab("Dwarf Composite", new DwarfCompositeTextureDebugPanel
+            {
+                World = World
+            });
 
             if (IncludeCloseButton)
                 AddChild(new Widget

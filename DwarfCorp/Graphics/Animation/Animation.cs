@@ -27,9 +27,6 @@ namespace DwarfCorp
         public float SpeedMultiplier { get; set; }
         public bool Loops = false;
 
-        [JsonIgnore]
-        public virtual bool CanUseInstancing { get { return true; } }
-
         public virtual int GetFrameCount()
         {
             return Frames.Count;

@@ -157,7 +157,7 @@ namespace DwarfCorp
                 SoundToPlay = ContentPaths.Entities.Dwarf.Audio.dwarfhurt1,
             }).SetFlag(Flag.ShouldSerialize, false);
 
-            if (Equipment.HasValue(out var equipment) && GetRoot().GetComponent<DwarfSprites.LayeredCharacterSprite>().HasValue(out var sprite))
+            if (Equipment.HasValue(out var equipment) && GetRoot().GetComponent<DwarfSprites.DwarfCharacterSprite>().HasValue(out var sprite))
                 equipment.AddLayersToSprite(sprite);
 
             base.CreateCosmeticChildren(manager);

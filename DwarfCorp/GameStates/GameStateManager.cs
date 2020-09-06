@@ -73,6 +73,8 @@ namespace DwarfCorp.GameStates
                 if (DwarfGame.IsConsoleVisible)
                 {
                     PerformanceMonitor.SetMetric("MEMORY", BytesToString(System.GC.GetTotalMemory(false)));
+                    PerformanceMonitor.SetMetric("COMPS BUILT", DwarfSprites.LayerStack.CompositesRebuilt.ToString());
+                    DwarfSprites.LayerStack.CompositesRebuilt = 0;
 
                     var statsDisplay = DwarfGame.GetConsoleTile("STATS");
 

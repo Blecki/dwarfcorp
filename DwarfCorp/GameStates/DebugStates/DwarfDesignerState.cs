@@ -176,7 +176,7 @@ namespace DwarfCorp.GameStates.Debug
                 }
             }
 
-            SpriteFrame.AnimationPlayer.Update(gameTime, false, Timer.TimerMode.Real);
+            SpriteFrame.AnimationPlayer.Update(gameTime, Timer.TimerMode.Real);
             SpriteFrame.Sprite.Update(Game.GraphicsDevice);
             GuiRoot.Update(gameTime.ToRealTime());
 

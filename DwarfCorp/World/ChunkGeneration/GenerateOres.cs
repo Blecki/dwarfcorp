@@ -18,6 +18,15 @@ namespace DwarfCorp.Generation
     {
         public static void GenerateOres(VoxelChunk Chunk, ChunkGeneratorSettings Settings)
         {
+            // Prepare randoms for each voxel. Need to have a predictable - but different - seed.
+            var noiseOffsets = new List<Vector3>();
+            foreach (var voxelType in Library.EnumerateVoxelTypes())
+                if (voxelType.SpawnClusters)
+                {
+                    var vRand = new Random(voxelType.ID);
+                    noiseOffsets.Add(new Vector3(vRand.Next(0, 64), vRand.Next(0, 64), vRand.Next(0, 64)));
+                }
+
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
@@ -33,7 +42,9 @@ namespace DwarfCorp.Generation
                         if (Chunk.Origin.Y + y == 0) continue;
 
                         var v = Chunk.Manager.CreateVoxelHandle(new GlobalVoxelCoordinate(Chunk.Origin.X + x, Chunk.Origin.Y + y, Chunk.Origin.Z + z));
-                        if (v.Sunlight) continue;
+                        if (!GameSettings.Current.NoStone && v.Sunlight) continue;
+
+                        int vtypeIndex = 0;
 
                         foreach (var voxelType in Library.EnumerateVoxelTypes())
                         {
@@ -42,9 +53,8 @@ namespace DwarfCorp.Generation
                                 if (Chunk.Origin.Y + y < voxelType.MinSpawnHeight) continue;
                                 if (Chunk.Origin.Y + y > voxelType.MaxSpawnHeight) continue;
 
-                                var vRand = new Random(voxelType.ID);
                                 var noiseVector = new Vector3(Chunk.Origin.X + x, Chunk.Origin.Y + y, Chunk.Origin.Z + z) * Settings.CaveNoiseScale * 2.0f;
-                                noiseVector += new Vector3(vRand.Next(0, 64), vRand.Next(0, 64), vRand.Next(0, 64));
+                                noiseVector += noiseOffsets[vtypeIndex];
 
                                 var fade = 1.0f - ((Chunk.Origin.Y + y - voxelType.MinSpawnHeight) / voxelType.MaxSpawnHeight);
 
@@ -52,6 +62,8 @@ namespace DwarfCorp.Generation
 
                                 if (Math.Abs(oreNoise) < voxelType.Rarity * fade)
                                     v.RawSetType(voxelType);
+
+                                vtypeIndex += 1;
                             }
                         }
                     }

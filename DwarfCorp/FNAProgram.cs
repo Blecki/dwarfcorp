@@ -142,6 +142,9 @@ namespace DwarfCorp
         public static void CaptureException(Exception exception)
         {
             Console.Error.WriteLine(exception.Message);
+#if DEBUG
+            throw exception;
+#endif
         }
 
         public static void CaptureSentryMessage(String Message)
@@ -161,4 +164,4 @@ namespace DwarfCorp
         }
     }
 #endif
-}
+        }

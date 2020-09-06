@@ -60,7 +60,7 @@ namespace DwarfCorp
             sprite.SetFlag(Flag.ShouldSerialize, false);
 
             // This is a hack to make the animation update at least once even when the object is created inactive by the craftbuilder.
-            sprite.AnimPlayer.Update(new DwarfTime(), false);
+            sprite.AnimPlayer.Update(new DwarfTime());
         }
 
         private void CreateSpriteWall(Vector3 diff)

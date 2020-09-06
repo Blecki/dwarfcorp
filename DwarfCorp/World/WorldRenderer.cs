@@ -51,6 +51,7 @@ namespace DwarfCorp
         public SkyRenderer Sky;
         public SelectionBuffer SelectionBuffer;
         public InstanceRenderer InstanceRenderer;
+        public DwarfSprites.DwarfInstanceGroup DwarfInstanceRenderer;
         public ContentManager Content;
         public DwarfGame Game;
         public GraphicsDevice GraphicsDevice { get { return GameState.Game.GraphicsDevice; } }
@@ -112,6 +113,8 @@ namespace DwarfCorp
                         ComponentRenderer.WaterRenderType.None, 0);
                     InstanceRenderer.Flush(GraphicsDevice, DefaultShader, Camera,
                         InstanceRenderMode.Normal);
+                    DwarfInstanceRenderer.Update(GraphicsDevice);
+                    DwarfInstanceRenderer.Render(GraphicsDevice, DefaultShader, Camera, InstanceRenderMode.Normal);
 
 
                     GraphicsDevice.SetRenderTarget(null);
@@ -334,6 +337,8 @@ namespace DwarfCorp
             var level = PersistentSettings.MaxViewingLevel >= World.WorldSizeInVoxels.Y ? 1000.0f : PersistentSettings.MaxViewingLevel + 0.25f;
             Plane slicePlane = WaterRenderer.CreatePlane(level, new Vector3(0, -1, 0), Camera.ViewMatrix, false);
 
+            DwarfInstanceRenderer.Update(GraphicsDevice);
+
             if (SelectionBuffer.Begin(GraphicsDevice))
             {
                 // Draw the whole world, and make sure to handle slicing
@@ -353,8 +358,8 @@ namespace DwarfCorp
                 //GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Components");
 
                 //GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer - Instances");
-                InstanceRenderer.Flush(GraphicsDevice, DefaultShader, Camera,
-                    InstanceRenderMode.SelectionBuffer);
+                InstanceRenderer.Flush(GraphicsDevice, DefaultShader, Camera, InstanceRenderMode.SelectionBuffer);
+                DwarfInstanceRenderer.Render(GraphicsDevice, DefaultShader, Camera, InstanceRenderMode.SelectionBuffer);
                 //GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Instances");
 
                 SelectionBuffer.End(GraphicsDevice);
@@ -416,6 +421,7 @@ namespace DwarfCorp
                 DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader,
                 ComponentRenderer.WaterRenderType.None, lastWaterHeight);
             InstanceRenderer.Flush(GraphicsDevice, DefaultShader, Camera, InstanceRenderMode.Normal);
+            DwarfInstanceRenderer.Render(GraphicsDevice, DefaultShader, Camera, InstanceRenderMode.Normal);
 
             WaterRenderer.DrawWater(
                 GraphicsDevice,

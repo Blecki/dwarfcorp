@@ -181,7 +181,7 @@ namespace DwarfCorp.GameStates
             {
                 foreach (var applicant in Applicants)
                 {
-                    applicant.Value.Portrait.AnimationPlayer.Update(new DwarfTime(time), false, Timer.TimerMode.Real);
+                    applicant.Value.Portrait.AnimationPlayer.Update(new DwarfTime(time), Timer.TimerMode.Real);
                     applicant.Value.Portrait.Invalidate();
                     applicant.Value.Portrait.Sprite.Update(GameStates.GameState.Game.GraphicsDevice);
                 }

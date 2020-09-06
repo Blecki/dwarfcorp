@@ -76,20 +76,14 @@ namespace DwarfCorp
             return Animations.ContainsKey(name) ? Animations[name] : null;
         }
 
-        public virtual void SetCurrentAnimation(string name, bool Play = false)
+        public virtual void SetCurrentAnimation(String Name, bool Play = false)
         {
-            var anim = GetAnimation(name);
-            SetCurrentAnimation(anim, Play);
-        }
-
-        public void SetCurrentAnimation(Animation Animation, bool Play = false)
-        {
-            AnimPlayer.ChangeAnimation(Animation, Play ? AnimationPlayer.ChangeAnimationOptions.Play : AnimationPlayer.ChangeAnimationOptions.Stop);
+            AnimPlayer.ChangeAnimation(GetAnimation(Name), Play ? AnimationPlayer.ChangeAnimationOptions.Play : AnimationPlayer.ChangeAnimationOptions.Stop);
         }
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            AnimPlayer.Update(gameTime, !DrawSilhouette); // Can't use instancing if we want the silhouette.
+            AnimPlayer.Update(gameTime);
             base.Update(gameTime, chunks, camera);
         }
 
@@ -151,12 +145,12 @@ namespace DwarfCorp
             if (!IsVisible) return;
             if (!AnimPlayer.HasValidAnimation()) return;
 
-            if (AnimPlayer.InstancingPossible)
+           // if (AnimPlayer.InstancingPossible)
             {
                 PrepareInstanceData(camera);
                 Manager.World.Renderer.InstanceRenderer.RenderInstance(InstanceData, graphicsDevice, effect, camera, Mode);
             }
-            else
+            /*else
             {
                 if (Primitive == null)
                     Primitive = new BillboardPrimitive();
@@ -201,7 +195,7 @@ namespace DwarfCorp
                 effect.VertexColorTint = origTint;
                 effect.EnableWind = false;
                 EndDraw(effect);
-            }
+            }*/
         }
 
         private Matrix GetWorldMatrix(Camera camera)

@@ -32,7 +32,7 @@ namespace DwarfCorp
 
             EquippedItems[Item.Equipment_Slot] = Item;
 
-            if (!String.IsNullOrEmpty(Item.Equipment_LayerName) && GetRoot().GetComponent<DwarfSprites.LayeredCharacterSprite>().HasValue(out var sprite))
+            if (!String.IsNullOrEmpty(Item.Equipment_LayerName) && GetRoot().GetComponent<DwarfSprites.DwarfCharacterSprite>().HasValue(out var sprite))
                 if (DwarfSprites.LayerLibrary.FindLayerWithName(Item.Equipment_LayerType, Item.Equipment_LayerName).HasValue(out var layer))
                 {
                     if (DwarfSprites.LayerLibrary.FindPalette(Item.Equipment_Palette).HasValue(out var palette))
@@ -46,7 +46,7 @@ namespace DwarfCorp
         {
             if (GetItemInSlot(Slot).HasValue(out var existing) 
                 && !String.IsNullOrEmpty(existing.Equipment_LayerName) 
-                && GetRoot().GetComponent< DwarfSprites.LayeredCharacterSprite>().HasValue(out var sprite))
+                && GetRoot().GetComponent< DwarfSprites.DwarfCharacterSprite>().HasValue(out var sprite))
                 sprite.RemoveLayer(existing.Equipment_LayerType);
 
             EquippedItems.Remove(Slot);
@@ -58,7 +58,7 @@ namespace DwarfCorp
                 UnequipItem(Item.Equipment_Slot);
         }
 
-        public void AddLayersToSprite(DwarfSprites.LayeredCharacterSprite Sprite)
+        public void AddLayersToSprite(DwarfSprites.DwarfCharacterSprite Sprite)
         {
             foreach (var item in EquippedItems.Values)
                 if (!String.IsNullOrEmpty(item.Equipment_LayerName))

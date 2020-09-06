@@ -2252,14 +2252,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Dwarf</Name>
     </None>
-    <None Include="World\Classes\Manager.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Manager</Name>
-    </None>
-    <None Include="World\Classes\Farmer.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Farmer</Name>
-    </None>
     <None Include="World\Classes\Pumpking.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Pumpking</Name>
@@ -3041,28 +3033,8 @@
       <Name>SnowGolem</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="World\Classes\Soldier.json">
-      <Name>Soldier</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="World\Classes\Crafter.json">
-      <Name>Crafter</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="World\Classes\Musketeer.json">
-      <Name>Musketeer</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="World\Classes\Troll.json">
       <Name>Troll</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="World\Classes\Wizard.json">
-      <Name>Wizard</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="World\Classes\Miner.json">
-      <Name>Miner</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Entities\Animals\Slimes\slime-animations.json">

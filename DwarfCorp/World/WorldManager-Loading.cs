@@ -125,6 +125,7 @@ namespace DwarfCorp
             Game.DoLazyAction(new Action(() =>
             {
                 Renderer.InstanceRenderer = new InstanceRenderer();
+                Renderer.DwarfInstanceRenderer = new DwarfSprites.DwarfInstanceGroup();
 
                 Renderer.bloom = new BloomComponent(Game)
                 {
@@ -264,6 +265,7 @@ namespace DwarfCorp
             Game.DoLazyAction(new Action(() =>
             {
                 Renderer.InstanceRenderer = new InstanceRenderer();
+                Renderer.DwarfInstanceRenderer = new DwarfSprites.DwarfInstanceGroup();
 
                 Renderer.bloom = new BloomComponent(Game)
                 {

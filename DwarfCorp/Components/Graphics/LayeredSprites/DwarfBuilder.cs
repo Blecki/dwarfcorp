@@ -83,9 +83,9 @@ namespace DwarfCorp.DwarfSprites
             return chosenPalettes;
         }
 
-        public static LayeredCharacterSprite CreateDwarfCharacterSprite(ComponentManager Manager, CreatureStats Stats)
+        public static DwarfCharacterSprite CreateDwarfCharacterSprite(ComponentManager Manager, CreatureStats Stats)
         {
-            var sprite = new DwarfSprites.LayeredCharacterSprite(Manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)));
+            var sprite = new DwarfSprites.DwarfCharacterSprite(Manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)));
 
             var random = new Random(Stats.RandomSeed);
 

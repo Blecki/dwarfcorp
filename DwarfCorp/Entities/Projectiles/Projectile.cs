@@ -69,11 +69,7 @@ namespace DwarfCorp
                 }) as SimpleSprite;
                 (Sprite as SimpleSprite).AutoSetWorldSize();
                 if (singleSprite)
-                {
                     (Sprite as SimpleSprite).OrientationType = SimpleSprite.OrientMode.Spherical;
-                }
-
-                
             }
 
             Sprite.SetFlag(Flag.ShouldSerialize, false);

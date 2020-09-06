@@ -62,7 +62,7 @@ namespace DwarfCorp
                 Rect = SpeakerBorder.Rect
             }) as Gui.Widgets.EmployeePortrait;
 
-            if (_employee.GetRoot().GetComponent<DwarfSprites.LayeredCharacterSprite>().HasValue(out var sprite))
+            if (_employee.GetRoot().GetComponent<DwarfSprites.DwarfCharacterSprite>().HasValue(out var sprite))
             {
                 Icon.Sprite = sprite.GetLayers();
                 Icon.AnimationPlayer = new AnimationPlayer(sprite.GetAnimation(_employee.Creature.CurrentCharacterMode.ToString() + "FORWARD"));
@@ -135,7 +135,7 @@ namespace DwarfCorp
             {
                 if (CurrentSpeach.MoveNext())
                 {
-                    SpeakerAnimationPlayer?.Update(gameTime, false, Timer.TimerMode.Real);
+                    SpeakerAnimationPlayer?.Update(gameTime, Timer.TimerMode.Real);
                     Output(CurrentSpeach.Current);
                     return true;
                 }

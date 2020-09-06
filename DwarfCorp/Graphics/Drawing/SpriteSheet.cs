@@ -173,6 +173,15 @@ namespace DwarfCorp
             return uvs;
         }
 
+        public Vector4 GetTileUVBounds(Point Tile)
+        {
+            float normalizeX = FrameWidth / (float)(Width);
+            float normalizeY = FrameHeight / (float)(Height);
+            Vector2 pixelCoords = new Vector2(Tile.X * FrameWidth, Tile.Y * FrameHeight);
+            Vector2 normalizedCoords = new Vector2(pixelCoords.X / (float)Width, pixelCoords.Y / (float)Height);
+            return new Vector4(normalizedCoords.X + 0.001f, normalizedCoords.Y + 0.001f, normalizedCoords.X + normalizeX - 0.001f, normalizedCoords.Y + normalizeY - 0.001f);
+        }
+
         public int Columns { get { return FrameWidth > 0 ? Width / FrameWidth : 0; } }
         public int Rows { get { return FrameHeight > 0 ? Height / FrameHeight : 0; } }
         public int Row(int TileIndex) { return Columns > 0 ? TileIndex / Columns : 0; }

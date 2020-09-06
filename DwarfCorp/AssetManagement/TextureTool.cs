@@ -48,6 +48,16 @@ namespace DwarfCorp
             return r;
         }
 
+        public static void CopyMemoryTextureToTexture2D(MemoryTexture Source, Texture2D Destination)
+        {
+            Destination.SetData(Source.Data);
+        }
+
+        public static void CopyMemoryTextureToTexture2D(MemoryTexture Source, Texture2D Destination, Rectangle DestRect)
+        {
+            Destination.SetData(0, DestRect, Source.Data, 0, DestRect.Width * DestRect.Height);
+        }
+
         public static Palette OptimizedPaletteFromMemoryTexture(MemoryTexture Source)
         {
             if (Source == null)

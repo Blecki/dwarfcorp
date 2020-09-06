@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
-using System.Runtime.Serialization;
+using System;
 
 namespace DwarfCorp
 {
@@ -16,24 +11,16 @@ namespace DwarfCorp
     /// </summary>
     public class OrientedAnimatedSprite : AnimatedSprite
     {
-        
-
         public SpriteOrientation CurrentOrientation { get; set; }
 
-        protected string currentMode = "";
+        protected string CurrentAnimationName = "";
 
-        public override void SetCurrentAnimation(string name, bool Play = false)
+        public override void SetCurrentAnimation(String Name, bool Play = false)
         {
-            //if (currentMode != name || Play)
-            //{
-                currentMode = name;
-                var s = currentMode + SpriteOrientationHelper.OrientationStrings[(int)CurrentOrientation];
-            if (Animations.ContainsKey(s))
-                SetCurrentAnimation(Animations[s], Play);
-            //        AnimPlayer.ChangeAnimation(Animations[s], AnimationPlayer.ChangeAnimationOptions.NoStateChange);
-            //}
+            CurrentAnimationName = Name;
+            var s = CurrentAnimationName + SpriteOrientationHelper.OrientationStrings[(int)CurrentOrientation];
+            base.SetCurrentAnimation(s, Play);
         }
-
 
         public OrientedAnimatedSprite()
         {
@@ -45,15 +32,22 @@ namespace DwarfCorp
         {
         }
 
-        override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
+        override public void Render(
+            DwarfTime gameTime, 
+            ChunkManager chunks, 
+            Camera camera, 
+            SpriteBatch spriteBatch, 
+            GraphicsDevice graphicsDevice, 
+            Shader effect, 
+            bool renderingForWater)
         {
             CurrentOrientation = SpriteOrientationHelper.CalculateSpriteOrientation(camera, GlobalTransform);
 
-            var s = currentMode + SpriteOrientationHelper.OrientationStrings[(int)CurrentOrientation];
+            var s = CurrentAnimationName + SpriteOrientationHelper.OrientationStrings[(int)CurrentOrientation];
             if (Animations.ContainsKey(s))
             {
                 AnimPlayer.ChangeAnimation(Animations[s], AnimationPlayer.ChangeAnimationOptions.Play);
-                AnimPlayer.Update(gameTime, true);
+                AnimPlayer.Update(gameTime);
             }
 
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);

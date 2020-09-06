@@ -391,6 +391,13 @@ namespace DwarfCorp
 
             if (CurrentTask.HasValue(out var currentTask))
             {
+#if DEBUG
+                if (this is GolemAI)
+                {
+                    var x = 5;
+                }
+#endif
+
                 if (!CurrentAct.HasValue()) // Should be impossible to have a current task and no current act.
                 {
                     // Try and recover the correct act.
@@ -404,31 +411,39 @@ namespace DwarfCorp
 
                 if (CurrentAct.HasValue(out Act currentAct))
                 {
-                    var status = currentAct.Tick();
-                    bool retried = false;
-
-                    if (CurrentAct.HasValue(out Act newCurrentAct) && currentTask != null)
+                    try
                     {
-                        if (status == Act.Status.Fail)
+                        var status = currentAct.Tick();
+                        bool retried = false;
+
+                        if (CurrentAct.HasValue(out Act newCurrentAct) && currentTask != null)
                         {
-                            LastFailedAct = newCurrentAct.Name;
+                            if (status == Act.Status.Fail)
+                            {
+                                LastFailedAct = newCurrentAct.Name;
 
-                            if (!FailedTasks.Any(task => task.TaskFailure.Equals(currentTask)))
-                                FailedTasks.Add(new FailedTask() { TaskFailure = currentTask, FailedTime = World.Time.CurrentDate });
+                                if (!FailedTasks.Any(task => task.TaskFailure.Equals(currentTask)))
+                                    FailedTasks.Add(new FailedTask() { TaskFailure = currentTask, FailedTime = World.Time.CurrentDate });
 
-                            if (currentTask.ShouldRetry(Creature))
-                                if (!Tasks.Contains(currentTask))
-                                {
-                                    ReassignCurrentTask();
-                                    retried = true;
-                                }
+                                if (currentTask.ShouldRetry(Creature))
+                                    if (!Tasks.Contains(currentTask))
+                                    {
+                                        ReassignCurrentTask();
+                                        retried = true;
+                                    }
+                            }
                         }
-                    }
 
-                    if (currentTask != null && currentTask.IsComplete(World))
-                        ChangeTask(null);
-                    else if (status != Act.Status.Running && !retried)
-                        ChangeTask(null);
+                        if (currentTask != null && currentTask.IsComplete(World))
+                            ChangeTask(null);
+                        else if (status != Act.Status.Running && !retried)
+                            ChangeTask(null);
+                    }
+                    catch (Exception e)
+                    {
+                        Program.LogSentryBreadcrumb("DATA", "Act: " + currentAct.Name + " - " + currentAct.GetType().Name);
+                        Program.CaptureException(new Exception("REPORT: Exception caught while ticking act.", e));
+                    }
                 }
             }
             else
@@ -755,7 +770,9 @@ namespace DwarfCorp
 
         public void Chat()
         {
+#if !DEBUG
             try
+#endif
             {
                 World.Paused = true;
 
@@ -828,10 +845,12 @@ namespace DwarfCorp
                 state.SetVoicePitch(Stats.VoicePitch);
                 GameStateManager.PushState(state);
             }
+#if !DEBUG
             catch (Exception e)
             {
-                Program.CaptureException(new Exception("Exception thrown by chat initialization.", e));
+                Program.CaptureException(new Exception("REPORT: Exception thrown by chat initialization.", e));
             }
+#endif
         }
     }
 }

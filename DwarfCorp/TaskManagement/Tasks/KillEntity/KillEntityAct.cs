@@ -38,7 +38,7 @@ namespace DwarfCorp
                 return false;
 
             if (RadiusDomain > 0.0)
-                if ((creature.Position - Entity.Position).LengthSquared() > RadiusDomain)
+                if ((creature.Position - Entity.Position).LengthSquared() > (RadiusDomain * RadiusDomain))
                     return false;
 
             //if (Defensive)
@@ -99,7 +99,7 @@ namespace DwarfCorp
             if (creature.Movement.IsSessile)
             {
                 Tree = new Domain(() => Verify(creature),
-                    new Select(
+                    new Sequence(
                         ActHelper.CreateEquipmentCheckAct(creature, "Tool", ActHelper.EquipmentFallback.AllowDefault, "Weapon"),
                         new AttackAct(Agent, entity),
                         new Wrap(() => OnAttackEnd(creature))));

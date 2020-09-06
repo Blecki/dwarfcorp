@@ -155,6 +155,7 @@
     <Compile Include="Components\Graphics\LayeredSimpleSprite.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfBuilder.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfCharacterSprite.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\DwarfInstanceGroup.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfLayer.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfLayerLibrary.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfLayerStack.cs" />
@@ -308,11 +309,13 @@
     <Compile Include="EventLogState.cs" />
     <Compile Include="EventLogViewer.cs" />
     <Compile Include="GameSettings.cs" />
+    <Compile Include="GameStates\DebugStates\DwarfCompositeTextureDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\DwarfDesignerState.cs" />
     <Compile Include="GameStates\DebugStates\GuiDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\GuiDebugState.cs" />
     <Compile Include="GameStates\DebugStates\GuiTextDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\GuiTextureDebugPanel.cs" />
+    <Compile Include="GameStates\DebugStates\TiledCompositeTextureDebugPanel.cs" />
     <Compile Include="GameStates\FrontEnd\CheckMegaWorldState.cs" />
     <Compile Include="GameStates\FrontEnd\CreditsState.cs" />
     <Compile Include="GameStates\FrontEnd\IntroState.cs" />

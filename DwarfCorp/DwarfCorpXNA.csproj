@@ -188,6 +188,7 @@
     <Compile Include="Components\AI\Creature-Death.cs" />
     <Compile Include="Components\AI\StatusEffects\MotivationStatusEffect.cs" />
     <Compile Include="Components\Graphics\ISprite.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\DwarfInstanceGroup.cs" />
     <Compile Include="Components\Graphics\SpriteOrientation.cs" />
     <Compile Include="Components\Physics\PhysicsSystem.cs" />
     <Compile Include="Entities\Animals\Pumpking.cs" />
@@ -195,6 +196,8 @@
     <Compile Include="Entities\Fixtures\TrainingEquipment\TrainingEquipment.cs" />
     <Compile Include="Entities\Plants\Cotton.cs" />
     <Compile Include="GameStates\DebugStates\GuiTextDebugPanel.cs" />
+    <Compile Include="GameStates\DebugStates\DwarfCompositeTextureDebugPanel.cs" />
+    <Compile Include="GameStates\DebugStates\TiledCompositeTextureDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\GuiTextureDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\GuiDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\GuiDebugState.cs" />
