@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using DwarfCorp.GameStates;
-using LibNoise.Modifiers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Content;
+using System;
+using System.Collections.Generic;
 
 namespace DwarfCorp.DwarfSprites
 {
@@ -19,11 +14,13 @@ namespace DwarfCorp.DwarfSprites
             public Point LastFrame = new Point(-1, -1);
         }
 
-        private const int InstanceQueueSize = 1024;
+        private const int InstanceQueueSize = 256;
 
         public BatchBillboardPrimitive Primitive = null;
         private TiledInstancedVertex[] Instances = new TiledInstancedVertex[InstanceQueueSize];
         private int InstanceCount = 0;
+        private TiledInstancedVertex[] SilhouetteInstances = new TiledInstancedVertex[InstanceQueueSize];
+        private int SilhouetteInstanceCount = 0;
         private DynamicVertexBuffer InstanceBuffer = null;
         private List<Dwarf> Dwarves = new List<Dwarf>();
         private Rectangle AtlasBounds;
@@ -118,7 +115,7 @@ namespace DwarfCorp.DwarfSprites
             {
                 if (dwarf.Sprite.SpriteSheet != null)
                 {
-                    Instances[InstanceCount] = new TiledInstancedVertex
+                    var v = new TiledInstancedVertex
                     {
                         Transform = dwarf.Sprite.GetWorldMatrix(Camera),
                         LightRamp = dwarf.Sprite.LightRamp,
@@ -127,6 +124,16 @@ namespace DwarfCorp.DwarfSprites
                         TileBounds = Sheet.GetTileUVBounds(dwarf.AtlasFrame)
                     };
 
+                    if (dwarf.Sprite.DrawSilhouette)
+                    {
+                        SilhouetteInstances[SilhouetteInstanceCount] = v;
+                        SilhouetteInstanceCount += 1;
+                        if (SilhouetteInstanceCount >= SilhouetteInstances.Length)
+                            FlushSilhouette(Device, Effect, Camera, Mode);
+                    }
+
+                    Instances[InstanceCount] = v;
+
                     InstanceCount += 1;
                     if (InstanceCount >= InstanceQueueSize)
                         Flush(Device, Effect, Camera, Mode);
@@ -134,51 +141,19 @@ namespace DwarfCorp.DwarfSprites
             }
 
             Flush(Device, Effect, Camera, Mode);
+            FlushSilhouette(Device, Effect, Camera, Mode);
         }
 
         private void Flush(GraphicsDevice Device, Shader Effect, Camera Camera, InstanceRenderMode Mode)
         {
             if (InstanceCount == 0) return;
 
-            if (Primitive == null)
-                Primitive = new BatchBillboardPrimitive(new NamedImageFrame("newgui\\error"), 32, 32,
-                            new Point(0, 0), 1.0f, 1.0f, false,
-                            new List<Matrix> { Matrix.Identity },
-                            new List<Color> { Color.White },
-                            new List<Color> { Color.White });
-
-            if (Primitive.VertexBuffer == null || Primitive.IndexBuffer == null ||
-    (Primitive.VertexBuffer != null && Primitive.VertexBuffer.IsContentLost) ||
-    (Primitive.IndexBuffer != null && Primitive.IndexBuffer.IsContentLost))
-                Primitive.ResetBuffer(Device);
-
-
-            if (InstanceBuffer == null || InstanceBuffer.IsDisposed || InstanceBuffer.IsContentLost)
-                InstanceBuffer = new DynamicVertexBuffer(Device, TiledInstancedVertex.VertexDeclaration, InstanceQueueSize, BufferUsage.None);
-            
-            Device.RasterizerState = new RasterizerState { CullMode = CullMode.None };
-            if (Mode == InstanceRenderMode.Normal)
-                Effect.SetTiledInstancedTechnique();
-            else
-                Effect.CurrentTechnique = Effect.Techniques[Shader.Technique.SelectionBufferTiledInstanced];
-
-            Effect.EnableWind = false;
-            Effect.EnableLighting = true;
-            Effect.VertexColorTint = Color.White;
-
-            Device.Indices = Primitive.IndexBuffer;
-
-            BlendState blendState = Device.BlendState;
-            Device.BlendState = Mode == InstanceRenderMode.Normal ? BlendState.NonPremultiplied : BlendState.Opaque;
-
-            Effect.MainTexture = AtlasTexture;
-            Effect.LightRamp = Color.White;
+            BlendState blendState;
+            bool ghostEnabled;
+            PrepEffect(Device, Effect, Mode, out blendState, out ghostEnabled);
 
             InstanceBuffer.SetData(Instances, 0, InstanceCount, SetDataOptions.Discard);
             Device.SetVertexBuffers(new VertexBufferBinding(Primitive.VertexBuffer), new VertexBufferBinding(InstanceBuffer, 0, 1));
-
-            var ghostEnabled = Effect.GhostClippingEnabled;
-            Effect.GhostClippingEnabled = false;//RenderData.EnableGhostClipping && ghostEnabled;
 
             foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
             {
@@ -196,6 +171,94 @@ namespace DwarfCorp.DwarfSprites
             Effect.EnableWind = false;
 
             InstanceCount = 0;
+        }
+
+        private void FlushSilhouette(GraphicsDevice Device, Shader Effect, Camera Camera, InstanceRenderMode Mode)
+        {
+            if (SilhouetteInstanceCount == 0) return;
+
+            BlendState blendState;
+            bool ghostEnabled;
+            PrepEffect(Device, Effect, Mode, out blendState, out ghostEnabled);
+
+            InstanceBuffer.SetData(SilhouetteInstances, 0, SilhouetteInstanceCount, SetDataOptions.Discard);
+            Device.SetVertexBuffers(new VertexBufferBinding(Primitive.VertexBuffer), new VertexBufferBinding(InstanceBuffer, 0, 1));
+
+            Color oldTint = Effect.VertexColorTint;
+            Effect.VertexColorTint = new Color(0.0f, 1.0f, 1.0f, 0.5f);
+            Device.DepthStencilState = new DepthStencilState
+            {
+                DepthBufferWriteEnable = false,
+                DepthBufferFunction = CompareFunction.Greater
+            };
+
+            var oldTechnique = Effect.CurrentTechnique;
+
+            Effect.CurrentTechnique = Effect.Techniques["TiledInstancedSilhouette"];
+
+            foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                Device.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0,
+                    Primitive.VertexCount, 0,
+                    Primitive.Indexes.Length / 3,
+                    SilhouetteInstanceCount);
+            }
+
+            Device.DepthStencilState = DepthStencilState.Default;
+            Effect.VertexColorTint = oldTint;
+            Effect.CurrentTechnique = oldTechnique;
+
+
+            Effect.GhostClippingEnabled = ghostEnabled;
+            Effect.SetTexturedTechnique();
+            Effect.World = Matrix.Identity;
+            Device.BlendState = blendState;
+            Effect.EnableWind = false;
+
+            SilhouetteInstanceCount = 0;
+        }
+
+        private void PrepEffect(GraphicsDevice Device, Shader Effect, InstanceRenderMode Mode, out BlendState blendState, out bool ghostEnabled)
+        {
+            if (Primitive == null)
+                Primitive = new BatchBillboardPrimitive(new NamedImageFrame("newgui\\error"), 32, 32,
+                            new Point(0, 0), 1.0f, 1.0f, false,
+                            new List<Matrix> { Matrix.Identity },
+                            new List<Color> { Color.White },
+                            new List<Color> { Color.White });
+
+            if (Primitive.VertexBuffer == null || Primitive.IndexBuffer == null ||
+                (Primitive.VertexBuffer != null && Primitive.VertexBuffer.IsContentLost) ||
+                (Primitive.IndexBuffer != null && Primitive.IndexBuffer.IsContentLost))
+                Primitive.ResetBuffer(Device);
+
+
+            if (InstanceBuffer == null || InstanceBuffer.IsDisposed || InstanceBuffer.IsContentLost)
+                InstanceBuffer = new DynamicVertexBuffer(Device, TiledInstancedVertex.VertexDeclaration, InstanceQueueSize, BufferUsage.None);
+
+            Device.RasterizerState = new RasterizerState { CullMode = CullMode.None };
+            if (Mode == InstanceRenderMode.Normal)
+                Effect.SetTiledInstancedTechnique();
+            else
+                Effect.CurrentTechnique = Effect.Techniques[Shader.Technique.SelectionBufferTiledInstanced];
+
+            Effect.EnableWind = false;
+            Effect.EnableLighting = true;
+            Effect.VertexColorTint = Color.White;
+
+            Device.Indices = Primitive.IndexBuffer;
+
+            blendState = Device.BlendState;
+            Device.BlendState = Mode == InstanceRenderMode.Normal ? BlendState.NonPremultiplied : BlendState.Opaque;
+
+            Effect.MainTexture = AtlasTexture;
+            Effect.LightRamp = Color.White;
+
+
+
+            ghostEnabled = Effect.GhostClippingEnabled;
+            Effect.GhostClippingEnabled = false;//RenderData.EnableGhostClipping && ghostEnabled;
         }
     }
 }

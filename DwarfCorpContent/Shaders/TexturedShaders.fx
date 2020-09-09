@@ -922,17 +922,6 @@ technique Icon
     }
 }
 
-/*
-technique Textured_0_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_3_0 TexturedVSNonInstanced(0);
-		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
-	}
-}
-*/
-
 technique Textured_1_Light
 {
 	pass Pass0
@@ -1285,6 +1274,15 @@ technique TiledInstanced
 	{
 		VertexShader = compile vs_3_0 TexturedVSTiledInstanced(MAX_LIGHTS);
 		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique TiledInstancedSilhouette
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSTiledInstanced(MAX_LIGHTS);
+		PixelShader = compile ps_3_0 SilhouettePS();
 	}
 }
 

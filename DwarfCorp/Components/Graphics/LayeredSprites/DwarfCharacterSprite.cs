@@ -1,12 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
-using DwarfCorp.GameStates;
 
 namespace DwarfCorp.DwarfSprites
 {
@@ -102,68 +100,6 @@ namespace DwarfCorp.DwarfSprites
             AnimPlayer.ChangeAnimation(Animation, Play ? AnimationPlayer.ChangeAnimationOptions.Play : AnimationPlayer.ChangeAnimationOptions.Stop);
         }
 
-        public override void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
-            GraphicsDevice graphicsDevice, Shader effect)
-        {
-            if (!IsVisible) return;
-
-            //base.RenderSelectionBuffer(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect);
-            //RenderBody(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false, InstanceRenderMode.SelectionBuffer);
-        }
-
-        private void RenderBody(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater,
-            InstanceRenderMode Mode)
-        {
-            if (!IsVisible) return;
-            if (!AnimPlayer.HasValidAnimation()) return;
-            var tex = Layers.GetCompositeTexture();
-            if (tex == null || tex.IsDisposed || tex.GraphicsDevice.IsDisposed)
-                return;
-            if (SpriteSheet == null)
-                SpriteSheet = new SpriteSheet(tex, 48, 40);
-            SpriteSheet.SwapFixedTexture(tex);
-
-
-            Color origTint = effect.VertexColorTint;
-            effect.SelectionBufferColor = this.GetGlobalIDColor().ToVector4();
-            effect.World = GetWorldMatrix(camera);
-            effect.MainTexture = tex;
-            ApplyTintingToEffect(effect);
-
-            if (Primitive == null)
-                Primitive = new BillboardPrimitive();
-            Primitive.SetFrame(SpriteSheet, SpriteSheet.GetTileRectangle(AnimPlayer.GetCurrentAnimation().Frames[AnimPlayer.CurrentFrame]), 1.0f, 1.0f, Color.White, Color.White);
-
-            if (DrawSilhouette)
-            {
-                Color oldTint = effect.VertexColorTint;
-                effect.VertexColorTint = SilhouetteColor;
-                graphicsDevice.DepthStencilState = DepthStencilState.None;
-                var oldTechnique = effect.CurrentTechnique;
-                effect.CurrentTechnique = effect.Techniques[Shader.Technique.Silhouette];
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                    Primitive.Render(graphicsDevice);
-                }
-
-                graphicsDevice.DepthStencilState = DepthStencilState.Default;
-                effect.VertexColorTint = oldTint;
-                effect.CurrentTechnique = oldTechnique;
-            }
-
-            effect.EnableWind = false;
-
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                Primitive.Render(graphicsDevice);
-            }
-            effect.VertexColorTint = origTint;
-            effect.EnableWind = false;
-            EndDraw(effect);
-        }
-
         public Matrix GetWorldMatrix(Camera camera)
         {
             var currDistortion = VertexNoise.GetNoiseVectorFromRepeatingTexture(GlobalTransform.Translation);
@@ -172,34 +108,6 @@ namespace DwarfCorp.DwarfSprites
             var pos = GlobalTransform.Translation;
             var bill = Matrix.CreateScale(SpriteSheet.FrameWidth / 32.0f, SpriteSheet.FrameHeight / 32.0f, 1.0f) * Matrix.CreateBillboard(pos, camera.Position, camera.UpVector, null) * Matrix.CreateTranslation(distortion);
             return bill;
-        }
-
-
-        override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
-            GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
-        {
-            /*if (!isBlinking)
-                VertexColorTint = tintOnBlink;
-            else
-            {
-                if (blinkTimer.CurrentTimeSeconds < 0.5f * blinkTimer.TargetTimeSeconds)
-                    VertexColorTint = new Color(new Vector3(1.0f, blinkTimer.CurrentTimeSeconds / blinkTimer.TargetTimeSeconds, blinkTimer.CurrentTimeSeconds / blinkTimer.TargetTimeSeconds));
-                else
-                    VertexColorTint = tintOnBlink;
-            }
-
-            RenderBody(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater, InstanceRenderMode.Normal);
-
-            CurrentOrientation = SpriteOrientationHelper.CalculateSpriteOrientation(camera, GlobalTransform);
-
-            var s = CurrentAnimationName + SpriteOrientationHelper.OrientationStrings[(int)CurrentOrientation];
-            if (Animations.ContainsKey(s))
-            {
-                AnimPlayer.ChangeAnimation(Animations[s], AnimationPlayer.ChangeAnimationOptions.Play);
-                AnimPlayer.Update(gameTime);
-            }
-
-            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);*/
         }
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
