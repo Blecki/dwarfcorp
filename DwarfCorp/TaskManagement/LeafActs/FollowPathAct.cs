@@ -531,8 +531,9 @@ namespace DwarfCorp
 
                     foreach (var status in PerformStep(step))
                     {
-                        //Agent.Physics.PropogateTransforms();
-                        DeltaTime += (float)DwarfTime.LastTime.ElapsedGameTime.TotalSeconds;
+                    //Agent.Physics.PropogateTransforms();
+                    DeltaTime += (float)Creature.AI.FrameDeltaTime.ElapsedGameTime.TotalSeconds;
+                    //DwarfTime.LastTime.ElapsedGameTime.TotalSeconds;
                         Creature.Physics.CollisionType = CollisionType.Dynamic;
 
                         if (status == Status.Fail)

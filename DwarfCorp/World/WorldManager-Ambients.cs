@@ -25,9 +25,9 @@ namespace DwarfCorp
             }
         }
 
-        public void HandleAmbientSound()
+        public void HandleAmbientSound(DwarfTime ElapsedTime)
         {
-            AmbienceTimer.Update(DwarfTime.LastTime);
+            AmbienceTimer.Update(ElapsedTime);
             if (!AmbienceTimer.HasTriggered && !firstAmbience)
             {
                 return;

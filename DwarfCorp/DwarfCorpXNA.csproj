@@ -186,6 +186,7 @@
     <Compile Include="AssetManagement\TextureTool-CropAndColorSprite.cs" />
     <Compile Include="AssetManagement\TextureTool-LoadPSD.cs" />
     <Compile Include="Components\AI\Creature-Death.cs" />
+    <Compile Include="Components\AI\AISystem.cs" />
     <Compile Include="Components\AI\StatusEffects\MotivationStatusEffect.cs" />
     <Compile Include="Components\Graphics\ISprite.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfInstanceGroup.cs" />

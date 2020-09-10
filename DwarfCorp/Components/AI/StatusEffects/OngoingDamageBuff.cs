@@ -18,7 +18,7 @@ namespace DwarfCorp
         public override void Update(DwarfTime time, Creature creature)
         {
             var dt = (float)time.ElapsedGameTime.TotalSeconds;
-            creature.Damage(DamagePerSecond * dt, DamageType);
+            creature.Damage(time, DamagePerSecond * dt, DamageType);
             base.Update(time, creature);
         }
 

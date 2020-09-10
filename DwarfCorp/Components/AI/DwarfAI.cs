@@ -354,7 +354,7 @@ namespace DwarfCorp
             AssignTask(Task);
         }
 
-        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera) 
+        override public void AIUpdate(DwarfTime gameTime, ChunkManager chunks, Camera camera) 
         {
             //base.Update(gameTime, chunks, camera);
 
@@ -603,7 +603,7 @@ namespace DwarfCorp
                 if ((Physics.IsInLiquid || (!Movement.CanSwim && (below.IsValid && (below.LiquidLevel > 5)))) 
                     && (!Movement.CanSwim || shouldDrown))
                 {
-                    Creature.Damage(Movement.CanSwim ? 1.0f : 30.0f, Health.DamageType.Normal);
+                    Creature.Damage(FrameDeltaTime, Movement.CanSwim ? 1.0f : 30.0f, Health.DamageType.Normal);
                 }
             }
 

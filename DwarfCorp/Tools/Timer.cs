@@ -141,20 +141,14 @@ namespace DwarfCorp
         }
 
         [JsonIgnore]
-        public static DwarfTime LastTime = new DwarfTime();
-
-        [JsonIgnore]
-        public static float Dt
-        {
-            get { return (float)LastTime.ElapsedGameTime.TotalSeconds; }
-        }
+        public static DwarfTime LastTimeX = new DwarfTime();
 
         [JsonIgnore]
         public static double MaximumElapsedGameTime = 60.0f / 10.0f;
 
         public static double Tick()
         {
-            return DwarfTime.LastTime.TotalRealTime.TotalSeconds;
+            return DwarfTime.LastTimeX.TotalRealTime.TotalSeconds;
         }
 
         public static double Tock(double start)

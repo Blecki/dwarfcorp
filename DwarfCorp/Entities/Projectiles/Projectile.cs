@@ -117,7 +117,7 @@ namespace DwarfCorp
             {
                 if (Target.GetRoot().GetComponent<Health>().HasValue(out var health))
                 {
-                    health.Damage(Damage.Amount, Damage.DamageType);
+                    health.Damage(gameTime, Damage.Amount, Damage.DamageType);
                     var knock = (Target.Position - Position);
                     knock.Normalize();
                     knock *= 0.2f;

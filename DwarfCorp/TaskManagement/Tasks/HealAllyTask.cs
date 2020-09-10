@@ -59,7 +59,7 @@ namespace DwarfCorp
             {
                 Agent.Physics.Face(Ally.Position);
                 Agent.Creature.CurrentCharacterMode = CharacterMode.Sitting;
-                healTimer.Update(DwarfTime.LastTime);
+                healTimer.Update(Agent.FrameDeltaTime);
                 if (healTimer.HasTriggered)
                 {
                     int amount = MathFunctions.RandInt(1, (int)Agent.Stats.Wisdom);
@@ -138,7 +138,7 @@ namespace DwarfCorp
                 if (Agent.Creature.Stats.CurrentClass.HasValue(out var c))
                     Agent.Creature.CurrentCharacterMode = c.AttackMode;
 
-                healTimer.Update(DwarfTime.LastTime);
+                healTimer.Update(Agent.FrameDeltaTime);
                 if (healTimer.HasTriggered)
                 {
                     if (Agent.Creature.Stats.CurrentClass.HasValue(out var _c))

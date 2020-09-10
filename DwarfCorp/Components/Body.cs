@@ -174,8 +174,6 @@ namespace DwarfCorp
         {
             HasMoved = false;
 
-            PerformanceMonitor.PushFrame("Body.UpdateTransform");
-
             if (Parent != null)
                 globalTransform = LocalTransform * Parent.GlobalTransform;
             else
@@ -185,9 +183,6 @@ namespace DwarfCorp
 
             if (NeedsSpacialStorageUpdate(LastBounds, BoundingBox))
             {
-                //Manager.World.RemoveGameObject(this, LastBounds);
-                //Manager.World.AddGameObject(this, BoundingBox);
-
                 if (IsRoot() && !IsFlagSet(Flag.DontUpdate))
                 {
                     Manager.World.RemoveRootGameObject(this, LastBounds);
@@ -198,8 +193,6 @@ namespace DwarfCorp
             }
 
             LastBounds = BoundingBox;
-           
-            PerformanceMonitor.PopFrame();
         }
 
         public virtual void OnSpacialStorageUpdate(BoundingBox LastBounds, BoundingBox NewBounds)
@@ -209,13 +202,9 @@ namespace DwarfCorp
 
         public void PropogateTransforms()
         {
-            PerformanceMonitor.PushFrame("Propogate Transforms");
-
             UpdateTransform();
             for (var i = 0; i < Children.Count; ++i)
                 Children[i].PropogateTransforms();
-
-            PerformanceMonitor.PopFrame();
         }
 
         public BoundingBox GetBoundingBox()

@@ -173,10 +173,10 @@ namespace DwarfCorp.GameStates
 
             BottomBar.Layout();
 
-            if (GameSpeedControls.CurrentSpeed != (int)DwarfTime.LastTime.Speed)
+            if (GameSpeedControls.CurrentSpeed != (int)DwarfTime.LastTimeX.Speed)
                 World.Tutorial("time");
 
-            GameSpeedControls.CurrentSpeed = (int)DwarfTime.LastTime.Speed;
+            GameSpeedControls.CurrentSpeed = (int)DwarfTime.LastTimeX.Speed;
 
             if (PausedWidget.Hidden == World.Paused)
             {
@@ -751,10 +751,10 @@ namespace DwarfCorp.GameStates
 
                 OnSpeedChanged = (sender, speed) =>
                 {
-                    if ((int)DwarfTime.LastTime.Speed != speed)
+                    if ((int)DwarfTime.LastTimeX.Speed != speed)
                     {
                         World.Tutorial("time");
-                        if ((int)DwarfTime.LastTime.Speed == 0)
+                        if ((int)DwarfTime.LastTimeX.Speed == 0)
                         {
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_speed_unpause, 0.1f);
                         }
@@ -773,7 +773,7 @@ namespace DwarfCorp.GameStates
                                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_speed_pause, 0.1f);
                                 break;
                         }
-                        DwarfTime.LastTime.Speed = (float)speed;
+                        DwarfTime.LastTimeX.Speed = (float)speed;
                         World.Paused = speed == 0;
                         PausedWidget.Hidden = !World.Paused;
                         PausedWidget.Tooltip = "(push " + ControlSettings.Mappings.Pause.ToString() + " to unpause)";

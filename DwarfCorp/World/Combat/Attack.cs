@@ -112,7 +112,7 @@ namespace DwarfCorp
             var health = other.GetRoot().EnumerateAll().OfType<Health>().FirstOrDefault();
             if (health != null)
             {
-                health.Damage(Weapon.DamageAmount + bonus);
+                health.Damage(performer.AI.FrameDeltaTime, Weapon.DamageAmount + bonus);
                 var injury = DiseaseLibrary.GetRandomInjury();
 
                 if (MathFunctions.RandEvent(injury.LikelihoodOfSpread))

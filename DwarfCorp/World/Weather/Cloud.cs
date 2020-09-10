@@ -161,12 +161,12 @@ namespace DwarfCorp
             {
                 if (!RainDrops[i].IsAlive) continue;
 
-                RainDrops[i].Pos += RainDrops[i].Vel * DwarfTime.Dt;
+                RainDrops[i].Pos += RainDrops[i].Vel * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                 if (stormProperties.RainRandom > 0)
                 {
-                    RainDrops[i].Vel.X += MathFunctions.Rand(-1, 1) * stormProperties.RainRandom * DwarfTime.Dt;
-                    RainDrops[i].Vel.Z += MathFunctions.Rand(-1, 1) * stormProperties.RainRandom * DwarfTime.Dt;
+                    RainDrops[i].Vel.X += MathFunctions.Rand(-1, 1) * stormProperties.RainRandom * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    RainDrops[i].Vel.Z += MathFunctions.Rand(-1, 1) * stormProperties.RainRandom * (float)gameTime.ElapsedGameTime.TotalSeconds;
                 }
 
                 if (RainDrops[i].Pos.Y < 0)
@@ -247,7 +247,7 @@ namespace DwarfCorp
             }
 
             Matrix tf = LocalTransform;
-            tf.Translation += Velocity * DwarfTime.Dt;
+            tf.Translation += Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
             LocalTransform = tf;
         }
 

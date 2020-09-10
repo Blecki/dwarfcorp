@@ -198,7 +198,8 @@ namespace DwarfCorp
                             },
                             new Wrap(() => DestroyResources(() => Agent.Position + MathFunctions.RandVector3Cube() * 0.5f)),
                             new Wrap(WaitForResources) { Name = "Wait for resources." },
-                            new Wrap(() => Creature.HitAndWait(true,
+                            new Wrap(() => Creature.HitAndWait(
+                                true,
                                 () => 1.0f, // Max Progress
                                 () => Des.Progress, // Current Progress
                                 () =>

@@ -44,7 +44,7 @@ namespace DwarfCorp
                 while (Farm.Progress < Farm.TargetProgress && !Farm.Finished)
                 {
                     Creature.Physics.Velocity *= 0.1f;
-                    Farm.Progress += 3 * Creature.Stats.BaseFarmSpeed*DwarfTime.Dt;
+                    Farm.Progress += 3 * Creature.Stats.BaseFarmSpeed * (float)Creature.AI.FrameDeltaTime.ElapsedGameTime.TotalSeconds;
 
                     Drawer2D.DrawLoadBar(Agent.Manager.World.Renderer.Camera, Agent.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4,
                         Farm.Progress / Farm.TargetProgress);

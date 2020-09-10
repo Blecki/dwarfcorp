@@ -784,7 +784,7 @@ namespace DwarfCorp.Gui
                         .Scale(tileSheet.TileWidth, tileSheet.TileHeight)
                         .Translate(
                             specialIndicatorPosition.X +
-                            (float)Math.Sin(DwarfTime.LastTime.TotalRealTime.TotalSeconds * 4.0) * 8.0f,
+                            (float)Math.Sin(DwarfTime.LastTimeX.TotalRealTime.TotalSeconds * 4.0) * 8.0f,
                             specialIndicatorPosition.Y)
                         .Texture(tileSheet.TileMatrix(SpecialIndicator.AnimationFrame));
                     MouseMesh.Render(RenderData.Device);

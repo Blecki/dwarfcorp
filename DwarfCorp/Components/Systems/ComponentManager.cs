@@ -232,7 +232,7 @@ namespace DwarfCorp
             World.EnumerateIntersectingRootEntitiesLoose(playerPoint, GameSettings.Current.EntityUpdateDistance, Into);
         }
 
-        public void Update(DwarfTime gameTime, ChunkManager chunks, HashSet<GameComponent> ComponentsToUpdate) // Todo: Camera redundant
+        public void Update(DwarfTime gameTime, ChunkManager chunks, HashSet<GameComponent> ComponentsToUpdate)
         {
             PerformanceMonitor.PushFrame("Component Update");
             PerformanceMonitor.SetMetric("COMPONENTS", NumComponents());
@@ -242,23 +242,33 @@ namespace DwarfCorp
             {
                 i += 1;
                 body.Update(gameTime, chunks, World.Renderer.Camera);
-                body.ProcessTransformChange();
             }
 
             PerformanceMonitor.SetMetric("ENTITIES UPDATED", i);
             PerformanceMonitor.PopFrame();
 
+            PerformanceMonitor.PushFrame("Transform Update");
+            var transformsProcessed = 0;
+            foreach (var body in ComponentsToUpdate)
+            {
+                transformsProcessed += 1;
+                body.ProcessTransformChange();
+            }
+
+            PerformanceMonitor.SetMetric("TRANSFORMS", transformsProcessed);
+            PerformanceMonitor.PopFrame();
+
             AddRemove();
-            ReceiveMessage();
+            ReceiveMessage(gameTime);
         }
 
-        private void ReceiveMessage()
+        private void ReceiveMessage(DwarfTime Time)
         {
             lock (_msgLock)
             {
                 foreach (var msg in _msgList)
                 {
-                    msg.Key.ReceiveMessageRecursive(msg.Value);
+                    msg.Key.ReceiveMessageRecursive(msg.Value, Time);
                 }
                 _msgList.Clear();
             }

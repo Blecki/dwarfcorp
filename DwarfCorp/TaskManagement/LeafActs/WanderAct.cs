@@ -53,14 +53,14 @@ namespace DwarfCorp
                 Creature.OverrideCharacterMode = false;
                 Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                 Creature.CurrentCharacterMode = CharacterMode.Walking;
-                WanderTime.Update(DwarfTime.LastTime);
+                WanderTime.Update(Agent.FrameDeltaTime);
 
                 if (!Creature.IsOnGround)
                 {
                     yield return Status.Success;
                     yield break;
                 }
-                if(TurnTime.Update(DwarfTime.LastTime) || TurnTime.HasTriggered || firstIter)
+                if(TurnTime.Update(Agent.FrameDeltaTime) || TurnTime.HasTriggered || firstIter)
                 {
                     int iters = 0;
 
@@ -109,11 +109,11 @@ namespace DwarfCorp
                 {
                     
                     Vector3 output =
-                        Creature.Controller.GetOutput((float) DwarfTime.LastTime.ElapsedGameTime.TotalSeconds,
+                        Creature.Controller.GetOutput((float)Agent.FrameDeltaTime.ElapsedGameTime.TotalSeconds,
                             LocalTarget, Agent.Position);
                     output.Y = 0.0f;
 
-                    Creature.Physics.ApplyForce(output * 0.5f, (float) DwarfTime.LastTime.ElapsedGameTime.TotalSeconds);
+                    Creature.Physics.ApplyForce(output * 0.5f, (float)Agent.FrameDeltaTime.ElapsedGameTime.TotalSeconds);
                     Creature.CurrentCharacterMode = CharacterMode.Walking;
                 }
 

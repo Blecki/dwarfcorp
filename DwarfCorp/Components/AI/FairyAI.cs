@@ -25,7 +25,7 @@ namespace DwarfCorp
         {
         }
 
-        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera) 
+        override public void AIUpdate(DwarfTime gameTime, ChunkManager chunks, Camera camera) 
         {
             if (!Active)
                 return;

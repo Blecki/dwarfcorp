@@ -1,9 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
+﻿using System;
 
 namespace DwarfCorp.Events
 {
@@ -26,7 +21,7 @@ namespace DwarfCorp.Events
             TextHorizontalAlign = Gui.HorizontalAlign.Center;
             OnUpdate = (sender, time) =>
             {
-                Update(DwarfTime.LastTime);
+                Update(DwarfTime.LastTimeX);
             };
             if (OnClick == null)
             {

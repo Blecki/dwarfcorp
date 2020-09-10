@@ -110,7 +110,7 @@ namespace DwarfCorp
                 if (creature == null) continue;
                 if (World.Overworld.GetPolitics(creature.Creature.Faction.ParentFaction, Allies.ParentFaction).GetCurrentRelationship() == Relationship.Loving) continue;
 
-                creature.Creature.Damage(DamageAmount);
+                creature.Creature.Damage(DwarfTime.LastTimeX, DamageAmount);
                 creature.Creature.Physics.Velocity *= 0.0f;
                 Trigger();
                 break;

@@ -32,7 +32,7 @@ namespace DwarfCorp
 
             return new Sequence(
                 new GoToZoneAct(agent.AI, Zone),
-                new Wait(999) { Name = "Wait." });
+                new Wait(agent.AI, 999) { Name = "Wait." });
         }
     }
 }

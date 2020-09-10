@@ -39,7 +39,7 @@ namespace DwarfCorp
                 Timer converseTimer = new Timer(5.0f, true);
                 while (!converseTimer.HasTriggered)
                 {
-                    converseTimer.Update(DwarfTime.LastTime);
+                    converseTimer.Update(c.FrameDeltaTime);
                     yield return Act.Status.Running;
                 }
             }

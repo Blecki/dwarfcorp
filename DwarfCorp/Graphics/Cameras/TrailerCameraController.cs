@@ -44,8 +44,8 @@ namespace DwarfCorp
 
         public void Update(WorldManager world, OrbitCamera camera)
         {
-            float dt = (float)DwarfTime.LastTime.ElapsedRealTime.TotalSeconds;
-            Duration.Update(DwarfTime.LastTime);
+            float dt = (float)DwarfTime.LastTimeX.ElapsedRealTime.TotalSeconds;
+            Duration.Update(DwarfTime.LastTimeX);
             Vector3 forward = (camera.Target - camera.Position);
             forward.Normalize();
             Vector3 right = Vector3.Cross(forward, camera.UpVector);
@@ -63,7 +63,7 @@ namespace DwarfCorp
             }
             camera.Position += vel * dt;
             camera.Target += vel * dt;
-            camera.OverheadUpdate(DwarfTime.LastTime, world.ChunkManager, 0.0f, Spin * dt, Zoom * dt);
+            camera.OverheadUpdate(DwarfTime.LastTimeX, world.ChunkManager, 0.0f, Spin * dt, Zoom * dt);
 
             if (Duration.HasTriggered)
             {

@@ -52,7 +52,7 @@ namespace DwarfCorp.GameStates
         {
             TutorialManager = new Tutorial.TutorialManager();
             IsInitialized = true;
-            DwarfTime.LastTime.Speed = 1.0f;
+            DwarfTime.LastTimeX.Speed = 1.0f;
 
             IndicatorManager.SetupStandards();
 
@@ -171,8 +171,8 @@ namespace DwarfCorp.GameStates
                         : World.LoadingException.ToString();
                     GuiRoot.MouseVisible = true;
                     GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
-                    DwarfTime.LastTime.IsPaused = false;
-                    DwarfTime.LastTime.Speed = 1.0f;
+                    DwarfTime.LastTimeX.IsPaused = false;
+                    DwarfTime.LastTimeX.Speed = 1.0f;
                     World = null;
                     DwarfGame.LogSentryBreadcrumb("Loading", "Loading failed.", SharpRaven.Data.BreadcrumbLevel.Error);
                     GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm()

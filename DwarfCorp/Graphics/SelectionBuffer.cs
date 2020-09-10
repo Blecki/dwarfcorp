@@ -109,7 +109,7 @@ namespace DwarfCorp
                 switch (State)
                 {
                     case SelectionBufferState.Idle:
-                        renderTimer.Update(DwarfTime.LastTime);
+                        renderTimer.Update(DwarfTime.LastTimeX);
                         renderThisFrame = (renderTimer.HasTriggered || colorBuffer == null);
                         if (!renderThisFrame)
                             return false;

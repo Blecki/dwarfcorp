@@ -99,7 +99,7 @@ namespace DwarfCorp
             var cmd2 = Drawer2D.DrawRect(camera, worldPos, new Rectangle((int)(width * (progress))/2 - width /2, 0, (int)(width * (progress)), height), backgroundColor, Color.Transparent, 1);
             if (timeout > 0)
             {
-                float endTime = (float)(timeout + DwarfTime.LastTime.TotalGameTime.TotalSeconds);
+                float endTime = (float)(timeout + DwarfTime.LastTimeX.TotalGameTime.TotalSeconds);
                 if (cmd1 != null)
                 {
                     cmd1.EndTime = endTime;
@@ -184,7 +184,7 @@ namespace DwarfCorp
                 {
                     //
                 }
-                if (draw.EndTime > 0 && DwarfTime.LastTime.TotalGameTime.TotalSeconds < draw.EndTime)
+                if (draw.EndTime > 0 && DwarfTime.LastTimeX.TotalGameTime.TotalSeconds < draw.EndTime)
                 {
                     extraDraws.Add(draw);
                 }

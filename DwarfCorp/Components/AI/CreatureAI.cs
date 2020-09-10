@@ -28,6 +28,7 @@ namespace DwarfCorp
         public Blackboard Blackboard = new Blackboard();
         public string Biography = "";
         public string LastFailedAct = null;
+        public DwarfTime FrameDeltaTime;
 
         protected struct FailedTask
         {
@@ -204,7 +205,7 @@ namespace DwarfCorp
 
                 Task newTask = null;
 
-                _preEmptTimer.Update(DwarfTime.LastTime);
+                _preEmptTimer.Update(FrameDeltaTime);
 
                 if (_preEmptTimer.HasTriggered)
                 {
@@ -326,7 +327,7 @@ namespace DwarfCorp
         }
 
 
-        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public virtual void AIUpdate(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
 
@@ -468,7 +469,7 @@ namespace DwarfCorp
                 bool shouldDrown = (above.IsValid && (!above.IsEmpty || above.LiquidLevel > 0));
                 if ((Physics.IsInLiquid || (!Movement.CanSwim && (below.IsValid && (below.LiquidLevel > 5))))
                     && (!Movement.CanSwim || shouldDrown))
-                    Creature.Damage(Movement.CanSwim ? 1.0f : 30.0f, Health.DamageType.Normal);
+                    Creature.Damage(FrameDeltaTime, Movement.CanSwim ? 1.0f : 30.0f, Health.DamageType.Normal);
             }
 
             if (PositionConstraint.Contains(Physics.LocalPosition) == ContainmentType.Disjoint)

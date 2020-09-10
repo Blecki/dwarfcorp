@@ -77,7 +77,7 @@ namespace DwarfCorp
                     FoodValueUntilHealed -= hungerChange;
                     if (FoodValueUntilHealed > 0)
                     {
-                       DoDamage(DwarfTime.Dt, creature);
+                       DoDamage((float)time.ElapsedGameTime.TotalSeconds, creature);
                     }
                     else
                     {
@@ -87,13 +87,13 @@ namespace DwarfCorp
                 case HealType.Sleep:
                     if (!creature.Stats.IsAsleep)
                     {
-                        DoDamage(DwarfTime.Dt, creature);
+                        DoDamage((float)time.ElapsedGameTime.TotalSeconds, creature);
                     }
                     else
                         EffectTime.Reset(0);
                     break;
                 case HealType.Time:
-                    DoDamage(DwarfTime.Dt, creature);
+                    DoDamage((float)time.ElapsedGameTime.TotalSeconds, creature);
                     break;
 
             }
@@ -120,7 +120,7 @@ namespace DwarfCorp
 
             if (TotalDamage > DamageEveryNSeconds)
             {
-                creature.Damage(DamageEveryNSeconds * DamagePerSecond, Health.DamageType.Poison);
+                creature.Damage(creature.AI.FrameDeltaTime, DamageEveryNSeconds * DamagePerSecond, Health.DamageType.Poison);
                 TotalDamage = 0;
             }
         }

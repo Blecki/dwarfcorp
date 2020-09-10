@@ -72,7 +72,7 @@ namespace DwarfCorp
             var keyboard = Keyboard.GetState();
 
             // Select bodies under the mouse if it is hovering.
-            MouseOverTimer.Update(DwarfTime.LastTime);
+            MouseOverTimer.Update(DwarfTime.LastTimeX);
             if (MouseOverTimer.HasTriggered)
             {
                 SelectedEntities = Components.FindRootBodiesInsideScreenRectangle(new Rectangle(mouse.X - 2, mouse.Y - 2, 4, 4), CameraController);

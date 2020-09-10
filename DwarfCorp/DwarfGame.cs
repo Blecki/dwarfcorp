@@ -306,8 +306,8 @@ namespace DwarfCorp
             PerformanceMonitor.BeginFrame();
                 PerformanceMonitor.PushFrame("Update");
                 AssetManagement.Steam.Steam.Update();
-                DwarfTime.LastTime.Update(time);
-                GameStateManager.Update(DwarfTime.LastTime);
+                DwarfTime.LastTimeX.Update(time);
+                GameStateManager.Update(DwarfTime.LastTimeX);
 
                 lock (_actionMutex)
                 {
@@ -352,9 +352,9 @@ namespace DwarfCorp
                 GraphicsDevice.Clear(Color.Black);
 
                 if (GameStateManager.DrawScreensaver)
-                    ScreenSaver.Render(GraphicsDevice, DwarfTime.LastTime);
+                    ScreenSaver.Render(GraphicsDevice, DwarfTime.LastTimeX);
 
-                GameStateManager.Render(DwarfTime.LastTime);
+                GameStateManager.Render(DwarfTime.LastTimeX);
 
                 GraphicsDevice.SetRenderTarget(null);
                 base.Draw(time);

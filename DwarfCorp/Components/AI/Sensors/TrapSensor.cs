@@ -33,7 +33,7 @@ namespace DwarfCorp
             {
                 foreach (Health hc in lc.EnumerateAll().OfType<Health>())
                 {
-                    hc.Damage(1000000);
+                    hc.Damage(DwarfTime.LastTimeX, 1000000);
                 }
             }
         }

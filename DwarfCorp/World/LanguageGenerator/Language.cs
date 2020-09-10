@@ -138,7 +138,7 @@ namespace DwarfCorp
 
                     while (!pauseTimer.HasTriggered)
                     {
-                        pauseTimer.Update(DwarfTime.LastTime);
+                        pauseTimer.Update(DwarfTime.LastTimeX);
                         yield return utter;
                     }
                 }

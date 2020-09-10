@@ -99,9 +99,9 @@ namespace DwarfCorp
                             var surfaceVoxel = VoxelHelpers.FindFirstVoxelBelow(voxel);
                             var height = surfaceVoxel.Coordinate.Y + 6;
 
-                            TargetPosition = new Vector3(body.GlobalTransform.Translation.X, height + 0.5f * (float)Math.Sin(DwarfTime.LastTime.TotalGameTime.TotalSeconds), body.GlobalTransform.Translation.Z);
+                            TargetPosition = new Vector3(body.GlobalTransform.Translation.X, height + 0.5f * (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds), body.GlobalTransform.Translation.Z);
                         }
-                        WaitTimer.Update(DwarfTime.LastTime);
+                        WaitTimer.Update(gameTime);
                         break;
                     }
 

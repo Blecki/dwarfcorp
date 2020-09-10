@@ -17,6 +17,7 @@ namespace DwarfCorp
     {
         public string Name { get; set; }
         public uint GlobalID { get; set; }
+        [JsonIgnore] public uint UpdateFrame = 0;
         [JsonIgnore] public Gui.Widget GuiTag = null;
 
         [JsonProperty] private uint ParentID = ComponentManager.InvalidID;
@@ -158,13 +159,13 @@ namespace DwarfCorp
         }
 
         // Todo: Kill
-        public virtual void ReceiveMessageRecursive(Message messageToReceive)
+        public virtual void ReceiveMessageRecursive(Message messageToReceive, DwarfTime time)
         {
             var children = Children.ToArray();
             // Todo: Possible race condition?
             foreach(GameComponent child in children)
             {
-                child.ReceiveMessageRecursive(messageToReceive);
+                child.ReceiveMessageRecursive(messageToReceive, time);
             }
         }
 
@@ -366,7 +367,7 @@ namespace DwarfCorp
         {
             var p = this;
 
-            while(!p.IsRoot())
+            while(p.Parent != null && !Object.ReferenceEquals(p.Parent, Manager.RootComponent))
                 p = p.Parent;
 
             return p;
@@ -374,7 +375,8 @@ namespace DwarfCorp
 
         public bool IsRoot()
         {
-            return Parent == null || Object.ReferenceEquals(Parent, Manager.RootComponent);
+            if (Manager == null) return false;
+            return Object.ReferenceEquals(Parent, Manager.RootComponent);
         }
 
         public IEnumerable<GameComponent> EnumerateAll()

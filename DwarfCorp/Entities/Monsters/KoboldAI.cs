@@ -37,7 +37,7 @@ namespace DwarfCorp
                 }
             }
 
-            LeaveWorldTimer.Update(DwarfTime.LastTime);
+            LeaveWorldTimer.Update(FrameDeltaTime);
 
             if (LeaveWorldTimer.HasTriggered)
             {

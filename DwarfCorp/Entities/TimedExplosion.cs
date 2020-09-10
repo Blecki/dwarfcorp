@@ -128,7 +128,7 @@ namespace DwarfCorp
                             {
                                 var distance = (body.Position - LocalPosition).Length();
                                 if (distance <= (VoxelRadius * 2.0f) && body.GetComponent<Health>().HasValue(out var health))
-                                    health.Damage(DamageAmount * (1.0f - (distance / (VoxelRadius * 2.0f)))); // Linear fall off on damage.
+                                    health.Damage(gameTime, DamageAmount * (1.0f - (distance / (VoxelRadius * 2.0f)))); // Linear fall off on damage.
                             }
                         }
 

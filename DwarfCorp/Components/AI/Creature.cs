@@ -272,7 +272,7 @@ namespace DwarfCorp
         /// This somewhat janky messaging system is rarely used anymore and should
         /// probably be removed for clarity.
         /// </summary>
-        public override void ReceiveMessageRecursive(Message messageToReceive)
+        public override void ReceiveMessageRecursive(Message messageToReceive, DwarfTime time)
         {
             switch (messageToReceive.Type)
             {
@@ -289,7 +289,7 @@ namespace DwarfCorp
             }
 
 
-            base.ReceiveMessageRecursive(messageToReceive);
+            base.ReceiveMessageRecursive(messageToReceive, time);
         }
 
         public Thought AddThought(String Description, TimeSpan TimeLimit, float HappinessModifier)
@@ -373,7 +373,7 @@ namespace DwarfCorp
                     Physics.Active = false;
                     Physics.Face(p_current);
                     if (defaultAttack.HasValue(out var attack))
-                        attack.PerformNoDamage(this, DwarfTime.LastTime, p_current);
+                        attack.PerformNoDamage(this, AI.FrameDeltaTime, p_current);
 
                     p_current = pos();
                     Physics.Velocity = Vector3.Zero;
@@ -381,7 +381,7 @@ namespace DwarfCorp
                     if (!String.IsNullOrEmpty(playSound))
                         NoiseMaker.MakeNoise(playSound, AI.Position, true);
 
-                    incrementTimer.Update(DwarfTime.LastTime);
+                    incrementTimer.Update(AI.FrameDeltaTime);
                     if (incrementTimer.HasTriggered)
                     {
                         Sprite.ReloopAnimations(c.AttackMode);
@@ -415,10 +415,10 @@ namespace DwarfCorp
         /// <summary>
         /// Called whenever the creature takes damage.
         /// </summary>
-        public override float Damage(float amount, DamageType type = DamageType.Normal)
+        public override float Damage(DwarfTime Time, float amount, DamageType type = DamageType.Normal)
         {
             IsCloaked = false;
-            float damage = base.Damage(amount, type);
+            float damage = base.Damage(Time, amount, type);
 
             string prefix = damage > 0 ? "-" : "+";
             Color color = damage > 0 ? GameSettings.Current.Colors.GetColor("Negative", Color.Red) : GameSettings.Current.Colors.GetColor("Positive", Color.Green);

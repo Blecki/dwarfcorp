@@ -36,6 +36,7 @@ namespace DwarfCorp
         public MonsterSpawner MonsterSpawner;
         public Faction PlayerFaction;
         public HashSet<GameComponent> ComponentUpdateSet = new HashSet<GameComponent>();
+        public uint EntityUpdateFrame = 0;
 
         #region Tutorial Hooks
 
@@ -65,8 +66,8 @@ namespace DwarfCorp
             {
                 paused_ = value;
 
-                if (DwarfTime.LastTime != null)
-                    DwarfTime.LastTime.IsPaused = paused_;
+                if (DwarfTime.LastTimeX != null)
+                    DwarfTime.LastTimeX.IsPaused = paused_;
             }
         }
 
@@ -190,7 +191,7 @@ namespace DwarfCorp
         public void Update(DwarfTime gameTime)
         {
             IndicatorManager.Update(gameTime);
-            HandleAmbientSound();
+            HandleAmbientSound(gameTime);
 
             TaskManager.Update(PlayerFaction.Minions);
 
@@ -219,9 +220,13 @@ namespace DwarfCorp
             // If not paused, we want to just update the rest of the game.
             else
             {
+                EntityUpdateFrame += 1;
+
                 // Choose what entities to update.
                 ComponentUpdateSet.Clear();
                 ComponentManager.FindComponentsToUpdate(ComponentUpdateSet);
+                foreach (var component in ComponentUpdateSet)
+                    component.UpdateFrame = EntityUpdateFrame;
 
                 ParticleManager.Update(gameTime, this);
                 TutorialManager.Update(UserInterface.Gui);

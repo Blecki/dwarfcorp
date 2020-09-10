@@ -131,7 +131,7 @@ namespace DwarfCorp.GameStates
             MakeMenu(dirs.FirstOrDefault());
             IsInitialized = true;
 
-            DwarfTime.LastTime.Speed = 1.0f;
+            DwarfTime.LastTimeX.Speed = 1.0f;
             SoundManager.PlayMusic("menu_music");
             SoundManager.StopAmbience();
         }

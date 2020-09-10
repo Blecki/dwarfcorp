@@ -233,9 +233,9 @@ namespace DwarfCorp
         {
             while(!ExitThreads && !DwarfGame.ExitGame)
             {
-                if (!DwarfTime.LastTime.IsPaused)
+                if (!DwarfTime.LastTimeX.IsPaused)
                 {
-                    ChunkUpdateTimer.Update(DwarfTime.LastTime);
+                    ChunkUpdateTimer.Update(DwarfTime.LastTimeX);
                     if (ChunkUpdateTimer.HasTriggered)
                     {
                         ChunkUpdate.RunUpdate(this);

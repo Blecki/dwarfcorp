@@ -78,7 +78,7 @@ namespace DwarfCorp
                     me.NoiseMaker.MakeNoise("Hurt", me.AI.Position, true, 0.1f);
                     me.World.ParticleManager.Trigger("puff", me.AI.Position, Color.White, 1);
                 }
-                mateTimer.Update(DwarfTime.LastTime);
+                mateTimer.Update(me.AI.FrameDeltaTime);
                 yield return Act.Status.Running;
             }
 

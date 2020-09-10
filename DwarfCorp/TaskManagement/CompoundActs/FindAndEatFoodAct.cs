@@ -96,7 +96,7 @@ namespace DwarfCorp
                 {
                     while (!eatTimer.HasTriggered)
                     {
-                        eatTimer.Update(DwarfTime.LastTime);
+                        eatTimer.Update(Agent.FrameDeltaTime);
                         Matrix rot = Agent.Creature.Physics.LocalTransform;
                         rot.Translation = Vector3.Zero;
                         FoodBody.LocalTransform = Agent.Creature.Physics.LocalTransform;

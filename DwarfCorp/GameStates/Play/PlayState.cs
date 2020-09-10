@@ -58,7 +58,7 @@ namespace DwarfCorp.GameStates
 
                 // Ensure game is not paused.
                 World.Paused = false;
-                DwarfTime.LastTime.Speed = 1.0f;
+                DwarfTime.LastTimeX.Speed = 1.0f;
 
                 // Setup new gui. Double rendering the mouse?
                 Gui = new Gui.Root(DwarfGame.GuiSkin);

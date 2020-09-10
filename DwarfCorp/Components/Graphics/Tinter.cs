@@ -47,13 +47,13 @@ namespace DwarfCorp
         }
 
 
-        public override void ReceiveMessageRecursive(Message messageToReceive)
+        public override void ReceiveMessageRecursive(Message messageToReceive, DwarfTime time)
         {
             if(messageToReceive.MessageString == "Chunk Modified")
             {
                 ColorAppplied = false;
             }
-            base.ReceiveMessageRecursive(messageToReceive);
+            base.ReceiveMessageRecursive(messageToReceive, time);
         }
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)

@@ -182,7 +182,7 @@ namespace DwarfCorp
 
                 if (Stats.Hunger.CurrentValue <= 1e-12 && (DateTime.Now - LastHungerDamageTime).TotalSeconds > Stats.HungerDamageRate)
                 {
-                    Damage(1.0f / (Stats.HungerResistance) * Stats.HungerDamageRate);
+                    Damage(gameTime, 1.0f / (Stats.HungerResistance) * Stats.HungerDamageRate);
                     LastHungerDamageTime = DateTime.Now;
                 }
             }

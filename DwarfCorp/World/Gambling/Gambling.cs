@@ -52,7 +52,7 @@ namespace DwarfCorp.Scripting
 
         private void PushParticipants()
         {
-            var time = DwarfTime.LastTime;
+            var time = DwarfTime.LastTimeX;
             List<Creature> removals = new List<Creature>();
             for (int i = 0; i < Participants.Count; i++)
             {

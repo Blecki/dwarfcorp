@@ -95,7 +95,7 @@ namespace DwarfCorp
                 {
                     if (Creature.Stats.CurrentClass.HasValue(out var __c))
                         Agent.Creature.CurrentCharacterMode = __c.AttackMode;
-                    waitTimer.Update(DwarfTime.LastTime);
+                    waitTimer.Update(Agent.FrameDeltaTime);
                     yield return Status.Running;
                 }
                 Agent.Creature.CurrentCharacterMode = CharacterMode.Idle;

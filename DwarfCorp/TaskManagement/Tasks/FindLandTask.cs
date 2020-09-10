@@ -72,9 +72,9 @@ namespace DwarfCorp
 
             while (!timer.HasTriggered)
             {
-                timer.Update(DwarfTime.LastTime);
+                timer.Update(creature.AI.FrameDeltaTime);
 
-                creature.Physics.ApplyForce(Vector3.Up * 25, DwarfTime.Dt);
+                creature.Physics.ApplyForce(Vector3.Up * 25, (float)creature.AI.FrameDeltaTime.ElapsedGameTime.TotalSeconds);
 
                 if (!creature.Physics.IsInLiquid)
                 {

@@ -165,7 +165,7 @@ namespace DwarfCorp
                 Creature.CurrentCharacterMode = CharacterMode.Idle;
                 Creature.OverrideCharacterMode = false;
 
-                SummonTimer.Update(DwarfTime.LastTime);
+                SummonTimer.Update(FrameDeltaTime);
                 if (SummonTimer.HasTriggered && Skeletons.Count < MaxSkeletons)
                 {
                     if (Creature.Stats.CurrentClass.HasValue(out var c))
@@ -183,7 +183,7 @@ namespace DwarfCorp
                 else if (SummonTimer.HasTriggered)
                     yield return Act.Status.Success;
 
-                GatherSkeletonsTimer.Update(DwarfTime.LastTime);
+                GatherSkeletonsTimer.Update(FrameDeltaTime);
                 if (GatherSkeletonsTimer.HasTriggered)
                 {
                     var wander = new WanderAct(this, GatherSkeletonsTimer.TargetTimeSeconds, 1.0f, 1.0f);
@@ -195,7 +195,7 @@ namespace DwarfCorp
                     }
                 }
 
-                AttackTimer.Update(DwarfTime.LastTime);
+                AttackTimer.Update(FrameDeltaTime);
                 if (AttackTimer.HasTriggered)
                     OrderSkeletonsToAttack();
 

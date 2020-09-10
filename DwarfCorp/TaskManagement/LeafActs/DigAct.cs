@@ -24,7 +24,7 @@ namespace DwarfCorp
             this.OwnerTask = OwnerTask;
         }
 
-        private IEnumerable<Act.Status> PerformOnVoxel(Creature performer, Vector3 pos, KillVoxelTask DigAct, DwarfTime time, float bonus, string faction)
+        private IEnumerable<Act.Status> PerformOnVoxel(Creature performer, Vector3 pos, KillVoxelTask DigAct, float bonus, string faction)
         {
             var tool = ActHelper.GetEquippedItem(performer, "Tool");
 
@@ -111,7 +111,7 @@ namespace DwarfCorp
                 foreach (var status in
                     PerformOnVoxel(Creature,
                             Creature.Physics.Position,
-                            OwnerTask, DwarfTime.LastTime,
+                            OwnerTask,
                             Creature.Stats.BaseDigSpeed,
                             Creature.Faction.ParentFaction.Name))
                 {

@@ -176,7 +176,7 @@ namespace DwarfCorp
             if(Heat > Flashpoint)
             {
                 if(DamageTimer.HasTriggered && Health != null)
-                    Health.Damage(Damage, Health.DamageType.Fire);
+                    Health.Damage(gameTime, Damage, Health.DamageType.Fire);
 
                 if(SoundTimer.HasTriggered)
                     SoundManager.PlaySound(ContentPaths.Audio.fire, body.Position, true, 1.0f);

@@ -69,7 +69,7 @@ namespace DwarfCorp
                     yield return Status.Success;
                 }
 
-                waitTimer.Update(DwarfTime.LastTime);
+                waitTimer.Update(Agent.FrameDeltaTime);
 
                 if (waitTimer.HasTriggered)
                 {

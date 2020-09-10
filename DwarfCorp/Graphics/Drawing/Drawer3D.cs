@@ -330,7 +330,7 @@ namespace DwarfCorp
                 Drawer3D.Effect = Effect;
                 Drawer3D.Camera = Camera;
 
-                var colorModulation = Math.Abs(Math.Sin(DwarfTime.LastTime.TotalGameTime.TotalSeconds*2.0f));
+                var colorModulation = Math.Abs(Math.Sin(DwarfTime.LastTimeX.TotalGameTime.TotalSeconds*2.0f));
 
                 DrawEntityDesignations(World, Designations);
 

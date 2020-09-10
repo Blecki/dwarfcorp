@@ -69,18 +69,18 @@ namespace DwarfCorp
             base.CreateCosmeticChildren(Manager);
         }
 
-        public override void ReceiveMessageRecursive(Message messageToReceive)
+        public override void ReceiveMessageRecursive(Message messageToReceive, DwarfTime time)
         {
             if (messageToReceive.Type == Message.MessageType.OnHurt)
             {
-                HurtTimer.Update(DwarfTime.LastTime);
+                HurtTimer.Update(time);
 
                 if (HurtTimer.HasTriggered)
                     if (GetComponent<ParticleTrigger>().HasValue(out var particles))
                         particles.Trigger(1);
             }
 
-            base.ReceiveMessageRecursive(messageToReceive);
+            base.ReceiveMessageRecursive(messageToReceive, time);
         }
     }
 }

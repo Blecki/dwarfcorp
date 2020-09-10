@@ -73,7 +73,7 @@ namespace DwarfCorp
             var bodies = Agent.World.PlayerFaction.OwnedObjects.Where(o => o.Tags.Contains("Teleporter")).ToList();
             while (true)
             {
-                avoidTimer.Update(DwarfTime.LastTime);
+                avoidTimer.Update(Agent.FrameDeltaTime);
 
                 if (avoidTimer.HasTriggered)
                     yield return Status.Success;
@@ -111,16 +111,16 @@ namespace DwarfCorp
                 Timer timeout = new Timer(2.0f, true, Timer.TimerMode.Real);
                 while (!reachedTarget)
                 {
-                    Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, furthest.DestinationVoxel.WorldPosition + Vector3.One*0.5f,
+                    Vector3 output = Creature.Controller.GetOutput((float)Agent.FrameDeltaTime.ElapsedGameTime.TotalSeconds, furthest.DestinationVoxel.WorldPosition + Vector3.One*0.5f,
                         Agent.Position);
-                    Creature.Physics.ApplyForce(output, DwarfTime.Dt);
+                    Creature.Physics.ApplyForce(output, (float)Agent.FrameDeltaTime.ElapsedGameTime.TotalSeconds);
 
                     if (Creature.AI.Movement.CanFly)
                     {
-                        Creature.Physics.ApplyForce(Vector3.Up * 10, DwarfTime.Dt);
+                        Creature.Physics.ApplyForce(Vector3.Up * 10, (float)Agent.FrameDeltaTime.ElapsedGameTime.TotalSeconds);
                     }
 
-                    timeout.Update(DwarfTime.LastTime);
+                    timeout.Update(Agent.FrameDeltaTime);
 
                     yield return Status.Running;
                     if (timeout.HasTriggered || (furthest.DestinationVoxel.WorldPosition - Agent.Position).Length() < 1)
@@ -164,8 +164,8 @@ namespace DwarfCorp
 
                 while (true)
                 {
-                    Timeout.Update(DwarfTime.LastTime);
-                    FailTimer.Update(DwarfTime.LastTime);
+                    Timeout.Update(Agent.FrameDeltaTime);
+                    FailTimer.Update(Agent.FrameDeltaTime);
 
                     if (FailTimer.HasTriggered)
                     {
@@ -227,7 +227,7 @@ namespace DwarfCorp
 
                             if (DefensiveStructure.GetRoot().GetComponent<Health>().HasValue(out var health))
                             {
-                                health.Damage(damage);
+                                health.Damage(Agent.FrameDeltaTime, damage);
                                 Drawer2D.DrawLoadBar(health.World.Renderer.Camera, DefensiveStructure.Position, Color.White, Color.Black, 32, 1, health.Hp / health.MaxHealth, 0.1f);
                             }
 
@@ -309,15 +309,15 @@ namespace DwarfCorp
 
                         var timeout = new Timer(10.0f, true);
 
-                        while (!attack.Perform(Creature, Target, DwarfTime.LastTime, Creature.Stats.Strength + Creature.Stats.Size, Creature.AI.Position, Creature.Faction.ParentFaction.Name))
+                        while (!attack.Perform(Creature, Target, Agent.FrameDeltaTime, Creature.Stats.Strength + Creature.Stats.Size, Creature.AI.Position, Creature.Faction.ParentFaction.Name))
                         {
-                            timeout.Update(DwarfTime.LastTime);
+                            timeout.Update(Agent.FrameDeltaTime);
                             if (timeout.HasTriggered)
                                 break;
 
                             Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
                             if (Creature.AI.Movement.CanFly)
-                                Creature.Physics.ApplyForce(-Creature.Physics.Gravity * 0.1f, DwarfTime.Dt);
+                                Creature.Physics.ApplyForce(-Creature.Physics.Gravity * 0.1f, (float)Agent.FrameDeltaTime.ElapsedGameTime.TotalSeconds);
                             yield return Status.Running;
                         }
 
@@ -328,12 +328,12 @@ namespace DwarfCorp
 
                         while (!Agent.Creature.Sprite.IsDone())
                         {
-                            timeout.Update(DwarfTime.LastTime);
+                            timeout.Update(Agent.FrameDeltaTime);
                             if (timeout.HasTriggered)
                                 break;
 
                             if (Creature.AI.Movement.CanFly)
-                                Creature.Physics.ApplyForce(-Creature.Physics.Gravity * 0.1f, DwarfTime.Dt);
+                                Creature.Physics.ApplyForce(-Creature.Physics.Gravity * 0.1f, (float)Agent.FrameDeltaTime.ElapsedGameTime.TotalSeconds);
                             yield return Status.Running;
                         }
 
@@ -348,18 +348,18 @@ namespace DwarfCorp
                         Vector3 dogfightTarget = Vector3.Zero;
                         while (!attack.RechargeTimer.HasTriggered && !Target.IsDead)
                         {
-                            attack.RechargeTimer.Update(DwarfTime.LastTime);
+                            attack.RechargeTimer.Update(Agent.FrameDeltaTime);
                             if (attack.Weapon.Mode == Weapon.AttackMode.Dogfight)
                             {
                                 dogfightTarget += MathFunctions.RandVector3Cube() * 0.1f;
-                                Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, dogfightTarget + Target.Position, Creature.Physics.GlobalTransform.Translation) * 0.9f;
-                                Creature.Physics.ApplyForce(output - Creature.Physics.Gravity, DwarfTime.Dt);
+                                Vector3 output = Creature.Controller.GetOutput((float)Agent.FrameDeltaTime.ElapsedGameTime.TotalSeconds, dogfightTarget + Target.Position, Creature.Physics.GlobalTransform.Translation) * 0.9f;
+                                Creature.Physics.ApplyForce(output - Creature.Physics.Gravity, (float)Agent.FrameDeltaTime.ElapsedGameTime.TotalSeconds);
                             }
                             else
                             {
                                 Creature.Physics.Velocity = Vector3.Zero;
                                 if (Creature.AI.Movement.CanFly)
-                                    Creature.Physics.ApplyForce(-Creature.Physics.Gravity, DwarfTime.Dt);
+                                    Creature.Physics.ApplyForce(-Creature.Physics.Gravity, (float)Agent.FrameDeltaTime.ElapsedGameTime.TotalSeconds);
                             }
                             yield return Status.Running;
                         }

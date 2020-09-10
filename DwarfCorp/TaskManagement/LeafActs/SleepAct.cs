@@ -81,7 +81,7 @@ namespace DwarfCorp
                         Creature.Physics.IsSleeping = true;
                     }
                     Creature.CurrentCharacterMode = CharacterMode.Sleeping;
-                    Creature.Stats.Energy.CurrentValue += DwarfTime.Dt*RechargeRate;
+                    Creature.Stats.Energy.CurrentValue += (float)Agent.FrameDeltaTime.ElapsedGameTime.TotalSeconds * RechargeRate;
                     if (Creature.Stats.Health.CurrentValue < startingHealth)
                     {
                         Creature.Stats.IsAsleep = false;
@@ -130,8 +130,8 @@ namespace DwarfCorp
                         Creature.Physics.AllowPhysicsSleep = true;
                     }
                     Creature.CurrentCharacterMode = CharacterMode.Sleeping;
-                    Creature.Stats.Energy.CurrentValue += DwarfTime.Dt*RechargeRate;
-                    Creature.Heal(DwarfTime.Dt * HealRate);
+                    Creature.Stats.Energy.CurrentValue += (float)Agent.FrameDeltaTime.ElapsedGameTime.TotalSeconds * RechargeRate;
+                    Creature.Heal((float)Agent.FrameDeltaTime.ElapsedGameTime.TotalSeconds * HealRate);
                     Creature.Stats.IsAsleep = true;
                     Creature.OverrideCharacterMode = false;
                     yield return Status.Running;

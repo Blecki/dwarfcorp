@@ -86,14 +86,14 @@ namespace DwarfCorp
             }
         }
 
-        public virtual float Damage(float amount, DamageType type = DamageType.Normal)
+        public virtual float Damage(DwarfTime Time, float amount, DamageType type = DamageType.Normal)
         {
             if(!IsDead)
             {
                 float damage = Math.Max(amount - Resistances[type], 0.0f);
                 Heal(-damage);
                 // Todo: Implement this using a callback to get rid of this messaging system once and for all.
-                Parent.ReceiveMessageRecursive(new Message(Message.MessageType.OnHurt, damage.ToString(CultureInfo.InvariantCulture)));
+                Parent.ReceiveMessageRecursive(new Message(Message.MessageType.OnHurt, damage.ToString(CultureInfo.InvariantCulture)), Time);
                 return damage;
             }
 
