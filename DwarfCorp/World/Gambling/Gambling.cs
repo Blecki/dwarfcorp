@@ -50,9 +50,8 @@ namespace DwarfCorp.Scripting
             State = Status.WaitingForPlayers;
         }
 
-        private void PushParticipants()
+        private void PushParticipants(DwarfTime time)
         {
-            var time = DwarfTime.LastTimeX;
             List<Creature> removals = new List<Creature>();
             for (int i = 0; i < Participants.Count; i++)
             {
@@ -110,7 +109,7 @@ namespace DwarfCorp.Scripting
                     PotFixture = null;
                 }
             }
-            PushParticipants();
+            PushParticipants(time);
             switch (State)
             {
                 case Status.WaitingForPlayers:

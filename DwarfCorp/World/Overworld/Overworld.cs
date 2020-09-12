@@ -19,6 +19,7 @@ namespace DwarfCorp.GameStates // Todo: Why in GameStates?
         public int Seed = 0;
         public int NumCaveLayers = 8;
         public int zLevels = 4; // This is actually y levels but genre convention is to call depth Z.
+        public bool DebugWorld = false;
 
         public InstanceSettings InstanceSettings; // These are only saved because it makes the selector default to the last launched branch.
 

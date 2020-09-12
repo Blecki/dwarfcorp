@@ -60,7 +60,7 @@ namespace DwarfCorp
             });
 
             CollisionType = CollisionType.Static;
-            PropogateTransforms();
+            //PropogateTransforms();
         }
 
         public override void CreateCosmeticChildren(ComponentManager Manager)

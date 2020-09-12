@@ -47,12 +47,14 @@ namespace DwarfCorp.DwarfSprites
             Dwarves.RemoveAll(d => d.Sprite.IsDead);
 
             // Calculate atlas size.
-            var columns = (int)Math.Ceiling(Math.Sqrt(Dwarves.Count) * 1.5f);
+            var columns = Math.Max((int)Math.Ceiling(Math.Sqrt(Dwarves.Count) * 1.5f), 1);
             var rows = Math.Max((int)Math.Ceiling((float)Dwarves.Count / (float)columns), 1);
             AtlasBounds = new Rectangle(0, 0, columns * 48, rows * 40);
 
             if (AtlasTexture == null || AtlasTexture.IsDisposed || AtlasTexture.Width != AtlasBounds.Width || AtlasTexture.Height != AtlasBounds.Height)
             {
+                if (AtlasTexture != null && !AtlasTexture.IsDisposed)
+                    AtlasTexture.Dispose();
                 AtlasTexture = new Texture2D(Device, AtlasBounds.Width, AtlasBounds.Height);
                 Sheet = new SpriteSheet(AtlasTexture, 48, 40);
             }

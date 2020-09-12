@@ -739,6 +739,8 @@
     <Compile Include="Tools\Datastructures\OctTree.cs" />
     <Compile Include="Tools\Datastructures\PriorityQueue.cs" />
     <Compile Include="Tools\Datastructures\ThreadSafeRandom.cs" />
+    <Compile Include="Tools\DateTimer.cs" />
+    <Compile Include="Tools\DwarfTime.cs" />
     <Compile Include="Tools\Extensions.cs" />
     <Compile Include="Tools\Graphics\ColorGradient.cs" />
     <Compile Include="Tools\Graphics\VertexNoise.cs" />

@@ -274,6 +274,8 @@
     <Compile Include="TaskManagement\FailureRecord.cs" />
     <Compile Include="TaskManagement\Tasks\UnequipTask.cs" />
     <Compile Include="TaskManagement\Tasks\FindAndEquipTask.cs" />
+    <Compile Include="Tools\DwarfTime.cs" />
+    <Compile Include="Tools\DateTimer.cs" />
     <Compile Include="World\Economy\Factions\Trading\TradeState\Balance.cs" />
     <Compile Include="World\Economy\Factions\Trading\TradeState\TradeHelper.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ResourceIcon.cs" />

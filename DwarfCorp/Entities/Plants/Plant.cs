@@ -51,7 +51,7 @@ namespace DwarfCorp
         
         public override void CreateCosmeticChildren(ComponentManager Manager)
         {
-            PropogateTransforms();
+            //PropogateTransforms();
 
             // Todo: Rather than passing the mesh name, create one in some kind of PrimitiveLibrary on the fly if it doesn't already exist.
             var mesh = AddChild(new InstanceMesh(Manager, "Model",

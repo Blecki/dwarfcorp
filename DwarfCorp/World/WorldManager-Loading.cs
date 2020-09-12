@@ -262,6 +262,9 @@ namespace DwarfCorp
 
             bool actionComplete = false;
 
+            SetLoadingMessage("Creating render artifacts...");
+
+            // Create rendering related items on main thread.
             Game.DoLazyAction(new Action(() =>
             {
                 Renderer.InstanceRenderer = new InstanceRenderer();
@@ -302,6 +305,8 @@ namespace DwarfCorp
             #endregion
 
             #region Load Components
+
+            SetLoadingMessage("Initializing engine modules...");
 
             // Create updateable systems.
             foreach (var updateSystemFactory in AssetManager.EnumerateModHooks(typeof(UpdateSystemFactoryAttribute), typeof(EngineModule), new Type[] { typeof(WorldManager) }))
@@ -361,10 +366,10 @@ namespace DwarfCorp
 
             #endregion
 
-            SetLoadingMessage("Creating Particles ...");
+            SetLoadingMessage("Creating Particles...");
             ParticleManager = new ParticleManager(ComponentManager);
 
-            SetLoadingMessage("Creating GameMaster ...");
+            SetLoadingMessage("Initializing Task Manager...");
 
             TaskManager = new TaskManager();
             TaskManager.World = this;
@@ -379,8 +384,13 @@ namespace DwarfCorp
             };
 
             SetLoadingMessage("Generating Chunks...");
-            Generation.Generator.Generate(Overworld.InstanceSettings.Cell.Bounds, ChunkManager, this, generatorSettings, SetLoadingMessage);
-            CreateInitialEmbarkment(generatorSettings);
+            if (Overworld.DebugWorld)
+                Generation.Generator.GenerateDebug(Overworld.InstanceSettings.Cell.Bounds, ChunkManager, this, generatorSettings, SetLoadingMessage);
+            else
+            {
+                Generation.Generator.Generate(Overworld.InstanceSettings.Cell.Bounds, ChunkManager, this, generatorSettings, SetLoadingMessage);
+                CreateInitialEmbarkment(generatorSettings);
+            }
             ChunkManager.NeedsMinimapUpdate = true;
             ChunkManager.RecalculateBounds();
 

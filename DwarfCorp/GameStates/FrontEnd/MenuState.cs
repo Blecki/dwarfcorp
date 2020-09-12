@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DwarfCorp.Gui;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Linq;
 
 namespace DwarfCorp.GameStates
 {
@@ -42,7 +43,17 @@ namespace DwarfCorp.GameStates
                 Text = Name,
                 InteriorMargin = new Gui.Margin(24,0,0,0),
                 Padding = new Gui.Margin(2, 2, 2, 2),
-                TextColor = Color.White.ToVector4()
+                TextColor = Color.White.ToVector4(),
+                OnLayout = (wid) =>
+                {
+                    var height = wid.Children.Select(c => c.GetBestSize().Y + 2).Sum();
+                    var rect = new Rectangle(wid.Rect.X, wid.Rect.Bottom - 30 - height, wid.Rect.Width, height + 30);
+                    wid.Rect = rect;
+                    var inside = wid.GetDrawableInterior().Interior(wid.InteriorMargin);
+                    foreach (var child in wid.Children)
+                        inside = Widget.LayoutChild(inside, wid.Padding, child);
+                    wid.Invalidate();
+                }
             });
         }
 

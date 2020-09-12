@@ -39,7 +39,7 @@ namespace DwarfCorp
                 }
             }
 
-            PropogateTransforms();
+            //PropogateTransforms();
             CreateCosmeticChildren(Manager);
             Orientation = OrientMode.Fixed;
         }

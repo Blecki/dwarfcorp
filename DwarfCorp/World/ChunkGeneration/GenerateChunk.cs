@@ -82,5 +82,34 @@ namespace DwarfCorp.Generation
 
             return c;
         }
+
+        public static VoxelChunk GenerateDebugChunk(GlobalChunkCoordinate ID, ChunkGeneratorSettings Settings)
+        {
+            var origin = new GlobalVoxelCoordinate(ID, new LocalVoxelCoordinate(0, 0, 0));
+            var worldDepth = Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY;
+            var waterHeight = NormalizeHeight(Settings.Overworld.GenerationSettings.SeaLevel + 1.0f / worldDepth);
+
+            var c = new VoxelChunk(Settings.World.ChunkManager, ID);
+
+            if (origin.Y != 0) return c;
+
+            var bedrock = Library.GetVoxelType("Bedrock");
+            var dirt = Library.GetVoxelType("Dirt");
+            var grass = Library.GetGrassType("grass");
+
+
+            for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
+                for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
+                {
+                    var bottom = VoxelHandle.UnsafeCreateLocalHandle(c, new LocalVoxelCoordinate(x, 0, z));
+                    bottom.RawSetType(bedrock);
+
+                    var top = VoxelHandle.UnsafeCreateLocalHandle(c, new LocalVoxelCoordinate(x, 1, z));
+                    top.RawSetType(dirt);
+                    top.RawSetGrass(grass.ID);
+                }
+
+            return c;
+        }
     }
 }

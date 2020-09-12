@@ -33,6 +33,7 @@ namespace DwarfCorp.Generation
             Settings.NormalizedSeaLevel = Math.Min((int)(worldDepth * NormalizeHeight(Settings.Overworld.GenerationSettings.SeaLevel + 1.0f / worldDepth)), worldDepth - 1);
 
             SetLoadingMessage("");
+
             foreach (var chunk in EnumerateTopChunks(Settings))
             {
                 SetLoadingMessage(String.Format("#Casting light in chunk {0} {1} {2}...", chunk.ID.X, chunk.ID.Y, chunk.ID.Z));
@@ -60,6 +61,28 @@ namespace DwarfCorp.Generation
                 SetLoadingMessage(String.Format("#Spawning life in chunk {0} {1} {2}...", chunk.ID.X, chunk.ID.Y, chunk.ID.Z));
                 GenerateSurfaceLife(chunk, Settings);
                 ChunkData.EnqueueInvalidColumn(chunk.ID.X, chunk.ID.Z);
+            }
+        }
+
+        public static void GenerateDebug(Rectangle spawnRect, ChunkManager ChunkData, WorldManager World, ChunkGeneratorSettings Settings, Action<String> SetLoadingMessage)
+        {
+            SetLoadingMessage(String.Format("{0} chunks to generate!", Settings.WorldSizeInChunks.X * Settings.WorldSizeInChunks.Y * Settings.WorldSizeInChunks.Z));
+            SetLoadingMessage("");
+
+            for (int dx = 0; dx < Settings.WorldSizeInChunks.X; dx++)
+                for (int dy = 0; dy < Settings.WorldSizeInChunks.Y; dy++)
+                    for (int dz = 0; dz < Settings.WorldSizeInChunks.Z; dz++)
+                    {
+                        SetLoadingMessage(String.Format("#Generating chunk {0} {1} {2}...", dx, dy, dz));
+                        ChunkData.AddChunk(GenerateDebugChunk(new GlobalChunkCoordinate(dx, dy, dz), Settings));
+                    }
+
+            Settings.NormalizedSeaLevel = 0;
+
+            foreach (var chunk in EnumerateTopChunks(Settings))
+            {
+                SetLoadingMessage(String.Format("#Casting light in chunk {0} {1} {2}...", chunk.ID.X, chunk.ID.Y, chunk.ID.Z));
+                CastSunlight(chunk, Settings);
             }
         }
     }

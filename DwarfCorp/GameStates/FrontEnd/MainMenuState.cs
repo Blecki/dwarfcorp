@@ -79,6 +79,18 @@ namespace DwarfCorp.GameStates
                     GameStateManager.PushState(new CheckMegaWorldState(Game));
                 });
 
+            CreateMenuItem(frame, "DEBUG WORLD", "",
+                (sender, args) =>
+                {
+                    DwarfGame.LogSentryBreadcrumb("Menu", "User generating a debug world.");
+
+                    var overworldSettings = Overworld.Create();
+                    overworldSettings.InstanceSettings.InitalEmbarkment = new Embarkment(overworldSettings);
+                    overworldSettings.InstanceSettings.InitalEmbarkment.Funds = 1000000u;
+                    overworldSettings.DebugWorld = true;
+                    GameStateManager.PushState(new LoadState(Game, overworldSettings, LoadTypes.GenerateOverworld));
+                });
+
             CreateMenuItem(frame, "Dwarf Designer", "Open the dwarf designer.",
                 (sender, args) =>
                 {

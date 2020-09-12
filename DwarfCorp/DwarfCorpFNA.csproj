@@ -300,6 +300,8 @@
     <Compile Include="TaskManagement\Tasks\KillVoxel\KillVoxelAct.cs" />
     <Compile Include="TaskManagement\Tasks\KillVoxel\KillVoxelTask.cs" />
     <Compile Include="TaskManagement\Tasks\UnequipTask.cs" />
+    <Compile Include="Tools\DateTimer.cs" />
+    <Compile Include="Tools\DwarfTime.cs" />
     <Compile Include="Tools\NeverNull.cs" />
     <Compile Include="Tools\MaybeNull.cs" />
     <Compile Include="World\AutoScaleThread.cs" />

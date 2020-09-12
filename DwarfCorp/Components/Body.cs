@@ -234,7 +234,7 @@ namespace DwarfCorp
         
         public virtual void CreateCosmeticChildren(ComponentManager Manager)
         {
-            PropogateTransforms();
+            //PropogateTransforms();
             //base.CreateCosmeticChildren(Manager);
         }
 
