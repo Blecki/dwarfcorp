@@ -171,7 +171,7 @@ namespace DwarfCorp.DwarfSprites
             Effect.World = Matrix.Identity;
             Device.BlendState = blendState;
             Effect.EnableWind = false;
-
+            Effect.MainTexture = null;
             InstanceCount = 0;
         }
 
@@ -217,6 +217,7 @@ namespace DwarfCorp.DwarfSprites
             Effect.World = Matrix.Identity;
             Device.BlendState = blendState;
             Effect.EnableWind = false;
+            Effect.MainTexture = null;
 
             SilhouetteInstanceCount = 0;
         }

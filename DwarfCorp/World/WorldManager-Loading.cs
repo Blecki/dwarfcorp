@@ -385,7 +385,10 @@ namespace DwarfCorp
 
             SetLoadingMessage("Generating Chunks...");
             if (Overworld.DebugWorld)
+            {
                 Generation.Generator.GenerateDebug(Overworld.InstanceSettings.Cell.Bounds, ChunkManager, this, generatorSettings, SetLoadingMessage);
+                PlayerFaction.Economy.Funds = Overworld.InstanceSettings.InitalEmbarkment.Funds;
+            }
             else
             {
                 Generation.Generator.Generate(Overworld.InstanceSettings.Cell.Bounds, ChunkManager, this, generatorSettings, SetLoadingMessage);

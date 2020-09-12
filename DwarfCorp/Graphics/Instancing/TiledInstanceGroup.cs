@@ -207,6 +207,7 @@ namespace DwarfCorp
             Effect.World = Matrix.Identity;
             Device.BlendState = blendState;
             Effect.EnableWind = false;
+            Effect.MainTexture = null;
 
             InstanceCount = 0;
         }
