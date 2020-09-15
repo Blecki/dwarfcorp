@@ -2,11 +2,32 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using System.Diagnostics;
 
 namespace DwarfCorp.GameStates
 {
     public static class GameStateManager
     {
+        private static string GetInstanceName()
+        {
+            //var instances = new PerformanceCounterCategory("Process").GetInstanceNames();
+            //var types = new PerformanceCounterCategory("Process").GetCounters("DwarfCorp");
+
+            var process = System.Diagnostics.Process.GetCurrentProcess();
+            using (process)
+            {
+                return process.ProcessName;
+            }
+        }
+
+        private static PerformanceCounter cpuCounter = new PerformanceCounter("Process", "% Processor Time", GetInstanceName(), true);
+        private static PerformanceCounter procMemCounter = new PerformanceCounter("Process", "Private Bytes", GetInstanceName(), true);
+        private static PerformanceCounter procVirMemCounter = new PerformanceCounter("Process", "Virtual Bytes", GetInstanceName(), true);
+        private static Timer PerformanceCounterTimer = new Timer(1, false, Timer.TimerMode.Real);
+        private static float CPUPercentage = 0.0f;
+        private static float ProcMemory = 0.0f;
+        private static float ProcVirMemory = 0.0f;
+
         private static List<GameState> StateStack = new List<GameState>();
         public static bool StateStackIsEmpty => StateStack.Count == 0;
         private static GameState CurrentState;
@@ -72,7 +93,19 @@ namespace DwarfCorp.GameStates
 
                 if (DwarfGame.IsConsoleVisible)
                 {
-                    PerformanceMonitor.SetMetric("MEMORY", BytesToString(System.GC.GetTotalMemory(false)));
+                    PerformanceCounterTimer.Update(time);
+                    if (PerformanceCounterTimer.HasTriggered)
+                    {
+                        PerformanceCounterTimer.Reset();
+                        CPUPercentage = cpuCounter.NextValue();
+                        ProcMemory = procMemCounter.NextValue();
+                        ProcVirMemory = procVirMemCounter.NextValue();
+                    }
+
+                    PerformanceMonitor.SetMetric("GC MEMORY", BytesToString(System.GC.GetTotalMemory(false)));
+                    PerformanceMonitor.SetMetric("CPU USAGE", CPUPercentage);
+                    PerformanceMonitor.SetMetric("PROC MEMORY", String.Format("{0:0.00}MB", ProcMemory / 1024 / 1024));
+                    PerformanceMonitor.SetMetric("VIR MEMORY", String.Format("{0:0.00}MB", ProcVirMemory / 1024 / 1024));
                     PerformanceMonitor.SetMetric("COMPS BUILT", DwarfSprites.LayerStack.CompositesRebuilt.ToString());
                     DwarfSprites.LayerStack.CompositesRebuilt = 0;
 

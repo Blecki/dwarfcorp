@@ -269,6 +269,7 @@ namespace DwarfCorp
             Active = false;
             IsVisible = false;
             Manager.RemoveComponent(this);
+            IsDead = true;
         }
 
         /// <summary>

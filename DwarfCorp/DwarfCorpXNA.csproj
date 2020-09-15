@@ -190,6 +190,7 @@
     <Compile Include="Components\AI\StatusEffects\MotivationStatusEffect.cs" />
     <Compile Include="Components\Graphics\ISprite.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfInstanceGroup.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\FixDwarfSprites.cs" />
     <Compile Include="Components\Graphics\SpriteOrientation.cs" />
     <Compile Include="Components\Physics\PhysicsSystem.cs" />
     <Compile Include="Entities\Animals\Pumpking.cs" />
@@ -230,6 +231,7 @@
     <Compile Include="Gui\Geo\PartBasics.cs" />
     <Compile Include="Gui\RenderData.cs" />
     <Compile Include="Gui\SpriteAtlasEntry.cs" />
+    <Compile Include="Gui\Widgets\StaticGridPanel.cs" />
     <Compile Include="Gui\Widgets\HorizontalFloatSliderCombo.cs" />
     <Compile Include="Gui\Widgets\ScrollingTextBox.cs" />
     <Compile Include="Gui\Widgets\TextBoxEx.cs" />

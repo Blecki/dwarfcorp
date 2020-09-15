@@ -44,6 +44,8 @@ namespace DwarfCorp
     /// </summary>
     public static partial class MathFunctions
     {
+        public const float fPI = (float)Math.PI;
+
         // Finds the power of 2 strictly greater than x.
         public static int NearestPowerOf2(int x)
         {

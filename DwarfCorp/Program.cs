@@ -40,7 +40,6 @@ namespace DwarfCorp
 
             GameSettings.Load();
 
-
 #if !DEBUG
             try
             {
@@ -157,6 +156,7 @@ namespace DwarfCorp
             file.Close();
         }
 
+        // Todo: Kill this
         public static string CreatePath(params string[] args)
         {
             string toReturn = "";

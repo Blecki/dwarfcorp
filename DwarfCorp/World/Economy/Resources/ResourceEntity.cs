@@ -46,6 +46,7 @@ namespace DwarfCorp
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {           
+
             base.Update(gameTime, chunks, camera);
 
             LifeTimer.Update(gameTime);

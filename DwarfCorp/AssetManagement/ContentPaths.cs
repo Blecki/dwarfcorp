@@ -313,27 +313,10 @@ namespace DwarfCorp
         }
         public class Particles
         {
-            public static string gibs = ProgramData.CreatePath("Particles", "gib_particle");
-            public static string splash = ProgramData.CreatePath("Particles", "splash");
-            public static string blood_particle = ProgramData.CreatePath("Particles", "blood_particle");
-            public static string dirt_particle = ProgramData.CreatePath("Particles", "dirt_particle");
-            public static string flame = ProgramData.CreatePath("Particles", "flame");
-            public static string more_flames = ProgramData.CreatePath("Particles", "moreflames");
-            public static string leaf = ProgramData.CreatePath("Particles", "leaf");
-            public static string puff = ProgramData.CreatePath("Particles", "puff");
-            public static string sand_particle = ProgramData.CreatePath("Particles", "sand_particle");
-            public static string splash2 = ProgramData.CreatePath("Particles", "splash2");
-            public static string splat = ProgramData.CreatePath("Particles", "splat");
             public static string stone_particle = ProgramData.CreatePath("Particles", "stone_particle");
-            public static string green_flame = ProgramData.CreatePath("Particles", "green_flame");
-            public static string star_particle = ProgramData.CreatePath("Particles", "bigstar_particle");
-            public static string heart = ProgramData.CreatePath("Particles", "heart");
             public static string fireball = ProgramData.CreatePath("Particles", "fireball");
-            public static string raindrop = ProgramData.CreatePath("Particles", "raindrop");
             public static string cloud1 = ProgramData.CreatePath("Sky", "cloud1");
             public static string cloud2 = ProgramData.CreatePath("Sky", "cloud2");
-            public static string snow_particle = ProgramData.CreatePath("Particles", "snow_particle");
-            public static string particles = ProgramData.CreatePath("Particles", "particles.json");
         }
         public class Effects
         {
@@ -351,13 +334,7 @@ namespace DwarfCorp
             public static string particles = ProgramData.CreatePath("Effects", "particles.json");
         }
 
-        public class World
-        {
-            public static string biomes = ProgramData.CreatePath("World", "Biomes");
-            public static string races = ProgramData.CreatePath("World", "Races");
-            public static string embarks = ProgramData.CreatePath("World", "Embarkments");
-        }
-                
+               
         public class Text
         {
             public class Templates
@@ -384,47 +361,9 @@ namespace DwarfCorp
 
         public class Entities
         {
-            public static class Golems
-            {
-                public static string snow_golem = ProgramData.CreatePath("Entities", "Golems", "snowgolem_animation.json");
-                public static string mud_golem = ProgramData.CreatePath("Entities", "Golems", "mudgolem_animation.json");
-                public static string mudball = ProgramData.CreatePath("Entities", "Golems", "mudball");
-                public static string snowball = ProgramData.CreatePath("Entities", "Golems", "snowball");
-            }
 
             public class Animals
             {
-                public static string chicken_animations = ProgramData.CreatePath("Entities", "Animals",
-                    "chicken_animation.json");
-
-                public static string turkey_animations = ProgramData.CreatePath("Entities", "Animals", "turkey_animation.json");
-                public static string penguin_animations = ProgramData.CreatePath("Entities", "Animals", "penguin_animation.json");
-                public static class Chimp
-                {
-                    public static string chimp_animations = ProgramData.CreatePath("Entities", "Animals", "Chimp", "chimp_animation.json");
-                }
-                public static Dictionary<string, string> fowl = new Dictionary<string, string>()
-                {
-                    {
-                        "Chicken",
-                        chicken_animations
-                    },
-                    {
-
-                        "Turkey",
-                        turkey_animations
-                    },
-                    {
-                        "Penguin",
-                        penguin_animations
-                    }
-                };
-
-                public class Bat
-                {
-                    public static string bat = ProgramData.CreatePath("Entities", "Animals", "bat");
-                    public static string bat_animations = ProgramData.CreatePath("Entities", "Animals", "bat_animation.json");
-                }
 
                 public class Spider
                 {
@@ -434,50 +373,7 @@ namespace DwarfCorp
                     public static string webshot = ProgramData.CreatePath("Entities", "Animals", "Spider", "webshot");
                 }
 
-                public class Birds
-                {
-                    public static string bird_prefix = ProgramData.CreatePath("Entities", "Animals", "Birds", "bird");
-                    public static string bird0 = ProgramData.CreatePath("Entities", "Animals", "Birds", "bird0");
-                    public static string bird1 = ProgramData.CreatePath("Entities", "Animals", "Birds", "bird1");
-                    public static string bird2 = ProgramData.CreatePath("Entities", "Animals", "Birds", "bird2");
-                    public static string bird3 = ProgramData.CreatePath("Entities", "Animals", "Birds", "bird3");
-                    public static string bird4 = ProgramData.CreatePath("Entities", "Animals", "Birds", "bird4");
-                    public static string bird5 = ProgramData.CreatePath("Entities", "Animals", "Birds", "bird5");
-                    public static string bird6 = ProgramData.CreatePath("Entities", "Animals", "Birds", "bird6");
-                    public static string bird7 = ProgramData.CreatePath("Entities", "Animals", "Birds", "bird7");
-                }
 
-                public class Rabbit
-                {
-                    public static string rabbit0 = ProgramData.CreatePath("Entities", "Animals", "Rabbit", "rabbit0");
-                    public static string rabbit1 = ProgramData.CreatePath("Entities", "Animals", "Rabbit", "rabbit1");
-                    public static string rabbit0_animation = ProgramData.CreatePath("Entities", "Animals", "Rabbit", "rabbit0_animation.json");
-                    public static string rabbit1_animation = ProgramData.CreatePath("Entities", "Animals", "Rabbit", "rabbit1_animation.json");
-                }
-
-                public class Scorpion
-                {
-                    public static string scorpion = ProgramData.CreatePath("Entities", "Animals", "scorpion");
-                    public static string scorption_animation = ProgramData.CreatePath("Entities", "Animals", "scorpion_animation.json");
-                }
-
-                public class Deer
-                {
-                    public static string deer = ProgramData.CreatePath("Entities", "Animals", "Deer", "deer");
-                    public static string animations = ProgramData.CreatePath("Entities", "Animals", "Deer", "deer_animation.json");
-                }
-
-                public class Snake
-                {
-                    public static string snake = ProgramData.CreatePath("Entities", "Animals", "Snake", "snake");
-                    public static string snake_animation = ProgramData.CreatePath("Entities", "Animals", "Snake", "snake_animation.json");
-                    public static string tail_animation = ProgramData.CreatePath("Entities", "Animals", "Snake", "tail_animation.json");
-
-                    public static string bonesnake = ProgramData.CreatePath("Entities", "Animals", "Snake", "bonesnake");
-                    public static string bonesnake_animation = ProgramData.CreatePath("Entities", "Animals", "Snake", "bonesnake_animation.json");
-                    public static string bonetail_animation = ProgramData.CreatePath("Entities", "Animals", "Snake", "bonetail_animation.json");
-
-                }
             }
 
             public class Balloon
@@ -517,37 +413,6 @@ namespace DwarfCorp
                     public static string dwarfhurt4 = ProgramData.CreatePath("Entities", "Dwarf", "Audio", "dwarfhurt4");
 
                 }
-                public class Sprites
-                {
-                    public static string crafter_hammer = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "crafter-hammer");
-                    public static string crafter = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "crafter");
-                    public static string soldier_axe = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "soldier-axe");
-                    public static string soldier_shield = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "soldier-shield");
-                    public static string soldier = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "soldier");
-                    public static string wizard_staff = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "wizard-staff");
-                    public static string wizard = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "wizard");
-                    public static string worker_pick = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "worker-pick");
-                    public static string worker = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "worker");
-
-                    public static string worker_animation = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "worker_animation.json");
-                    public static string crafter_animation = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "crafter_animation.json");
-                    public static string wizard_animation = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "wizard_animation.json");
-                    public static string soldier_animation =  ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "soldier_animation.json");
-
-                    public static string fairy = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "fairy");
-
-                    public static string fairy_animation = ProgramData.CreatePath("Entities", "Dwarf", "Sprites",
-                        "fairy_animation.json");
-
-                    public static string musketdwarf_animations = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "musket_animation.json");
-                    public static string musket = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "musket");
-
-                    public static string soldier_minecart = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "soldier_minecart.json");
-                    public static string worker_minecart = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "worker_minecart.json");
-                    public static string crafter_minecart = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "crafter_minecart.json");
-                    public static string wizard_minecart = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "wizard_minecart.json");
-                    public static string musket_minecart = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "musket_minecart.json");
-                }
 
             }
 
@@ -576,24 +441,6 @@ namespace DwarfCorp
                 public static string bookshelf = ProgramData.CreatePath("Entities", "Furniture", "bookshelf");
                 public static string conveyor = ProgramData.CreatePath("Entities", "Furniture", "conveyor");
                 public static string elevator = ProgramData.CreatePath("Entities", "Furniture", "elevator");
-            }
-            public class Goblin
-            {
-                public static string goblin = ProgramData.CreatePath("Entities", "Goblin",  "goblin.json");
-                public static string goblin_classes = ProgramData.CreatePath("Entities", "Goblin", "goblin_classes.json"); 
-                public class Sprites
-                {
-                    public static string goblin_animations = ProgramData.CreatePath("Entities", "Goblin", "Sprites", "goblin_animation.json"); 
-                }
-
-                public class Audio
-                {
-                    public static string goblinhurt1 = ProgramData.CreatePath("Entities", "Goblin", "Audio", "goblinhurt1");
-                    public static string goblinhurt2 = ProgramData.CreatePath("Entities", "Goblin", "Audio", "goblinhurt2");
-                    public static string goblinhurt3 = ProgramData.CreatePath("Entities", "Goblin", "Audio", "goblinhurt3");
-                    public static string goblinhurt4 = ProgramData.CreatePath("Entities", "Goblin", "Audio", "goblinhurt4");
-
-                }
             }
             
             public class Kobold

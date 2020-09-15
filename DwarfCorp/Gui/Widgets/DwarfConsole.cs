@@ -26,6 +26,10 @@ namespace DwarfCorp.Gui.Widgets
         public override void Construct()
         {
             Root.RegisterForUpdate(this);
+            this.InteriorMargin = new Margin(4, 4, 4, 4);
+            this.Border = "border-thin-transparent";
+            this.Background = new TileReference("basic", 1);
+            this.BackgroundColor = new Vector4(1, 1, 1, 1);
 
             OnUpdate = (sender, time) =>
             {
@@ -41,8 +45,10 @@ namespace DwarfCorp.Gui.Widgets
             TextGrid = AddChild(new TextGrid
             {
                 AutoLayout = AutoLayout.DockFill,
-                Font = "monofont",
+                Font = "large-mono-font",
                 TextSize = GameSettings.Current.ConsoleTextSize,
+                CharacterScale = 0.5f,
+                MonoKerning = 10.0f
             }) as TextGrid;
         }
 

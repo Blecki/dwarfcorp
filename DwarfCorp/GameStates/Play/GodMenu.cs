@@ -479,8 +479,7 @@ namespace DwarfCorp.Play
                                 Text = "PASS OUT",
                                 OnClick = (sender, args) =>
                                 {
-                                    var employee = Datastructures.SelectRandom(World.PlayerFaction.Minions);
-                                    if (employee != null)
+                                    foreach (var employee in World.PlayerFaction.Minions)
                                         employee.Creature.Heal(-employee.Stats.Health.CurrentValue * employee.Creature.MaxHealth + 1);
                                 }
                             }

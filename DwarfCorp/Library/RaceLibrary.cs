@@ -16,7 +16,7 @@ namespace DwarfCorp
             RacesInitialized = true;
 
             Races = new Dictionary<string, Race>();
-            foreach (var race in FileUtils.LoadJsonListFromDirectory<Race>(ContentPaths.World.races, null, r => r.Name))
+            foreach (var race in FileUtils.LoadJsonListFromDirectory<Race>("World\\Races", null, r => r.Name))
                 Races.Add(race.Name, race);
 
             Console.WriteLine("Loaded Race Library.");

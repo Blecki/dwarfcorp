@@ -254,7 +254,8 @@ namespace DwarfCorp
             else if (CurrentCharacterMode == CharacterMode.Sleeping)
                 CurrentCharacterMode = CharacterMode.Idle;
 
-            if (/*World.Time.IsDay() && */Stats.IsAsleep && !Stats.Energy.IsDissatisfied() && !Stats.Health.IsCritical())
+            // Break out of sleeping if appropriate - just in case the sleep act is interupted before it finishes.
+            if (Stats.IsAsleep && Stats.Health.IsSatisfied() && !Stats.Buffs.Any(buff => buff is Disease))
                 Stats.IsAsleep = false;
         }
 

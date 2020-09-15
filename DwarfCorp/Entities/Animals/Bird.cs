@@ -15,7 +15,7 @@ namespace DwarfCorp
     {
         private static string GetRandomBird()
         {
-            return ContentPaths.Entities.Animals.Birds.bird_prefix + MathFunctions.Random.Next(8);
+            return "Entities\\Animals\\Birds\\bird" + MathFunctions.Random.Next(8);
         }
 
         [EntityFactory("Bird")]

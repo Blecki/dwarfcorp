@@ -90,6 +90,7 @@ namespace DwarfCorp
             foreach (var item in EquippedItems)
             {
                 var resource = new ResourceEntity(Manager, item.Value, MathFunctions.RandVector3Box(box));
+                Manager.RootComponent.AddChild(resource);
                 if (inventory.HasValue(out var inv) && inv.Attacker != null && !inv.Attacker.IsDead)
                     inv.Attacker.Creature.Gather(resource, TaskPriority.Eventually);
                 if (flammable.HasValue(out var flames) && flames.Heat >= flames.Flashpoint)

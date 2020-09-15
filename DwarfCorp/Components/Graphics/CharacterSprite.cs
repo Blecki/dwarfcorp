@@ -160,7 +160,6 @@ namespace DwarfCorp
 
         void ISprite.SetDrawSilhouette(bool DrawSilhouette)
         {
-            this.DrawSilhouette = DrawSilhouette;
         }
     }
 

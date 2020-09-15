@@ -207,7 +207,7 @@ namespace DwarfCorp
             public List<String> EnabledMods = new List<String>();
             public int MaxSaves = 15;
             public bool EnableSlowMotion = false;
-            public int ConsoleTextSize = 2;
+            public int ConsoleTextSize = 1;
             public float HoursUnhappyBeforeQuitting = 4.0f;
             public ColorSettings Colors = new ColorSettings();
             public bool AllowAutoDigging = true;
@@ -218,6 +218,7 @@ namespace DwarfCorp
             public float SpeciesLimitAdjust = 1.0f;
             public int LandCost = 3;
             public int MaxDwarfSpriteUpdates = 16;
+            public int MaxAIUpdates = 32;
 
             public bool DisableWeather = true;
 

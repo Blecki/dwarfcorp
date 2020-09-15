@@ -122,11 +122,14 @@ namespace DwarfCorp
             Matrix mat = Matrix.CreateRotationY(angle);
             mat.Translation = LocalTransform.Translation;
             LocalTransform = mat;
-            PropogateTransforms();
+            //PropogateTransforms();
         }
 
         public virtual void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
         {
+            if (IsDead)
+                return;
+
             if (AnimationQueue.Count > 0)
             {
                 var anim = AnimationQueue[0];
@@ -145,6 +148,9 @@ namespace DwarfCorp
 
         public void ProcessTransformChange()
         {
+            if (IsDead)
+                return;
+
             if (HasMoved)
             {
                 UpdateTransform();
@@ -170,6 +176,11 @@ namespace DwarfCorp
             return lastMinChunkID != newMinChunkID || lastMaxChunkID != newMaxChunkID;
         }
 
+        public virtual void OnOutsideWorld()
+        {
+            this.Die();
+        }
+
         public void UpdateTransform()
         {
             HasMoved = false;
@@ -186,7 +197,8 @@ namespace DwarfCorp
                 if (IsRoot() && !IsFlagSet(Flag.DontUpdate))
                 {
                     Manager.World.RemoveRootGameObject(this, LastBounds);
-                    Manager.World.AddRootGameObject(this, BoundingBox);
+                    if (Manager.World.AddRootGameObject(this, BoundingBox) == 0)
+                        this.OnOutsideWorld();
                 }
 
                 this.OnSpacialStorageUpdate(LastBounds, BoundingBox);

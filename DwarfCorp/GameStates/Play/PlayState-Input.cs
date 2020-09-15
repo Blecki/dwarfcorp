@@ -413,12 +413,18 @@ namespace DwarfCorp.GameStates
                 // Todo: Employee AI debug display
 
                 var scheduleDisplay = DwarfGame.GetConsoleTile("FORECAST");
-                scheduleDisplay.TextSize = 1;
                 scheduleDisplay.Lines.Clear();
                 scheduleDisplay.Lines.Add(String.Format("Diff:{0:+00;-00;+00} Forecast:{1:+00;-00;+00}", World.EventScheduler.CurrentDifficulty, World.EventScheduler.ForecastDifficulty(World.Time.CurrentDate)));
                 foreach (var scheduledEvent in World.EventScheduler.Forecast)
                     scheduleDisplay.Lines.Add(String.Format("{2:+00;-00;+00} {1} {0}", scheduledEvent.Event.Name, (scheduledEvent.Date - World.Time.CurrentDate).ToString(@"hh\:mm"), scheduledEvent.Event.Difficulty));
                 scheduleDisplay.Invalidate();
+
+                var modulesDisplay = DwarfGame.GetConsoleTile("MODULES");
+                modulesDisplay.Lines.Clear();
+                modulesDisplay.Lines.Add("Modules");
+                foreach (var module in World.UpdateSystems)
+                    modulesDisplay.Lines.Add(module.GetType().Name);
+                modulesDisplay.Invalidate();
             }
             #endregion
 

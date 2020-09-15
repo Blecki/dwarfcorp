@@ -119,6 +119,8 @@ namespace DwarfCorp.GameStates
 
         public override void OnEnter()
         {
+            //DwarfSprites.FixDwarfSprites.Process();
+
             // Make sure that this memory gets cleaned up!!
             EntityFactory.Cleanup();
             Drawer3D.Cleanup();

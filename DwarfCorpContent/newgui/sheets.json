@@ -6,6 +6,12 @@
     "TileHeight": 8
   },
   {
+    "Name": "large-mono-font",
+    "Texture": "newgui/large-mono-font",
+    "TileWidth": 16,
+    "TileHeight": 16
+  },
+  {
     "Name": "font8",
     "Texture": "newgui/fonts/font8",
     "Type": "JsonFont"

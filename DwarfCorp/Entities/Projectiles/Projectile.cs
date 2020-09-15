@@ -25,9 +25,22 @@ namespace DwarfCorp
             
         }
 
-        public Projectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Health.DamageAmount damage, float size, string asset, string hitParticles, string hitNoise, GameComponent target, bool animated = false, bool singleSprite = false) :
+        public Projectile(
+            ComponentManager manager, 
+            Vector3 position, 
+            Vector3 initialVelocity, 
+            Health.DamageAmount damage, 
+            float size, 
+            string asset, 
+            string hitParticles, 
+            string hitNoise, 
+            GameComponent target, 
+            bool animated = false, 
+            bool singleSprite = false) :
             base(manager, "Projectile", Matrix.CreateTranslation(position), new Vector3(size, size, size), Vector3.One, 1.0f, 1.0f, 1.0f, 1.0f, new Vector3(0, -10, 0), OrientMode.Fixed)
         {
+            if (size == 0) throw new InvalidOperationException();
+
             this.AllowPhysicsSleep = false; 
             Target = target;
             HitAnimation = null;
@@ -113,6 +126,11 @@ namespace DwarfCorp
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            if (IsDead)
+                return;
+
+            base.Update(gameTime, chunks, camera);
+
             if (Target != null && (Target.Position - LocalPosition).LengthSquared() < DamageRadius)
             {
                 if (Target.GetRoot().GetComponent<Health>().HasValue(out var health))
@@ -145,13 +163,13 @@ namespace DwarfCorp
                     Die();
             }
 
-            base.Update(gameTime, chunks, camera);
         }
 
         public override void Die()
         {
             if (HitAnimation != null)
             {
+                // This can't do anything, right? It's getting killed... isn't it?
                 if (Sprite is AnimatedSprite)
                 {
                     (Sprite as AnimatedSprite).AnimPlayer.Reset();
@@ -166,7 +184,7 @@ namespace DwarfCorp
                     Vector3 camvelocity1 = GameState.Game.GraphicsDevice.Viewport.Project(Position + Velocity,
                         Manager.World.Renderer.Camera.ProjectionMatrix, Manager.World.Renderer.Camera.ViewMatrix, Matrix.Identity);
                     IndicatorManager.DrawIndicator(HitAnimation.SpriteSheet, HitAnimation.Animation, Target.Position,
-                        HitAnimation.Animation.FrameHZ*HitAnimation.Animation.Frames.Count + 1.0f, 1.0f, Vector2.Zero, Color.White, camvelocity1.X - camvelocity0.X > 0);
+                        (1.0f/HitAnimation.Animation.FrameHZ)*HitAnimation.Animation.Frames.Count, 1.0f, Vector2.Zero, Color.White, camvelocity1.X - camvelocity0.X > 0);
                 }
             }
             base.Die();

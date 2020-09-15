@@ -27,8 +27,9 @@ namespace DwarfCorp
                     }
         }
 
-        public void AddRootGameObject(GameComponent GameObject, BoundingBox LastBounds)
+        public int AddRootGameObject(GameComponent GameObject, BoundingBox LastBounds)
         {
+            var numberOfChunksAddedTo = 0;
             var minChunkID = GlobalVoxelCoordinate.FromVector3(LastBounds.Min).GetGlobalChunkCoordinate();
             var maxChunkID = GlobalVoxelCoordinate.FromVector3(LastBounds.Max).GetGlobalChunkCoordinate();
 
@@ -42,8 +43,10 @@ namespace DwarfCorp
                             var chunk = ChunkManager.GetChunk(coord);
                             lock (chunk)
                                 chunk.RootEntities.Add(GameObject);
+                            numberOfChunksAddedTo += 1;
                         }
                     }
+            return numberOfChunksAddedTo;
         }
 
         public void RemoveEntityAnchor(GameComponent GameObject, BoundingBox LastBounds)
@@ -145,6 +148,8 @@ namespace DwarfCorp
                                 var chunk = ChunkManager.GetChunk(coord);
                                 lock (chunk)
                                 {
+                                    //if (Debugger.Switches.ABTestSwitch)
+                                        chunk.RootEntities.RemoveWhere(e => e.IsDead);
                                     foreach (var entity in chunk.RootEntities)
                                         Into.Add(entity);
                                 }

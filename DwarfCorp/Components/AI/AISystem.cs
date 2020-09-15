@@ -22,7 +22,7 @@ namespace DwarfCorp
         }
 
         public List<AIComponent> AIComponents = new List<AIComponent>();
-        public int currentIndex = -1;
+        public int CurrentComponentIndex = -1;
 
         public override void ComponentCreated(GameComponent C)
         {
@@ -42,20 +42,18 @@ namespace DwarfCorp
         public override void Update(DwarfTime GameTime, WorldManager World)
         {
             var aiObjectsUpdatedThisFrame = 0;
-            var maxObjects = 32;
-            var startIndex = currentIndex;
+            var aiObjectsChecked = 0;
             PerformanceMonitor.PushFrame("AISystem");
             while (true)
             {
-                currentIndex += 1;
+                CurrentComponentIndex += 1;
 
-                if (currentIndex >= AIComponents.Count)
-                    currentIndex = 0;
+                if (CurrentComponentIndex >= AIComponents.Count)
+                    CurrentComponentIndex = 0;
 
-                if (currentIndex == startIndex)
-                    break;
+                aiObjectsChecked += 1;
 
-                var thisObject = AIComponents[currentIndex];
+                var thisObject = AIComponents[CurrentComponentIndex];
                 if (thisObject.AI.GetRoot().UpdateFrame == World.EntityUpdateFrame)
                 {
                     var elapsedTime = GameTime;
@@ -65,7 +63,7 @@ namespace DwarfCorp
                         elapsedTime = new DwarfTime(GameTime.TotalGameTime, timeSinceUpdate);
                     }
 
-                    AIComponents[currentIndex] = new AIComponent
+                    AIComponents[CurrentComponentIndex] = new AIComponent
                     {
                         AI = thisObject.AI,
                         TimeOfLastUpdate = GameTime.TotalGameTime
@@ -74,9 +72,12 @@ namespace DwarfCorp
                     thisObject.AI.FrameDeltaTime = elapsedTime;
                     thisObject.AI.AIUpdate(elapsedTime, World.ChunkManager, World.Renderer.Camera);
                     aiObjectsUpdatedThisFrame += 1;
-                    if (aiObjectsUpdatedThisFrame == maxObjects)
+                    if (aiObjectsUpdatedThisFrame == GameSettings.Current.MaxAIUpdates)
                         break;
                 }
+
+                if (aiObjectsChecked == AIComponents.Count)
+                    break; // Prevent multiple updates if there are less AI objects than the max single frame update count.
             }
             PerformanceMonitor.SetMetric("AI Objects", aiObjectsUpdatedThisFrame);
             PerformanceMonitor.PopFrame();

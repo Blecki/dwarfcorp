@@ -14,6 +14,7 @@ using SDL2;
 using SharpRaven;
 using SharpRaven.Data;
 using System.Collections.Generic;
+using DwarfCorp.Gui.Widgets;
 
 namespace DwarfCorp
 {
@@ -226,11 +227,87 @@ namespace DwarfCorp
             // Create console.
             ConsoleGui = new Gui.Root(GuiSkin);
             ConsoleGui.SetMetrics = false;
-            ConsoleGui.RootItem.AddChild(new Gui.Widgets.AutoGridPanel
+            ConsoleGui.RootItem.AddChild(new Gui.Widgets.StaticGridPanel
             {
-                Rows = 2,
+                Rows = 4,
                 Columns = 4,
-                AutoLayout = AutoLayout.DockFill
+                AutoLayout = AutoLayout.DockFill,
+                Panels = new List<Gui.Widgets.StaticGridPanel.Panel>
+                {
+                    new Gui.Widgets.StaticGridPanel.Panel
+                    {
+                        Name = "LOG",
+                        X = 0,
+                        Y = 0,
+                        RowSpan = 2,
+                        ColSpan = 2
+                    },
+                    new Gui.Widgets.StaticGridPanel.Panel
+                    {
+                        Name = "COMMAND",
+                        X = 2,
+                        Y = 0,
+                        RowSpan = 2,
+                        ColSpan = 1
+                    },
+                    new Gui.Widgets.StaticGridPanel.Panel
+                    {
+                        Name = "STATS",
+                        X = 0,
+                        Y = 2,
+                        RowSpan = 2,
+                        ColSpan = 1
+                    },
+                    new Gui.Widgets.StaticGridPanel.Panel
+                    {
+                        Name = "PERFORMANCE",
+                        X = 1,
+                        Y = 2,
+                        RowSpan = 2,
+                        ColSpan = 1
+                    },
+                    new Gui.Widgets.StaticGridPanel.Panel
+                    {
+                        Name = "FPS",
+                        X = 2,
+                        Y = 2,
+                        RowSpan = 2,
+                        ColSpan = 1
+                    },
+                    new Gui.Widgets.StaticGridPanel.Panel
+                    {
+                        Name = "FORECAST",
+                        X = 3,
+                        Y = 0,
+                        RowSpan = 1,
+                        ColSpan = 1
+                    },
+                    new Gui.Widgets.StaticGridPanel.Panel
+                    {
+                        Name = "MODULES",
+                        X = 3,
+                        Y = 1,
+                        RowSpan = 1,
+                        ColSpan = 1
+                    },
+                    new Gui.Widgets.StaticGridPanel.Panel
+                    {
+                        Name = "STEAM",
+                        X = 3,
+                        Y = 2,
+                        RowSpan = 1,
+                        ColSpan = 1
+                    },
+                    new Gui.Widgets.StaticGridPanel.Panel
+                    {
+                        Name = "VERSION",
+                        X = 3,
+                        Y = 3,
+                        RowSpan = 1,
+                        ColSpan = 1
+                    }
+
+                }
             });
 
             ConsoleGui.RootItem.Layout();
@@ -259,6 +336,12 @@ namespace DwarfCorp
             ScreenSaver = new Terrain2D(this);
 
             base.LoadContent();
+
+            var ver = GetConsoleTile("VERSION");
+            ver.Lines.Clear();
+            ver.Lines.Add("VERSION");
+            ver.Lines.Add(Program.Version);
+            ver.Lines.Add(Program.Commit);
         }
 
         public static void RebuildConsole()
@@ -439,8 +522,6 @@ namespace DwarfCorp
             {
                 display = DwarfGame.ConsolePanel.AddChild(new Gui.Widgets.DwarfConsole
                 {
-                    Background = new TileReference("basic", 1),
-                    BackgroundColor = new Vector4(1.0f, 1.0f, 1.0f, 1.0f),
                     Tag = Name
                 }) as Gui.Widgets.DwarfConsole;
 

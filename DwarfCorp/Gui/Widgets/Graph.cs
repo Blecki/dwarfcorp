@@ -27,6 +27,7 @@ namespace DwarfCorp.Gui.Widgets
         public float MaxValueSeen = 0.0f;
         public int GraphWidth { get { return Children[2].Rect.Width; } }
         public Color LineColor = Color.Black;
+        public float ScaleGraphRange = 1.0f;
 
         public void SetFont(string font)
         {
@@ -108,7 +109,7 @@ namespace DwarfCorp.Gui.Widgets
                 float alpha = 0.995f;
                 float currentMax = Values.Max();
                 MaxValueSeen = Math.Max(alpha * MaxValueSeen + (1.0f - alpha) * currentMax, currentMax);
-                var yScale = (float)GraphBox.Rect.Width / MaxValueSeen;
+                var yScale = ((float)GraphBox.Rect.Width / MaxValueSeen) * ScaleGraphRange;
 
                 MinLabel.Text = ModString(MinLabelString);
                 MaxLabel.Text = ModString(String.Format("{0}", MaxValueSeen));
@@ -117,7 +118,7 @@ namespace DwarfCorp.Gui.Widgets
                 foreach (var x in EnumerateRange(0, Values.Count))
                 { 
                     mesh.QuadPart()
-                        .Scale(1.0f, Values[x] * yScale)
+                        .Scale(1.0f, Math.Min(Values[x] * yScale, GraphBox.Rect.Height))
                         .Translate(x + GraphBox.Rect.X, GraphBox.Rect.Y)
                         .Texture(tileMatrix)
                         .Colorize(new Vector4(Values[x] / MaxValueSeen, 1.0f - (Values[x] / MaxValueSeen), 0, 0.75f));

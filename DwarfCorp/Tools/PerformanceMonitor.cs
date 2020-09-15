@@ -130,6 +130,7 @@ namespace DwarfCorp
                     fps.AddChild(new Gui.Widgets.Graph()
                     {
                         AutoLayout = AutoLayout.DockFill,
+                        ScaleGraphRange = 5.0f
                     });
 
                     fps.Layout();

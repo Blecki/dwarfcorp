@@ -18,7 +18,7 @@ namespace DwarfCorp
                 return;
             BiomesInitialized = true;
 
-            Biomes = FileUtils.LoadJsonListFromDirectory<BiomeData>(ContentPaths.World.biomes, null, b => b.Name);
+            Biomes = FileUtils.LoadJsonListFromDirectory<BiomeData>("World\\Biomes", null, b => b.Name);
 
             byte id = 0;
             foreach (var biome in Biomes)
