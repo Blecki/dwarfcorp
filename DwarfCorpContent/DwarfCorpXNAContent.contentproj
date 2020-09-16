@@ -4823,8 +4823,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="test.conv">
-      <Name>test</Name>
+    <None Include="whats-new.conv">
+      <Name>whats-new</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Compile Include="Entities\Troll\troll.png">

@@ -17,6 +17,7 @@ namespace DwarfCorp
         public Health.DamageAmount Damage { get; set; }
         public GameComponent Target { get; set; }
         public float DamageRadius { get; set; }
+        public GameComponent Shooter { get; set; }
 
         [JsonIgnore] public Library.SimpleAnimationTuple HitAnimation { get; set; }
 
@@ -35,6 +36,7 @@ namespace DwarfCorp
             string hitParticles, 
             string hitNoise, 
             GameComponent target, 
+            GameComponent Shooter,
             bool animated = false, 
             bool singleSprite = false) :
             base(manager, "Projectile", Matrix.CreateTranslation(position), new Vector3(size, size, size), Vector3.One, 1.0f, 1.0f, 1.0f, 1.0f, new Vector3(0, -10, 0), OrientMode.Fixed)
@@ -43,6 +45,7 @@ namespace DwarfCorp
 
             this.AllowPhysicsSleep = false; 
             Target = target;
+            this.Shooter = Shooter;
             HitAnimation = null;
             IsSleeping = false;
             Velocity = initialVelocity;
@@ -141,6 +144,13 @@ namespace DwarfCorp
                     knock *= 0.2f;
                     if (Target.AnimationQueue.Count == 0)
                         Target.AnimationQueue.Add(new KnockbackAnimation(0.15f, Target.LocalTransform, knock));
+                }
+
+                if (Target.IsDead && Shooter is Creature c)
+                {
+                    c.AI.AddXP(GameSettings.Current.XP_attack * 10); // Bonus XP for killing blow!
+                    c.Stats.NumThingsKilled++;
+                    c.AddThought("I killed somehing!", new TimeSpan(0, 8, 0, 0), 10.0f);
                 }
 
                 if (Damage.DamageType == Health.DamageType.Fire)

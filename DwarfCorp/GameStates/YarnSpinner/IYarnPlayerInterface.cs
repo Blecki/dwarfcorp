@@ -31,6 +31,6 @@ namespace DwarfCorp
         void EndTrade();
         void WaitForMarket(Action<Gui.Widgets.MarketDialogResult, Trade.MarketTransaction> Callback);
         void EndMarket();
-
+        void ActivateAlwaysTalk();
     }
 }

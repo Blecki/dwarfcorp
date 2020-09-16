@@ -37,7 +37,7 @@ namespace DwarfCorp
             {
                 yield return Act.Status.Running;
             }
-            Creature.AI.AddXP(5);
+            Creature.AI.AddXP(GameSettings.Current.XP_attack);
             yield return Act.Status.Success;
         }
 

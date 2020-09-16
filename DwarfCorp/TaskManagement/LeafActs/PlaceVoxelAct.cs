@@ -94,7 +94,7 @@ namespace DwarfCorp
                     PlaceVoxel(Location, vType, Creature.Manager.World);
 
                 Creature.Stats.NumBlocksPlaced++;
-                Creature.AI.AddXP(1);
+                Creature.AI.AddXP(GameSettings.Current.XP_craft);
                 ActHelper.ApplyWearToTool(Creature.AI, GameSettings.Current.Wear_Craft);
 
                 yield return Status.Success;

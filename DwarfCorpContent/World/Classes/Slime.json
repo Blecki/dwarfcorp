@@ -4,7 +4,7 @@
   "AttackMode": "Attacking",
   "Weapons": [
     {
-      "DamageAmount": 1.5,
+      "DamageAmount": 0.5,
       "Name": "Chomp",
       "Range": 2.0,
       "HitNoise": {

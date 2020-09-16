@@ -72,7 +72,7 @@ namespace DwarfCorp
     /// Specifies how a voxel is to be sloped.
     /// </summary>
     [Flags]
-    public enum RampType
+    public enum RampType // Todo: Change to compass orientation.
     {
         None = 0x0,
         TopFrontLeft = 0x1,

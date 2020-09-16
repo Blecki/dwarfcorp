@@ -23,6 +23,7 @@ namespace DwarfCorp
  
         public WorldManager World { get; set; }
         public Timer MigrationTimer = new Timer(120, false);
+        private Random Random = new Random();
 
         public MonsterSpawner(WorldManager world)
         {
@@ -169,5 +170,64 @@ namespace DwarfCorp
 
             return toReturn;
         }
+
+        public void OnVoxelChanged(VoxelChangeEvent e)
+        {
+            if (e.Type == VoxelChangeEventType.Explored && e.Voxel.IsEmpty)
+            {
+                var below = VoxelHelpers.GetVoxelBelow(e.Voxel);
+                if (below.IsValid && !below.IsEmpty && Library.GetBiome("Cave").HasValue(out BiomeData caveBiome) && Library.GetBiome("Hell").HasValue(out BiomeData hellBiome))
+                {
+                    var biome = (e.Voxel.Coordinate.Y <= 10) ? hellBiome : caveBiome;
+                    if (e.Voxel.Coordinate.Y > 5 && Random.NextDouble() < 0.5f)
+                        GenerateCaveFlora(below, biome);
+                    if (e.Voxel.Coordinate.Y > 5 && Random.NextDouble() < 0.5f)
+                        GenerateCaveFauna(below, biome);
+                }
+            }
+        }
+
+        private void GenerateCaveFlora(VoxelHandle CaveFloor, BiomeData Biome)
+        {
+            foreach (var floraType in Biome.Vegetation)
+            {
+                if (Random.NextDouble() > floraType.SpawnProbability)
+                    continue;
+
+                //if (Settings.NoiseGenerator.Noise(CaveFloor.Coordinate.X / floraType.ClumpSize, floraType.NoiseOffset, CaveFloor.Coordinate.Z / floraType.ClumpSize) < floraType.ClumpThreshold)
+                //continue;
+
+                var plantSize = MathFunctions.Rand() * floraType.SizeVariance + floraType.MeanSize;
+                var lambdaFloraType = floraType;
+
+                var blackboard = new Blackboard();
+                blackboard.SetData("Scale", plantSize);
+
+                EntityFactory.CreateEntity<GameComponent>(
+                    lambdaFloraType.Name,
+                    CaveFloor.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
+                    blackboard);
+
+                break; // Don't risk spawning multiple plants in the same spot.
+            }
+        }
+
+        private void GenerateCaveFauna(VoxelHandle CaveFloor, BiomeData Biome)
+        {
+            var spawnLikelihood = (World.Overworld.Difficulty.CombatModifier + 0.1f);
+
+            foreach (var animalType in Biome.Fauna)
+            {
+                if (!(Random.NextDouble() < animalType.SpawnProbability * spawnLikelihood))
+                    continue;
+
+                var lambdaAnimalType = animalType;
+
+                EntityFactory.CreateEntity<GameComponent>(lambdaAnimalType.Name, CaveFloor.WorldPosition + new Vector3(0.5f, 1.5f, 0.5f));
+
+                break; // Prevent spawning multiple animals in same spot.
+            }
+        }
+
     }
 }

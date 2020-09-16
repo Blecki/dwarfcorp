@@ -191,7 +191,7 @@ namespace DwarfCorp
                 Creature.Faction.OwnedObjects.Add(previewBody);
 
             Creature.Manager.World.ParticleManager.Trigger("puff", Voxel.WorldPosition, Color.White, 10);
-            Creature.AI.AddXP((int)(5 * (Item.ItemType.Placement_PlaceTime / Creature.AI.Stats.Intelligence)));
+            Creature.AI.AddXP((int)(GameSettings.Current.XP_craft * Item.ItemType.Placement_PlaceTime));
 
 
             Item.Entity.Delete();

@@ -45,11 +45,12 @@ namespace DwarfCorp.Play.EmployeeInfo
             if (cost > Employee.Stats.XP) return;
             var baseStats = Employee.Stats.FindAdjustment("base stats");
             if (baseStats == null) return;
-            var property = baseStats.GetType().GetField(StatName, System.Reflection.BindingFlags.Public);
+            var property = baseStats.GetType().GetField(StatName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
             if (property == null) return;
             var value = property.GetValue(baseStats) as float?;
             if (!value.HasValue) return;
             property.SetValue(baseStats, value.Value + 1);
+            Employee.Stats.XP -= cost;
 
             Employee.Creature.AddThought("I levelled up!", new TimeSpan(4, 0, 0), 50);
         }

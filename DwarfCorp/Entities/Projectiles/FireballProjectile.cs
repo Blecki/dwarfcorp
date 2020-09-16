@@ -18,7 +18,8 @@ namespace DwarfCorp
                 Manager,
                 Position,
                 Data.GetData("Velocity", Vector3.Up * 10 * MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)),
-                Data.GetData<GameComponent>("Target", null));
+                Data.GetData<GameComponent>("Target", null),
+                Data.GetData<Creature>("Shooter", null));
         }
 
         public FireballProjectile()
@@ -26,8 +27,8 @@ namespace DwarfCorp
             
         }
 
-        public FireballProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, GameComponent target) :
-            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 15.0f, DamageType = Health.DamageType.Fire }, 0.25f, ContentPaths.Particles.fireball, "flame", ContentPaths.Audio.Oscar.sfx_ic_demon_fire_hit_1, target)
+        public FireballProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, GameComponent target, GameComponent Shooter) :
+            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 15.0f, DamageType = Health.DamageType.Fire }, 0.25f, ContentPaths.Particles.fireball, "flame", ContentPaths.Audio.Oscar.sfx_ic_demon_fire_hit_1, target, Shooter)
         {
             Sprite.LightsWithVoxels = false;
             Sprite2.LightsWithVoxels = false;

@@ -164,6 +164,7 @@
     <Compile Include="GameStates\DebugStates\GuiTextDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\GuiTextureDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\TiledCompositeTextureDebugPanel.cs" />
+    <Compile Include="GameStates\FrontEnd\ChangeLogState.cs" />
     <Compile Include="GameStates\FrontEnd\CheckMegaWorldState.cs" />
     <Compile Include="GameStates\Play\CategoryIcon.cs" />
     <Compile Include="GameStates\Play\CategoryMenuBuilder.cs" />
@@ -216,11 +217,14 @@
     <Compile Include="Gui\SpriteAtlasEntry.cs" />
     <Compile Include="Gui\TileSheetDefinition.cs" />
     <Compile Include="Gui\Widgets\HorizontalFloatSliderCombo.cs" />
+    <Compile Include="Gui\Widgets\ScrollingTextBox.cs" />
     <Compile Include="Gui\Widgets\SliderCombo.cs" />
     <Compile Include="Gui\Widgets\PlaceCraftInfo.cs" />
     <Compile Include="Gui\Widgets\DefaultTaskPriority.cs" />
+    <Compile Include="Gui\Widgets\StaticGridPanel.cs" />
     <Compile Include="Gui\Widgets\StatsTracker.cs" />
     <Compile Include="Gui\Widgets\MarketPanel.cs" />
+    <Compile Include="Gui\Widgets\TextBoxEx.cs" />
     <Compile Include="Library\CategoryIconLibrary.cs" />
     <Compile Include="Library\ClassLibrary.cs" />
     <Compile Include="Library\CraftLibrary.cs" />
@@ -275,7 +279,6 @@
     <Compile Include="TaskManagement\ActData.cs" />
     <Compile Include="TaskManagement\ActHelper-ApplyWearToTool.cs" />
     <Compile Include="TaskManagement\ActHelper-GetEquippedItem.cs" />
-    <Compile Include="TaskManagement\ActHelper-CreateEquipmentCheckAct.cs" />
     <Compile Include="TaskManagement\ActWrapperTask.cs" />
     <Compile Include="TaskManagement\Always.cs" />
     <Compile Include="TaskManagement\BehaviorExtensions.cs" />
@@ -284,6 +287,7 @@
     <Compile Include="TaskManagement\CompoundActs\TransferResourcesAct.cs" />
     <Compile Include="TaskManagement\CompoundActs\TransferResourcesTask.cs" />
     <Compile Include="TaskManagement\Enums.cs" />
+    <Compile Include="TaskManagement\EquipmentCheckAct.cs" />
     <Compile Include="TaskManagement\FailMessage.cs" />
     <Compile Include="TaskManagement\FailureRecord.cs" />
     <Compile Include="TaskManagement\LeafActs\EquipAct.cs" />

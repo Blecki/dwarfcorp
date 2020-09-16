@@ -255,19 +255,7 @@ namespace DwarfCorp
             }
 
             foreach (var voxel in localList)
-            {
-                var box = voxel.Voxel.GetBoundingBox();
-                var hashmap = World.EnumerateIntersectingAnchors(box);
-
-                foreach (var intersectingBody in hashmap)
-                {
-                    var listener = intersectingBody as IVoxelListener; // Aren't they always listeners?
-                    if (listener != null)
-                        listener.OnVoxelChanged(voxel);
-                }
-
-                World.TaskManager.OnVoxelChanged(voxel);
-            }
+                World.OnVoxelChanged(voxel);
         }
 
         public void UpdateBounds()

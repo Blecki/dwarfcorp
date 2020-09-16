@@ -103,11 +103,11 @@ namespace DwarfCorp.Generation
                                     }
 
                                     // Spawn flora and fauna.
-                                    if (data.Noise > Settings.CaveSize * 1.8f && globalY > Settings.LavaLevel)
-                                    {
-                                        GenerateCaveFlora(below, biome, Settings);
-                                        GenerateCaveFauna(below, biome, Settings);
-                                    }
+                                    //if (data.Noise > Settings.CaveSize * 1.8f && globalY > Settings.LavaLevel)
+                                    //{
+                                        //GenerateCaveFlora(below, biome, Settings);
+                                        //GenerateCaveFauna(below, biome, Settings);
+                                    //}
                                 }
                             }
                         }

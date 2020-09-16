@@ -9,19 +9,22 @@ namespace DwarfCorp
     {
         public float FenceRotation { get; set; }
         public Vector3 BasePosition = Vector3.Zero;
+        
+        public Rail.CompassOrientation EdgeOrientation = Rail.CompassOrientation.North;
 
         public Fence()
         {
             
         }
 
-        public Fence(ComponentManager componentManager, Vector3 position, float orientation, string asset) :
+        public Fence(ComponentManager componentManager, Vector3 position, float orientation, string asset, Rail.CompassOrientation EdgeOrientation, VoxelHandle AnchorVoxel) :
             base(componentManager, position, new SpriteSheet(asset, 32, 32), new Point(0, 0))
         {
             this.Name = "Fence";
             this.LocalBoundingBoxOffset = new Vector3(0, -0.25f, 0);
             this.BoundingBoxSize = new Vector3(1.0f, 0.5f, 0.1f);
             this.SetFlag(Flag.RotateBoundingBox, true);
+            this.EdgeOrientation = EdgeOrientation;
 
             FenceRotation = orientation;
 
@@ -31,13 +34,42 @@ namespace DwarfCorp
             LocalTransform = Matrix.CreateRotationY(FenceRotation) * Matrix.CreateTranslation(position);
             BasePosition = position;
 
-            var under = new VoxelHandle(Manager.World.ChunkManager, GlobalVoxelCoordinate.FromVector3(BasePosition - new Vector3(0.0f, 0.5f, 0.0f)));
-            if (under.IsValid && under.RampType != RampType.None)
-                LocalPosition = BasePosition - new Vector3(0.0f, 0.5f, 0.0f);
-            else
-                LocalPosition = BasePosition;
+            MatchToVoxel(AnchorVoxel);
+        }
 
-            PropogateTransforms();
+        private void MatchToVoxel(VoxelHandle V)
+        {
+            var height = 0.0f;
+
+            switch (EdgeOrientation)
+            {
+                case Rail.CompassOrientation.North:
+                    if ((V.RampType & RampType.TopFrontLeft) == RampType.TopFrontLeft)
+                        height = -0.5f;
+                    if ((V.RampType & RampType.TopFrontRight) == RampType.TopFrontRight)
+                        height = -0.5f;
+                    break;
+                case Rail.CompassOrientation.East:
+                    if ((V.RampType & RampType.TopBackRight) == RampType.TopBackRight)
+                        height = -0.5f;
+                    if ((V.RampType & RampType.TopFrontRight) == RampType.TopFrontRight)
+                        height = -0.5f;
+                    break;
+                case Rail.CompassOrientation.South:
+                    if ((V.RampType & RampType.TopBackLeft) == RampType.TopBackLeft)
+                        height = -0.5f;
+                    if ((V.RampType & RampType.TopBackRight) == RampType.TopBackRight)
+                        height = -0.5f;
+                    break;
+                case Rail.CompassOrientation.West:
+                    if ((V.RampType & RampType.TopBackLeft) == RampType.TopBackLeft)
+                        height = -0.5f;
+                    if ((V.RampType & RampType.TopFrontLeft) == RampType.TopFrontLeft)
+                        height = -0.5f;
+                    break;
+            }
+
+            LocalPosition = BasePosition + new Vector3(0.0f, height, 0.0f);
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
@@ -55,11 +87,7 @@ namespace DwarfCorp
                 {
                     if (v.Type == VoxelChangeEventType.RampsChanged)
                     {
-                        var transform = LocalTransform.Translation;
-                        if (v.OldRamps != RampType.None && v.NewRamps == RampType.None)
-                            LocalPosition = BasePosition;
-                        else if (v.OldRamps == RampType.None && v.NewRamps != RampType.None)
-                            LocalPosition = BasePosition - new Vector3(0.0f, 0.5f, 0.0f);
+                        MatchToVoxel(v.Voxel);
                         ProcessTransformChange();
                     }
                 }))
@@ -71,6 +99,7 @@ namespace DwarfCorp
             public GlobalVoxelOffset VoxelOffset;
             public Vector3 VisibleOffset;
             public float Angle;
+            public Rail.CompassOrientation EdgeOrientation;
         }
 
         private static FenceSegmentInfo[] FenceSegments = new FenceSegmentInfo[]
@@ -79,28 +108,32 @@ namespace DwarfCorp
             {
                 VoxelOffset = new GlobalVoxelOffset(0,0,1),
                 VisibleOffset = new Microsoft.Xna.Framework.Vector3(0,0,0.45f),
-                Angle = (float)Math.Atan2(0,1)
+                Angle = (float)Math.Atan2(0,1),
+                EdgeOrientation = Rail.CompassOrientation.North
             },
 
             new FenceSegmentInfo
             {
                 VoxelOffset = new GlobalVoxelOffset(0,0,-1),
                 VisibleOffset = new Microsoft.Xna.Framework.Vector3(0,0,-0.45f),
-                Angle = (float)Math.Atan2(0,-1)
+                Angle = (float)Math.Atan2(0,-1),
+                EdgeOrientation = Rail.CompassOrientation.South
             },
 
             new FenceSegmentInfo
             {
                 VoxelOffset = new GlobalVoxelOffset(1,0,0),
                 VisibleOffset = new Microsoft.Xna.Framework.Vector3(0.45f,0,0),
-                Angle = (float)Math.Atan2(1,0)
+                Angle = (float)Math.Atan2(1,0),
+                EdgeOrientation = Rail.CompassOrientation.East
             },
 
             new FenceSegmentInfo
             {
                 VoxelOffset = new GlobalVoxelOffset(-1,0,0),
                 VisibleOffset = new Microsoft.Xna.Framework.Vector3(-0.45f,0,0),
-                Angle = (float)Math.Atan2(-1,0)
+                Angle = (float)Math.Atan2(-1,0),
+                EdgeOrientation = Rail.CompassOrientation.West
             },
         };
 
@@ -119,7 +152,7 @@ namespace DwarfCorp
                     if (neighbor.IsValid && !Voxels.Any(v => v == neighbor))
                         yield return new Fence(components,
                             voxel.WorldPosition + off + segment.VisibleOffset,
-                            segment.Angle, asset);
+                            segment.Angle, asset, segment.EdgeOrientation, voxel);
                 }
 
                 if (createWorkPiles && MathFunctions.RandEvent(0.1f))

@@ -130,7 +130,7 @@ namespace DwarfCorp
                 {
                     if (Library.GetVoxelType(vox.Type.Name).HasValue(out VoxelType voxelType))
                     {
-                        Creature.AI.AddXP(Math.Max((int)(voxelType.StartingHealth / 4), 1));
+                        Creature.AI.AddXP(GameSettings.Current.XP_dig * Math.Max((int)(voxelType.StartingHealth / 4), 1));
                         Creature.Stats.NumBlocksDestroyed++;
                         ActHelper.ApplyWearToTool(Creature.AI, GameSettings.Current.Wear_Dig);
 

@@ -33,6 +33,7 @@ namespace DwarfCorp
         private CreatureAI _employee = null;
         private float _voicePitch = 0.0f;
         public WorldManager World;
+        private bool AlwaysTalk = false;
 
         public YarnState(
             WorldManager world,
@@ -43,6 +44,11 @@ namespace DwarfCorp
         {
             World = world;
             YarnEngine = new YarnEngine(ConversationFile, StartNode, Memory, this);
+        }
+
+        public void ActivateAlwaysTalk()
+        {
+            AlwaysTalk = true;
         }
 
         public void SetVoicePitch(float pitch)
@@ -94,13 +100,30 @@ namespace DwarfCorp
 
         public void Speak(String S)
         {
-            _Output?.ClearText();
+            //_Output?.ClearText();
             var colon = S.IndexOf(":");
             if (colon != -1)
             {
                 var name = S.Substring(0, colon + 1);
                 S = S.Substring(colon + 1);
                 _Output?.AppendText(name+"\n");
+                TimeSinceOutput = 0.0f;
+
+                SpeakerAnimationPlayer?.Play();
+
+                if (Language != null)
+                {
+                    CurrentSpeach = Language.Say(S).GetEnumerator();
+                    YarnEngine.EnterSpeakState();
+                }
+                else
+                {
+                    _Output?.AppendText(S);
+                    TimeSinceOutput = 0.0f;
+                }
+            }
+            else if (AlwaysTalk)
+            {
                 TimeSinceOutput = 0.0f;
 
                 SpeakerAnimationPlayer?.Play();
@@ -239,22 +262,15 @@ namespace DwarfCorp
 
         private void PositionItems()
         {
-            int w = global::System.Math.Min(GuiRoot.RenderData.VirtualScreen.Width - 256, 550);
-            int h = global::System.Math.Min(GuiRoot.RenderData.VirtualScreen.Height - 256, 300);
-            int x = GuiRoot.RenderData.VirtualScreen.Width / 2 - w / 2;
-            int y = global::System.Math.Max(GuiRoot.RenderData.VirtualScreen.Height / 2 - h / 2, 280);
+            var halfy = GuiRoot.RenderData.VirtualScreen.Height / 2;
+            int w = GuiRoot.RenderData.VirtualScreen.Width - 256 - 32;
+            int x = 256 + 16;
 
-            _Output.Rect = new Rectangle(x, y - 260, w, 260);
-            ChoicePanel.Rect = new Rectangle(x, y, w, h);
+            _Output.Rect = new Rectangle(x, 32, w, halfy - 32);
+            ChoicePanel.Rect = new Rectangle(x, halfy + 16, w, halfy - 16);
 
-                int inset = 32;
-            SpeakerBorder.Rect = new Rectangle(x - w / 2 + inset / 2, y - 260 + inset, 256 - inset, 256 - inset);
-
-            if (SpeakerBorder.Rect.X < 0)
-            {
-                _Output.Rect.X += -SpeakerBorder.Rect.X;
-                SpeakerBorder.Rect.X = 0;
-            }
+            int inset = 32;
+            SpeakerBorder.Rect = new Rectangle(16 + inset / 2, halfy - 256 + inset, 256 - inset, 256 - inset);
 
             SpeakerRectangle.EntireMeshAsPart()
                 .ResetQuad()

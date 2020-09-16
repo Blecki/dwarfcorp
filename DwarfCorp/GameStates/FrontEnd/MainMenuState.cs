@@ -97,11 +97,11 @@ namespace DwarfCorp.GameStates
                     GameStateManager.PushState(new Debug.DwarfDesignerState(GameState.Game));
                 });
 
-#if DEBUG
-            CreateMenuItem(frame, "Yarn test", "", (sender, args) =>
+            CreateMenuItem(frame, "What's New", "", (sender, args) =>
             {
-                GameStateManager.PushState(new YarnState(null, "test.conv", "Start", new Yarn.MemoryVariableStore()));
+                GameStateManager.PushState(new YarnState(null, "whats-new.conv", "Start", new Yarn.MemoryVariableStore()));
             });
+#if DEBUG
 
             CreateMenuItem(frame, "Debug GUI", "", (sender, args) =>
             {

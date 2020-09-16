@@ -435,7 +435,7 @@ namespace DwarfCorp.Play
                                 OnClick = (sender, args) =>
                                 {
                                     foreach(var minion in World.PlayerFaction.Minions)
-                                        minion.AddXP(100);
+                                        minion.AddXP(10000);
                                 } 
                             },
                             new HorizontalMenuTray.MenuItem

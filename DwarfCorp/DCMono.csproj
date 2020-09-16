@@ -316,6 +316,7 @@
     <Compile Include="GameStates\DebugStates\GuiTextDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\GuiTextureDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\TiledCompositeTextureDebugPanel.cs" />
+    <Compile Include="GameStates\FrontEnd\ChangeLogState.cs" />
     <Compile Include="GameStates\FrontEnd\CheckMegaWorldState.cs" />
     <Compile Include="GameStates\FrontEnd\CreditsState.cs" />
     <Compile Include="GameStates\FrontEnd\IntroState.cs" />
@@ -540,10 +541,13 @@
     <Compile Include="Gui\Widgets\ProgressBar.cs" />
     <Compile Include="Gui\Widgets\ResourceColumns.cs" />
     <Compile Include="Gui\Widgets\ResourcePanel.cs" />
+    <Compile Include="Gui\Widgets\ScrollingTextBox.cs" />
     <Compile Include="Gui\Widgets\SliderCombo.cs" />
+    <Compile Include="Gui\Widgets\StaticGridPanel.cs" />
     <Compile Include="Gui\Widgets\StatsTracker.cs" />
     <Compile Include="Gui\Widgets\TabPanel.cs" />
     <Compile Include="Gui\Widgets\TextBox.cs" />
+    <Compile Include="Gui\Widgets\TextBoxEx.cs" />
     <Compile Include="Gui\Widgets\TextGrid.cs" />
     <Compile Include="Gui\Widgets\TextProgressBar.cs" />
     <Compile Include="Gui\Widgets\ToggleTray.cs" />
@@ -642,7 +646,6 @@
     <Compile Include="TaskManagement\Act.cs" />
     <Compile Include="TaskManagement\ActData.cs" />
     <Compile Include="TaskManagement\ActHelper-ApplyWearToTool.cs" />
-    <Compile Include="TaskManagement\ActHelper-CreateEquipmentCheckAct.cs" />
     <Compile Include="TaskManagement\ActHelper-GetEquippedItem.cs" />
     <Compile Include="TaskManagement\ActWrapperTask.cs" />
     <Compile Include="TaskManagement\Always.cs" />
@@ -681,6 +684,7 @@
     <Compile Include="TaskManagement\ControlFlow\WhileLoop.cs" />
     <Compile Include="TaskManagement\ControlFlow\Wrap.cs" />
     <Compile Include="TaskManagement\Enums.cs" />
+    <Compile Include="TaskManagement\EquipmentCheckAct.cs" />
     <Compile Include="TaskManagement\FailMessage.cs" />
     <Compile Include="TaskManagement\FailureRecord.cs" />
     <Compile Include="TaskManagement\LeafActs\AttackAct.cs" />

@@ -54,9 +54,15 @@ namespace DwarfCorp
             //PropogateTransforms();
 
             // Todo: Rather than passing the mesh name, create one in some kind of PrimitiveLibrary on the fly if it doesn't already exist.
-            var mesh = AddChild(new InstanceMesh(Manager, "Model",
-                Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(BoundingBoxSize.X, BoundingBoxSize.Y, BoundingBoxSize.Z) * Matrix.CreateTranslation(GetBoundingBox().Center() - Position), MeshAsset,
-                this.BoundingBoxSize, Vector3.Zero));
+            var mesh = AddChild(new InstanceMesh(
+                Manager, 
+                "Model",
+                Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) 
+                    * Matrix.CreateScale(BoundingBoxSize.X, BoundingBoxSize.Y, BoundingBoxSize.Z) 
+                    * Matrix.CreateTranslation(new Vector3(0, BoundingBoxSize.Y / 2, 0)), 
+                MeshAsset,
+                this.BoundingBoxSize, 
+                Vector3.Zero));
 
             mesh.SetFlag(Flag.ShouldSerialize, false);
 

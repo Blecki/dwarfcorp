@@ -72,7 +72,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            var spriteSheet = new SpriteSheet("Entitires\\Animals\\bat", 32, 32);
+            var spriteSheet = new SpriteSheet("Entities\\Animals\\bat", 32, 32);
             var sprite = new CharacterSprite(manager, "Sprite", Matrix.CreateTranslation(0, 0.0f, 0));
             sprite.SpriteSheet = spriteSheet;
 

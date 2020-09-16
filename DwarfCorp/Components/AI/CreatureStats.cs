@@ -94,7 +94,7 @@ namespace DwarfCorp
 
         public static int GetLevelUpCost(int CurrentLevel)
         {
-            return CurrentLevel * CurrentLevel;
+            return CurrentLevel * GameSettings.Current.DwarfBaseLevelCost;
         }
 
         public String SpeciesName = "";

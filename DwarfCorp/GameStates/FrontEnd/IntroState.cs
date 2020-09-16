@@ -31,7 +31,11 @@ namespace DwarfCorp.GameStates
             if (IntroTimer.HasTriggered || Keyboard.GetState().GetPressedKeys().Length > 0)
             {
                 GameStateManager.PopState();
-                GameStateManager.PushState(new MainMenuState(Game));
+                var version = Program.Version;
+                if (GameSettings.Current.LastVersionChangesDisplayed != version)
+                    GameStateManager.PushState(new ChangeLogState(Game));
+                else
+                    GameStateManager.PushState(new MainMenuState(Game));
             }
 
             base.Update(gameTime);

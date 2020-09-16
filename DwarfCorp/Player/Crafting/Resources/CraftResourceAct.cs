@@ -136,7 +136,7 @@ namespace DwarfCorp
             {
                 for (var i = 0; i < ItemType.Craft_ResultsCount; ++i)
                     Creature.Inventory.AddResource(res);
-                Creature.AI.AddXP((int)ItemType.Craft_BaseCraftTime);
+                Creature.AI.AddXP((int)ItemType.Craft_BaseCraftTime * GameSettings.Current.XP_craft);
                 ActHelper.ApplyWearToTool(Creature.AI, GameSettings.Current.Wear_Craft);
                 Des.Finished = true;
                 yield return Status.Success;

@@ -42,9 +42,9 @@ namespace DwarfCorp.Voxels.Geo
                         Mesh = Geo.TemplateMesh.Quad(verts[VoxelVertex.FrontTopLeft], verts[VoxelVertex.BackTopLeft], verts[VoxelVertex.FrontTopRight], verts[VoxelVertex.BackTopRight]),
                         Edges = new TemplateEdge[]
                         {
-                            new TemplateEdge { Start = 0, End = 1, EdgeType = EdgeType.Exterior, Orientation = FaceOrientation.North },
+                            new TemplateEdge { Start = 0, End = 1, EdgeType = EdgeType.Exterior, Orientation = FaceOrientation.South },
                             new TemplateEdge { Start = 1, End = 2, EdgeType = EdgeType.Exterior, Orientation = FaceOrientation.East },
-                            new TemplateEdge { Start = 2, End = 3, EdgeType = EdgeType.Exterior, Orientation = FaceOrientation.South },
+                            new TemplateEdge { Start = 2, End = 3, EdgeType = EdgeType.Exterior, Orientation = FaceOrientation.North },
                             new TemplateEdge { Start = 3, End = 0, EdgeType = EdgeType.Exterior, Orientation = FaceOrientation.West }
                         },
                         Corners = new TemplateCorner[]
@@ -58,13 +58,13 @@ namespace DwarfCorp.Voxels.Geo
                     },
                     new TemplateFace
                     {
-                        Orientation = FaceOrientation.South,
+                        Orientation = FaceOrientation.North,
                         Mesh = Geo.TemplateMesh.Quad(verts[VoxelVertex.FrontBottomLeft], verts[VoxelVertex.FrontTopLeft], verts[VoxelVertex.FrontBottomRight], verts[VoxelVertex.FrontTopRight]),
                         FaceShape = SideFaceShape
                     },
                     new TemplateFace
                     {
-                        Orientation = FaceOrientation.North,
+                        Orientation = FaceOrientation.South,
                         Mesh = Geo.TemplateMesh.Quad(verts[VoxelVertex.BackBottomRight], verts[VoxelVertex.BackTopRight], verts[VoxelVertex.BackBottomLeft], verts[VoxelVertex.BackTopLeft]),
                         FaceShape = SideFaceShape
                     },                    
@@ -108,9 +108,9 @@ namespace DwarfCorp.Voxels.Geo
                         Mesh = Geo.TemplateMesh.Quad(verts[VoxelVertex.FrontTopLeft], verts[VoxelVertex.BackTopLeft], verts[VoxelVertex.FrontTopRight], verts[VoxelVertex.BackTopRight]),
                         Edges = new TemplateEdge[]
                         {
-                            new TemplateEdge { Start = 0, End = 1, EdgeType = EdgeType.Exterior, Orientation = FaceOrientation.North },
+                            new TemplateEdge { Start = 0, End = 1, EdgeType = EdgeType.Exterior, Orientation = FaceOrientation.South },
                             new TemplateEdge { Start = 1, End = 2, EdgeType = EdgeType.Exterior, Orientation = FaceOrientation.East },
-                            new TemplateEdge { Start = 2, End = 3, EdgeType = EdgeType.Exterior, Orientation = FaceOrientation.South },
+                            new TemplateEdge { Start = 2, End = 3, EdgeType = EdgeType.Exterior, Orientation = FaceOrientation.North },
                             new TemplateEdge { Start = 3, End = 0, EdgeType = EdgeType.Exterior, Orientation = FaceOrientation.West }
                         },
                         Corners = new TemplateCorner[]
@@ -125,13 +125,13 @@ namespace DwarfCorp.Voxels.Geo
                     },
                     new TemplateFace
                     {
-                        Orientation = FaceOrientation.South,
+                        Orientation = FaceOrientation.North,
                         Mesh = Geo.TemplateMesh.Quad(verts[VoxelVertex.FrontBottomLeft], verts[VoxelVertex.FrontTopLeft], verts[VoxelVertex.FrontBottomRight], verts[VoxelVertex.FrontTopRight]),
                         FaceShape = TemplateFaceShapes.LowerSlab
                     },
                     new TemplateFace
                     {
-                        Orientation = FaceOrientation.North,
+                        Orientation = FaceOrientation.South,
                         Mesh = Geo.TemplateMesh.Quad(verts[VoxelVertex.BackBottomRight], verts[VoxelVertex.BackTopRight], verts[VoxelVertex.BackBottomLeft], verts[VoxelVertex.BackTopLeft]),
                         FaceShape = TemplateFaceShapes.LowerSlab
                     },
@@ -175,9 +175,9 @@ namespace DwarfCorp.Voxels.Geo
                         Mesh = Geo.TemplateMesh.Quad(verts[VoxelVertex.FrontTopLeft], verts[VoxelVertex.BackTopLeft], verts[VoxelVertex.FrontTopRight], verts[VoxelVertex.BackTopRight]),
                         Edges = new TemplateEdge[]
                         {
-                            new TemplateEdge { Start = 0, End = 1, EdgeType = EdgeType.Exterior, Orientation = FaceOrientation.North },
+                            new TemplateEdge { Start = 0, End = 1, EdgeType = EdgeType.Exterior, Orientation = FaceOrientation.South },
                             new TemplateEdge { Start = 1, End = 2, EdgeType = EdgeType.Exterior, Orientation = FaceOrientation.East },
-                            new TemplateEdge { Start = 2, End = 3, EdgeType = EdgeType.Exterior, Orientation = FaceOrientation.South },
+                            new TemplateEdge { Start = 2, End = 3, EdgeType = EdgeType.Exterior, Orientation = FaceOrientation.North },
                             new TemplateEdge { Start = 3, End = 0, EdgeType = EdgeType.Exterior, Orientation = FaceOrientation.West }
                         },
                         Corners = new TemplateCorner[]
@@ -192,13 +192,13 @@ namespace DwarfCorp.Voxels.Geo
                     },
                     new TemplateFace
                     {
-                        Orientation = FaceOrientation.South,
+                        Orientation = FaceOrientation.North,
                         Mesh = Geo.TemplateMesh.Quad(verts[VoxelVertex.FrontBottomLeft], verts[VoxelVertex.FrontTopLeft], verts[VoxelVertex.FrontBottomRight], verts[VoxelVertex.FrontTopRight]),
                         FaceShape = TemplateFaceShapes.LowerSlab
                     },
                     new TemplateFace
                     {
-                        Orientation = FaceOrientation.North,
+                        Orientation = FaceOrientation.South,
                         Mesh = Geo.TemplateMesh.Quad(verts[VoxelVertex.BackBottomRight], verts[VoxelVertex.BackTopRight], verts[VoxelVertex.BackBottomLeft], verts[VoxelVertex.BackTopLeft]),
                         FaceShape = TemplateFaceShapes.LowerSlab
                     },

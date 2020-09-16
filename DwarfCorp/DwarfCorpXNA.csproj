@@ -204,6 +204,7 @@
     <Compile Include="GameStates\DebugStates\GuiDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\GuiDebugState.cs" />
     <Compile Include="GameStates\FrontEnd\CheckMegaWorldState.cs" />
+    <Compile Include="GameStates\FrontEnd\ChangeLogState.cs" />
     <Compile Include="GameStates\Play\CategoryIcon.cs" />
     <Compile Include="GameStates\Play\CategoryMenuBuilder.cs" />
     <Compile Include="GameStates\Play\CommandBar\CommandPanel.cs" />
@@ -219,6 +220,7 @@
     <Compile Include="GameStates\Play\TaskListPanel.cs" />
     <Compile Include="GameStates\Play\ZonePanel\DraggedResourceIcon.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ResourceGuiGraphicIcon.cs" />
+    <Compile Include="GameStates\YarnSpinner\AlwaysTalking.cs" />
     <Compile Include="Graphics\Animation\AnimationDescriptor.cs" />
     <Compile Include="Graphics\Animation\AnimationFrameConverter.cs" />
     <Compile Include="Graphics\Cameras\CameraPositionSnapshot.cs" />
@@ -266,7 +268,7 @@
     <Compile Include="Player\Tools\PathingHintTool.cs" />
     <Compile Include="Player\Tools\EntityInspector\EntityInspector.cs" />
     <Compile Include="Player\Tools\EntityInspector\EntityInspectorPanel.cs" />
-    <Compile Include="TaskManagement\ActHelper-CreateEquipmentCheckAct.cs" />
+    <Compile Include="TaskManagement\EquipmentCheckAct.cs" />
     <Compile Include="TaskManagement\Always.cs" />
     <Compile Include="TaskManagement\ActHelper-ApplyWearToTool.cs" />
     <Compile Include="TaskManagement\ActHelper-GetEquippedItem.cs" />

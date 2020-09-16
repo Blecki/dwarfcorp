@@ -388,6 +388,23 @@ namespace DwarfCorp
                     r.Destroy();
                 }
             }
-        }        
+        }
+
+        public void OnVoxelChanged(VoxelChangeEvent e)
+        {
+            var box = e.Voxel.GetBoundingBox();
+            var hashmap = EnumerateIntersectingAnchors(box);
+
+            foreach (var intersectingBody in hashmap)
+            {
+                var listener = intersectingBody as IVoxelListener; // Aren't they always listeners?
+                if (listener != null)
+                    listener.OnVoxelChanged(e);
+            }
+
+            TaskManager.OnVoxelChanged(e);
+            MonsterSpawner.OnVoxelChanged(e);
+
+        }
     }
 }

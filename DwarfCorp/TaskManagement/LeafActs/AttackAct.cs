@@ -321,7 +321,7 @@ namespace DwarfCorp
                             yield return Status.Running;
                         }
 
-                        Agent.AddXP(2); // Gain XP for attacking.
+                        Agent.AddXP(GameSettings.Current.XP_attack); // Gain XP for attacking.
                         ActHelper.ApplyWearToTool(Creature.AI, GameSettings.Current.Wear_Attack);
 
                         timeout.Reset();
@@ -370,10 +370,10 @@ namespace DwarfCorp
                         if (Target.IsDead)
                         {
                             Target = null;
-                            Agent.AddXP(10);
+                            Agent.AddXP(GameSettings.Current.XP_attack * 10); // Bonus XP for killing blow!
                             Creature.Physics.Face(Creature.Physics.Velocity + Creature.Physics.GlobalTransform.Translation);
                             Creature.Stats.NumThingsKilled++;
-                            Creature.AddThought("I killed somehing!", new TimeSpan(0, 8, 0, 0), 1.0f);
+                            Creature.AddThought("I killed somehing!", new TimeSpan(0, 8, 0, 0), 10.0f);
                             Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                             Creature.OverrideCharacterMode = false;
                             Creature.CurrentCharacterMode = defaultCharachterMode;

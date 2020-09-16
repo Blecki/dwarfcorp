@@ -29,7 +29,7 @@ namespace DwarfCorp
             {
                 BuildRoom.Build();
                 Creature.Stats.NumRoomsBuilt++;
-                Creature.AI.AddXP(10);
+                Creature.AI.AddXP(GameSettings.Current.XP_craft);
                 yield return Status.Success;
             }
         }

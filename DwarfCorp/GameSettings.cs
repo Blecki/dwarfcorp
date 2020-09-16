@@ -161,6 +161,7 @@ namespace DwarfCorp
     {
         public class Settings
         {
+            public String LastVersionChangesDisplayed = "";
             public bool TutorialDisabledGlobally = false;
             public int ResolutionX = 1280;
             public int ResolutionY = 720;
@@ -224,7 +225,14 @@ namespace DwarfCorp
 
             public bool AllowIdleCrafting = false;
             public int DwarfBasePay = 2;
+            public int DwarfBaseLevelCost = 10;
             public int DwarfSigningBonusFactor = 4;
+
+            [AutoResetInt(10)] public int XP_attack = 10;
+            [AutoResetInt(2)] public int XP_dig = 2;
+            [AutoResetInt(1)] public int XP_craft = 1;
+            [AutoResetInt(10)] public int XP_farm = 10;
+
 
             [AutoResetBool(false)] public bool FastGen = false;
             [AutoResetFloat(0.15f)] public float GenerationRuinsRate = 0.15f;
@@ -303,6 +311,16 @@ namespace DwarfCorp
             }
         }
 
+        private class AutoResetIntAttribute : Attribute
+        {
+            public int Value;
+
+            public AutoResetIntAttribute(int Value)
+            {
+                this.Value = Value;
+            }
+        }
+
         public static void Reset()
         {
             Current = new Settings();
@@ -354,6 +372,12 @@ namespace DwarfCorp
                         {
                             member.SetValue(Current, resetBool.Value);
                             Console.Out.WriteLine("Auto Reset Bool Setting: {0} to {1}", member.Name, resetBool.Value);
+                        }
+
+                        if (attribute is AutoResetIntAttribute resetInt)
+                        {
+                            member.SetValue(Current, resetInt.Value);
+                            Console.Out.WriteLine("Auto Reset Int Setting: {0} to {1}", member.Name, resetInt.Value);
                         }
                     }
 

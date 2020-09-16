@@ -44,7 +44,7 @@ namespace DwarfCorp
             LocalPosition += VertexNoise.GetNoiseVectorFromRepeatingTexture(position);
 
             CreateCosmeticChildren(Manager);
-            PropogateTransforms();
+            //PropogateTransforms();
         }
 
         public Fixture(

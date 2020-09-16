@@ -83,7 +83,7 @@ namespace DwarfCorp
 
                 Creature.CurrentCharacterMode = CharacterMode.Idle;
                 Creature.AddThought("I farmed something!", new TimeSpan(0, 4, 0, 0), 1.0f);
-                Creature.AI.AddXP(1);
+                Creature.AI.AddXP(GameSettings.Current.XP_farm);
                 ActHelper.ApplyWearToTool(Creature.AI, GameSettings.Current.Wear_Dig);
 
                 Creature.Sprite.PauseAnimations();

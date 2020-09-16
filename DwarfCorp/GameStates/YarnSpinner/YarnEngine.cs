@@ -25,7 +25,7 @@ namespace DwarfCorp
         private Yarn.Dialogue Dialogue;
         private States State = States.Running;
         private IEnumerator<Yarn.Dialogue.RunnerResult> Runner;
-        private Yarn.MemoryVariableStore Memory;
+        public Yarn.MemoryVariableStore Memory;
 
         private class CommandHandler
         {

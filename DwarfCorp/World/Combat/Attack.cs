@@ -59,7 +59,7 @@ namespace DwarfCorp
             }
         }
 
-        public void LaunchProjectile(Vector3 start, Vector3 end, GameComponent target)
+        public void LaunchProjectile(Creature Performer, Vector3 start, Vector3 end, GameComponent target)
         {
             Vector3 velocity = (end - start);
             float dist = velocity.Length();
@@ -68,6 +68,7 @@ namespace DwarfCorp
             Blackboard data = new Blackboard();
             data.SetData("Velocity", velocity);
             data.SetData("Target", target);
+            data.SetData("Shooter", Performer);
             EntityFactory.CreateEntity<GameComponent>(Weapon.ProjectileType, start, data);
         }
 
@@ -210,7 +211,7 @@ namespace DwarfCorp
                 case Weapon.AttackMode.Ranged:
                     {
                         PlayNoise(other.GlobalTransform.Translation);
-                        LaunchProjectile(pos, other.Position, other);
+                        LaunchProjectile(performer, pos, other.Position, other);
 
                         var injury = DiseaseLibrary.GetRandomInjury();
 

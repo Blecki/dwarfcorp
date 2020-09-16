@@ -33,6 +33,7 @@ namespace DwarfCorp.SteamPipes
 
         public static Orientation DetectOrientationFromVector(Vector3 V)
         {
+            // Todo: NO NO NO North is positive Z
             // Treat unit X as north because why not.
             if (V.X > 0.5f) return Orientation.North;
             else if (V.X < -0.5f) return Orientation.South;

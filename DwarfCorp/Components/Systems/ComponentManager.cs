@@ -277,11 +277,14 @@ namespace DwarfCorp
         private void AddRemove()
         {
             AdditionMutex.WaitOne();
-            foreach (GameComponent component in Additions)
+            var local = Additions;
+            Additions = new List<GameComponent>();
+            AdditionMutex.ReleaseMutex();
+
+            foreach (GameComponent component in local)
                 AddComponentImmediate(component);
 
-            Additions.Clear();
-            AdditionMutex.ReleaseMutex();
+            local.Clear();
 
             RemovalMutex.WaitOne();
             var localRemovals = new List<GameComponent>(Removals);

@@ -153,7 +153,7 @@ namespace DwarfCorp
                 if (TheAttack.RechargeTimer.HasTriggered)
                 {
                     closestCreature.Kill(this);
-                    TheAttack.LaunchProjectile(Position + Vector3.Up * 0.5f, closestCreature.Position, closestCreature.Physics);
+                    TheAttack.LaunchProjectile(null, Position + Vector3.Up * 0.5f, closestCreature.Position, closestCreature.Physics);
                     TheAttack.PlayNoise(Position);
                     TheAttack.RechargeTimer.Reset();
 

@@ -24,7 +24,7 @@
       "SizeVariance": 1.0,
       "VerticalOffset": 1.7,
       "NoiseOffset": 57.248703,
-      "SpawnProbability": 0.2
+      "SpawnProbability": 0.04
     },
     {
       "Name": "Mushroom",
