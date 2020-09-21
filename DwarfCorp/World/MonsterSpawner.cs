@@ -25,14 +25,10 @@ namespace DwarfCorp
             public bool Attack;
         }
 
-        public List<Faction> SpawnFactions = new List<Faction>();
- 
         public Timer MigrationTimer = new Timer(120, false);
-        private Random Random = new Random();
 
         public MonsterSpawner()
         {
-            SpawnFactions = new List<Faction>();
         }
 
         public override void Update(DwarfTime GameTime, WorldManager World)
@@ -44,14 +40,14 @@ namespace DwarfCorp
 
         public void CreateMigration(WorldManager World)
         {
-            int tries = 0;
-            float padding = 2.0f;
+            var attempts = 0;
+            var padding = 2.0f;
 
-            while (tries < 10)
+            while (attempts < GameSettings.Current.MigrationAttempts)
             {
-                int side = MathFunctions.Random.Next(4);
-                BoundingBox bounds = World.ChunkManager.Bounds;
-                Vector3 pos = Vector3.Zero;
+                var side = MathFunctions.Random.Next(4);
+                var bounds = World.ChunkManager.Bounds;
+                var pos = Vector3.Zero;
                 switch (side)
                 {
                     case 0:
@@ -74,7 +70,7 @@ namespace DwarfCorp
                 {
                     if (biome.Fauna.Count == 0)
                     {
-                        tries++;
+                        attempts++;
                         continue;
                     }
 
@@ -83,7 +79,7 @@ namespace DwarfCorp
 
                     if (testCreature == null)
                     {
-                        tries++;
+                        attempts++;
                         continue;
                     }
 
@@ -96,7 +92,7 @@ namespace DwarfCorp
                         if (!vox.IsValid)
                         {
                             testCreature.GetRoot().Delete();
-                            tries++;
+                            attempts++;
                             continue;
                         }
 
@@ -106,7 +102,7 @@ namespace DwarfCorp
                     else
                     {
                         testCreature.GetRoot().Delete();
-                        tries++;
+                        attempts++;
                         continue;
                     }
                 }
@@ -181,9 +177,9 @@ namespace DwarfCorp
                 if (below.IsValid && !below.IsEmpty && Library.GetBiome("Cave").HasValue(out BiomeData caveBiome) && Library.GetBiome("Hell").HasValue(out BiomeData hellBiome))
                 {
                     var biome = (Event.Voxel.Coordinate.Y <= 10) ? hellBiome : caveBiome;
-                    if (Event.Voxel.Coordinate.Y > 5 && Random.NextDouble() < 0.5f)
+                    if (Event.Voxel.Coordinate.Y > 5 && MathFunctions.Random.NextDouble() < 0.5f)
                         GenerateCaveFlora(below, biome);
-                    if (Event.Voxel.Coordinate.Y > 5 && Random.NextDouble() < 0.5f)
+                    if (Event.Voxel.Coordinate.Y > 5 && MathFunctions.Random.NextDouble() < 0.5f)
                         GenerateCaveFauna(World, below, biome);
                 }
             }
@@ -193,7 +189,7 @@ namespace DwarfCorp
         {
             foreach (var floraType in Biome.Vegetation)
             {
-                if (Random.NextDouble() > floraType.SpawnProbability)
+                if (MathFunctions.Random.NextDouble() > floraType.SpawnProbability)
                     continue;
 
                 //if (Settings.NoiseGenerator.Noise(CaveFloor.Coordinate.X / floraType.ClumpSize, floraType.NoiseOffset, CaveFloor.Coordinate.Z / floraType.ClumpSize) < floraType.ClumpThreshold)
@@ -220,7 +216,7 @@ namespace DwarfCorp
 
             foreach (var animalType in Biome.Fauna)
             {
-                if (!(Random.NextDouble() < animalType.SpawnProbability * spawnLikelihood))
+                if (!(MathFunctions.Random.NextDouble() < animalType.SpawnProbability * spawnLikelihood))
                     continue;
 
                 var lambdaAnimalType = animalType;

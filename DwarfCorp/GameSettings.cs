@@ -228,6 +228,8 @@ namespace DwarfCorp
             public int DwarfBaseLevelCost = 10;
             public int DwarfSigningBonusFactor = 4;
 
+            public int MigrationAttempts = 10;
+
             [AutoResetInt(10)] public int XP_attack = 10;
             [AutoResetInt(2)] public int XP_dig = 2;
             [AutoResetInt(1)] public int XP_craft = 1;

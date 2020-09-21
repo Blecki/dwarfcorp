@@ -245,7 +245,7 @@ namespace DwarfCorp
             }
         }
 
-        public void Update(DwarfTime gameTime, Camera camera, GraphicsDevice g)
+        public List<VoxelChangeEvent> GetAndClearChangedVoxelList()
         {
             List<VoxelChangeEvent> localList = null;
             lock (ChangedVoxels)
@@ -253,9 +253,7 @@ namespace DwarfCorp
                 localList = ChangedVoxels;
                 ChangedVoxels = new List<VoxelChangeEvent>();
             }
-
-            foreach (var voxel in localList) // Todo: This should be handled by the world manager itself.
-                World.OnVoxelChanged(voxel);
+            return localList;
         }
 
         public void UpdateBounds()
