@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using DwarfCorp.Gui;
-using DwarfCorp.Gui.Widgets;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace DwarfCorp.Play.EmployeeInfo
 {

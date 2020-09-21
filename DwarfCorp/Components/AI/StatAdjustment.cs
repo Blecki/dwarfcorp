@@ -1,9 +1,5 @@
-using System;
-using System.IO;
-using DwarfCorp.GameStates;
-using Microsoft.Xna.Framework;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using System;
 
 namespace DwarfCorp
 {

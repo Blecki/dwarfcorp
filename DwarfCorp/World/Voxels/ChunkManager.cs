@@ -254,7 +254,7 @@ namespace DwarfCorp
                 ChangedVoxels = new List<VoxelChangeEvent>();
             }
 
-            foreach (var voxel in localList)
+            foreach (var voxel in localList) // Todo: This should be handled by the world manager itself.
                 World.OnVoxelChanged(voxel);
         }
 

@@ -137,7 +137,6 @@ namespace DwarfCorp
                 if (PlanService != null)
                     PlanService.Restart();
 
-                MonsterSpawner = new MonsterSpawner(this);
                 EntityFactory.Initialize(this);
             }), () => { actionComplete = true; return true; });
 
@@ -280,7 +279,6 @@ namespace DwarfCorp
                 if (PlanService != null)
                     PlanService.Restart();
 
-                MonsterSpawner = new MonsterSpawner(this);
                 EntityFactory.Initialize(this);
             }), () => { actionComplete = true; return true; });
 

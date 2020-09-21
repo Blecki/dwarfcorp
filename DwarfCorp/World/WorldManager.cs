@@ -33,7 +33,6 @@ namespace DwarfCorp
         private Timer checkFoodTimer = new Timer(60.0f, false, Timer.TimerMode.Real);
         public TaskManager TaskManager;
         private Timer orphanedTaskRateLimiter = new Timer(10.0f, false, Timer.TimerMode.Real);
-        public MonsterSpawner MonsterSpawner;
         public Faction PlayerFaction;
         public HashSet<GameComponent> ComponentUpdateSet = new HashSet<GameComponent>();
         public uint EntityUpdateFrame = 0;
@@ -132,10 +131,9 @@ namespace DwarfCorp
         private Splasher Splasher;
         #endregion
 
-        [JsonIgnore]
-        public List<EngineModule> UpdateSystems = new List<EngineModule>();
+        [JsonIgnore] public List<EngineModule> UpdateSystems = new List<EngineModule>();
 
-        public T FindSystem<T>() where T: EngineModule
+        public MaybeNull<T> FindSystem<T>() where T: EngineModule
         {
             return UpdateSystems.FirstOrDefault(s => s is T) as T;
         }
@@ -319,8 +317,6 @@ namespace DwarfCorp
 
 
                 ComponentManager.Update(gameTime, ChunkManager, ComponentUpdateSet);
-                MonsterSpawner.Update(gameTime);
-
             }
 
             // These things are updated even when the game is paused
@@ -353,6 +349,9 @@ namespace DwarfCorp
 
         public void Quit()
         {
+            foreach (var module in UpdateSystems)
+                module.Shutdown();
+
             ChunkManager.Destroy();
             ComponentManager = null;
 
@@ -403,8 +402,8 @@ namespace DwarfCorp
             }
 
             TaskManager.OnVoxelChanged(e);
-            MonsterSpawner.OnVoxelChanged(e);
-
+            foreach (var updateSystem in UpdateSystems)
+                updateSystem.OnVoxelChange(e, this);
         }
     }
 }

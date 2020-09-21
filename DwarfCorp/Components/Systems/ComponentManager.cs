@@ -247,16 +247,16 @@ namespace DwarfCorp
             PerformanceMonitor.SetMetric("ENTITIES UPDATED", i);
             PerformanceMonitor.PopFrame();
 
-            PerformanceMonitor.PushFrame("Transform Update");
-            var transformsProcessed = 0;
-            foreach (var body in ComponentsToUpdate)
-            {
-                transformsProcessed += 1;
-                body.ProcessTransformChange();
-            }
+            //PerformanceMonitor.PushFrame("Transform Update");
+            //var transformsProcessed = 0;
+            //foreach (var body in ComponentsToUpdate)
+            //{
+            //    transformsProcessed += 1;
+            //    body.ProcessTransformChange();
+            //}
 
-            PerformanceMonitor.SetMetric("TRANSFORMS", transformsProcessed);
-            PerformanceMonitor.PopFrame();
+            //PerformanceMonitor.SetMetric("TRANSFORMS", transformsProcessed);
+            //PerformanceMonitor.PopFrame();
 
             AddRemove();
             ReceiveMessage(gameTime);

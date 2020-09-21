@@ -193,6 +193,7 @@
     <Compile Include="Components\Graphics\LayeredSprites\FixDwarfSprites.cs" />
     <Compile Include="Components\Graphics\SpriteOrientation.cs" />
     <Compile Include="Components\Physics\PhysicsSystem.cs" />
+    <Compile Include="Components\Systems\TransformUpdater.cs" />
     <Compile Include="Entities\Animals\Pumpking.cs" />
     <Compile Include="Entities\Fixtures\Jack-O-Lantern.cs" />
     <Compile Include="Entities\Fixtures\TrainingEquipment\TrainingEquipment.cs" />

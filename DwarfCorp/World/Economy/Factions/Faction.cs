@@ -205,7 +205,9 @@ namespace DwarfCorp
             {
                 TradeEnvoy envoy = null;
 
-                var creatures = World.MonsterSpawner.Spawn(World.MonsterSpawner.GenerateSpawnEvent(this, World.PlayerFaction, MathFunctions.Random.Next(4) + 1, false));
+                if (World.FindSystem<MonsterSpawner>().HasValue(out var spawner))
+                { 
+                var creatures = spawner.Spawn(spawner.GenerateSpawnEvent(this.World, this, World.PlayerFaction, MathFunctions.Random.Next(4) + 1, false));
 
 
                 envoy = new TradeEnvoy(World.Time.CurrentDate)
@@ -218,42 +220,7 @@ namespace DwarfCorp
                     TradeMoney = new DwarfBux((decimal)MathFunctions.Rand(race.MinCash, race.MaxCash))
                 };
 
-                if (race.IsNative)
-                {
-                    if (Economy == null)
-                        Economy = new Company(this, 1000.0m, new CompanyInformation()
-                        {
-                            Name = ParentFaction.Name
-                        });
-
-                    foreach (CreatureAI creature in envoy.Creatures)
-                    {
-                        creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
-                        creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, Economy.Information, new Resource("Flag")));
-                    }
-                }
-                else
-                {
-                    GameComponent balloon = null;
-
-                    var rooms = World.EnumerateZones().Where(room => room.Type.Name == "Balloon Port").ToList();
-
-                    if (rooms.Count != 0)
-                    {
-                        var pos = rooms.First().GetBoundingBox().Center();
-                        balloon = Balloon.CreateBalloon(pos + new Vector3(0, 1000, 0), pos + Vector3.UnitY * 15, World.ComponentManager, this);
-                    }
-
-                    if (balloon != null)
-                    {
-                        foreach (CreatureAI creature in creatures)
-                        {
-                            var tf = creature.Physics.LocalTransform;
-                            tf.Translation = balloon.LocalTransform.Translation;
-                            creature.Physics.LocalTransform = tf;
-                        }
-                    }
-                    else
+                    if (race.IsNative)
                     {
                         if (Economy == null)
                             Economy = new Company(this, 1000.0m, new CompanyInformation()
@@ -265,6 +232,42 @@ namespace DwarfCorp
                         {
                             creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
                             creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, Economy.Information, new Resource("Flag")));
+                        }
+                    }
+                    else
+                    {
+                        GameComponent balloon = null;
+
+                        var rooms = World.EnumerateZones().Where(room => room.Type.Name == "Balloon Port").ToList();
+
+                        if (rooms.Count != 0)
+                        {
+                            var pos = rooms.First().GetBoundingBox().Center();
+                            balloon = Balloon.CreateBalloon(pos + new Vector3(0, 1000, 0), pos + Vector3.UnitY * 15, World.ComponentManager, this);
+                        }
+
+                        if (balloon != null)
+                        {
+                            foreach (CreatureAI creature in creatures)
+                            {
+                                var tf = creature.Physics.LocalTransform;
+                                tf.Translation = balloon.LocalTransform.Translation;
+                                creature.Physics.LocalTransform = tf;
+                            }
+                        }
+                        else
+                        {
+                            if (Economy == null)
+                                Economy = new Company(this, 1000.0m, new CompanyInformation()
+                                {
+                                    Name = ParentFaction.Name
+                                });
+
+                            foreach (CreatureAI creature in envoy.Creatures)
+                            {
+                                creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
+                                creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, Economy.Information, new Resource("Flag")));
+                            }
                         }
                     }
                 }
@@ -303,57 +306,62 @@ namespace DwarfCorp
                 return null;
         }
 
-        public WarParty SendWarParty()
+        public MaybeNull<WarParty> SendWarParty()
         {
             World.Tutorial("war");
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
             var politics = World.Overworld.GetPolitics(ParentFaction, World.PlayerFaction.ParentFaction);
             politics.IsAtWar = true;
-            
-            var creatures = World.MonsterSpawner.Spawn(World.MonsterSpawner.GenerateSpawnEvent(this, World.PlayerFaction, MathFunctions.Random.Next(World.Overworld.Difficulty.CombatModifier) + 1, false));
 
-            var party = new WarParty(World.Time.CurrentDate)
+            if (World.FindSystem<MonsterSpawner>().HasValue(out var spawner))
             {
-                Creatures = creatures,
-                OtherFaction = World.PlayerFaction,
-                ShouldRemove = false,
-                OwnerFaction = this
-            };
+                var creatures = spawner.Spawn(spawner.GenerateSpawnEvent(this.World, this, World.PlayerFaction, MathFunctions.Random.Next(World.Overworld.Difficulty.CombatModifier) + 1, false));
 
-            WarParties.Add(party);
-
-            World.MakeAnnouncement(new Gui.Widgets.QueuedAnnouncement()
-            {
-                Text = String.Format("A war party from {0} has arrived!", ParentFaction.Name),
-                SecondsVisible = 60,
-                ClickAction = (gui, sender) =>
+                var party = new WarParty(World.Time.CurrentDate)
                 {
-                    if (party.Creatures.Count > 0)
+                    Creatures = creatures,
+                    OtherFaction = World.PlayerFaction,
+                    ShouldRemove = false,
+                    OwnerFaction = this
+                };
+
+                WarParties.Add(party);
+
+                World.MakeAnnouncement(new Gui.Widgets.QueuedAnnouncement()
+                {
+                    Text = String.Format("A war party from {0} has arrived!", ParentFaction.Name),
+                    SecondsVisible = 60,
+                    ClickAction = (gui, sender) =>
                     {
-                        party.Creatures.First().ZoomToMe();
-                        World.UserInterface.MakeWorldPopup(String.Format("Warriors from {0} ({1}) have entered our territory. They will prepare for a while and then attack us.", ParentFaction.Name, (Race.HasValue(out var race) ? race.Name : "???")), party.Creatures.First().Physics, -10);
+                        if (party.Creatures.Count > 0)
+                        {
+                            party.Creatures.First().ZoomToMe();
+                            World.UserInterface.MakeWorldPopup(String.Format("Warriors from {0} ({1}) have entered our territory. They will prepare for a while and then attack us.", ParentFaction.Name, (Race.HasValue(out var race) ? race.Name : "???")), party.Creatures.First().Physics, -10);
+                        }
+                    },
+                    ShouldKeep = () =>
+                    {
+                        return party.ExpiditionState == Expedition.State.Arriving;
                     }
-                },
-                ShouldKeep = () =>
+                });
+
+                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.15f);
+
+                foreach (var creature in creatures)
                 {
-                    return party.ExpiditionState == Expedition.State.Arriving;
+                    if (Economy == null)
+                        Economy = new Company(this, (decimal)MathFunctions.Rand(1000, 9999), null);
+
+                    if (Economy.Information == null)
+                        Economy.Information = new CompanyInformation();
+
+                    creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, Economy.Information, new Resource("Flag")));
                 }
-            });
 
-            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.15f);
-
-            foreach (var creature in creatures)
-            {
-                if (Economy == null)
-                    Economy = new Company(this, (decimal)MathFunctions.Rand(1000, 9999), null);
-
-                if (Economy.Information == null)
-                    Economy.Information = new CompanyInformation();
-
-                creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, Economy.Information, new Resource("Flag")));
+                return party;
             }
 
-            return party;
+            return null;
         }
     }
 }

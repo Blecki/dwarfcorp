@@ -8,8 +8,14 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class MonsterSpawner
+    public class MonsterSpawner : EngineModule
     {
+        [UpdateSystemFactory]
+        private static EngineModule __factory(WorldManager World)
+        {
+            return new MonsterSpawner();
+        }
+
         public struct SpawnEvent
         {
             public Faction SpawnFaction;
@@ -21,26 +27,22 @@ namespace DwarfCorp
 
         public List<Faction> SpawnFactions = new List<Faction>();
  
-        public WorldManager World { get; set; }
         public Timer MigrationTimer = new Timer(120, false);
         private Random Random = new Random();
 
-        public MonsterSpawner(WorldManager world)
+        public MonsterSpawner()
         {
-            World = world;
             SpawnFactions = new List<Faction>();
         }
 
-        public void Update(DwarfTime t)
+        public override void Update(DwarfTime GameTime, WorldManager World)
         {
-            MigrationTimer.Update(t);
+            MigrationTimer.Update(GameTime);
             if (MigrationTimer.HasTriggered)
-            {
-                CreateMigration();
-            }
+                CreateMigration(World);
         }
 
-        public void CreateMigration()
+        public void CreateMigration(WorldManager World)
         {
             int tries = 0;
             float padding = 2.0f;
@@ -137,7 +139,7 @@ namespace DwarfCorp
             return pos;
         }
 
-        public SpawnEvent GenerateSpawnEvent(Faction spawnFaction, Faction targetFaction, int num, bool attack=true)
+        public SpawnEvent GenerateSpawnEvent(WorldManager World, Faction spawnFaction, Faction targetFaction, int num, bool attack=true)
         {
             return new SpawnEvent()
             {
@@ -171,18 +173,18 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public void OnVoxelChanged(VoxelChangeEvent e)
+        public override void OnVoxelChange(VoxelChangeEvent Event, WorldManager World)
         {
-            if (e.Type == VoxelChangeEventType.Explored && e.Voxel.IsEmpty)
+            if (Event.Type == VoxelChangeEventType.Explored && Event.Voxel.IsEmpty)
             {
-                var below = VoxelHelpers.GetVoxelBelow(e.Voxel);
+                var below = VoxelHelpers.GetVoxelBelow(Event.Voxel);
                 if (below.IsValid && !below.IsEmpty && Library.GetBiome("Cave").HasValue(out BiomeData caveBiome) && Library.GetBiome("Hell").HasValue(out BiomeData hellBiome))
                 {
-                    var biome = (e.Voxel.Coordinate.Y <= 10) ? hellBiome : caveBiome;
-                    if (e.Voxel.Coordinate.Y > 5 && Random.NextDouble() < 0.5f)
+                    var biome = (Event.Voxel.Coordinate.Y <= 10) ? hellBiome : caveBiome;
+                    if (Event.Voxel.Coordinate.Y > 5 && Random.NextDouble() < 0.5f)
                         GenerateCaveFlora(below, biome);
-                    if (e.Voxel.Coordinate.Y > 5 && Random.NextDouble() < 0.5f)
-                        GenerateCaveFauna(below, biome);
+                    if (Event.Voxel.Coordinate.Y > 5 && Random.NextDouble() < 0.5f)
+                        GenerateCaveFauna(World, below, biome);
                 }
             }
         }
@@ -212,7 +214,7 @@ namespace DwarfCorp
             }
         }
 
-        private void GenerateCaveFauna(VoxelHandle CaveFloor, BiomeData Biome)
+        private void GenerateCaveFauna(WorldManager World, VoxelHandle CaveFloor, BiomeData Biome)
         {
             var spawnLikelihood = (World.Overworld.Difficulty.CombatModifier + 0.1f);
 
