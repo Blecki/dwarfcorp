@@ -92,6 +92,7 @@
     <Compile Include="AssetManagement\TextureTool-CropAndColorSprite.cs" />
     <Compile Include="AssetManagement\TextureTool-LoadPSD.cs" />
     <Compile Include="AssetManagement\TextureTool.cs" />
+    <Compile Include="Components\AI\AISystem.cs" />
     <Compile Include="Components\AI\CharacterMode.cs" />
     <Compile Include="Components\AI\Creature-Death.cs" />
     <Compile Include="Components\AI\Creature-Indicators.cs" />
@@ -183,6 +184,8 @@
     <Compile Include="Components\Systems\ComponentRenderer.cs" />
     <Compile Include="Components\Systems\ConsoleCommands.cs" />
     <Compile Include="Components\Systems\Message.cs" />
+    <Compile Include="Components\Systems\MinimapIconModule.cs" />
+    <Compile Include="Components\Systems\TransformUpdater.cs" />
     <Compile Include="Components\VoxelChangeEvent.cs" />
     <Compile Include="Components\VoxelRevealer.cs" />
     <Compile Include="ConsoleCommandHandlerAttribute.cs" />
@@ -851,6 +854,7 @@
     <Compile Include="World\LanguageGenerator\TextAtom.cs" />
     <Compile Include="World\LanguageGenerator\TextGenerator.cs" />
     <Compile Include="World\LanguageGenerator\Verb.cs" />
+    <Compile Include="World\ModuleManager.cs" />
     <Compile Include="World\MonsterSpawner.cs" />
     <Compile Include="World\Overworld\BiomeData.cs" />
     <Compile Include="World\Overworld\ColonyCell.cs" />

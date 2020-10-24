@@ -12,21 +12,35 @@ namespace DwarfCorp.Play
     {
         private Gui.TextureAtlas.SpriteAtlasEntry CachedDynamicSheet = null;
         private Gui.TextureAtlas.SpriteAtlasEntry CachedOperationIconDynamicSheet = null;
-        public PossiblePlayerCommand Resource;
+        public PossiblePlayerCommand Command;
+        public Gui.Widget MenuBarIcon;
 
         public override void Construct()
         {
-            Tooltip = Resource.Tooltip;
+            Tooltip = Command.Tooltip;
             MinimumSize = new Point(32, 64);
             Border = "border-thin";
             Background = new TileReference("basic", 1);
             BackgroundColor = new Vector4(0, 0, 0, 1.0f);
 
+            if (Command != null && Command.Icon != null && CachedDynamicSheet == null)
+            {
+                CachedDynamicSheet = ResourceGraphicsHelper.GetDynamicSheet(Root, Command.Icon);
+                MenuBarIcon = new Gui.Widgets.FlatToolTray.Icon
+                {
+                    NewStyleIcon = Command.Icon
+                };
+            }
 
-            if (Resource != null && Resource.Icon != null && CachedDynamicSheet == null)
-                CachedDynamicSheet = ResourceGraphicsHelper.GetDynamicSheet(Root, Resource.Icon);
-            if (Resource != null && Resource.OperationIcon != null && CachedOperationIconDynamicSheet == null)
-                CachedOperationIconDynamicSheet = ResourceGraphicsHelper.GetDynamicSheet(Root, Resource.OperationIcon);
+            if (Command != null && Command.OperationIcon != null && CachedOperationIconDynamicSheet == null)
+            {
+                CachedOperationIconDynamicSheet = ResourceGraphicsHelper.GetDynamicSheet(Root, Command.OperationIcon);
+                if (MenuBarIcon == null)
+                    MenuBarIcon = new Gui.Widgets.FlatToolTray.Icon
+                    {
+                        NewStyleIcon = Command.OperationIcon
+                    };
+            }
 
             OnClose = (sender) =>
             {
@@ -38,6 +52,9 @@ namespace DwarfCorp.Play
                 CachedOperationIconDynamicSheet = null;
             };
 
+            if (MenuBarIcon != null)
+                Root.ConstructWidget(MenuBarIcon);
+
             base.Construct();
         }
 
@@ -45,9 +62,9 @@ namespace DwarfCorp.Play
         {
             var r = base.Redraw();
 
-            if (Resource != null)
+            if (Command != null)
             {
-                if (Resource.OperationIcon != null)
+                if (Command.OperationIcon != null)
                 {
                     if (CachedOperationIconDynamicSheet != null)
                         r.QuadPart()
@@ -56,7 +73,7 @@ namespace DwarfCorp.Play
                             .Texture(CachedOperationIconDynamicSheet.TileSheet.TileMatrix(0));
                 }
 
-                if (Resource.Icon != null)
+                if (Command.Icon != null)
                 {
                     if (CachedDynamicSheet != null)
                         r.QuadPart()
@@ -66,11 +83,11 @@ namespace DwarfCorp.Play
                 }
                 else
                 {
-                    var tile = Root.GetTileSheet(Resource.OldStyleIcon.Sheet);
+                    var tile = Root.GetTileSheet(Command.OldStyleIcon.Sheet);
                     r.QuadPart()
                         .Scale(32, 32)
                             .Translate(Rect.X + (Rect.Width - 32) / 2, Rect.Y + 32 + ((Rect.Height / 2) - 32) / 2)
-                        .Texture(Root.GetTileSheet(Resource.OldStyleIcon.Sheet).TileMatrix(Resource.OldStyleIcon.Tile));
+                        .Texture(Root.GetTileSheet(Command.OldStyleIcon.Sheet).TileMatrix(Command.OldStyleIcon.Tile));
                 }
             }
 

@@ -159,10 +159,7 @@ namespace DwarfCorp
 
             #region Load Components
 
-            // Create updateable systems.
-            foreach (var updateSystemFactory in AssetManager.EnumerateModHooks(typeof(UpdateSystemFactoryAttribute), typeof(EngineModule), new Type[] { typeof(WorldManager) }))
-                UpdateSystems.Add(updateSystemFactory.Invoke(null, new Object[] { this }) as EngineModule);
-
+            ModuleManager = new ModuleManager(this);
             ChunkManager = new ChunkManager(Content, this);
             Splasher = new Splasher(ChunkManager);
 
@@ -306,9 +303,7 @@ namespace DwarfCorp
 
             SetLoadingMessage("Initializing engine modules...");
 
-            // Create updateable systems.
-            foreach (var updateSystemFactory in AssetManager.EnumerateModHooks(typeof(UpdateSystemFactoryAttribute), typeof(EngineModule), new Type[] { typeof(WorldManager) }))
-                UpdateSystems.Add(updateSystemFactory.Invoke(null, new Object[] { this }) as EngineModule);
+            ModuleManager = new ModuleManager(this);
 
             Time = new WorldTime();
 

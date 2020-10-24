@@ -39,6 +39,13 @@ namespace DwarfCorp
             return new Slime("Entities\\Animals\\Slimes\\slime_yellow", "Yellow Slime", Position, Manager, "Slime");
         }
 
+        [EntityFactory("Slime - White")]
+        private static GameComponent __factory4(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Slime("Entities\\Animals\\Slimes\\slime_white", "White Slime", Position, Manager, "Slime");
+        }
+
+
         public string SpriteAsset { get; set; }
 
         public Slime()

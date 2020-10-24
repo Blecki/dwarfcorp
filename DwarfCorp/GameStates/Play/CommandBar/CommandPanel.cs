@@ -26,20 +26,20 @@ namespace DwarfCorp.Play
                 EnableScrolling = true;
                 base.Construct();
 
-                //Commands = PlayerCommandEnumerator.EnumeratePlayerCommands(World).ToList();
-                //foreach (var command in Commands)
-                //    if (command.HoverWidget != null) Root.ConstructWidget(command.HoverWidget);
+                Commands = PlayerCommandEnumerator.EnumeratePlayerCommands(World).ToList();
+                foreach (var command in Commands)
+                    if (command.HoverWidget != null) Root.ConstructWidget(command.HoverWidget);
 
-                //ItemSize = new Point(38, 70);
-                //foreach (var resource in Commands)
-                //{
-                //    var lambdaResource = resource;
-                //    resource.GuiTag = AddChild(new CommandIcon
-                //    {
-                //        Resource = resource,
-                //        OnClick = (sender, args) => OnCommandClicked(lambdaResource)
-                //    });
-                //}
+                ItemSize = new Point(38, 70);
+                foreach (var resource in Commands)
+                {
+                    var lambdaResource = resource;
+                    resource.GuiTag = AddChild(new CommandIcon
+                    {
+                        Command = resource,
+                        OnClick = (sender, args) => OnCommandClicked(lambdaResource)
+                    });
+                }
             }
 
             public void ApplyFilter(String Text)
@@ -47,7 +47,7 @@ namespace DwarfCorp.Play
                 var scrollbar = Children[0];
                 Children.Clear();
                 AddChild(scrollbar);
-                foreach (var command in Commands.Where(c => c.Name.ToUpperInvariant().Contains(Text.ToUpperInvariant())))
+                foreach (var command in Commands.Where(c => c.DisplayName.ToUpperInvariant().Contains(Text.ToUpperInvariant())))
                     AddChild(command.GuiTag);
                 this.Layout();
                 this.Invalidate();

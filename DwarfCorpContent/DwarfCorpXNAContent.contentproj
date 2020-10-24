@@ -2244,6 +2244,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>snowflake</Name>
     </None>
+    <None Include="World\Biomes\Flesh.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Flesh</Name>
+    </None>
     <None Include="World\Biomes\Wetlands.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Wetlands</Name>
@@ -2439,6 +2443,10 @@
     <None Include="World\ResourceItems\CopperHoe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>CopperHoe</Name>
+    </None>
+    <None Include="World\ResourceItems\WhiteSlime.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>WhiteSlime</Name>
     </None>
     <None Include="World\ResourceItems\StrawHat.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -4082,6 +4090,22 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>CarvedStoneInset</Name>
     </None>
+    <None Include="World\Voxels\Bone.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Bone</Name>
+    </None>
+    <None Include="World\Voxels\Fat.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Fat</Name>
+    </None>
+    <None Include="World\Voxels\Dermis.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Dermis</Name>
+    </None>
+    <None Include="World\Voxels\Meat.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Meat</Name>
+    </None>
     <None Include="World\Voxels\Dark Blue Tile.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Dark Blue Tile</Name>
@@ -4141,6 +4165,10 @@
     <None Include="World\Voxels\SandstoneBricks.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>SandstoneBricks</Name>
+    </None>
+    <None Include="World\Voxels\Guts.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Guts</Name>
     </None>
     <None Include="World\Voxels\White Tile.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -5150,6 +5178,20 @@
   <ItemGroup>
     <Compile Include="newgui\large-mono-font.png">
       <Name>large-mono-font</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="newgui\horizontal-scrollbar.png">
+      <Name>horizontal-scrollbar</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\Animals\Slimes\slime_white.png">
+      <Name>slime_white</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

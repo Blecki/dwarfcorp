@@ -15,6 +15,8 @@ namespace DwarfCorp
             return new PhysicsSystem();
         }
 
+        public override ModuleManager.UpdateTypes UpdatesWanted => ModuleManager.UpdateTypes.Update;
+        
         public override void Update(DwarfTime GameTime, WorldManager World)
         {
             var physicsObject = 0;

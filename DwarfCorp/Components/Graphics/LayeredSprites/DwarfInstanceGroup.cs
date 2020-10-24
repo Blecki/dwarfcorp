@@ -27,6 +27,7 @@ namespace DwarfCorp.DwarfSprites
         private Texture2D AtlasTexture = null;
         private SpriteSheet Sheet = null;
         private int LastUpdatedDwarf = 0;
+        private Object AtlasLock = new Object();
 
         public DwarfInstanceGroup()
         {
@@ -44,71 +45,76 @@ namespace DwarfCorp.DwarfSprites
 
         public void Update(GraphicsDevice Device)
         {
-            Dwarves.RemoveAll(d => d.Sprite.IsDead);
-
-            // Calculate atlas size.
-            var columns = Math.Max((int)Math.Ceiling(Math.Sqrt(Dwarves.Count) * 1.5f), 1);
-            var rows = Math.Max((int)Math.Ceiling((float)Dwarves.Count / (float)columns), 1);
-            AtlasBounds = new Rectangle(0, 0, columns * 48, rows * 40);
-
-            if (AtlasTexture == null || AtlasTexture.IsDisposed || AtlasTexture.Width != AtlasBounds.Width || AtlasTexture.Height != AtlasBounds.Height)
+            lock (AtlasLock)
             {
-                if (AtlasTexture != null && !AtlasTexture.IsDisposed)
-                    AtlasTexture.Dispose();
-                AtlasTexture = new Texture2D(Device, AtlasBounds.Width, AtlasBounds.Height);
-                Sheet = new SpriteSheet(AtlasTexture, 48, 40);
-            }
+                Device.Textures[0] = null;
 
-            var x = 0;
-            var y = 0;
-            var updates = 0;
-            var index = 0;
+                Dwarves.RemoveAll(d => d.Sprite.IsDead);
 
-            foreach (var dwarf in Dwarves)
-            {
-                var needsUpdate = false;
+                // Calculate atlas size.
+                var columns = Math.Max((int)Math.Ceiling(Math.Sqrt(Dwarves.Count) * 1.5f), 1);
+                var rows = Math.Max((int)Math.Ceiling((float)Dwarves.Count / (float)columns), 1);
+                AtlasBounds = new Rectangle(0, 0, columns * 48, rows * 40);
 
-                var atlasFrame = new Point(x, y);
-                var atlasRect = new Rectangle(x * 48, y * 40, 48, 40);
-
-                if (atlasFrame != dwarf.AtlasFrame)
-                    needsUpdate = true;
-
-                var frame = dwarf.Sprite.AnimPlayer.GetCurrentAnimation().Frames[dwarf.Sprite.AnimPlayer.CurrentFrame];
-                if (frame != dwarf.LastFrame)
-                    needsUpdate = true;
-
-                x += 1;
-                if (x >= columns)
+                if (AtlasTexture == null || AtlasTexture.IsDisposed || AtlasTexture.Width != AtlasBounds.Width || AtlasTexture.Height != AtlasBounds.Height)
                 {
-                    x = 0;
-                    y += 1;
+                    if (AtlasTexture != null && !AtlasTexture.IsDisposed)
+                        AtlasTexture.Dispose();
+                    AtlasTexture = new Texture2D(Device, AtlasBounds.Width, AtlasBounds.Height);
+                    Sheet = new SpriteSheet(AtlasTexture, 48, 40);
                 }
 
-                if (dwarf.Sprite.SpriteSheet != null && needsUpdate && updates < GameSettings.Current.MaxDwarfSpriteUpdates && index > LastUpdatedDwarf)
+                var x = 0;
+                var y = 0;
+                var updates = 0;
+                var index = 0;
+
+                foreach (var dwarf in Dwarves)
                 {
-                    var sourceRectangle = dwarf.Sprite.GetCurrentFrameRect();
+                    var needsUpdate = false;
+
+                    var atlasFrame = new Point(x, y);
+                    var atlasRect = new Rectangle(x * 48, y * 40, 48, 40);
+
+                    if (atlasFrame != dwarf.AtlasFrame)
+                        needsUpdate = true;
+
+                    var frame = dwarf.Sprite.AnimPlayer.GetCurrentAnimation().Frames[dwarf.Sprite.AnimPlayer.CurrentFrame];
+                    if (frame != dwarf.LastFrame)
+                        needsUpdate = true;
+
+                    x += 1;
+                    if (x >= columns)
+                    {
+                        x = 0;
+                        y += 1;
+                    }
+
+                    if (dwarf.Sprite.SpriteSheet != null && needsUpdate && updates < GameSettings.Current.MaxDwarfSpriteUpdates && index > LastUpdatedDwarf)
+                    {
+                        var sourceRectangle = dwarf.Sprite.GetCurrentFrameRect();
 
                         var realTexture = dwarf.Sprite.SpriteSheet.GetTexture();
                         var textureData = new Color[sourceRectangle.Width * sourceRectangle.Height];
                         realTexture.GetData(0, sourceRectangle, textureData, 0, sourceRectangle.Width * sourceRectangle.Height);
                         AtlasTexture.SetData(0, atlasRect, textureData, 0, 48 * 40);
 
-                    updates += 1;
-                    LastUpdatedDwarf = index;
+                        updates += 1;
+                        LastUpdatedDwarf = index;
+                    }
+                    else
+                        frame = new Point(-1, -1);
+
+                    dwarf.AtlasFrame = atlasFrame;
+                    dwarf.LastFrame = frame;
+                    index += 1;
+
+
                 }
-                else
-                    frame = new Point(-1, -1);
 
-                dwarf.AtlasFrame = atlasFrame;
-                dwarf.LastFrame = frame;
-                index += 1;
-
-                
+                if (LastUpdatedDwarf >= Dwarves.Count - 1)
+                    LastUpdatedDwarf = -1;
             }
-
-            if (LastUpdatedDwarf >= Dwarves.Count - 1)
-                LastUpdatedDwarf = -1;
         }
 
         public void Render(GraphicsDevice Device, Shader Effect, Camera Camera, InstanceRenderMode Mode)
@@ -144,6 +150,9 @@ namespace DwarfCorp.DwarfSprites
 
             Flush(Device, Effect, Camera, Mode);
             FlushSilhouette(Device, Effect, Camera, Mode);
+
+            Effect.MainTexture = null;
+            Effect.CurrentTechnique.Passes[0].Apply();
         }
 
         private void Flush(GraphicsDevice Device, Shader Effect, Camera Camera, InstanceRenderMode Mode)
@@ -152,27 +161,34 @@ namespace DwarfCorp.DwarfSprites
 
             BlendState blendState;
             bool ghostEnabled;
-            PrepEffect(Device, Effect, Mode, out blendState, out ghostEnabled);
 
-            InstanceBuffer.SetData(Instances, 0, InstanceCount, SetDataOptions.Discard);
-            Device.SetVertexBuffers(new VertexBufferBinding(Primitive.VertexBuffer), new VertexBufferBinding(InstanceBuffer, 0, 1));
-
-            foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
+            lock (AtlasLock)
             {
-                pass.Apply();
-                Device.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0,
-                    Primitive.VertexCount, 0,
-                    Primitive.Indexes.Length / 3,
-                    InstanceCount);
-            }
+                PrepEffect(Device, Effect, Mode, out blendState, out ghostEnabled);
 
-            Effect.GhostClippingEnabled = ghostEnabled;
-            Effect.SetTexturedTechnique();
-            Effect.World = Matrix.Identity;
-            Device.BlendState = blendState;
-            Effect.EnableWind = false;
-            Effect.MainTexture = null;
-            InstanceCount = 0;
+                InstanceBuffer.SetData(Instances, 0, InstanceCount, SetDataOptions.Discard);
+                Device.SetVertexBuffers(new VertexBufferBinding(Primitive.VertexBuffer), new VertexBufferBinding(InstanceBuffer, 0, 1));
+
+                foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    Device.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0,
+                        Primitive.VertexCount, 0,
+                        Primitive.Indexes.Length / 3,
+                        InstanceCount);
+                }
+
+                Effect.GhostClippingEnabled = ghostEnabled;
+                Effect.SetTexturedTechnique();
+                Effect.World = Matrix.Identity;
+                Device.BlendState = blendState;
+                Effect.EnableWind = false;
+                Effect.MainTexture = null;
+                InstanceCount = 0;
+
+                Device.Textures[0] = null;
+
+            }
         }
 
         private void FlushSilhouette(GraphicsDevice Device, Shader Effect, Camera Camera, InstanceRenderMode Mode)
@@ -181,45 +197,51 @@ namespace DwarfCorp.DwarfSprites
 
             BlendState blendState;
             bool ghostEnabled;
-            PrepEffect(Device, Effect, Mode, out blendState, out ghostEnabled);
 
-            InstanceBuffer.SetData(SilhouetteInstances, 0, SilhouetteInstanceCount, SetDataOptions.Discard);
-            Device.SetVertexBuffers(new VertexBufferBinding(Primitive.VertexBuffer), new VertexBufferBinding(InstanceBuffer, 0, 1));
-
-            Color oldTint = Effect.VertexColorTint;
-            Effect.VertexColorTint = new Color(0.0f, 1.0f, 1.0f, 0.5f);
-            Device.DepthStencilState = new DepthStencilState
+            lock (AtlasLock)
             {
-                DepthBufferWriteEnable = false,
-                DepthBufferFunction = CompareFunction.Greater
-            };
+                PrepEffect(Device, Effect, Mode, out blendState, out ghostEnabled);
 
-            var oldTechnique = Effect.CurrentTechnique;
+                InstanceBuffer.SetData(SilhouetteInstances, 0, SilhouetteInstanceCount, SetDataOptions.Discard);
+                Device.SetVertexBuffers(new VertexBufferBinding(Primitive.VertexBuffer), new VertexBufferBinding(InstanceBuffer, 0, 1));
 
-            Effect.CurrentTechnique = Effect.Techniques["TiledInstancedSilhouette"];
+                Color oldTint = Effect.VertexColorTint;
+                Effect.VertexColorTint = new Color(0.0f, 1.0f, 1.0f, 0.5f);
+                Device.DepthStencilState = new DepthStencilState
+                {
+                    DepthBufferWriteEnable = false,
+                    DepthBufferFunction = CompareFunction.Greater
+                };
 
-            foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                Device.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0,
-                    Primitive.VertexCount, 0,
-                    Primitive.Indexes.Length / 3,
-                    SilhouetteInstanceCount);
+                var oldTechnique = Effect.CurrentTechnique;
+
+                Effect.CurrentTechnique = Effect.Techniques["TiledInstancedSilhouette"];
+
+                foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    Device.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0,
+                        Primitive.VertexCount, 0,
+                        Primitive.Indexes.Length / 3,
+                        SilhouetteInstanceCount);
+                }
+
+                Device.DepthStencilState = DepthStencilState.Default;
+                Effect.VertexColorTint = oldTint;
+                Effect.CurrentTechnique = oldTechnique;
+
+
+                Effect.GhostClippingEnabled = ghostEnabled;
+                Effect.SetTexturedTechnique();
+                Effect.World = Matrix.Identity;
+                Device.BlendState = blendState;
+                Effect.EnableWind = false;
+                Effect.MainTexture = null;
+                Device.Textures[0] = null;
+
+
+                SilhouetteInstanceCount = 0;
             }
-
-            Device.DepthStencilState = DepthStencilState.Default;
-            Effect.VertexColorTint = oldTint;
-            Effect.CurrentTechnique = oldTechnique;
-
-
-            Effect.GhostClippingEnabled = ghostEnabled;
-            Effect.SetTexturedTechnique();
-            Effect.World = Matrix.Identity;
-            Device.BlendState = blendState;
-            Effect.EnableWind = false;
-            Effect.MainTexture = null;
-
-            SilhouetteInstanceCount = 0;
         }
 
         private void PrepEffect(GraphicsDevice Device, Shader Effect, InstanceRenderMode Mode, out BlendState blendState, out bool ghostEnabled)

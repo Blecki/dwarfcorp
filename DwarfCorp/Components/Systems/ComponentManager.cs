@@ -22,7 +22,6 @@ namespace DwarfCorp
         private Dictionary<uint, GameComponent> Components;
         private uint MaxGlobalID = 0;
         public const int InvalidID = 0;
-        private List<MinimapIcon> MinimapIcons = new List<MinimapIcon>();
         private List<GameComponent> Removals = new List<GameComponent>();
         private List<GameComponent> Additions = new List<GameComponent>();
 
@@ -40,8 +39,6 @@ namespace DwarfCorp
 
         private Mutex AdditionMutex = new Mutex();
         private Mutex RemovalMutex = new Mutex();
-
-        public IEnumerable<MinimapIcon> GetMinimapIcons() { return MinimapIcons; }
 
         public WorldManager World { get; set; }
 
@@ -96,13 +93,7 @@ namespace DwarfCorp
             RootComponent = Components[SaveData.RootComponent] as GameComponent;
 
             foreach (var component in Components)
-            {
-                if (component.Value is MinimapIcon)
-                    MinimapIcons.Add(component.Value as MinimapIcon);
-
-                foreach (var system in World.UpdateSystems)
-                    system.ComponentCreated(component.Value);
-            }
+                World.ModuleManager.ComponentCreated(component.Value);
 
             MaxGlobalID = Components.Aggregate<KeyValuePair<uint, GameComponent>, uint>(0, (current, component) => Math.Max(current, component.Value.GlobalID));
 
@@ -190,40 +181,33 @@ namespace DwarfCorp
             return Components.ContainsKey(id) || Additions.Any(a => a.GlobalID == id);
         }
 
-        private void RemoveComponentImmediate(GameComponent component)
+        private void RemoveComponentImmediate(GameComponent Component)
         {
-            if (!Components.ContainsKey(component.GlobalID))
+            if (!Components.ContainsKey(Component.GlobalID))
                 return;
 
-            Components.Remove(component.GlobalID);
+            Components.Remove(Component.GlobalID);
 
-            if (component is MinimapIcon)
-                MinimapIcons.Remove(component as MinimapIcon);
+            World.ModuleManager.ComponentDestroyed(Component);
 
-            foreach (var system in World.UpdateSystems)
-                system.ComponentDestroyed(component);
-
-            foreach (var child in new List<GameComponent>(component.EnumerateChildren()))
+            foreach (var child in new List<GameComponent>(Component.EnumerateChildren()))
                 RemoveComponentImmediate(child);
         }
 
-        private void AddComponentImmediate(GameComponent component)
+        private void AddComponentImmediate(GameComponent Component)
         {
-            if (Components.ContainsKey(component.GlobalID))
+            if (Components.ContainsKey(Component.GlobalID))
             {
-                if (Object.ReferenceEquals(Components[component.GlobalID], component)) return;
+                if (Object.ReferenceEquals(Components[Component.GlobalID], Component)) return;
                 throw new InvalidOperationException("Attempted to add component with same ID as existing component.");
             }
 
-            Components[component.GlobalID] = component;
+            Components[Component.GlobalID] = Component;
 
-            if (component is MinimapIcon)
-                MinimapIcons.Add(component as MinimapIcon);
+            World.ModuleManager.ComponentCreated(Component);
 
-            foreach (var system in World.UpdateSystems)
-                system.ComponentCreated(component);
-
-            component.ProcessTransformChange();
+            // Todo: Works if we remove this?
+            Component.ProcessTransformChange();
         }
 
         public void FindComponentsToUpdate(HashSet<GameComponent> Into)
@@ -246,17 +230,6 @@ namespace DwarfCorp
 
             PerformanceMonitor.SetMetric("ENTITIES UPDATED", i);
             PerformanceMonitor.PopFrame();
-
-            //PerformanceMonitor.PushFrame("Transform Update");
-            //var transformsProcessed = 0;
-            //foreach (var body in ComponentsToUpdate)
-            //{
-            //    transformsProcessed += 1;
-            //    body.ProcessTransformChange();
-            //}
-
-            //PerformanceMonitor.SetMetric("TRANSFORMS", transformsProcessed);
-            //PerformanceMonitor.PopFrame();
 
             AddRemove();
             ReceiveMessage(gameTime);

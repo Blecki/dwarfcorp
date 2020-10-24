@@ -193,6 +193,7 @@
     <Compile Include="Components\Graphics\LayeredSprites\FixDwarfSprites.cs" />
     <Compile Include="Components\Graphics\SpriteOrientation.cs" />
     <Compile Include="Components\Physics\PhysicsSystem.cs" />
+    <Compile Include="Components\Systems\MinimapIconModule.cs" />
     <Compile Include="Components\Systems\TransformUpdater.cs" />
     <Compile Include="Entities\Animals\Pumpking.cs" />
     <Compile Include="Entities\Fixtures\Jack-O-Lantern.cs" />
@@ -208,7 +209,13 @@
     <Compile Include="GameStates\FrontEnd\ChangeLogState.cs" />
     <Compile Include="GameStates\Play\CategoryIcon.cs" />
     <Compile Include="GameStates\Play\CategoryMenuBuilder.cs" />
+    <Compile Include="GameStates\Play\CommandBar\CommandMenuItemIcon.cs" />
     <Compile Include="GameStates\Play\CommandBar\CommandPanel.cs" />
+    <Compile Include="GameStates\Play\CommandBar\HorizontalGridPanel.cs" />
+    <Compile Include="GameStates\Play\CommandBar\ScrollingCommandTray.cs" />
+    <Compile Include="GameStates\Play\CommandBar\CommandTray.cs" />
+    <Compile Include="GameStates\Play\CommandBar\CommandMenuItem.cs" />
+    <Compile Include="GameStates\Play\CommandBar\EnumerateCommandMenuItems.cs" />
     <Compile Include="GameStates\Play\CommandBar\PossiblePlayerCommand.cs" />
     <Compile Include="GameStates\Play\CommandBar\EnumeratePlayerCommands.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\PolicyPanel.cs" />
@@ -238,6 +245,7 @@
     <Compile Include="Gui\Widgets\HorizontalFloatSliderCombo.cs" />
     <Compile Include="Gui\Widgets\ScrollingTextBox.cs" />
     <Compile Include="Gui\Widgets\TextBoxEx.cs" />
+    <Compile Include="Gui\Widgets\HorizontalScrollBar.cs" />
     <Compile Include="Library\CategoryIconLibrary.cs" />
     <Compile Include="Library\LoadoutLibrary.cs" />
     <Compile Include="Library\EquipmentLibrary.cs" />
@@ -1058,6 +1066,7 @@
     <Compile Include="World\Weather\Storm.cs" />
     <Compile Include="World\Weather\StormType.cs" />
     <Compile Include="World\Weather\Weather.cs" />
+    <Compile Include="World\ModuleManager.cs" />
     <Compile Include="World\WorldManager-Ambients.cs" />
     <Compile Include="World\WorldManager-Announcement.cs" />
     <Compile Include="World\WorldManager-Employees.cs" />

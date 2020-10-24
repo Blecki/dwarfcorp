@@ -74,7 +74,10 @@ namespace DwarfCorp
                 {
                     minion.Blackboard.SetData("MoveTarget", above);
 
-                    var moveTask = new ActWrapperTask(new GoToNamedVoxelAct("MoveTarget", PlanAct.PlanType.Adjacent, minion));
+                    var moveTask = new ActWrapperTask(
+                        new Sequence(
+                            new GoToNamedVoxelAct("MoveTarget", PlanAct.PlanType.Adjacent, minion),
+                            new WanderAct(minion, 5.0f, 5.0f, 1.0f)));
                     moveTask.AutoRetry = false;
                     moveTask.Priority = TaskPriority.Urgent;
                     minion.ChangeTask(moveTask);

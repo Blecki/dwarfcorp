@@ -36,6 +36,7 @@ namespace DwarfCorp
         public Faction PlayerFaction;
         public HashSet<GameComponent> ComponentUpdateSet = new HashSet<GameComponent>();
         public uint EntityUpdateFrame = 0;
+        public ModuleManager ModuleManager;
 
         #region Tutorial Hooks
 
@@ -131,13 +132,6 @@ namespace DwarfCorp
         private Splasher Splasher;
         #endregion
 
-        [JsonIgnore] public List<EngineModule> UpdateSystems = new List<EngineModule>();
-
-        public MaybeNull<T> FindSystem<T>() where T: EngineModule
-        {
-            return UpdateSystems.FirstOrDefault(s => s is T) as T;
-        }
-
         /// <summary>
         /// Creates a new play state
         /// </summary>
@@ -229,15 +223,7 @@ namespace DwarfCorp
                 ParticleManager.Update(gameTime, this);
                 TutorialManager.Update(UserInterface.Gui);
 
-                foreach (var updateSystem in UpdateSystems)
-                {
-                    try
-                    {
-                        updateSystem.Update(gameTime, this);
-                    }
-                    catch (Exception) { }
-                }
-
+                ModuleManager.Update(gameTime, this);
                 UpdateZones(gameTime);
 
                 #region Mourn dead minions
@@ -323,7 +309,21 @@ namespace DwarfCorp
 
             Splasher.Splash(gameTime, ChunkManager.Water.GetSplashQueue());
 
-            ChunkManager.Update(gameTime, Renderer.Camera, GraphicsDevice);
+            var changedVoxels = ChunkManager.GetAndClearChangedVoxelList();
+            foreach (var @event in changedVoxels)
+            {
+                var box = @event.Voxel.GetBoundingBox();
+                var hashmap = EnumerateIntersectingAnchors(box);
+
+                foreach (var intersectingBody in hashmap)
+                    if (intersectingBody is IVoxelListener listener) // Aren't they always listeners?
+                        listener.OnVoxelChanged(@event);
+
+                TaskManager.OnVoxelChanged(@event);
+            }
+
+            ModuleManager.VoxelChange(changedVoxels, this);
+
             SoundManager.Update(gameTime, Renderer.Camera, Time);
             Weather.Update(this.Time.CurrentDate, this);
 
@@ -349,8 +349,7 @@ namespace DwarfCorp
 
         public void Quit()
         {
-            foreach (var module in UpdateSystems)
-                module.Shutdown();
+            ModuleManager.Shutdown();
 
             ChunkManager.Destroy();
             ComponentManager = null;
@@ -387,23 +386,6 @@ namespace DwarfCorp
                     r.Destroy();
                 }
             }
-        }
-
-        public void OnVoxelChanged(VoxelChangeEvent e)
-        {
-            var box = e.Voxel.GetBoundingBox();
-            var hashmap = EnumerateIntersectingAnchors(box);
-
-            foreach (var intersectingBody in hashmap)
-            {
-                var listener = intersectingBody as IVoxelListener; // Aren't they always listeners?
-                if (listener != null)
-                    listener.OnVoxelChanged(e);
-            }
-
-            TaskManager.OnVoxelChanged(e);
-            foreach (var updateSystem in UpdateSystems)
-                updateSystem.OnVoxelChange(e, this);
         }
     }
 }

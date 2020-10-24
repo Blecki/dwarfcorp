@@ -179,29 +179,30 @@ namespace DwarfCorp.Gui.Widgets.Minimap
 
                     var viewPort = new Viewport(RenderTarget.Bounds);
 
-                    foreach (var icon in World.ComponentManager.GetMinimapIcons())
-                    {
-                        if (!icon.Parent.IsVisible)
-                            continue;
-
-                        var screenPos = viewPort.Project(icon.GlobalTransform.Translation, Camera.ProjectionMatrix, Camera.ViewMatrix, Matrix.Identity);
-
-                        if (RenderTarget.Bounds.Contains((int)screenPos.X, (int)screenPos.Y))
+                    if (World.ModuleManager.GetModule<MinimapIconModule>().HasValue(out var iconModule))
+                        foreach (var icon in iconModule.GetMinimapIcons())
                         {
+                            if (!icon.Parent.IsVisible)
+                                continue;
 
-                            var parentBody = icon.Parent;
-                            if (icon.Parent != null)
+                            var screenPos = viewPort.Project(icon.GlobalTransform.Translation, Camera.ProjectionMatrix, Camera.ViewMatrix, Matrix.Identity);
+
+                            if (RenderTarget.Bounds.Contains((int)screenPos.X, (int)screenPos.Y))
                             {
-                                if (icon.Parent.Position.Y > World.Renderer.PersistentSettings.MaxViewingLevel + 1)
-                                    continue;
-                                var firstVisible = VoxelHelpers.FindFirstVisibleVoxelOnRay(World.ChunkManager, parentBody.Position, parentBody.Position + Vector3.Up * World.WorldSizeInVoxels.Y);
-                                if (firstVisible.IsValid)
-                                    continue;
-                            }
 
-                            DwarfGame.SpriteBatch.Draw(icon.Icon.SafeGetImage(), new Vector2(screenPos.X, screenPos.Y), icon.Icon.SourceRect, Color.White, 0.0f, new Vector2(icon.Icon.SourceRect.Width / 2.0f, icon.Icon.SourceRect.Height / 2.0f), icon.IconScale, SpriteEffects.None, 0);
+                                var parentBody = icon.Parent;
+                                if (icon.Parent != null)
+                                {
+                                    if (icon.Parent.Position.Y > World.Renderer.PersistentSettings.MaxViewingLevel + 1)
+                                        continue;
+                                    var firstVisible = VoxelHelpers.FindFirstVisibleVoxelOnRay(World.ChunkManager, parentBody.Position, parentBody.Position + Vector3.Up * World.WorldSizeInVoxels.Y);
+                                    if (firstVisible.IsValid)
+                                        continue;
+                                }
+
+                                DwarfGame.SpriteBatch.Draw(icon.Icon.SafeGetImage(), new Vector2(screenPos.X, screenPos.Y), icon.Icon.SourceRect, Color.White, 0.0f, new Vector2(icon.Icon.SourceRect.Width / 2.0f, icon.Icon.SourceRect.Height / 2.0f), icon.IconScale, SpriteEffects.None, 0);
+                            }
                         }
-                    }
                 }
                 finally
                 {

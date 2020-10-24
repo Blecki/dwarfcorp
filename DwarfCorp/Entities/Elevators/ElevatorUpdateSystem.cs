@@ -15,6 +15,11 @@ namespace DwarfCorp.Elevators
             return new ElevatorUpdateSystem();
         }
 
+        public override ModuleManager.UpdateTypes UpdatesWanted => ModuleManager.UpdateTypes.ComponentCreated 
+            | ModuleManager.UpdateTypes.ComponentDestroyed 
+            | ModuleManager.UpdateTypes.Update 
+            | ModuleManager.UpdateTypes.Render;
+
         private List<ElevatorShaft> Objects = new List<ElevatorShaft>();
         private List<ElevatorStack> Shafts = new List<ElevatorStack>();
         

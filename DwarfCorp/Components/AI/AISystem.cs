@@ -15,6 +15,10 @@ namespace DwarfCorp
             return new AISystem();
         }
 
+        public override ModuleManager.UpdateTypes UpdatesWanted => ModuleManager.UpdateTypes.ComponentCreated 
+            | ModuleManager.UpdateTypes.ComponentDestroyed 
+            | ModuleManager.UpdateTypes.Update;
+
         public struct AIComponent
         {
             public CreatureAI AI;
@@ -41,6 +45,9 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime GameTime, WorldManager World)
         {
+            if (AIComponents.Count == 0)
+                return;
+
             var aiObjectsUpdatedThisFrame = 0;
             var aiObjectsChecked = 0;
             PerformanceMonitor.PushFrame("AISystem");
@@ -53,27 +60,30 @@ namespace DwarfCorp
 
                 aiObjectsChecked += 1;
 
-                var thisObject = AIComponents[CurrentComponentIndex];
-                if (thisObject.AI.GetRoot().UpdateFrame == World.EntityUpdateFrame)
+                if (CurrentComponentIndex < AIComponents.Count)
                 {
-                    var elapsedTime = GameTime;
-                    if (thisObject.TimeOfLastUpdate.HasValue)
+                    var thisObject = AIComponents[CurrentComponentIndex];
+                    if (thisObject.AI.GetRoot().UpdateFrame == World.EntityUpdateFrame)
                     {
-                        var timeSinceUpdate = GameTime.TotalGameTime - thisObject.TimeOfLastUpdate.Value;
-                        elapsedTime = new DwarfTime(GameTime.TotalGameTime, timeSinceUpdate);
+                        var elapsedTime = GameTime;
+                        if (thisObject.TimeOfLastUpdate.HasValue)
+                        {
+                            var timeSinceUpdate = GameTime.TotalGameTime - thisObject.TimeOfLastUpdate.Value;
+                            elapsedTime = new DwarfTime(GameTime.TotalGameTime, timeSinceUpdate);
+                        }
+
+                        AIComponents[CurrentComponentIndex] = new AIComponent
+                        {
+                            AI = thisObject.AI,
+                            TimeOfLastUpdate = GameTime.TotalGameTime
+                        };
+
+                        thisObject.AI.FrameDeltaTime = elapsedTime;
+                        thisObject.AI.AIUpdate(elapsedTime, World.ChunkManager, World.Renderer.Camera);
+                        aiObjectsUpdatedThisFrame += 1;
+                        if (aiObjectsUpdatedThisFrame == GameSettings.Current.MaxAIUpdates)
+                            break;
                     }
-
-                    AIComponents[CurrentComponentIndex] = new AIComponent
-                    {
-                        AI = thisObject.AI,
-                        TimeOfLastUpdate = GameTime.TotalGameTime
-                    };
-
-                    thisObject.AI.FrameDeltaTime = elapsedTime;
-                    thisObject.AI.AIUpdate(elapsedTime, World.ChunkManager, World.Renderer.Camera);
-                    aiObjectsUpdatedThisFrame += 1;
-                    if (aiObjectsUpdatedThisFrame == GameSettings.Current.MaxAIUpdates)
-                        break;
                 }
 
                 if (aiObjectsChecked == AIComponents.Count)

@@ -337,6 +337,7 @@ namespace DwarfCorp
             var level = PersistentSettings.MaxViewingLevel >= World.WorldSizeInVoxels.Y ? 1000.0f : PersistentSettings.MaxViewingLevel + 0.25f;
             Plane slicePlane = WaterRenderer.CreatePlane(level, new Vector3(0, -1, 0), Camera.ViewMatrix, false);
 
+            
             DwarfInstanceRenderer.Update(GraphicsDevice);
 
             if (SelectionBuffer.Begin(GraphicsDevice))
@@ -508,8 +509,7 @@ namespace DwarfCorp
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
 
-            foreach (var module in World.UpdateSystems)
-                module.Render(gameTime, World.ChunkManager, Camera, DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader);
+                World.ModuleManager.Render(gameTime, World.ChunkManager, Camera, DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader);
 
             lock (ScreenshotLock)
             {

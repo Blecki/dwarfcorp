@@ -1,0 +1,41 @@
+{
+  "ID": 0,
+  "Name": "Fat",
+  "Top": "2, 15",
+  "Bottom": "2, 15",
+  "Sides": "2, 15",
+  "Transitions": 1,
+  "HasTransitionTextures": false,
+  "TransitionTiles": [
+    "0, 8",
+    "9, 0",
+    "4, 1"
+  ],
+  "ReleasesResource": true,
+  "ResourceToRelease": "Meat",
+  "BuildRequirements": [ "Meat" ],
+  "StartingHealth": 100.0,
+  "ProbabilityOfRelease": 1.0,
+  "CanRamp": true,
+  "IsBuildable": true,
+  "ParticleType": "stone_particle",
+  "EmitsLight": false,
+  "MinSpawnHeight": -999.0,
+  "MaxSpawnHeight": 999.0,
+  "SpawnProbability": 1.0,
+  "Rarity": 1.0,
+  "SpawnClusters": false,
+  "IsSoil": false,
+  "IsSurface": false,
+  "IsInvincible": false,
+  "Tint": "255, 255, 255, 255",
+  "SpawnOnSurface": false,
+  "IsTransparent": false,
+  "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_stone_destroy",
+  "HitSoundResources": [
+    "Audio\\oscar\\sfx_ic_dwarf_pick_stone_1",
+    "Audio\\oscar\\sfx_ic_dwarf_pick_stone_2",
+    "Audio\\oscar\\sfx_ic_dwarf_pick_stone_3"
+  ],
+  "MinimapColor": "228,83,83,255"
+}

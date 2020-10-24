@@ -25,6 +25,8 @@ namespace DwarfCorp
                 creature.Stats.AddBuff(Buff.Clone()); // Todo: Check if the creature already has this kind of buff and dissalow if so.
         }
 
+        public RadiusBuffer() : base() { }
+
         public RadiusBuffer(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
             base(manager, name, localTransform, boundingBoxExtents, boundingBoxPos)
         {

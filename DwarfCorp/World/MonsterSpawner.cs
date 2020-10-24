@@ -16,6 +16,8 @@ namespace DwarfCorp
             return new MonsterSpawner();
         }
 
+        public override ModuleManager.UpdateTypes UpdatesWanted => ModuleManager.UpdateTypes.Update | ModuleManager.UpdateTypes.VoxelChange;
+
         public struct SpawnEvent
         {
             public Faction SpawnFaction;
@@ -169,18 +171,21 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public override void OnVoxelChange(VoxelChangeEvent Event, WorldManager World)
+        public override void VoxelChange(List<VoxelChangeEvent> Events, WorldManager World)
         {
-            if (Event.Type == VoxelChangeEventType.Explored && Event.Voxel.IsEmpty)
+            foreach (var Event in Events)
             {
-                var below = VoxelHelpers.GetVoxelBelow(Event.Voxel);
-                if (below.IsValid && !below.IsEmpty && Library.GetBiome("Cave").HasValue(out BiomeData caveBiome) && Library.GetBiome("Hell").HasValue(out BiomeData hellBiome))
+                if (Event.Type == VoxelChangeEventType.Explored && Event.Voxel.IsEmpty)
                 {
-                    var biome = (Event.Voxel.Coordinate.Y <= 10) ? hellBiome : caveBiome;
-                    if (Event.Voxel.Coordinate.Y > 5 && MathFunctions.Random.NextDouble() < 0.5f)
-                        GenerateCaveFlora(below, biome);
-                    if (Event.Voxel.Coordinate.Y > 5 && MathFunctions.Random.NextDouble() < 0.5f)
-                        GenerateCaveFauna(World, below, biome);
+                    var below = VoxelHelpers.GetVoxelBelow(Event.Voxel);
+                    if (below.IsValid && !below.IsEmpty && Library.GetBiome("Cave").HasValue(out BiomeData caveBiome) && Library.GetBiome("Hell").HasValue(out BiomeData hellBiome))
+                    {
+                        var biome = (Event.Voxel.Coordinate.Y <= 10) ? hellBiome : caveBiome;
+                        if (Event.Voxel.Coordinate.Y > 5 && MathFunctions.Random.NextDouble() < 0.5f)
+                            GenerateCaveFlora(below, biome);
+                        if (Event.Voxel.Coordinate.Y > 5 && MathFunctions.Random.NextDouble() < 0.5f)
+                            GenerateCaveFauna(World, below, biome);
+                    }
                 }
             }
         }

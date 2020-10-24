@@ -23,7 +23,10 @@ namespace DwarfCorp
             var resourceList = FileUtils.LoadJsonListFromDirectory<ResourceType>("World\\ResourceItems", null, r => r.TypeName);
 
             foreach (var resource in resourceList)
+            {
                 Resources[resource.TypeName] = resource;
+                resource.InitializeStrings();
+            }
 
             PossibleTags = resourceList.SelectMany(r => r.Tags).Distinct().OrderBy(t => t).ToList();
 

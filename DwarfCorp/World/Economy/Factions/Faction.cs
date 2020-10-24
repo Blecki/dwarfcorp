@@ -205,7 +205,7 @@ namespace DwarfCorp
             {
                 TradeEnvoy envoy = null;
 
-                if (World.FindSystem<MonsterSpawner>().HasValue(out var spawner))
+                if (World.ModuleManager.GetModule<MonsterSpawner>().HasValue(out var spawner))
                 { 
                 var creatures = spawner.Spawn(spawner.GenerateSpawnEvent(this.World, this, World.PlayerFaction, MathFunctions.Random.Next(4) + 1, false));
 
@@ -313,7 +313,7 @@ namespace DwarfCorp
             var politics = World.Overworld.GetPolitics(ParentFaction, World.PlayerFaction.ParentFaction);
             politics.IsAtWar = true;
 
-            if (World.FindSystem<MonsterSpawner>().HasValue(out var spawner))
+            if (World.ModuleManager.GetModule<MonsterSpawner>().HasValue(out var spawner))
             {
                 var creatures = spawner.Spawn(spawner.GenerateSpawnEvent(this.World, this, World.PlayerFaction, MathFunctions.Random.Next(World.Overworld.Difficulty.CombatModifier) + 1, false));
 

@@ -15,7 +15,8 @@ namespace DwarfCorp.Play
         {
             yield return new PossiblePlayerCommand
             {
-                Name = "Select",
+                ID = new List<String> { "Select" },
+                DisplayName = "Select",
                 Icon = new ResourceType.GuiGraphic
                 {
                     AssetPath = "newgui/icons",
@@ -28,8 +29,9 @@ namespace DwarfCorp.Play
 
             yield return new PossiblePlayerCommand
             {
-                Name = "Destroy",
-                Tooltip = "Deconstruct objects",
+                ID = new List<String> { "Destroy Zone" },
+                DisplayName = "Destroy",
+                Tooltip = "Deconstruct Zone",
                 Icon = new ResourceType.GuiGraphic
                 {
                     AssetPath = "newgui/round-buttons",
@@ -46,7 +48,8 @@ namespace DwarfCorp.Play
             foreach (var data in Library.EnumerateZoneTypes())
                 yield return new PossiblePlayerCommand
                 {
-                    Name = "Build " + data.DisplayName,
+                    ID = new List<String> { "Build Zone", data.DisplayName },
+                    DisplayName = "Build " + data.DisplayName,
                     OldStyleIcon = data.NewIcon,
                     OnClick = (sender, args) => World.UserInterface.ChangeTool("BuildZone", data),
                     Tooltip = "",
@@ -60,7 +63,8 @@ namespace DwarfCorp.Play
 
             yield return new PossiblePlayerCommand
             {
-                Name = "Move Object",
+                ID = new List<String> { "Move Object" },
+                DisplayName = "Move Object",
                 Tooltip = "Move objects",
                 OldStyleIcon = new TileReference("mouse", 9),
                 OnClick = (sender, args) =>
@@ -72,7 +76,8 @@ namespace DwarfCorp.Play
 
             yield return new PossiblePlayerCommand
             {
-                Name = "Destroy Object",
+                ID = new List<String> { "Destroy Object" },
+                DisplayName = "Destroy Object",
                 Tooltip = "Deconstruct objects",
                 Icon = new ResourceType.GuiGraphic
                 {
@@ -90,7 +95,8 @@ namespace DwarfCorp.Play
             foreach (var data in Library.EnumerateVoxelTypes().Where(v => v.IsBuildable))
                 yield return new PossiblePlayerCommand
                 {
-                    Name = "Build " + data.Name + " Wall",
+                    ID = new List<string> { "Build Wall", data.Name },
+                    DisplayName = "Build " + data.Name + " Wall",
                     OldStyleIcon = new Gui.TileReference("voxels", data.ID),
                     OperationIcon = new ResourceType.GuiGraphic
                     {
@@ -118,7 +124,8 @@ namespace DwarfCorp.Play
             foreach (var data in Library.EnumerateVoxelTypes().Where(v => v.IsBuildable))
                 yield return new PossiblePlayerCommand
                 {
-                    Name = "Build " + data.Name + " Floor",
+                    ID = new List<string> { "Build Floor", data.Name },
+                    DisplayName = "Build " + data.Name + " Floor",
                     OldStyleIcon = new Gui.TileReference("voxels", data.ID),
                     OperationIcon = new ResourceType.GuiGraphic
                     {
@@ -153,9 +160,10 @@ namespace DwarfCorp.Play
             foreach (var data in Library.EnumerateResourceTypes().Where(r => r.Craft_Craftable))
                 yield return new PossiblePlayerCommand
                 {
+                    ID = new List<string> { "Craft", data.Category, data.DisplayName },
                     Icon = data.Gui_Graphic,
                     Tooltip = data.Craft_Verb.PastTense + " " + objectNameToLabel(data.DisplayName),
-                    Name = data.Craft_Verb.PastTense + " "  + objectNameToLabel(data.DisplayName),
+                    DisplayName = data.Craft_Verb.PastTense + " "  + objectNameToLabel(data.DisplayName),
                     OperationIcon = new ResourceType.GuiGraphic
                     {
                         AssetPath = "newgui//icons",
@@ -199,9 +207,10 @@ namespace DwarfCorp.Play
             foreach (var data in Library.EnumerateResourceTypes().Where(r => r.Placement_Placeable))
                 yield return new PossiblePlayerCommand
                 {
+                    ID = new List<string> { "Place", data.Category, data.DisplayName },
                     Icon = data.Gui_Graphic,
                     Tooltip = "Place " + objectNameToLabel(data.DisplayName),
-                    Name = "Place " + objectNameToLabel(data.DisplayName),
+                    DisplayName = "Place " + objectNameToLabel(data.DisplayName),
                     HoverWidget = new PlaceCraftInfo
                     {
                         Data = data as ResourceType,
@@ -214,7 +223,8 @@ namespace DwarfCorp.Play
 
             yield return new PossiblePlayerCommand
             {
-                Name = "Paint Rail",
+                ID = new List<string> { "Rail", "Paint" },
+                DisplayName = "Paint Rail",
                 OldStyleIcon = new TileReference("rail", 0),
                 Tooltip = "Paint",
                 OnClick = (widget, args) => World.UserInterface.ChangeTool("PaintRail", Rail.PaintRailTool.Mode.Normal)
@@ -223,8 +233,9 @@ namespace DwarfCorp.Play
             foreach (var data in Library.EnumerateRailPatterns())
                 yield return new PossiblePlayerCommand
                 {
+                    ID = new List<string> { "Rail", data.Name },
                     Tooltip = "Build Rail " + data.Name,
-                    Name = data.Name,
+                    DisplayName = data.Name,
                     OldStyleIcon = new TileReference("rail", data.Icon),
                     OperationIcon = new ResourceType.GuiGraphic
                     {
@@ -242,7 +253,8 @@ namespace DwarfCorp.Play
 
             yield return new PossiblePlayerCommand
             {
-                Name = "Dig",
+                ID = new List<string> { "Dig" },
+                DisplayName = "Dig",
                 Icon = new ResourceType.GuiGraphic
                 {
                     AssetPath = "newgui/icons",
@@ -255,7 +267,8 @@ namespace DwarfCorp.Play
 
             yield return new PossiblePlayerCommand
             {
-                Name = "Gather",
+                ID = new List<string> { "Gather" },
+                DisplayName = "Gather",
                 Icon = new ResourceType.GuiGraphic
                 {
                     AssetPath = "newgui/icons",
@@ -268,7 +281,8 @@ namespace DwarfCorp.Play
 
             yield return new PossiblePlayerCommand
             {
-                Name = "Harvest",
+                ID = new List<string> { "Harvest" },
+                DisplayName = "Harvest",
                 Icon = new ResourceType.GuiGraphic
                 {
                     AssetPath = "newgui/icons",
@@ -281,7 +295,8 @@ namespace DwarfCorp.Play
 
             yield return new PossiblePlayerCommand
             {
-                Name = "Hunt",
+                ID = new List<string> { "Hunt" },
+                DisplayName = "Hunt",
                 Icon = new ResourceType.GuiGraphic
                 {
                     AssetPath = "newgui/icons",
@@ -295,6 +310,7 @@ namespace DwarfCorp.Play
             foreach (var data in Library.EnumerateResourceTypesWithTag("Plantable"))
                 yield return new PossiblePlayerCommand
                 {
+                    ID = new List<string> { "Plant", data.DisplayName },
                     Icon = data.Gui_Graphic,
                     OperationIcon = new ResourceType.GuiGraphic
                     {
@@ -303,7 +319,7 @@ namespace DwarfCorp.Play
                         Frame = new Point(5, 1)
                     },
                     Tooltip = "Plant " + data.DisplayName,
-                    Name = "Plant " + data.DisplayName,
+                    DisplayName = "Plant " + data.DisplayName,
                     OnClick = (sender, args) => World.UserInterface.ChangeTool("Plant", data.TypeName),
                     HoverWidget = new PlantInfo()
                     {
@@ -315,13 +331,14 @@ namespace DwarfCorp.Play
 
             yield return new PossiblePlayerCommand
             {
+                ID = new List<string> { "Wrangle" },
                 Icon = new ResourceType.GuiGraphic
                 {
                     AssetPath = "newgui/icons",
                     FrameSize = new Point(32, 32),
                     Frame = new Point(0, 4)
                 },
-                Name = "Catch",
+                DisplayName = "Catch",
                 Tooltip = "Catch Animals",
                 HoverWidget = new Widget()
                 {
@@ -335,7 +352,8 @@ namespace DwarfCorp.Play
             
             yield return new PossiblePlayerCommand
             {
-                Name = "Cancel",
+                ID = new List<string> { "Cancel" },
+                DisplayName = "Cancel",
                 Tooltip = "Cancel voxel tasks such as mining, guarding, and planting.",
                 Icon = new ResourceType.GuiGraphic
                 {

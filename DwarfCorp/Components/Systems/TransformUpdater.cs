@@ -17,6 +17,8 @@ namespace DwarfCorp
             return new ComponentTransformModule();
         }
 
+        public override ModuleManager.UpdateTypes UpdatesWanted => ModuleManager.UpdateTypes.Update | ModuleManager.UpdateTypes.Shutdown;
+
         private class WorkerThread
         {
             public Thread Thread;
@@ -74,6 +76,12 @@ namespace DwarfCorp
                 thread.Signal.WaitOne();
             //while (RunningThreads > 0) { }
             PerformanceMonitor.PopFrame();
+        }
+
+        public override void Shutdown()
+        {
+            foreach (var thread in WorkerThreads)
+                thread.Thread.Abort();
         }
     }
 }

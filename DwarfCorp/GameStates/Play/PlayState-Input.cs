@@ -63,7 +63,8 @@ namespace DwarfCorp.GameStates
             if (IsMouseOverGui)
                 ShowInfo(InfoTray.TopEntry, "MOUSE OVER GUI");
             else
-                BottomToolBar.RefreshVisibleTray();
+                if (BottomToolBar != null)
+                    BottomToolBar.RefreshVisibleTray();
 
             #region Handle keyboard input
 
@@ -155,7 +156,8 @@ namespace DwarfCorp.GameStates
                     else if (FlatToolTray.Tray.Hotkeys.Contains((Keys)args.KeyValue))
                     {
                         if (PausePanel == null || PausePanel.Hidden)
-                            (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey((Keys)args.KeyValue);
+                            if (BottomToolBar != null)
+                                (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey((Keys)args.KeyValue);
                     }
                     else if ((Keys)args.KeyValue == Keys.Escape)
                     {
@@ -166,7 +168,7 @@ namespace DwarfCorp.GameStates
                             World.TutorialManager.DismissCurrentTutorial();
                         else if (TogglePanels.Any(p => p.Hidden == false))
                             HideTogglePanels();
-                        else if (MainMenu.Hidden && PausePanel == null)
+                        else if (MainMenu != null && MainMenu.Hidden && PausePanel == null)
                             (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(FlatToolTray.Tray.Hotkeys[0]);
                         else if (CurrentToolMode != "SelectUnits" && PausePanel == null)
                             ChangeTool("SelectUnits");
@@ -331,7 +333,7 @@ namespace DwarfCorp.GameStates
             #endregion
 
             // Close the bottom menu if the only icon is the return icon.
-            if (BottomToolBar.Children.First(w => w.Hidden == false).Children.Count(c => c.Hidden == false) == 1)
+            if (BottomToolBar != null && BottomToolBar.Children.First(w => w.Hidden == false).Children.Count(c => c.Hidden == false) == 1)
                 (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(FlatToolTray.Tray.Hotkeys[0]);
 
             #region Handle slice hotkeys being held down
@@ -419,12 +421,7 @@ namespace DwarfCorp.GameStates
                     scheduleDisplay.Lines.Add(String.Format("{2:+00;-00;+00} {1} {0}", scheduledEvent.Event.Name, (scheduledEvent.Date - World.Time.CurrentDate).ToString(@"hh\:mm"), scheduledEvent.Event.Difficulty));
                 scheduleDisplay.Invalidate();
 
-                var modulesDisplay = DwarfGame.GetConsoleTile("MODULES");
-                modulesDisplay.Lines.Clear();
-                modulesDisplay.Lines.Add("Modules");
-                foreach (var module in World.UpdateSystems)
-                    modulesDisplay.Lines.Add(module.GetType().Name);
-                modulesDisplay.Invalidate();
+                World.ModuleManager.DebugOutput(DwarfGame.GetConsoleTile("MODULES"));
             }
             #endregion
 

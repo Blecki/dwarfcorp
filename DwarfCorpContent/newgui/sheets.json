@@ -146,6 +146,12 @@
     "TileHeight": 24
   },
   {
+    "Name": "horizontal-scrollbar",
+    "Texture": "newgui/horizontal-scrollbar",
+    "TileWidth": 24,
+    "TileHeight": 24
+  },
+  {
     "Name": "horizontal-slider",
     "Texture": "newgui/slider",
     "TileWidth": 24,
