@@ -18,15 +18,15 @@ namespace DwarfCorp.Play
         private class CommandGrid : Gui.Widgets.GridPanel
         {
             public WorldManager World;
-            public List<PossiblePlayerCommand> Commands;
-            public Action<PossiblePlayerCommand> OnCommandClicked;
+            public List<CommandMenuItem> Commands;
+            public Action<CommandMenuItem> OnCommandClicked;
 
             public override void Construct()
             {
                 EnableScrolling = true;
                 base.Construct();
 
-                Commands = PlayerCommandEnumerator.EnumeratePlayerCommands(World).ToList();
+                Commands = CommandMenuItemEnumerator.EnumerateCommandMenuItems(World).ToList();
                 foreach (var command in Commands)
                     if (command.HoverWidget != null) Root.ConstructWidget(command.HoverWidget);
 
@@ -34,7 +34,7 @@ namespace DwarfCorp.Play
                 foreach (var resource in Commands)
                 {
                     var lambdaResource = resource;
-                    resource.GuiTag = AddChild(new CommandIcon
+                    resource.GuiTag = AddChild(new CommandMenuItemIcon
                     {
                         Command = resource,
                         OnClick = (sender, args) => OnCommandClicked(lambdaResource)

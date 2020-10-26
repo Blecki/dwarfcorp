@@ -17,7 +17,6 @@ namespace DwarfCorp.Gui.Widgets
 
         public override void Construct()
         {
-            Border = "border-fancy";
             var builder = new StringBuilder();
             builder.AppendLine(String.Format("Place {0}", Data.Name));
             builder.AppendLine(String.Format("Strength: {0}", Data.StartingHealth));

@@ -1,0 +1,29 @@
+{
+  "TypeName": "Fat",
+  "MoneyValue": 10.0,
+  "MaterialStrength": 0.0,
+  "Description": "Good for burning.",
+  "Category": "Fuel",
+  "Tags": [
+    "Fat",
+    "Fuel"
+  ],
+  "FoodContent": 10.0,
+  "DisplayName": "Fat",
+  "PlantToGenerate": null,
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "Broth",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "7, 6"
+  }
+
+}

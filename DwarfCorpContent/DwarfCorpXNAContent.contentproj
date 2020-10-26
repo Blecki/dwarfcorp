@@ -2368,6 +2368,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Empty</Name>
     </None>
+    <None Include="World\GrassTypes\Skin.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Skin</Name>
+    </None>
     <None Include="World\Loadouts\Crafter.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Crafter</Name>
@@ -2403,6 +2407,14 @@
     <None Include="World\ResourceItems\Apothecary.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Apothecary</Name>
+    </None>
+    <None Include="World\ResourceItems\Leather.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Leather</Name>
+    </None>
+    <None Include="World\ResourceItems\Fat.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Fat</Name>
     </None>
     <None Include="World\ResourceItems\PeppermintAxe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -4082,6 +4094,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>default</Name>
     </None>
+    <None Include="World\VoxelModels\arches.vox">
+      <Name>arches</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="World\VoxelModels\hand.vox">
+      <Name>hand</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="World\VoxelModels\head.vox">
+      <Name>head</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="World\Voxels\Blue Tile Slab.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Blue Tile Slab</Name>
@@ -5192,6 +5216,13 @@
   <ItemGroup>
     <Compile Include="Entities\Animals\Slimes\slime_white.png">
       <Name>slime_white</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\Plants\hair.png">
+      <Name>hair</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

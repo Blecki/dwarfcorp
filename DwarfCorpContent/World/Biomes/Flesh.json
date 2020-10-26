@@ -8,6 +8,13 @@
   "Vegetation": [
   ],
   "Motes": [
+    {
+      "Name": "hair",
+      "RegionScale": 0.1,
+      "SpawnThreshold": 0.6,
+      "MoteScale": 1.2,
+      "Asset": "Entities\\Plants\\hair"
+    }
   ],
   "Fauna": [
     {
@@ -23,15 +30,15 @@
   "SubsurfaceLayers": [
     {
       "VoxelType": "Fat",
-      "Depth": 2
+      "Depth": 3
     },
     {
       "VoxelType": "Meat",
-      "Depth": 4
+      "Depth": 1
     },
     {
       "VoxelType": "Bone",
-      "Depth": 1
+      "Depth": 4
     },
     {
       "VoxelType": "Shale",
@@ -54,7 +61,7 @@
       "Depth": 4
     }
   ],
-  "GrassDecal": "",
+  "GrassDecal": "skin",
   "ShoreVoxel": "Dermis",
   "ClumpGrass": false,
   "ClumpSize": 30.0,

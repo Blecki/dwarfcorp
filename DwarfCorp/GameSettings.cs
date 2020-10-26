@@ -238,6 +238,7 @@ namespace DwarfCorp
 
             [AutoResetBool(false)] public bool FastGen = false;
             [AutoResetFloat(0.15f)] public float GenerationRuinsRate = 0.15f;
+            [AutoResetFloat(0.25f)] public float GenerationMonuments = 0.25f;
             [AutoResetBool(false)] public bool NoStone = false;
 
             [AutoResetFloat(-10.0f)] public float Boredom_Gamble = -10.0f;

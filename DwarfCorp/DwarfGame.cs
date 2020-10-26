@@ -211,7 +211,6 @@ namespace DwarfCorp
             LogSentryBreadcrumb("Loading", "LoadContent was called.", BreadcrumbLevel.Info);
             AssetManager.Initialize(Content, GraphicsDevice, GameSettings.Current);
 
-
             //DwarfSprites.LayerLibrary.ConvertTestPSD();
 
 
