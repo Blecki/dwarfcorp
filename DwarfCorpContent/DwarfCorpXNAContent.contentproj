@@ -4096,14 +4096,15 @@
     </None>
     <None Include="World\VoxelModels\arches.vox">
       <Name>arches</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="World\VoxelModels\hand.vox">
       <Name>hand</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="World\VoxelModels\head.vox">
       <Name>head</Name>
+    </None>
+    <None Include="World\VoxelModels\pillars.vox">
+      <Name>pillars</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="World\Voxels\Blue Tile Slab.json">

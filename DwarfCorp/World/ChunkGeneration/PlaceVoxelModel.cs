@@ -15,7 +15,7 @@ namespace DwarfCorp.Generation
 {
     public static partial class Generator
     {
-        public static void PlaceVoxelModel(VoxelChunk Chunk, VoxelModel Model, VoxelType SolidType, int Rotations)
+        public static void PlaceVoxelModel(VoxelChunk Chunk, VoxelModel Model, VoxelType WallType, VoxelType FloorType, int Rotations)
         {
             for (var x = 0; x < Math.Min(VoxelConstants.ChunkSizeX, Model.Dimensions.X); ++x)
                 for (var y = 0; y < Math.Min(VoxelConstants.ChunkSizeY, Model.Dimensions.Y); ++y)
@@ -33,7 +33,7 @@ namespace DwarfCorp.Generation
                         if (Model.Index(modelX, y, modelZ) != 0)
                         {
                             var v = VoxelHandle.UnsafeCreateLocalHandle(Chunk, new LocalVoxelCoordinate(x, y, z));
-                            v.Type = SolidType;
+                            v.Type = Model.Index(modelX, y, modelZ) == 249 ? WallType : FloorType; // Todo: Shouldn't be hardcoded like this.
                         }
                     }
         }

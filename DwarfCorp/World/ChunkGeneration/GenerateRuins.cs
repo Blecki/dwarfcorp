@@ -58,7 +58,7 @@ namespace DwarfCorp.Generation
                 ruinFloorType = Library.GetVoxelType(biome.RuinFloorType);
             }
 
-            if (!ruinWallType.HasValue(out var ruinWallTypeValue) || !ruinFloorType.HasValue())
+            if (!ruinWallType.HasValue(out var ruinWallTypeValue) || !ruinFloorType.HasValue(out var ruinFloorTypeValue))
                 return;
 
             // Should this ruin be a monument?
@@ -66,7 +66,7 @@ namespace DwarfCorp.Generation
             {
                 var worldPos = new Vector3(Chunk.Origin.X, avgHeight, Chunk.Origin.Z);
                 var baseVoxel = Settings.World.ChunkManager.CreateVoxelHandle(GlobalVoxelCoordinate.FromVector3(worldPos));
-                PlaceMonument(baseVoxel.Chunk, Library.EnumerateVoxelModels().SelectRandom(), ruinWallTypeValue, Settings);
+                PlaceMonument(baseVoxel.Chunk, Library.EnumerateVoxelModels().SelectRandom(), ruinWallTypeValue, ruinFloorTypeValue, Settings);
                 return;
             }
 
@@ -118,10 +118,10 @@ namespace DwarfCorp.Generation
                 }
         }
 
-        private static void PlaceMonument(VoxelChunk Chunk, VoxelModel Monument, VoxelType WallType, ChunkGeneratorSettings Settings)
+        private static void PlaceMonument(VoxelChunk Chunk, VoxelModel Monument, VoxelType WallType, VoxelType FloorType, ChunkGeneratorSettings Settings)
         {
             var monument = Library.EnumerateVoxelModels().SelectRandom();
-            PlaceVoxelModel(Chunk, monument, WallType, MathFunctions.RandInt(0, 3));
+            PlaceVoxelModel(Chunk, monument, WallType, FloorType, MathFunctions.RandInt(0, 3));
             return;
 
         }
