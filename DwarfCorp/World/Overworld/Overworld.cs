@@ -50,6 +50,7 @@ namespace DwarfCorp.GameStates // Todo: Why in GameStates?
             r.Map = new OverworldMap(r.Width, r.Height);
             r.PlayerCorporationResources = new ResourceSet();
             r.Difficulty = Library.GetDifficulty("Normal");
+            r.PlayerCorporationFunds = r.Difficulty.StartingFunds;
 
             r.InstanceSettings = new InstanceSettings(r);
 

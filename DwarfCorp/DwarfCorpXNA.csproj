@@ -205,7 +205,6 @@
     <Compile Include="GameStates\DebugStates\GuiTextureDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\GuiDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\GuiDebugState.cs" />
-    <Compile Include="GameStates\FrontEnd\CheckMegaWorldState.cs" />
     <Compile Include="GameStates\FrontEnd\ChangeLogState.cs" />
     <Compile Include="GameStates\Play\CategoryIcon.cs" />
     <Compile Include="GameStates\Play\CategoryMenuBuilder.cs" />
@@ -387,7 +386,6 @@
     <Compile Include="GameStates\Play\ZonePanel\ResourceFilterPanel.cs" />
     <Compile Include="GameStates\WorldGeneration\ChooseEmployeeTypeDialog.cs" />
     <Compile Include="GameStates\WorldGeneration\EmbarkmentEditor.cs" />
-    <Compile Include="GameStates\WorldGeneration\EmbarkmentResourceColumns.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldPreviewMesh.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldTextureGenerator.cs" />
     <Compile Include="Gui\Widgets\DefaultTaskPriority.cs" />
@@ -587,10 +585,8 @@
     <Compile Include="World\Gambling\Gambling.cs" />
     <Compile Include="World\LanguageGenerator\Verb.cs" />
     <Compile Include="World\Overworld\BiomeData.cs" />
-    <Compile Include="GameStates\WorldGeneration\GenerationPanel.cs" />
     <Compile Include="World\Overworld\Embarkment.cs" />
     <Compile Include="World\Overworld\InstanceSettings.cs" />
-    <Compile Include="GameStates\WorldGeneration\LaunchPanel.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGeneratorState.cs" />
     <Compile Include="World\Overworld\OverworldFaction.cs" />
     <Compile Include="World\Overworld\Overworld.cs" />

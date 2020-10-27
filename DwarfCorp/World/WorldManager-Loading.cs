@@ -378,7 +378,7 @@ namespace DwarfCorp
             if (Overworld.DebugWorld)
             {
                 Generation.Generator.GenerateDebug(ChunkManager, this, generatorSettings, SetLoadingMessage);
-                PlayerFaction.Economy.Funds = Overworld.InstanceSettings.InitalEmbarkment.Funds;
+                PlayerFaction.Economy.Funds = Overworld.PlayerCorporationFunds;
             }
             else
             {

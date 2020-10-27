@@ -21,6 +21,15 @@ namespace DwarfCorp.Gui.Widgets
             "Very High"
         };
 
+        public static Point[] Sizes = new Point[]
+        {
+            new Point(4,4),
+            new Point(8,8),
+            new Point(16,16),
+            new Point(32,32),
+            new Point(64,64)
+        };
+
         public enum DialogResult
         {
             Okay,
@@ -168,6 +177,7 @@ namespace DwarfCorp.Gui.Widgets
                 new float[] { 0.0f, 0.5f, 1.0f, 1.5f, 2.0f }, (f) => Settings.GenerationSettings.TemperatureScale = f,
                 () => Settings.GenerationSettings.TemperatureScale));
 
+            AddChild(CreateCombo<Point>(Root, "Size", "Size of the world in chunks", Sizes, (p) => Settings.GenerationSettings.SizeInChunks = p, () => Settings.GenerationSettings.SizeInChunks));
 
             var srow = AddChild(new Widget
             {

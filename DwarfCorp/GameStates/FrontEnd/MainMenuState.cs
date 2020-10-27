@@ -67,16 +67,9 @@ namespace DwarfCorp.GameStates
 
                     var overworldSettings = Overworld.Create();
                     overworldSettings.InstanceSettings.InitalEmbarkment = new Embarkment(overworldSettings);
-                    overworldSettings.InstanceSettings.InitalEmbarkment.Funds = 1000u;
                     foreach (var loadout in Library.EnumerateLoadouts())
                         overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random(loadout, overworldSettings.Company));
                     GameStateManager.PushState(new LoadState(Game, overworldSettings, LoadTypes.GenerateOverworld));
-                });
-
-            CreateMenuItem(frame, "GIANT QUICKPLAY", "",
-                (sender, args) =>
-                {
-                    GameStateManager.PushState(new CheckMegaWorldState(Game));
                 });
 
             CreateMenuItem(frame, "DEBUG WORLD", "",
@@ -86,7 +79,7 @@ namespace DwarfCorp.GameStates
 
                     var overworldSettings = Overworld.Create();
                     overworldSettings.InstanceSettings.InitalEmbarkment = new Embarkment(overworldSettings);
-                    overworldSettings.InstanceSettings.InitalEmbarkment.Funds = 1000000u;
+                    overworldSettings.PlayerCorporationFunds = 1000000u;
                     overworldSettings.DebugWorld = true;
                     GameStateManager.PushState(new LoadState(Game, overworldSettings, LoadTypes.GenerateOverworld));
                 });

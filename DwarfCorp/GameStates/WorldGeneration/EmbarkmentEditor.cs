@@ -14,10 +14,8 @@ namespace DwarfCorp.GameStates
     {
         private Overworld Settings;
         private Gui.Widgets.WidgetListView EmployeeList;
-        private EmbarkmentResourceColumns ResourceColumns;
         private Widget EmployeeCost;
-        private Widget TotalCost;
-        private Widget Cash;
+        private Widget ReadyFunds;
         private Widget ValidationLabel;
 
         public EmbarkmentEditor(Overworld Settings) 
@@ -81,14 +79,13 @@ namespace DwarfCorp.GameStates
 
         private void UpdateCost()
         {
-            Cash.Text = Settings.InstanceSettings.InitalEmbarkment.Funds.ToString();
-            Cash.Invalidate();
+            var dwarfCost = new DwarfBux(Settings.InstanceSettings.InitalEmbarkment.Employees.Sum(e => e.SigningBonus));
 
-            EmployeeCost.Text = (new DwarfBux(Settings.InstanceSettings.InitalEmbarkment.Employees.Sum(e => e.SigningBonus))).ToString();
+            EmployeeCost.Text = dwarfCost.ToString();
             EmployeeCost.Invalidate();
 
-            TotalCost.Text = (Settings.InstanceSettings.InitalEmbarkment.Funds + Settings.InstanceSettings.InitalEmbarkment.Employees.Sum(e => e.SigningBonus)).ToString();
-            TotalCost.Invalidate();
+            ReadyFunds.Text = (Settings.PlayerCorporationFunds - dwarfCost).ToString();
+            ReadyFunds.Invalidate();
 
             var s = "";
             InstanceSettings.ValidateEmbarkment(Settings, out s);
@@ -122,9 +119,6 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.FloatBottomRight,
                 OnClick = (sender, args) =>
                 {
-                    foreach (var res in ResourceColumns.SelectedResources.SelectMany(i => i.Resources))
-                        Settings.InstanceSettings.InitalEmbarkment.Resources.Add(res);
-
                     var message = "";
                     var valid = Embarkment.ValidateEmbarkment(Settings, out message);
                     if (valid == InstanceSettings.ValidationResult.Pass)
@@ -211,20 +205,6 @@ namespace DwarfCorp.GameStates
 
             var moneyBar = costPanel.AddChild(CreateBar("Ready Cash:"));
 
-            Cash = moneyBar.AddChild(new Gui.Widgets.MoneyEditor
-            {
-                MaximumValue = (int)FundsAvailable,
-                MinimumSize = new Point(128, 33),
-                AutoLayout = AutoLayout.DockRight,
-                OnValueChanged = (sender) =>
-                {
-                    Settings.InstanceSettings.InitalEmbarkment.Funds = (sender as Gui.Widgets.MoneyEditor).CurrentValue;
-                    UpdateCost();
-                },
-                Tooltip = "Money to take.",
-                TextHorizontalAlign = HorizontalAlign.Right
-            }) as Gui.Widgets.MoneyEditor;
-
             var employeeCostBar = costPanel.AddChild(CreateBar("Signing Bonuses:"));
             EmployeeCost = employeeCostBar.AddChild(new Widget
             {
@@ -235,7 +215,7 @@ namespace DwarfCorp.GameStates
             });
 
             var totalBar = costPanel.AddChild(CreateBar("Total Cost:"));
-            TotalCost = totalBar.AddChild(new Widget
+            ReadyFunds = totalBar.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockRight,
                 Text = "$0",
@@ -251,14 +231,6 @@ namespace DwarfCorp.GameStates
             }) as Gui.Widgets.WidgetListView;
 
             RebuildEmployeeList();
-
-            ResourceColumns = columns.AddChild(new EmbarkmentResourceColumns
-            {
-                SourceResources = Play.Trading.Helper.AggregateResourcesIntoTradeableItems(Settings.PlayerCorporationResources),
-                SelectedResources = Play.Trading.Helper.AggregateResourcesIntoTradeableItems(Settings.InstanceSettings.InitalEmbarkment.Resources),
-                LeftHeader = "Available",
-                RightHeader = "Taking"
-            }) as EmbarkmentResourceColumns;
 
             Layout();
             UpdateCost();
