@@ -23,30 +23,7 @@ namespace DwarfCorp.GameStates
             OverworldMap.Smooth(4, Overworld.Width, Overworld.Height, colorData);
             Overworld.Map.ShadeHeight(4, colorData);
 
-            TerrainTexture.SetData(colorData);
-
-            // Draw political boundaries
-            if (ShowPolitics)
-            {
-                for (var x = 0; x < Overworld.Width; ++x)
-                    for (var y = 0; y < Overworld.Height; ++y)
-                    {
-                        var thisCell = Overworld.ColonyCells.GetCellAt(x, y);
-                        var rect = new Rectangle(x * 4, y * 4, 4, 4);
-
-                        if (EnumerateNeighbors(new Point(x, y)).Select(p => Overworld.ColonyCells.GetCellAt(p.X, p.Y)).Any(c => c == null || !Object.ReferenceEquals(c.Faction, thisCell.Faction)))
-                            FillSolidRectangle(rect, colorData, thisCell.Faction.PrimaryColor, stride);
-                        else
-                            FillPoliticalRectangle(rect, colorData, thisCell.Faction.PrimaryColor, stride);
-                    }
-            }
-
-            foreach (var cell in Overworld.ColonyCells.EnumerateCells())
-                DrawRectangle(new Rectangle(cell.Bounds.X * 4, cell.Bounds.Y * 4, cell.Bounds.Width * 4, cell.Bounds.Height * 4), colorData, Color.Black, stride);
-
-            var spawnRect = new Rectangle((int)Overworld.InstanceSettings.Origin.X * 4, (int)Overworld.InstanceSettings.Origin.Y * 4,
-                Overworld.InstanceSettings.Cell.Bounds.Width * 4, Overworld.InstanceSettings.Cell.Bounds.Height * 4);
-            DrawRectangle(spawnRect, colorData, Color.Red, stride);
+            TerrainTexture.SetData(colorData);            
 
             FullTexture.SetData(colorData);
         }

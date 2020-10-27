@@ -114,7 +114,7 @@ namespace DwarfCorp
             Renderer.Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
             Renderer.PersistentSettings = gameFile.Metadata.RendererSettings;
             Time = gameFile.Metadata.Time;
-            WorldSizeInChunks = new Point3(Overworld.InstanceSettings.Cell.Bounds.Width, Overworld.zLevels, Overworld.InstanceSettings.Cell.Bounds.Height);
+            WorldSizeInChunks = Overworld.WorldSizeInChunks;
 
             #endregion
 
@@ -336,8 +336,6 @@ namespace DwarfCorp
             foreach (var faction in Overworld.Natives)
                 Factions.AddFaction(new Faction(this, faction));
 
-            Point playerOrigin = new Point((int)(Overworld.InstanceSettings.Origin.X), (int)(Overworld.InstanceSettings.Origin.Y));
-
             PlayerFaction = Factions.Factions["Player"];
             PlayerFaction.Economy = new Company(PlayerFaction, 300.0m, Overworld.Company);
 
@@ -379,12 +377,12 @@ namespace DwarfCorp
             SetLoadingMessage("Generating Chunks...");
             if (Overworld.DebugWorld)
             {
-                Generation.Generator.GenerateDebug(Overworld.InstanceSettings.Cell.Bounds, ChunkManager, this, generatorSettings, SetLoadingMessage);
+                Generation.Generator.GenerateDebug(ChunkManager, this, generatorSettings, SetLoadingMessage);
                 PlayerFaction.Economy.Funds = Overworld.InstanceSettings.InitalEmbarkment.Funds;
             }
             else
             {
-                Generation.Generator.Generate(Overworld.InstanceSettings.Cell.Bounds, ChunkManager, this, generatorSettings, SetLoadingMessage);
+                Generation.Generator.Generate(ChunkManager, this, generatorSettings, SetLoadingMessage);
                 CreateInitialEmbarkment(generatorSettings);
             }
             ChunkManager.NeedsMinimapUpdate = true;

@@ -47,7 +47,7 @@ namespace DwarfCorp
             }
 
             if (String.IsNullOrEmpty(CachedBiome))
-                if (World.Overworld.Map.GetBiomeAt(LocalPosition, chunks.World.Overworld.InstanceSettings.Origin).HasValue(out var biome))
+                if (World.Overworld.Map.GetBiomeAt(LocalPosition).HasValue(out var biome))
                     CachedBiome = biome.Name;
 
             var factor = 1.0f;

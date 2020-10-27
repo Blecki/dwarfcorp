@@ -21,7 +21,7 @@ namespace DwarfCorp.Generation
 
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
-                    if (Settings.Overworld.Map.GetBiomeAt(new Vector3(x, 0, z) + chunk.Origin.ToVector3(), Settings.Overworld.InstanceSettings.Origin).HasValue(out var biome))
+                    if (Settings.Overworld.Map.GetBiomeAt(new Vector3(x, 0, z) + chunk.Origin.ToVector3()).HasValue(out var biome))
                         for (var y = 0; y < VoxelConstants.ChunkSizeY; ++y)
                         {
                             var globalY = y + chunk.Origin.Y;

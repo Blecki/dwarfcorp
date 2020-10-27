@@ -25,7 +25,7 @@ namespace DwarfCorp.GameStates
             this.Settings = Settings;
         }
 
-        private DwarfBux FundsAvailable => Settings.PlayerCorporationFunds - Settings.InstanceSettings.CalculateLandValue();
+        private DwarfBux FundsAvailable => Settings.PlayerCorporationFunds;
 
         private Widget CreateEmployeeListing(Applicant Applicant, int Index)
         {

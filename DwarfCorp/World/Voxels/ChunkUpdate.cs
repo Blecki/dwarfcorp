@@ -76,7 +76,7 @@ namespace DwarfCorp
                             if (voxelAbove.IsValid && !voxelAbove.IsEmpty)
                                 continue;
 
-                            if (chunk.Manager.World.Overworld.Map.GetBiomeAt(voxel.Coordinate.ToVector3(), chunk.Manager.World.Overworld.InstanceSettings.Origin).HasValue(out var biome))
+                            if (chunk.Manager.World.Overworld.Map.GetBiomeAt(voxel.Coordinate.ToVector3()).HasValue(out var biome))
                             {
                                 var grassyNeighbors = VoxelHelpers.EnumerateManhattanNeighbors2D(voxel.Coordinate)
                                     .Select(c => new VoxelHandle(voxel.Chunk.Manager, c))
@@ -84,7 +84,7 @@ namespace DwarfCorp
                                     .Where(v => Library.GetGrassType(v.GrassType).Spreads)
                                     .Where(v =>
                                     {
-                                        if (chunk.Manager.World.Overworld.Map.GetBiomeAt(v.Coordinate.ToVector3(), chunk.Manager.World.Overworld.InstanceSettings.Origin).HasValue(out var otherBiome))
+                                        if (chunk.Manager.World.Overworld.Map.GetBiomeAt(v.Coordinate.ToVector3()).HasValue(out var otherBiome))
                                             return biome == otherBiome;
                                         return false;
                                     })

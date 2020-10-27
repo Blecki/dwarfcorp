@@ -52,7 +52,7 @@ namespace DwarfCorp.Generation
 
             var ruinWallType = Library.GetVoxelType("Cobble"); // Todo: Should make this data so this doesn't break if tile names change?
             var ruinFloorType = Library.GetVoxelType("Blue Tile");
-            if (Settings.Overworld.Map.GetBiomeAt(Chunk.Origin.ToVector3(), Settings.Overworld.InstanceSettings.Origin).HasValue(out var biome))
+            if (Settings.Overworld.Map.GetBiomeAt(Chunk.Origin.ToVector3()).HasValue(out var biome))
             {
                 ruinWallType = Library.GetVoxelType(biome.RuinWallType);
                 ruinFloorType = Library.GetVoxelType(biome.RuinFloorType);

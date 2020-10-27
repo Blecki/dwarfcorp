@@ -86,7 +86,7 @@ namespace DwarfCorp
             // Now check for biome ambience.
             var pos = vox.WorldPosition;
 
-            if (Overworld.Map.GetBiomeAt(pos, Overworld.InstanceSettings.Origin).HasValue(out var biome))
+            if (Overworld.Map.GetBiomeAt(pos).HasValue(out var biome))
             {
                 if (!string.IsNullOrEmpty(biome.DayAmbience))
                 {

@@ -107,7 +107,6 @@ namespace DwarfCorp
         {
             var metaFilePath = filePath + global::System.IO.Path.DirectorySeparatorChar + "meta.txt";
             MetaData = FileUtils.LoadJsonFromAbsolutePath<OverworldMetaData>(metaFilePath);
-            MetaData.Overworld.ColonyCells.InitializeCellMap();
 
             var worldFilePath = filePath + global::System.IO.Path.DirectorySeparatorChar + "world.png";
             var worldTexture = AssetManager.LoadUnbuiltTextureFromAbsolutePath(worldFilePath);

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.GameStates // Todo: Why in GameStates?
 {
@@ -9,11 +10,12 @@ namespace DwarfCorp.GameStates // Todo: Why in GameStates?
         public CompanyInformation Company;
         public ResourceSet PlayerCorporationResources;
         public DwarfBux PlayerCorporationFunds;
-        public CellSet ColonyCells;
         public List<OverworldFaction> Natives;
 
-        public int Width = 128;
-        public int Height = 128;
+        public Point Size = new Point(16, 16);
+        public Point3 WorldSizeInChunks { get { return new Point3(Size.X, zLevels, Size.Y); } }
+        public int Width { get { return Size.X * VoxelConstants.OverworldScale; } }
+        public int Height { get { return Size.Y * VoxelConstants.OverworldScale; } }
         public string Name = "";
         public Difficulty Difficulty = null;
         public int Seed = 0;
@@ -25,7 +27,7 @@ namespace DwarfCorp.GameStates // Todo: Why in GameStates?
 
         public String GetInstancePath()
         {
-            return DwarfGame.GetWorldDirectory() + System.IO.Path.DirectorySeparatorChar + Name + System.IO.Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)InstanceSettings.Origin.X, (int)InstanceSettings.Origin.Y);
+            return DwarfGame.GetWorldDirectory() + System.IO.Path.DirectorySeparatorChar + Name;
         }
 
         public Dictionary<String, Politics> Politics = new Dictionary<string, Politics>();
@@ -49,8 +51,7 @@ namespace DwarfCorp.GameStates // Todo: Why in GameStates?
             r.PlayerCorporationResources = new ResourceSet();
             r.Difficulty = Library.GetDifficulty("Normal");
 
-            r.ColonyCells = new CellSet("World\\colonies");
-            r.InstanceSettings = new InstanceSettings(r.ColonyCells.GetCellAt(16, 0), r);
+            r.InstanceSettings = new InstanceSettings(r);
 
             return r;
         }

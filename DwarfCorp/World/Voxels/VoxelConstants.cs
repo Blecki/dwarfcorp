@@ -12,6 +12,8 @@ namespace DwarfCorp
         public const Int32 ChunkSizeZ = 16;
         public const Int32 ChunkVoxelCount = ChunkSizeX * ChunkSizeY * ChunkSizeZ;
 
+        public const Int32 OverworldScale = 4;
+
         public const Int32 XDivShift = 4;
         public const Int32 YDivShift = 4;
         public const Int32 ZDivShift = 4;

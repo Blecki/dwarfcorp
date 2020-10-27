@@ -587,7 +587,6 @@
     <Compile Include="World\Gambling\Gambling.cs" />
     <Compile Include="World\LanguageGenerator\Verb.cs" />
     <Compile Include="World\Overworld\BiomeData.cs" />
-    <Compile Include="World\Overworld\ColonyCell.cs" />
     <Compile Include="GameStates\WorldGeneration\GenerationPanel.cs" />
     <Compile Include="World\Overworld\Embarkment.cs" />
     <Compile Include="World\Overworld\InstanceSettings.cs" />

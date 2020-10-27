@@ -17,29 +17,19 @@ namespace DwarfCorp
         public LoadType LoadType = LoadType.CreateNew;
 
         [JsonIgnore] public Embarkment InitalEmbarkment = null;
-        [JsonIgnore] public Vector2 Origin => new Vector2(Cell.Bounds.X, Cell.Bounds.Y);
-
-        public ColonyCell Cell = null;
 
         public InstanceSettings()
         {
-            int x = 5;
         }
 
-        public InstanceSettings(ColonyCell Cell, GameStates.Overworld Overworld)
+        public InstanceSettings(GameStates.Overworld Overworld)
         {
-            this.Cell = Cell;
             InitalEmbarkment = new Embarkment(Overworld);
         }
 
-        public DwarfBux CalculateLandValue()
-        {
-            return Cell.Bounds.Width * Cell.Bounds.Height * GameSettings.Current.LandCost;
-        }
-        
         public DwarfBux TotalCreationCost()
         {
-            return CalculateLandValue() + InitalEmbarkment.TotalCost();
+            return InitalEmbarkment.TotalCost();
         }
 
         public enum ValidationResult

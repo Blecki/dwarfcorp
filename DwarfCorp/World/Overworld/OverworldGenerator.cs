@@ -50,6 +50,8 @@ namespace DwarfCorp.GameStates
         // Todo: Should belong to preview
         public IEnumerable<KeyValuePair<string, Color>> GetSpawnStats()
         {
+            yield break;
+            /*
             var biomes = new HashSet<byte>();
             var spawnRect = Overworld.InstanceSettings.Cell.Bounds;
 
@@ -57,11 +59,6 @@ namespace DwarfCorp.GameStates
                 for (int y = Math.Max(spawnRect.Y, 0); y < Math.Min(spawnRect.Y + spawnRect.Height, Overworld.Height - 1); y++)
                     biomes.Add(Overworld.Map.Map[x, y].Biome);
 
-            if (Overworld.InstanceSettings.Cell.Faction == null)
-                yield return new KeyValuePair<string, Color>("Unclaimed land.", Color.White);
-            else
-                yield return new KeyValuePair<string, Color>(String.Format("Claimed by: {0}", Overworld.InstanceSettings.Cell.Faction.Name), Color.White);
-            
             yield return new KeyValuePair<string, Color>("Biomes: ", Color.White);
             foreach (var biome in biomes)
                 if (Library.GetBiome(biome).HasValue(out var _biome))
@@ -72,6 +69,7 @@ namespace DwarfCorp.GameStates
                     biomeColor.B = (byte)Math.Min(255, biomeColor.B + 80);
                     yield return new KeyValuePair<string, Color>("    " + _biome.Name, biomeColor);
                 }
+                */
         }
               
         public void Generate()
@@ -251,11 +249,7 @@ namespace DwarfCorp.GameStates
                         Overworld.Natives.Add(civ);
                 Politics.Initialize(Overworld);
 
-                Overworld.ColonyCells = new CellSet("World\\colonies");
-                Overworld.InstanceSettings = new InstanceSettings(Overworld.ColonyCells.GetCellAt(16, 0), Overworld);
-
-                SeedCivs();
-                GrowCivs();
+                Overworld.InstanceSettings = new InstanceSettings(Overworld);
 
                 for (int x = 0; x < Overworld.Width; x++)
                 {
@@ -576,34 +570,6 @@ namespace DwarfCorp.GameStates
             return null;
         }
 
-        public void SeedCivs()
-        {
-            foreach (var civ in Overworld.Natives)
-                if (civ.InteractiveFaction && !civ.IsCorporate)
-                {
-                    var randomCell = Overworld.ColonyCells.EnumerateCells().Where(c => c.Faction == null).SelectRandom();
-                    randomCell.Faction = civ;
-                }
-        }
-
-        public void GrowCivs()
-        {
-            while (true)
-            {
-                var cellsChanged = 0;
-                foreach (var cell in Overworld.ColonyCells.EnumerateCells().Where(c => c.Faction == null).OrderBy(c => Random.NextDouble()))
-                {
-                    var neighborCiv = Overworld.ColonyCells.EnumerateManhattanNeighbors(cell).Where(c => c.Faction != null).SelectRandom();
-                    if (neighborCiv != null)
-                    {
-                        cell.Faction = neighborCiv.Faction;
-                        cellsChanged += 1;
-                    }
-                }
-
-                if (cellsChanged == 0)
-                    return;
-            }
-        }
+       
     }
 }

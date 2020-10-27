@@ -22,7 +22,7 @@ namespace DwarfCorp.GameStates
         private Widget ZoomedPreview;
         private Gui.Mesh ZoomedPreviewMesh;
 
-        public LaunchPanel(DwarfGame Game, OverworldGenerator Generator, Overworld Settings, WorldGeneratorState Preview) 
+        public LaunchPanel(DwarfGame Game, OverworldGenerator Generator, Overworld Settings, WorldGeneratorState Preview)
         {
             this.Generator = Generator;
             this.Settings = Settings;
@@ -35,20 +35,8 @@ namespace DwarfCorp.GameStates
 
         private void LaunchNewGame()
         {
-            if (Settings.InstanceSettings == null || Settings.InstanceSettings.Cell == null || Settings.Natives == null)
+            if (Settings.InstanceSettings == null || Settings.Natives == null)
                 return; // Someone crashed here.
-
-            var playerFaction = Settings.Natives.FirstOrDefault(f => f.Name == "Player");
-            var politics = Settings.GetPolitics(Settings.InstanceSettings.Cell.Faction, playerFaction);
-
-            if (politics != null)
-                politics.AddEvent(new PoliticalEvent
-                {
-                    Change = -2.0f,
-                    Description = "You stole our land."
-                });
-
-            Settings.InstanceSettings.Cell.Faction = playerFaction;
 
             GameStateManager.ClearState();
             GameStateManager.PushState(new LoadState(Game, Settings, LoadTypes.UseExistingOverworld));
@@ -57,7 +45,7 @@ namespace DwarfCorp.GameStates
         public override void Construct()
         {
             Padding = new Margin(2, 2, 0, 0);
-            
+
             StartButton = AddChild(new Gui.Widget
             {
                 Text = "Start Game",
@@ -68,13 +56,13 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockBottom,
                 OnClick = (sender, args) =>
                 {
-                    var saveName = DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Settings.Name + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)Settings.InstanceSettings.Origin.X, (int)Settings.InstanceSettings.Origin.Y);
+                    var saveName = DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Settings.Name;
                     var saveGame = SaveGame.LoadMetaFromDirectory(saveName);
                     if (saveGame != null)
                     {
                         DwarfGame.LogSentryBreadcrumb("WorldGenerator", "User is loading a saved game.");
                         Settings.InstanceSettings.LoadType = LoadType.LoadFromFile;
-                        
+
                         GameStateManager.ClearState();
                         GameStateManager.PushState(new LoadState(Game, Settings, LoadTypes.UseExistingOverworld));
                     }
@@ -140,78 +128,67 @@ namespace DwarfCorp.GameStates
 
         public void UpdateCellInfo()
         {
-            if (Settings.InstanceSettings.Origin.X < 0 || Settings.InstanceSettings.Origin.X >= Settings.Width ||
-                Settings.InstanceSettings.Origin.Y < 0 || Settings.InstanceSettings.Origin.Y >= Settings.Height)
+            SaveName = DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Settings.Name;
+            var saveGame = SaveGame.LoadMetaFromDirectory(SaveName);
+
+            if (saveGame != null)
             {
-                StartButton.Hidden = true;
-                CellInfo.Text = "\nSelect a spawn cell to continue";
-                SaveName = "";
+                StartButton.Text = "Load";
+                CellInfo.Clear();
+                CellInfo.Text = "\n" + saveGame.Metadata.DescriptionString;
+                StartButton.Hidden = false;
+                CellInfo.Layout();
             }
             else
             {
-                SaveName = DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Settings.Name + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)Settings.InstanceSettings.Origin.X, (int)Settings.InstanceSettings.Origin.Y);
-                var saveGame = SaveGame.LoadMetaFromDirectory(SaveName);
+                StartButton.Hidden = false;
+                StartButton.Text = "Create";
+                CellInfo.Clear();
+                CellInfo.Text = "";
 
-                if (saveGame != null)
+                var cellInfoText = Root.ConstructWidget(new Widget
                 {
-                    StartButton.Text = "Load";
-                    CellInfo.Clear();
-                    CellInfo.Text = "\n" + saveGame.Metadata.DescriptionString;
-                    StartButton.Hidden = false;
-                    CellInfo.Layout();
-                }
-                else
+                    AutoLayout = AutoLayout.DockFill
+                });
+
+                CellInfo.AddChild(new Gui.Widget
                 {
-                    StartButton.Hidden = false;
-                    StartButton.Text = "Create";
-                    CellInfo.Clear();
-                    CellInfo.Text = "";
-
-                    var cellInfoText = Root.ConstructWidget(new Widget
+                    Text = "Edit Embarkment",
+                    Border = "border-button",
+                    ChangeColorOnHover = true,
+                    TextColor = new Vector4(0, 0, 0, 1),
+                    Font = "font16",
+                    AutoLayout = Gui.AutoLayout.DockTop,
+                    MinimumSize = new Point(0, 32),
+                    OnClick = (sender, args) =>
                     {
-                        AutoLayout = AutoLayout.DockFill
-                    });
-
-                    CellInfo.AddChild(new Gui.Widget
-                    {
-                        Text = "Edit Embarkment",
-                        Border = "border-button",
-                        ChangeColorOnHover = true,
-                        TextColor = new Vector4(0, 0, 0, 1),
-                        Font = "font16",
-                        AutoLayout = Gui.AutoLayout.DockTop,
-                        MinimumSize = new Point(0, 32),
-                        OnClick = (sender, args) =>
+                        DwarfGame.LogSentryBreadcrumb("Game Launcher", "User is modifying embarkment.");
+                        var embarkmentEditor = Root.ConstructWidget(new EmbarkmentEditor(Settings)
                         {
-                            DwarfGame.LogSentryBreadcrumb("Game Launcher", "User is modifying embarkment.");
-                            var embarkmentEditor = Root.ConstructWidget(new EmbarkmentEditor(Settings)
+                            OnClose = (s) =>
                             {
-                                OnClose = (s) =>
-                                {
-                                    SetCreateCellInfoText(cellInfoText);
-                                }
-                            });
+                                SetCreateCellInfoText(cellInfoText);
+                            }
+                        });
 
-                            Root.ShowModalPopup(embarkmentEditor);
-                        }
-                    });
+                        Root.ShowModalPopup(embarkmentEditor);
+                    }
+                });
 
-                    CellInfo.AddChild(cellInfoText);
-                    SetCreateCellInfoText(cellInfoText);
+                CellInfo.AddChild(cellInfoText);
+                SetCreateCellInfoText(cellInfoText);
 
-                    CellInfo.Layout();
-                }
+                CellInfo.Layout();
             }
         }
+        
 
         private void SetCreateCellInfoText(Widget Widget)
         {
             try
-            {
+            { //Todo: Cleanup
                 Widget.Text = String.Format("\nCorporate Funds: {5}\nWorld Size: {0}x{1}\nLand Cost: {2}\nEmbarkment Cost: {3}\nTotal Cost: {4}",
-                    Settings.InstanceSettings.Cell.Bounds.Width * VoxelConstants.ChunkSizeX,
-                    Settings.InstanceSettings.Cell.Bounds.Height * VoxelConstants.ChunkSizeZ,
-                    Settings.InstanceSettings.CalculateLandValue(),
+                    256, 256, 0,
                     Settings.InstanceSettings.InitalEmbarkment.TotalCost(),
                     Settings.InstanceSettings.TotalCreationCost(),
                     Settings.PlayerCorporationFunds);
@@ -225,23 +202,6 @@ namespace DwarfCorp.GameStates
             {
                 Widget.Text = "Something went wrong when calculating the embarkment cost.";
             }
-        }
-
-        public void DrawZoomedPreview()
-        {
-            if (ZoomedPreviewMesh == null)
-            {
-                ZoomedPreviewMesh = Mesh.EmptyMesh();
-                ZoomedPreviewMesh.QuadPart();
-            }
-
-            ZoomedPreviewMesh.EntireMeshAsPart()
-                .ResetQuad()
-                .Scale(-ZoomedPreview.Rect.Width, -ZoomedPreview.Rect.Height)
-                .Translate(ZoomedPreview.Rect.X + ZoomedPreview.Rect.Width, ZoomedPreview.Rect.Y + ZoomedPreview.Rect.Height)
-                .Texture(Preview.Preview.ZoomedPreviewMatrix);
-
-            Root.DrawMesh(ZoomedPreviewMesh, Preview.Preview.TerrainTexture);
         }
     }
 }

@@ -68,7 +68,7 @@ namespace DwarfCorp
 
                 pos = MathFunctions.Clamp(pos, World.ChunkManager.Bounds);
 
-                if (World.Overworld.Map.GetBiomeAt(pos, World.Overworld.InstanceSettings.Origin).HasValue(out var biome))
+                if (World.Overworld.Map.GetBiomeAt(pos).HasValue(out var biome))
                 {
                     if (biome.Fauna.Count == 0)
                     {

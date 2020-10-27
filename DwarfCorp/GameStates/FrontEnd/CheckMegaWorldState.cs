@@ -26,7 +26,7 @@ namespace DwarfCorp.GameStates
                     DwarfGame.LogSentryBreadcrumb("Menu", "User generating a random world.");
 
                     var overworldSettings = Overworld.Create();
-                    overworldSettings.InstanceSettings.Cell = new ColonyCell { Bounds = new Rectangle(0, 0, 64, 64), Faction = overworldSettings.ColonyCells.GetCellAt(0, 0).Faction };
+                    // Todo: Set world size to largest.
                     overworldSettings.InstanceSettings.InitalEmbarkment = new Embarkment(overworldSettings);
                     overworldSettings.InstanceSettings.InitalEmbarkment.Funds = 1000u;
                     foreach (var loadout in Library.EnumerateLoadouts())
