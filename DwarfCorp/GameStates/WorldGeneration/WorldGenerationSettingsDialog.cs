@@ -10,7 +10,6 @@ namespace DwarfCorp.Gui.Widgets
     public class WorldGenerationSettingsDialog : Widget
     {
         public GameStates.Overworld Settings;
-        private Gui.Widget NameEditBox;
 
         public static string[] LevelStrings = new string[]
         {
@@ -21,15 +20,6 @@ namespace DwarfCorp.Gui.Widgets
             "Very High"
         };
 
-        public static Point[] Sizes = new Point[]
-        {
-            new Point(4,4),
-            new Point(8,8),
-            new Point(16,16),
-            new Point(32,32),
-            new Point(64,64)
-        };
-
         public enum DialogResult
         {
             Okay,
@@ -38,7 +28,7 @@ namespace DwarfCorp.Gui.Widgets
 
         public DialogResult Result = DialogResult.Okay;
 
-        public static Widget CreateCombo<T>(Gui.Root Root, String Name, String Tooltip, T[] Values, Action<T> Setter, Func<T> Getter)
+        public static Widget CreateCombo<T>(Gui.Root Root, String Name, String Tooltip, T[] Values, Action<T> Setter, Func<T> Getter, String Font = "font10")
         {
             global::System.Diagnostics.Debug.Assert(Values.Length == LevelStrings.Length);
 
@@ -46,20 +36,24 @@ namespace DwarfCorp.Gui.Widgets
             {
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 30),
-                Tooltip = Tooltip
+                Tooltip = Tooltip,
+                Font = Font
             });
 
             r.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockLeft,
                 MinimumSize = new Point(64, 0),
-                Text = Name
+                Text = Name,
+                Font = Font,
+                TextVerticalAlign = VerticalAlign.Center
             });
 
             var combo = r.AddChild(new Gui.Widgets.ComboBox
             {
                 AutoLayout = AutoLayout.DockFill, 
                 Items = new List<String>(LevelStrings),
+                Font = Font,
                 OnSelectedIndexChanged = (sender) =>
                 {
                     var box = sender as ComboBox;
@@ -117,41 +111,6 @@ namespace DwarfCorp.Gui.Widgets
                 OnLayout = (sender) => sender.Rect.X -= okayButton.Rect.Width + 4
             });
 
-            var topRow = AddChild(new Widget
-            {
-                AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 30)
-            });
-
-            topRow.AddChild(new Widget
-            {
-                AutoLayout = AutoLayout.DockLeft,
-                MinimumSize = new Point(64, 0),
-                Text = "Name"
-            });
-
-            topRow.AddChild(new Widget
-            {
-                AutoLayout = AutoLayout.DockRight,
-                Border = "border-button",
-                Text = "Random",
-                OnClick = (sender, args) =>
-                {
-                    Settings.Name = TextGenerator.GenerateRandom(TextGenerator.GetAtoms(ContentPaths.Text.Templates.worlds));
-                    NameEditBox.Text = Settings.Name;
-                }
-            });
-
-            NameEditBox = topRow.AddChild(new Gui.Widgets.EditableTextField
-            {
-                AutoLayout = AutoLayout.DockFill,
-                Text = Settings.Name,
-                OnTextChange = (sender) =>
-                {
-                    Settings.Name = sender.Text;
-                }
-            });
-
             AddChild(CreateCombo<int>(Root, "Natives", "Number of native civilizations",
                 new int[] { 1, 2, 4, 8, 16 }, (i) => Settings.GenerationSettings.NumCivilizations = i,
                 () => Settings.GenerationSettings.NumCivilizations));
@@ -177,34 +136,8 @@ namespace DwarfCorp.Gui.Widgets
                 new float[] { 0.0f, 0.5f, 1.0f, 1.5f, 2.0f }, (f) => Settings.GenerationSettings.TemperatureScale = f,
                 () => Settings.GenerationSettings.TemperatureScale));
 
-            AddChild(CreateCombo<Point>(Root, "Size", "Size of the world in chunks", Sizes, (p) => Settings.GenerationSettings.SizeInChunks = p, () => Settings.GenerationSettings.SizeInChunks));
-
-            var srow = AddChild(new Widget
-            {
-                AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 30),
-                Tooltip = "Set the world seed"
-            });
-
-            srow.AddChild(new Widget
-            {
-                AutoLayout = AutoLayout.DockLeft,
-                MinimumSize = new Point(64, 0),
-                Text = "Seed"
-            });
-
-            srow.AddChild(new EditableTextField()
-            {
-                AutoLayout = AutoLayout.DockFill,
-                Text = Settings.Seed.ToString(),
-                BeforeTextChange = (sender, args) =>
-                {
-                    if (Int32.TryParse(args.NewText, out int s))
-                        Settings.Seed = s;
-                    else
-                        args.Cancelled = true;
-                }
-            });
+            AddChild(CreateCombo<int>(Root, "Volcanoes", "Number of Volcanoes", new int[] { 0, 1, 3, 5, 8 }, (f) => Settings.GenerationSettings.NumVolcanoes = f,
+                () => Settings.GenerationSettings.NumVolcanoes));
 
             Layout();
         }

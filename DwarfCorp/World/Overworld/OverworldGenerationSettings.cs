@@ -13,6 +13,5 @@ namespace DwarfCorp.GameStates
         public int NumFaults = 3;
         public float SeaLevel = 0.17f;
         public float TemperatureScale = 1.0f;
-        public Point SizeInChunks = new Point(16, 16);
     }
 }

@@ -8,7 +8,7 @@ namespace DwarfCorp
     {
         public void CreateInitialEmbarkment(Generation.ChunkGeneratorSettings Settings)
         {
-            if (GenerateInitialBalloonPort(Renderer.Camera.Position.X, Renderer.Camera.Position.Z, 1, Settings).HasValue(out var port))
+            if (GenerateInitialBalloonPort(Settings.Overworld.SpawnPoint.X, Settings.Overworld.SpawnPoint.Y, 1, Settings).HasValue(out var port))
             {
                 var portBox = port.GetBoundingBox();
 

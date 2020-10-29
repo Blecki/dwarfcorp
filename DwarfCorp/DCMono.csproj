@@ -320,7 +320,6 @@
     <Compile Include="GameStates\DebugStates\GuiTextureDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\TiledCompositeTextureDebugPanel.cs" />
     <Compile Include="GameStates\FrontEnd\ChangeLogState.cs" />
-    <Compile Include="GameStates\FrontEnd\CheckMegaWorldState.cs" />
     <Compile Include="GameStates\FrontEnd\CreditsState.cs" />
     <Compile Include="GameStates\FrontEnd\IntroState.cs" />
     <Compile Include="GameStates\FrontEnd\LoadState.cs" />
@@ -345,10 +344,13 @@
     <Compile Include="GameStates\PaginatedChooserState.cs" />
     <Compile Include="GameStates\Play\CategoryIcon.cs" />
     <Compile Include="GameStates\Play\CategoryMenuBuilder.cs" />
-    <Compile Include="GameStates\Play\CommandBar\CommandIcon.cs" />
+    <Compile Include="GameStates\Play\CommandBar\CommandMenuItem.cs" />
+    <Compile Include="GameStates\Play\CommandBar\CommandMenuItemIcon.cs" />
     <Compile Include="GameStates\Play\CommandBar\CommandPanel.cs" />
-    <Compile Include="GameStates\Play\CommandBar\EnumeratePlayerCommands.cs" />
-    <Compile Include="GameStates\Play\CommandBar\PossiblePlayerCommand.cs" />
+    <Compile Include="GameStates\Play\CommandBar\CommandTray.cs" />
+    <Compile Include="GameStates\Play\CommandBar\EnumerateCommandMenuItems.cs" />
+    <Compile Include="GameStates\Play\CommandBar\HorizontalGridPanel.cs" />
+    <Compile Include="GameStates\Play\CommandBar\ScrollingCommandTray.cs" />
     <Compile Include="GameStates\Play\ContentsPanel.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\ApplicantInfo.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\EconomyState.cs" />
@@ -383,11 +385,9 @@
     <Compile Include="GameStates\Screensaver\DwarfRunner.cs" />
     <Compile Include="GameStates\Screensaver\Terrain2D.cs" />
     <Compile Include="GameStates\WaitState.cs" />
+    <Compile Include="GameStates\WorldGeneration\BiomeChooser.cs" />
     <Compile Include="GameStates\WorldGeneration\ChooseEmployeeTypeDialog.cs" />
     <Compile Include="GameStates\WorldGeneration\EmbarkmentEditor.cs" />
-    <Compile Include="GameStates\WorldGeneration\EmbarkmentResourceColumns.cs" />
-    <Compile Include="GameStates\WorldGeneration\GenerationPanel.cs" />
-    <Compile Include="GameStates\WorldGeneration\LaunchPanel.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldPreviewMesh.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldTextureGenerator.cs" />
     <Compile Include="GameStates\WorldGeneration\SimpleOrbitCamera.cs" />
@@ -526,6 +526,7 @@
     <Compile Include="Gui\Widgets\HorizontalFloatSlider.cs" />
     <Compile Include="Gui\Widgets\HorizontalFloatSliderCombo.cs" />
     <Compile Include="Gui\Widgets\HorizontalMenuTray.cs" />
+    <Compile Include="Gui\Widgets\HorizontalScrollBar.cs" />
     <Compile Include="Gui\Widgets\HorizontalSlider.cs" />
     <Compile Include="Gui\Widgets\IconTray.cs" />
     <Compile Include="Gui\Widgets\InfoTicker.cs" />
@@ -573,6 +574,7 @@
     <Compile Include="Library\RailLibrary.cs" />
     <Compile Include="Library\ResourceLibrary.cs" />
     <Compile Include="Library\VoxelLibrary.cs" />
+    <Compile Include="Library\VoxelModelLibrary.cs" />
     <Compile Include="Library\ZoneLibrary.cs" />
     <Compile Include="LogWriter.cs" />
     <Compile Include="NativeInjector.cs" />
@@ -775,6 +777,23 @@
     <Compile Include="Tools\SparseVoxelTree-Levels.cs" />
     <Compile Include="Tools\SparseVoxelTree.cs" />
     <Compile Include="Tools\Timer.cs" />
+    <Compile Include="VoxelLoader\Chunk.cs" />
+    <Compile Include="VoxelLoader\Chunks\GroupNode.cs" />
+    <Compile Include="VoxelLoader\Chunks\Layer.cs" />
+    <Compile Include="VoxelLoader\Chunks\Main.cs" />
+    <Compile Include="VoxelLoader\Chunks\Material.cs" />
+    <Compile Include="VoxelLoader\Chunks\MaterialOld.cs" />
+    <Compile Include="VoxelLoader\Chunks\Model.cs" />
+    <Compile Include="VoxelLoader\Chunks\Pack.cs" />
+    <Compile Include="VoxelLoader\Chunks\Palette.cs" />
+    <Compile Include="VoxelLoader\Chunks\ShapeNode.cs" />
+    <Compile Include="VoxelLoader\Chunks\Size.cs" />
+    <Compile Include="VoxelLoader\Chunks\TransformNode.cs" />
+    <Compile Include="VoxelLoader\Chunks\Unknown.cs" />
+    <Compile Include="VoxelLoader\Extensions.cs" />
+    <Compile Include="VoxelLoader\GenericsReader.cs" />
+    <Compile Include="VoxelLoader\IVoxLoader.cs" />
+    <Compile Include="VoxelLoader\VoxReader.cs" />
     <Compile Include="World\AutoScaleThread.cs" />
     <Compile Include="World\ChunkGeneration\CastSunlight.cs" />
     <Compile Include="World\ChunkGeneration\ChunkGeneratorSettings.cs" />
@@ -790,6 +809,7 @@
     <Compile Include="World\ChunkGeneration\GenerateWater.cs" />
     <Compile Include="World\ChunkGeneration\GetAverageHeight.cs" />
     <Compile Include="World\ChunkGeneration\Misc.cs" />
+    <Compile Include="World\ChunkGeneration\PlaceVoxelModel.cs" />
     <Compile Include="World\ChunkGeneration\VegetationData.cs" />
     <Compile Include="World\CollisionType.cs" />
     <Compile Include="World\Combat\Alliance.cs" />
@@ -857,7 +877,6 @@
     <Compile Include="World\ModuleManager.cs" />
     <Compile Include="World\MonsterSpawner.cs" />
     <Compile Include="World\Overworld\BiomeData.cs" />
-    <Compile Include="World\Overworld\ColonyCell.cs" />
     <Compile Include="World\Overworld\Embarkment.cs" />
     <Compile Include="World\Overworld\InstanceSettings.cs" />
     <Compile Include="World\Overworld\Overworld.cs" />
@@ -937,6 +956,7 @@
     <Compile Include="World\Voxels\VoxelListPrimitive-Ramps.cs" />
     <Compile Include="World\Voxels\VoxelListPrimitive-TransitionTextures.cs" />
     <Compile Include="World\Voxels\VoxelListPrimitive.cs" />
+    <Compile Include="World\Voxels\VoxelModel.cs" />
     <Compile Include="World\Voxels\VoxelType.cs" />
     <Compile Include="World\Water\LiquidAsset.cs" />
     <Compile Include="World\Water\LiquidType.cs" />
@@ -1007,9 +1027,7 @@
       <Name>YarnSpinner</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="GameStates\Debug\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="steam_api.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

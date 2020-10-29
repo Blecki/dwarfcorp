@@ -16,7 +16,8 @@ namespace DwarfCorp
     {
         public LoadType LoadType = LoadType.CreateNew;
 
-        [JsonIgnore] public Embarkment InitalEmbarkment = null;
+        public Embarkment InitalEmbarkment = null;
+        public List<BiomeData> SelectedBiomes = new List<BiomeData>();
 
         public InstanceSettings()
         {

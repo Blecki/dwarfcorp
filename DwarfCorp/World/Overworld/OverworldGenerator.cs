@@ -231,7 +231,7 @@ namespace DwarfCorp.GameStates
                 LoadingMessage = "Biome";
                 for (int x = 0; x < Overworld.Width; x++)
                     for (int y = 0; y < Overworld.Height; y++)
-                        if (Library.GetBiomeForConditions(Overworld.Map.Map[x, y].Temperature, Overworld.Map.Map[x, y].Rainfall, Overworld.Map.Map[x, y].Height).HasValue(out var biome))
+                        if (GetBiomeForConditions(Overworld, Overworld.Map.Map[x, y].Temperature, Overworld.Map.Map[x, y].Rainfall, Overworld.Map.Map[x, y].Height).HasValue(out var biome))
                             Overworld.Map.Map[x, y].Biome = biome.Biome;
 
                 LoadingMessage = "Volcanoes";
@@ -248,8 +248,6 @@ namespace DwarfCorp.GameStates
                     if (library.GenerateOverworldFaction(Overworld, i, Overworld.GenerationSettings.NumCivilizations).HasValue(out var civ))
                         Overworld.Natives.Add(civ);
                 Politics.Initialize(Overworld);
-
-                Overworld.InstanceSettings = new InstanceSettings(Overworld);
 
                 for (int x = 0; x < Overworld.Width; x++)
                 {
@@ -274,6 +272,25 @@ namespace DwarfCorp.GameStates
                 throw;
             }
 #endif
+        }
+
+        private static MaybeNull<BiomeData> GetBiomeForConditions(Overworld World, float Temperature, float Rainfall, float Elevation)
+        {
+            BiomeData closest = null;
+            var closestDist = float.MaxValue;
+
+            foreach (var biome in World.InstanceSettings.SelectedBiomes)
+            {
+                var dist = Math.Abs(biome.Temp - Temperature) + Math.Abs(biome.Rain - Rainfall) + Math.Abs(biome.Height - Elevation);
+
+                if (dist < closestDist)
+                {
+                    closest = biome;
+                    closestDist = dist;
+                }
+            }
+
+            return closest;
         }
 
         public void CalculateRain(int width, int height)

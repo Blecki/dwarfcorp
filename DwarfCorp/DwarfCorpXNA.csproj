@@ -224,6 +224,7 @@
     <Compile Include="GameStates\Play\TaskListPanel.cs" />
     <Compile Include="GameStates\Play\ZonePanel\DraggedResourceIcon.cs" />
     <Compile Include="GameStates\Play\ZonePanel\ResourceGuiGraphicIcon.cs" />
+    <Compile Include="GameStates\WorldGeneration\BiomeChooser.cs" />
     <Compile Include="GameStates\YarnSpinner\AlwaysTalking.cs" />
     <Compile Include="Graphics\Animation\AnimationDescriptor.cs" />
     <Compile Include="Graphics\Animation\AnimationFrameConverter.cs" />

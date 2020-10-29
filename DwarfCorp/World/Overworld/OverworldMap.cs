@@ -271,6 +271,20 @@ namespace DwarfCorp
             return WorldToOverworld(new Vector2(worldXYZ.X, worldXYZ.Z));
         }
 
+        public IEnumerable<BiomeData> EnumeratePresentBiomes()
+        {
+            var presentBiomes = new List<byte>();
+
+            for (var x = 0; x < Map.GetLength(0); ++x)
+                for (var z = 0; z < Map.GetLength(1); ++z)
+                    if (!presentBiomes.Contains(Map[x, z].Biome))
+                        presentBiomes.Add(Map[x, z].Biome);
+
+            foreach (var biome in presentBiomes)
+                if (Library.GetBiome(biome).HasValue(out var biomeData))
+                    yield return biomeData;
+        }
+
         public MaybeNull<BiomeData> GetBiomeAt(Vector3 worldPos)
         {
             var v = WorldToOverworld(worldPos);

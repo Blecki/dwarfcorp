@@ -38,7 +38,7 @@ namespace DwarfCorp.GameStates
             CreateMenuItem(frame,
                 Library.GetString("new-game"),
                 Library.GetString("new-game-tooltip"),
-                (sender, args) => GameStateManager.PushState(new WorldGeneratorState(Game, Overworld.Create(), WorldGeneratorState.PanelStates.Generate)));
+                (sender, args) => GameStateManager.PushState(new WorldGeneratorState(Game, Overworld.Create(), WorldGeneratorState.WorldType.NewWorld)));
 
             CreateMenuItem(frame, 
                 Library.GetString("load-game"),

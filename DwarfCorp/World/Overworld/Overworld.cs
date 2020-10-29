@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using System;
 using Microsoft.Xna.Framework;
+using System.Linq;
 
 namespace DwarfCorp.GameStates // Todo: Why in GameStates?
 {
@@ -12,18 +13,19 @@ namespace DwarfCorp.GameStates // Todo: Why in GameStates?
         public DwarfBux PlayerCorporationFunds;
         public List<OverworldFaction> Natives;
 
-        public Point Size = new Point(16, 16);
-        public Point3 WorldSizeInChunks { get { return new Point3(Size.X, zLevels, Size.Y); } }
-        public int Width { get { return Size.X * VoxelConstants.OverworldScale; } }
-        public int Height { get { return Size.Y * VoxelConstants.OverworldScale; } }
+        public Point SizeInChunks = new Point(16, 16);
+        public Point3 WorldSizeInChunks { get { return new Point3(SizeInChunks.X, zLevels, SizeInChunks.Y); } }
+        public int Width { get { return SizeInChunks.X * VoxelConstants.OverworldScale; } }
+        public int Height { get { return SizeInChunks.Y * VoxelConstants.OverworldScale; } }
         public string Name = "";
         public Difficulty Difficulty = null;
         public int Seed = 0;
         public int NumCaveLayers = 8;
         public int zLevels = 4; // This is actually y levels but genre convention is to call depth Z.
         public bool DebugWorld = false;
+        public Point SpawnPoint = new Point(128, 128);
 
-        public InstanceSettings InstanceSettings; // These are only saved because it makes the selector default to the last launched branch.
+        [JsonIgnore] public InstanceSettings InstanceSettings;
 
         public String GetInstancePath()
         {
@@ -53,6 +55,7 @@ namespace DwarfCorp.GameStates // Todo: Why in GameStates?
             r.PlayerCorporationFunds = r.Difficulty.StartingFunds;
 
             r.InstanceSettings = new InstanceSettings(r);
+            r.InstanceSettings.SelectedBiomes = Library.EnumerateBiomes().Where(b => !b.Underground).ToList();
 
             return r;
         }

@@ -48,13 +48,20 @@ namespace DwarfCorp.GameStates
                     if (args.MouseButton == 0)
                     {
                         var clickPoint = Camera.ScreenToWorld(new Vector2(args.X, args.Y));
+                        var x = clickPoint.X;
+                        var y = clickPoint.Y;
+                        if (x < 0) x = 0;
+                        if (x > Overworld.Width) x = Overworld.Width;
+                        if (y < 0) y = 0;
+                        if (y > Overworld.Height) y = Overworld.Height;
+                        clickPoint = new Point(x, y);
 
                         Camera.SetGoalFocus(new Vector3((float)clickPoint.X / (float)Overworld.Width, 0, (float)clickPoint.Y / (float)Overworld.Height));
 
                         UpdatePreview = true;
 
-
                         OnCellSelectionMade?.Invoke();
+                        Overworld.SpawnPoint = new Point(clickPoint.X * VoxelConstants.OverworldScale, clickPoint.Y * VoxelConstants.OverworldScale);
                     }
                 },
                 OnMouseMove = (sender, args) => 
@@ -137,10 +144,7 @@ namespace DwarfCorp.GameStates
             var maxWidth = 0;
 
             // Gather entries.
-            var colorKeyEntries = Library.CreateBiomeColors().ToList();
-            foreach (var native in Overworld.Natives.Where(n => n.InteractiveFaction && !n.IsCorporate))
-                colorKeyEntries.Add(new KeyValuePair<string, Color>(native.Name, native.PrimaryColor));
-            colorKeyEntries.Add(new KeyValuePair<string, Color>("Player", Overworld.Natives.FirstOrDefault(n => n.Name == "Player").PrimaryColor));
+            var colorKeyEntries = Library.CreateBiomeColors(Overworld.Map.EnumeratePresentBiomes()).ToList();
 
             // Calculate legend size.
             foreach (var color in colorKeyEntries)
@@ -276,7 +280,7 @@ namespace DwarfCorp.GameStates
                     if (Mesh.BalloonPrimitive == null)
                         Mesh.CreatBalloonMesh(Overworld);
 
-                    var balloonPos = new Vector2(0, 0);
+                    var balloonPos = new Vector2(Overworld.SpawnPoint.X / VoxelConstants.OverworldScale, Overworld.SpawnPoint.Y / VoxelConstants.OverworldScale);
 
                     PreviewEffect.Parameters["Texture"].SetValue(Mesh.IconTexture);
                     PreviewEffect.Parameters["World"].SetValue(Matrix.CreateTranslation((float)balloonPos.X / Overworld.Width, 0.1f, (float)balloonPos.Y / Overworld.Height));

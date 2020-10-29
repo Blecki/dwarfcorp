@@ -118,7 +118,7 @@ namespace DwarfCorp.GameStates
             GameStateManager.ClearState();
             Destroy();
 
-            GameStateManager.PushState(new WorldGeneratorState(Game, World.Overworld, WorldGeneratorState.PanelStates.Launch));
+            GameStateManager.PushState(new WorldGeneratorState(Game, World.Overworld, WorldGeneratorState.WorldType.SavedWorld));
         }
 
         public void AutoSave(Action<bool> callback = null)

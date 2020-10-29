@@ -30,10 +30,14 @@ namespace DwarfCorp
             Console.WriteLine("Loaded Biome Library.");
         }
 
-        public static Dictionary<string, Color> CreateBiomeColors()
+        public static IEnumerable<BiomeData> EnumerateBiomes()
         {
             InitializeBiomes();
+            return Biomes;
+        }
 
+        public static Dictionary<string, Color> CreateBiomeColors(IEnumerable<BiomeData> Biomes)
+        {
             Dictionary<string, Color> toReturn = new Dictionary<string, Color>();
             foreach (var biome in Biomes)
                 toReturn[biome.Name] = biome.MapColor;
@@ -52,27 +56,6 @@ namespace DwarfCorp
             if (Index < 0 || Index >= Biomes.Count)
                 return null;
             return Biomes[Index];
-        }
-
-        public static MaybeNull<BiomeData> GetBiomeForConditions(float Temperature, float Rainfall, float Elevation)
-        {
-            InitializeBiomes();
-
-            BiomeData closest = null;
-            var closestDist = float.MaxValue;
-
-            foreach (var biome in Library.Biomes)
-            {
-                var dist = Math.Abs(biome.Temp - Temperature) + Math.Abs(biome.Rain - Rainfall) + Math.Abs(biome.Height - Elevation);
-
-                if (dist < closestDist)
-                {
-                    closest = biome;
-                    closestDist = dist;
-                }
-            }
-
-            return closest;
         }
 
         public static Dictionary<int, String> GetBiomeTypeMap()

@@ -13,6 +13,9 @@ namespace DwarfCorp.Generation
 
         public static BalloonPortVoxelSets GenerateBalloonPort(ChunkManager chunkManager, float x, float z, int size, ChunkGeneratorSettings Settings)
         {
+            x = MathHelper.Clamp(x, size + 1, (Settings.WorldSizeInChunks.X * VoxelConstants.ChunkSizeX) - size - 1);
+            z = MathHelper.Clamp(z, size + 1, (Settings.WorldSizeInChunks.Z * VoxelConstants.ChunkSizeY) - size - 1);
+
             var centerCoordinate = GlobalVoxelCoordinate.FromVector3(new Vector3(x, (Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY) - 1, z));
 
             var stockpileYPosition = (int)Math.Ceiling(GetAverageHeight(centerCoordinate.X - size, centerCoordinate.Y - size, size * 2 + 1, size * 2 + 1, Settings));

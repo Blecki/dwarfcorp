@@ -62,7 +62,7 @@ namespace DwarfCorp.GameStates
             {
                 var file = NewOverworldFile.Load(path);
                 GameStateManager.PopState();
-                var genState = new WorldGeneratorState(Game, file.CreateSettings(), WorldGeneratorState.PanelStates.Launch);
+                var genState = new WorldGeneratorState(Game, file.CreateSettings(), WorldGeneratorState.WorldType.SavedWorld);
                 GameStateManager.PushState(genState);
             };
         }        
