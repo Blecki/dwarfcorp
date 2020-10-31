@@ -9,7 +9,7 @@ namespace DwarfCorp
 {
     public static partial class Library
     {
-        private static List<GameStates.CategoryIcon> CategoryIcons;
+        private static List<Play.CategoryIcon> CategoryIcons;
         private static bool CategoryIconsInitialized = false;
 
         private static void InitializeCategoryIcons()
@@ -18,18 +18,18 @@ namespace DwarfCorp
                 return;
             CategoryIconsInitialized = true;
 
-            CategoryIcons = FileUtils.LoadJsonListFromMultipleSources<GameStates.CategoryIcon>("category-icons.json", null, (i) => String.Join(".", i.Category));
+            CategoryIcons = FileUtils.LoadJsonListFromMultipleSources<Play.CategoryIcon>("category-icons.json", null, (i) => String.Join(".", i.Category));
 
             Console.WriteLine("Loaded Category Icon Library.");
         }
 
-        public static MaybeNull<GameStates.CategoryIcon> GetCategoryIcon(String Name)
+        public static MaybeNull<Play.CategoryIcon> GetCategoryIcon(String Name)
         {
             InitializeCategoryIcons();
             return CategoryIcons.FirstOrDefault(b => String.Join(".", b.Category) == Name);
         }
 
-        public static IEnumerable<GameStates.CategoryIcon> EnumerateCategoryIcons()
+        public static IEnumerable<Play.CategoryIcon> EnumerateCategoryIcons()
         {
             InitializeCategoryIcons();
             return CategoryIcons;

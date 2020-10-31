@@ -18,7 +18,8 @@
       "AssetPath": "newgui/icons",
       "FrameSize": "32, 32",
       "Frame": "0, 3"
-    }
+    },
+    "EnableHotkeys": false
   },
 
   {

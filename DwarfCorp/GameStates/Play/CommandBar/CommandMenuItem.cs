@@ -22,5 +22,6 @@ namespace DwarfCorp.Play
         public Widget HoverWidget = null;
         public Widget GuiTag = null;
         public ResourceType.GuiGraphic OperationIcon; // Todo: Add category icon.
+        public bool EnableHotkeys = true;
     }
 }

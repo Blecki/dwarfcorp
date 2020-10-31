@@ -15,6 +15,29 @@ namespace DwarfCorp.Play
         public CommandMenuItem Command;
         public bool Enabled = true;
 
+        private bool _drawHotkey = false;
+        public bool DrawHotkey
+        {
+            get { return _drawHotkey; }
+            set
+            {
+                _drawHotkey = value;
+                Invalidate();
+            }
+        }
+
+        private Microsoft.Xna.Framework.Input.Keys _hotkeyValue = 0;
+        public Microsoft.Xna.Framework.Input.Keys HotkeyValue
+        {
+            get { return _hotkeyValue; }
+            set
+            {
+                _hotkeyValue = value;
+                Invalidate();
+            }
+        }
+
+
         private bool _mouseisOver = false;
         public bool MouseIsOver
         {
@@ -104,6 +127,15 @@ namespace DwarfCorp.Play
                         .Scale(32, 32)
                             .Translate(interior.X + (interior.Width - 32) / 2, interior.Y + (interior.Height - 32) / 2)
                         .Texture(Root.GetTileSheet(Command.OldStyleIcon.Sheet).TileMatrix(Command.OldStyleIcon.Tile));
+                }
+
+                if (DrawHotkey)
+                {
+                    var font = Root.GetTileSheet("font10");
+                    var numberSize = new Rectangle();
+                    InputManager.TryConvertKeyboardInput(HotkeyValue, false, out var hotkey);
+                    var stringMesh = r.StringPart(hotkey.ToString(), font, new Vector2(1, 1), out numberSize).Colorize(new Vector4(1, 0, 0, 0.8f));
+                    stringMesh.Translate(Rect.Left + 8 - (numberSize.Width / 2), Rect.Top + 8 - (numberSize.Height / 2));
                 }
 
                 if (!Enabled)

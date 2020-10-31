@@ -156,7 +156,6 @@ namespace DwarfCorp.Gui.Widgets
                 GetIcon(0).Layout();
                 pos.X += ItemSize.X + ItemSpacing.X;
 
-                nextHotkey = AssignHotkey(nextHotkey, GetIcon(0));
 
 
                 // Add back button.
@@ -164,7 +163,6 @@ namespace DwarfCorp.Gui.Widgets
                 GetChild(0).Hidden = false;
                 GetChild(0).Rect = new Rectangle(pos.X, pos.Y, ItemSize.X, ItemSize.Y);
                 pos.X += ItemSize.X + ItemSpacing.X;
-                nextHotkey = AssignHotkey(nextHotkey, GetChild(0));
 
                 (GetChild(1) as FramedIcon).Enabled = false;
 
@@ -175,7 +173,6 @@ namespace DwarfCorp.Gui.Widgets
                     child.Rect = new Rectangle(pos.X, pos.Y, ItemSize.X, ItemSize.Y);
                     pos.X += ItemSize.X + ItemSpacing.X;
                     child.Layout();
-                    nextHotkey = AssignHotkey(nextHotkey, child);
 
                     if (pos.X + ItemSize.X + ItemSpacing.X + ItemSize.X + ItemSpacing.X >= rect.Right)
                     {
@@ -190,7 +187,6 @@ namespace DwarfCorp.Gui.Widgets
                 GetChild(1).Hidden = false;
                 GetChild(1).Rect = new Rectangle(pos.X, Rect.Y, ItemSize.X, ItemSize.Y);
                 GetChild(1).Layout();
-                nextHotkey = AssignHotkey(nextHotkey, GetChild(1));
             }
             else
             {
@@ -202,29 +198,12 @@ namespace DwarfCorp.Gui.Widgets
                     var child = GetIcon(c);
                     child.Hidden = false;
                     child.Rect = new Rectangle(pos.X, pos.Y, ItemSize.X, ItemSize.Y);
-                    nextHotkey = AssignHotkey(nextHotkey, child);
                     pos.X += ItemSize.X + ItemSpacing.X;
                     child.Layout();
                 }
             }
 
             Invalidate();   
-        }
-
-        private int AssignHotkey(int nextHotkey, Widget child)
-        {
-            if (nextHotkey >= 0 && nextHotkey < FlatToolTray.Tray.Hotkeys.Count)
-            {
-                (child as FramedIcon).HotkeyValue = FlatToolTray.Tray.Hotkeys[nextHotkey];
-                (child as FramedIcon).DrawHotkey = HotKeys;
-                ++nextHotkey;
-            }
-            else
-            {
-                (child as FramedIcon).HotkeyValue = 0;
-                (child as FramedIcon).DrawHotkey = false;
-            }
-            return nextHotkey;
         }
 
         protected override Gui.Mesh Redraw()

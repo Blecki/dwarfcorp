@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace DwarfCorp.GameStates // Needs to be in Play
+namespace DwarfCorp.Play
 {
     public class CategoryIcon
     {
@@ -9,5 +9,6 @@ namespace DwarfCorp.GameStates // Needs to be in Play
         public String Label;
         public ResourceType.GuiGraphic DynamicIcon;
         public String Tooltip;
+        public bool EnableHotkeys = true;
     }
 }

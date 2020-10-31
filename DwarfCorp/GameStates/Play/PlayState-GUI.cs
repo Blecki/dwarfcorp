@@ -17,8 +17,6 @@ namespace DwarfCorp.GameStates
         private Widget LevelLabel;
         private Widget SupervisionLabel;
         private Widget StocksLabel;
-        private FlatToolTray.RootTray BottomToolBar;
-        private FlatToolTray.Tray MainMenu;
         private Widget TimeLabel;
         private Widget PausePanel;
         private Gui.Widgets.Minimap.MinimapFrame MinimapFrame;
@@ -46,6 +44,7 @@ namespace DwarfCorp.GameStates
         private Widget CommandsIcon;
         private Dictionary<uint, WorldPopup> LastWorldPopup = new Dictionary<uint, WorldPopup>();
         private List<Widget> TogglePanels = new List<Widget>();
+        private Play.CommandTray CommandTray;
 
 
 
@@ -311,8 +310,6 @@ namespace DwarfCorp.GameStates
 
         public void CreateGUIComponents()
         {
-            DwarfCorp.Gui.Widgets.FlatToolTray.Tray.DetectHotKeys();
-
             BottomBackground = Gui.RootItem.AddChild(new TrayBackground
             {
                 Corners = Scale9Corners.Top,
@@ -948,15 +945,15 @@ namespace DwarfCorp.GameStates
                 CameraTray.Select(1);
             }
 
-#endregion
+            #endregion
 
-#region Setup tool tray
+            #region Setup tool tray
 
-            var toolbar = secondBar.AddChild(new Play.CommandTray
+            CommandTray = secondBar.AddChild(new Play.CommandTray
             {
                 World = this.World,
                 AutoLayout = AutoLayout.DockFill
-            });
+            }) as Play.CommandTray;
 
             ChangeTool("SelectUnits");
 
@@ -978,11 +975,13 @@ namespace DwarfCorp.GameStates
 
             // Now that it's laid out, bring the second bar to the front so commands draw over other shit.
             secondBar.BringToFront();
-            toolbar.BringToFront();
+            CommandTray.BringToFront();
             GodMenu.BringToFront();
 
             BodySelector.LeftReleased += BodySelector_LeftReleased;
             (Tools["SelectUnits"] as DwarfSelectorTool).DrawSelectionRect = b => ContextCommands.Any(c => c.CanBeAppliedTo(b, World));
+
+            CommandTray.RefreshItems();
         }
 
     }

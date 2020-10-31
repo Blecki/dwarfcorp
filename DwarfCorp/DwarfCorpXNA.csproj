@@ -206,8 +206,8 @@
     <Compile Include="GameStates\DebugStates\GuiDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\GuiDebugState.cs" />
     <Compile Include="GameStates\FrontEnd\ChangeLogState.cs" />
-    <Compile Include="GameStates\Play\CategoryIcon.cs" />
-    <Compile Include="GameStates\Play\CategoryMenuBuilder.cs" />
+    <Compile Include="GameStates\Play\CommandBar\CategoryIcon.cs" />
+    <Compile Include="GameStates\Play\CommandBar\Hotkeys.cs" />
     <Compile Include="GameStates\Play\CommandBar\CommandMenuItemIcon.cs" />
     <Compile Include="GameStates\Play\CommandBar\CommandPanel.cs" />
     <Compile Include="GameStates\Play\CommandBar\HorizontalGridPanel.cs" />

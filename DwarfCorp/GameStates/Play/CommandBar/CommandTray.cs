@@ -9,18 +9,6 @@ using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp.Play
 {
-    /* I have an enumeration of all commands - Need to display them in a scrolling try.
-        X Dynamically pick which ones to display based on the category and a level
-        X Display in a row instead of a panel
-        X Remove filter etc
-        X Scroll the row
-        X Clicking a category moves to next lower level
-            X Need return button
-        - Show command popups
-        X Include category icons in list
-        - Need category icons setup for all base crafting commands
-        */
-
     public class MenuNode
     {
         public enum Type
@@ -46,8 +34,7 @@ namespace DwarfCorp.Play
         public Widget PopupFrame;
         public ScrollingCommandTray CommandGrid;
         private Gui.Widgets.HorizontalScrollBar ScrollBar = null;
-
-
+        
         public void PushCategory(String Category)
         {
             ActiveMenu.Add(Category);
@@ -117,13 +104,16 @@ namespace DwarfCorp.Play
                 SetCategoryIcons(child, myPath);
 
             if (Library.GetCategoryIcon(myPath).HasValue(out var presetIcon) && presetIcon.DynamicIcon != null)
+            {
                 Node.Value.MenuItem = new CommandMenuItem
                 {
                     ID = presetIcon.Category,
                     DisplayName = presetIcon.Label,
                     Icon = presetIcon.DynamicIcon,
-                    Tooltip = presetIcon.Tooltip
+                    Tooltip = presetIcon.Tooltip,
+                    EnableHotkeys = presetIcon.EnableHotkeys
                 };
+            }
             else
             {
                 var firstLeaf = GetFirstLeaf(Node);
@@ -133,11 +123,10 @@ namespace DwarfCorp.Play
                         DisplayName = Node.Value.Name,
                         Icon = leaf.MenuItem.Icon,
                         OldStyleIcon = leaf.MenuItem.OldStyleIcon,
-                        Tooltip = Node.Value.Name
+                        Tooltip = Node.Value.Name,
+                        EnableHotkeys = true
                     };
             }
-
-            
         }
 
         private void BuildMenuTree(List<CommandMenuItem> Commands)
@@ -170,7 +159,6 @@ namespace DwarfCorp.Play
                 }
             }
 
-            SetCategoryIcons(MenuRoot, "");
         }
 
         private void VisitTree(NeverNull<MenuNode> Node, Action<MenuNode> Func)
@@ -191,6 +179,7 @@ namespace DwarfCorp.Play
                 if (command.HoverWidget != null) Root.ConstructWidget(command.HoverWidget);
 
             BuildMenuTree(Commands);
+            SetCategoryIcons(MenuRoot, "");
             VisitTree(MenuRoot, (node) =>
             {
                 node.GuiTag = Root.ConstructWidget(new CommandMenuItemIcon
@@ -298,6 +287,21 @@ namespace DwarfCorp.Play
             {
                 foreach (var item in menu.Children)
                     CommandGrid.AddChild(item.GuiTag);
+
+                if (menu.MenuItem.EnableHotkeys)
+                    Hotkeys.AssignHotKeys(menu.Children, (child, key) =>
+                    {
+                        if (child.GuiTag is CommandMenuItemIcon icon)
+                        {
+                            icon.HotkeyValue = key;
+                            icon.DrawHotkey = true;
+                        }
+                    });
+                else
+                    foreach (var child in menu.Children)
+                        if (child.GuiTag is CommandMenuItemIcon icon)
+                            icon.DrawHotkey = false;
+
                 var itemsVisible = CommandGrid.GetItemsVisible();
                 if (itemsVisible >= CommandGrid.Children.Count)
                     ScrollBar.Hidden = true;
@@ -315,6 +319,16 @@ namespace DwarfCorp.Play
                 ActiveMenu = new List<string>();
                 RefreshItems();
             }
+        }
+
+        public void HandleHotkeyPress(Keys Key)
+        {
+            foreach (var child in CommandGrid.Children)
+                if (child is CommandMenuItemIcon icon && icon.DrawHotkey == true && icon.HotkeyValue == Key)
+                {
+                    Root.SafeCall(child.OnClick, child, new InputEventArgs { X = child.Rect.X, Y = child.Rect.Y });
+                    return;
+                }
         }
 
         public void ClearCommandWidget()
