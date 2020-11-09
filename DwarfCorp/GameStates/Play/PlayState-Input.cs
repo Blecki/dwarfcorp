@@ -159,7 +159,10 @@ namespace DwarfCorp.GameStates
                         else if (TogglePanels.Any(p => p.Hidden == false))
                             HideTogglePanels();
                         else if (CommandTray != null && CommandTray.ActiveMenu.Count > 0)
+                        {
                             CommandTray.PopCategory();
+                            CommandTray.RefreshItems();
+                        }
                         else if (CurrentToolMode != "SelectUnits" && PausePanel == null)
                             ChangeTool("SelectUnits");
                         else if (PausePanel != null)

@@ -342,14 +342,14 @@
     <Compile Include="GameStates\ModManagement\Steam\UGCUnsubscribe.cs" />
     <Compile Include="GameStates\ModManagement\Steam\UGCUpload.cs" />
     <Compile Include="GameStates\PaginatedChooserState.cs" />
-    <Compile Include="GameStates\Play\CategoryIcon.cs" />
-    <Compile Include="GameStates\Play\CategoryMenuBuilder.cs" />
+    <Compile Include="GameStates\Play\CommandBar\CategoryIcon.cs" />
     <Compile Include="GameStates\Play\CommandBar\CommandMenuItem.cs" />
     <Compile Include="GameStates\Play\CommandBar\CommandMenuItemIcon.cs" />
     <Compile Include="GameStates\Play\CommandBar\CommandPanel.cs" />
     <Compile Include="GameStates\Play\CommandBar\CommandTray.cs" />
     <Compile Include="GameStates\Play\CommandBar\EnumerateCommandMenuItems.cs" />
     <Compile Include="GameStates\Play\CommandBar\HorizontalGridPanel.cs" />
+    <Compile Include="GameStates\Play\CommandBar\Hotkeys.cs" />
     <Compile Include="GameStates\Play\CommandBar\ScrollingCommandTray.cs" />
     <Compile Include="GameStates\Play\ContentsPanel.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\ApplicantInfo.cs" />

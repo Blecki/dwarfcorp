@@ -75,7 +75,7 @@ namespace DwarfCorp.Gui.Widgets
             AddChild(new Widget
             {
                 Text = Message == null ? "" : "\n" + Message.Text,
-                Font = "font10",
+                Font = "arial10",
                 AutoLayout = AutoLayout.DockTop
             });
 

@@ -57,6 +57,7 @@ namespace DwarfCorp
                 ThreadController.WaitOne();
                 while (PendingUpdates.TryDequeue(out var component))
                     component.ProcessTransformChange();
+                System.Threading.Thread.Yield();
                 (Info as WorkerThread).Signal.Set();
             }
         }

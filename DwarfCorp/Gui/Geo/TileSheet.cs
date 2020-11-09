@@ -81,6 +81,22 @@ namespace DwarfCorp.Gui
             return new Point(TileWidth, TileHeight);
         }
 
+        public int GlyphAdvance(int Index)
+        {
+            return TileWidth;
+        }
+
+        public int GlyphLeftBearing(int Index)
+        {
+            return 0;
+        }
+
+        public int GlyphKerning(int First, int Second)
+        {
+            return 0;
+        }
+
+
         public Point MeasureString(String S)
         {
             return new Point(S.Length * TileWidth, TileHeight);

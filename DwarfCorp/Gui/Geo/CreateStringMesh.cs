@@ -17,6 +17,7 @@ namespace DwarfCorp.Gui
         {
             var pos = Vector2.Zero;
             var maxX = 0.0f;
+            var prevChar = 0;
 
             var r = new MeshPart
             {
@@ -31,6 +32,7 @@ namespace DwarfCorp.Gui
                     if (pos.X > maxX) maxX = pos.X;
                     pos.X = 0;
                     pos.Y += FontSheet.TileHeight * GlyphScale.Y;
+                    prevChar = 0;
                 }
                 else if (c < 32) continue;
                 else
@@ -38,13 +40,16 @@ namespace DwarfCorp.Gui
                     var x = c;
                     if (!FontSheet.HasGlyph(c - ' '))
                         x = '*';
+                    var kerning = FontSheet.GlyphKerning(prevChar, c - ' ');
 
                     var glyphSize = FontSheet.GlyphSize(x - ' ');
                     QuadPart()
                         .Texture(FontSheet.TileMatrix(x - ' '))
                         .Scale(glyphSize.X * GlyphScale.X, glyphSize.Y * GlyphScale.Y)
-                        .Translate(pos.X, pos.Y);
-                    pos.X += glyphSize.X * GlyphScale.X;
+                        .Translate(pos.X - FontSheet.GlyphLeftBearing(c - ' ') + kerning, pos.Y);
+
+                    pos.X += FontSheet.GlyphAdvance(c - ' ') * GlyphScale.X;
+                    prevChar = c - ' ';
                 }
             }
 
@@ -60,6 +65,7 @@ namespace DwarfCorp.Gui
         {
             var pos = Vector2.Zero;
             var maxX = 0.0f;
+            var prevChar = 0;
 
             foreach (var c in String)
             {
@@ -68,6 +74,7 @@ namespace DwarfCorp.Gui
                     if (pos.X > maxX) maxX = pos.X;
                     pos.X = 0;
                     pos.Y += FontSheet.TileHeight * GlyphScale.Y;
+                    prevChar = 0;
                 }
                 else if (c < 32) continue;
                 else
@@ -75,9 +82,11 @@ namespace DwarfCorp.Gui
                     var x = c;
                     if (!FontSheet.HasGlyph(c - ' '))
                         x = '*';
+                    var kerning = FontSheet.GlyphKerning(prevChar, c - ' ');
 
                     var glyphSize = FontSheet.GlyphSize(x - ' ');
-                    pos.X += glyphSize.X * GlyphScale.X;
+                    pos.X += (kerning + FontSheet.GlyphAdvance(x - ' ')) * GlyphScale.X;
+                    prevChar = c - ' ';
                 }
             }
 

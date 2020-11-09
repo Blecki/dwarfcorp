@@ -34,16 +34,19 @@ namespace DwarfCorp.Play
         public Widget PopupFrame;
         public ScrollingCommandTray CommandGrid;
         private Gui.Widgets.HorizontalScrollBar ScrollBar = null;
+        public Rectangle ToolPopupZone = new Rectangle(0, 0, 0, 0);
         
         public void PushCategory(String Category)
         {
             ActiveMenu.Add(Category);
+            ScrollBar.ScrollPosition = 0;
         }
 
         public void PopCategory()
         {
             if (ActiveMenu.Count > 0)
                 ActiveMenu.RemoveAt(ActiveMenu.Count - 1);
+            ClearCommandWidget();
         }
 
         public MaybeNull<MenuNode> FindNode(NeverNull<MenuNode> Node, List<String> Path, int Offset)
@@ -205,17 +208,19 @@ namespace DwarfCorp.Play
                                 var midPoint = sender.Rect.X + (sender.Rect.Width / 2);
 
                                 var popupBorder = Root.GetTileSheet(PopupFrame.Border);
+                                var bestSize = CommandWidget.GetBestSize();
+                                CommandWidget.Rect = new Rectangle(0, 0, bestSize.X, bestSize.Y);
 
                                 PopupFrame.Rect.X = midPoint - (CommandWidget.Rect.Width / 2) - popupBorder.TileWidth;
                                 PopupFrame.Rect.Y = Parent.Rect.Y - CommandWidget.Rect.Height - (popupBorder.TileHeight * 2);
                                 PopupFrame.Rect.Width = CommandWidget.Rect.Width + (popupBorder.TileWidth * 2);
                                 PopupFrame.Rect.Height = CommandWidget.Rect.Height + (popupBorder.TileHeight * 2);
 
-                                if (PopupFrame.Rect.X < Parent.Rect.X)
-                                    PopupFrame.Rect.X = Parent.Rect.X;
+                                if (PopupFrame.Rect.X < ToolPopupZone.X)
+                                    PopupFrame.Rect.X = ToolPopupZone.X;
 
-                                if (PopupFrame.Rect.Right > Root.RenderData.VirtualScreen.Right)
-                                    PopupFrame.Rect.X = Root.RenderData.VirtualScreen.Right - PopupFrame.Rect.Width;
+                                if (PopupFrame.Rect.Right > ToolPopupZone.Right)
+                                    PopupFrame.Rect.X = ToolPopupZone.Right - PopupFrame.Rect.Width;
 
                                 PopupFrame.Layout();
                                 Children.Add(PopupFrame);
@@ -259,7 +264,7 @@ namespace DwarfCorp.Play
 
             PopupFrame = Root.ConstructWidget(new Widget
             {
-                Border = "border-fancy",
+                Border = "border-button",
                 Hidden = true
             });
 
@@ -272,11 +277,14 @@ namespace DwarfCorp.Play
             OnLayout = (sender) => RefreshItems();
 
             Root.RegisterForUpdate(this);
+
             OnUpdate = (sender, time) =>
             {
                 foreach (var item in CommandGrid.Children)
                     if (item is CommandMenuItemIcon icon)
                         icon.UpdateAvailability();
+                if (CommandWidget != null)
+                    Root.SafeCall(CommandWidget.OnUpdate, CommandWidget, time);
             };
         }
 
@@ -304,7 +312,10 @@ namespace DwarfCorp.Play
 
                 var itemsVisible = CommandGrid.GetItemsVisible();
                 if (itemsVisible >= CommandGrid.Children.Count)
+                {
+                    CommandGrid.ScrollPosition = 0;
                     ScrollBar.Hidden = true;
+                }
                 else
                 {
                     ScrollBar.SupressOnScroll = true; // Prevents infinite loop.
@@ -333,8 +344,9 @@ namespace DwarfCorp.Play
 
         public void ClearCommandWidget()
         {
-            PopupFrame.Clear();
+            PopupFrame.Children.Clear();
             PopupFrame.Hidden = true;
+            PopupFrame.Invalidate();
             Children.Remove(PopupFrame);
         }
     }

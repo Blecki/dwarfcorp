@@ -7,11 +7,17 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp.Gui
 {
+    public class Kerning
+    {
+        public String Key;
+        public int Distance;
+    }
+
     public class VariableWidthFont : ITileSheet
     {
         private TileSheet Sheet;
         private List<Rectangle> Glyphs;
-
+        
         public bool RepeatWhenUsedAsBorder { get { return false; } }
 
         public void ResetAtlasBounds(Rectangle MyBounds, Rectangle AtlasBounds)
@@ -121,6 +127,21 @@ namespace DwarfCorp.Gui
             return Index >= 0 && Index < Glyphs.Count ? new Point(Glyphs[Index].Width, Glyphs[Index].Height) : new Point(1, 1);
         }
 
+        public int GlyphAdvance(int Index)
+        {
+            return Index >= 0 && Index < Glyphs.Count ? Glyphs[Index].Width : 1;
+        }
+
+        public int GlyphLeftBearing(int Index)
+        {
+            return 0;
+        }
+
+        public int GlyphKerning(int First, int Second)
+        {
+            return 0;
+        }
+        
         public bool HasGlyph(int Index)
         {
             return Index >= 0 && Index < Glyphs.Count;

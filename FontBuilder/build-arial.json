@@ -1,0 +1,26 @@
+﻿{
+  "SearchForCharacters": true,
+  "SearchExtensions": [ ".json", ".txt" ],
+  "SearchPath": "",
+  "FontName": "Arial",
+  "Ranges": [
+    {
+      "Low": 32,
+      "High": 128
+    }
+  ],
+  "Targets": [
+    {
+      "FontSize": 8,
+      "OutputName": "arial8"
+    },
+    {
+      "FontSize": 20,
+      "OutputName": "arial10"
+    },
+    {
+      "FontSize": 16,
+      "OutputName": "arial16"
+    }
+  ]
+}

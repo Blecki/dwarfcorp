@@ -3,6 +3,7 @@
   "MoneyValue": 15.0,
   "Description": "Carries steam.",
   "Category": "Steam",
+  "Disable": true,
   "Tags": [
     "Steam"
   ],

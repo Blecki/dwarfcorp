@@ -37,6 +37,8 @@ namespace FontBuilder
         public int Y;
         public int Width;
         public int Height;
+        public int AdvanceWidth;
+        public int LeftBearing;
 
         [JsonIgnore]
         public System.Drawing.Bitmap Bitmap;
@@ -46,6 +48,7 @@ namespace FontBuilder
     {
         public Rectangle Dimensions;
         public List<Glyph> Glyphs;
+        public Dictionary<String, int> Kernings;
     }
 
     public struct Rectangle

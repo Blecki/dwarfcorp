@@ -22,6 +22,11 @@
     "Type": "JsonFont"
   },
   {
+    "Name": "arial10",
+    "Texture": "newgui/fonts/envy20",
+    "Type": "JsonFont"
+  },
+  {
     "Name": "font10-outline-numsonly",
     "Texture": "newgui/font-10px-outline-numsonly",
     "Type": "VariableWidthFont"

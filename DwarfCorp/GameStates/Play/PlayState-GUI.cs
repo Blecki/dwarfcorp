@@ -973,6 +973,9 @@ namespace DwarfCorp.GameStates
 
             Gui.RootItem.Layout();
 
+            // Tell the command tray where the tool popup can exist.
+            CommandTray.ToolPopupZone = new Rectangle(MinimapFrame.Rect.Right + 4, 0, Gui.RenderData.VirtualScreen.Width - MinimapFrame.Rect.Right - 8, 0);
+
             // Now that it's laid out, bring the second bar to the front so commands draw over other shit.
             secondBar.BringToFront();
             CommandTray.BringToFront();

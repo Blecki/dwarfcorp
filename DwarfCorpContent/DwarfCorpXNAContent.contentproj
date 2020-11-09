@@ -2152,6 +2152,22 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>troll-animations</Name>
     </None>
+    <None Include="newgui\fonts\arial10_def.font">
+      <Name>arial10_def</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="newgui\fonts\arial16_def.font">
+      <Name>arial16_def</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="newgui\fonts\arial8_def.font">
+      <Name>arial8_def</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="newgui\fonts\envy20_def.font">
+      <Name>envy20_def</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Particles\Definitions\puff.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>puff</Name>
@@ -5224,6 +5240,30 @@
   <ItemGroup>
     <Compile Include="Entities\Plants\hair.png">
       <Name>hair</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="newgui\fonts\arial10.bmp">
+      <Name>arial10</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="newgui\fonts\arial16.bmp">
+      <Name>arial16</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="newgui\fonts\arial8.bmp">
+      <Name>arial8</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="newgui\fonts\envy20.bmp">
+      <Name>envy20</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

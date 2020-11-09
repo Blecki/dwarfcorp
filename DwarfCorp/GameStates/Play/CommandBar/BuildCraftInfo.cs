@@ -15,8 +15,7 @@ namespace DwarfCorp.Gui.Widgets
         private Widget Button;
         private Widget PlaceButton;
         public Action<Widget, InputEventArgs> BuildAction = null;
-        public bool DrawBorder = true;
-
+        
         public Func<bool> CanPlace = null;
         public Action<Widget, InputEventArgs> PlaceAction = null;
 
@@ -27,18 +26,25 @@ namespace DwarfCorp.Gui.Widgets
             public Widget Count;
         }
 
+        public override Point GetBestSize()
+        {
+            return new Point(450, 64 + (Data.Craft_Ingredients.Count * 18) + 18 + 32);
+        }
+
         public override void Construct()
         {
             Border = "";
             Font = "font10";
             TextColor = new Vector4(0, 0, 0, 1);
-            InteriorMargin = new Margin(16, 16, 16, 16);
+            InteriorMargin = new Margin(4, 4, 4, 4);
 
             var titleBar = AddChild(new Widget()
             {
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 34),
             });
+
+            
 
             for (var i = 0; i < Data.Craft_Ingredients.Count; ++i)
             { 
@@ -280,7 +286,7 @@ namespace DwarfCorp.Gui.Widgets
                     PlaceButton.Hidden = false;
             };
 
-            Root.RegisterForUpdate(this);
+            //Root.RegisterForUpdate(this);
             Layout();
         }
 
@@ -318,18 +324,6 @@ namespace DwarfCorp.Gui.Widgets
             for (var i = 0; i < Data.Craft_Ingredients.Count && i < ResourceCombos.Count; ++i)
                 r.Add(new ResourceApparentTypeAmount(ResourceCombos[i].Combo.SelectedItem, Data.Craft_Ingredients[i].Count));
             return r;
-        }
-
-        protected override Mesh Redraw()
-        {
-            if (DrawBorder)
-            {
-                var borderMesh = Mesh.EmptyMesh();
-                borderMesh.Scale9Part(Rect, Root.GetTileSheet("border-fancy"), Scale9Corners.Top | Scale9Corners.Left | Scale9Corners.Right);
-                return Mesh.Merge(borderMesh, base.Redraw()); // This will be removable when we switch to in place drawing for the whole GUI tree.
-            }
-            else
-                return base.Redraw();
         }
     }
 }

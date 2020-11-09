@@ -16,6 +16,8 @@ namespace DwarfCorp.Gui
             public int Y;
             public int Width;
             public int Height;
+            public int AdvanceWidth;
+            public int LeftBearing;
         }
 
         public struct _Rect
@@ -30,10 +32,12 @@ namespace DwarfCorp.Gui
         {
             public _Rect Dimensions;
             public List<Glyph> Glyphs;
+            public Dictionary<String, int> Kernings;
         }
 
         private TileSheet Sheet;
         private Dictionary<char, Glyph> Glyphs = new Dictionary<char, Glyph>();
+        private Dictionary<String, int> Kernings;
 
         public void ResetAtlasBounds(Rectangle MyBounds, Rectangle AtlasBounds)
         {
@@ -54,7 +58,14 @@ namespace DwarfCorp.Gui
 
             var atlas = FileUtils.LoadJsonFromResolvedPath<Atlas>(AssetPath + "_def.font");
             foreach (var glyph in atlas.Glyphs)
+            {
+                if (glyph.AdvanceWidth == 0)
+                    glyph.AdvanceWidth = glyph.Width; // Fix fonts generated without full metadata
                 Glyphs.Add(glyph.Code, glyph);
+            }
+            Kernings = atlas.Kernings;
+            if (Kernings == null)
+                Kernings = new Dictionary<string, int>();
         }
 
         public Matrix TileMatrix(int TileID)
@@ -102,11 +113,29 @@ namespace DwarfCorp.Gui
                 else if (c < 32) continue;
                 else
                 {
-                    lineWidth += HasGlyph((int)(c - ' ')) ? GlyphSize((int)(c - ' ')).X : 0;
+                    lineWidth += HasGlyph((int)(c - ' ')) ? GlyphAdvance((int)(c - ' ')) : 0;
                     if (lineWidth > size.X) size.X = lineWidth;
                 }
             }
             return size;
+        }
+
+        public int GlyphAdvance(int Index)
+        {
+            return Glyphs[(char)(Index + ' ')].AdvanceWidth;
+        }
+
+        public int GlyphLeftBearing(int Index)
+        {
+            return Glyphs[(char)(Index + ' ')].LeftBearing;
+        }
+
+        public int GlyphKerning(int First, int Second)
+        {
+            var s = new String((char)First, (char)Second);
+            if (Kernings.TryGetValue(s, out var k))
+                return k;
+            return 0;
         }
 
         public String WordWrapString(String S, float GlyphWidthScale, float Width, bool wrapWithinWords)
@@ -137,7 +166,7 @@ namespace DwarfCorp.Gui
                         wordLength = 0;
                         foreach (var letter in w.ToString())
                         {
-                            lineLength += (HasGlyph(letter - ' ') ? GlyphSize(letter - ' ').X : 0) * GlyphWidthScale;
+                            lineLength += (HasGlyph(letter - ' ') ? GlyphAdvance(letter - ' ') : 0) * GlyphWidthScale;
                             if (lineLength > Width)
                             {
                                 r.Append("\n-");
@@ -161,6 +190,7 @@ namespace DwarfCorp.Gui
                 }
                 return true;
             };
+
             foreach(var c in S)
             {
                 if (c == '\r' || c == '\t') continue;
@@ -169,7 +199,7 @@ namespace DwarfCorp.Gui
                 {
                     if (w.Length == 0)
                     {
-                        lineLength += Glyphs[' '].Width * GlyphWidthScale;
+                        lineLength += Glyphs[' '].AdvanceWidth * GlyphWidthScale;
                     }
                     else
                     {
@@ -181,14 +211,14 @@ namespace DwarfCorp.Gui
                                 lineLength = 0;
                             }
                             wrapWord();
-                            lineLength = wordLength + Glyphs[' '].Width * GlyphWidthScale;
+                            lineLength = wordLength + Glyphs[' '].AdvanceWidth * GlyphWidthScale;
                             wordLength = 0;
                             w.Clear();
                         }
                         else
                         {
                             r.Append(w);
-                            lineLength += wordLength + Glyphs[' '].Width * GlyphWidthScale;
+                            lineLength += wordLength + Glyphs[' '].AdvanceWidth * GlyphWidthScale;
                             wordLength = 0;
                             w.Clear();
                         }
@@ -201,7 +231,7 @@ namespace DwarfCorp.Gui
                 else
                 {
                     w.Append(c);
-                    wordLength += (HasGlyph(c - ' ') ? GlyphSize(c - ' ').X : 0) * GlyphWidthScale;
+                    wordLength += (HasGlyph(c - ' ') ? GlyphAdvance(c - ' ') : 0) * GlyphWidthScale;
                 }
             }
 

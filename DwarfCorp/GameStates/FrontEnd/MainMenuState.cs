@@ -30,7 +30,7 @@ namespace DwarfCorp.GameStates
                         var file = NewOverworldFile.Load(GameToContinue.FullName);
                         GameStateManager.PopState();
                         var overworldSettings = file.CreateSettings();
-                        overworldSettings.InstanceSettings.LoadType = LoadType.LoadFromFile;
+                        overworldSettings.InstanceSettings = new InstanceSettings() { LoadType = LoadType.LoadFromFile };
                         GameStateManager.PushState(new LoadState(Game, overworldSettings, LoadTypes.UseExistingOverworld));
                     });
             }
@@ -81,6 +81,7 @@ namespace DwarfCorp.GameStates
                     overworldSettings.InstanceSettings.InitalEmbarkment = new Embarkment(overworldSettings);
                     overworldSettings.PlayerCorporationFunds = 1000000u;
                     overworldSettings.DebugWorld = true;
+                    overworldSettings.SizeInChunks = new Point(2, 2);
                     GameStateManager.PushState(new LoadState(Game, overworldSettings, LoadTypes.GenerateOverworld));
                 });
 

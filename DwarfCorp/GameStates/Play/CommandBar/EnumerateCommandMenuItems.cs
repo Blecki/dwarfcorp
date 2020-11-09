@@ -171,7 +171,7 @@ namespace DwarfCorp.Play
                 return replacement;
             };
 
-            foreach (var data in Library.EnumerateResourceTypes().Where(r => r.Craft_Craftable))
+            foreach (var data in Library.EnumerateResourceTypes().Where(r => r.Craft_Craftable && !r.Disable))
                 yield return new CommandMenuItem
                 {
                     ID = new List<string> { "Object", "Craft", data.Category, data.DisplayName },
@@ -187,7 +187,6 @@ namespace DwarfCorp.Play
                     HoverWidget = new BuildCraftInfo
                     {
                         Data = data as ResourceType,
-                        DrawBorder = false,
                         Rect = new Rectangle(0, 0, 450, 200),
                         World = World,
                         OnShown = (sender) => World.Tutorial((data as ResourceType).TypeName),

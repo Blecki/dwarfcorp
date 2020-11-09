@@ -4,10 +4,13 @@ title: Start
 <<show_portrait>>
 <<set_language "Undead">>
 <<always_talk>>
+Hey, you can speed this up by mashing spacebar.
+
 Here's what's new in version XXXXX:
 * Your dwarves no longer have classes. Instead, they come with loadouts, that determine their starting equipment. Any dwarf can do any job.
 * Since there's no managers, you will need to promote dwarves yourself. A manager can't do much, but they increase the motivation of surrounding dwarves.
 * Unmotivated dwarves might just not get anything done.
+* Re-worked world generation.
 [[Give me the long version.|XXXX_Long]]
 [[Tell me about previous versions.|Previous]]
 [[I've heard enough.|End]]
@@ -34,6 +37,8 @@ Okay, so here's what's new in version XXXXX:
 * Some new things make dwarves mad or happy.
 * Rendering improvements.
 * Bug Fixes
+* Re-worked world generation.
+* New command menu.
 [[XXXX_menu]]
 ===
 
@@ -44,7 +49,22 @@ title: XXXX_menu
 [[Tell me about rendering improvements.|XXXX_rendering]]
 [[Tell me about bug fixes.|XXXX_bugs]]
 [[Tell me about monster spawning.|XXXX_spawning]]
+[[Tell me about world generation.|XXXX_world_generation]]
+[[Tell me about the command menu.|XXXX_command_menu]]
 [[That's enough about that.|Menu]]
+
+===
+
+title: XXXX_world_generation
+---
+We got rid of the tiled overworld. Corporate traders will still come and you can use them as a remote stockpile, but there's no overworld. You also have far more control over the world you generate, and you don't need startup funds to get a bigger plot.
+[[Got it.|XXXX_menu]]
+===
+
+title: XXXX_command_menu
+---
+You'll notice a scrollbar on the bottom of the command tray when it doesn't fit, instead of the buttons at either end. It's much easier to use now.
+[[Oh wow!|XXXX_menu]]
 ===
 
 title: XXXX_spawning

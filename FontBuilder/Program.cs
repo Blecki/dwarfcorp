@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Windows.Media;
+using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace FontBuilder
 {
@@ -30,7 +33,7 @@ namespace FontBuilder
             if (options.SearchForCharacters)
                 RecursivelySearchForCharacters(Path.Combine(workingDirectory, options.SearchPath), options, characters);
             characters = characters.Distinct().ToList();
-           
+
             foreach (var target in options.Targets)
             {
                 var glyphs = new List<Glyph>();
@@ -62,13 +65,22 @@ namespace FontBuilder
                 else
                     baseFontGlyphs = new Dictionary<char, System.Drawing.Bitmap>();
 
-                var font = new System.Drawing.Font(options.FontName, target.FontSize);
+                var font = new System.Drawing.Font(options.FontName, target.FontSize, System.Drawing.GraphicsUnit.Pixel);
                 var bitmap = new System.Drawing.Bitmap(1, 1);
                 var graphics = System.Drawing.Graphics.FromImage(bitmap);
 
+                var typeface = new Typeface(options.FontName);
+
+                // create glyphtypeface
+                typeface.TryGetGlyphTypeface(out var glyphTypeface);
 
                 foreach (var c in characters)
                 {
+                    if (c == 'W')
+                    {
+                        var x = 5;
+                    }
+
                     if (baseFontGlyphs.ContainsKey(c)) continue;
 
                     try
@@ -78,10 +90,32 @@ namespace FontBuilder
                         g.Bitmap = new System.Drawing.Bitmap(g.Width, g.Height);
 
                         var glyphGraphics = System.Drawing.Graphics.FromImage(g.Bitmap);
-                        glyphGraphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
+                        glyphGraphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
                         glyphGraphics.DrawString(new string(c, 1), font, System.Drawing.Brushes.White, 0, 0);
                         glyphGraphics.Flush();
                         glyphGraphics.Dispose();
+
+
+                        if (glyphTypeface.CharacterToGlyphMap.TryGetValue(c, out var fontGlyph))
+                        {
+                            glyphTypeface.RightSideBearings.TryGetValue(fontGlyph, out var rightBearing);
+                            if (glyphTypeface.AdvanceWidths.TryGetValue(fontGlyph, out var advanceWidth))
+                                g.AdvanceWidth = (int)Math.Round(advanceWidth * target.FontSize);
+                            else
+                                g.AdvanceWidth = g.Width;
+
+                            if (glyphTypeface.LeftSideBearings.TryGetValue(fontGlyph, out var leftBearing))
+                                g.LeftBearing = (int)Math.Round(leftBearing * target.FontSize);
+                            else
+                                g.LeftBearing = 0;
+                        }
+                        else
+                        {
+                            g.AdvanceWidth = g.Width;
+                            g.LeftBearing = 0;
+                        }
+
+
                         glyphs.Add(g);
 
                         Console.Write(c);
@@ -109,12 +143,22 @@ namespace FontBuilder
                         composeGraphics.DrawImageUnscaled(glyph.Bitmap, new System.Drawing.Point(glyph.X, glyph.Y));
                     composeGraphics.Flush();
 
-                    
+
                     bitmap.Save(Path.Combine(workingDirectory, imagePath));
 
+                    var kernings = GetKerningPairs(font, composeGraphics);
+                    atlas.Kernings = new Dictionary<string, int>();
+                    foreach (var entry in kernings)
+                    {
+                        if (characters.Contains((char)entry.wFirst) && characters.Contains((char)entry.wSecond))
+                            atlas.Kernings.Add(new string((char)entry.wFirst, 1) + new string((char)entry.wSecond, 1), entry.iKernAmount);
+                    }
+
                     var jsonPath = String.IsNullOrEmpty(target.OutputName) ? String.Format("__{0}_def.font", options.FontName) : target.OutputName + "_def.font";
-                    var json = Newtonsoft.Json.JsonConvert.SerializeObject(atlas);
+                    var json = Newtonsoft.Json.JsonConvert.SerializeObject(atlas, Newtonsoft.Json.Formatting.Indented);
                     File.WriteAllText(Path.Combine(workingDirectory, jsonPath), json);
+
+
 
 
                     composeGraphics.Dispose();
@@ -158,5 +202,45 @@ namespace FontBuilder
             foreach (var directory in System.IO.Directory.EnumerateDirectories(Path))
                 RecursivelySearchForCharacters(directory, Options, Into);
         }
+
+        // Shamelessly stolen from
+        //  https://github.com/SudoMike/SudoFont
+        public static KerningPair[] GetKerningPairs(Font font, Graphics graphics)
+        {
+            // Select the HFONT into the HDC.
+            IntPtr hDC = graphics.GetHdc();
+            Font fontClone = (Font)font.Clone();
+            IntPtr hFont = fontClone.ToHfont();
+            SelectObject(hDC, hFont);
+
+            // Find out how many pairs there are and allocate them.
+            int numKerningPairs = GetKerningPairs(hDC.ToInt32(), 0, null);
+            KerningPair[] kerningPairs = new KerningPair[numKerningPairs];
+
+            // Get the pairs.
+            GetKerningPairs(hDC.ToInt32(), kerningPairs.Length, kerningPairs);
+
+            DeleteObject(hFont);
+            graphics.ReleaseHdc();
+
+            return kerningPairs;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct KerningPair
+        {
+            public Int16 wFirst;
+            public Int16 wSecond;
+            public Int32 iKernAmount;
+        }
+
+        [DllImport("Gdi32.dll", EntryPoint = "GetKerningPairs", SetLastError = true)]
+        static extern int GetKerningPairs(int hdc, int nNumPairs, [In, Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)] KerningPair[] kerningPairs);
+
+        [DllImport("Gdi32.dll", CharSet = CharSet.Unicode)]
+        static extern IntPtr SelectObject(IntPtr hdc, IntPtr hgdiobj);
+
+        [DllImport("Gdi32.dll", CharSet = CharSet.Unicode)]
+        static extern bool DeleteObject(IntPtr hdc);
     }
 }
