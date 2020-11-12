@@ -81,12 +81,12 @@ namespace DwarfCorp.Gui
             return new Point(TileWidth, TileHeight);
         }
 
-        public int GlyphAdvance(int Index)
+        public float GlyphAdvance(int Index)
         {
             return TileWidth;
         }
 
-        public int GlyphLeftBearing(int Index)
+        public float GlyphLeftBearing(int Index)
         {
             return 0;
         }

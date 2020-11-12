@@ -37,8 +37,8 @@ namespace FontBuilder
         public int Y;
         public int Width;
         public int Height;
-        public int AdvanceWidth;
-        public int LeftBearing;
+        public float AdvanceWidth;
+        public float LeftBearing;
 
         [JsonIgnore]
         public System.Drawing.Bitmap Bitmap;

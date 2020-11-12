@@ -6,7 +6,7 @@
     "5, 15",
     "6, 15"
   ],
-  "FringePrecedence": 254,
+  "FringePrecedence": 250,
   "BecomeWhenSnowedOn": "snow-grass",
   "MinimapColor": "209,148,116,255"
 }

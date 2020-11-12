@@ -11,7 +11,7 @@ namespace DwarfCorp
         {
             if (!V.IsValid) return false;
             if (V.Coordinate.Y >= World.Renderer.PersistentSettings.MaxViewingLevel) return false;
-            if (V.IsEmpty) return false;
+            if (V.IsEmpty && V.IsExplored) return false;
             if (V.Coordinate.Y == World.Renderer.PersistentSettings.MaxViewingLevel - 1) return true;
             if (V.Coordinate.Y == World.WorldSizeInVoxels.Y - 1) return true;
 

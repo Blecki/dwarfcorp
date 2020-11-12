@@ -420,7 +420,7 @@ namespace DwarfCorp
                 case VoxelSelectionType.SelectPrism:
                     return true;
                 case VoxelSelectionType.SelectFilled:
-                    return !V.IsEmpty || World.PersistentData.Designations.IsVoxelDesignation(V, DesignationType.Put);
+                    return !V.IsEmpty || !V.IsExplored || World.PersistentData.Designations.IsVoxelDesignation(V, DesignationType.Put);
                 case VoxelSelectionType.SelectEmpty:
                     return V.IsEmpty && V.IsExplored;
                 default:
@@ -431,7 +431,7 @@ namespace DwarfCorp
         private bool VoxelPassesRayFilter(VoxelHandle V)
         {
             if (!V.IsValid) return false;
-            return !V.IsEmpty || World.PersistentData.Designations.IsVoxelDesignation(V, DesignationType.Put);
+            return !V.IsEmpty || !V.IsExplored || World.PersistentData.Designations.IsVoxelDesignation(V, DesignationType.Put);
         }
     }
 }

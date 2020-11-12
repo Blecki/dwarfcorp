@@ -22,8 +22,13 @@
     "Type": "JsonFont"
   },
   {
-    "Name": "arial10",
-    "Texture": "newgui/fonts/envy20",
+    "Name": "aliasedFont20",
+    "Texture": "newgui/fonts/aliased20",
+    "Type": "JsonFont"
+  },
+  {
+    "Name": "aliasedFont10",
+    "Texture": "newgui/fonts/aliased10",
     "Type": "JsonFont"
   },
   {

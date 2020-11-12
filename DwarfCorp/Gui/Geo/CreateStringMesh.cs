@@ -46,7 +46,7 @@ namespace DwarfCorp.Gui
                     QuadPart()
                         .Texture(FontSheet.TileMatrix(x - ' '))
                         .Scale(glyphSize.X * GlyphScale.X, glyphSize.Y * GlyphScale.Y)
-                        .Translate(pos.X - FontSheet.GlyphLeftBearing(c - ' ') + kerning, pos.Y);
+                        .Translate(pos.X /*- FontSheet.GlyphLeftBearing(c - ' ')*/ + kerning, pos.Y);
 
                     pos.X += FontSheet.GlyphAdvance(c - ' ') * GlyphScale.X;
                     prevChar = c - ' ';

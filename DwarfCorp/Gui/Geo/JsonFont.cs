@@ -16,8 +16,8 @@ namespace DwarfCorp.Gui
             public int Y;
             public int Width;
             public int Height;
-            public int AdvanceWidth;
-            public int LeftBearing;
+            public float AdvanceWidth;
+            public float LeftBearing;
         }
 
         public struct _Rect
@@ -102,7 +102,7 @@ namespace DwarfCorp.Gui
         public Point MeasureString(String S)
         {
             var size = new Point(0, TileHeight);
-            var lineWidth = 0;
+            float lineWidth = 0;
             foreach (var c in S)
             {
                 if (c == '\n')
@@ -114,18 +114,18 @@ namespace DwarfCorp.Gui
                 else
                 {
                     lineWidth += HasGlyph((int)(c - ' ')) ? GlyphAdvance((int)(c - ' ')) : 0;
-                    if (lineWidth > size.X) size.X = lineWidth;
+                    if (lineWidth > size.X) size.X = (int)Math.Ceiling(lineWidth);
                 }
             }
             return size;
         }
 
-        public int GlyphAdvance(int Index)
+        public float GlyphAdvance(int Index)
         {
             return Glyphs[(char)(Index + ' ')].AdvanceWidth;
         }
 
-        public int GlyphLeftBearing(int Index)
+        public float GlyphLeftBearing(int Index)
         {
             return Glyphs[(char)(Index + ' ')].LeftBearing;
         }

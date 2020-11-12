@@ -47,7 +47,7 @@ namespace DwarfCorp
 
         private Feasibility ComputeFeasible()
         {
-            if (!Voxel.IsValid || Voxel.IsEmpty)
+            if (!Voxel.IsValid || (Voxel.IsEmpty && Voxel.IsExplored))
                 return Feasibility.Infeasible;
 
             if (VoxelHelpers.VoxelIsCompletelySurrounded(Voxel) || VoxelHelpers.VoxelIsSurroundedByWater(Voxel))
@@ -85,7 +85,7 @@ namespace DwarfCorp
 
         public override bool ShouldDelete(Creature agent)
         {
-            return !Voxel.IsValid || Voxel.IsEmpty;
+            return !Voxel.IsValid || (Voxel.IsEmpty && Voxel.IsExplored);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
@@ -96,7 +96,7 @@ namespace DwarfCorp
         public override bool IsComplete(WorldManager World)
         {
             if (!Voxel.IsValid) return false;
-            return Voxel.IsEmpty;
+            return Voxel.IsEmpty && Voxel.IsExplored;
         }
 
         public override void OnEnqueued(WorldManager World)

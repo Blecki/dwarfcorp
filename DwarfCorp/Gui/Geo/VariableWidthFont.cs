@@ -127,12 +127,12 @@ namespace DwarfCorp.Gui
             return Index >= 0 && Index < Glyphs.Count ? new Point(Glyphs[Index].Width, Glyphs[Index].Height) : new Point(1, 1);
         }
 
-        public int GlyphAdvance(int Index)
+        public float GlyphAdvance(int Index)
         {
             return Index >= 0 && Index < Glyphs.Count ? Glyphs[Index].Width : 1;
         }
 
-        public int GlyphLeftBearing(int Index)
+        public float GlyphLeftBearing(int Index)
         {
             return 0;
         }

@@ -100,12 +100,12 @@ namespace FontBuilder
                         {
                             glyphTypeface.RightSideBearings.TryGetValue(fontGlyph, out var rightBearing);
                             if (glyphTypeface.AdvanceWidths.TryGetValue(fontGlyph, out var advanceWidth))
-                                g.AdvanceWidth = (int)Math.Round(advanceWidth * target.FontSize);
+                                g.AdvanceWidth = (float)(advanceWidth * target.FontSize);
                             else
                                 g.AdvanceWidth = g.Width;
 
                             if (glyphTypeface.LeftSideBearings.TryGetValue(fontGlyph, out var leftBearing))
-                                g.LeftBearing = (int)Math.Round(leftBearing * target.FontSize);
+                                g.LeftBearing = (float)(leftBearing * target.FontSize);
                             else
                                 g.LeftBearing = 0;
                         }
@@ -151,7 +151,7 @@ namespace FontBuilder
                     foreach (var entry in kernings)
                     {
                         if (characters.Contains((char)entry.wFirst) && characters.Contains((char)entry.wSecond))
-                            atlas.Kernings.Add(new string((char)entry.wFirst, 1) + new string((char)entry.wSecond, 1), entry.iKernAmount);
+                            atlas.Kernings.Add(new string((char)entry.wFirst, 1) + new string((char)entry.wSecond, 1), entry.iKernAmount * target.FontSize);
                     }
 
                     var jsonPath = String.IsNullOrEmpty(target.OutputName) ? String.Format("__{0}_def.font", options.FontName) : target.OutputName + "_def.font";

@@ -13,8 +13,8 @@ namespace DwarfCorp.Gui
         int TileWidth { get; }
         int TileHeight { get; }
         Point GlyphSize(int TileID);
-        int GlyphAdvance(int TileID); // How far to move to the right after drawing a glyph.
-        int GlyphLeftBearing(int TileID);
+        float GlyphAdvance(int TileID); // How far to move to the right after drawing a glyph.
+        float GlyphLeftBearing(int TileID);
         int GlyphKerning(int FirstID, int SecondID);
         Point MeasureString(String S);
         bool RepeatWhenUsedAsBorder { get; }

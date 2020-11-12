@@ -81,8 +81,16 @@ namespace DwarfCorp
                         }
                     }
 
-                    // Todo: Shitbox - what happens if the player saves while this animation is in progress?? How is the OnComplete restored?
-                    var motion = new TossMotion(1.0f, 2.0f, grabbed.LocalTransform, Location.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f));
+                    // Fail if something is in the way.
+                    foreach (var phys in Creature.World.EnumerateIntersectingRootObjects(Location.GetBoundingBox(), CollisionType.Dynamic).OfType<Physics>())
+                    {
+                        Agent.SetTaskFailureReason("Something was in the way.");
+                        yield return Status.Fail;
+                        yield break;
+                    }
+
+                        // Todo: Shitbox - what happens if the player saves while this animation is in progress?? How is the OnComplete restored?
+                        var motion = new TossMotion(1.0f, 2.0f, grabbed.LocalTransform, Location.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f));
                     if (grabbed.GetRoot().GetComponent<Physics>().HasValue(out var grabbedPhysics))
                         grabbedPhysics.CollideMode = Physics.CollisionMode.None;
                     grabbed.AnimationQueue.Add(motion);

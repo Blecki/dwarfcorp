@@ -2152,6 +2152,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>troll-animations</Name>
     </None>
+    <None Include="newgui\fonts\aliased10_def.font">
+      <Name>aliased10_def</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="newgui\fonts\arial10_def.font">
       <Name>arial10_def</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2164,8 +2168,8 @@
       <Name>arial8_def</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="newgui\fonts\envy20_def.font">
-      <Name>envy20_def</Name>
+    <None Include="newgui\fonts\aliased20_def.font">
+      <Name>aliased20_def</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Particles\Definitions\puff.json">
@@ -5262,8 +5266,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="newgui\fonts\envy20.bmp">
-      <Name>envy20</Name>
+    <Compile Include="newgui\fonts\aliased20.bmp">
+      <Name>aliased20</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="newgui\fonts\aliased10.bmp">
+      <Name>aliased10</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

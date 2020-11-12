@@ -50,7 +50,6 @@ namespace DwarfCorp
                         continue;
 
                     var boundingBox = v.GetBoundingBox().Expand(-0.1f, -0.1f, -0.1f);
-                    var reject = false;
                     if (World.EnumerateIntersectingAnchors(boundingBox).Any())
                         continue;
 

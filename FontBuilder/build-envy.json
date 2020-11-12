@@ -2,7 +2,7 @@
   "SearchForCharacters": true,
   "SearchExtensions": [ ".json", ".txt" ],
   "SearchPath": "",
-  "FontName": "Envy Code R",
+  "FontName": "Bahnschrift SemiCondensed",
   "Ranges": [
     {
       "Low": 32,
@@ -11,12 +11,13 @@
   ],
   "Targets": [
     {
-      "FontSize": 8,
+      "FontSize": 10,
       "OutputName": "envy8"
     },
     {
       "FontSize": 20,
       "OutputName": "envy20"
     }
+
   ]
 }
