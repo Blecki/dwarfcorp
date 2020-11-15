@@ -18,7 +18,7 @@ namespace DwarfCorp.Generation
 
             var centerCoordinate = GlobalVoxelCoordinate.FromVector3(new Vector3(x, (Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY) - 1, z));
 
-            var stockpileYPosition = (int)Math.Ceiling(GetAverageHeight(centerCoordinate.X - size, centerCoordinate.Y - size, size * 2 + 1, size * 2 + 1, Settings));
+            var stockpileYPosition = (int)Math.Ceiling(GetAverageHeight(centerCoordinate.X - size, centerCoordinate.Z - size, size * 2 + 1, size * 2 + 1, Settings));
 
             // Next, create the balloon port by deciding which voxels to fill.
             var balloonPortDesignations = new List<VoxelHandle>();

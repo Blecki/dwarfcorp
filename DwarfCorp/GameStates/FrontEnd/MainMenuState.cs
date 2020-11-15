@@ -67,6 +67,10 @@ namespace DwarfCorp.GameStates
 
                     var overworldSettings = Overworld.Create();
                     overworldSettings.InstanceSettings.InitalEmbarkment = new Embarkment(overworldSettings);
+                    var biomeList = new List<BiomeData>();
+                    for (var x = 0; x < 4; ++x)
+                        biomeList.Add(Library.EnumerateBiomes().Where(b => !b.Underground).SelectRandom());
+                    overworldSettings.InstanceSettings.SelectedBiomes = biomeList.Distinct().ToList();
                     foreach (var loadout in Library.EnumerateLoadouts())
                         overworldSettings.InstanceSettings.InitalEmbarkment.Employees.Add(Applicant.Random(loadout, overworldSettings.Company));
                     GameStateManager.PushState(new LoadState(Game, overworldSettings, LoadTypes.GenerateOverworld));

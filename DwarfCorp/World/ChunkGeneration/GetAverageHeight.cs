@@ -24,7 +24,7 @@ namespace DwarfCorp.Generation
             }
 
             if (numHeight == 0) return 0;
-            return avgHeight / numHeight;
+            return (float)avgHeight / (float)numHeight;
         }
     }
 }

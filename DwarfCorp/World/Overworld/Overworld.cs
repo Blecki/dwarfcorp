@@ -13,7 +13,7 @@ namespace DwarfCorp.GameStates // Todo: Why in GameStates?
         public DwarfBux PlayerCorporationFunds;
         public List<OverworldFaction> Natives;
 
-        public Point SizeInChunks = new Point(16, 16);
+        public Point SizeInChunks = new Point(12, 12);
         public Point3 WorldSizeInChunks { get { return new Point3(SizeInChunks.X, zLevels, SizeInChunks.Y); } }
         public int Width { get { return SizeInChunks.X * VoxelConstants.OverworldScale; } }
         public int Height { get { return SizeInChunks.Y * VoxelConstants.OverworldScale; } }
@@ -55,7 +55,10 @@ namespace DwarfCorp.GameStates // Todo: Why in GameStates?
             r.PlayerCorporationFunds = r.Difficulty.StartingFunds;
 
             r.InstanceSettings = new InstanceSettings(r);
-            r.InstanceSettings.SelectedBiomes = Library.EnumerateBiomes().Where(b => !b.Underground).ToList();
+            var biomeList = new List<BiomeData>();
+            for (var x = 0; x < 5; ++x)
+                biomeList.Add(Library.EnumerateBiomes().Where(b => !b.Underground).SelectRandom());
+            r.InstanceSettings.SelectedBiomes = biomeList.Distinct().ToList();
 
             return r;
         }
