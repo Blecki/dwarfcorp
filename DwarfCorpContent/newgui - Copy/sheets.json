@@ -1,0 +1,348 @@
+[
+  {
+    "Name": "monofont",
+    "Texture": "newgui/small-font",
+    "TileWidth": 6,
+    "TileHeight": 8
+  },
+  {
+    "Name": "large-mono-font",
+    "Texture": "newgui/large-mono-font",
+    "TileWidth": 16,
+    "TileHeight": 16
+  },
+  {
+    "Name": "font8",
+    "Texture": "newgui/fonts/font8",
+    "Type": "JsonFont"
+  },
+  {
+    "Name": "font10",
+    "Texture": "newgui/fonts/font10",
+    "Type": "JsonFont"
+  },
+  {
+    "Name": "aliasedFont20",
+    "Texture": "newgui/fonts/aliased20",
+    "Type": "JsonFont"
+  },
+  {
+    "Name": "aliasedFont10",
+    "Texture": "newgui/fonts/aliased10",
+    "Type": "JsonFont"
+  },
+  {
+    "Name": "font10-outline-numsonly",
+    "Texture": "newgui/font-10px-outline-numsonly",
+    "Type": "VariableWidthFont"
+  },
+  {
+    "Name": "14pt-numbers",
+    "Texture": "newgui/14pt-numbers",
+    "TileWidth": 12,
+    "TileHeight": 18
+  },
+  {
+    "Name": "balance",
+    "Texture": "newgui/balance",
+    "TileWidth": 64,
+    "TileHeight": 48
+  },
+  {
+    "Name": "font16",
+    "Texture": "newgui/fonts/font16",
+    "Type": "JsonFont"
+  },
+  {
+    "Name": "font18-outline",
+    "Texture": "newgui/fonts/font18-outline",
+    "Type": "JsonFont"
+  },
+  {
+    "Name": "mouse",
+    "Texture": "newgui/pointers",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "basic",
+    "Texture": "newgui/basic",
+    "TileWidth": 8,
+    "TileHeight": 8
+  },
+  {
+    "Name": "error",
+    "Texture": "newgui/error",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "rail",
+    "Texture": "RailIcons",
+    "TileWidth": 64,
+    "TileHeight": 64,
+    "Type": "Generated"
+  },
+  {
+    "Name": "indicator-circle",
+    "Texture": "newgui/indicator-circle",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "border-one",
+    "Texture": "newgui/border",
+    "TileWidth": 16,
+    "TileHeight": 16
+  },
+  {
+    "Name": "border-fancy",
+    "Texture": "newgui/fancy-border",
+    "TileWidth": 30,
+    "TileHeight": 30
+  },
+  {
+    "Name": "border-dark",
+    "Texture": "newgui/dark-border",
+    "TileWidth": 11,
+    "TileHeight": 11
+  },
+  {
+    "Name": "border-hilite",
+    "Texture": "newgui/hilite-border",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "border-button",
+    "Texture": "newgui/button",
+    "TileWidth": 8,
+    "TileHeight": 8
+  },
+  {
+    "Name": "checkbox",
+    "Texture": "newgui/checkbox",
+    "TileWidth": 18,
+    "TileHeight": 18
+  },
+  {
+    "Name": "radiobutton",
+    "Texture": "newgui/radiobutton",
+    "TileWidth": 18,
+    "TileHeight": 18
+  },
+  {
+    "Name": "border-thin",
+    "Texture": "newgui/thin",
+    "TileWidth": 2,
+    "TileHeight": 2
+  },
+  {
+    "Name": "brown-frame",
+    "Texture": "newgui/brown-frame",
+    "TileWidth": 8,
+    "TileHeight": 8
+  },
+  {
+    "Name": "border-thin-transparent",
+    "Texture": "newgui/thin-transparent",
+    "TileWidth": 2,
+    "TileHeight": 2
+  },
+  {
+    "Name": "vertical-scrollbar",
+    "Texture": "newgui/vertical-scrollbar",
+    "TileWidth": 24,
+    "TileHeight": 24
+  },
+  {
+    "Name": "horizontal-scrollbar",
+    "Texture": "newgui/horizontal-scrollbar",
+    "TileWidth": 24,
+    "TileHeight": 24
+  },
+  {
+    "Name": "horizontal-slider",
+    "Texture": "newgui/slider",
+    "TileWidth": 24,
+    "TileHeight": 24
+  },
+  {
+    "Name": "combo-down",
+    "Texture": "newgui/down",
+    "TileWidth": 16,
+    "TileHeight": 16
+  },
+  {
+    "Name": "company-logo-background",
+    "Texture": "newgui/logo-bg",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "company-logo-symbol",
+    "Texture": "newgui/logo-fg",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "icon-frame",
+    "Texture": "newgui/icon-frame",
+    "TileWidth": 40,
+    "TileHeight": 40
+  },
+  {
+    "Name": "tool-icons",
+    "Texture": "newgui/icons",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "resources",
+    "Texture": "newgui/resources",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "dwarves",
+    "Texture": "newgui/dwarves",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+
+  {
+    "Name": "equipment",
+    "Texture": "newgui/equipment",
+    "TileWidth": 64,
+    "TileHeight": 64
+  },
+  {
+    "Name": "equipment_sheet",
+    "Texture": "newgui/equipment_sheet",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "selected-slot",
+    "Texture": "newgui/selected-slot",
+    "TileWidth": 16,
+    "TileHeight": 16
+  },
+  {
+    "Name": "tray-border",
+    "Texture": "newgui/tray-border",
+    "TileWidth": 32,
+    "TileHeight": 32,
+    "RepeatWhenUsedAsBorder": true
+  },
+  {
+    "Name": "tray-border-transparent",
+    "Texture": "newgui/tray-border-transparent",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "round-buttons",
+    "Texture": "newgui/round-buttons",
+    "TileWidth": 16,
+    "TileHeight": 16
+  },
+  {
+    "Name": "speech-bubble",
+    "Texture": "newgui/speech-bubble",
+    "TileWidth": 30,
+    "TileHeight": 30
+  },
+  {
+    "Name": "speech-bubble-reverse",
+    "Texture": "newgui/speech-bubble-reverse",
+    "TileWidth": 30,
+    "TileHeight": 30
+  },
+  {
+    "Name": "dwarf",
+    "Texture": "newgui/diplo-dorf",
+    "TileWidth": 64,
+    "TileHeight": 64
+  },
+  {
+    "Name": "GUI\\diplo-dorf",
+    "Texture": "GUI/diplo-dorf",
+    "TileWidth": 64,
+    "TileHeight": 64
+  },
+  {
+    "Name": "GUI\\diplo-elf",
+    "Texture": "GUI/diplo-elf",
+    "TileWidth": 64,
+    "TileHeight": 64
+  },
+  {
+    "Name": "GUI\\diplo-goblin",
+    "Texture": "GUI/diplo-goblin",
+    "TileWidth": 64,
+    "TileHeight": 64
+  },
+  {
+    "Name": "GUI\\diplo-moleman",
+    "Texture": "GUI/diplo-moleman",
+    "TileWidth": 64,
+    "TileHeight": 64
+  },
+  {
+    "Name": "GUI\\diplo-necro",
+    "Texture": "GUI/diplo-necro",
+    "TileWidth": 64,
+    "TileHeight": 64
+  },
+  {
+    "Name": "coins",
+    "Texture": "Entities/DwarfObjects/coinpiles",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "voxels",
+    "Texture": "Voxels",
+    "TileWidth": 32,
+    "TileHeight": 32,
+    "Type": "Generated"
+  },
+  {
+    "Name": "rooms",
+    "Texture": "newgui/room_icons",
+    "TileWidth": 16,
+    "TileHeight": 16
+  },
+  {
+    "Name": "progress-sides",
+    "Texture": "newgui/progress-sides",
+    "TileWidth": 16,
+    "TileHeight": 32
+  },
+  {
+    "Name": "progress-middle",
+    "Texture": "newgui/progress-middle",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "progress-fill",
+    "Texture": "newgui/progress-fill",
+    "TileWidth": 8,
+    "TileHeight": 32
+  },
+  {
+    "Name": "map-icons",
+    "Texture": "GUI/map_icons",
+    "TileWidth": 16,
+    "TileHeight": 16
+  },
+  {
+    "Name": "hand",
+    "Texture": "newgui/hand",
+    "TileWidth": 32,
+    "TileHeight": 32
+  }
+]
+

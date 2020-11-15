@@ -19,7 +19,7 @@ namespace DwarfCorp.Gui.Widgets.Minimap
 
         public override Point GetBestSize()
         {
-            return new Point(Renderer.RenderWidth + 16, Renderer.RenderHeight + 12);
+            return new Point(Renderer.RenderWidth + 20, Renderer.RenderHeight + 20);
         }
 
         public override void Construct()
@@ -87,7 +87,7 @@ namespace DwarfCorp.Gui.Widgets.Minimap
         protected override Gui.Mesh Redraw()
         {
             var mesh = Mesh.EmptyMesh();
-            mesh.Scale9Part(Rect, Root.GetTileSheet("tray-border-transparent"), Scale9Corners.Top | Scale9Corners.Right);
+            mesh.Scale9Part(Rect, Root.GetTileSheet("border-fancy-transparent"), Scale9Corners.All);
             return mesh;
         }
     }

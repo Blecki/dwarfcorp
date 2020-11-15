@@ -313,15 +313,15 @@ namespace DwarfCorp.GameStates
             BottomBackground = Gui.RootItem.AddChild(new TrayBackground
             {
                 Corners = Scale9Corners.Top,
-                MinimumSize = new Point(0, 112),
+                MinimumSize = new Point(0, 118),
                 AutoLayout = AutoLayout.DockBottom
             });
 
             BottomBar = BottomBackground.AddChild(new Gui.Widget
             {
-                Transparent = false,
-                Background = new TileReference("basic", 0),
-                BackgroundColor = new Vector4(0, 0, 0, 0.5f),
+                Transparent = true,
+                //Background = new TileReference("basic", 0),
+                //BackgroundColor = new Vector4(0, 0, 0, 0.5f),
                 Padding = new Margin(0, 0, 2, 2),
                 MinimumSize = new Point(0, 42),
                 AutoLayout = AutoLayout.DockBottom
@@ -330,7 +330,7 @@ namespace DwarfCorp.GameStates
             var secondBar = BottomBackground.AddChild(new Widget
             {
                 Transparent = true,
-                MinimumSize = new Point(0, 64),
+                MinimumSize = new Point(0, 70),
                 AutoLayout = AutoLayout.DockBottom,
                 InteriorMargin = new Margin(2, 0, 0, 0),
                 Padding = new Margin(0, 0, 2, 2)
@@ -464,7 +464,6 @@ namespace DwarfCorp.GameStates
                 Tag = "minimap",
                 Renderer = MinimapRenderer,
                 AutoLayout = AutoLayout.FloatBottomLeft,
-                MinimumSize = new Point(208, 204),
                 OnLayout = (sender) => sender.Rect.Y += 4
             }) as Gui.Widgets.Minimap.MinimapFrame;
 
@@ -516,6 +515,25 @@ namespace DwarfCorp.GameStates
                 World = this.World
             });
 
+            var eventPanel = Gui.RootItem.AddChild(new EventLogViewer()
+            {
+                Border = "border-fancy",
+                AutoLayout = AutoLayout.FloatBottomLeft,
+                MinimumSize = new Point(400, Math.Min(600, Gui.RenderData.VirtualScreen.Height - 100)),
+                Log = World.EventLog,
+                Now = World.Time.CurrentDate,
+                Hidden = true
+            });
+
+            var economyPanel = Gui.RootItem.AddChild(new EconomyPanel()
+            {
+                Border = "border-fancy",
+                AutoLayout = AutoLayout.FloatBottomLeft,
+                MinimumSize = new Point(400, Math.Min(600, Gui.RenderData.VirtualScreen.Height - 100)),
+                World = World,
+                Hidden = true
+            });
+
             TogglePanels = new List<Widget>
             {
                 MinimapFrame,
@@ -524,6 +542,8 @@ namespace DwarfCorp.GameStates
                 taskList,
                 roomList,
                 commandPanel,
+                eventPanel,
+                economyPanel
             };
 
             MinimapIcon = new FramedIcon
@@ -646,6 +666,56 @@ namespace DwarfCorp.GameStates
                 }
             };
 
+            var eventsIcon = new FramedIcon
+            {
+                Icon = new Gui.TileReference("tool-icons", 21),
+                OnClick = (sender, args) =>
+                {
+                    if (eventPanel.Hidden)
+                    {
+                        HideTogglePanels();
+                        eventPanel.Hidden = false;
+                    }
+                    else
+                        eventPanel.Hidden = true;
+                },
+                Text = Library.GetString("events-label"),
+                TextVerticalAlign = VerticalAlign.Below,
+                Tooltip = Library.GetString("events-tooltip")
+            };
+
+            EconomyIcon = new Gui.Widgets.FramedIcon
+            {
+                Tag = "economy",
+                Icon = new Gui.TileReference("tool-icons", 10),
+                OnClick = (sender, args) =>
+                {
+                    if (economyPanel.Hidden)
+                    {
+                        HideTogglePanels();
+                        economyPanel.Hidden = false;
+                        World.Tutorial("economy");
+                    }
+                    else
+                        economyPanel.Hidden = true;
+                },
+                Tooltip = Library.GetString("economy-tooltip"),
+                Text = Library.GetString("economy-label"),
+                TextVerticalAlign = VerticalAlign.Below
+            };
+
+            var diplomacyIcon = new Gui.Widgets.FramedIcon()
+            {
+                Icon = new Gui.TileReference("tool-icons", 36),
+                OnClick = (sender, args) =>
+                {
+                    GameStateManager.PushState(new PlayFactionViewState(GameState.Game, World));
+                },
+                Text = Library.GetString("diplomacy-label"),
+                TextVerticalAlign = VerticalAlign.Below,
+                Tooltip = Library.GetString("diplomacy-tooltip")
+            };
+
             var bottomLeft = secondBar.AddChild(new Gui.Widgets.IconTray
             {
                 Corners = 0,
@@ -660,7 +730,10 @@ namespace DwarfCorp.GameStates
                             MarksIcon,
                             TasksIcon,
                             ZonesIcon,
-                            CommandsIcon
+                            CommandsIcon,
+                            eventsIcon,
+                            EconomyIcon,
+                            diplomacyIcon
                         },
             });
 
@@ -675,16 +748,6 @@ namespace DwarfCorp.GameStates
 
 #region Setup right tray
 
-            EconomyIcon = new Gui.Widgets.FramedIcon
-            {
-                Tag = "economy",
-                Icon = new Gui.TileReference("tool-icons", 10),
-                OnClick = (sender, args) => GameStateManager.PushState(new EconomyState(Game, World)),
-                Tooltip = Library.GetString("economy-tooltip"),
-                Text = Library.GetString("economy-label"),
-                TextVerticalAlign = VerticalAlign.Below
-            };
-
             var topRightTray = secondBar.AddChild(new Gui.Widgets.IconTray
             {
                 Corners = 0,//Gui.Scale9Corners.Top,
@@ -694,30 +757,6 @@ namespace DwarfCorp.GameStates
                 AlwaysPerfectSize = true,
                 ItemSource = new Gui.Widget[]
                         {
-                            new Gui.Widgets.FramedIcon()
-                            {
-                                 Icon = new Gui.TileReference("tool-icons", 21),
-                                OnClick = (sender, args) =>
-                                {
-                                    GameStateManager.PushState(new EventLogState(Game, World.EventLog, World.Time.CurrentDate));
-                                },
-                                Text = Library.GetString("events-label"),
-                                TextVerticalAlign = VerticalAlign.Below,
-                                Tooltip = Library.GetString("events-tooltip")
-                            },
-                            new Gui.Widgets.FramedIcon()
-                            {
-                                 Icon = new Gui.TileReference("tool-icons", 36),
-                                OnClick = (sender, args) =>
-                                {
-                                    GameStateManager.PushState(new PlayFactionViewState(GameState.Game, World));
-                                },
-                                Text =  Library.GetString("diplomacy-label"),
-                                TextVerticalAlign = VerticalAlign.Below,
-                                Tooltip = Library.GetString("diplomacy-tooltip")
-                            },
-                            EconomyIcon,
-
                             new Gui.Widgets.FramedIcon
                             {
                                 Icon = new Gui.TileReference("tool-icons", 12),

@@ -102,6 +102,12 @@
     "TileHeight": 30
   },
   {
+    "Name": "border-fancy-transparent",
+    "Texture": "newgui/fancy-border-transparent",
+    "TileWidth": 30,
+    "TileHeight": 30
+  },
+  {
     "Name": "border-dark",
     "Texture": "newgui/dark-border",
     "TileWidth": 11,

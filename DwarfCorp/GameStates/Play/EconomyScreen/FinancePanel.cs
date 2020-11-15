@@ -83,26 +83,33 @@ namespace DwarfCorp.GameStates
                 AddRow("Average dwarf happiness:", String.Format("{0}%", (int)(float)Faction.Minions.Sum(m => m.Stats.Happiness.Percentage) / Math.Max(Faction.Minions.Count, 1)));
                 InfoWidget.Layout();
             };
+
             var selector = AddChild(new Gui.Widgets.ComboBox()
             {
                 Items = Faction.World.Stats.GameStats.Keys.ToList(),
                 AutoLayout = AutoLayout.DockTop
             }) as Gui.Widgets.ComboBox;
+
             var graph = AddChild(new Gui.Widgets.Graph() { AutoLayout = AutoLayout.DockFill,  GraphStyle = Gui.Widgets.Graph.Style.LineChart }) as Gui.Widgets.Graph;
             graph.SetFont("font10");
-            graph.Values = Faction.World.Stats.GameStats["Money"].Values.Select(v => v.Value).ToList();
+            if (Faction.World.Stats.GameStats.ContainsKey("Money"))
+                graph.Values = Faction.World.Stats.GameStats["Money"].Values.Select(v => v.Value).ToList();
 
             selector.OnSelectedIndexChanged = (sender) =>
             {
-                var values = Faction.World.Stats.GameStats[selector.SelectedItem].Values;
-                graph.Values = Faction.World.Stats.GameStats[selector.SelectedItem].Values.Select(v => v.Value).ToList();
-                if (values.Count > 0)
+                if (!String.IsNullOrEmpty(selector.SelectedItem) && Faction.World.Stats.GameStats.ContainsKey(selector.SelectedItem))
                 {
-                    graph.XLabelMin = "\n" + TextGenerator.AgeToString(Faction.World.Time.CurrentDate - values.First().Date);
-                    graph.XLabelMax = "\nNow";
+                    var values = Faction.World.Stats.GameStats[selector.SelectedItem].Values;
+                    graph.Values = Faction.World.Stats.GameStats[selector.SelectedItem].Values.Select(v => v.Value).ToList();
+                    if (values.Count > 0)
+                    {
+                        graph.XLabelMin = "\n" + TextGenerator.AgeToString(Faction.World.Time.CurrentDate - values.First().Date);
+                        graph.XLabelMax = "\nNow";
+                    }
                 }
                 graph.Invalidate();
             };
+
             selector.OnSelectedIndexChanged.Invoke(selector);
             Layout();
             Root.RegisterForUpdate(this);

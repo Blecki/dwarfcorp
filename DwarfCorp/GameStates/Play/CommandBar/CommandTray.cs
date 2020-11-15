@@ -173,7 +173,7 @@ namespace DwarfCorp.Play
 
         public override void Construct()
         {
-            Padding = new Margin(2, 2, 2, 2);
+            Padding = new Margin(0, 2, 2, 2);
 
             base.Construct();
 
@@ -264,7 +264,7 @@ namespace DwarfCorp.Play
 
             PopupFrame = Root.ConstructWidget(new Widget
             {
-                Border = "border-button",
+                Border = "border-one",
                 Hidden = true
             });
 

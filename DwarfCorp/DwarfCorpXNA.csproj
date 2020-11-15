@@ -217,6 +217,7 @@
     <Compile Include="GameStates\Play\CommandBar\EnumerateCommandMenuItems.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\PolicyPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\LevelUpPanel.cs" />
+    <Compile Include="GameStates\Play\EconomyPanel.cs" />
     <Compile Include="GameStates\Play\PlayState-Tools.cs" />
     <Compile Include="GameStates\Play\PlayState-Render.cs" />
     <Compile Include="GameStates\Play\PlayState-Input.cs" />
@@ -333,8 +334,7 @@
     <Compile Include="Entities\Fixtures\CandyTable.cs" />
     <Compile Include="Entities\Plants\CandyCane.cs" />
     <Compile Include="EventLog.cs" />
-    <Compile Include="EventLogViewer.cs" />
-    <Compile Include="EventLogState.cs" />
+    <Compile Include="GameStates\Play\EventLogViewer.cs" />
     <Compile Include="Entities\Animals\BatAI.cs" />
     <Compile Include="Entities\Animals\BrownRabbit.cs" />
     <Compile Include="Entities\Animals\Fowl.cs" />

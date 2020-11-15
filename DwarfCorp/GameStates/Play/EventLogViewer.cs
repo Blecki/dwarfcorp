@@ -1,19 +1,7 @@
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Threading;
-using DwarfCorp.GameStates;
 using DwarfCorp.Gui;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Linq;
-using Newtonsoft.Json;
-#if !XNA_BUILD && !GEMMONO
-using SDL2;
-#endif
-using SharpRaven;
-using SharpRaven.Data;
-using System.Collections.Generic;
 
 namespace DwarfCorp
 {
@@ -21,10 +9,9 @@ namespace DwarfCorp
     {
         public EventLog Log { get; set; }
         public DateTime Now { get; set; }
-        public Widget CloseButton { get; set; }
+
         public override void Construct()
         {
-            Border = "border-fancy";
             AddChild(new Gui.Widget()
             {
                 Text = "Events",
@@ -32,16 +19,17 @@ namespace DwarfCorp
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(256, 32)
             });
+
             Gui.Widgets.WidgetListView listView = AddChild(new Gui.Widgets.WidgetListView()
             {
-                AutoLayout = AutoLayout.DockTop,
+                AutoLayout = AutoLayout.DockFill,
                 SelectedItemForegroundColor = Color.Black.ToVector4(),
                 SelectedItemBackgroundColor = new Vector4(0, 0, 0, 0),
                 ItemBackgroundColor2 = new Vector4(0, 0, 0, 0.1f),
                 ItemBackgroundColor1 = new Vector4(0, 0, 0, 0),
-                ItemHeight = 32,
-                MinimumSize = new Point(0, 3 * Root.RenderData.VirtualScreen.Height / 4)
+                ItemHeight = 32
             }) as Gui.Widgets.WidgetListView;
+
             foreach (var logged in Log.GetEntries().Reverse())
             {
                 listView.AddItem(Root.ConstructWidget(new Widget()
@@ -56,14 +44,7 @@ namespace DwarfCorp
                     TextVerticalAlign = VerticalAlign.Center
                 }));
             }
-            CloseButton = AddChild(new Gui.Widgets.Button()
-            {
-                Text = "Close",
-                Font = "font10",
-                Border = "border-button",
-                MinimumSize = new Point(128, 32),
-                AutoLayout = AutoLayout.FloatBottomRight
-            });
+
             Layout();
             base.Construct();
         }

@@ -59,7 +59,7 @@ namespace DwarfCorp.GameStates
                 if (!MinimapFrame.Hidden && !Gui.RootItem.Hidden)
                 {
                     Gui.Draw(new Point(0, 0), false);
-                    MinimapRenderer.Render(new Rectangle(MinimapFrame.Rect.X, MinimapFrame.Rect.Bottom - 192, 192, 192), Gui);
+                    MinimapRenderer.Render(new Rectangle(MinimapFrame.Rect.X + 10, MinimapFrame.Rect.Y + 10, 192, 192), Gui);
                     Gui.DrawMesh(MinimapFrame.GetRenderMesh(Gui.RenderMeshInvalidation), Gui.SpriteAtlas.Texture);
                     Gui.RedrawPopups();
                     Gui.DrawMouse();
