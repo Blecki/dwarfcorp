@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace DwarfCorp.Play
 {
-    public class ZoneListPanel : Widget
+    public class ZoneListPanel : Gui.Widgets.Window
     {
         public WorldManager World;
 
@@ -18,8 +18,8 @@ namespace DwarfCorp.Play
 
         public override void Construct()
         {
-            Border = "border-fancy";
-            Font = "font10";
+            Text = "Zones";
+
             OnConstruct = (sender) =>
             {
                 sender.Root.RegisterForUpdate(sender);
@@ -28,7 +28,8 @@ namespace DwarfCorp.Play
                 {
                     AutoLayout = AutoLayout.DockTop,
                     MinimumSize = new Point(0, 24),
-                    Text = ""
+                    Text = "",
+                    Font = "font10"
                 }) as EditableTextField;
 
                 ListView = AddChild(new WidgetListView
@@ -37,7 +38,8 @@ namespace DwarfCorp.Play
                     SelectedItemForegroundColor = new Vector4(0,0,0,1),
                     ChangeColorOnSelected=false,
                     Border = null,
-                    ItemHeight = 24
+                    ItemHeight = 24,
+                    Font = "font10"
                 }) as WidgetListView;
 
                 ListView.Border = null; // Can't make WidgetListView stop defaulting its border without breaking everywhere else its used.

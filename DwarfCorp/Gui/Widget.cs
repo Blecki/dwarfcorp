@@ -32,6 +32,8 @@ namespace DwarfCorp.Gui
 
         // Todo: Hover styling.
 
+        public int VerticalTextOffset = 0;
+
         #endregion
 
         #region Appearance
@@ -567,16 +569,16 @@ namespace DwarfCorp.Gui
             switch (TextVerticalAlign)
             {
                 case VerticalAlign.Top:
-                    textDrawPos.Y = drawableArea.Y;
+                    textDrawPos.Y = drawableArea.Y + VerticalTextOffset;
                     break;
                 case VerticalAlign.Bottom:
-                    textDrawPos.Y = drawableArea.Y + drawableArea.Height - stringMeshSize.Height;
+                    textDrawPos.Y = drawableArea.Y + drawableArea.Height - stringMeshSize.Height + VerticalTextOffset;
                     break;
                 case VerticalAlign.Below:
-                    textDrawPos.Y = drawableArea.Y + drawableArea.Height;
+                    textDrawPos.Y = drawableArea.Y + drawableArea.Height + VerticalTextOffset;
                     break;
                 case VerticalAlign.Center:
-                    textDrawPos.Y = drawableArea.Y + ((drawableArea.Height - stringMeshSize.Height) / 2);
+                    textDrawPos.Y = drawableArea.Y + ((drawableArea.Height - stringMeshSize.Height) / 2) + VerticalTextOffset;
                     break;
             }
 
@@ -632,16 +634,16 @@ namespace DwarfCorp.Gui
             switch (TextVerticalAlign)
             {
                 case VerticalAlign.Top:
-                    textDrawPos.Y = drawableArea.Y;
+                    textDrawPos.Y = drawableArea.Y + VerticalTextOffset;
                     break;
                 case VerticalAlign.Bottom:
-                    textDrawPos.Y = drawableArea.Y + drawableArea.Height - stringMeshSize.Height;
+                    textDrawPos.Y = drawableArea.Y + drawableArea.Height - stringMeshSize.Height + VerticalTextOffset;
                     break;
                 case VerticalAlign.Below:
-                    textDrawPos.Y = drawableArea.Y + drawableArea.Height;
+                    textDrawPos.Y = drawableArea.Y + drawableArea.Height + VerticalTextOffset;
                     break;
                 case VerticalAlign.Center:
-                    textDrawPos.Y = drawableArea.Y + ((drawableArea.Height - stringMeshSize.Height) / 2);
+                    textDrawPos.Y = drawableArea.Y + ((drawableArea.Height - stringMeshSize.Height) / 2) + VerticalTextOffset;
                     break;
             }
 

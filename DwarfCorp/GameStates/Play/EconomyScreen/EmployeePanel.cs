@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Gui.Widgets
 {
-    public class EmployeePanel : Columns
+    public class EmployeePanel : Gui.Widget
     {
         public WorldManager World;
         private Gui.Widgets.WidgetListView EmployeeList;
@@ -50,6 +50,7 @@ namespace DwarfCorp.Gui.Widgets
             EmployeeList.AddItem(new Widget
             {
                 Text = "+ Hire New Employee",
+                TextColor = new Vector4(0,0,0,1),
                 MinimumSize = new Point(128, 64),
                 OnClick = (sender, args) =>
                 {
@@ -104,26 +105,7 @@ namespace DwarfCorp.Gui.Widgets
 
         public override void Construct()
         {
-            var left = AddChild(new Widget
-            {
-                Background = new TileReference("basic", 0)
-            });
-
-            var right = AddChild(new Play.EmployeeInfo.OverviewPanel
-            {
-                OnFireClicked = (sender) =>
-                {
-                    RebuildEmployeeList();
-                }
-            }) as Play.EmployeeInfo.OverviewPanel;
-
-            var bottomBar = left.AddChild(new Widget
-            {
-                AutoLayout = AutoLayout.DockBottom,
-                MinimumSize = new Point(0, 30)
-            });
-
-            var topBar = left.AddChild(new Widget
+            var topBar = AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 32),
@@ -144,7 +126,7 @@ namespace DwarfCorp.Gui.Widgets
                 OnTextChange = (sender) => RebuildEmployeeList()
             }) as EditableTextField;
 
-            EmployeeList = left.AddChild(new Gui.Widgets.WidgetListView
+            EmployeeList = AddChild(new Gui.Widgets.WidgetListView
             {
                 AutoLayout = AutoLayout.DockFill,
                 Font = "font10",
@@ -153,13 +135,22 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     if (sender is Gui.Widgets.WidgetListView list && list.SelectedIndex > 0 && list.SelectedItem.Tag is CreatureAI creature)
                     {
-                        right.Hidden = false;
-                        right.Employee = creature;
+                        // Todo: Open employee window to that employee instead.
+                        //right.Hidden = false;
+                        //right.Employee = creature;
                     }
-                    else
-                        right.Hidden = true;
+                    //else
+                    //    right.Hidden = true;
                 }
             }) as Gui.Widgets.WidgetListView;
+
+            OnUpdate += (sender, time) =>
+            {
+                if (IsAnyParentHidden()) return;
+                RebuildEmployeeList();
+            };
+
+            Root.RegisterForUpdate(this);
 
             RebuildEmployeeList();
         }

@@ -5280,8 +5280,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="newgui\fancy-border-transparent.png">
-      <Name>fancy-border-transparent</Name>
+    <Compile Include="newgui\window-transparent.png">
+      <Name>window-transparent</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="newgui\window.png">
+      <Name>window</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

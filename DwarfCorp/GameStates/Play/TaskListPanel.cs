@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Play
 {
-    public class TaskListPanel : Widget
+    public class TaskListPanel : Window
     {
         public WorldManager World;
 
@@ -17,8 +17,8 @@ namespace DwarfCorp.Play
 
         public override void Construct()
         {
-            Border = "border-fancy";
-
+            Text = "Task List";
+        
             OnConstruct = (sender) =>
             {
                 sender.Root.RegisterForUpdate(sender);
@@ -26,7 +26,8 @@ namespace DwarfCorp.Play
                 var topRow = AddChild(new Widget
                 {
                     AutoLayout = AutoLayout.DockTop,
-                    MinimumSize = new Point(0, 24)
+                    MinimumSize = new Point(0, 24),
+                    Font = "font10"
                 });
 
                 topRow.AddChild(new Widget
@@ -36,6 +37,7 @@ namespace DwarfCorp.Play
                     Text = "Default Priorities",
                     ChangeColorOnHover = true,
                     Border = "border-button",
+                    Font = "font10",
                     OnClick = (btn, args) =>
                     {
                         var screen = sender.Root.RenderData.VirtualScreen;
@@ -53,7 +55,8 @@ namespace DwarfCorp.Play
                 {
                     AutoLayout = AutoLayout.DockFill,
                     MinimumSize = new Point(0, 24),
-                    Text = ""
+                    Text = "",
+                    Font = "font10"
                 }) as EditableTextField;
 
                 ListView = AddChild(new WidgetListView
@@ -61,7 +64,8 @@ namespace DwarfCorp.Play
                     AutoLayout = AutoLayout.DockFill,
                     SelectedItemForegroundColor = new Vector4(0,0,0,1),
                     Border = null,
-                    ItemHeight = 16
+                    ItemHeight = 16,
+                    Font = "font10"
                 }) as WidgetListView;
 
                 ListView.Border = null; // Can't make WidgetListView stop defaulting its border without breaking everywhere else its used.

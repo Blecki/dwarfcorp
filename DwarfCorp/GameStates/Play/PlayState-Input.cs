@@ -50,12 +50,6 @@ namespace DwarfCorp.GameStates
             Debugger.SetConsoleCommandContext(World);
             InfoTray.ClearTopMessage();
 
-            // Hide tutorial while menu is up
-            if (PausePanel == null || PausePanel.Hidden)
-                World.TutorialManager.ShowTutorial();
-            else
-                World.TutorialManager.HideTutorial();
-
 #if !DEBUG
             try
             {
@@ -156,8 +150,6 @@ namespace DwarfCorp.GameStates
 
                         if (World.TutorialManager.HasCurrentTutorial())
                             World.TutorialManager.DismissCurrentTutorial();
-                        else if (TogglePanels.Any(p => p.Hidden == false))
-                            HideTogglePanels();
                         else if (CommandTray != null && CommandTray.ActiveMenu.Count > 0)
                         {
                             CommandTray.PopCategory();
@@ -261,6 +253,7 @@ namespace DwarfCorp.GameStates
                             if (!GodMenu.Hidden)
                                 ChangeTool("SelectUnits");
                             GodMenu.Hidden = !GodMenu.Hidden;
+                            GodMenu.BringToFront();
                             GodMenu.Invalidate();
                         }
                     }

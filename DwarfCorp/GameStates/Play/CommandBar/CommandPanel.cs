@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Play
 {
-    public class CommandPanel : Gui.Widget
+    public class CommandPanel : Gui.Widgets.Window
     {
         public WorldManager World;
         private Gui.Widgets.EditableTextField FilterBox;
@@ -23,6 +23,8 @@ namespace DwarfCorp.Play
 
             public override void Construct()
             {
+                Text = "Commands";
+
                 EnableScrolling = true;
                 base.Construct();
 

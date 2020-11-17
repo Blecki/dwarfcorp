@@ -5,20 +5,16 @@ using System.Linq;
 
 namespace DwarfCorp
 {
-    public class EventLogViewer : Gui.Widget
+    public class EventLogViewer : Gui.Widgets.Window
     {
         public EventLog Log { get; set; }
         public DateTime Now { get; set; }
 
         public override void Construct()
         {
-            AddChild(new Gui.Widget()
-            {
-                Text = "Events",
-                Font = "font16",
-                AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(256, 32)
-            });
+            base.Construct();
+
+            Text = "Events";
 
             Gui.Widgets.WidgetListView listView = AddChild(new Gui.Widgets.WidgetListView()
             {
@@ -27,7 +23,8 @@ namespace DwarfCorp
                 SelectedItemBackgroundColor = new Vector4(0, 0, 0, 0),
                 ItemBackgroundColor2 = new Vector4(0, 0, 0, 0.1f),
                 ItemBackgroundColor1 = new Vector4(0, 0, 0, 0),
-                ItemHeight = 32
+                ItemHeight = 32,
+                Border = ""
             }) as Gui.Widgets.WidgetListView;
 
             foreach (var logged in Log.GetEntries().Reverse())
@@ -46,7 +43,6 @@ namespace DwarfCorp
             }
 
             Layout();
-            base.Construct();
         }
     }
 }

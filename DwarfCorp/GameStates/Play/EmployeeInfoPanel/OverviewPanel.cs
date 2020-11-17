@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp.Play.EmployeeInfo
 {
-    public class OverviewPanel : Widget
+    public class OverviewPanel : Window
     {
         public bool EnablePosession = false;
         private CreatureAI _employee;
@@ -70,7 +70,9 @@ namespace DwarfCorp.Play.EmployeeInfo
 
         public override void Construct()
         {
-            Text = "You have no employees.";
+            StartingSize = new Rectangle(0, 0, 450, 500 - (50 * (GameSettings.Current.GuiScale - 1)));
+
+            Text = "Employee Details";
             Font = "font16";
 
             InteriorPanel = AddChild(new Widget
@@ -169,16 +171,17 @@ namespace DwarfCorp.Play.EmployeeInfo
             var topbuttons = top.AddChild(new Widget()
             {
                 AutoLayout = AutoLayout.FloatTopRight,
-                MinimumSize = new Point(32, 24)
+                MinimumSize = new Point(54, 24)
             });
+
             topbuttons.AddChild(new Widget()
             {
-                Text = "<",
-                Font = "font10",
+                Text = "<<",
+                Font = "font16",
                 Tooltip = "Previous employee.",
                 AutoLayout = AutoLayout.DockLeft,
                 ChangeColorOnHover = true,
-                MinimumSize = new Point(16, 24),
+                MinimumSize = new Point(32, 24),
                 OnClick = (sender, args) =>
                 {
                     if (Employee.Faction.Minions.Count == 0)
@@ -198,14 +201,15 @@ namespace DwarfCorp.Play.EmployeeInfo
                     Employee.World.PersistentData.SelectedMinions = new List<CreatureAI>() { Employee };
                 }
             });
+
             topbuttons.AddChild(new Widget()
             {
-                Text = ">",
-                Font = "font10",
+                Text = ">>",
+                Font = "font16",
                 Tooltip = "Next employee.",
                 AutoLayout = AutoLayout.DockRight,
                 ChangeColorOnHover = true,
-                MinimumSize = new Point(16, 24),
+                MinimumSize = new Point(32, 24),
                 OnClick = (sender, args) =>
                 {
                     if (Employee.Faction.Minions.Count == 0)
@@ -351,6 +355,7 @@ namespace DwarfCorp.Play.EmployeeInfo
 
             foreach (var child in Children)
                 child.Invalidate();
+
             MainPanel.Invalidate();
             StatsPanel.Invalidate();
             EquipmentPanel.Invalidate();

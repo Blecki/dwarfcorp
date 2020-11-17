@@ -13,8 +13,6 @@ namespace DwarfCorp.Gui.Widgets
 
         public override void Construct()
         {
-            Border = "border-fancy";
-
             var builder = new StringBuilder();
             builder.AppendLine("Plant " + Type);
             if (Library.GetResourceType(Type).HasValue(out var res))

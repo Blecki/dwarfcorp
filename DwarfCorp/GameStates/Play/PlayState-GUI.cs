@@ -43,7 +43,6 @@ namespace DwarfCorp.GameStates
         private Widget MarksIcon;
         private Widget CommandsIcon;
         private Dictionary<uint, WorldPopup> LastWorldPopup = new Dictionary<uint, WorldPopup>();
-        private List<Widget> TogglePanels = new List<Widget>();
         private Play.CommandTray CommandTray;
 
 
@@ -185,12 +184,6 @@ namespace DwarfCorp.GameStates
 
             // Really just handles mouse pointer animation.
             Gui.Update(gameTime.ToRealTime());
-        }
-
-        private void HideTogglePanels()
-        {
-            foreach (var panel in TogglePanels)
-                panel.Hidden = true;
         }
 
         private void MakeMenuItem(Gui.Widget Menu, string Name, string Tooltip, Action<Gui.Widget, Gui.InputEventArgs> OnClick)
@@ -463,8 +456,7 @@ namespace DwarfCorp.GameStates
             {
                 Tag = "minimap",
                 Renderer = MinimapRenderer,
-                AutoLayout = AutoLayout.FloatBottomLeft,
-                OnLayout = (sender) => sender.Rect.Y += 4
+                AutoLayout = AutoLayout.FloatBottomLeft
             }) as Gui.Widgets.Minimap.MinimapFrame;
 
             SelectedEmployeeInfo = Gui.RootItem.AddChild(new Play.EmployeeInfo.OverviewPanel
@@ -483,7 +475,6 @@ namespace DwarfCorp.GameStates
                 DesignationSet = World.PersistentData.Designations,
                 World = World,
                 Hidden = true,
-                Border = "border-fancy",
                 AutoLayout = AutoLayout.FloatBottomLeft,
                 MinimumSize = new Point(300, 200)
             });
@@ -529,22 +520,11 @@ namespace DwarfCorp.GameStates
             {
                 Border = "border-fancy",
                 AutoLayout = AutoLayout.FloatBottomLeft,
-                MinimumSize = new Point(400, Math.Min(600, Gui.RenderData.VirtualScreen.Height - 100)),
+                MinimumSize = new Point(600, Math.Min(600, Gui.RenderData.VirtualScreen.Height - 100)),
                 World = World,
                 Hidden = true
             });
 
-            TogglePanels = new List<Widget>
-            {
-                MinimapFrame,
-                SelectedEmployeeInfo,
-                markerFilter,
-                taskList,
-                roomList,
-                commandPanel,
-                eventPanel,
-                economyPanel
-            };
 
             MinimapIcon = new FramedIcon
             {
@@ -558,8 +538,8 @@ namespace DwarfCorp.GameStates
                 {
                     if (MinimapFrame.Hidden)
                     {
-                        HideTogglePanels();
                         MinimapFrame.Hidden = false;
+                        MinimapFrame.BringToFront();
                     }
                     else
                         MinimapFrame.Hidden = true;
@@ -578,8 +558,8 @@ namespace DwarfCorp.GameStates
                 {
                     if (SelectedEmployeeInfo.Hidden)
                     {
-                        HideTogglePanels();
                         SelectedEmployeeInfo.Hidden = false;
+                        SelectedEmployeeInfo.BringToFront();
                     }
                     else
                         SelectedEmployeeInfo.Hidden = true;
@@ -598,8 +578,8 @@ namespace DwarfCorp.GameStates
                 {
                     if (markerFilter.Hidden)
                     {
-                        HideTogglePanels();
                         markerFilter.Hidden = false;
+                        markerFilter.BringToFront();
                     }
                     else
                         markerFilter.Hidden = true;
@@ -618,8 +598,8 @@ namespace DwarfCorp.GameStates
                 {
                     if (taskList.Hidden)
                     {
-                        HideTogglePanels();
                         taskList.Hidden = false;
+                        taskList.BringToFront();
                     }
                     else
                         taskList.Hidden = true;
@@ -638,8 +618,8 @@ namespace DwarfCorp.GameStates
                 {
                     if (roomList.Hidden)
                     {
-                        HideTogglePanels();
                         roomList.Hidden = false;
+                        roomList.BringToFront();
                     }
                     else
                         roomList.Hidden = true;
@@ -658,8 +638,8 @@ namespace DwarfCorp.GameStates
                 {
                     if (commandPanel.Hidden)
                     {
-                        HideTogglePanels();
                         commandPanel.Hidden = false;
+                        commandPanel.BringToFront();
                     }
                     else
                         commandPanel.Hidden = true;
@@ -673,8 +653,8 @@ namespace DwarfCorp.GameStates
                 {
                     if (eventPanel.Hidden)
                     {
-                        HideTogglePanels();
                         eventPanel.Hidden = false;
+                        eventPanel.BringToFront();
                     }
                     else
                         eventPanel.Hidden = true;
@@ -692,8 +672,8 @@ namespace DwarfCorp.GameStates
                 {
                     if (economyPanel.Hidden)
                     {
-                        HideTogglePanels();
                         economyPanel.Hidden = false;
+                        economyPanel.BringToFront();
                         World.Tutorial("economy");
                     }
                     else

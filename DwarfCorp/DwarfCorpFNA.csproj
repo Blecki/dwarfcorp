@@ -168,6 +168,7 @@
     <Compile Include="GameStates\DebugStates\GuiTextureDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\TiledCompositeTextureDebugPanel.cs" />
     <Compile Include="GameStates\FrontEnd\ChangeLogState.cs" />
+    <Compile Include="GameStates\Play\CommandBar\BuildCraftInfo.cs" />
     <Compile Include="GameStates\Play\CommandBar\CategoryIcon.cs" />
     <Compile Include="GameStates\Play\CommandBar\CommandMenuItem.cs" />
     <Compile Include="GameStates\Play\CommandBar\CommandMenuItemIcon.cs" />
@@ -176,8 +177,10 @@
     <Compile Include="GameStates\Play\CommandBar\EnumerateCommandMenuItems.cs" />
     <Compile Include="GameStates\Play\CommandBar\HorizontalGridPanel.cs" />
     <Compile Include="GameStates\Play\CommandBar\Hotkeys.cs" />
+    <Compile Include="GameStates\Play\CommandBar\PlaceCraftInfo.cs" />
     <Compile Include="GameStates\Play\CommandBar\ScrollingCommandTray.cs" />
     <Compile Include="GameStates\Play\ContentsPanel.cs" />
+    <Compile Include="GameStates\Play\EconomyPanel.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\ApplicantInfo.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\EconomyState.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\EmployeePanel.cs" />
@@ -193,6 +196,7 @@
     <Compile Include="GameStates\Play\EmployeeInfoPanel\StatsPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\TaskListPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\TaskPanel.cs" />
+    <Compile Include="GameStates\Play\EventLogViewer.cs" />
     <Compile Include="GameStates\Play\PlayState-GUI.cs" />
     <Compile Include="GameStates\Play\PlayState-Input.cs" />
     <Compile Include="GameStates\Play\PlayState-Render.cs" />
@@ -671,7 +675,6 @@
     <Compile Include=".\Gui\Widgets\AnnouncementPopup.cs" />
     <Compile Include=".\Gui\Widgets\AudioMixerWidget.cs" />
     <Compile Include=".\Gui\Widgets\AutoGridPanel.cs" />
-    <Compile Include=".\Gui\Widgets\BuildCraftInfo.cs" />
     <Compile Include=".\Gui\Widgets\BuildRoomInfo.cs" />
     <Compile Include=".\Gui\Widgets\BuildWallInfo.cs" />
     <Compile Include=".\Gui\Widgets\Button.cs" />

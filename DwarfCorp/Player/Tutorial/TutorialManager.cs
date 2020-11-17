@@ -22,8 +22,8 @@ namespace DwarfCorp.Tutorial
 
         private Dictionary<String, TutorialEntry> Entries;
         public bool TutorialEnabled = true;
-        private Widget ExistingTutorial = null;
-        private bool TutorialVisible = false;
+        private Gui.Widgets.TutorialPopup ExistingTutorial = null;
+        public bool FlipTutorial = true;
 
         private Queue<String> PendingTutorials = new Queue<string>();
 
@@ -73,85 +73,86 @@ namespace DwarfCorp.Tutorial
             {
                 Entries[Name].Shown = true;
                 PendingTutorials.Enqueue(Name);
+                FlipTutorial = true;
             }
         }
 
         public void HideTutorial()
         {
-            TutorialVisible = false;
-
             if (ExistingTutorial != null)
                 ExistingTutorial.Hidden = true;
         }
 
         public void ShowTutorial()
         {
-            TutorialVisible = true;
             if (ExistingTutorial != null)
                 ExistingTutorial.Hidden = false;
         }
 
         public void Update(Gui.Root Gui)
         {
+            if (!TutorialEnabled && ExistingTutorial != null)
+                ExistingTutorial.Hidden = true;
+
             if (!TutorialEnabled || Gui == null)
                 return;
 
-            if (ExistingTutorial != null) return;
-
-            if (PendingTutorials.Count > 0)
+            if (FlipTutorial == true)
             {
-                var nextTutorial = PendingTutorials.Dequeue();
-                if (Entries.ContainsKey(nextTutorial))
+                FlipTutorial = false;
+
+                if (PendingTutorials.Count > 0)
                 {
-                    var entry = Entries[nextTutorial];
-                    TutorialVisible = true;
-                    ExistingTutorial = CreateTutorialPopup(entry, Gui);
+                    var nextTutorial = PendingTutorials.Dequeue();
+                    if (Entries.ContainsKey(nextTutorial))
+                    {
+                        var entry = Entries[nextTutorial];
+                        CreateTutorialPopup(entry, Gui);
+                    }
+                    else
+                        ExistingTutorial.Hidden = true;
                 }
+                else
+                    ExistingTutorial.Hidden = true;
             }
         }
 
-        private Widget CreateTutorialPopup(TutorialEntry Tutorial, Root Gui)
+        private void DismissTutorial(Root Gui)
         {
-            var popup = Gui.ConstructWidget(new Gui.Widgets.TutorialPopup
-            {
-                Message = Tutorial,
-                OnClose = (sender) =>
-                {
-                    TutorialEnabled = !(sender as Gui.Widgets.TutorialPopup).DisableChecked;
-                    Gui.ClearSpecials();
-                    if (!String.IsNullOrEmpty(Tutorial.NextTutorial))
-                        ShowTutorial(Tutorial.NextTutorial);
-                    ExistingTutorial = null;
-                },
-                OnLayout = (sender) =>
-                {
-                    sender.Rect.X = Gui.RenderData.VirtualScreen.Width - sender.Rect.Width;
-                    sender.Rect.Y = 64;
-                }
-            });
+            TutorialEnabled = !ExistingTutorial.DisableChecked;
+            Gui.ClearSpecials();
+            if (!String.IsNullOrEmpty(ExistingTutorial.Message.NextTutorial))
+                ShowTutorial(ExistingTutorial.Message.NextTutorial);
+            FlipTutorial = true;
+        }
 
-            if (Tutorial.Popup)
-            {
-                Gui.ShowMinorPopup(popup);
-                popup.PopupDestructionType = PopupDestructionType.Keep;
-            }
-            else
-                Gui.RootItem.AddChild(popup);
+        private void CreateTutorialPopup(TutorialEntry Tutorial, Root Gui)
+        {
+            if (ExistingTutorial == null)
+                ExistingTutorial = Gui.RootItem.AddChild(new Gui.Widgets.TutorialPopup
+                {
+                    Message = Tutorial,
+                    Hidden = true,
+                    OnDismiss = (sender) => { DismissTutorial(Gui); },
+                    StartingSize = new Microsoft.Xna.Framework.Rectangle(Gui.RenderData.VirtualScreen.Width - 400, 64, 400, 450)
+                }) as Gui.Widgets.TutorialPopup;
 
+            ExistingTutorial.Hidden = false;
+            ExistingTutorial.Message = Tutorial;
+            ExistingTutorial.Refresh();
             Gui.SpecialHiliteWidgetName = Tutorial.GuiHilite;
-
-            return popup;
+            ExistingTutorial.Invalidate();
         }
 
         public bool HasCurrentTutorial()
         {
-            return ExistingTutorial != null;
+            return ExistingTutorial != null && !ExistingTutorial.Hidden;
         }
 
         public void DismissCurrentTutorial()
         {
-            if (ExistingTutorial != null)
-                ExistingTutorial.Close();
+            if (ExistingTutorial != null && !ExistingTutorial.Hidden)
+                DismissTutorial(ExistingTutorial.Root);
         }
 
         public TutorialSaveData GetSaveData()

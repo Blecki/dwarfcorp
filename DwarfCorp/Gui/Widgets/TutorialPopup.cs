@@ -9,23 +9,29 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Gui.Widgets
 {
-    public class TutorialPopup : Widget
+    public class TutorialPopup : Window
     {
         public TutorialManager.TutorialEntry Message = null;
         private Gui.Widgets.CheckBox DisableBox;
         public bool DisableChecked { get { return DisableBox.CheckState; } }
+        public Action<Widget> OnDismiss = null;
+
+        public void Refresh()
+        {
+            this.Clear();
+            SetText();
+        }
 
         public override void Construct()
         {
-            //Set size and center on screen.
-            Rect = new Rectangle(0, 0, 450, 400);
+            base.Construct();
+            SetText();
+        }
 
-            Border = "border-fancy";
-
+        public void SetText()
+        {
             Text = Message == null || String.IsNullOrEmpty(Message.Title) ? "Tutorial" : Message.Title;
-            Font = "font16";
             TextColor = new Vector4(0, 0, 0, 1);
-            InteriorMargin = new Margin(16, 0, 0, 0);
 
             if (!String.IsNullOrEmpty(Message.Name) && AssetManager.DoesTextureExist("newgui\\tutorials\\" + Message.Name))
             {
@@ -60,7 +66,7 @@ namespace DwarfCorp.Gui.Widgets
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 Border = "border-button",
-                OnClick = (sender, args) => { this.Close(); SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_window_close, 0.015f); },
+                OnClick = (sender, args) => { this.OnDismiss(this); SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_window_close, 0.015f); },
                 AutoLayout = AutoLayout.FloatBottomRight,
                 ChangeColorOnHover = true,
                 TextColor = new Vector4(0, 0, 0, 1)

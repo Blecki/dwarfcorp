@@ -244,6 +244,7 @@
     <Compile Include="Gui\Widgets\ScrollingTextBox.cs" />
     <Compile Include="Gui\Widgets\TextBoxEx.cs" />
     <Compile Include="Gui\Widgets\HorizontalScrollBar.cs" />
+    <Compile Include="Gui\Widgets\Window.cs" />
     <Compile Include="Library\CategoryIconLibrary.cs" />
     <Compile Include="Library\LoadoutLibrary.cs" />
     <Compile Include="Library\EquipmentLibrary.cs" />
@@ -774,7 +775,7 @@
     <Compile Include="Graphics\Animation\AnimationPlayer.cs" />
     <Compile Include="Graphics\Animation\AnimationLibrary.cs" />
     <Compile Include="Gui\Widgets\CollapsableStack.cs" />
-    <Compile Include="Gui\Widgets\DesignationFilter.cs" />
+    <Compile Include="GameStates\Play\DesignationFilter.cs" />
     <Compile Include="Gui\Widgets\TrayBackground.cs" />
     <Compile Include="World\Designations\DesignationType.cs" />
     <Compile Include="Graphics\Instancing\InstanceRenderData.cs" />
@@ -992,8 +993,8 @@
     <Compile Include="NativeInjector.cs" />
     <Compile Include="Gui\Widgets\AnnouncementPopup.cs" />
     <Compile Include="GameStates\Play\CommandBar\BuildCraftInfo.cs" />
-    <Compile Include="Gui\Widgets\BuildWallInfo.cs" />
-    <Compile Include="Gui\Widgets\BuildRoomInfo.cs" />
+    <Compile Include="GameStates\Play\CommandBar\BuildWallInfo.cs" />
+    <Compile Include="GameStates\Play\CommandBar\BuildRoomInfo.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\ApplicantInfo.cs" />
     <Compile Include="Gui\Widgets\HorizontalMenuTray.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGenerationSettingsDialog.cs" />
@@ -1002,7 +1003,7 @@
     <Compile Include="GameStates\Play\EmployeeInfoPanel\OverviewPanel.cs" />
     <Compile Include="Gui\Widgets\FramedIcon.cs" />
     <Compile Include="Gui\Widgets\CompanyLogo.cs" />
-    <Compile Include="Gui\Widgets\PlantInfo.cs" />
+    <Compile Include="GameStates\Play\CommandBar\PlantInfo.cs" />
     <Compile Include="Gui\Widgets\ToggleTray.cs" />
     <Compile Include="Gui\Widgets\MoneyEditor.cs" />
     <Compile Include="Gui\Widgets\KeyEditor.cs" />

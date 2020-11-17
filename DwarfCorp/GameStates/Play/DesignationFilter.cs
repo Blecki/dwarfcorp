@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Gui.Widgets
 {
-    public class DesignationFilter : Widget
+    public class DesignationFilter : Window
     {
         public DesignationSet DesignationSet;
         public int ColumnCount = 2;
@@ -20,20 +20,14 @@ namespace DwarfCorp.Gui.Widgets
         {
             Padding = new Margin(2, 2, 2, 2);
 
-            AddChild(new Gui.Widget
-            {
-                Text = "Visible Markers",
-                TextHorizontalAlign = HorizontalAlign.Center,
-                AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 36),
-                Font = "font16"
-            });
+            Text = "Visible Markers";
             
             var columns = AddChild(new Gui.Widgets.Columns
             {
                 AutoLayout = AutoLayout.DockFill,
                 MinimumSize = new Point(0, 120),
-                ColumnCount = ColumnCount
+                ColumnCount = ColumnCount,
+                Font = "font10"
             });
 
             for (var i = 0; i < ColumnCount; ++i)
