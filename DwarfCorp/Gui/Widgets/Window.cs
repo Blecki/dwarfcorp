@@ -33,11 +33,18 @@ namespace DwarfCorp.Gui.Widgets
 
             OnMouseDown += (sender, args) =>
             {
-                if (args.Y < Rect.Y + 30)
+                if (args.Y < Rect.Y + 32)
                 {
-                    Dragging = true;
-                    MouseDownPos = new Point(args.X, args.Y);
-                    RectStartPos = new Point(Rect.X, Rect.Y);
+                    if (args.X > (Rect.Right - 36))
+                    {
+                        this.Hidden = true;
+                    }
+                    else
+                    {
+                        Dragging = true;
+                        MouseDownPos = new Point(args.X, args.Y);
+                        RectStartPos = new Point(Rect.X, Rect.Y);
+                    }
                 }
 
                 this.BringToFront();
@@ -68,6 +75,21 @@ namespace DwarfCorp.Gui.Widgets
             {
                 Dragging = false;
             };
+        }
+
+        protected override Mesh Redraw()
+        {
+            var r = base.Redraw();
+            AddCloseButtonMesh(r);
+            return r;
+        }
+
+        private void AddCloseButtonMesh(Mesh r)
+        {
+            var buttonSheet = Root.GetTileSheet("round-buttons");
+            r.QuadPart().Scale(buttonSheet.TileWidth, buttonSheet.TileHeight)
+                .Translate(Rect.Right - 36, Rect.Y + 30 - buttonSheet.TileHeight)
+                .Texture(buttonSheet.TileMatrix(5));
         }
     }
 }

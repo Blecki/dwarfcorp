@@ -22,13 +22,6 @@ namespace DwarfCorp.GameStates
                 SelectedTabColor = new Vector4(1, 0, 0, 1)
             }) as Gui.Widgets.TabPanel;
 
-            var employeePanel = tabPanel.AddTab("Employees", new Gui.Widgets.EmployeePanel
-            {
-                Font = "font10",
-                Padding = new Margin(4, 4, 0, 0),
-                World = World,
-            });
-
             var financePanel = tabPanel.AddTab("Finance", new FinancePanel
             {
                 Padding = new Margin(4, 4, 0, 0),

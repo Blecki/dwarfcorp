@@ -122,6 +122,17 @@ namespace DwarfCorp.GameStates
             return LastWorldPopup[body.GlobalID];
         }
 
+        public void ShowEmployeeDialog(CreatureAI Employee, Rectangle ParentRect)
+        {
+            SelectedEmployeeInfo.Employee = Employee;
+            var rect = new Rectangle(ParentRect.Right, ParentRect.Y, SelectedEmployeeInfo.Rect.Width, SelectedEmployeeInfo.Rect.Height);
+            if (rect.Right > Gui.RenderData.VirtualScreen.Right) rect.X = ParentRect.X - SelectedEmployeeInfo.Rect.Width;
+            SelectedEmployeeInfo.Rect = rect;
+            SelectedEmployeeInfo.Hidden = false;
+            SelectedEmployeeInfo.Layout();
+            SelectedEmployeeInfo.BringToFront();
+        }
+
         private void UpdateGui(DwarfTime gameTime)
         {
             #region World Popups
@@ -462,13 +473,20 @@ namespace DwarfCorp.GameStates
             SelectedEmployeeInfo = Gui.RootItem.AddChild(new Play.EmployeeInfo.OverviewPanel
             {
                 Hidden = true,
-                Border = "border-fancy",
                 Employee = null,
                 EnablePosession = true,
                 Tag = "selected-employee-info",
                 AutoLayout = AutoLayout.FloatBottomLeft,
                 MinimumSize = new Point(450, 500 - (50 * (GameSettings.Current.GuiScale - 1))),
             }) as Play.EmployeeInfo.OverviewPanel;
+
+            var employeeListView = Gui.RootItem.AddChild(new Gui.Widgets.EmployeePanel
+            {
+                Hidden = true,
+                AutoLayout = AutoLayout.FloatBottomLeft,
+                MinimumSize = new Point(450, Gui.RenderData.VirtualScreen.Height - 120),
+                World = World
+            });
 
             var markerFilter = Gui.RootItem.AddChild(new DesignationFilter
             {
@@ -556,13 +574,13 @@ namespace DwarfCorp.GameStates
                 TextVerticalAlign = VerticalAlign.Below,
                 OnClick = (sender, args) =>
                 {
-                    if (SelectedEmployeeInfo.Hidden)
+                    if (employeeListView.Hidden)
                     {
-                        SelectedEmployeeInfo.Hidden = false;
-                        SelectedEmployeeInfo.BringToFront();
+                        employeeListView.Hidden = false;
+                        employeeListView.BringToFront();
                     }
                     else
-                        SelectedEmployeeInfo.Hidden = true;
+                        employeeListView.Hidden = true;
                 }
             };
 

@@ -7,11 +7,12 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Gui.Widgets
 {
-    public class EmployeePanel : Gui.Widget
+    public class EmployeePanel : Gui.Widgets.Window
     {
         public WorldManager World;
         private Gui.Widgets.WidgetListView EmployeeList;
         private EditableTextField FilterTextField;
+        private List<CreatureAI> FilteredEmployeeList = new List<CreatureAI>();
 
         private string GetFilter()
         {
@@ -45,12 +46,16 @@ namespace DwarfCorp.Gui.Widgets
 
         private void RebuildEmployeeList()
         {
+            var SelectedEmployee = EmployeeList.SelectedItem == null ? null : EmployeeList.SelectedItem.Tag as CreatureAI;
+            EmployeeList.OnSelectedIndexChanged = null;
+            var selectedIndex = 0;
+
             EmployeeList.ClearItems();
 
             EmployeeList.AddItem(new Widget
             {
                 Text = "+ Hire New Employee",
-                TextColor = new Vector4(0,0,0,1),
+                TextColor = new Vector4(0, 0, 0, 1),
                 MinimumSize = new Point(128, 64),
                 OnClick = (sender, args) =>
                 {
@@ -71,8 +76,11 @@ namespace DwarfCorp.Gui.Widgets
                 }
             });
 
-            foreach (var employee in World.PlayerFaction.Minions.Where(m => PassesFilter(m)))
+            foreach (var employee in FilteredEmployeeList)
             {
+                if (Object.ReferenceEquals(employee, SelectedEmployee))
+                    selectedIndex = EmployeeList.Children.Count;
+
                 var bar = Root.ConstructWidget(new Widget
                 {
                     Background = new TileReference("basic", 0),
@@ -100,11 +108,23 @@ namespace DwarfCorp.Gui.Widgets
                 EmployeeList.AddItem(bar);
             }
 
-            EmployeeList.SelectedIndex = 1;
+            EmployeeList.SelectedIndex = selectedIndex;
+
+            EmployeeList.OnSelectedIndexChanged += (sender) =>
+            {
+                if (sender is Gui.Widgets.WidgetListView list && list.SelectedIndex > 0 && list.SelectedItem.Tag is CreatureAI creature)
+                {
+                    World.UserInterface.ShowEmployeeDialog(creature, this.Rect);
+                }
+            };
         }
 
         public override void Construct()
         {
+            base.Construct();
+
+            Text = "Employees";
+
             var topBar = AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockTop,
@@ -116,6 +136,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 MinimumSize = new Point(64, 0),
                 AutoLayout = AutoLayout.DockLeft,
+                Font = "font10",
                 Text = "Filter:",
                 TextVerticalAlign = VerticalAlign.Center
             });
@@ -123,7 +144,7 @@ namespace DwarfCorp.Gui.Widgets
             FilterTextField = topBar.AddChild(new EditableTextField
             {
                 AutoLayout = AutoLayout.DockFill,
-                OnTextChange = (sender) => RebuildEmployeeList()
+                //OnTextChange = (sender) => RebuildEmployeeList()
             }) as EditableTextField;
 
             EmployeeList = AddChild(new Gui.Widgets.WidgetListView
@@ -131,28 +152,32 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockFill,
                 Font = "font10",
                 ItemHeight = 64,
-                OnSelectedIndexChanged = (sender) =>
-                {
-                    if (sender is Gui.Widgets.WidgetListView list && list.SelectedIndex > 0 && list.SelectedItem.Tag is CreatureAI creature)
-                    {
-                        // Todo: Open employee window to that employee instead.
-                        //right.Hidden = false;
-                        //right.Employee = creature;
-                    }
-                    //else
-                    //    right.Hidden = true;
-                }
+                SelectedItemForegroundColor = new Vector4(0, 0, 0, 1),
+                SelectedItemBackgroundColor = new Vector4(243.0f / 256.0f, 232.0f / 256.0f, 79.0f / 256.0f, 1.0f)
             }) as Gui.Widgets.WidgetListView;
 
             OnUpdate += (sender, time) =>
             {
                 if (IsAnyParentHidden()) return;
-                RebuildEmployeeList();
+                var newList = World.PlayerFaction.Minions.Where(m => PassesFilter(m)).ToList();
+                bool listsMatch = true;
+                if (newList.Count != FilteredEmployeeList.Count)
+                    listsMatch = false;
+                else
+                    for (var x = 0; x < newList.Count; ++x)
+                        if (!Object.ReferenceEquals(newList[x], FilteredEmployeeList[x]))
+                            listsMatch = false;
+                if (!listsMatch)
+                {
+                    FilteredEmployeeList = newList;
+                    RebuildEmployeeList();
+                }
             };
 
             Root.RegisterForUpdate(this);
 
             RebuildEmployeeList();
+
         }
     }
 }

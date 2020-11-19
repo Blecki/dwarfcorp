@@ -124,6 +124,7 @@ namespace DwarfCorp.Gui.Widgets.Minimap
             if (DynamicAtlasEntry != null)
                 mesh.QuadPart().Scale(Renderer.RenderWidth, Renderer.RenderHeight).Translate(Rect.X + 10, Rect.Y + 10).Texture(DynamicAtlasEntry.TileSheet.TileMatrix(0));
             mesh.Scale9Part(Rect, Root.GetTileSheet("window-transparent"), Scale9Corners.All);
+            AddCloseButtonMesh(mesh);
             return mesh;
         }
     }
