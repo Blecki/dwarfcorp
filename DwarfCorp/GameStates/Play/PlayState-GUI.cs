@@ -534,9 +534,8 @@ namespace DwarfCorp.GameStates
                 Hidden = true
             });
 
-            var economyPanel = Gui.RootItem.AddChild(new EconomyPanel()
+            var economyPanel = Gui.RootItem.AddChild(new FinancePanel()
             {
-                Border = "border-fancy",
                 AutoLayout = AutoLayout.FloatBottomLeft,
                 MinimumSize = new Point(600, Math.Min(600, Gui.RenderData.VirtualScreen.Height - 100)),
                 World = World,
@@ -702,12 +701,27 @@ namespace DwarfCorp.GameStates
                 TextVerticalAlign = VerticalAlign.Below
             };
 
+            var factionWindow = Gui.RootItem.AddChild(new FactionWindow()
+            {
+                AutoLayout = AutoLayout.FloatBottomLeft,
+                MinimumSize = new Point(400, 450),
+                Overworld = World.Overworld,
+                Hidden = true
+            });
+
             var diplomacyIcon = new Gui.Widgets.FramedIcon()
             {
                 Icon = new Gui.TileReference("tool-icons", 36),
                 OnClick = (sender, args) =>
                 {
-                    GameStateManager.PushState(new PlayFactionViewState(GameState.Game, World));
+                    if (factionWindow.Hidden)
+                    {
+                        factionWindow.Hidden = false;
+                        factionWindow.BringToFront();
+                        World.Tutorial("diplomacy");
+                    }
+                    else
+                        factionWindow.Hidden = true;
                 },
                 Text = Library.GetString("diplomacy-label"),
                 TextVerticalAlign = VerticalAlign.Below,

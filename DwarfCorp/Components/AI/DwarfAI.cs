@@ -630,7 +630,7 @@ namespace DwarfCorp
                 Manager.World.MakeAnnouncement(new Gui.Widgets.QueuedAnnouncement
                 {
                     Text = String.Format("{0} is ready to spend some XP!", Stats.FullName),
-                    ClickAction = (gui, sender) => GameStateManager.PushState(new EconomyState(Manager.World.Game, Manager.World)) // This should open the employee view instead.
+                    ClickAction = (gui, sender) => Manager.World.UserInterface.ShowEmployeeDialog(this, new Rectangle(0,0,0,0))
                 });
 
                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);

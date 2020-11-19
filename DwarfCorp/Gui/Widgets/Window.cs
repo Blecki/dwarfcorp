@@ -84,7 +84,7 @@ namespace DwarfCorp.Gui.Widgets
             return r;
         }
 
-        private void AddCloseButtonMesh(Mesh r)
+        protected void AddCloseButtonMesh(Mesh r)
         {
             var buttonSheet = Root.GetTileSheet("round-buttons");
             r.QuadPart().Scale(buttonSheet.TileWidth, buttonSheet.TileHeight)

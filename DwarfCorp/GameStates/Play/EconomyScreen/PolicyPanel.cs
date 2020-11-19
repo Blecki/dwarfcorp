@@ -9,10 +9,7 @@ namespace DwarfCorp.GameStates
 {
     public class PolicyPanel : Gui.Widget
     {
-        public Faction Faction;
-        private Widget InfoWidget;
         public WorldManager World;
-        int numrows = 0;
         private Widget Title;
         private Gui.Widgets.HorizontalFloatSliderCombo FoodCostSlider;
 
@@ -69,22 +66,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockTop
             });
 
-            var split = AddChild(new Gui.Widgets.Columns
-            {
-                AutoLayout = AutoLayout.DockFill
-            }) as Gui.Widgets.Columns;
-
-            var leftPanel = split.AddChild(new Widget
-            {
-                Padding = new Margin(2, 2, 2, 2)
-            });
-
-            var rightPanel = split.AddChild(new Widget
-            {
-                Padding = new Margin(2, 2, 2, 2)
-            });
-
-            FoodCostSlider = LabelAndDockWidget(leftPanel, "Employee Food Cost", new Gui.Widgets.HorizontalFloatSliderCombo
+            FoodCostSlider = LabelAndDockWidget(this, "Employee Food Cost", new Gui.Widgets.HorizontalFloatSliderCombo
             {
                 ScrollMax = 10.0f,
                 ScrollMin = 0.1f,

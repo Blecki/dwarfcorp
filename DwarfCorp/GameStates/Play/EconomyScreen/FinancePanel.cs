@@ -7,13 +7,11 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.GameStates
 {
-    public class FinancePanel : Gui.Widget
+    public class FinancePanel : Gui.Widgets.Window
     {
-        public Faction Faction;
         private Widget InfoWidget;
         public WorldManager World;
         int numrows = 0;
-        private Widget Title;
 
         public FinancePanel()
         {
@@ -25,15 +23,13 @@ namespace DwarfCorp.GameStates
             {
                 Font = "font10",
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(640, 30),
-                MaximumSize =  new Point (700, 30),
+                MinimumSize = new Point(0, 30),
                 Text = name,
                 TextVerticalAlign = VerticalAlign.Center,
                 Background = new TileReference("basic", 0),
                 BackgroundColor = numrows % 2 == 0 ? new Vector4(0, 0, 0, 0.05f) : new Vector4(0, 0, 0, 0.2f)
             });
 
-            numrows++;
             row.AddChild(new Widget()
             {
                 Text = value,
@@ -41,76 +37,56 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockRight,
                 TextVerticalAlign = VerticalAlign.Center,
                 TextHorizontalAlign = HorizontalAlign.Right,
-                MinimumSize = new Point(320, 30)
+                MinimumSize = new Point(200, 30),
+                MaximumSize = new Point(200, 30)
             });
+
+            numrows++;
         }
 
         public override void Construct()
         {
-            Font = "font10";
-            Title = AddChild(new Widget()
-            {
-                Font = "font16",
-                Text = "Finance",
-                AutoLayout = AutoLayout.DockTop
-            });
+            base.Construct();
 
+            Text = "Finance";
+            
             InfoWidget = AddChild(new Widget()
             {
                 Font = "font10",
                 Text = "",
-                MinimumSize = new Point(640, 300),
+                MinimumSize = new Point(0, 300),
                 AutoLayout = AutoLayout.DockTop
+            });
+
+            AddChild(new PolicyPanel
+            {
+                AutoLayout = AutoLayout.DockFill,
+                World = World
             });
             
             OnUpdate = (sender, time) =>
             {
+                if (this.Hidden) return;
+
                 numrows = 0;
                 InfoWidget.Clear();
                 AddRow("Corporate Liquid Assets:", World.Overworld.PlayerCorporationFunds.ToString());
                 AddRow("Corporate Material Assets:", new DwarfBux(World.Overworld.PlayerCorporationResources.Enumerate().Sum(r => r.MoneyValue)).ToString());
-                AddRow("Liquid assets:", Faction.Economy.Funds.ToString());
+                AddRow("Liquid assets:", World.PlayerFaction.Economy.Funds.ToString());
                 var resources = World.EnumerateResourcesIncludingMinions();
                 AddRow("Material assets:", String.Format("{0} goods valued at ${1}",
                     resources.Count(),
                     resources.Sum(r => r.MoneyValue)));
-                var payPerDay = (DwarfBux)Faction.Minions.Select(m => m.Stats.DailyPay.Value).Sum();
-                AddRow("Employees:", String.Format("{0} at {1} per day.", Faction.Minions.Count, payPerDay));
-                AddRow("Runway:", String.Format("{0} day(s).\n", (int)(Faction.Economy.Funds / Math.Max(payPerDay, (decimal)0.01))));
+                var payPerDay = (DwarfBux)World.PlayerFaction.Minions.Select(m => m.Stats.DailyPay.Value).Sum();
+                AddRow("Employees:", String.Format("{0} at {1} per day.", World.PlayerFaction.Minions.Count, payPerDay));
+                AddRow("Runway:", String.Format("{0} day(s).\n", (int)(World.PlayerFaction.Economy.Funds / Math.Max(payPerDay, (decimal)0.01))));
                 var freeStockPile = World.ComputeRemainingStockpileSpace();
                 var totalStockPile = Math.Max(World.ComputeTotalStockpileSpace(), 1);
                 AddRow("Stockpile space:", String.Format("{0} used of {1} ({2:00.00}%)\n", totalStockPile - freeStockPile, totalStockPile, (float)(totalStockPile - freeStockPile) / (float)totalStockPile * 100.0f));
-                AddRow("Average dwarf happiness:", String.Format("{0}%", (int)(float)Faction.Minions.Sum(m => m.Stats.Happiness.Percentage) / Math.Max(Faction.Minions.Count, 1)));
+                AddRow("Average dwarf happiness:", String.Format("{0}%", (int)(float)World.PlayerFaction.Minions.Sum(m => m.Stats.Happiness.Percentage) / Math.Max(World.PlayerFaction.Minions.Count, 1)));
                 InfoWidget.Layout();
             };
 
-            var selector = AddChild(new Gui.Widgets.ComboBox()
-            {
-                Items = Faction.World.Stats.GameStats.Keys.ToList(),
-                AutoLayout = AutoLayout.DockTop
-            }) as Gui.Widgets.ComboBox;
-
-            var graph = AddChild(new Gui.Widgets.Graph() { AutoLayout = AutoLayout.DockFill,  GraphStyle = Gui.Widgets.Graph.Style.LineChart }) as Gui.Widgets.Graph;
-            graph.SetFont("font10");
-            if (Faction.World.Stats.GameStats.ContainsKey("Money"))
-                graph.Values = Faction.World.Stats.GameStats["Money"].Values.Select(v => v.Value).ToList();
-
-            selector.OnSelectedIndexChanged = (sender) =>
-            {
-                if (!String.IsNullOrEmpty(selector.SelectedItem) && Faction.World.Stats.GameStats.ContainsKey(selector.SelectedItem))
-                {
-                    var values = Faction.World.Stats.GameStats[selector.SelectedItem].Values;
-                    graph.Values = Faction.World.Stats.GameStats[selector.SelectedItem].Values.Select(v => v.Value).ToList();
-                    if (values.Count > 0)
-                    {
-                        graph.XLabelMin = "\n" + TextGenerator.AgeToString(Faction.World.Time.CurrentDate - values.First().Date);
-                        graph.XLabelMax = "\nNow";
-                    }
-                }
-                graph.Invalidate();
-            };
-
-            selector.OnSelectedIndexChanged.Invoke(selector);
             Layout();
             Root.RegisterForUpdate(this);
         }

@@ -47,10 +47,11 @@ namespace DwarfCorp.Gui.Widgets
         public int ItemHeight = 32;
 
         public bool ChangeColorOnSelected = true;
+        public bool CheckBorder = true;
 
         public override void Construct()
         {
-            if (String.IsNullOrEmpty(Border)) Border = "border-one";
+            if (CheckBorder && String.IsNullOrEmpty(Border)) Border = "border-one";
 
             ScrollBar = new VerticalScrollBar
             {

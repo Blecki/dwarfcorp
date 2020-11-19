@@ -217,7 +217,7 @@
     <Compile Include="GameStates\Play\CommandBar\EnumerateCommandMenuItems.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\PolicyPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\LevelUpPanel.cs" />
-    <Compile Include="GameStates\Play\EconomyPanel.cs" />
+    <Compile Include="GameStates\Play\EconomyScreen\FactionWindow.cs" />
     <Compile Include="GameStates\Play\PlayState-Tools.cs" />
     <Compile Include="GameStates\Play\PlayState-Render.cs" />
     <Compile Include="GameStates\Play\PlayState-Input.cs" />
@@ -845,7 +845,6 @@
     <Compile Include="GameStates\GameStateManager.cs" />
     <Compile Include="GameStates\FrontEnd\WorldLoaderState.cs" />
     <Compile Include="GameStates\PaginatedChooserState.cs" />
-    <Compile Include="GameStates\Play\EconomyScreen\EconomyState.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGeneratorPreview.cs" />
     <Compile Include="GameStates\FrontEnd\IntroState.cs" />
     <Compile Include="GameStates\FrontEnd\LoadState.cs" />
