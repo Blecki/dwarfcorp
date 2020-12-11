@@ -515,14 +515,14 @@ namespace DwarfCorp.GameStates
                 World = this.World
             });
 
-            var commandPanel = Gui.RootItem.AddChild(new Play.CommandPanel
-            {
-                Border = "border-fancy",
-                AutoLayout = AutoLayout.FloatBottomLeft,
-                MinimumSize = new Point(400, Math.Min(600, Gui.RenderData.VirtualScreen.Height - 100)),
-                Hidden = true,
-                World = this.World
-            });
+            //var commandPanel = Gui.RootItem.AddChild(new Play.CommandPanel
+            //{
+            //    Border = "border-fancy",
+            //    AutoLayout = AutoLayout.FloatBottomLeft,
+            //    MinimumSize = new Point(400, Math.Min(600, Gui.RenderData.VirtualScreen.Height - 100)),
+            //    Hidden = true,
+            //    World = this.World
+            //});
 
             var eventPanel = Gui.RootItem.AddChild(new EventLogViewer()
             {
@@ -643,25 +643,25 @@ namespace DwarfCorp.GameStates
                 }
             };
 
-            CommandsIcon = new FramedIcon
-            {
-                Icon = new Gui.TileReference("tool-icons", 15),
-                Text = "Commands",
-                Tooltip = "Search all possible commands.",
-                TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Below,
-                EnabledTextColor = Vector4.One,
-                OnClick = (sender, args) =>
-                {
-                    if (commandPanel.Hidden)
-                    {
-                        commandPanel.Hidden = false;
-                        commandPanel.BringToFront();
-                    }
-                    else
-                        commandPanel.Hidden = true;
-                }
-            };
+            //CommandsIcon = new FramedIcon
+            //{
+            //    Icon = new Gui.TileReference("tool-icons", 15),
+            //    Text = "Commands",
+            //    Tooltip = "Search all possible commands.",
+            //    TextHorizontalAlign = HorizontalAlign.Center,
+            //    TextVerticalAlign = VerticalAlign.Below,
+            //    EnabledTextColor = Vector4.One,
+            //    OnClick = (sender, args) =>
+            //    {
+            //        if (commandPanel.Hidden)
+            //        {
+            //            commandPanel.Hidden = false;
+            //            commandPanel.BringToFront();
+            //        }
+            //        else
+            //            commandPanel.Hidden = true;
+            //    }
+            //};
 
             var eventsIcon = new FramedIcon
             {
@@ -742,7 +742,7 @@ namespace DwarfCorp.GameStates
                             MarksIcon,
                             TasksIcon,
                             ZonesIcon,
-                            CommandsIcon,
+                            //CommandsIcon,
                             eventsIcon,
                             EconomyIcon,
                             diplomacyIcon

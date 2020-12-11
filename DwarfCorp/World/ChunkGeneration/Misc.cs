@@ -15,9 +15,9 @@ namespace DwarfCorp.Generation
 {
     public static partial class Generator
     {
-        public static float NormalizeHeight(float height)
+        public static float NormalizeHeight(ChunkGeneratorSettings Settings, float height)
         {
-            return 0.15f + (height * 0.8f);
+            return 0.15f + (height * Settings.Overworld.HeightScale * 0.8f);
         }
 
         public static IEnumerable<VoxelChunk> EnumerateTopChunks(ChunkGeneratorSettings Settings)

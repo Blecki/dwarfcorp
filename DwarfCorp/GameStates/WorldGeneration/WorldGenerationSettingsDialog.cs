@@ -139,6 +139,10 @@ namespace DwarfCorp.Gui.Widgets
             AddChild(CreateCombo<int>(Root, "Volcanoes", "Number of Volcanoes", new int[] { 0, 1, 3, 5, 8 }, (f) => Settings.GenerationSettings.NumVolcanoes = f,
                 () => Settings.GenerationSettings.NumVolcanoes));
 
+            AddChild(CreateCombo<float>(Root, "World Height Scale", "Scales hills - smaller values mean smaller hills.", new float[] { 0.0f, 0.25f, 0.60f, 1.0f, 2.0f },
+                (f) => Settings.HeightScale = f,
+                () => Settings.HeightScale));
+
             Layout();
         }
     }

@@ -133,6 +133,7 @@
     <Compile Include="Components\Graphics\LayeredSprites\DwarfLayerType.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfPalette.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\DwarfPaletteType.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\FixDwarfSprites.cs" />
     <Compile Include="Components\Graphics\MeshComponent.cs" />
     <Compile Include="Components\Graphics\SpriteOrientation.cs" />
     <Compile Include="Components\Physics\Fire.cs" />
@@ -141,6 +142,7 @@
     <Compile Include="Components\Systems\ConsoleCommands.cs" />
     <Compile Include="Components\Systems\MinimapIconModule.cs" />
     <Compile Include="Components\Systems\TransformUpdater.cs" />
+    <Compile Include="Entities\Animals\Pumpking.cs" />
     <Compile Include="Entities\Dwarves\NonPlayerDwarf.cs" />
     <Compile Include="Entities\Fixtures\CandyChair.cs" />
     <Compile Include="Entities\Fixtures\CandyTable.cs" />
@@ -169,6 +171,8 @@
     <Compile Include="GameStates\DebugStates\TiledCompositeTextureDebugPanel.cs" />
     <Compile Include="GameStates\FrontEnd\ChangeLogState.cs" />
     <Compile Include="GameStates\Play\CommandBar\BuildCraftInfo.cs" />
+    <Compile Include="GameStates\Play\CommandBar\BuildRoomInfo.cs" />
+    <Compile Include="GameStates\Play\CommandBar\BuildWallInfo.cs" />
     <Compile Include="GameStates\Play\CommandBar\CategoryIcon.cs" />
     <Compile Include="GameStates\Play\CommandBar\CommandMenuItem.cs" />
     <Compile Include="GameStates\Play\CommandBar\CommandMenuItemIcon.cs" />
@@ -178,12 +182,13 @@
     <Compile Include="GameStates\Play\CommandBar\HorizontalGridPanel.cs" />
     <Compile Include="GameStates\Play\CommandBar\Hotkeys.cs" />
     <Compile Include="GameStates\Play\CommandBar\PlaceCraftInfo.cs" />
+    <Compile Include="GameStates\Play\CommandBar\PlantInfo.cs" />
     <Compile Include="GameStates\Play\CommandBar\ScrollingCommandTray.cs" />
     <Compile Include="GameStates\Play\ContentsPanel.cs" />
-    <Compile Include="GameStates\Play\EconomyPanel.cs" />
+    <Compile Include="GameStates\Play\DesignationFilter.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\ApplicantInfo.cs" />
-    <Compile Include="GameStates\Play\EconomyScreen\EconomyState.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\EmployeePanel.cs" />
+    <Compile Include="GameStates\Play\EconomyScreen\FactionWindow.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\FinancePanel.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\HireEmployeeDialog.cs" />
     <Compile Include="GameStates\Play\EconomyScreen\PolicyPanel.cs" />
@@ -213,6 +218,7 @@
     <Compile Include="GameStates\WorldGeneration\OverworldTextureGenerator.cs" />
     <Compile Include="GameStates\WorldGeneration\SimpleOrbitCamera.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldPreviewMesh.cs" />
+    <Compile Include="GameStates\YarnSpinner\AlwaysTalking.cs" />
     <Compile Include="Graphics\Animation\AnimationDescriptor.cs" />
     <Compile Include="Graphics\Animation\AnimationFrameConverter.cs" />
     <Compile Include="Graphics\Cameras\CameraPositionSnapshot.cs" />
@@ -229,12 +235,12 @@
     <Compile Include="Gui\Widgets\HorizontalScrollBar.cs" />
     <Compile Include="Gui\Widgets\ScrollingTextBox.cs" />
     <Compile Include="Gui\Widgets\SliderCombo.cs" />
-    <Compile Include="Gui\Widgets\PlaceCraftInfo.cs" />
     <Compile Include="Gui\Widgets\DefaultTaskPriority.cs" />
     <Compile Include="Gui\Widgets\StaticGridPanel.cs" />
     <Compile Include="Gui\Widgets\StatsTracker.cs" />
     <Compile Include="Gui\Widgets\MarketPanel.cs" />
     <Compile Include="Gui\Widgets\TextBoxEx.cs" />
+    <Compile Include="Gui\Widgets\Window.cs" />
     <Compile Include="Library\CategoryIconLibrary.cs" />
     <Compile Include="Library\ClassLibrary.cs" />
     <Compile Include="Library\CraftLibrary.cs" />
@@ -248,8 +254,6 @@
     <Compile Include="Library\ZoneLibrary.cs" />
     <Compile Include="LogWriter.cs" />
     <Compile Include="EventLog.cs" />
-    <Compile Include="EventLogState.cs" />
-    <Compile Include="EventLogViewer.cs" />
     <Compile Include="GameStates\WaitState.cs" />
     <Compile Include="GameStates\Play\WorldPopup.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGeneratorState.cs" />
@@ -281,6 +285,10 @@
     <Compile Include="Player\Crafting\DeconstructObjectTask.cs" />
     <Compile Include="Player\Crafting\DeconstructObjectAct.cs" />
     <Compile Include="Player\Loadout.cs" />
+    <Compile Include="Player\Tools\EntityInspector\EntityInspector.cs" />
+    <Compile Include="Player\Tools\EntityInspector\EntityInspectorPanel.cs" />
+    <Compile Include="Player\Tools\EntityInspector\PropertyPanel.cs" />
+    <Compile Include="Player\Tools\PathingHintTool.cs" />
     <Compile Include="Player\Tutorial\JsonTutorialSet.cs" />
     <Compile Include="Player\Tutorial\TutorialManager.cs" />
     <Compile Include="Player\Tutorial\TutorialSaveData.cs" />
@@ -675,8 +683,6 @@
     <Compile Include=".\Gui\Widgets\AnnouncementPopup.cs" />
     <Compile Include=".\Gui\Widgets\AudioMixerWidget.cs" />
     <Compile Include=".\Gui\Widgets\AutoGridPanel.cs" />
-    <Compile Include=".\Gui\Widgets\BuildRoomInfo.cs" />
-    <Compile Include=".\Gui\Widgets\BuildWallInfo.cs" />
     <Compile Include=".\Gui\Widgets\Button.cs" />
     <Compile Include=".\Gui\Widgets\CancelToolOptions.cs" />
     <Compile Include=".\Gui\Widgets\CheckBox.cs" />
@@ -689,7 +695,6 @@
     <Compile Include=".\Gui\Widgets\CompanyLogo.cs" />
     <Compile Include=".\Gui\Widgets\Confirm.cs" />
     <Compile Include=".\Gui\Widgets\ContextMenu.cs" />
-    <Compile Include=".\Gui\Widgets\DesignationFilter.cs" />
     <Compile Include=".\Gui\Widgets\DwarfConsole.cs" />
     <Compile Include=".\Gui\Widgets\EditableTextField.cs" />
     <Compile Include=".\Gui\Widgets\EmployeePortrait.cs" />
@@ -710,7 +715,6 @@
     <Compile Include=".\Gui\Widgets\KeyField.cs" />
     <Compile Include=".\Gui\Widgets\ListView.cs" />
     <Compile Include=".\Gui\Widgets\MoneyEditor.cs" />
-    <Compile Include=".\Gui\Widgets\PlantInfo.cs" />
     <Compile Include=".\Gui\Widgets\Popup.cs" />
     <Compile Include=".\Gui\Widgets\ProgressBar.cs" />
     <Compile Include=".\Gui\Widgets\ResourceColumns.cs" />

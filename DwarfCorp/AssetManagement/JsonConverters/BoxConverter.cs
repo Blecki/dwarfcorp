@@ -1,35 +1,3 @@
-// BoxConverter.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -65,7 +33,9 @@ namespace DwarfCorp
                 }
             }
 
-            return new Vector3(float.Parse(intTokens[0]), float.Parse(intTokens[1]), float.Parse(intTokens[2]));
+            if (!float.TryParse(intTokens[0], out var x) || !float.TryParse(intTokens[1], out var y) || !float.TryParse(intTokens[2], out var z))
+                return Vector3.Zero;
+            return new Vector3(x, y, z);
         }
 
         public override bool CanWrite
@@ -96,8 +66,15 @@ namespace DwarfCorp
             if (token.Type == JTokenType.String)
             {
                 // customize this to suit your needs
-                return new DwarfBux(decimal.Parse(token.ToString(),
-                       global::System.Globalization.CultureInfo.GetCultureInfo("es-ES")));
+                try
+                {
+                    return new DwarfBux(decimal.Parse(token.ToString(),
+                           global::System.Globalization.CultureInfo.GetCultureInfo("es-ES")));
+                }
+                catch (Exception)
+                {
+                    return new DwarfBux(0);
+                }
             }
             if (token.Type == JTokenType.Null && objectType == typeof(DwarfBux?))
             {
@@ -152,14 +129,15 @@ namespace DwarfCorp
             var properties = jsonObject.Properties().ToList();
             try
             {
+                if (!float.TryParse((string)properties[0], out var maxx) || !float.TryParse((string)properties[1], out var maxy) || !float.TryParse((string)properties[2], out var maxz))
+                    return Vector3.Zero;
+                if (!float.TryParse((string)properties[0], out var minx) || !float.TryParse((string)properties[1], out var miny) || !float.TryParse((string)properties[2], out var minz))
+                    return Vector3.Zero;
+
                 return new BoundingBox()
                 {
-                    Max = new Vector3(float.Parse((string)properties[0]),
-                        float.Parse((string)properties[1]),
-                        float.Parse((string)properties[2])),
-                    Min = new Vector3(float.Parse((string)properties[3]),
-                        float.Parse((string)properties[4]),
-                        float.Parse((string)properties[5]))
+                    Max = new Vector3(maxx, maxy, maxz),
+                    Min = new Vector3(minx, miny, minz)
                 };
             }
             catch (global::System.OverflowException)
@@ -211,7 +189,10 @@ namespace DwarfCorp
                 //"R, G, B, A";
                 string value = reader.Value.ToString();
                 string[] toks = value.Split(',');
-                return new Color(int.Parse(toks[0]), int.Parse(toks[1]), int.Parse(toks[2]), int.Parse(toks[3]));
+                if (!int.TryParse(toks[0], out var r) || !int.TryParse(toks[1], out var g) || !int.TryParse(toks[2], out var b) || !int.TryParse(toks[3], out var a))
+                    return new Color(1, 1, 1, 1);
+
+                return new Color(r, g, b, a);
             }
 
         }

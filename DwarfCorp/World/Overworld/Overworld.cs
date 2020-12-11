@@ -23,6 +23,7 @@ namespace DwarfCorp.GameStates // Todo: Why in GameStates?
         public int NumCaveLayers = 8;
         public int zLevels = 4; // This is actually y levels but genre convention is to call depth Z.
         public bool DebugWorld = false;
+        public float HeightScale = 1.0f;
         public Point SpawnPoint = new Point(128, 128);
 
         [JsonIgnore] public InstanceSettings InstanceSettings;
