@@ -113,7 +113,10 @@ namespace DwarfCorp.Tutorial
                         ExistingTutorial.Hidden = true;
                 }
                 else
-                    ExistingTutorial.Hidden = true;
+                {
+                    if (ExistingTutorial != null)
+                        ExistingTutorial.Hidden = true;
+                }
             }
         }
 

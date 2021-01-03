@@ -100,7 +100,7 @@ namespace DwarfCorp
         public String SpeciesName = "";
         [JsonIgnore] public MaybeNull<CreatureSpecies> Species { get; private set; }
 
-        public DwarfBux DailyPay => GameSettings.Current.DwarfBasePay * GetCurrentLevel();
+        [JsonIgnore] public DwarfBux DailyPay => GameSettings.Current.DwarfBasePay * GetCurrentLevel();
 
         public TaskCategory AllowedTasks = TaskCategory.Attack | TaskCategory.Gather | TaskCategory.Plant | TaskCategory.Harvest | TaskCategory.Chop | TaskCategory.Wrangle | TaskCategory.TillSoil;
         [JsonIgnore] public bool IsOverQualified => XP >= GetLevelUpCost(GetCurrentLevel());
@@ -122,11 +122,7 @@ namespace DwarfCorp
 
         public CreatureStats()
         {
-            Age = (int)Math.Max(MathFunctions.RandNormalDist(35, 15), 15);
-            RandomSeed = MathFunctions.RandInt(int.MinValue, int.MaxValue);
-
-            if (FindAdjustment("base stats") == null)
-                AddStatAdjustment(new StatAdjustment { Name = "base stats" });
+           
         }
 
         [OnDeserialized]
@@ -135,10 +131,19 @@ namespace DwarfCorp
             if (Library.GetClass(ClassName).HasValue(out var creatureClass))
                 CurrentClass = creatureClass;
             Species = Library.GetSpecies(SpeciesName);
+
+            if (FindAdjustment("base stats") == null)
+                AddStatAdjustment(new StatAdjustment { Name = "base stats" });
         }
 
         public CreatureStats(String SpeciesName, String ClassName, MaybeNull<Loadout> Loadout) : this()
         {
+            Age = (int)Math.Max(MathFunctions.RandNormalDist(35, 15), 15);
+            RandomSeed = MathFunctions.RandInt(int.MinValue, int.MaxValue);
+
+            if (FindAdjustment("base stats") == null)
+                AddStatAdjustment(new StatAdjustment { Name = "base stats" });
+
             this.ClassName = ClassName;
             CurrentClass = Library.GetClass(ClassName);
 

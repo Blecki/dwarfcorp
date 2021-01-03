@@ -131,7 +131,7 @@ namespace DwarfCorp
             {
                 if (!float.TryParse((string)properties[0], out var maxx) || !float.TryParse((string)properties[1], out var maxy) || !float.TryParse((string)properties[2], out var maxz))
                     return Vector3.Zero;
-                if (!float.TryParse((string)properties[0], out var minx) || !float.TryParse((string)properties[1], out var miny) || !float.TryParse((string)properties[2], out var minz))
+                if (!float.TryParse((string)properties[3], out var minx) || !float.TryParse((string)properties[4], out var miny) || !float.TryParse((string)properties[5], out var minz))
                     return Vector3.Zero;
 
                 return new BoundingBox()

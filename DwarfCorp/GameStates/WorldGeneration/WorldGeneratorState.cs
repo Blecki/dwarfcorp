@@ -169,15 +169,23 @@ namespace DwarfCorp.GameStates
                 {
                     if (_WorldType == WorldType.SavedWorld)
                     {
-                        var saveName = DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Settings.Name;
-                        var saveGame = SaveGame.LoadMetaFromDirectory(saveName);
-                        if (saveGame != null)
+                        try
                         {
-                            DwarfGame.LogSentryBreadcrumb("WorldGenerator", "User is loading a saved game.");
-                            Settings.InstanceSettings.LoadType = LoadType.LoadFromFile;
+                            var saveName = DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Settings.Name;
+                            var saveGame = SaveGame.LoadMetaFromDirectory(saveName);
+                            if (saveGame != null)
+                            {
+                                DwarfGame.LogSentryBreadcrumb("WorldGenerator", "User is loading a saved game.");
+                                Settings.InstanceSettings = new InstanceSettings();
+                                Settings.InstanceSettings.LoadType = LoadType.LoadFromFile;
 
-                            GameStateManager.ClearState();
-                            GameStateManager.PushState(new LoadState(Game, Settings, LoadTypes.UseExistingOverworld));
+                                GameStateManager.ClearState();
+                                GameStateManager.PushState(new LoadState(Game, Settings, LoadTypes.UseExistingOverworld));
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            throw new Exception("Exception while loading save", e);
                         }
                     }
                     else

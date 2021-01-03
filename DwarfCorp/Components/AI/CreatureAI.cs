@@ -118,9 +118,17 @@ namespace DwarfCorp
         [JsonIgnore]
         public Vector3 Position // Todo: Remove wrapper
         {
-            get { return Creature.Physics.GlobalTransform.Translation; }
+            get
+            {
+                if (Creature == null || Creature.Physics == null)
+                    return Vector3.Zero;
+                return Creature.Physics.GlobalTransform.Translation;
+            }
             set
             {
+                if (Creature == null || Creature.Physics == null)
+                    return;
+
                 Matrix newTransform = Creature.Physics.LocalTransform;
                 newTransform.Translation = value;
                 Creature.Physics.LocalTransform = newTransform;
@@ -331,10 +339,12 @@ namespace DwarfCorp
         {
             base.Update(gameTime, chunks, camera);
 
+            if (Creature == null || Stats == null) return;
+
             if (!Active)
                 return;
 
-            Creature.NoiseMaker.BasePitch = Stats.VoicePitch;
+            if (Creature.NoiseMaker != null) Creature.NoiseMaker.BasePitch = Stats.VoicePitch;
 
             // Non-dwarves are always at full energy.
             Stats.Energy.CurrentValue = 100.0f;

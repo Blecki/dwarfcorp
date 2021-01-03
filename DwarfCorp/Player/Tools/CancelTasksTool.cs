@@ -55,6 +55,11 @@ namespace DwarfCorp
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
+            if (World == null || World.UserInterface == null || World.UserInterface.VoxSelector == null || World.UserInterface.BodySelector == null)
+                return;
+            if (Options == null || Options.Voxels == null || Options.Entities == null)
+                return;
+
             if (World.UserInterface.IsCameraRotationModeActive())
             {
                 World.UserInterface.VoxSelector.Enabled = false;

@@ -165,7 +165,8 @@ namespace DwarfCorp
                             var rx = (x * scale) + tx;
                             var ry = (y * scale) + ty;
                             var pixelIndex = ry * Map.GetLength(0) * scale + rx;
-                            worldData[pixelIndex] = cellColor;
+                            if (pixelIndex >= 0 && pixelIndex < worldData.Length)
+                                worldData[pixelIndex] = cellColor;
                         }
                 }
             }

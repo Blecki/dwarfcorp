@@ -8,7 +8,7 @@ namespace DwarfCorp
         public Timer HurtTimer { get; set; }
 
         public Tree() {
-            SetFlag(Flag.DontUpdate, true);
+            //SetFlag(Flag.DontUpdate, true);
 
         }
 

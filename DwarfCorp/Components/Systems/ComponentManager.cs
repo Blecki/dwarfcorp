@@ -102,9 +102,12 @@ namespace DwarfCorp
 
             foreach (var component in SaveData.SaveableComponents)
             {
-                component.ProcessTransformChange();
                 component.CreateCosmeticChildren(this);
+                component.HasMoved = true;
+                //component.ProcessTransformChange();
             }
+
+            RootComponent.ProcessTransformChange();
 
             var removals = SaveData.SaveableComponents.Where(p => p.Parent == null && p != RootComponent).ToList();
 

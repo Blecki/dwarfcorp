@@ -20,9 +20,21 @@ namespace DwarfCorp.GameStates
             }
         }
 
-        private static PerformanceCounter cpuCounter = new PerformanceCounter("Process", "% Processor Time", GetInstanceName(), true);
-        private static PerformanceCounter procMemCounter = new PerformanceCounter("Process", "Private Bytes", GetInstanceName(), true);
-        private static PerformanceCounter procVirMemCounter = new PerformanceCounter("Process", "Virtual Bytes", GetInstanceName(), true);
+        private static PerformanceCounter InitializePerformanceCounter(String Category, String Counter, String InstanceName, bool ReadOnly)
+        {
+            try
+            {
+                return new PerformanceCounter(Category, Counter, InstanceName, ReadOnly);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private static PerformanceCounter cpuCounter = InitializePerformanceCounter("Process", "% Processor Time", GetInstanceName(), true);
+        private static PerformanceCounter procMemCounter = InitializePerformanceCounter("Process", "Private Bytes", GetInstanceName(), true);
+        private static PerformanceCounter procVirMemCounter = InitializePerformanceCounter("Process", "Virtual Bytes", GetInstanceName(), true);
         private static Timer PerformanceCounterTimer = new Timer(1, false, Timer.TimerMode.Real);
         private static float CPUPercentage = 0.0f;
         private static float ProcMemory = 0.0f;
@@ -97,9 +109,9 @@ namespace DwarfCorp.GameStates
                     if (PerformanceCounterTimer.HasTriggered)
                     {
                         PerformanceCounterTimer.Reset();
-                        CPUPercentage = cpuCounter.NextValue();
-                        ProcMemory = procMemCounter.NextValue();
-                        ProcVirMemory = procVirMemCounter.NextValue();
+                        CPUPercentage = cpuCounter == null ? 0.0f : cpuCounter.NextValue();
+                        ProcMemory = procMemCounter == null ? 0.0f : procMemCounter.NextValue();
+                        ProcVirMemory = procVirMemCounter == null ? 0.0f : procVirMemCounter.NextValue();
                     }
 
                     PerformanceMonitor.SetMetric("GC MEMORY", BytesToString(System.GC.GetTotalMemory(false)));

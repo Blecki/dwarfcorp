@@ -78,8 +78,10 @@ namespace DwarfCorp
             var terrainTiles = new Gui.TileSheet(cubeTexture.Width, cubeTexture.Height, cubeTexture.Bounds, 32, 32, false);
 
             short id = 2;
-            foreach (VoxelType type in VoxelTypeList)
+            foreach (var type in VoxelTypeList)
             {
+                if (type == null) continue;
+
                 VoxelTypes[type.Name] = type;
                 VoxelPrimitives[type.Name] = CreateVoxelPrimitive(cubeTexture, 32, 32, type.Top, type.Bottom, type.Sides);
                 if (type.Name == "_empty")

@@ -34,9 +34,12 @@ namespace DwarfCorp.GameStates
             if (Mode != "SelectUnits")
                 SelectedObjects = new List<GameComponent>();
 
-            CurrentTool.OnEnd();
-            CurrentToolMode = Mode;
-            CurrentTool.OnBegin(Arguments);
+            if (Tools.ContainsKey(Mode))
+            {
+                CurrentTool.OnEnd();
+                CurrentToolMode = Mode;
+                CurrentTool.OnBegin(Arguments);
+            }
         }
     }
 }
