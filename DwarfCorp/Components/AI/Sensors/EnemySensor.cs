@@ -49,66 +49,74 @@ namespace DwarfCorp
 
         public void Sense()
         {
-            if (Name == "turret-sensor")
+            try
             {
-                var x = 5;
-            }
 
-            if (!Active) return;
-
-            if (Creature != null)
-                Allies = Creature.Faction;
-
-            // Don't sense enemies if we're inside the ground??
-            var currentVoxel = new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(Position));
-            if (!(currentVoxel.IsValid && currentVoxel.IsEmpty))
-                return;
-
-            var sensed = new List<CreatureAI>();
-
-            var myRoot = GetRoot();
-
-            foreach (var body in Manager.World.EnumerateIntersectingRootObjects(BoundingBox, b => !Object.ReferenceEquals(b, myRoot)))
-            {
-                if (body.GetComponent<Flammable>().HasValue(out var flames) && flames.IsOnFire)
+                if (Name == "turret-sensor")
                 {
-                    if (GetRoot().GetComponent<CreatureAI>().HasValue(out var myAI))
+                    var x = 5;
+                }
+
+                if (!Active) return;
+
+                if (Creature != null)
+                    Allies = Creature.Faction;
+
+                // Don't sense enemies if we're inside the ground??
+                var currentVoxel = new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(Position));
+                if (!(currentVoxel.IsValid && currentVoxel.IsEmpty))
+                    return;
+
+                var sensed = new List<CreatureAI>();
+
+                var myRoot = GetRoot();
+
+                foreach (var body in Manager.World.EnumerateIntersectingRootObjects(BoundingBox, b => !Object.ReferenceEquals(b, myRoot)))
+                {
+                    if (body.GetComponent<Flammable>().HasValue(out var flames) && flames.IsOnFire)
                     {
-                        var task = new FleeEntityTask(body, 5)
+                        if (GetRoot().GetComponent<CreatureAI>().HasValue(out var myAI))
                         {
-                            Priority = TaskPriority.Urgent,
-                            AutoRetry = false,
-                            ReassignOnDeath = false
-                        };
+                            var task = new FleeEntityTask(body, 5)
+                            {
+                                Priority = TaskPriority.Urgent,
+                                AutoRetry = false,
+                                ReassignOnDeath = false
+                            };
 
-                        if (!myAI.HasTaskWithName(task))
-                            myAI.AssignTask(task);
+                            if (!myAI.HasTaskWithName(task))
+                                myAI.AssignTask(task);
 
-                        continue;
+                            continue;
+                        }
+                    }
+
+                    if (body.GetComponent<CreatureAI>().HasValue(out var minion))
+                    {
+                        if (!minion.Active)
+                            continue;
+
+                        if (!DetectCloaked && minion.Creature.IsCloaked)
+                            continue;
+
+                        else if (DetectCloaked && minion.Creature.IsCloaked)
+                            minion.Creature.IsCloaked = false;
+
+                        if (World.Overworld.GetPolitics(Allies.ParentFaction, minion.Faction.ParentFaction).GetCurrentRelationship() != Relationship.Hateful)
+                            continue;
+
+                        if (!VoxelHelpers.DoesRayHitSolidVoxel(Manager.World.ChunkManager, Position, minion.Position))
+                            sensed.Add(minion);
                     }
                 }
 
-                if (body.GetComponent<CreatureAI>().HasValue(out var minion))
-                {
-                    if (!minion.Active)
-                        continue;
-
-                    if (!DetectCloaked && minion.Creature.IsCloaked)
-                        continue;
-
-                    else if (DetectCloaked && minion.Creature.IsCloaked)
-                        minion.Creature.IsCloaked = false;
-
-                    if (World.Overworld.GetPolitics(Allies.ParentFaction, minion.Faction.ParentFaction).GetCurrentRelationship() != Relationship.Hateful)
-                        continue;
-
-                    if (!VoxelHelpers.DoesRayHitSolidVoxel(Manager.World.ChunkManager, Position, minion.Position))
-                        sensed.Add(minion);
-                }
+                if (sensed != null && sensed.Count > 0 && OnEnemySensed != null)
+                    OnEnemySensed.Invoke(sensed);
             }
-
-            if (sensed != null && sensed.Count > 0 && OnEnemySensed != null)
-                OnEnemySensed.Invoke(sensed);
+            catch (Exception e)
+            {
+                // Fuck it
+            }
         }
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)

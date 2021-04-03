@@ -43,8 +43,14 @@ namespace DwarfCorp
 
         public void MakeTradeWidget(WorldManager World)
         {
+            if (Creatures == null)
+                return;
+
             var liveCreatures = Creatures.Where(creature => creature != null && !creature.IsDead);
             if (!liveCreatures.Any())
+                return;
+
+            if (OwnerFaction == null || World == null || World.UserInterface == null)
                 return;
 
             var zones = World.EnumerateZones().OfType<BalloonPort>();
@@ -68,9 +74,12 @@ namespace DwarfCorp
             else
                 closestCreature = liveCreatures.First();
 
+            if (closestCreature == null || closestCreature.Physics == null)
+                return;
+
             TradeWidget = World.UserInterface.MakeWorldPopup(new Events.TimedIndicatorWidget()
             {
-                Text = string.Format("Click here to trade with the {0}!", OwnerFaction.Race.HasValue(out var race) ? race.Name : "???"),
+                Text = string.Format("Click here to trade with the {0}!", OwnerFaction.Race.HasValue(out var race) ? (race == null ? "???" : race.Name) : "???"),
                 OnClick = (gui, sender) =>
                 {
                     OpenDiplomacyConversation(World);

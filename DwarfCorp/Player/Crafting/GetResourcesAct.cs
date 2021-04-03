@@ -54,6 +54,9 @@ namespace DwarfCorp
         public override void Initialize()
         {
             var hasAllResources = true;
+            
+            if (Creature == null || Creature.Inventory == null) return;
+            if (Resources == null) return;
 
             if (Resources != null)
             {

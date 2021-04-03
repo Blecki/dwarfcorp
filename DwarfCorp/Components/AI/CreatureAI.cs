@@ -96,22 +96,22 @@ namespace DwarfCorp
         [JsonIgnore] // Todo: The problem with these wrappers is that everything works with CreatureAI instead of Creature.
         public Physics Physics
         {
-            get { return Creature.Physics; }
+            get { return Creature == null ? null : Creature.Physics; }
         }
 
         /// <summary> Wrapper around Creature.Faction </summary>
         [JsonIgnore]
         public Faction Faction
         {
-            get { return Creature.Faction; }
-            set { Creature.Faction = value; }
+            get { return Creature == null ? null : Creature.Faction; }
+            set { if (Creature != null) Creature.Faction = value; }
         }
 
         /// <summary> Wrapper around Creature.Stats </summary>
         [JsonIgnore]
         public CreatureStats Stats
         {
-            get { return Creature.Stats; }
+            get { return Creature == null ? null : Creature.Stats; }
         }
 
         /// <summary> Wrapper around Creature.Physics.GlobalTransform.Translation </summary>
@@ -589,7 +589,13 @@ namespace DwarfCorp
 
         public override string GetDescription()
         {
-            string desc = Stats.FullName + ", level " + Stats.GetCurrentLevel() +
+            if (Stats == null || Creature == null)
+                return "This bloke got a problem.";
+
+            if (Stats.Happiness == null || Stats.Health == null || Stats.Hunger == null || Stats.Energy == null)
+                return "This bloke got no stats.";
+
+            string desc = (Stats.FullName == null ? "Who" : Stats.FullName) + ", level " + Stats.GetCurrentLevel() +
                           ", " + Stats.Gender.ToString() + "\n    " +
                           "Happiness: " + GetHappinessDescription(Stats.Happiness) + ". Health: " + Stats.Health.Percentage +
                           ". Hunger: " + (100 - Stats.Hunger.Percentage) + ". Energy: " + Stats.Energy.Percentage +
@@ -763,7 +769,7 @@ namespace DwarfCorp
         {
             if (CurrentTask.HasValue(out var currentTask))
             {
-                if (currentTask.ReassignOnDeath && Faction == World.PlayerFaction)
+                if (World != null && World.TaskManager != null && currentTask.ReassignOnDeath && Faction == World.PlayerFaction)
                     World.TaskManager.AddTask(currentTask);
                 ChangeTask(null);
             }

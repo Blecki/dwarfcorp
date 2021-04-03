@@ -23,6 +23,7 @@ namespace DwarfCorp
 
         public override void OnBegin(Object Arguments)
         {
+            Options = Arguments as Gui.Widgets.CancelToolOptions;
             World.Tutorial("cancel-tasks");
             World.UserInterface.VoxSelector.SelectionColor = Color.Red;
             World.UserInterface.VoxSelector.DrawBox = true;

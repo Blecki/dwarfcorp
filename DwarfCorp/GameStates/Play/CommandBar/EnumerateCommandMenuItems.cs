@@ -35,7 +35,7 @@ namespace DwarfCorp.Play
                 {
                     AssetPath = "newgui/icons",
                     FrameSize = new Point(32, 32),
-                    Frame = new Point(5, 0)
+                    Frame = new Point(0, 5)
                 },
                 OnClick = (sender, args) => World.UserInterface.ChangeTool("PathingHint", null),
                 Tooltip = "Select dwarves"
@@ -355,7 +355,6 @@ namespace DwarfCorp.Play
                 Tooltip = "Catch Animals",
                 HoverWidget = new Widget()
                 {
-                    Border = "border-fancy",
                     Text = "Catch Animals.\n Click and drag to catch animals.\nRequires animal pen.",
                     Rect = new Rectangle(0, 0, 256, 128),
                     TextColor = Color.Black.ToVector4()
@@ -380,7 +379,7 @@ namespace DwarfCorp.Play
                 },
                 HoverWidget = new CancelToolOptions
                 {
-                    Rect = new Rectangle(0, 0, 200, 100)
+                    Rect = new Rectangle(0, 0, 256, 128)
                 }
             };
         }

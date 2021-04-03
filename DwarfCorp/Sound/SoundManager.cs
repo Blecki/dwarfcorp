@@ -555,32 +555,39 @@ namespace DwarfCorp
                 Listener.Forward.Normalize();
             }
 
-            foreach(Sound3D instance in ActiveSounds)
+            try
             {
-                if(instance.EffectInstance.IsDisposed || (instance.HasStarted && instance.EffectInstance.State == SoundState.Stopped || instance.EffectInstance.State == SoundState.Paused))
+                foreach (Sound3D instance in ActiveSounds)
                 {
-                    if(!instance.EffectInstance.IsDisposed)
-                        instance.EffectInstance.Dispose();
-                    toRemove.Add(instance);
-                    SoundCounts[instance.Name]--;
-                }
-                else if(!instance.HasStarted)
-                {
-                    if (float.IsNaN(instance.Position.X) || 
-                        float.IsNaN(instance.Position.Y) ||
-                        float.IsNaN(instance.Position.Z))
+                    if (instance.EffectInstance.IsDisposed || (instance.HasStarted && instance.EffectInstance.State == SoundState.Stopped || instance.EffectInstance.State == SoundState.Paused))
                     {
-                        instance.Position = Vector3.Zero;
+                        if (!instance.EffectInstance.IsDisposed)
+                            instance.EffectInstance.Dispose();
+                        toRemove.Add(instance);
+                        SoundCounts[instance.Name]--;
                     }
-                    instance.EffectInstance.Volume *= (GameSettings.Current.MasterVolume * GameSettings.Current.SoundEffectVolume * instance.VolumeMultiplier);
-                    Emitter.Position = instance.Position;
-                    instance.EffectInstance.Apply3D(Listener, Emitter);
-                    instance.EffectInstance.Play();
-                    //instance.EffectInstance.Apply3D(Listener, Emitter);
+                    else if (!instance.HasStarted)
+                    {
+                        if (float.IsNaN(instance.Position.X) ||
+                            float.IsNaN(instance.Position.Y) ||
+                            float.IsNaN(instance.Position.Z))
+                        {
+                            instance.Position = Vector3.Zero;
+                        }
+                        instance.EffectInstance.Volume *= (GameSettings.Current.MasterVolume * GameSettings.Current.SoundEffectVolume * instance.VolumeMultiplier);
+                        Emitter.Position = instance.Position;
+                        instance.EffectInstance.Apply3D(Listener, Emitter);
+                        instance.EffectInstance.Play();
+                        //instance.EffectInstance.Apply3D(Listener, Emitter);
 
-                    //instance.EffectInstance.Volume = Math.Max(Math.Min(400.0f / (camera.Position - instance.Position).LengthSquared(), 0.999f), 0.001f);
-                    instance.HasStarted = true;
+                        //instance.EffectInstance.Volume = Math.Max(Math.Min(400.0f / (camera.Position - instance.Position).LengthSquared(), 0.999f), 0.001f);
+                        instance.HasStarted = true;
+                    }
                 }
+            } 
+            catch (Exception e)
+            {
+                // Collection getting modified somehow? ??? Dunno. Very odd and rare crash.
             }
 
             ActiveSounds2D.RemoveAll(sound => sound.IsDisposed || sound.State == SoundState.Stopped);

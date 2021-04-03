@@ -12,9 +12,14 @@ namespace DwarfCorp.Gui.Widgets
         public CheckBox Voxels;
         public CheckBox Entities;
 
+        public override Point GetBestSize()
+        {
+            return new Point(200, 50);
+        }
+
+
         public override void Construct()
         {
-            Border = "border-fancy";
             Font = "font8";
             TextColor = new Vector4(0, 0, 0, 1);
 

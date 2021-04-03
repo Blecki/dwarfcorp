@@ -11,8 +11,8 @@ namespace DwarfCorp
 {
     internal static class Program
     {
-        public static string Version = "20.12.10_XNA";
-        public static string[] CompatibleVersions = { "20.12.10_XNA", "20.12.10_FNA" };
+        public static string Version = "21.04.03_XNA";
+        public static string[] CompatibleVersions = { "21.01.26_XNA", "21.01.26_FNA", "20.12.10_XNA", "20.12.10_FNA", "21.04.03_XNA", "21.04.03_FNA" };
         public static string Commit = "UNKNOWN";
         public static char DirChar = Path.DirectorySeparatorChar;
         private static RavenClient ravenClient;
@@ -98,7 +98,8 @@ namespace DwarfCorp
             if (ravenClient != null)
                 ravenClient.Capture(new SentryEvent(exception));
 #else
-            throw exception;
+            var x = 5;
+            //throw exception;
 #endif
         }
 
