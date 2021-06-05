@@ -1,0 +1,34 @@
+{
+  "TypeName": "Cave Mushroom",
+  "MoneyValue": 3.5,
+  "Description": "Dwarves can eat these.",
+  "Category": "Seeds",
+  "Tags": [
+    "SelfIlluminating",
+    "Edible",
+    "Fungus",
+    "Flammable",
+    "RawFood",
+    "Brewable",
+    "Plantable",
+    "BelowGroundPlant"
+  ],
+  "FoodContent": 30.0,
+  "DisplayName": "Cave Mushroom",
+  "PlantToGenerate": "Cave Mushroom Sprout",
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "Cave-brew",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "4, 1"
+  }
+
+}

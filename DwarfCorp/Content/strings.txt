@@ -1,0 +1,100 @@
+okay: Okay
+yes: Yes
+no: No
+main-menu-title: MAIN MENU
+continue: Continue
+continue-tooltip: Continue save game {0}.
+new-game: New Game
+new-game-tooltip: Start a new game of DwarfCorp.
+new-game-advanced: New Game (Advanced)
+new-game-advanced-tooltip: Start a new game of DwarfCorp.
+load-game: Load Game
+load-game-tooltip: Load DwarfCorp game from a file.
+options: Options
+options-tooltip: Change game settings
+manage-mods: Manage Mods
+manage-mods-tooltip: Enable or disable mods, find new mods, and adjust load order.
+credits: Credits
+credits-tooltip: View the credits
+advanced-world-creation-denied: Advanced world creation is not available in the demo.
+save-load-denied: Saving and loading are not available in the demo.
+quit: Quit
+quit-tooltip: Goodbye.
+click-and-drag: Click and drag to {0} {1}.
+place: Click to place {0}.
+verb-noun: {0} {1}
+rail: Rail
+rail-description: Rail.
+cancelled-crafting-unreachable: {0} cancelled crafting {1} because crafting station was unreachable.
+place-existing: Place Existing
+place-existing-tooltip: Place an existing {0} from our stockpiles.
+craft-new: {0} New
+craft-new-tooltip: {0} a new {1} using the selected resources.
+build: Build
+built: Built
+building: Building
+bear-trap: Bear Trap
+s-bear-trap: Bear Trap
+d-bear-trap: Damages enemies and then explodes.
+craft: Craft {0}
+place: Place
+stockpile: Stockpile
+craft-at: {0} Craft {1} at {2}
+brew: Brew
+brewed: Brewed
+brewing: Brewing
+ale: Ale
+s-ale: ale
+d-ale: Turn brewable food into alcohol.
+anvil: Anvil
+s-anvil: Anvil
+d-anvil: Used to craft more complex items.
+play-employee-icon-label: Dwarfs
+play-employee-icon-tooltip: Selected employee menu
+play-marks-icon-label: Markers
+play-marks-icon-tooltip: Active Markers
+play-tasks-icon-label: Tasks
+play-tasks-icon-tooltip: Task List
+play-map-icon-label: Map
+play-map-icon-tooltip: Minimap
+fire-dwarf: Fire this dwarf!
+keep-dwarf: Keep this dwarf.
+firing-error: Error firing dwarf. Try again?
+was-fired: {0} was fired.
+money-amount: Amount of money in our treasury
+stockpile-tooltip: Amount of stockpile space remaining. Build more stockpiles to get more space.
+slicer-tooltip: Current viewing level.
+slicer-down-tooltip: Go down one viewing level.
+slicer-up-tooltip: Go up one viewing level.
+slicer-current-tooltip: Current viewing level.
+time-tooltip: Current time/date.
+economy-tooltip: Click to open the Colony Management screen.
+economy-label: Colony
+events-tooltip: View Event Log
+events-label: Events
+settings-tooltip: Click to open the Settings screen.
+settings-label: Option
+color-profile: Profile:
+options-apply-check: Apply changes?
+options-apply: Apply
+options-restore-defaults: Restore default settings
+options-restore-defaults-check: Set all settings to their default?
+options-camera-movement: Camera Move Speed
+options-camera-movement-tooltip: Sensitivity of the camera to the movement keys
+options-camera-zoom: Camera Zoom Speed
+options-camera-zoom-tooltip: Sensitivity of the camera to zooming
+options-gameplay-tab: GAMEPLAY
+options-ai-tab: AI
+options-invert-zoom: Invert Zoom
+options-invert-zoom-tooltip: When checked, zooming in/out with the scroll wheel will be inverted
+options-zoom-to-mouse: Zoom to Mouse
+options-zoom-to-mouse-tooltip: When checked, when you zoom in, you will zoom toward the mouse
+options-edge-scrolling: Edge Scrolling
+options-edge-scrolling-tooltip: When checked, moving the cursor to the edge of the screen will move the camera.
+world-generation-start-underground: Start Underground
+world-generation-reveal-surface: Reveal Surface
+play-rooms-icon-label: Zones
+play-rooms-icon-tooltip: Lists all zones in your colony.
+generic-room-description: It's rectangular. It's open. It's a room.
+diplomacy-label: Factions
+diplomacy-tooltip: View diplomatic relations with other factions.

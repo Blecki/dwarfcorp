@@ -1,0 +1,19 @@
+{
+  "Name": "Soldier",
+  "Actions": "Attack, Chop, Harvest, Hunt, Gather, Guard, BuildObject",
+  "Description": "Soldiers are best at looking tough. They are devestating warriors, and also pretty good lumberjacks and cooks.",
+  "StartingEquipment": [
+    {
+      "_TypeName": "Boots"
+    },
+    {
+      "_TypeName": "Iron Axe"
+    },
+    {
+      "_TypeName": "Tabard"
+    },
+    {
+      "_TypeName": "Helmet"
+    }
+  ]
+}

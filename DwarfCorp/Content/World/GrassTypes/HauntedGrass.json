@@ -1,0 +1,12 @@
+{
+  "Name": "haunted-grass",
+  "Tile": "9, 3",
+  "FringeTiles": [
+    "5, 3",
+    "6, 3",
+    "7, 3"
+  ],
+  "FringePrecedence": 252,
+  "BecomeWhenSnowedOn": "snow-haunted-grass",
+  "MinimapColor": "149, 82, 116, 255"
+}

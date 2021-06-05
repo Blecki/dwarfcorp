@@ -1,0 +1,32 @@
+Mashed #1
+Mashed #2
+Grated #1
+Grated #2
+#1 Stew
+#2 Stew
+#1 Burger with #2
+#2 Burger with #1
+#1 Sandwich with #2
+#2 Sandwich with #1
+#1 au #2
+#2 au #1
+#1 con #2
+#2 con #1
+Frosted #1
+Frosted #2
+#1 Pie
+#2 Pie
+#1 Butter
+#2 Butter
+#1 Cake
+#2 Cake
+#1 and #2
+#2 and #1
+Seared #1
+Seared #2
+Grilled #1
+Grilled #2
+Baked #1
+Baked #2
+Braised #1
+Braised #2

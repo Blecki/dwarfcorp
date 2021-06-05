@@ -1,0 +1,33 @@
+{
+  "TypeName": "BambooSprout",
+  "MoneyValue": 3.0,
+  "Description": "Grows Bamboo.",
+  "Category": "Seeds",
+  "Tags": [
+    "Plantable",
+    "Fruit",
+    "Flammable",
+    "AboveGroundPlant",
+    "Edible",
+    "RawFood",
+    "Brewable"
+  ],
+  "FoodContent": 50.0,
+  "DisplayName": "Bamboo Sprout",
+  "PlantToGenerate": "Bamboo Sprout",
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "Tea",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "7, 4"
+  }
+
+}

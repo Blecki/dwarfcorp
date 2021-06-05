@@ -1,0 +1,9 @@
+{
+  "Name": "Bird",
+  "BabyType": "Bird",
+  "LaysEggs": true,
+  "BaseMeatResource": "Bird Meat",
+  "IsMigratory": true,
+  "SpeciesLimit": 10,
+  "EggTime": 240
+}

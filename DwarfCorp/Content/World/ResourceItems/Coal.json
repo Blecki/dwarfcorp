@@ -1,0 +1,28 @@
+{
+  "TypeName": "Coal",
+  "MoneyValue": 15.0,
+  "Description": "Used as fuel",
+  "Category": "Fuel",
+  "Tags": [
+    "Fuel",
+    "Flammable"
+  ],
+  "FoodContent": 0.0,
+  "DisplayName": "Coal",
+  "PlantToGenerate": null,
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "2, 2"
+  }
+
+}

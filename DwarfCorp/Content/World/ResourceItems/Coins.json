@@ -1,0 +1,27 @@
+{
+  "TypeName": "Coins",
+  "MoneyValue": 64.0,
+  "Description": "Dwarfbux container.",
+  "Tags": [
+    "Precious",
+    "Money"
+  ],
+  "FoodContent": 0.0,
+  "DisplayName": "Coins",
+  "PlantToGenerate": null,
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "6, 0"
+  }
+
+}

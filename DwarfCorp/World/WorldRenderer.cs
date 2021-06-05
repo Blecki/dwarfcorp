@@ -374,7 +374,7 @@ namespace DwarfCorp
             // Start drawing the bloom effect
             if (GameSettings.Current.EnableGlow)
             {
-                bloom.BeginDraw();
+                //bloom.BeginDraw();
             }
 
             // Draw the sky
@@ -449,9 +449,9 @@ namespace DwarfCorp
                 {
                     fxaa.Begin(DwarfTime.LastTimeX);
                 }
-                bloom.DrawTarget = UseFXAA ? fxaa.RenderTarget : null;
+                //bloom.DrawTarget = UseFXAA ? fxaa.RenderTarget : null;
 
-                bloom.Draw(gameTime.ToRealTime());
+                //bloom.Draw(gameTime.ToRealTime());
                 if (UseFXAA)
                     fxaa.End(DwarfTime.LastTimeX);
             }

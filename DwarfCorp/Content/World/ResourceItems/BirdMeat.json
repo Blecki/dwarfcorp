@@ -1,0 +1,30 @@
+{
+  "TypeName": "Bird Meat",
+  "MoneyValue": 25.0,
+  "Description": "Came from an animal.",
+  "Category": "Meat",
+  "Tags": [
+    "Edible",
+    "AnimalProduct",
+    "Meat",
+    "RawFood"
+  ],
+  "FoodContent": 150.0,
+  "DisplayName": "Bird Meat",
+  "PlantToGenerate": null,
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "5, 3"
+  }
+
+}

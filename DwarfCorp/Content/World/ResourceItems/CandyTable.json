@@ -1,0 +1,53 @@
+{
+  "TypeName": "Candy Table",
+  "MoneyValue": 5.0,
+  "Description": "Eat the food, not the table. The FOOD!",
+  "Category": "Furniture",
+  "Tags": [
+    "Table",
+    "Candy"
+  ],
+  "FoodContent": 0.0,
+  "DisplayName": "Candy Table",
+  "PlantToGenerate": null,
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": null,
+
+  "Placement_Placeable": true,
+  "Placement_EntityToCreate": "Candy Table",
+  "Placement_AllowRotation": false,
+  "Placement_PlaceTime": 5.0,
+  "Placement_SpawnOffset": "0, 0.5, 0",
+  "Placement_AddToOwnedPool": true,
+  "Placement_MarkDestructable": true,
+  "Placement_PlacementRequirement": "OnGround",
+
+  "Craft_Craftable": true,
+  "Craft_Ingredients": [
+    {
+      "Tag": "Peppermint",
+      "Count": 4
+    }
+  ],
+  "Craft_ResultsCount": 1,
+  "Craft_BaseCraftTime": 24.0,
+  "Craft_Location": "Craft Table",
+  "Craft_TaskCategory": "CraftItem",
+  "Craft_Noise": "Craft",
+  "Craft_MetaResourceFactory": "Normal",
+
+  "Tutorial": "Dwarfs prefer to eat on chairs near tables, and will gamble there as well.",
+
+  "Gui_Graphic": {
+    "AssetPath": "entities\\Furniture\\interior_furniture",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "7, 4"
+  }
+
+}

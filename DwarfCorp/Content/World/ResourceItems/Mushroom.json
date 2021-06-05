@@ -1,0 +1,33 @@
+{
+  "TypeName": "Mushroom",
+  "MoneyValue": 2.5,
+  "Description": "Dwarves can eat these.",
+  "Category": "Seeds",
+  "Tags": [
+    "Edible",
+    "Fungus",
+    "Flammable",
+    "RawFood",
+    "Brewable",
+    "Plantable",
+    "BelowGroundPlant"
+  ],
+  "FoodContent": 50.0,
+  "DisplayName": "Mushroom",
+  "PlantToGenerate": "Mushroom Sprout",
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "Mushroom Wine",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "1, 2"
+  }
+
+}

@@ -1,7 +1,0 @@
-{
-  "Name": "Penguin",
-  "BabyType": "Penguin",
-  "LaysEggs": true,
-  "BaseMeatResource": "Bird Meat",
-  "IsMigratory": true
-}

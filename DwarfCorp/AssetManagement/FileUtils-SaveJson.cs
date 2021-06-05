@@ -20,6 +20,7 @@ namespace DwarfCorp
         {
             new BoxConverter(),
             new Vector3Converter(),
+            new PointConverter(),
             new MatrixConverter(),
             new TextureContentConverter(),
             new RectangleConverter(),

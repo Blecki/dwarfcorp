@@ -16,25 +16,26 @@ namespace DwarfCorp
     {
         public static List<ModMetaData> DiscoverMods()
         {
-            var subscribed = AssetManagement.Steam.Steam.GetSubscribedMods();
+            // Todo: Restore steam functionality
+            //var subscribed = AssetManagement.Steam.Steam.GetSubscribedMods();
             List<ModMetaData> subscribedMods = new List<ModMetaData>();
-            foreach(var m in subscribed)
-            {
-                ulong size;
-                string folder;
-                uint folderSize = 2048;
-                uint timestamp;
-                if (Steamworks.SteamUGC.GetItemInstallInfo((Steamworks.PublishedFileId_t)m.m_PublishedFileId, out size, 
-                    out folder, folderSize, out timestamp))
-                {
-                    var mod = GetMod(folder, ModSource.SteamDirectory);
-                    if (mod != null)
-                    {
-                        subscribedMods.Add(mod);
-                    }
-                };
+            //foreach(var m in subscribed)
+            //{
+            //    ulong size;
+            //    string folder;
+            //    uint folderSize = 2048;
+            //    uint timestamp;
+            //    if (Steamworks.SteamUGC.GetItemInstallInfo((Steamworks.PublishedFileId_t)m.m_PublishedFileId, out size, 
+            //        out folder, folderSize, out timestamp))
+            //    {
+            //        var mod = GetMod(folder, ModSource.SteamDirectory);
+            //        if (mod != null)
+            //        {
+            //            subscribedMods.Add(mod);
+            //        }
+            //    };
 
-            }
+            //}
 
             return subscribedMods.Concat(EnumerateMods(GameSettings.Current.LocalModDirectory, ModSource.LocalDirectory)).ToList();
         }

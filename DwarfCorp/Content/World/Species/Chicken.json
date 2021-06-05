@@ -1,0 +1,7 @@
+{
+  "Name": "Chicken",
+  "BabyType": "Chicken",
+  "LaysEggs": true,
+  "BaseMeatResource": "Bird Meat",
+  "IsMigratory": true
+}

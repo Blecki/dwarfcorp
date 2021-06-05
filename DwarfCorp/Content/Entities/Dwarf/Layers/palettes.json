@@ -1,0 +1,316 @@
+[
+  {
+    "Name": "Base",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 0,
+    "Type": "Base"
+  },
+
+  {
+    "Name": "Hair 01",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 1,
+    "Type": "Hair"
+  },
+
+  {
+    "Name": "Hair 02",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 2,
+    "Type": "Hair"
+  },
+
+  {
+    "Name": "Hair 03",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 3,
+    "Type": "Hair"
+  },
+
+  {
+    "Name": "Hair 04",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 4,
+    "Type": "Hair"
+  },
+
+  {
+    "Name": "Hair 05",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 5,
+    "Type": "Hair"
+  },
+
+  {
+    "Name": "Hair 06",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 6,
+    "Type": "Hair"
+  },
+  {
+    "Name": "Hair 07",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 7,
+    "Type": "Hair"
+  },
+
+  {
+    "Name": "Hair 08",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 8,
+    "Type": "Hair"
+  },
+
+  {
+    "Name": "Hair 09",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 9,
+    "Type": "Hair"
+  },
+
+  {
+    "Name": "Hair 10",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 10,
+    "Type": "Hair"
+  },
+
+  {
+    "Name": "Hair 11",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 11,
+    "Type": "Hair"
+  },
+
+  {
+    "Name": "Hair 12",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 12,
+    "Type": "Hair"
+  },
+
+
+  {
+    "Name": "Skin 01",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 13,
+    "Type": "Skin"
+  },
+
+  {
+    "Name": "Skin 02",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 14,
+    "Type": "Skin"
+  },
+
+  {
+    "Name": "Skin 03",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 15,
+    "Type": "Skin"
+  },
+
+  {
+    "Name": "Skin 04",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 16,
+    "Type": "Skin"
+  },
+
+  {
+    "Name": "Skin 05",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 17,
+    "Type": "Skin"
+  },
+
+  {
+    "Name": "Equipment",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 18,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Purple Equipment",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 19,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Brown Equipment",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 20,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Wood Equipment",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 20,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Iron Equipment",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 21,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Copper Equipment",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 22,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Stone Equipment",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 23,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Orange Equipment",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 24,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Leather Equipment",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 25,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Brown and Yellow",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 26,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Brown and Purple",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 27,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Tan and Blue",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 28,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Green Coat",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 29,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Armor and Tabard",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 30,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Staff",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 31,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Straw Equipment",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 32,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Ruby",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 33,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Garnet",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 34,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Citrine",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 35,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Emerald",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 36,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Sapphire",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 37,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Amethyst",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 38,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Bamboo Equipment",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 39,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Brick",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 40,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Ice",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 41,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Obsidian Equipment",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 42,
+    "Type": "Equipment"
+  },
+
+  {
+    "Name": "Peppermint Equipment",
+    "Asset": "Entities\\Dwarf\\Layers\\dwarf-palettes",
+    "Row": 43,
+    "Type": "Equipment"
+  }
+]

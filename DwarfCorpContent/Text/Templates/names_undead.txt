@@ -1,6 +1,0 @@
-<undead_phoneme><undead_phoneme><undead_phoneme>
-<undead_phoneme><undead_phoneme>
-<undead_phoneme><undead_phoneme>
-<undead_phoneme><undead_phoneme>
-<undead_phoneme><undead_phoneme><undead_phoneme><undead_phoneme>
-<undead_phoneme><undead_phoneme><undead_phoneme><undead_phoneme><undead_phoneme>

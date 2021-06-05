@@ -1,0 +1,70 @@
+[
+  {
+    "Name": "IdleFORWARD",
+    "Frames": [ "0.05 0 0", "0.05 1 0", "0.1 2 0", "0.05 1 0", "0.1 0 0", "0.05 1 0", "0.1 2 0", "0.05 1 0" ]
+  },
+  {
+    "Name": "IdleLEFT",
+    "Frames": [ "0.05 0 1", "0.05 1 1", "0.1 2 1", "0.05 1 1", "0.1 0 1", "0.05 1 1", "0.1 2 1", "0.05 1 1" ]
+  },
+  {
+    "Name": "IdleRIGHT",
+    "Frames": [ "0.05 0 2", "0.05 1 2", "0.1 2 2", "0.05 1 2", "0.1 0 2", "0.05 1 2", "0.1 2 2", "0.05 1 2" ]
+  },
+  {
+    "Name": "IdleBACKWARD",
+    "Frames": [ "0.05 0 3" ]
+  },
+
+  {
+    "Name": "WalkingFORWARD",
+    "Frames": [ "0.15 1 4", "0.15 2 4", "0.15 0 4" ]
+  },
+  {
+    "Name": "WalkingLEFT",
+    "Frames": [ "0.15 1 5", "0.15 2 5", "0.15 0 5" ]
+  },
+  {
+    "Name": "WalkingRIGHT",
+    "Frames": [ "0.15 1 6", "0.15 2 6", "0.15 0 6" ]
+  },
+  {
+    "Name": "WalkingBACKWARD",
+    "Frames": [ "0.15 1 7", "0.15 2 7", "0.15 0 7" ]
+  },
+
+  {
+    "Name": "JumpingFORWARD",
+    "Frames": [ "0.15 1 4" ]
+  },
+  {
+    "Name": "JumpingLEFT",
+    "Frames": [ "0.15 1 5" ]
+  },
+  {
+    "Name": "JumpingRIGHT",
+    "Frames": [ "0.15 1 6" ]
+  },
+  {
+    "Name": "JumpingBACKWARD",
+    "Frames": [ "0.15 1 7" ]
+  },
+
+  {
+    "Name": "FallingFORWARD",
+    "Frames": [ "0.15 2 4" ]
+  },
+  {
+    "Name": "FallingLEFT",
+    "Frames": [ "0.15 2 5" ]
+  },
+  {
+    "Name": "FallingRIGHT",
+    "Frames": [ "0.15 2 6" ]
+  },
+  {
+    "Name": "FallingBACKWARD",
+    "Frames": [ "0.15 2 7" ]
+  }
+
+]

@@ -203,6 +203,7 @@ namespace DwarfCorp
 
         private void DrawInstanced(GraphicsDevice graphics, Shader effect, Camera cam)
         {
+            effect.SetInstancedTechnique();
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();

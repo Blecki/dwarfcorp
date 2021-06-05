@@ -1,0 +1,33 @@
+{
+  "ID": 0,
+  "Name": "_designation",
+  "Top": "0, 0",
+  "Bottom": "0, 0",
+  "Sides": "0, 0",
+  "Transitions": 1,
+  "HasTransitionTextures": false,
+  "TransitionTiles": null,
+  "ReleasesResource": false,
+  "ResourceToRelease": "Stone",
+  "StartingHealth": 0.0,
+  "ProbabilityOfRelease": 0.0,
+  "CanRamp": false,
+  "IsBuildable": false,
+  "ParticleType": "puff",
+  "EmitsLight": false,
+  "MinSpawnHeight": -999.0,
+  "MaxSpawnHeight": 999.0,
+  "SpawnProbability": 1.0,
+  "Rarity": 1.0,
+  "SpawnClusters": false,
+  "IsSoil": false,
+  "IsSurface": false,
+  "IsInvincible": false,
+  "Tint": "255, 255, 255, 255",
+  "SpawnOnSurface": false,
+  "IsTransparent": false,
+  "ExplosionSoundResource": "Audio\\gravel",
+  "HitSoundResources": [
+    "Audio\\pick"
+  ]
+}

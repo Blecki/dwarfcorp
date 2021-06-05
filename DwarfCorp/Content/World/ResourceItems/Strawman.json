@@ -1,0 +1,56 @@
+{
+  "TypeName": "Strawman",
+  "MoneyValue": 15.0,
+  "Description": "A place for thugs to train when there's nothing around to kill.",
+  "Category": "Furniture",
+  "Tags": [
+    "Train"
+  ],
+  "FoodContent": 0.0,
+  "DisplayName": "Strawman",
+  "PlantToGenerate": null,
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": null,
+
+  "Placement_Placeable": true,
+  "Placement_EntityToCreate": "Strawman",
+  "Placement_AllowRotation": true,
+  "Placement_PlaceTime": 5.0,
+  "Placement_SpawnOffset": "0, 0.5, 0",
+  "Placement_AddToOwnedPool": true,
+  "Placement_MarkDestructable": true,
+  "Placement_PlacementRequirement": "OnGround",
+
+  "Craft_Craftable": true,
+  "Craft_Ingredients": [
+    {
+      "Tag": "Grain",
+      "Count": 4
+    },
+    {
+      "Tag": "Cotton",
+      "Count": 1
+    }
+  ],
+  "Craft_ResultsCount": 1,
+  "Craft_BaseCraftTime": 32.0,
+  "Craft_Location": "Craft Table",
+  "Craft_TaskCategory": "CraftItem",
+  "Craft_Noise": "Craft",
+  "Craft_MetaResourceFactory": "Normal",
+
+  "Tutorial": "Dwarfs can hit the strawman to increase their XP and level up. They do this automatically. The strawman is destroyed by the dwarf.",
+
+  "Gui_Graphic": {
+    "AssetPath": "entities\\Furniture\\interior_furniture",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "1, 5"
+  }
+
+}

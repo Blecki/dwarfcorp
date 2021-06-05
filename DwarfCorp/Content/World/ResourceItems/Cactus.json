@@ -1,0 +1,32 @@
+{
+  "TypeName": "Cactus",
+  "MoneyValue": 4.0,
+  "Description": "Grows cacti.",
+  "Category": "Seeds",
+  "Tags": [
+    "Fruit",
+    "Plantable",
+    "Flammable",
+    "AboveGroundPlant",
+    "Edible",
+    "RawFood"
+  ],
+  "FoodContent": 0.0,
+  "DisplayName": "Cactus",
+  "PlantToGenerate": "Cactus Sprout",
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "7, 1"
+  }
+
+}

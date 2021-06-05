@@ -22,13 +22,21 @@ namespace DwarfCorp
 
             foreach (var voxFile in AssetManager.EnumerateAllFiles("World/VoxelModels/"))
             {
-                var stream = new FileStream(voxFile, FileMode.Open);
-                var model = new VoxelModel();
-                var modelReader = new CsharpVoxReader.VoxReader(stream, model);
-                modelReader.ReadFromStream();
+                try
+                {
 
-                var name = System.IO.Path.GetFileNameWithoutExtension(voxFile);
-                VoxelModels.Add(name, model);
+                    var stream = new FileStream(voxFile, FileMode.Open);
+                    var model = new VoxelModel();
+                    var modelReader = new CsharpVoxReader.VoxReader(stream, model);
+                    modelReader.ReadFromStream();
+
+                    var name = System.IO.Path.GetFileNameWithoutExtension(voxFile);
+                    VoxelModels.Add(name, model);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error loading voxel model " + voxFile + ": " + e.Message);
+                }
             }
 
             Console.WriteLine("Loaded Voxel Model Library.");

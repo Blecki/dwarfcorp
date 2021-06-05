@@ -1,0 +1,187 @@
+title: Start
+---
+<<set_portrait "GUI\diplo-elf" 64 64 5.0 0 1 0>>
+<<show_portrait>>
+<<set_language "Elf">> 
+<<pick>>
+	Elf: Falalala!
+	Elf: Oooh, hi!
+	Elf: Joyus jumping jellybeans!
+	Elf: Teehee, you look like sugarplums.
+	Elf: Well, fiddle-dee-dee!
+<<end>>
+Elf: I am $envoy_name of $envoy_faction.
+[[Main]]
+===
+
+
+title: Main
+---
+<<if $envoy_demands_tribute>>
+	<<pick>>
+		$envoy_name: Oh, if you want to live here, you have to pay the tax. Yup!
+		$envoy_name: Will you support our lollipop fund? Come on!
+		$envoy_name: Teedle-dee, teedle-dum, pay us now or get kicked in the bum.
+	<<end>>
+	[[Pay Tribute|PayTribute]]
+	[[Refuse to pay. (WAR)|DeclareWar]]
+<<elseif $faction_was_at_war>>
+	$envoy_name: Oh I forgot, we are at war. How silly!
+	[[Make peace.|MakePeace]]
+	[[Continue the war.|DeclareWar]]
+<<else>>
+	[[Trade.|Trade]]
+	[[What is your opinion of us?|Opinion]]
+	[[What is something you have many of?|Many]]
+	[[What is something you have few of?|Few]]
+	[[What is something you hate?|Hate]]
+	[[What is something you like?|Like]]
+	[[Declare war!|ConfirmWar]]
+	[[Goodbye.|Goodbye]]
+<<endif>>
+===
+
+
+title: Trade
+---
+<<begin_trade>>
+[[Trade2]]
+===
+
+title: Trade2
+---
+<<wait_for_trade>>
+<<if $trade_result == "cancelled">>
+	<<if $trades == 0>>
+		$envoy_name: Oh fiddlesticks, it looks like you're wasting my time.
+	<<else>>
+		$envoy_name: Shall we continue?
+	<<endif>>
+	<<end_trade>>
+	[[Main]]
+<<elseif $trade_result == "hated">>
+	<<pick>>
+		$envoy_name: Is this a joke? It's not funny.
+		$envoy_name: Ew that is just gross. No way am I taking that.
+	<<end>>
+	<<set $offensive_trades = $offensive_trades + 1>>
+	<<political_event "you tried to give us something offensive" -0.25>> // Description, change, duration (days)
+	<<if $offensive_trades >= 3>>
+		$envoy_name: You know you could be a little more considerate! We're leaving.
+		<<end_trade>>
+		<<recall_envoy>>
+		<<end_conversation>>
+	<<endif>>
+	[[Trade2]]
+<<elseif $trade_result == "unprofitable">>
+	<<pick>>
+		$envoy_name: Can't you do better than that?
+	<<end>>
+	[[Trade2]]
+<<else>>
+	<<set $trades = $trades + 1>>
+	<<if $trade_result == "liked">>
+		<<political_event "you gave us something we liked" 0.25>>
+	<<endif>>
+	<<finalize_trade>> // Applys the trade and creates the events the achievement engine needs.
+	<<political_event "we had profitable trade" 0.25>>
+	<<pick>>
+		$envoy_name: Dwarves make all the best things.
+		$envoy_name: Delightful!
+	<<end>>
+	[[Trade2]]
+<<endif>>
+<<end_trade>>
+[[Main]]
+===
+
+
+title: Opinion
+---
+$envoy_name: You know how it is. Our current relationship is $envoy_relationship.
+[[Main]]
+===
+
+
+title: Many
+---
+$envoy_name: Oh we got a lot of crafted things. And fruit. But we'd always like more.
+[[Main]]
+===
+
+
+title: Few
+---
+$envoy_name: Not a lot of metal around elven lands, nope.
+[[Main]]
+===
+
+
+title: Hate
+---
+$envoy_name: I just hate killing things. Especially trees. And evil things are right out.
+[[Main]]
+===
+
+
+title: Like
+---
+$envoy_name: Magic things. And things you make. Dwarves always make the best things.
+[[Main]]
+===
+
+
+title: ConfirmWar
+---
+$envoy_name: Uh really?
+[[Yes!|DeclareWar]]
+[[No.|Main]]
+===
+
+
+title: DeclareWar
+---
+$envoy_name: Ho ho, you will rue this day when we cut out your eyes and serve them as garnish on a plate of your own flesh. Teedle-dee!
+<<political_event "you declared war on us" -2.0>>
+<<declare_war>> // This is what actually turns them hostile. Also generates the events for the achievement system.
+<<recall_envoy>>
+<<end_conversation>>
+===
+
+
+title: MakePeace
+---
+$envoy_name: Oh wonderous! I did so hate slaughtering you.
+<<make_peace>>
+<<political_event "you made peace with us" 0.4>>
+[[Main]]
+===
+
+
+title: PayTribute
+---
+<<if $player_money < $envoy_tribute_demanded>>
+	$envoy_name: Well if you don't have enough then why did I even ask? Goodbye!
+	<<recall_envoy>>
+	<<end_conversation>>
+<<else>>
+	<<pay_tribute>>
+	<<political_event "you paid us tribute" 0.5>>
+	$envoy_name: Oh wonderous! Delightful! Exclamation!
+	<<set $envoy_tribute_demanded = 0.0>>
+	[[Did you just say 'exclamation'?|Main]]
+<<endif>>
+===
+
+title: Wut
+---
+$envoy_name: Uhuh.
+[[Main]]
+===
+
+
+title: Goodbye
+---
+$envoy_name: Teedle-ho, off I go!
+<<end_conversation>>
+===  

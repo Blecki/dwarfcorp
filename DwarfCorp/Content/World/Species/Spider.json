@@ -1,0 +1,7 @@
+{
+  "Name": "Spider",
+  "BabyType": "Spider",
+  "CanReproduce": true,
+  "HasMeat": false,
+  "HasBones": false
+}

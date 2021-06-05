@@ -60,6 +60,7 @@ namespace DwarfCorp
         {
             GameState.Game = this;
             Graphics = new GraphicsDeviceManager(this);
+            Graphics.GraphicsProfile = GraphicsProfile.HiDef;
             Window.Title = "DwarfCorp";
             Window.AllowUserResizing = false;
             MainThreadID = Thread.CurrentThread.ManagedThreadId;
@@ -79,8 +80,9 @@ namespace DwarfCorp
             Graphics.PreferMultiSampling = false;
             Graphics.ApplyChanges();
 
-            if (AssetManagement.Steam.Steam.InitializeSteam() == AssetManagement.Steam.Steam.SteamInitializationResult.QuitImmediately)
-                Exit();
+            // Todo: Restore steam functionality
+            //if (AssetManagement.Steam.Steam.InitializeSteam() == AssetManagement.Steam.Steam.SteamInitializationResult.QuitImmediately)
+            //    Exit();
         }
 
 #if !XNA_BUILD && !GEMMONO
@@ -384,7 +386,7 @@ namespace DwarfCorp
 
             PerformanceMonitor.BeginFrame();
                 PerformanceMonitor.PushFrame("Update");
-                AssetManagement.Steam.Steam.Update();
+                //AssetManagement.Steam.Steam.Update(); // Todo: Restore Steam functionality
                 DwarfTime.LastTimeX.Update(time);
                 GameStateManager.Update(DwarfTime.LastTimeX);
 

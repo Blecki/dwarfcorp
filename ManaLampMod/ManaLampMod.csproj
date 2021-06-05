@@ -69,11 +69,5 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DwarfCorp\DwarfCorpXNA.csproj">
-      <Project>{99d7d745-bbe2-458e-8108-8d2e5a8835f3}</Project>
-      <Name>DwarfCorpXNA</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -40,6 +40,8 @@ using System;
 using DwarfCorp.AssetManagement.Steam;
 using Steamworks;
 
+// Todo: 64 BIT STEAMWORKS!
+
 namespace DwarfCorp.GameStates.ModManagement
 {
     public class SearchWidget : Gui.Widget

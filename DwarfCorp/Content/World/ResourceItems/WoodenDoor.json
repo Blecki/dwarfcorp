@@ -1,0 +1,52 @@
+{
+  "TypeName": "Wooden Door",
+  "MoneyValue": 15.0,
+  "Description": "It's heavy, it's wood, it falls on your neighbor's dog.",
+  "Category": "Furniture",
+  "Tags": [
+    "Door"
+  ],
+  "FoodContent": 0.0,
+  "DisplayName": "Wooden Door",
+  "PlantToGenerate": null,
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": null,
+
+  "Placement_Placeable": true,
+  "Placement_EntityToCreate": "Wooden Door",
+  "Placement_AllowRotation": true,
+  "Placement_PlaceTime": 5.0,
+  "Placement_SpawnOffset": "0, 0.5, 0",
+  "Placement_AddToOwnedPool": true,
+  "Placement_MarkDestructable": true,
+  "Placement_PlacementRequirement": "OnGround",
+
+  "Craft_Craftable": true,
+  "Craft_Ingredients": [
+    {
+      "Tag": "Wood",
+      "Count": 2
+    }
+  ],
+  "Craft_ResultsCount": 1,
+  "Craft_BaseCraftTime": 32.0,
+  "Craft_Location": "Craft Table",
+  "Craft_TaskCategory": "CraftItem",
+  "Craft_Noise": "Craft",
+  "Craft_MetaResourceFactory": "Normal",
+
+  "Tutorial": "Keep monsters out, and dwarves in.",
+
+  "Gui_Graphic": {
+    "AssetPath": "entities\\Furniture\\interior_furniture",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "3, 1"
+  }
+
+}

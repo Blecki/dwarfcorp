@@ -1,0 +1,32 @@
+{
+  "TypeName": "Coconut",
+  "MoneyValue": 6.0,
+  "Description": "Grows palm trees.",
+  "Category": "Seeds",
+  "Tags": [
+    "Fruit",
+    "Plantable",
+    "Flammable",
+    "AboveGroundPlant",
+    "Edible",
+    "RawFood"
+  ],
+  "FoodContent": 50.0,
+  "DisplayName": "Coconut",
+  "PlantToGenerate": "Palm Tree Sprout",
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "5, 1"
+  }
+
+}

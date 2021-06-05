@@ -22,6 +22,7 @@ namespace DwarfCorp
         /// </summary>
         private static void Main(string[] args)
         {
+           
             try
             {
                 var cwd = global::System.IO.Path.GetDirectoryName(global::System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
@@ -71,8 +72,9 @@ namespace DwarfCorp
                     game.Run();
                 }
 
-                while (AssetManagement.Steam.Steam.HasTransaction(a => true))
-                    AssetManagement.Steam.Steam.Update();
+                // Todo: Restore steam
+                //while (AssetManagement.Steam.Steam.HasTransaction(a => true))
+                //    AssetManagement.Steam.Steam.Update();
 
                 SignalShutdown();
             }
@@ -85,8 +87,10 @@ namespace DwarfCorp
             {
                 CaptureException(exception);
                 WriteExceptionLog(exception);
+#if !DCMONO
                 var report = GameSettings.Current.AllowReporting ? "This was automatically reported to the devs to help us debug!" : "You have opted out of automatic crash reporting.";
                 System.Windows.Forms.MessageBox.Show(String.Format("An unhandled exception occurred in DwarfCorp. {1} \n {0}", exception.ToString(), report), "ERROR");
+#endif
             }
 #endif
             }

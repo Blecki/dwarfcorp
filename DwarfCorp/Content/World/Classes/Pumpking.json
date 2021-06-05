@@ -1,0 +1,60 @@
+{
+  "Name": "Pumpking",
+  "Actions": 24592,
+  "AttackMode": "Attacking",
+  "Weapons": [
+    {
+      "DamageAmount": 50.0,
+      "Name": "Fireball",
+      "Range": 5.0,
+      "HitNoise": {
+        "Sounds": [
+          "Audio\\oscar\\sfx_ic_demon_fire_spit_1",
+          "Audio\\oscar\\sfx_ic_demon_fire_spit_2"
+        ],
+        "Volume": 1.0,
+        "RandomPitch": true
+      },
+      "HitColor": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "Mode": "Ranged",
+      "RechargeRate": 0.25,
+      "Knockback": 2.5,
+      "AnimationAsset": "Effects\\hit",
+      "HitParticles": "",
+      "ProjectileType": "Fireball",
+      "LaunchSpeed": 5.0,
+      "HasTriggered": false,
+      "TriggerMode": "Animation",
+      "TriggerFrame": 2,
+      "DiseaseToSpread": null,
+      "ShootLaser": false
+    }
+  ],
+  "Levels": [
+    {
+      "Index": 0,
+      "Name": "Pumpking",
+      "Pay": {
+        "Value": 0.0
+      },
+      "XP": 0,
+      "BaseStats": {
+        "Name": "",
+        "Dexterity": 4.0,
+        "Constitution": 6.0,
+        "Strength": 90.0,
+        "Wisdom": 2.0,
+        "Charisma": 1.0,
+        "Intelligence": 3.0,
+        "Size": 100
+      },
+      "ExtraWeapons": [],
+      "HealingPower": 0
+    }
+  ]
+}

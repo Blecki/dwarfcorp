@@ -1,0 +1,45 @@
+{
+  "TypeName": "Refined Mana",
+  "MoneyValue": 200.0,
+  "Description": "Magic distilled into it's pure form.",
+  "Tags": [
+    "Magical",
+    "Precious",
+    "SelfIlluminating",
+    "RefinedMana"
+  ],
+  "FoodContent": 0.0,
+  "DisplayName": "Refined Mana",
+  "PlantToGenerate": null,
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "",
+
+  "Craft_Craftable": true,
+  "Craft_Ingredients": [
+    {
+      "Tag": "Mana",
+      "Count": 1
+    }
+  ],
+  "Craft_ResultsCount": 1,
+  "Craft_BaseCraftTime": 8.0,
+  "Craft_Location": "Apothecary",
+  "Craft_TaskCategory": "Research",
+  "Craft_Noise": "Craft",
+  "Craft_MetaResourceFactory": "Normal",
+
+  "Tutorial": "At an Apothecary, dwarfs can turn mana rocks into pure mana, multiplying its magical power by 8. Mana is used to construct magical objects.",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "3, 5"
+  }
+
+}

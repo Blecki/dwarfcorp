@@ -1,0 +1,24 @@
+{
+  "TypeName": "Invalid",
+  "MoneyValue": 1.0,
+  "Description": "This is an invalid resource. Something must have gone wrong with DwarfCorp.",
+  "FoodContent": 0.0,
+  "Tags": [],
+  "DisplayName": "Invalid",
+  "PlantToGenerate": null,
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "",
+
+  "Gui_Graphic": {
+    "AssetPath": "Entities/Dwarf/ToolIcons/unknown",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "0, 0"
+  }
+
+}

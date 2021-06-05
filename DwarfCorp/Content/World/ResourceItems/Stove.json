@@ -1,0 +1,56 @@
+{
+  "TypeName": "Stove",
+  "MoneyValue": 15.0,
+  "Description": "Fill your home with the smell of fresh baked bread.",
+  "Category": "Furniture",
+  "Tags": [
+    "Stove"
+  ],
+  "FoodContent": 0.0,
+  "DisplayName": "Stove",
+  "PlantToGenerate": null,
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": null,
+
+  "Placement_Placeable": true,
+  "Placement_EntityToCreate": "Stove",
+  "Placement_AllowRotation": true,
+  "Placement_PlaceTime": 5.0,
+  "Placement_SpawnOffset": "0, 0.5, 0",
+  "Placement_AddToOwnedPool": true,
+  "Placement_MarkDestructable": true,
+  "Placement_PlacementRequirement": "OnGround",
+
+  "Craft_Craftable": true,
+  "Craft_Ingredients": [
+    {
+      "Tag": "Iron",
+      "Count": 1
+    },
+    {
+      "Tag": "Fuel",
+      "Count": 2
+    }
+  ],
+  "Craft_ResultsCount": 1,
+  "Craft_BaseCraftTime": 32.0,
+  "Craft_Location": "Anvil",
+  "Craft_TaskCategory": "CraftItem",
+  "Craft_Noise": "Craft",
+  "Craft_MetaResourceFactory": "Normal",
+
+  "Tutorial": "Stoves can be used to bake grain into bread. Bread is more nutritious than raw grain.",
+
+  "Gui_Graphic": {
+    "AssetPath": "entities\\Furniture\\interior_furniture",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "3, 4"
+  }
+
+}

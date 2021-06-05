@@ -1,0 +1,67 @@
+{
+  "Name": "Leaves",
+  "Emitters": [
+    {
+
+      "MaxParticles": 1000,
+      "ParticlesPerFrame": 0,
+      "ReleaseOnce": true,
+      "EmissionFrequency": 1.0,
+      "ConstantAccel": "0, -10, 0",
+      "MinScale": 0.1,
+      "MaxScale": 0.5,
+      "GrowthSpeed": -0.5,
+      "Damping": 0.5,
+      "MinAngle": 0.0,
+      "MaxAngle": 3.14159,
+      "MinAngular": -5.0,
+      "MaxAngular": 5.0,
+      "AngularDamping": 0.99,
+      "LinearDamping": 0.95,
+      "Animation": {
+
+        "FrameWidth": 32,
+        "FrameHeight": 32,
+        "Name": "leaf",
+        "Frames": [
+          "0, 0"
+        ],
+        "CurrentFrame": 0,
+        "LastFrame": 0,
+        "IsPlaying": true,
+        "Loops": true,
+        "Tint": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "FrameHZ": 1.0,
+        "Speeds": [
+          1.41742229
+        ],
+        "WorldWidth": 1.0,
+        "WorldHeight": 1.0,
+        "Flipped": false,
+        "SpeedMultiplier": 1.0
+      },
+      "SpriteSheet": {
+        "FrameWidth": 32,
+        "FrameHeight": 32,
+        "Width": 32,
+        "Height": 32,
+        "AssetName": "Particles\\leaf"
+      },
+      "EmissionRadius": 2.0,
+      "EmissionSpeed": 5.0,
+      "ParticleDecay": 0.5,
+      "CollidesWorld": true,
+      "Sleeps": true,
+      "HasLighting": true,
+      "RotatesWithVelocity": false,
+      "Blend": 0,
+      "EmitsLight": false,
+      "UseManualControl": false
+    }
+  ]
+}

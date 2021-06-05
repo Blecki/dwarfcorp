@@ -11,6 +11,8 @@ namespace DwarfCorp
     /// <summary>
     /// This class renders a skybox and sky elements (like the sun and moon) to the screen.
     /// </summary>
+    /// 
+    //TODO: MONOFIX
     public class SkyRenderer
     {
         public TextureCube SkyTexture { get; set; }
@@ -36,6 +38,8 @@ namespace DwarfCorp
 
         public void CreateContent()
         {
+            return;
+
             if (GameState.Game.GraphicsDevice.IsDisposed)
             {
                 return;
@@ -75,6 +79,8 @@ namespace DwarfCorp
 
         public void Render(DwarfTime time, GraphicsDevice device, Camera camera, float scale, Color fogColor, BoundingBox backgroundScale, bool drawBackground=true)
         {
+            return; 
+
             if (firstIter)
             {
                 CreateContent();
@@ -93,6 +99,8 @@ namespace DwarfCorp
 
         private void CreateBackgroundMesh(GraphicsDevice Device, BoundingBox worldBounds)
         {
+            return; 
+
             int resolution = 4;
             int width = 256;
             int height = 256;
@@ -128,6 +136,8 @@ namespace DwarfCorp
 
         private static int[] SetUpTerrainIndices(int width, int height)
         {
+            return new int[1];
+
             int[] indices = new int[(width - 1) * (height - 1) * 6];
             int counter = 0;
             for (int y = 0; y < height - 1; y++)
@@ -154,6 +164,8 @@ namespace DwarfCorp
 
         public void RenderBackgroundMesh(GraphicsDevice device, Camera camera, Color fogColor, BoundingBox scale)
         {
+            return; 
+
             if (BackgroundMesh == null || BackgroundMesh.IsDisposed || BackgroundMesh.GraphicsDevice.IsDisposed || BackgroundIndex == null || BackgroundIndex.IsDisposed || BackgroundIndex.GraphicsDevice.IsDisposed)
             {
                 CreateBackgroundMesh(device, scale);
@@ -177,6 +189,8 @@ namespace DwarfCorp
 
         public void ValidateBuffers()
         {
+            return;
+
             if (SkyEffect.IsDisposed || BackgroundEffect.IsDisposed || (BackgroundMesh != null && BackgroundMesh.IsDisposed) || SunTexture.IsDisposed || MoonTexture.IsDisposed || SkyTexture.IsDisposed)
             {
                 CreateContent();
@@ -185,6 +199,8 @@ namespace DwarfCorp
 
         public void RenderDaySky(DwarfTime time, GraphicsDevice device, Camera camera)
         {
+            return;
+
             SkyEffect.Parameters["SkyboxTexture"].SetValue(SkyTexture);
             SkyEffect.Parameters["ViewMatrix"].SetValue(camera.ViewMatrix);
             SkyEffect.Parameters["ProjectionMatrix"].SetValue(camera.ProjectionMatrix);
@@ -200,6 +216,8 @@ namespace DwarfCorp
 
         public void RenderNightSky(DwarfTime time, GraphicsDevice device, Camera camera)
         {
+            return;
+
             SkyEffect.Parameters["SkyboxTexture"].SetValue(NightTexture);
             SkyEffect.Parameters["ViewMatrix"].SetValue(camera.ViewMatrix);
             SkyEffect.Parameters["ProjectionMatrix"].SetValue(camera.ProjectionMatrix);
@@ -216,6 +234,8 @@ namespace DwarfCorp
 
         public void RenderStars(DwarfTime time, GraphicsDevice device, Camera camera, Viewport viewPort)
         {
+            return;
+
             Matrix rot = Matrix.CreateRotationZ((-CosTime + 0.5f * (float)Math.PI));
             try
             {
@@ -246,6 +266,8 @@ namespace DwarfCorp
 
         public void RenderSunMoon(DwarfTime time, GraphicsDevice device, Camera camera, Viewport viewPort, float scale)
         {
+            return;
+
             Matrix rot = Matrix.CreateRotationZ((-CosTime + 0.5f * (float) Math.PI));
             SunPosition = new Vector3(1000, 100, 0);
             Vector3 moonPosition = new Vector3(-1000, 100, 0);

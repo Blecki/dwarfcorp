@@ -1,0 +1,45 @@
+{
+  "TypeName": "Glass",
+  "MoneyValue": 8.0,
+  "Description": "Made from sand. Allows light to pass through.",
+  "Tags": [
+    "Material",
+    "HardMaterial",
+    "Craft",
+    "Glass"
+  ],
+  "FoodContent": 0.0,
+  "DisplayName": "Glass",
+  "PlantToGenerate": null,
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "",
+
+  "Craft_Craftable": true,
+  "Craft_Ingredients": [
+    {
+      "Tag": "Sand",
+      "Count": 1
+    }
+  ],
+  "Craft_ResultsCount": 1,
+  "Craft_BaseCraftTime": 8.0,
+  "Craft_Location": "Forge",
+  "Craft_TaskCategory": "CraftItem",
+  "Craft_Noise": "Craft",
+  "Craft_MetaResourceFactory": "Normal",
+
+  "Tutorial": "Convert sand into glass at a Forge. Use glass to build glass blocks or windows.",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "4, 0"
+  }
+
+}

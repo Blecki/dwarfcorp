@@ -174,7 +174,7 @@ namespace DwarfCorp
             shader.MainTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
             shader.SelfIlluminationEnabled = true;
             shader.SelfIlluminationTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_illumination);
-            shader.EnableShadows = false;
+            //shader.EnableShadows = false;
             shader.EnableLighting = false;
             shader.ClippingEnabled = false;
             shader.CameraPosition = new Vector3(-0.5f, 0.5f, 0.5f);

@@ -1,0 +1,21 @@
+{
+  "$type": "DwarfCorp.Events.SpawnTradeEnvoyEvent, BaseContent",
+  "PartyFaction": "Corporate",
+  "PartyFactionFilter": {
+    "Hostility": "NotHostile",
+    "Specification": "Corporate",
+    "Claim": "Any"
+  },
+  "TributeDemanded": {
+    "Value": 0.0
+  },
+  "Likelihood": 8,
+  "Name": "Corporate Trade Envoy",
+  "Difficulty": -10.0,
+  "AllowedTime": "OnlyDayTime",
+  "CooldownHours": 4,
+  "AnnouncementText": null,
+  "AnnouncementDetails": null,
+  "AnnouncementSound": null,
+  "PauseOnAnnouncementDetails": false
+}

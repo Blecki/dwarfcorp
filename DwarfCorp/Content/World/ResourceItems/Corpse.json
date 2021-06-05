@@ -1,0 +1,27 @@
+{
+  "TypeName": "Corpse",
+  "MoneyValue": 0.0,
+  "Description": "Dead carcass. Should be buried.",
+  "Category": "corpse",
+  "Tags": [
+    "Corpse"
+  ],
+  "FoodContent": 0.0,
+  "DisplayName": "Corpse",
+  "PlantToGenerate": null,
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "3, 4"
+  }
+
+}

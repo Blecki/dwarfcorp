@@ -1,0 +1,217 @@
+[
+  {
+    "Name": "SleepingFORWARD",
+    "Frames": [ "0.5 4 0", "0.5 5 0", "0.5 6 0", "0.5 7 0" ]
+  },
+  {
+    "Name": "SleepingLEFT",
+    "Frames": [ "0.5 4 1", "0.5 5 1", "0.5 6 1", "0.5 7 1" ]
+  },
+  {
+    "Name": "SleepingRIGHT",
+    "Frames": [ "0.5 4 2", "0.5 5 2", "0.5 6 2", "0.5 7 2" ]
+  },
+  {
+    "Name": "SleepingBACKWARD",
+    "Frames": [ "0.5 4 3", "0.5 5 3", "0.5 6 3", "0.5 7 3" ]
+  },
+
+  {
+    "Name": "IdleFORWARD",
+    "Frames": [ "1.3 1 0", "0.25 3 0" ]
+  },
+  {
+    "Name": "IdleLEFT",
+    "Frames": [ "1.3 1 1", "0.25 3 1" ]
+  },
+  {
+    "Name": "IdleRIGHT",
+    "Frames": [ "1.3 1 2", "0.25 3 2" ]
+  },
+  {
+    "Name": "IdleBACKWARD",
+    "Frames": [ "1.3 1 3", "0.25 3 3" ]
+  },
+
+  {
+    "Name": "WalkingFORWARD",
+    "Frames": [ "0.25 1 0", "0.25 2 0", "0.25 1 0", "0.25 0 0", "0.25 1 0", "0.25 2 0", "0.25 3 0", "0.25 0 0" ]
+  },
+  {
+    "Name": "WalkingLEFT",
+    "Frames": [ "0.25 1 1", "0.25 2 1", "0.25 1 1", "0.25 0 1", "0.25 1 1", "0.25 2 1", "0.25 3 1", "0.25 0 1" ]
+  },
+  {
+    "Name": "WalkingRIGHT",
+    "Frames": [ "0.25 1 2", "0.25 2 2", "0.25 1 2", "0.25 0 2", "0.25 1 2", "0.25 2 2", "0.25 3 2", "0.25 0 2" ]
+  },
+  {
+    "Name": "WalkingBACKWARD",
+    "Frames": [ "0.25 1 3", "0.25 2 3", "0.25 1 3", "0.25 0 3", "0.25 1 3", "0.25 2 3", "0.25 3 3", "0.25 0 3" ]
+  },
+
+  {
+    "Name": "AttackingFORWARD",
+    "Frames": [ "0.25 0 8", "0.25 1 8", "0.25 2 8", "0.25 3 8", "0.25 0 8" ],
+    "Loops": false
+  },
+  {
+    "Name": "AttackingLEFT",
+    "Frames": [ "0.25 0 9", "0.25 1 9", "0.25 2 9", "0.25 3 9", "0.25 0 9" ],
+    "Loops": false
+  },
+  {
+    "Name": "AttackingRIGHT",
+    "Frames": [ "0.25 0 10", "0.25 1 10", "0.25 2 10", "0.25 3 10", "0.25 0 10" ],
+    "Loops": false
+  },
+  {
+    "Name": "AttackingBACKWARD",
+    "Frames": [ "0.25 0 11", "0.25 1 11", "0.25 2 11", "0.25 3 11", "0.25 0 11" ],
+    "Loops": false
+  },
+
+  {
+    "Name": "Attacking01FORWARD",
+    "Frames": [ "0.25 4 8", "0.25 5 8", "0.25 6 8", "0.25 7 8", "0.25 4 8" ],
+    "Loops": false
+  },
+  {
+    "Name": "Attacking01LEFT",
+    "Frames": [ "0.25 4 9", "0.25 5 9", "0.25 6 9", "0.25 7 9", "0.25 4 9" ],
+    "Loops": false
+  },
+  {
+    "Name": "Attacking01RIGHT",
+    "Frames": [ "0.25 4 10", "0.25 5 10", "0.25 6 10", "0.25 7 10", "0.25 4 10" ],
+    "Loops": false
+  },
+  {
+    "Name": "Attacking01BACKWARD",
+    "Frames": [ "0.25 4 11", "0.25 5 11", "0.25 6 11", "0.25 7 11", "0.25 4 11" ],
+    "Loops": false
+  },
+
+  {
+    "Name": "Attacking02FORWARD",
+    "Frames": [ "0.25 4 12", "0.25 5 12", "0.25 6 12", "0.25 7 12", "0.25 4 12" ],
+    "Loops": false
+  },
+  {
+    "Name": "Attacking02LEFT",
+    "Frames": [ "0.25 4 13", "0.25 5 13", "0.25 6 13", "0.25 7 13", "0.25 4 13" ],
+    "Loops": false
+  },
+  {
+    "Name": "Attacking02RIGHT",
+    "Frames": [ "0.25 4 14", "0.25 5 14", "0.25 6 14", "0.25 7 14", "0.25 4 14" ],
+    "Loops": false
+  },
+  {
+    "Name": "Attacking02BACKWARD",
+    "Frames": [ "0.25 4 15", "0.25 5 15", "0.25 6 15", "0.25 7 15", "0.25 4 15" ],
+    "Loops": false
+  },
+
+  {
+    "Name": "SwimmingFORWARD",
+    "Frames": [ "0.3 0 12", "0.3 1 12", "0.3 2 12" ]
+  },
+  {
+    "Name": "SwimmingLEFT",
+    "Frames": [ "0.3 0 13", "0.3 1 13", "0.3 2 13" ]
+  },
+  {
+    "Name": "SwimmingRIGHT",
+    "Frames": [ "0.3 0 14", "0.3 1 14", "0.3 2 14" ]
+  },
+  {
+    "Name": "SwimmingBACKWARD",
+    "Frames": [ "0.3 0 15", "0.3 1 15", "0.3 2 15" ]
+  },
+
+  {
+    "Name": "JumpingFORWARD",
+    "Frames": [ "1 0 4" ]
+  },
+  {
+    "Name": "JumpingLEFT",
+    "Frames": [ "1 0 5" ]
+  },
+  {
+    "Name": "JumpingRIGHT",
+    "Frames": [ "1 0 6" ]
+  },
+  {
+    "Name": "JumpingBACKWARD",
+    "Frames": [ "1 0 7" ]
+  },
+
+  {
+    "Name": "FallingFORWARD",
+    "Frames": [ "1 1 4" ]
+  },
+  {
+    "Name": "FallingLEFT",
+    "Frames": [ "1 1 5" ]
+  },
+  {
+    "Name": "FallingRIGHT",
+    "Frames": [ "1 1 6" ]
+  },
+  {
+    "Name": "FallingBACKWARD",
+    "Frames": [ "1 1 7" ]
+  },
+
+  {
+    "Name": "SittingFORWARD",
+    "Frames": [ "1 3 4" ]
+  },
+  {
+    "Name": "SittingLEFT",
+    "Frames": [ "1 3 5" ]
+  },
+  {
+    "Name": "SittingRIGHT",
+    "Frames": [ "1 3 6" ]
+  },
+  {
+    "Name": "SittingBACKWARD",
+    "Frames": [ "1 3 7" ]
+  },
+
+  {
+    "Name": "ClimbingFORWARD",
+    "Frames": [ "0.25 4 4", "0.25 5 4", "0.25 6 4", "0.25 5 4" ]
+  },
+  {
+    "Name": "ClimbingLEFT",
+    "Frames": [ "0.25 4 5", "0.25 5 5", "0.25 6 5", "0.25 5 5" ]
+  },
+  {
+    "Name": "ClimbingRIGHT",
+    "Frames": [ "0.25 4 6", "0.25 5 6", "0.25 6 6", "0.25 5 6" ]
+  },
+  {
+    "Name": "ClimbingBACKWARD",
+    "Frames": [ "0.25 4 7", "0.25 5 7", "0.25 6 7", "0.25 5 7" ]
+  },
+
+  {
+    "Name": "MinecartFORWARD",
+    "Frames": [ "1 0 0" ]
+  },
+  {
+    "Name": "MinecartLEFT",
+    "Frames": [ "1 0 1" ]
+  },
+  {
+    "Name": "MinecartRIGHT",
+    "Frames": [ "1 0 2" ]
+  },
+  {
+    "Name": "MinecartBACKWARD",
+    "Frames": [ "1 0 3" ]
+  }
+]

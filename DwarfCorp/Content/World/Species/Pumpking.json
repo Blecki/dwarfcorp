@@ -1,0 +1,7 @@
+{
+  "Name": "Pumpking",
+  "HasMeat": false,
+  "HasBones": false,
+  "BaseMeatResource": "Pumpkin",
+  "FeelsFear": false
+}

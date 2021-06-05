@@ -1,0 +1,32 @@
+{
+  "TypeName": "Berry",
+  "MoneyValue": 5.0,
+  "Description": "Dwarves can eat these.",
+  "Category": "Seeds",
+  "Tags": [
+    "Edible",
+    "Flammable",
+    "RawFood",
+    "Plantable",
+    "AboveGroundPlant",
+    "Fruit"
+  ],
+  "FoodContent": 50.0,
+  "DisplayName": "Berry",
+  "PlantToGenerate": "Berry Bush Sprout",
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "Wine",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "2, 1"
+  }
+
+}

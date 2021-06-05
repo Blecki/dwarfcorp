@@ -1,0 +1,52 @@
+{
+  "TypeName": "Stone Door",
+  "MoneyValue": 15.0,
+  "Description": "It's heavy. It's stone. It's not a window.",
+  "Category": "Furniture",
+  "Tags": [
+    "Door"
+  ],
+  "FoodContent": 0.0,
+  "DisplayName": "Stone Door",
+  "PlantToGenerate": null,
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": null,
+
+  "Placement_Placeable": true,
+  "Placement_EntityToCreate": "Stone Door",
+  "Placement_AllowRotation": true,
+  "Placement_PlaceTime": 5.0,
+  "Placement_SpawnOffset": "0, 0.5, 0",
+  "Placement_AddToOwnedPool": true,
+  "Placement_MarkDestructable": true,
+  "Placement_PlacementRequirement": "OnGround",
+
+  "Craft_Craftable": true,
+  "Craft_Ingredients": [
+    {
+      "Tag": "Stone",
+      "Count": 2
+    }
+  ],
+  "Craft_ResultsCount": 1,
+  "Craft_BaseCraftTime": 16.0,
+  "Craft_Location": "Craft Table",
+  "Craft_TaskCategory": "CraftItem",
+  "Craft_Noise": "Craft",
+  "Craft_MetaResourceFactory": "Normal",
+
+  "Tutorial": "Doors allow travel for your dwarfs while preventing travel for any other creature. Enemy creatures will attack your doors to try to destroy them. Doors must be placed next to walls.",
+
+  "Gui_Graphic": {
+    "AssetPath": "entities\\Furniture\\interior_furniture",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "0, 8"
+  }
+
+}

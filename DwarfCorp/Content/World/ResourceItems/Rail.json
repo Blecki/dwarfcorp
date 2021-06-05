@@ -1,0 +1,43 @@
+{
+  "TypeName": "Rail",
+  "Type": "Resource",
+  "MoneyValue": 12.0,
+  "Description": "These can be laid to create mine cart tracks.",
+  "Tags": [
+    "Rail"
+  ],
+  "FoodContent": 0.0,
+  "DisplayName": "Rail",
+  "PlantToGenerate": null,
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "",
+
+  "Craft_Craftable": true,
+  "Craft_Ingredients": [
+    {
+      "Tag": "Iron",
+      "Count": 1
+    }
+  ],
+  "Craft_ResultsCount": 4,
+  "Craft_BaseCraftTime": 8.0,
+  "Craft_Location": "Craft Table",
+  "Craft_TaskCategory": "CraftItem",
+  "Craft_Noise": "Craft",
+  "Craft_MetaResourceFactory": "Normal",
+
+  "Tutorial": "Rails are needed to build railways. One metal can be turned into four rails. Dwarfs move faster on railways.",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "6, 4"
+  }
+
+}

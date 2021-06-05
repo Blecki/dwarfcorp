@@ -1,0 +1,90 @@
+{
+  "TypeName": "Potion Of Health",
+  "MoneyValue": 100.0,
+  "Description": "Dwarfs drink this potion when they take damage.",
+  "Category": "Potions",
+  "Tags": [
+    "Potion"
+  ],
+  "FoodContent": 0.0,
+  "DisplayName": "Potion Of Health",
+  "MaterialStrength": 5.0,
+  "PlantToGenerate": null,
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "",
+  "PotionType": {
+    "TypeName": "Potion Of Health",
+    "Description": "Dwarfs drink this potion when they take damage.",
+    "Effects": {
+      "$type": "DwarfCorp.OngoingHealBuff, /Content",
+      "DamagePerSecond": 10.0,
+      "EffectTime": {
+        "TargetTimeSeconds": 4.0,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": true,
+        "HasTriggered": false,
+        "Mode": "Game"
+      },
+      "IsInEffect": true,
+      "Particles": "star_particle",
+      "ParticleTimer": {
+        "TargetTimeSeconds": 0.25,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": false,
+        "HasTriggered": false,
+        "Mode": "Real"
+      },
+      "SoundOnStart": null,
+      "SoundOnEnd": null
+    },
+    "Ingredients": [
+      {
+        "Type": "Magical",
+        "Count": 1
+      },
+      {
+        "Type": "Edible",
+        "Count": 1
+      }
+    ],
+    "Icon": 44
+  },
+
+  "Craft_Craftable": true,
+  "Craft_Ingredients": [
+    {
+      "Tag": "Magical",
+      "Count": 1
+    },
+    {
+      "Tag": "Edible",
+      "Count": 1
+    }
+  ],
+  "Craft_Verb": {
+    "Base": "concoct",
+    "PastTense": "concoted",
+    "PresentTense": "concoting"
+  },
+  "Craft_ResultsCount": 1,
+  "Craft_BaseCraftTime": 16.0,
+  "Craft_Location": "Apothecary",
+  "Craft_TaskCategory": "Research",
+  "Craft_Noise": "Craft",
+  "Craft_MetaResourceFactory": "Normal",
+
+  "Tutorial": "Dwarfs drink this potion when they take damage.",
+
+  "Gui_Graphic": {
+    "AssetPath": "Entities\\potions",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "1, 0"
+  }
+
+}

@@ -1,0 +1,246 @@
+﻿[
+  {
+    "Name": "new game start",
+    "Title": "Tutorial",
+    "Text": "Welcome to DwarfCorp! You can turn this tutorial off at any time and I won't bother you again. Why don't you try selecting a dwarf? The selector tool is at the left end of the tray at the bottom.",
+    "GuiHilite": "select",
+    "NextTutorial": "camera"
+  },
+  {
+    "Name": "dwarf selected",
+    "Title": "Selecting Dwarves",
+    "Text": "You selected a dwarf! You can tell a dwarf to go somewhere by right clicking. You can order your employees to do something using the tools in the tray at the bottom of the screen. Dwarfs to do not have to be selected to issue orders.",
+    "GuiHilite": "tools"
+  },
+  {
+    "Name": "mine",
+    "Title": "Mining",
+    "Text": "Left click and drag to tell dwarves to mine blocks. Mining sometimes produces resources for trading and building. Tip: hold ALT and use the mouse wheel to dig pits. Right click and drag to cancel mine designations. When your employee collects resources, the dwarf will take them to a stockpile to store them.",
+    "GuiHilite": "dig"
+  },
+  {
+    "Name": "wrangle",
+    "Title": "Catching Animals",
+    "Text": "Left click and drag over animals to capture them. Dwarves will bring the animals to an animal pen, where they may breed and lay eggs.",
+    "GuiHilite": "wrangle"
+  },
+  {
+    "Name": "slice",
+    "Title": "Slicing",
+    "Text": "You can view slices of blocks beneath the earth. The most valuable resources are underground, and dwarves prefer living in the dark. Push the Slice key (by default Q) to slice the terrain at the mouse cursor. You can also slice terrain using the slice buttons at the bottom of the screen, using the slice-up and slice-down keys (by default, pageup and pagedown), or with CTRL + mousehweel.",
+    "GuiHilite": "slice",
+    "NextTutorial": "unslice"
+  },
+  {
+    "Name": "unslice",
+    "Title": "Unslicing",
+    "Text": "Push the Unslice key (by default, E) to reveal all the terrain. Pressing CTRL plus the Slice key (default Q) will re-slice to where you were last.",
+    "GuiHilite": "slice"
+  },
+  {
+    "Name": "build blocks",
+    "Title": "Placing Blocks",
+    "Text": "Left click and drag to tell dwarves to place blocks. You can only build blocks that you have resources for. When there aren't enough resources, the blocks will turn red. You can cancel placing blocks by right clicking and dragging.",
+    "GuiHilite": "build wall"
+  },
+  {
+    "Name": "build items",
+    "Title": "Building Items",
+    "Text": "Left click to tell dwarfs to build items. Once you click, a blueprint will be created. The dwarf will gather the resources and build the item at the work pile. The dwarf will ignore the blueprint until enough resources are available.",
+    "GuiHilite": "craft item"
+  },
+  {
+    "Name": "build crafts",
+    "Title": "Crafting",
+    "Text": "You told one of your employees to craft an item. The dwarf will now attempt to gather the resources for the item and will build it in the workshop. The item will appear in the stockpile once the dwarf is finished. NOTE: an anvil or forge is required to build crafts."
+  },
+  {
+    "Name": "cook",
+    "Title": "Cooking",
+    "Text": "Dwarves can cook meals, bake bread or brew ale. You can select which food items you want to use for the dwarf to cook with. Meals provide more happiness and relieve hunger more than raw foods. Dwarves must eat to survive and stay happy. Once you select a food, the dwarf will gather the resources from your stockpiles and go cook it. NOTE: You must have a barrell, cutting board, or stove to cook.",
+    "GuiHilite": "cook"
+  },
+  {
+    "Name": "plant",
+    "Title": "Planting Seeds",
+    "Text": "Left click and drag on any soil to plant seeds. Seeds will eventually grow into plants that can be harvested. Dwarfs auto-harvest plants once grown. Some plants can only be grown underground."
+  },
+  {
+    "Name": "gather",
+    "Title": "Gathering Resources",
+    "Text": "Left click and drag to tell dwarves to gather loose resources on the ground. Dwarves auto-gather stuff that they mine or harvest from plants. Right click and drag to cancel a gather designation.",
+    "GuiHilite": "gather"
+  },
+  {
+    "Name": "attack",
+    "Title": "Attacking",
+    "Text": "Left click and drag on creatures to tell dwarves to attack (or hunt) them. Right click and drag to cancel attack designations.",
+    "GuiHilite": "attack"
+  },
+  {
+    "Name": "chop",
+    "Title": "Gathering Plants",
+    "Text": "Left click and drag over plants to tell dwarves to chop them down and harvest them. Plants release wood, seeds, and other resources.",
+    "GuiHilite": "chop"
+  },
+  {
+    "Name": "build Stockpile",
+    "Title": "Stockpiles",
+    "Text": "Left click and drag a set of blocks to build a stockpile. Stockpiles are free and increase the number of goods your dwarf corporation can have in storage. Dwarves carry resources to stockpiles to store them, and grab resources from stockpiles when they\\'re needed. Stockpiles automatically redistribute goods when necessary. You can see what is in your stockpiles at the top of the screen. The larger the stockpile, the more goods that can be stored there."
+  },
+
+  {
+    "Name": "build Graveyard",
+    "Title": "Graveyard",
+    "Text": "Left click and drag to build a graveyard. When dwarves die, they produce corpses. Corpses can only be stored in the graveyard. Dwarves will come to the graveyard to mourn the dead."
+  },
+  {
+    "Name": "build Balloon Port",
+    "Title": "Balloon Port",
+    "Text": "Left click and drag to build a balloon port. Balloon ports are necessary for trade. They must be built above ground. They also act as stockpiles. The larger the balloon port, the more it can store in its stockpile."
+  },
+  {
+    "Name": "build Animal Pen",
+    "Title": "Animal Pen",
+    "Text": "Build an animal pen to wrangle animals. Animals breed and produce meat/bones/eggs. Only one animal type per pen."
+  },
+  {
+    "Name": "level up",
+    "Title": "Promoting Dwarves",
+    "Text": "One of your employees has gained enough experience points (XP) to get a promotion! Employees earn XP from working, digging, fighting and training.  Promoting employees makes them work harder, but they also demand higher wages. Go to the colony menu (by pushing the economy button on the bottom right of the screen), select an employee, and promote them. If you choose not to promote your employees, they may become unhappy."
+  },
+  {
+    "Name": "happiness",
+    "Title": "Happy Thoughts",
+    "Text": "Dwarves get happy or unhappy thoughts depending on the circumstances. You can view their unhappy or happy thoughts by clicking on the colony menu at the bottom right of the screen. Unhappy employees may refuse to work, or might even quit. Make your employees happy by ensuring they are paid fairly, have access to food and ale, and beds to sleep in."
+  },
+  {
+    "Name": "money",
+    "Title": "Money",
+    "Text": "Your colony needs money to survive. Earn Dwarfbux ($) by trading with the natives as they arrive. Being bankrupt for too long might cause all of your employees to quit, and your stock may crash! Money is stored in the treasury.",
+    "GuiHilite": "money"
+  },
+  {
+    "Name": "combat",
+    "Title": "Combat",
+    "Text": "Your employees are in combat! All kinds of monsters want to eat them, and some of the natives might be hostile. Dwarves regain their health points (HP) while sleeping or eating. Make sure you hire plenty of military dwarves to keep your colony defended. (By clicking on the Economy button on the bottom right of the screen)"
+  },
+  {
+    "Name": "death",
+    "Title": "Death",
+    "Text": "One of your employees died! That's bad news. When employees die, their coworkers may become depressed."
+  },
+  {
+    "Name": "pay",
+    "Title": "Pay",
+    "Text": "You have just paid your employees. Employees are paid every night at midnight from the treasury. Your colony needs money to survive. Earn Dwarfbux ($) by trading with the motherland or natives as they arrive. Being bankrupt for too long might cause all of your employees to quit, and your stock may crash!"
+  },
+  {
+    "Name": "war",
+    "Title": "War",
+    "Text": "We are at war! Natives will send war bands to our colony each day until they grow tired of war. War is bad for business, so make sure not to offend the natives too much."
+  },
+  {
+    "Name": "trade",
+    "Title": "Trade",
+    "Text": "Someone has arrived to trade with us! Native creatures and expeditions from the motherland will occasionally arrive to trade with us. We must have an accessible balloon port to trade with the trade envoy. Each group has a different set of items they find common, rare, offensive or precious. Make sure to ask them about their customs before trading."
+  },
+  {
+    "Name": "trade_screen",
+    "Title": "Trade Screen",
+    "Text": "The items in our stockpiles are on the left side of the screen. The trader items are on the right side. Click on an item on the left side to offer it to the trader. Click one of their items on the right side to request that item. Shift+click to move 5 items, Ctrl + click to move all items. Click and hold to keep moving items.",
+    "NextTutorial": "trade_balance"
+  },
+  {
+    "Name": "market_screen",
+    "Title": "Market Screen",
+    "Text": "The market screen allows you to offer items for sale rather then sending them back to your corporate reserves. You'll get money now, but the market rate is much less than you can get selling directly to visiting traders."
+  },
+  {
+    "Name": "trade_balance",
+    "Title": "Trade Balance",
+    "Text": "The balance on the bottom of the screen represents the balance of trade. If it is weighted to the left, our goods are more valuable than their goods. If it is weighted to the right, their goods are more valuable. The traders will only trade with us if they get a profit.",
+    "NextTutorial": "trade_money",
+    "GuiHilite": "trade_balance"
+  },
+  {
+    "Name": "trade_money",
+    "Title": "Trade Money",
+    "Text": "At the bottom of each trade column there is an entry for how much money to trade. You can type a number on the right side to demand money from the trader, or a number on the left side to offer money.",
+    "NextTutorial": "trade_stocks",
+    "GuiHilite": "trade_money"
+  },
+  {
+    "Name": "trade_stocks",
+    "Title": "Trade Stockpiles",
+    "Text": "We can only trade as many goods as will fit in our stockpiles. Build more stockpiles to make more space if necessary.",
+    "GuiHilite": "trade_stocks"
+  },
+  {
+    "Name": "diplomacy",
+    "Title": "Diplomacy",
+    "Text": "The diplomacy screen shows you all the factions in your immediate area. Mouse over faction names to see what their relationship with us is like. Having a negative relationship with a faction means that they might go to war with us."
+  },
+  {
+    "Name": "potions",
+    "Title": "Potions",
+    "Text": "Wizards can brew potions at the Apothecary. Potions can be used to heal dwarfs, or make them stronger, faster or happier. Potions require mana rocks or refined mana to brew."
+  },
+  {
+    "Name": "time",
+    "Title": "Time",
+    "Text": "You can speed up the time by pressing the >> button using the time controls on the bottom right of the screen. Time can also be sped up or slowed down using the time forward and backward keys (by default X and C). Time can be paused using the pause key (by default, Space). You can still issue commands while time is paused.",
+    "GuiHilite": "speed controls"
+  },
+  {
+    "Name": "camera",
+    "Title": "The Camera",
+    "Text": "Move the camera using the arrow keys, movement keys (by default, W.A.S.D) or by hovering the mouse at the side of the screen. Zoom the camera in and out using the mouse wheel or by right clicking and dragging while the shift key is pressed. Hold shift or middle mouse button and drag the mouse to rotate the camera. The camera can be re-centered on your balloon port by clicking on the Home button on the minimap (bottom left corner).",
+    "GuiHilite": "minimap",
+    "NextTutorial": "slice"
+  },
+  {
+    "Name": "walk_camera",
+    "Title": "Walk Camera",
+    "Text": "You are now in a special camera mode called Walk. Walk around with the movement keys (arrows or WASD). Jump with the jump key (default C). Toggle flying with the fly key (default k). Press shift or middle mouse button to toggle the mouse. To go back, click the Orbit button, or press Escape.",
+    "GuiHilite": "camera_modes"
+  },
+  {
+    "Name": "xray",
+    "Title": "X-Ray View",
+    "Text": "X-Ray view allows you to see underground into areas that your dwarfs have explored. Toggle it by pressing Tab, or clicking the button labeled x-ray.",
+    "GuiHilite": "xray"
+  },
+  {
+    "Name": "brush",
+    "Title": "Brushes",
+    "Text": "By clicking one of the brush buttons on the bottom of the screen, you activated a brush. The available brushes are Block, Shell and Stair brushes. The block brush selects a rectangular region of the world as you click and drag. The shell brush selects a single-block shell around a rectangular region. The stair brush selects stairs down into the earth when mining, or stairs up into the air when building.",
+    "GuiHilite": "brushes"
+  },
+  {
+    "Name": "hire",
+    "Title": "Hiring Dwarves",
+    "Text": "Here, you can hire new dwarves to be employees of your company. Click on the employee type to view a new resume, and click \"Hire\" if you want to hire them. Hiring dwarves requires a balloon port and enough Dwarfbux to cover their signing bonus.",
+    "Popup": true
+  },
+  {
+    "Name": "economy",
+    "Title": "Colony Screen",
+    "Text": "This is the colony screen, where you can view your employees and finances. You can also hire new employees, fire employees, and manage employee tasks."
+  },
+  {
+    "Name": "paint rail",
+    "Title": "Rail Path Tool",
+    "Text": "This tool lets you lay down long stretches of rail by clicking and dragging. Dwarves will use rail to move quickly from place to place. If you need more control, you can also place specific rail pieces to create curves and interchanges."
+  },
+  {
+    "Name": "place rail",
+    "Title": "Rail Tool",
+    "Text": "Dwarves will use rail to move quickly from place to place. To create a junction, simply overlap with existing rail. The correct junction will automatically be created."
+  },
+  {
+    "Name": "equipment",
+    "Title": "Equipment",
+    "Text": "Dwarves need equipment to carry out your instructions. Tools will wear out as they are used and need to be replaced periodically. On the left is the dwarf. Click on an equipment slot to get the option to remove the item, and to see all available items that can be equipped."
+  }
+]

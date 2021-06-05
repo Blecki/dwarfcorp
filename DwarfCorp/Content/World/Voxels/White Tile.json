@@ -1,0 +1,38 @@
+{
+  "ID": 0,
+  "Name": "White Tile",
+  "Top": "3, 5",
+  "Bottom": "3, 5",
+  "Sides": "3, 5",
+  "Transitions": 1,
+  "HasTransitionTextures": false,
+  "TransitionTiles": null,
+  "ReleasesResource": false,
+  "ResourceToRelease": "Stone",
+  "BuildRequirements": [ "Stone" ],
+  "StartingHealth": 60.0,
+  "ProbabilityOfRelease": 0.0,
+  "CanRamp": false,
+  "IsBuildable": true,
+  "ParticleType": "stone_particle",
+  "EmitsLight": false,
+  "MinSpawnHeight": -999.0,
+  "MaxSpawnHeight": 999.0,
+  "SpawnProbability": 1.0,
+  "Rarity": 1.0,
+  "SpawnClusters": false,
+  "IsSoil": false,
+  "IsSurface": false,
+  "IsInvincible": false,
+  "Tint": "255, 255, 255, 255",
+  "SpawnOnSurface": false,
+  "IsTransparent": false,
+  "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_stone_destroy",
+  "HitSoundResources": [
+    "Audio\\oscar\\sfx_ic_dwarf_pick_stone_1",
+    "Audio\\oscar\\sfx_ic_dwarf_pick_stone_2",
+    "Audio\\oscar\\sfx_ic_dwarf_pick_stone_3"
+  ],
+  "MinimapColor": "169,189,167,255"
+
+}

@@ -1,0 +1,19 @@
+getting pickaxe out of beard:
+
+frame order: 0,1,0,1,2,3,3
+
+notes: 
+frames 0 and 1 are repeated because the dwarf is rummaging through his beard.
+
+frame 3 is repeated so he holds his pickaxe aloft longer.
+the reason these are set up this way is so that all frames of all animations have the same duration.
+makes things easier for both of us.
+
+
+
+putting pickaxe back in beard:
+
+frame order: 0,0,1,2
+
+notes:
+again, frame 0 is repeated so he holds his pickaxe aloft longer. with only one frame, it looks too abrupt.

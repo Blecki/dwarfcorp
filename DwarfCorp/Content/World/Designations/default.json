@@ -1,0 +1,11 @@
+{
+  "Name": "default",
+  "Color": [
+    128,
+    128,
+    128,
+    255
+  ],
+  "LineWidth": 0.1,
+  "DrawType": "FullBox"
+}

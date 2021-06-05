@@ -181,7 +181,7 @@ namespace DwarfCorp
                 CreateAssets();
             }
 
-            Bloom.BeginDraw();
+            //Bloom.BeginDraw();
             try
             {
                 graphics.Clear(Color.SkyBlue);
@@ -308,7 +308,7 @@ namespace DwarfCorp
                 DwarfGame.SpriteBatch.End();
             }
 
-            Bloom.Draw(time.ToRealTime());
+            //Bloom.Draw(time.ToRealTime());
         }
 
         public void RenderTile(TerrainElement element, SpriteBatch sprites, int ix, int iy, float x, float originX, Color tint)

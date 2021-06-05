@@ -1,0 +1,15 @@
+{
+  "CanBuildAboveGround": true,
+  "CanBuildBelowGround": false,
+  "MinimumSideLength": 3,
+  "MinimumSideWidth": 3,
+  "MaxNumRooms": 1,
+  "Name": "Balloon Port",
+  "DisplayName": "Balloon\nPort",
+  "RequiredResources": {},
+  "NewIcon": {
+    "Sheet": "rooms",
+    "Tile": 1
+  },
+  "Description": "Balloons pick up / drop off resources here."
+}

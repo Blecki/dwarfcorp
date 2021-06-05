@@ -1,0 +1,18 @@
+[
+  {
+    "Name": "IdleFORWARD",
+    "Frames": [ "1 0 0" ]
+  },
+  {
+    "Name": "IdleLEFT",
+    "Frames": [ "1 0 0" ]
+  },
+  {
+    "Name": "IdleRIGHT",
+    "Frames": [ "1 0 0" ]
+  },
+  {
+    "Name": "IdleBACKWARD",
+    "Frames": [ "1 0 0" ]
+  }
+]

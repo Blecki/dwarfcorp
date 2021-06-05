@@ -1,0 +1,95 @@
+{
+  "TypeName": "Fire Staff",
+  "MoneyValue": 1500.0,
+  "Description": "A real wizard's staff, not one of those lame ones.",
+  "Category": "Tools",
+  "Tags": [
+    "Tool",
+    "Weapon",
+    "Staff"
+  ],
+  "FoodContent": 0.0,
+  "DisplayName": "Fire Staff",
+  "PlantToGenerate": "",
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "",
+
+  "Tool_Breakable": true,
+  "Tool_Durability": 256,
+  "Tool_Wear": 0,
+  "Tool_Effectiveness": 1.0,
+  "Tool_AttackAnimation": "Attacking01",
+  "Tool_AttackTriggerFrame": 2,
+  "Tool_AttackDamage": 1,
+  "Tool_AttackHitEffect": "Effects\\pierce",
+  "Tool_Magic": true,
+
+  "Equipable": true,
+  "Equipment_LayerType": "Tool",
+  "Equipment_Palette": "Ruby",
+  "Equipment_LayerName": "staff",
+  "Equipment_Slot": "Tool",
+  "Equipment_Weapon": {
+    "DamageAmount": 25.0,
+    "Name": "Fireball",
+    "Range": 25.0,
+    "HitNoise": {
+      "Sounds": [
+        "Audio\\oscar\\sfx_env_lava_spread"
+      ],
+      "Volume": 1.0,
+      "RandomPitch": true
+    },
+    "HitColor": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "Mode": "Area",
+    "RechargeRate": 3.0,
+    "Knockback": 0.0,
+    "AnimationAsset": "Effects\\explode",
+    "HitParticles": "flame",
+    "ProjectileType": "",
+    "LaunchSpeed": 0.0,
+    "HasTriggered": false,
+    "TriggerMode": "Animation",
+    "TriggerFrame": 2,
+    "DiseaseToSpread": null,
+    "ShootLaser": true
+  },
+
+  "Gui_Graphic": {
+    "AssetPath": "Entities/Dwarf/ToolIcons/equipment",
+    "Palette": "Wood Equipment",
+    "FrameSize": "32, 32",
+    "Frame": "1, 1"
+  },
+
+  "Craft_Craftable": true,
+  "Craft_Ingredients": [
+    {
+      "Tag": "Wood",
+      "Count": 2
+    },
+    {
+      "Tag": "Mana",
+      "Count": 2
+    }
+  ],
+  "Craft_ResultsCount": 1,
+  "Craft_BaseCraftTime": 16.0,
+  "Craft_Location": "Craft Table",
+  "Craft_TaskCategory": "CraftItem",
+  "Craft_Noise": "Craft",
+  "Craft_MetaResourceFactory": "Normal",
+
+  "Tutorial": "The weapon of a real wizard."
+
+}

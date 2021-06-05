@@ -1,6 +1,0 @@
-{
-  "Name": "Normal",
-  "CombatModifier": 2,
-  "StartingFunds": 2000,
-  "Dwarves":  [ "Miner", "Miner", "Miner", "Crafter" ]
-}

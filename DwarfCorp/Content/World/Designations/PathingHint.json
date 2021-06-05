@@ -1,0 +1,11 @@
+{
+  "Name": "PathingHint",
+  "Color": [
+    255,
+    255,
+    0,
+    128
+  ],
+  "LineWidth": 0.1,
+  "DrawType": "FullBox"
+}

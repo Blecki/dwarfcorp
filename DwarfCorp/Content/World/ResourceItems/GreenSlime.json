@@ -1,0 +1,31 @@
+{
+  "TypeName": "Green Slime",
+  "MaterialStrength": 5.0,
+  "MoneyValue": 25.0,
+  "Description": "Goop from a green slime.",
+  "Category": "Meat",
+  "Tags": [
+    "Slime",
+    "Edible",
+    "RawFood",
+    "Brewable"
+  ],
+  "FoodContent": 0.0,
+  "DisplayName": "Green Slime",
+  "PlantToGenerate": null,
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "Wine",
+
+
+  "Gui_Graphic": {
+    "AssetPath": "Entities\\Animals\\Slimes\\Slime_Goo",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "1, 0"
+  }
+}

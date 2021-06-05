@@ -78,8 +78,8 @@ namespace DwarfCorp
 
         public bool EnableShadows
         {
-            get { return Parameters["xEnableShadows"].GetValueBoolean(); }
-            set {  Parameters["xEnableShadows"].SetValue(value);}
+            get { return false; } // return Parameters["xEnableShadows"].GetValueBoolean(); } //TODO: MONOFIX
+            set { }//  Parameters["xEnableShadows"].SetValue(value);}
         }
 
         public Texture2D WaterBumpMap
@@ -402,7 +402,7 @@ namespace DwarfCorp
 
         public void SetTexturedTechnique()
         {
-            CurrentTechnique = Techniques[TexturedTechniques[CurrentNumLights]];
+            CurrentTechnique = Techniques[TexturedTechniques[0/*CurrentNumLights*/]];
         }
 
         public void SetIconTechnique()
@@ -412,12 +412,12 @@ namespace DwarfCorp
 
         public void SetInstancedTechnique()
         {
-            CurrentTechnique = Techniques[InstancedTechniques[CurrentNumLights]];
+            CurrentTechnique = Techniques[InstancedTechniques[0/*CurrentNumLights*/]];
         }
 
         public void SetTiledInstancedTechnique()
         {
-            CurrentTechnique = Techniques[TiledInstancedTechniques[CurrentNumLights]];
+            CurrentTechnique = Techniques[TiledInstancedTechniques[0/*CurrentNumLights*/]];
         }
 
 

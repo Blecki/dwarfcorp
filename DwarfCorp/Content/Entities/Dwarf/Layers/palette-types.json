@@ -1,0 +1,22 @@
+[
+  {
+    "Name": "Base",
+    "RowLabelColor": "0, 0, 0, 255"
+  },
+
+  {
+    "Name": "Skin",
+    "RowLabelColor": "255, 0, 0, 255"
+  },
+
+  {
+    "Name": "Hair",
+    "RowLabelColor": "0, 255, 0, 255"
+  },
+
+  {
+    "Name": "Equipment",
+    "RowLabelColor": "0, 0, 255, 255"
+  }
+
+]

@@ -1,0 +1,146 @@
+{
+  "TypeName": "Bone",
+  "MoneyValue": 15.0,
+  "Description": "Came from an animal.",
+  "Category": "Bone",
+  "Tags": [
+    "Bone",
+    "Material",
+    "AnimalProduct",
+    "HardMaterial",
+    "TrinketMaterial"
+  ],
+  "FoodContent": 0.0,
+  "DisplayName": "Bone",
+  "PlantToGenerate": null,
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "3, 3"
+  },
+
+  "Trinket_TrinketData": [
+    {
+      "Name": "Ring",
+      "Value": 1.5,
+      "Graphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "Stone Equipment",
+        "FrameSize": "32, 32",
+        "Frame": "0, 2"
+      },
+      "EncrustingGraphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "None",
+        "FrameSize": "32, 32",
+        "Frame": "0, 4"
+      }
+    },
+    {
+      "Name": "Bracer",
+      "Value": 1.8,
+      "Graphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "Stone Equipment",
+        "FrameSize": "32, 32",
+        "Frame": "1, 2"
+      },
+      "EncrustingGraphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "None",
+        "FrameSize": "32, 32",
+        "Frame": "1, 4"
+      }
+    },
+    {
+      "Name": "Pendant",
+      "Value": 1.6,
+      "Graphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "Stone Equipment",
+        "FrameSize": "32, 32",
+        "Frame": "2, 2"
+      },
+      "EncrustingGraphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "None",
+        "FrameSize": "32, 32",
+        "Frame": "2, 4"
+      }
+    },
+    {
+      "Name": "Figure",
+      "Value": 3.0,
+      "Graphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "Stone Equipment",
+        "FrameSize": "32, 32",
+        "Frame": "3, 2"
+      },
+      "EncrustingGraphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "None",
+        "FrameSize": "32, 32",
+        "Frame": "3, 4"
+      }
+    },
+    {
+      "Name": "Earrings",
+      "Value": 2.0,
+      "Graphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "Stone Equipment",
+        "FrameSize": "32, 32",
+        "Frame": "4, 2"
+      },
+      "EncrustingGraphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "None",
+        "FrameSize": "32, 32",
+        "Frame": "4, 4"
+      }
+    },
+    {
+      "Name": "Staff",
+      "Value": 3.5,
+      "Graphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "Stone Equipment",
+        "FrameSize": "32, 32",
+        "Frame": "5, 2"
+      },
+      "EncrustingGraphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "None",
+        "FrameSize": "32, 32",
+        "Frame": "5, 4"
+      }
+    },
+    {
+      "Name": "Crown",
+      "Value": 4.0,
+      "Graphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "Stone Equipment",
+        "FrameSize": "32, 32",
+        "Frame": "6, 2"
+      },
+      "EncrustingGraphic": {
+        "AssetPath": "newgui/trinkets-new",
+        "Palette": "None",
+        "FrameSize": "32, 32",
+        "Frame": "6, 4"
+      }
+    }
+  ]
+
+}

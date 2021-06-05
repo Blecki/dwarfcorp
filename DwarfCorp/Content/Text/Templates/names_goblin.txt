@@ -1,0 +1,14 @@
+<goblin_phoneme>
+<goblin_phoneme><goblin_phoneme>
+<goblin_phoneme><goblin_phoneme>
+<goblin_phoneme><goblin_phoneme>
+<goblin_phoneme><goblin_phoneme><goblin_phoneme>
+<goblin_phoneme><goblin_phoneme><goblin_phoneme>
+<goblin_phoneme><goblin_phoneme><goblin_phoneme>
+<goblin_phoneme><goblin_phoneme><goblin_phoneme>
+<goblin_phoneme><goblin_phoneme><goblin_phoneme>
+<goblin_phoneme><goblin_phoneme><goblin_phoneme><goblin_phoneme>
+<goblin_phoneme> <goblin_phoneme>
+<goblin_phoneme><goblin_phoneme> <goblin_phoneme><goblin_phoneme>
+<goblin_phoneme><goblin_phoneme><goblin_phoneme> <goblin_phoneme><goblin_phoneme><goblin_phoneme>
+<goblin_phoneme><goblin_phoneme><goblin_phoneme><goblin_phoneme> <goblin_phoneme><goblin_phoneme>

@@ -1,0 +1,73 @@
+{
+  "Name": "Flesh",
+  "Icon": "1, 0",
+  "DayAmbience": "sfx_amb_forest_day",
+  "NightAmbience": "sfx_amb_forest_night",
+  "RuinFloorType" : "Bone",
+  "RuinWallType" : "Bone",
+  "Vegetation": [
+  ],
+  "Motes": [
+    {
+      "Name": "hair",
+      "RegionScale": 0.1,
+      "SpawnThreshold": 0.6,
+      "MoteScale": 1.2,
+      "Asset": "Entities\\Plants\\hair"
+    }
+  ],
+  "Fauna": [
+    {
+      "Name": "Slime - White",
+      "SpawnProbability": 0.0005,
+      "MaxPopulation": 100
+    }
+  ],
+  "SoilLayer": {
+    "VoxelType": "Dermis",
+    "Depth": 1
+  },
+  "SubsurfaceLayers": [
+    {
+      "VoxelType": "Fat",
+      "Depth": 3
+    },
+    {
+      "VoxelType": "Meat",
+      "Depth": 1
+    },
+    {
+      "VoxelType": "Bone",
+      "Depth": 4
+    },
+    {
+      "VoxelType": "Shale",
+      "Depth": 4
+    },
+    {
+      "VoxelType": "Slate",
+      "Depth": 4
+    },
+    {
+      "VoxelType": "Granite",
+      "Depth": 4
+    },
+    {
+      "VoxelType": "Marble",
+      "Depth": 4
+    },
+    {
+      "VoxelType": "Obsidian",
+      "Depth": 4
+    }
+  ],
+  "GrassDecal": "skin",
+  "ShoreVoxel": "Dermis",
+  "ClumpGrass": false,
+  "ClumpSize": 30.0,
+  "ClumpTreshold": 0.75,
+  "MapColor": [ 209, 148, 116, 255 ],
+  "Height": 0.2,
+  "Temp": 0.39,
+  "Rain": 0.25
+}

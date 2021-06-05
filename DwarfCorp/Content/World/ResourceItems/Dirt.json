@@ -1,0 +1,28 @@
+{
+  "TypeName": "Dirt",
+  "MoneyValue": 1.0,
+  "Description": "Can be used to make bricks.",
+  "Category": "Stone",
+  "Tags": [
+    "Soil",
+    "Material"
+  ],
+  "FoodContent": 0.0,
+  "DisplayName": "Dirt",
+  "PlantToGenerate": null,
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "0, 1"
+  }
+
+}

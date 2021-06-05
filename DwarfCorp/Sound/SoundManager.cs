@@ -118,7 +118,7 @@ namespace DwarfCorp
             if (PlayLoopOverIntro && !string.IsNullOrEmpty(Loop))
             {
                 LoopCue = sounds.GetCue(Loop);
-                LoopCue.Play();
+                //LoopCue.Play();
             }
         }
 
@@ -129,7 +129,7 @@ namespace DwarfCorp
                 if (!PlayLoopOverIntro)
                 {
                     LoopCue = sounds.GetCue(Loop);
-                    LoopCue.Play();
+                    //LoopCue.Play();
                 }
                 IntroCue = null;
             }
@@ -145,7 +145,7 @@ namespace DwarfCorp
             if (OutroCue == null && !string.IsNullOrEmpty(Outro))
             {
                 OutroCue = sounds.GetCue(Outro);
-                OutroCue.Play();
+                //OutroCue.Play();
             }
 
             if (LoopCue != null)
@@ -372,32 +372,32 @@ namespace DwarfCorp
 
         public static void PlayAmbience(string sound)
         {
-            if (!HasAudioDevice) return;
-            Cue cue;
-            if (!ActiveCues.TryGetValue(sound, out cue))
-            {
-                cue = SoundBank.GetCue(sound);
-                ActiveCues[sound] = cue;
-            }
-            try
-            {
-                if (!cue.IsPlaying && !cue.IsStopped && !cue.IsStopping)
-                {
-                    cue.Play();
-                }
-                else if (cue.IsStopped)
-                {
-                    Cue newCue = SoundBank.GetCue(sound);
-                    newCue.Play();
-                    ActiveCues[sound] = newCue;
-                }
-            }
-            catch (InvalidOperationException)
-            {
-                Cue newCue = SoundBank.GetCue(sound);
-                newCue.Play();
-                ActiveCues[sound] = newCue;
-            }
+        //    if (!HasAudioDevice) return;
+        //    Cue cue;
+        //    if (!ActiveCues.TryGetValue(sound, out cue))
+        //    {
+        //        cue = SoundBank.GetCue(sound);
+        //        ActiveCues[sound] = cue;
+        //    }
+        //    try
+        //    {
+        //        if (!cue.IsPlaying && !cue.IsStopped && !cue.IsStopping)
+        //        {
+        //            //cue.Play();
+        //        }
+        //        else if (cue.IsStopped)
+        //        {
+        //            Cue newCue = SoundBank.GetCue(sound);
+        //            //newCue.Play();
+        //            ActiveCues[sound] = newCue;
+        //        }
+        //    }
+        //    catch (InvalidOperationException)
+        //    {
+        //        Cue newCue = SoundBank.GetCue(sound);
+        //        //newCue.Play();
+        //        ActiveCues[sound] = newCue;
+        //    }
         }
 
         public static void SetActiveSongs(params string[] songs)
@@ -415,7 +415,7 @@ namespace DwarfCorp
         {
             if (!HasAudioDevice) return;
             AudioEngine.GetCategory("Music").SetVolume(GameSettings.Current.MusicVolume * GameSettings.Current.MasterVolume);
-            CurrentMusic.PlayTrack(name);
+            //CurrentMusic.PlayTrack(name);
             /*
             if(GameSettings.Default.MasterVolume < 0.001f || GameSettings.Default.MusicVolume < 0.001f)
             {

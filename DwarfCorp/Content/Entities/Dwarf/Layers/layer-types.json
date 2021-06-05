@@ -1,0 +1,67 @@
+[
+  {
+    "Name": "Body",
+    "Precedence": 0,
+    "Fundamental": true,
+    "PaletteType": "Skin",
+    "Gendered": true
+  },
+
+
+  {
+    "Name": "Feet",
+    "Precedence": 1,
+    "Fundamental": false,
+    "PaletteType": "Equipment"
+  },
+
+  {
+    "Name": "Clothing",
+    "Precedence": 2,
+    "Fundamental": false,
+    "PaletteType": "Equipment"
+  },
+
+  {
+    "Name": "Face",
+    "Precedence": 3,
+    "Fundamental": true,
+    "PaletteType": "Skin",
+    "Gendered": true
+  },
+
+  {
+    "Name": "Nose",
+    "Precedence": 4,
+    "Fundamental": true,
+    "PaletteType": "Skin"
+  },
+
+  {
+    "Name": "Beard",
+    "Precedence": 5,
+    "Fundamental": true,
+    "PaletteType": "Hair"
+  },
+
+  {
+    "Name": "Hair",
+    "Precedence": 6,
+    "Fundamental": true,
+    "PaletteType": "Hair"
+  },
+
+  {
+    "Name": "Hat",
+    "Precedence": 7,
+    "Fundamental": false,
+    "PaletteType": "Equipment"
+  },
+
+  {
+    "Name": "Tool",
+    "Precedence": 8,
+    "Fundamental": false,
+    "PaletteType": "Equipment"
+  }
+]

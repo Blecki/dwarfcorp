@@ -1,0 +1,30 @@
+{
+  "TypeName": "Emerald",
+  "MoneyValue": 350.0,
+  "Description": "Shiny!",
+  "Category": "Gems",
+  "Tags": [
+    "Precious",
+    "Gem",
+    "HardMaterial"
+  ],
+  "FoodContent": 0.0,
+  "Trinket_JewellPalette": "Emerald",
+  "DisplayName": "Emerald",
+  "PlantToGenerate": null,
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "",
+
+  "Gui_Graphic": {
+    "AssetPath": "newgui/resources",
+    "Palette": "None",
+    "FrameSize": "32, 32",
+    "Frame": "0, 4"
+  }
+
+}

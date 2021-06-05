@@ -1,0 +1,6 @@
+{
+  "Name": "Deer",
+  "BabyType": "Deer",
+  "CanReproduce": true,
+  "IsMigratory": true
+}
