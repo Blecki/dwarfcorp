@@ -1,10 +1,10 @@
 {
   "Name": "Deciduous Forest",
   "Icon": "0, 3",
-  "DayAmbience": "sfx_amb_forest_day",
-  "NightAmbience": "sfx_amb_forest_night",
-  "RuinFloorType" : "Stockpile",
-  "RuinWallType" : "Shale",
+  "DayAmbience": "Audio/oscar/sfx_amb_forest_day",
+  "NightAmbience": "Audio/oscar/sfx_amb_forest_night",
+  "RuinFloorType": "Stockpile",
+  "RuinWallType": "Shale",
   "Vegetation": [
     {
       "Name": "Pine Tree",

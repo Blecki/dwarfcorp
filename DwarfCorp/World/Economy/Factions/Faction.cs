@@ -76,7 +76,7 @@ namespace DwarfCorp
             TradeEnvoys.RemoveAll(t => t == null || t.ShouldRemove);
 
             if (hadFactions && TradeEnvoys.Count == 0)
-                SoundManager.PlayMusic(World.Time.IsDay() ? "main_theme_day" : "main_theme_night");
+                SoundManager.PlayMusic("", World.Time.IsDay() ? "Music/mx_day_loop_v4" : "Music/mx_night_loop_v2");
 
             foreach (var party in WarParties)
                 party.Update(World);
@@ -298,7 +298,7 @@ namespace DwarfCorp
                 World.Tutorial("trade");
 
                 if (!String.IsNullOrEmpty(race.TradeMusic))
-                    SoundManager.PlayMusic(race.TradeMusic);
+                    SoundManager.PlayMusic(null, race.TradeMusic);
 
                 return envoy;
             }

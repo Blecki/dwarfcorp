@@ -13,7 +13,7 @@
       "SpawnProbability": 0.8
     }
   ],
-  "DayAmbience": "sfx_amb_cave",
+  "DayAmbience": "Audio/oscar/sfx_amb_cave",
   "Underground": true,
   "Motes": [
     {

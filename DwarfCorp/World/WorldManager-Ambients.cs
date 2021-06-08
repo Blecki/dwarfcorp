@@ -9,17 +9,12 @@ namespace DwarfCorp
         private string[] prevAmbience = { null, null };
         private Timer AmbienceTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
         private bool firstAmbience = true;
+
         private void PlaySpecialAmbient(string sound)
         {
             if (prevAmbience[0] != sound)
             {
                 SoundManager.PlayAmbience(sound);
-
-                if (!string.IsNullOrEmpty(prevAmbience[0]) && prevAmbience[0] != sound)
-                    SoundManager.StopAmbience(prevAmbience[0]);
-                if (!string.IsNullOrEmpty(prevAmbience[1]) && prevAmbience[1] != sound)
-                    SoundManager.StopAmbience(prevAmbience[1]);
-
                 prevAmbience[0] = sound;
                 prevAmbience[1] = sound;
             }
@@ -37,13 +32,13 @@ namespace DwarfCorp
             // Before doing anything, determine if there is a rain or snow storm.
             if (Weather.IsRaining())
             {
-                PlaySpecialAmbient("sfx_amb_rain_storm");
+                PlaySpecialAmbient("Audio/oscar/sfx_amb_rain_storm");
                 return;
             }
 
             if (Weather.IsSnowing())
             {
-                PlaySpecialAmbient("sfx_amb_snow_storm");
+                PlaySpecialAmbient("Audio/oscar/sfx_amb_snow_storm");
                 return;
             }
 
@@ -55,7 +50,7 @@ namespace DwarfCorp
                 float height = WaterRenderer.GetTotalWaterHeightCells(ChunkManager, vox);
                 if (height > 0)
                 {
-                    PlaySpecialAmbient("sfx_amb_ocean");
+                    PlaySpecialAmbient("Audio/oscar/sfx_amb_ocean");
                     return;
                 }
                 else
@@ -63,7 +58,7 @@ namespace DwarfCorp
                     // Unexplored voxels assumed to be cave.
                     if (vox.IsValid && !vox.IsExplored)
                     {
-                        PlaySpecialAmbient("sfx_amb_cave");
+                        PlaySpecialAmbient("Audio/oscar/sfx_amb_cave");
                         return;
                     }
 
@@ -71,7 +66,7 @@ namespace DwarfCorp
                     // Underground, do the cave test.
                     if (above.IsValid && above.IsEmpty && above.Sunlight == false)
                     {
-                        PlaySpecialAmbient("sfx_amb_cave");
+                        PlaySpecialAmbient("Audio/oscar/sfx_amb_cave");
                         return;
                     }
 
@@ -93,15 +88,9 @@ namespace DwarfCorp
                     if (prevAmbience[0] != biome.DayAmbience)
                     {
                         if (!string.IsNullOrEmpty(prevAmbience[0]))
-                        {
-                            SoundManager.StopAmbience(prevAmbience[0]);
                             prevAmbience[0] = null;
-                        }
                         if (!string.IsNullOrEmpty(prevAmbience[1]))
-                        {
-                            SoundManager.StopAmbience(prevAmbience[1]);
                             prevAmbience[1] = null;
-                        }
                         SoundManager.PlayAmbience(biome.DayAmbience);
                     }
 

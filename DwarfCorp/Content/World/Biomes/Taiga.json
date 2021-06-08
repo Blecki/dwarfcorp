@@ -1,9 +1,9 @@
 {
   "Name": "Taiga",
   "Icon": "2, 2",
-  "DayAmbience": "sfx_amb_tundra",
-  "RuinFloorType" : "Blue Tile",
-  "RuinWallType" : "Shale",
+  "DayAmbience": "Audio/oscar/sfx_amb_tundra",
+  "RuinFloorType": "Blue Tile",
+  "RuinWallType": "Shale",
   "Vegetation": [
     {
       "Name": "Snow Pine Tree",

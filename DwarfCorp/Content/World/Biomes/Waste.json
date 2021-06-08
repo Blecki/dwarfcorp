@@ -2,11 +2,11 @@
   "Name": "Waste",
   "Icon": "3, 2",
   "Vegetation": [],
-  "DayAmbience": "sfx_amb_forest_day",
-  "NightAmbience": "sfx_amb_forest_night",
-  "RuinFloorType" : "Blue Tile",
-  "RuinWallType" : "Obsidian",
-  "WaterIsLava" : true,
+  "DayAmbience": "Audio/oscar/sfx_amb_forest_day",
+  "NightAmbience": "Audio/oscar/sfx_amb_forest_night",
+  "RuinFloorType": "Blue Tile",
+  "RuinWallType": "Obsidian",
+  "WaterIsLava": true,
   "Motes": [
     {
       "Name": "deadbush",

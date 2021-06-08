@@ -42,6 +42,6 @@
   },
   "Crafts": [ "Stone" ],
   "Encrustings": [ "Gem" ],
-  "TradeMusic": "molemen",
+  "TradeMusic": "Music/mx_molemen_loop_v1",
   "Icon": 4
 }

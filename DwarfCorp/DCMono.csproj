@@ -170,6 +170,9 @@
     <Compile Include="Player\Tools\EntityInspector\EntityInspector.cs" />
     <Compile Include="Player\Tools\EntityInspector\EntityInspectorPanel.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Sound\SFXMixer.cs" />
+    <Compile Include="Sound\MusicPlayer.cs" />
+    <Compile Include="Sound\SoundSource.cs" />
     <Compile Include="TaskManagement\EquipmentCheckAct.cs" />
     <Compile Include="TaskManagement\Always.cs" />
     <Compile Include="TaskManagement\ActHelper-ApplyWearToTool.cs" />

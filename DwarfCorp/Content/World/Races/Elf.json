@@ -44,6 +44,6 @@
   },
   "Crafts": [ "Wood" ],
   "Encrustings": [ "Gem" ],
-  "TradeMusic": "elf",
+  "TradeMusic": "Music/mx_elves_loop_v1",
   "Icon": 5
 }

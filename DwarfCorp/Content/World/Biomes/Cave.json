@@ -1,7 +1,7 @@
 {
   "Name": "Cave",
   "Icon": "0, 0",
-  "DayAmbience": "sfx_amb_cave",
+  "DayAmbience": "Audio/oscar/sfx_amb_cave",
   "Underground": true,
   "Vegetation": [
     {

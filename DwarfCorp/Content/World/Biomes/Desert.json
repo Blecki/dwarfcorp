@@ -1,9 +1,9 @@
 {
   "Name": "Desert",
   "Icon": "0, 3",
-  "DayAmbience": "sfx_amb_desert",
-  "RuinFloorType" : "Brown Tile",
-  "RuinWallType" : "Sandstone",
+  "DayAmbience": "Audio/oscar/sfx_amb_desert",
+  "RuinFloorType": "Brown Tile",
+  "RuinWallType": "Sandstone",
   "Vegetation": [
     {
       "Name": "Wheat",

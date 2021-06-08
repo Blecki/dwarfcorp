@@ -3627,71 +3627,71 @@
 /processorParam:Quality=Best
 /build:Music/dwarfcorp_5.mp3
 
-#begin Music/dwarfcorp_ogg.ogg
-/importer:OggImporter
+#begin Music/dwarfcorp_ogg.mp3
+/importer:Mp3Importer
 /processor:SongProcessor
 /processorParam:Quality=Best
-/build:Music/dwarfcorp_ogg.ogg
+/build:Music/dwarfcorp_ogg.mp3
 
-#begin Music/mx_day_intro_v4.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
+#begin Music/mx_day_intro_v4.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
 /processorParam:Quality=Best
-/build:Music/mx_day_intro_v4.wav
+/build:Music/mx_day_intro_v4.mp3
 
-#begin Music/mx_day_loop_v4.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
+#begin Music/mx_day_loop_v4.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
 /processorParam:Quality=Best
-/build:Music/mx_day_loop_v4.wav
+/build:Music/mx_day_loop_v4.mp3
 
-#begin Music/mx_dayToNight_trans_v1.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
+#begin Music/mx_dayToNight_trans_v1.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
 /processorParam:Quality=Best
-/build:Music/mx_dayToNight_trans_v1.wav
+/build:Music/mx_dayToNight_trans_v1.mp3
 
-#begin Music/mx_elves_loop_v1.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
+#begin Music/mx_elves_loop_v1.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
 /processorParam:Quality=Best
-/build:Music/mx_elves_loop_v1.wav
+/build:Music/mx_elves_loop_v1.mp3
 
-#begin Music/mx_goblin_loop_v1.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
+#begin Music/mx_goblin_loop_v1.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
 /processorParam:Quality=Best
-/build:Music/mx_goblin_loop_v1.wav
+/build:Music/mx_goblin_loop_v1.mp3
 
-#begin Music/mx_menu_loop_v2.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
+#begin Music/mx_menu_loop_v2.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
 /processorParam:Quality=Best
-/build:Music/mx_menu_loop_v2.wav
+/build:Music/mx_menu_loop_v2.mp3
 
-#begin Music/mx_molemen_loop_v1.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
+#begin Music/mx_molemen_loop_v1.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
 /processorParam:Quality=Best
-/build:Music/mx_molemen_loop_v1.wav
+/build:Music/mx_molemen_loop_v1.mp3
 
-#begin Music/mx_night_loop_v2.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
+#begin Music/mx_night_loop_v2.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
 /processorParam:Quality=Best
-/build:Music/mx_night_loop_v2.wav
+/build:Music/mx_night_loop_v2.mp3
 
-#begin Music/mx_undead_demo_v2.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
+#begin Music/mx_undead_demo_v2.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
 /processorParam:Quality=Best
-/build:Music/mx_undead_demo_v2.wav
+/build:Music/mx_undead_demo_v2.mp3
 
-#begin Music/mx_undead_loop_v1.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
+#begin Music/mx_undead_loop_v1.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
 /processorParam:Quality=Best
-/build:Music/mx_undead_loop_v1.wav
+/build:Music/mx_undead_loop_v1.mp3
 
 #begin newgui/14pt-numbers.png
 /importer:TextureImporter

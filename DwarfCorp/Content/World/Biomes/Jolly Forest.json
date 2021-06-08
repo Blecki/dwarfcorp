@@ -1,9 +1,9 @@
 {
   "Name": "Jolly Forest",
   "Icon": "2, 2",
-  "DayAmbience": "sfx_amb_tundra",
-  "RuinFloorType" : "Blue Tile",
-  "RuinWallType" : "Candy",
+  "DayAmbience": "Audio/oscar/sfx_amb_tundra",
+  "RuinFloorType": "Blue Tile",
+  "RuinWallType": "Candy",
   "Vegetation": [
     {
       "Name": "Candycane",

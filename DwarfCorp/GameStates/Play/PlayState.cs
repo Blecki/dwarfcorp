@@ -68,17 +68,17 @@ namespace DwarfCorp.GameStates
                 CreateGUIComponents();
                 IsInitialized = true;
 
-                SoundManager.PlayMusic("main_theme_day");
+                SoundManager.PlayMusic("Music/mx_day_intro_v4", "Music/mx_day_loop_v4"); // Todo: Choose a song at random!
                 World.Time.Dawn += time =>
                 {
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_daytime, 0.15f);
-                    SoundManager.PlayMusic("main_theme_day");
+                    SoundManager.PlayMusic("Music/mx_day_intro_v4", "Music/mx_day_loop_v4");
                 };
 
                 World.Time.NewNight += time =>
                 {
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_nighttime, 0.15f);
-                    SoundManager.PlayMusic("main_theme_night");
+                    SoundManager.PlayMusic("Music/mx_dayToNight_trans_v1", "Music/mx_night_loop_v2");
                 };
 
                 World.UnpauseThreads();

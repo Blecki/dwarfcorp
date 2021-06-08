@@ -44,6 +44,6 @@
   },
   "Crafts": [ "Bone" ],
   "Encrustings": [ "Gem" ],
-  "TradeMusic": "undead",
+  "TradeMusic": "Music/mx_undead_loop_v1",
   "Icon": 6
 }

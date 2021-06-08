@@ -2,9 +2,9 @@
   "Name": "Tundra",
   "Icon": "0, 0",
   "WaterSurfaceIce": true,
-  "DayAmbience": "sfx_amb_tundra",
-  "RuinFloorType" : "Snow",
-  "RuinWallType" : "Ice",
+  "DayAmbience": "Audio/oscar/sfx_amb_tundra",
+  "RuinFloorType": "Snow",
+  "RuinWallType": "Ice",
   "Vegetation": [],
   "Motes": [
   ],

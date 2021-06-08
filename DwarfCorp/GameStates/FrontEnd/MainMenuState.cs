@@ -144,7 +144,7 @@ namespace DwarfCorp.GameStates
             IsInitialized = true;
 
             DwarfTime.LastTimeX.Speed = 1.0f;
-            SoundManager.PlayMusic("menu_music");
+            SoundManager.PlayMusic(null, "Music/mx_menu_loop_v2");
             SoundManager.StopAmbience();
         }
 
