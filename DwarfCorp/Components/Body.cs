@@ -29,7 +29,7 @@ namespace DwarfCorp
         [JsonIgnore] public Action OnDestroyed;
         [JsonIgnore] public bool IsReserved => ReservedFor != null;
         [JsonIgnore] public GameComponent ReservedFor = null;
-        private BoundingBox LastBounds = new BoundingBox();
+        private BoundingBox LastBounds = new BoundingBox(new Vector3(-1, -1, -1), new Vector3(0, 0, 0)); // This is to make sure objects that spawn in chunk 0,0,0 actually get added to the octtree.
 
         [JsonIgnore] public Matrix GlobalTransform => globalTransform;
 

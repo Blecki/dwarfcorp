@@ -44,23 +44,12 @@ float4 xFlatColor;
 float2 pixelSize;
 float4 xID;
 
-//------- Technique: Clipping Plane Fix --------
 
 int Clipping;
 int GhostMode;
 int SelfIllumination;
 float4 ClipPlane0;
 
-/*
-float4 GetNoise(float4 pos)
-{
-	pos.w = 0;
-	float mag = dot(pos, pos) * 0.00001;
-	float sm = sin(mag + 0.1);
-	float cm = cos(mag);
-	return float4(cm * 0.2 + sm * 0.1, sm * 0.5 + cm * 0.1, sm * 0.2 + cm * 0.1, 0);
-}
-*/
 
 float4 GetWind(float4 pos, float2 uv, float4 bounds)
 {
@@ -518,8 +507,7 @@ TPixelToFrame TexturedPS_From_Lightmap(LightmapToPixel PSIn)
  		Output.Color *= -1.0f / (PSIn.ClipDistance.w * 0.75f) * 0.25f;
  		clip(GhostMode * (Output.Color.a) - 0.1f);
  	}
-	//Output = (TPixelToFrame)0;
-	//Output.Color = float4(1, 0, 0, 1);
+
 	return Output;
 }
 
@@ -529,20 +517,7 @@ TPixelToFrame TexturedPS_To_Lightmap(TVertexToPixel PSIn)
 	float4 shadowPos = GetPositionFromLight(PSIn.WorldPosition);
 		float2 shadowUV = 0.5 * shadowPos.xy / shadowPos.w + float2(0.5, 0.5);
 		shadowUV.y = 1.0f - shadowUV.y;
-
-	/*xEnableShadows
-	if (shadowUV.x < 1.0 && shadowUV.y < 1.0 && shadowUV.x > 0 && shadowUV.y > 0)
-	{
-		float shadowdepth = tex2D(ShadowMapSampler, shadowUV).r;
-
-		// Check our value against the depth value
-		float ourdepth = 1 - (shadowPos.z / shadowPos.w) + 0.01;
-
-		// Check the shadowdepth against the depth of this pixel
-		// a fudge factor is added to account for floating-point error
-		PSIn.Color.r *= saturate(exp(200 * (ourdepth - shadowdepth)) + 0.25f);
-	}
-	*/
+	
 
     Output.Color = tex2D(SunSampler, float2(PSIn.LightRamp.r, (xTimeOfDay)));
     Output.Color.a *= PSIn.LightRamp.a;
@@ -566,11 +541,10 @@ TVertexToPixel TexturedVSNonInstanced( float4 inPos : POSITION,
 									   float2 inTexCoords: TEXCOORD0, 
 									   float4 lightRamp : COLOR0, 
 									   float4 inTexSource : TEXCOORD1, 
-									   float4 vertColor : COLOR1//,
-									   //uniform int max_lights
+									   float4 vertColor : COLOR1
 									   )
 {
-    return TexturedVS(inPos, inTexCoords, lightRamp, inTexSource, xWorld, xLightRamp, vertColor, ActiveLights);// max_lights);
+    return TexturedVS(inPos, inTexCoords, lightRamp, inTexSource, xWorld, xLightRamp, vertColor, ActiveLights);
 }
 
 TVertexToPixel TexturedVSNonInstanced_1Light(float4 inPos : POSITION,
@@ -588,12 +562,11 @@ TVertexToPixel TexturedVSInstanced( float4 inPos : POSITION,
 									float4 inTexSource : TEXCOORD1, 
 									float4 id : COLOR4, 
 									float4x4 transform : BLENDWEIGHT, 
-									float4 tint : COLOR5//,
-									//uniform int max_lights
+									float4 tint : COLOR5
 									)
 {
     return TexturedVS(inPos, inTexCoords, inLightRamp, inTexSource, transpose(transform),
-		              float4(1, 1, 1, tint.a), tint, ActiveLights);//max_lights);
+		              float4(1, 1, 1, tint.a), tint, ActiveLights);
 }
 
 TVertexToPixel TexturedVSTiledInstanced(float4 inPos : POSITION,
@@ -603,14 +576,13 @@ TVertexToPixel TexturedVSTiledInstanced(float4 inPos : POSITION,
 	float4 id : COLOR4,
 	float4x4 transform : BLENDWEIGHT,
 	float4 vertexColor : COLOR5,
-	float4 tileTexSource : TEXCOORD5//,
-	//uniform int max_lights
+	float4 tileTexSource : TEXCOORD5
 	)
 {
 	float2 newTexCoord = inTexCoords * float2(tileTexSource.z - tileTexSource.x, tileTexSource.w - tileTexSource.y);
 	newTexCoord += float2(tileTexSource.x, tileTexSource.y);
     return TexturedVS(inPos, newTexCoord, inLightRamp, tileTexSource, transpose(transform),
-		float4(1, 1, 1, vertexColor.a), vertexColor, ActiveLights);//, max_lights);
+		float4(1, 1, 1, vertexColor.a), vertexColor, ActiveLights);
 }
 
 TVertexToPixel TexturedVSInstanced_1Light(float4 inPos : POSITION,
@@ -846,25 +818,6 @@ TPixelToFrame TexturedPS(TVertexToPixel PSIn)
     {
         TPixelToFrame Output = (TPixelToFrame) 0;
 
-	/*
-	if (xEnableShadows)
-	{
-		float4 shadowPos = GetPositionFromLight(PSIn.WorldPosition);
-			float2 shadowUV = 0.5 * shadowPos.xy / shadowPos.w + float2(0.5, 0.5);
-			shadowUV.y = 1.0f - shadowUV.y;
-		if (shadowUV.x < 1.0 && shadowUV.y < 1.0 && shadowUV.x > 0 && shadowUV.y > 0)
-		{
-			float shadowdepth = tex2D(ShadowMapSampler, shadowUV).r;
-
-			// Check our value against the depth value
-			float ourdepth = 1 - (shadowPos.z / shadowPos.w) + 0.05;
-
-			// Check the shadowdepth against the depth of this pixel
-			// a fudge factor is added to account for floating-point error
-			PSIn.Color.r *= saturate(exp(100 * (ourdepth - shadowdepth)) + 0.25f);
-		}
-	}
-	*/
         Output.Color = tex2D(SunSampler, float2(PSIn.LightRamp.r, (xTimeOfDay)));
         Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.LightRamp.b, 0.5f)).rgb;
         saturate(Output.Color.rgb);
@@ -933,141 +886,6 @@ technique Textured_1_Light
 		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
 	}
 }
-/*
-technique Textured_2_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSNonInstanced(2);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Textured_3_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSNonInstanced(3);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Textured_4_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSNonInstanced(4);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Textured_5_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSNonInstanced(5);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Textured_6_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSNonInstanced(6);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Textured_7_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSNonInstanced(7);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Textured_8_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSNonInstanced(8);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Textured_9_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSNonInstanced(9);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Textured_10_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSNonInstanced(10);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Textured_11_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSNonInstanced(11);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Textured_12_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSNonInstanced(12);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Textured_13_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSNonInstanced(13);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Textured_14_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSNonInstanced(14);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Textured_15_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSNonInstanced(15);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Textured_16_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSNonInstanced(16);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}*/
 
 technique Textured_Flag
 {
@@ -1100,7 +918,7 @@ technique Lightmap
 {
 	pass Pass0
 	{
-		VertexShader = compile vs_4_0 TexturedVS_To_Lightmap();//MAX_LIGHTS);
+		VertexShader = compile vs_4_0 TexturedVS_To_Lightmap();
 		PixelShader = compile ps_4_0 TexturedPS_To_Lightmap();
 	}
 }
@@ -1109,7 +927,7 @@ technique Textured_colorscale
 {
 	pass Pass0
 	{
-		VertexShader = compile vs_4_0 TexturedVSNonInstanced();//MAX_LIGHTS);
+		VertexShader = compile vs_4_0 TexturedVSNonInstanced();
 		PixelShader = compile ps_4_0 TexturedPS_Colorscale();
 	}
 }
@@ -1118,166 +936,16 @@ technique Instanced
 {
     pass Pass0
     {   
-		VertexShader = compile vs_4_0 TexturedVSInstanced();//MAX_LIGHTS);
+		VertexShader = compile vs_4_0 TexturedVSInstanced();
 		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
     }
 }
-
-technique Instanced_1_Light
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSInstanced_1Light();
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-/*
-
-technique Instanced_2_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSInstanced(2);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Instanced_3_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSInstanced(3);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Instanced_4_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSInstanced(4);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Instanced_5_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSInstanced(5);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Instanced_6_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSInstanced(6);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-
-technique Instanced_7_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSInstanced(7);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-
-technique Instanced_8_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSInstanced(8);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Instanced_9_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSInstanced(9);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Instanced_10_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSInstanced(10);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Instanced_11_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSInstanced(11);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Instanced_12_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSInstanced(12);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Instanced_13_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSInstanced(13);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique Instanced_14_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSInstanced(14);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-
-technique Instanced_15_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSInstanced(15);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-
-technique Instanced_16_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSInstanced(16);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}*/
 
 technique TiledInstanced
 {
 	pass Pass0
 	{
-		VertexShader = compile vs_4_0 TexturedVSTiledInstanced();//MAX_LIGHTS);
+		VertexShader = compile vs_4_0 TexturedVSTiledInstanced();
 		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
 	}
 }
@@ -1286,159 +954,10 @@ technique TiledInstancedSilhouette
 {
 	pass Pass0
 	{
-		VertexShader = compile vs_4_0 TexturedVSTiledInstanced();//MAX_LIGHTS);
+		VertexShader = compile vs_4_0 TexturedVSTiledInstanced();
 		PixelShader = compile ps_4_0 SilhouettePS();
 	}
 }
-
-technique TiledInstanced_1_Light
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSTiledInstanced_1Light();
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-/*
-technique TiledInstanced_2_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSTiledInstanced(2);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique TiledInstanced_3_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSTiledInstanced(3);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique TiledInstanced_4_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSTiledInstanced(4);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique TiledInstanced_5_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSTiledInstanced(5);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique TiledInstanced_6_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSTiledInstanced(6);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-
-technique TiledInstanced_7_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSTiledInstanced(7);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-
-technique TiledInstanced_8_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSTiledInstanced(8);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique TiledInstanced_9_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSTiledInstanced(9);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique TiledInstanced_10_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSTiledInstanced(10);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique TiledInstanced_11_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSTiledInstanced(11);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique TiledInstanced_12_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSTiledInstanced(12);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique TiledInstanced_13_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSTiledInstanced(13);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-technique TiledInstanced_14_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSTiledInstanced(14);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-
-technique TiledInstanced_15_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSTiledInstanced(15);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}
-
-
-technique TiledInstanced_16_Lights
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_4_0 TexturedVSTiledInstanced(16);
-		PixelShader = compile ps_4_0 TexturedPS_Alphatest();
-	}
-}*/
-
 
 technique Instanced_SelectionBuffer
 {
