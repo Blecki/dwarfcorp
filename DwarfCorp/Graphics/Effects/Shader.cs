@@ -9,7 +9,7 @@ namespace DwarfCorp
 {
     public class Shader : Effect
     {
-        public const int MaxLights = 16;
+        public const int MaxLights = 64;
 
         public Vector3[] LightPositions
         {
@@ -74,6 +74,12 @@ namespace DwarfCorp
         {
             get { return Parameters["xEnableLighting"].GetValueInt32() > 0; }
             set {  Parameters["xEnableLighting"].SetValue(value ? 1 : 0);}
+        }
+
+        public int ActiveLights
+        {
+            get { return Parameters["ActiveLights"].GetValueInt32(); }
+            set { Parameters["ActiveLights"].SetValue(value); }
         }
 
         public bool EnableShadows
@@ -402,7 +408,8 @@ namespace DwarfCorp
 
         public void SetTexturedTechnique()
         {
-            CurrentTechnique = Techniques[TexturedTechniques[0/*CurrentNumLights*/]];
+            ActiveLights = CurrentNumLights;
+            CurrentTechnique = Techniques["Textured"];// TexturedTechniques[0/*CurrentNumLights*/]];
         }
 
         public void SetIconTechnique()
@@ -412,12 +419,14 @@ namespace DwarfCorp
 
         public void SetInstancedTechnique()
         {
-            CurrentTechnique = Techniques[InstancedTechniques[0/*CurrentNumLights*/]];
+            ActiveLights = CurrentNumLights;
+            CurrentTechnique = Techniques["Instanced"];// InstancedTechniques[0/*CurrentNumLights*/]];
         }
 
         public void SetTiledInstancedTechnique()
         {
-            CurrentTechnique = Techniques[TiledInstancedTechniques[0/*CurrentNumLights*/]];
+            ActiveLights = CurrentNumLights;
+            CurrentTechnique = Techniques["TiledInstanced"];// TiledInstancedTechniques[0/*CurrentNumLights*/]];
         }
 
 

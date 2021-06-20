@@ -32,7 +32,7 @@ namespace DwarfCorp.GameStates
         private CheckBox AutoFarming;
         private CheckBox IdleCrafting;
         private CheckBox AutoDigging;
-        private CheckBox PlayIntro;
+        //private CheckBox PlayIntro;
         private CheckBox AllowReporting;
         private ComboBox GuiScale;
         private HorizontalFloatSlider MasterVolume;
@@ -343,13 +343,13 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-            PlayIntro = rightPanel.AddChild(new CheckBox
-            {
-                Text = "Play Intro",
-                Tooltip = "When checked, the intro animation will play at the beginning of the game.",
-                OnCheckStateChange = OnItemChanged,
-                AutoLayout = AutoLayout.DockTop
-            }) as CheckBox;
+            //PlayIntro = rightPanel.AddChild(new CheckBox
+            //{
+            //    Text = "Play Intro",
+            //    Tooltip = "When checked, the intro animation will play at the beginning of the game.",
+            //    OnCheckStateChange = OnItemChanged,
+            //    AutoLayout = AutoLayout.DockTop
+            //}) as CheckBox;
 
             AllowReporting = rightPanel.AddChild(new CheckBox
             {
@@ -943,7 +943,7 @@ namespace DwarfCorp.GameStates
             toReturn.AllowIdleCrafting = this.IdleCrafting.CheckState;
             toReturn.InvertZoom = this.InvertZoom.CheckState;
             toReturn.ZoomCameraTowardMouse = this.ZoomTowardMouse.CheckState;
-            toReturn.DisplayIntro = this.PlayIntro.CheckState;
+            //toReturn.DisplayIntro = this.PlayIntro.CheckState;
             toReturn.AllowReporting = this.AllowReporting.CheckState;
             toReturn.MaxSaves = int.Parse(this.MaxSaves.SelectedItem);
             toReturn.AutoSave = this.Autosave.CheckState;
@@ -1107,7 +1107,7 @@ namespace DwarfCorp.GameStates
             this.IdleCrafting.CheckState = GameSettings.Current.AllowIdleCrafting;
             this.InvertZoom.CheckState = GameSettings.Current.InvertZoom;
             this.ZoomTowardMouse.CheckState = GameSettings.Current.ZoomCameraTowardMouse;
-            this.PlayIntro.CheckState = GameSettings.Current.DisplayIntro;
+            //this.PlayIntro.CheckState = GameSettings.Current.DisplayIntro;
             this.AllowReporting.CheckState = GameSettings.Current.AllowReporting;
             this.Autosave.CheckState = GameSettings.Current.AutoSave;
             (this.AutoSaveFrequency.GetChild(1) as SliderCombo).ScrollPosition = GameSettings.Current.AutoSaveTimeMinutes;

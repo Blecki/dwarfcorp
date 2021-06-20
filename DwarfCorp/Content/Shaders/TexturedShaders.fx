@@ -1,9 +1,9 @@
 
-#define MAX_LIGHTS 16
+#define MAX_LIGHTS 64
 #define LIGHT_COLOR float4(0, 0, 1, 0)
 
 float3 xLightPositions[MAX_LIGHTS];
-
+int ActiveLights;
 
 //------- Constants --------
 float4x4 xView;
@@ -570,7 +570,7 @@ TVertexToPixel TexturedVSNonInstanced( float4 inPos : POSITION,
 									   //uniform int max_lights
 									   )
 {
-    return TexturedVS(inPos, inTexCoords, lightRamp, inTexSource, xWorld, xLightRamp, vertColor, 1);// max_lights);
+    return TexturedVS(inPos, inTexCoords, lightRamp, inTexSource, xWorld, xLightRamp, vertColor, ActiveLights);// max_lights);
 }
 
 TVertexToPixel TexturedVSNonInstanced_1Light(float4 inPos : POSITION,
@@ -593,7 +593,7 @@ TVertexToPixel TexturedVSInstanced( float4 inPos : POSITION,
 									)
 {
     return TexturedVS(inPos, inTexCoords, inLightRamp, inTexSource, transpose(transform),
-		              float4(1, 1, 1, tint.a), tint, 1);//max_lights);
+		              float4(1, 1, 1, tint.a), tint, ActiveLights);//max_lights);
 }
 
 TVertexToPixel TexturedVSTiledInstanced(float4 inPos : POSITION,
@@ -610,7 +610,7 @@ TVertexToPixel TexturedVSTiledInstanced(float4 inPos : POSITION,
 	float2 newTexCoord = inTexCoords * float2(tileTexSource.z - tileTexSource.x, tileTexSource.w - tileTexSource.y);
 	newTexCoord += float2(tileTexSource.x, tileTexSource.y);
     return TexturedVS(inPos, newTexCoord, inLightRamp, tileTexSource, transpose(transform),
-		float4(1, 1, 1, vertexColor.a), vertexColor, 1);//, max_lights);
+		float4(1, 1, 1, vertexColor.a), vertexColor, ActiveLights);//, max_lights);
 }
 
 TVertexToPixel TexturedVSInstanced_1Light(float4 inPos : POSITION,

@@ -16,20 +16,34 @@
   {
     "Name": "?????",
     "Role": "Mysterious Benefactor",
-    "Color": [255, 255, 255, 255],
+    "Color": [ 255, 255, 255, 255 ],
     "RandomFlash": true,
     "Divider": false
   },
   {
+    "Name": "Anthony Casteel",
+    "Role": "Project Lead - Holey Donut Games",
+    "Color": [ 255, 255, 255, 255 ],
+    "RandomFlash": false,
+    "Divider": false
+  },
+  {
+    "Name": "Jo Hannah",
+    "Role": "Lead Art Contractor - Holey Donut Games",
+    "Color": [ 255, 255, 255, 255 ],
+    "RandomFlash": false,
+    "Divider": false
+  },
+  {
     "Name": "Matthew Klingensmith",
-    "Role": "Project Lead",
+    "Role": "Project Lead - Completely Fair Games",
     "Color": [255, 255, 255, 255],
     "RandomFlash": false,
     "Divider": false
   },
   {
     "Name": "Wilson Pei",
-    "Role": "Lead Artist + Design",
+    "Role": "Lead Artist + Design - Completely Fair Games",
     "Color": [255, 255, 255, 255],
     "RandomFlash": false,
     "Divider": false
@@ -77,8 +91,8 @@
     "Divider": false
   },
   {
-  	  "Name": "Joseph Hannah",
-	  "Role" : "Art Contractor",
+  	  "Name": "Jo Hannah",
+	    "Role" : "Art Contractor",
       "Color": [255, 255, 255, 255],
       "RandomFlash": false,
       "Divider": false

@@ -183,7 +183,6 @@ namespace DwarfCorp
             public float CameraZoomSpeed = 0.5f;
             public bool EnableEdgeScroll = false;
             public float WorldScale = 4.0f;
-            public bool DisplayIntro = true;
             public float MasterVolume = 1.0f;
             public float SoundEffectVolume = 1.0f;
             public float MusicVolume = 0.2f;

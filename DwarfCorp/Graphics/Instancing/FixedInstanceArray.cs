@@ -247,8 +247,7 @@ namespace DwarfCorp
         public void Render(
             GraphicsDevice graphics,
             Shader effect,
-            Camera cam, 
-            string mode)
+            Camera cam)
         {
             effect.EnableWind = EnableWind;
             Camera = cam;
@@ -263,7 +262,7 @@ namespace DwarfCorp
             {
                 graphics.RasterizerState = rasterState;
 
-                effect.CurrentTechnique = effect.Techniques[mode];
+                effect.SetInstancedTechnique();
                 effect.EnableLighting = true;
                 effect.VertexColorTint = Color.White;
 
@@ -315,12 +314,6 @@ namespace DwarfCorp
                 graphics.BlendState = blendState;
             }
             effect.EnableWind = false;
-        }
-
-
-        public void Render(GraphicsDevice graphics, Shader effect, Camera cam)
-        {
-            Render(graphics, effect, cam, Shader.InstancedTechniques[effect.CurrentNumLights]);
         }
 
         public void RenderSelectionBuffer(GraphicsDevice graphics, Shader effect, Camera cam, bool rebuildVertices)

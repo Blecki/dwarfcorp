@@ -2551,6 +2551,9 @@
 #begin Entities/fairy-animations.json
 /copy:Entities/fairy-animations.json
 
+#begin Entities/Furniture/barrel.obj
+/copy:Entities/Furniture/barrel.obj
+
 #begin Entities/Furniture/bedtex.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -2624,23 +2627,7 @@
 /build:Entities/Furniture/interior_furniture.png
 
 #begin Entities/Furniture/sm_anvil.obj
-/importer:OpenAssetImporter
-/processor:ModelProcessor
-/processorParam:ColorKeyColor=0,0,0,0
-/processorParam:ColorKeyEnabled=True
-/processorParam:DefaultEffect=BasicEffect
-/processorParam:GenerateMipmaps=True
-/processorParam:GenerateTangentFrames=False
-/processorParam:PremultiplyTextureAlpha=True
-/processorParam:PremultiplyVertexColors=True
-/processorParam:ResizeTexturesToPowerOfTwo=False
-/processorParam:RotationX=0
-/processorParam:RotationY=0
-/processorParam:RotationZ=0
-/processorParam:Scale=1
-/processorParam:SwapWindingOrder=False
-/processorParam:TextureFormat=Compressed
-/build:Entities/Furniture/sm_anvil.obj
+/copy:Entities/Furniture/sm_anvil.obj
 
 #begin Entities/Furniture/tx_anvil.png
 /importer:TextureImporter
@@ -2653,6 +2640,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Entities/Furniture/tx_anvil.png
+
+#begin Entities/Furniture/tx_barrel.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Entities/Furniture/tx_barrel.png
 
 #begin Entities/Goblin/Audio/goblinhurt1.wav
 /importer:WavImporter
@@ -3279,23 +3278,7 @@
 /copy:Entities/Rail/rail-pieces.json
 
 #begin Entities/Rail/sm_minecart.obj
-/importer:OpenAssetImporter
-/processor:ModelProcessor
-/processorParam:ColorKeyColor=0,0,0,0
-/processorParam:ColorKeyEnabled=True
-/processorParam:DefaultEffect=BasicEffect
-/processorParam:GenerateMipmaps=True
-/processorParam:GenerateTangentFrames=False
-/processorParam:PremultiplyTextureAlpha=True
-/processorParam:PremultiplyVertexColors=True
-/processorParam:ResizeTexturesToPowerOfTwo=False
-/processorParam:RotationX=0
-/processorParam:RotationY=0
-/processorParam:RotationZ=0
-/processorParam:Scale=1
-/processorParam:SwapWindingOrder=False
-/processorParam:TextureFormat=Compressed
-/build:Entities/Rail/sm_minecart.obj
+/copy:Entities/Rail/sm_minecart.obj
 
 #begin Entities/Skeleton/necromancer.png
 /importer:TextureImporter
@@ -3596,6 +3579,37 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Logos/logos.png
+
+#begin Logos/small-logo.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Logos/small-logo.png
+
+#begin Models/sphere.fbx
+/importer:FbxImporter
+/processor:ModelProcessor
+/processorParam:ColorKeyColor=0,0,0,0
+/processorParam:ColorKeyEnabled=True
+/processorParam:DefaultEffect=BasicEffect
+/processorParam:GenerateMipmaps=True
+/processorParam:GenerateTangentFrames=False
+/processorParam:PremultiplyTextureAlpha=True
+/processorParam:PremultiplyVertexColors=True
+/processorParam:ResizeTexturesToPowerOfTwo=False
+/processorParam:RotationX=0
+/processorParam:RotationY=0
+/processorParam:RotationZ=0
+/processorParam:Scale=1
+/processorParam:SwapWindingOrder=False
+/processorParam:TextureFormat=Compressed
+/build:Models/sphere.fbx
 
 #begin Music/dwarfcorp.mp3
 /importer:Mp3Importer

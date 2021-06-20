@@ -36,7 +36,7 @@ namespace DwarfCorp
             AddChild(new Health(Manager, "Hp", 10, 0, 10));
 
             CreateCosmeticChildren(manager);
-            PropogateTransforms();
+            //PropogateTransforms();
         }
 
         public override void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect)

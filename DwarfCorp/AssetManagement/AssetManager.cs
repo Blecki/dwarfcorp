@@ -377,7 +377,8 @@ namespace DwarfCorp
                 var filename = ResolveContentPath(asset, ".obj");
                 if (Path.GetExtension(filename) == ".xnb")
                 {
-                    //var toReturn = Content.Load<ModelMesh>(filename.Substring(0, filename.Length - 4));
+                    var toReturn = Content.Load<ModelMesh>(filename.Substring(0, filename.Length - 4));
+
                     //TextureCache[asset] = toReturn;
                     //return toReturn;
                     // Todo: Convert model mesh to raw prim?

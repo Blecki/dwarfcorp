@@ -25,8 +25,8 @@ namespace DwarfCorp
         public static SFXMixer Mixer = null;
 
         private static SoundEffectInstance CurrentAmbience = null;
-
-        public static void LoadDefaultSounds()
+        
+               public static void LoadMixerSettings()
         {
             try
             {
@@ -44,6 +44,7 @@ namespace DwarfCorp
                 }
 
                 SoundEffect.DistanceScale = 1.0f;// 0.25f;
+
             }
             catch (Exception exception)
             {

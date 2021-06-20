@@ -11,8 +11,8 @@ namespace DwarfCorp
 {
     internal static class Program
     {
-        public static string Version = "21.04.03_XNA";
-        public static string[] CompatibleVersions = { "21.01.26_XNA", "21.01.26_FNA", "20.12.10_XNA", "20.12.10_FNA", "21.04.03_XNA", "21.04.03_FNA" };
+        public static string Version = "21.04.03_MONO";
+        public static string[] CompatibleVersions = { "21.04.03_MONO" };
         public static string Commit = "UNKNOWN";
         public static char DirChar = Path.DirectorySeparatorChar;
         private static RavenClient ravenClient;
@@ -22,7 +22,6 @@ namespace DwarfCorp
         /// </summary>
         private static void Main(string[] args)
         {
-           
             try
             {
                 var cwd = global::System.IO.Path.GetDirectoryName(global::System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);

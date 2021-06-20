@@ -78,7 +78,7 @@ namespace DwarfCorp
 
         private bool CreateSprite()
         {
-            PropogateTransforms();
+            //PropogateTransforms();
             var voxel = new VoxelHandle(Manager.World.ChunkManager, GlobalVoxelCoordinate.FromVector3(LocalPosition));
             if (!voxel.IsValid && _orientationType != OrientationType.Standing)
             {

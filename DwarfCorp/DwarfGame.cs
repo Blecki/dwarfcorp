@@ -320,16 +320,16 @@ namespace DwarfCorp
             if (SoundManager.Content == null)
             {
                 SoundManager.Content = Content;
-                SoundManager.LoadDefaultSounds();
+                SoundManager.LoadMixerSettings();
             }
 
             if (GameStateManager.StateStackIsEmpty)
             {
                 LogSentryBreadcrumb("GameState", "There was nothing in the state stack. Starting over.");
-                if (GameSettings.Current.DisplayIntro)
+                //if (GameSettings.Current.DisplayIntro)
                     GameStateManager.PushState(new IntroState(this));
-                else
-                    GameStateManager.PushState(new MainMenuState(this));
+                //else
+                //    GameStateManager.PushState(new MainMenuState(this));
             }
 
             ControlSettings.Load();
