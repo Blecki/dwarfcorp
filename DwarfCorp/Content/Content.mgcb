@@ -6946,6 +6946,9 @@
 #begin World/Voxels/TilledSoil.json
 /copy:World/Voxels/TilledSoil.json
 
+#begin World/Voxels/VoxelUpdateHookTest.json
+/copy:World/Voxels/VoxelUpdateHookTest.json
+
 #begin World/Voxels/Water.json
 /copy:World/Voxels/Water.json
 

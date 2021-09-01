@@ -121,7 +121,7 @@ namespace DwarfCorp
             RebuildThread.Name = "RebuildVoxels";
 
             WaterUpdateThread = new AutoScaleThread(this, (f) => Water.UpdateWater());
-            this.ChunkUpdateThread = new Thread(UpdateChunks) { IsBackground = true, Name = "Update Chunks" };
+            this.ChunkUpdateThread = new Thread(UpdateChunksThread) { IsBackground = true, Name = "Update Chunks" };
 
             GameSettings.Current.VisibilityUpdateTime = 0.05f;
 
@@ -229,20 +229,9 @@ namespace DwarfCorp
                     }
         }
 
-        public void UpdateChunks()
+        public void UpdateChunksThread()
         {
-            while(!ExitThreads && !DwarfGame.ExitGame)
-            {
-                if (!DwarfTime.LastTimeX.IsPaused)
-                {
-                    ChunkUpdateTimer.Update(DwarfTime.LastTimeX);
-                    if (ChunkUpdateTimer.HasTriggered)
-                    {
-                        ChunkUpdate.RunUpdate(this);
-                    }
-                }
-                Thread.Sleep(100);
-            }
+            ChunkUpdate.ChunkUpdateThread(this);
         }
 
         public List<VoxelChangeEvent> GetAndClearChangedVoxelList()

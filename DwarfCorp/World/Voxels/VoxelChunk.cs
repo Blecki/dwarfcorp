@@ -28,6 +28,7 @@ namespace DwarfCorp
         public HashSet<GameComponent> RootEntities = new HashSet<GameComponent>();
         public HashSet<GameComponent> EntityAnchors = new HashSet<GameComponent>();
 
+        public int UpdateDitherPattern = 0;
 
         public void InvalidateSlice(int LocalY)
         {

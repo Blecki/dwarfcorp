@@ -803,6 +803,8 @@
     <Compile Include="World\Voxels\Coordinate.cs" />
     <Compile Include="World\Voxels\GrassType.cs" />
     <Compile Include="World\Voxels\VoxelModel.cs" />
+    <Compile Include="World\Voxels\VoxelUpdateHookTest.cs" />
+    <Compile Include="World\Voxels\VoxelUpdateHookAttribute.cs" />
     <Compile Include="World\Water\LiquidType.cs" />
     <Compile Include="World\Voxels\VoxelChunk-Motes.cs" />
     <Compile Include="World\Voxels\VoxelHelpers\GetVoxelBoundingBox.cs" />

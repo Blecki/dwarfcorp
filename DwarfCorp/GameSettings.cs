@@ -168,6 +168,7 @@ namespace DwarfCorp
             public int GuiScale = 1;
             public bool GuiAutoScale = true;
             public int ChunkDrawDistance = 100;
+            [AutoResetDouble(0.1)] public double ChunkUpdateTime = 0.1;
             public float VertexCullDistance = 1000;
             public int EntityUpdateDistance = 128;
             public int ChunkLoadDistance = 128;
@@ -301,8 +302,19 @@ namespace DwarfCorp
             {
                 this.Value = Value;
             }
-        }       
-        
+        }
+
+        private class AutoResetDoubleAttribute : Attribute
+        {
+            public double Value;
+
+            public AutoResetDoubleAttribute(double Value)
+            {
+                this.Value = Value;
+            }
+        }
+
+
         private class AutoResetBoolAttribute : Attribute
         {
             public bool Value;
@@ -368,6 +380,12 @@ namespace DwarfCorp
                         {
                             member.SetValue(Current, resetFloat.Value);
                             Console.Out.WriteLine("Auto Reset Float Setting: {0} to {1}", member.Name, resetFloat.Value);
+                        }
+
+                        if (attribute is AutoResetDoubleAttribute resetDouble)
+                        {
+                            member.SetValue(Current, resetDouble.Value);
+                            Console.Out.WriteLine("Auto Reset Double Setting: {0} to {1}", member.Name, resetDouble.Value);
                         }
 
                         if (attribute is AutoResetBoolAttribute resetBool)

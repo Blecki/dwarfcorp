@@ -43,11 +43,6 @@ namespace DwarfCorp
             }
         }
 
-        private float MaxDiff(BoundingBox a, BoundingBox b)
-        {
-            return (a.Min - b.Min).LengthSquared() + (a.Max - b.Max).LengthSquared();
-        }
-
         /// <summary>
         /// Sets the global transform without any book-keeping or change detection mechanisms.
         /// !!DANGEROUS!!

@@ -131,7 +131,17 @@ namespace DwarfCorp
                 return null;
 
             if (!EffectLibrary.ContainsKey(Name))
-                EffectLibrary.Add(Name, Content.Load<SoundEffect>(AssetManager.ResolveContentPath(Name)));
+            {
+                try
+                {
+                    EffectLibrary.Add(Name, Content.Load<SoundEffect>(AssetManager.ResolveContentPath(Name)));
+                }
+                catch (ContentLoadException)
+                {
+                    EffectLibrary.Add(Name, null);
+                }
+            }
+
             return EffectLibrary[Name];
         }
 
