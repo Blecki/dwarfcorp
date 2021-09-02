@@ -69,5 +69,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DwarfCorp\DCMono.csproj">
+      <Project>{6214be89-2dc0-459c-a5e4-2543d7b074da}</Project>
+      <Name>DCMono</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

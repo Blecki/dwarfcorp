@@ -1,0 +1,39 @@
+{
+  "ID": 0,
+  "Name": "Ocean",
+  "Top": "0, 10",
+  "Bottom": "0, 10",
+  "Sides": "0, 10",
+  "Transitions": 1,
+  "HasTransitionTextures": false,
+  "TransitionTiles": [
+    "0, 10",
+    "15, 10",
+    "15, 10"
+  ],
+  "ReleasesResource": false,
+  "ResourceToRelease": "Mana",
+  "StartingHealth": 1.0,
+  "ProbabilityOfRelease": 0.0,
+  "CanRamp": false,
+  "IsBuildable": false,
+  "ParticleType": "star_particle",
+  "EmitsLight": true,
+  "MinSpawnHeight": -999.0,
+  "MaxSpawnHeight": 999.0,
+  "SpawnProbability": 1.0,
+  "Rarity": 1.0,
+  "SpawnClusters": false,
+  "IsSoil": false,
+  "IsSurface": false,
+  "IsInvincible": false,
+  "Tint": "255, 255, 255, 255",
+  "SpawnOnSurface": false,
+  "IsTransparent": false,
+  "ExplosionSoundResource": "Audio\\wurp",
+  "HitSoundResources": [
+    "Audio\\pick"
+  ],
+  "MinimapColor": "26,227,194,255",
+  "UpdateHook": "OCEAN"
+}

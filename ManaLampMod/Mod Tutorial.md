@@ -2,7 +2,7 @@
 # DwarfCorp mods
 ## Where are mods located?
 		
-Mods downloaded from steam will be placed in your steam folder under `/steamapps/workshop/content/252390`, where that number if the DwarfCorp app id. You can change this in the steam client, but if you do so, you should also change it in your settings. This setting is not available from the options screen - try looking in your appdata or relevant folder for your settings file.
+Mods downloaded from steam will be placed in your steam folder under `/steamapps/workshop/content/252390`, where that number is the DwarfCorp app id. You can change this in the steam client, but if you do so, you should also change it in your settings. This setting is not available from the options screen - try looking in your appdata or relevant folder for your settings file.
 The full path may be `C:/Program Files/Steam/steamapps/workshop/content/252390` for default installations.
 This is where any mods you subscribe to will be placed.
 

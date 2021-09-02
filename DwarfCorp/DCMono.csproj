@@ -942,6 +942,7 @@
     <Compile Include="World\Water\LiquidAsset.cs" />
     <Compile Include="World\Voxels\VoxelChunk.cs" />
     <Compile Include="World\Voxels\VoxelType.cs" />
+    <Compile Include="World\Water\OceanVoxelHook.cs" />
     <Compile Include="World\Water\WaterManager.cs" />
     <Compile Include="Graphics\Effects\WaterRenderer.cs" />
     <Compile Include="World\DetailMoteData.cs" />

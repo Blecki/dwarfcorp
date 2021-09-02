@@ -6892,6 +6892,9 @@
 #begin World/Voxels/ObsidianBricks.json
 /copy:World/Voxels/ObsidianBricks.json
 
+#begin World/Voxels/Ocean.json
+/copy:World/Voxels/Ocean.json
+
 #begin World/Voxels/Plank.json
 /copy:World/Voxels/Plank.json
 
