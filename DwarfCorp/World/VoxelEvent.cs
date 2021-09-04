@@ -5,21 +5,23 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    public enum VoxelChangeEventType
+    public enum VoxelEventType
     {
         VoxelTypeChanged,
         RampsChanged,
         Explored,
+        SteppedOn,
         // Todo: Revealed, etc.
     }
 
-    public class VoxelChangeEvent
+    public class VoxelEvent
     {
-        public VoxelChangeEventType Type;
+        public VoxelEventType Type;
         public VoxelHandle Voxel;
         public short OriginalVoxelType;
         public short NewVoxelType;
         public RampType OldRamps;
         public RampType NewRamps;
+        public CreatureAI Creature;
     }
 }

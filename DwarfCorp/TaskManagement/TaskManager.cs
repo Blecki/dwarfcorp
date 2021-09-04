@@ -98,7 +98,7 @@ namespace DwarfCorp
             return null;
         }
 
-        public void OnVoxelChanged(VoxelChangeEvent e)
+        public void OnVoxelChanged(VoxelEvent e)
         {
             foreach(var task in Tasks)
             {

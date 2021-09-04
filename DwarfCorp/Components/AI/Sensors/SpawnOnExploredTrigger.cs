@@ -29,9 +29,9 @@ namespace DwarfCorp
             this.CollisionType = CollisionType.Static;
         }
 
-        public void OnVoxelChanged(VoxelChangeEvent V)
+        public void OnVoxelChanged(VoxelEvent V)
         {
-            if (V.Type == VoxelChangeEventType.Explored)
+            if (V.Type == VoxelEventType.Explored)
             {
                 Delete();
                 EntityFactory.CreateEntity<GameComponent>(EntityToSpawn, SpawnLocation, BlackboardData);

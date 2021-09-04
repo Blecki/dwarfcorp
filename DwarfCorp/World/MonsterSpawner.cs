@@ -171,11 +171,11 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public override void VoxelChange(List<VoxelChangeEvent> Events, WorldManager World)
+        public override void VoxelChange(List<VoxelEvent> Events, WorldManager World)
         {
             foreach (var Event in Events)
             {
-                if (Event.Type == VoxelChangeEventType.Explored && Event.Voxel.IsEmpty)
+                if (Event.Type == VoxelEventType.Explored && Event.Voxel.IsEmpty)
                 {
                     var below = VoxelHelpers.GetVoxelBelow(Event.Voxel);
                     if (below.IsValid && !below.IsEmpty && Library.GetBiome("Cave").HasValue(out BiomeData caveBiome) && Library.GetBiome("Hell").HasValue(out BiomeData hellBiome))

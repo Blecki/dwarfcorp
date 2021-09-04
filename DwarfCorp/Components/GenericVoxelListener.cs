@@ -6,7 +6,7 @@ namespace DwarfCorp
 {
     public class GenericVoxelListener : GameComponent, IVoxelListener
     {
-        private Action<VoxelChangeEvent> Handler;
+        private Action<VoxelEvent> Handler;
 
         [OnSerializing]
         void Serializer(StreamingContext Context)
@@ -23,7 +23,7 @@ namespace DwarfCorp
             Matrix Transform,
             Vector3 BoundingBoxExtents,
             Vector3 BoundingBoxOffset,
-            Action<VoxelChangeEvent> Handler) :
+            Action<VoxelEvent> Handler) :
             base(Manager, "New Voxel Listener", Transform, BoundingBoxExtents, BoundingBoxOffset)
         {
             DebugColor = Color.DarkSlateGray;
@@ -33,7 +33,7 @@ namespace DwarfCorp
             this.Handler = Handler;
         }
 
-        public void OnVoxelChanged(VoxelChangeEvent V)
+        public void OnVoxelChanged(VoxelEvent V)
         {
             Handler?.Invoke(V);
         }

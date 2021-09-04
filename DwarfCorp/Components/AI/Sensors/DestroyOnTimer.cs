@@ -52,9 +52,9 @@ namespace DwarfCorp
             this.Voxel = Voxel;
         }
 
-        public void OnVoxelChanged(VoxelChangeEvent V)
+        public void OnVoxelChanged(VoxelEvent V)
         {
-            if (V.Type == VoxelChangeEventType.VoxelTypeChanged && V.NewVoxelType == 0)
+            if (V.Type == VoxelEventType.VoxelTypeChanged && V.NewVoxelType == 0)
                 Die();
         }
 

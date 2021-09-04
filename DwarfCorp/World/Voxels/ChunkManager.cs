@@ -70,16 +70,6 @@ namespace DwarfCorp
             return result;
         }
 
-        private List<VoxelChangeEvent> ChangedVoxels = new List<VoxelChangeEvent>();
-
-        public void NotifyChangedVoxel(VoxelChangeEvent Change)
-        {
-            lock (ChangedVoxels)
-            {
-                ChangedVoxels.Add(Change);
-            }
-        }
-
         private Thread RebuildThread { get; set; }
         private Thread ChunkUpdateThread { get; set; }
         private AutoScaleThread WaterUpdateThread;
@@ -232,17 +222,6 @@ namespace DwarfCorp
         public void UpdateChunksThread()
         {
             ChunkUpdate.ChunkUpdateThread(this);
-        }
-
-        public List<VoxelChangeEvent> GetAndClearChangedVoxelList()
-        {
-            List<VoxelChangeEvent> localList = null;
-            lock (ChangedVoxels)
-            {
-                localList = ChangedVoxels;
-                ChangedVoxels = new List<VoxelChangeEvent>();
-            }
-            return localList;
         }
 
         public void UpdateBounds()

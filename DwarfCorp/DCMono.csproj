@@ -552,7 +552,7 @@
     <Compile Include="Components\Graphics\RenderBobber.cs" />
     <Compile Include="Components\IVoxelListener.cs" />
     <Compile Include="Components\VoxelRevealer.cs" />
-    <Compile Include="Components\VoxelChangeEvent.cs" />
+    <Compile Include="World\VoxelEvent.cs" />
     <Compile Include="Components\GenericVoxelListener.cs" />
     <Compile Include="Components\AI\StatusEffects\StatBuff.cs" />
     <Compile Include="Components\AI\StatusEffects\ThoughtBuff.cs" />
@@ -630,6 +630,7 @@
     <Compile Include="World\Overworld\OverworldGenerator.cs" />
     <Compile Include="World\Potions\GatherPotionsTask.cs" />
     <Compile Include="World\Potions\Potion.cs" />
+    <Compile Include="World\VoxelTriggerModule.cs" />
     <Compile Include="World\Voxels\ChunkBuilder\TemplateSolidLibrary.cs" />
     <Compile Include="World\Voxels\ChunkBuilder\TemplateTypes.cs" />
     <Compile Include="World\Voxels\ChunkBuilder\GeometryBuilder-Fringe.cs" />
@@ -805,6 +806,8 @@
     <Compile Include="World\Voxels\VoxelModel.cs" />
     <Compile Include="World\Voxels\VoxelUpdateHookTest.cs" />
     <Compile Include="World\Voxels\VoxelUpdateHookAttribute.cs" />
+    <Compile Include="World\VoxelTriggerHookAttribute.cs" />
+    <Compile Include="World\VoxelTriggerHookTest.cs" />
     <Compile Include="World\Water\LiquidType.cs" />
     <Compile Include="World\Voxels\VoxelChunk-Motes.cs" />
     <Compile Include="World\Voxels\VoxelHelpers\GetVoxelBoundingBox.cs" />

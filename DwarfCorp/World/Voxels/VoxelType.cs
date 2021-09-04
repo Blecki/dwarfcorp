@@ -67,6 +67,7 @@ namespace DwarfCorp
         public Color MinimapColor = Color.White;
 
         public String UpdateHook = null;
+        public String Trigger = null;
 
         public VoxelType()
         {

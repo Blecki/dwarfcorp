@@ -135,7 +135,7 @@ namespace DwarfCorp.Rail
             {
                 if (!Active) return;
 
-                if (_event.Type == VoxelChangeEventType.VoxelTypeChanged && _event.NewVoxelType == 0)
+                if (_event.Type == VoxelEventType.VoxelTypeChanged && _event.NewVoxelType == 0)
                 {
                     Die();
                     var designation = World.PersistentData.Designations.EnumerateEntityDesignations(DesignationType.PlaceObject).FirstOrDefault(d => Object.ReferenceEquals(d.Body, this));

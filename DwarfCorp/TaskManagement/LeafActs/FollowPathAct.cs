@@ -179,6 +179,9 @@ namespace DwarfCorp
                         yield return Status.Fail;
 
                     SetAgentTranslation(GetPathPoint(Step.DestinationVoxel));
+
+                    VoxelTrigger(Step.DestinationVoxel);
+
                     break;
 
                 case MoveType.RideVehicle:
@@ -228,6 +231,9 @@ namespace DwarfCorp
                         SetCharacterMode(CharacterMode.Walking);
                         yield return Status.Running;
                     }
+
+                    VoxelTrigger(Step.DestinationVoxel);
+
                     break;
 
                 case MoveType.Swim:
@@ -270,6 +276,8 @@ namespace DwarfCorp
 
                         SetAgentTranslation(dest);
 
+                        VoxelTrigger(Step.DestinationVoxel);
+
                         break;
                     }
                 case MoveType.HighJump:
@@ -296,6 +304,8 @@ namespace DwarfCorp
 
                         SetAgentTranslation(dest);
 
+                        VoxelTrigger(Step.DestinationVoxel);
+
                         break;
                     }
                 case MoveType.Fall:
@@ -310,6 +320,8 @@ namespace DwarfCorp
                         SetCharacterMode(CharacterMode.Falling);
                         yield return Status.Running;
                     }
+
+                    VoxelTrigger(Step.DestinationVoxel);
 
                     break;
 
@@ -461,9 +473,24 @@ namespace DwarfCorp
 
                     SetAgentTranslation(GetPathPoint(Step.DestinationVoxel));
                     //Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
+
+                    VoxelTrigger(Step.DestinationVoxel);
+
                     yield return Status.Running;
                         break;
             }
+        }
+
+        private void VoxelTrigger(VoxelHandle StepVoxel)
+        {
+            var below = VoxelHelpers.GetVoxelBelow(StepVoxel);
+            if (below.IsValid && !below.IsEmpty)
+                Agent.World.EnqueueVoxelEvent(new VoxelEvent
+                {
+                    Type = VoxelEventType.SteppedOn,
+                    Voxel = below,
+                    Creature = Agent
+                });
         }
 
         private void SetCharacterMode(CharacterMode Mode)

@@ -166,9 +166,9 @@ namespace DwarfCorp
             get { return (RampType)(_cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] & VoxelConstants.RampTypeMask); }
             set {
                 if (value != (RampType)(_cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] & VoxelConstants.RampTypeMask))
-                    _cache_Chunk.Manager.NotifyChangedVoxel(new VoxelChangeEvent
+                    _cache_Chunk.Manager.World.EnqueueVoxelEvent(new VoxelEvent
                     {
-                        Type = VoxelChangeEventType.RampsChanged,
+                        Type = VoxelEventType.RampsChanged,
                         Voxel = this,
                         OldRamps = (RampType)(_cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] & VoxelConstants.RampTypeMask),
                         NewRamps = value
@@ -241,9 +241,9 @@ namespace DwarfCorp
                     _cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] = (byte)((_cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] & VoxelConstants.InverseExploredMask) | VoxelConstants.ExploredMask);
                     InvalidateVoxel(this);
 
-                    _cache_Chunk.Manager.NotifyChangedVoxel(new VoxelChangeEvent
+                    _cache_Chunk.Manager.World.EnqueueVoxelEvent(new VoxelEvent
                     {
-                        Type = VoxelChangeEventType.Explored,
+                        Type = VoxelEventType.Explored,
                         Voxel = this
                     });
                 }
@@ -460,9 +460,9 @@ namespace DwarfCorp
                 }
 
                 // Invoke new voxel listener.
-                _cache_Chunk.Manager.NotifyChangedVoxel(new VoxelChangeEvent
+                _cache_Chunk.Manager.World.EnqueueVoxelEvent(new VoxelEvent
                 {
-                    Type = VoxelChangeEventType.VoxelTypeChanged,
+                    Type = VoxelEventType.VoxelTypeChanged,
                     Voxel = this,
                     OriginalVoxelType = previous,
                     NewVoxelType = NewType.ID

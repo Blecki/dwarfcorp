@@ -85,7 +85,7 @@ namespace DwarfCorp
                 new Vector3(0.0f, -0.30f, 0.0f),
                 (v) =>
                 {
-                    if (v.Type == VoxelChangeEventType.RampsChanged)
+                    if (v.Type == VoxelEventType.RampsChanged)
                     {
                         MatchToVoxel(v.Voxel);
                         ProcessTransformChange();

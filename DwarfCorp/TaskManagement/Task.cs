@@ -44,7 +44,7 @@ namespace DwarfCorp
         public virtual bool IsComplete(WorldManager World) { return false; }
         public virtual void OnEnqueued(WorldManager World) {}
         public virtual void OnDequeued(WorldManager World) {}
-        public virtual void OnVoxelChange(VoxelChangeEvent changeEvent) {}
+        public virtual void OnVoxelChange(VoxelEvent changeEvent) {}
         public virtual void OnUpdate(WorldManager World) {}
         public virtual void OnCancelled(TaskManager Manager, WorldManager World) {}
 

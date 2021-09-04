@@ -132,6 +132,31 @@ namespace DwarfCorp
         private Splasher Splasher;
         #endregion
 
+        #region Voxel Events
+
+        private List<VoxelEvent> VoxelEvents = new List<VoxelEvent>();
+
+        public void EnqueueVoxelEvent(VoxelEvent Change)
+        {
+            lock (VoxelEvents)
+            {
+                VoxelEvents.Add(Change);
+            }
+        }
+        private List<VoxelEvent> GetAndClearVoxelEventQueue()
+        {
+            List<VoxelEvent> localList = null;
+            lock (VoxelEvents)
+            {
+                localList = VoxelEvents;
+                VoxelEvents = new List<VoxelEvent>();
+            }
+            return localList;
+        }
+
+
+
+        #endregion
         /// <summary>
         /// Creates a new play state
         /// </summary>
@@ -309,7 +334,7 @@ namespace DwarfCorp
 
             Splasher.Splash(gameTime, ChunkManager.Water.GetSplashQueue());
 
-            var changedVoxels = ChunkManager.GetAndClearChangedVoxelList();
+            var changedVoxels = GetAndClearVoxelEventQueue();
             foreach (var @event in changedVoxels)
             {
                 var box = @event.Voxel.GetBoundingBox();

@@ -84,7 +84,7 @@ namespace DwarfCorp
                 new Vector3(0.5f, -0.30f, 0.0f),
                 (v) =>
                 {
-                    if (v.Type == VoxelChangeEventType.VoxelTypeChanged
+                    if (v.Type == VoxelEventType.VoxelTypeChanged
                         && v.NewVoxelType == 0)
                         Die();
                 }))

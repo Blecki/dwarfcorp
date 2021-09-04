@@ -57,7 +57,7 @@ namespace DwarfCorp
         }
 
 
-        public override void OnVoxelChange(VoxelChangeEvent changeEvent)
+        public override void OnVoxelChange(VoxelEvent changeEvent)
         {
             CacheDirty = true;
         }
