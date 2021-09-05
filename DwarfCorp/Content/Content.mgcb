@@ -6895,6 +6895,9 @@
 #begin World/Voxels/Ocean.json
 /copy:World/Voxels/Ocean.json
 
+#begin World/Voxels/PitTrap.json
+/copy:World/Voxels/PitTrap.json
+
 #begin World/Voxels/Plank.json
 /copy:World/Voxels/Plank.json
 
@@ -6949,8 +6952,8 @@
 #begin World/Voxels/TilledSoil.json
 /copy:World/Voxels/TilledSoil.json
 
-#begin World/Voxels/VoxelTriggerHookTest.json
-/copy:World/Voxels/VoxelTriggerHookTest.json
+#begin World/Voxels/VoxelEventHookTest.json
+/copy:World/Voxels/VoxelEventHookTest.json
 
 #begin World/Voxels/VoxelUpdateHookTest.json
 /copy:World/Voxels/VoxelUpdateHookTest.json

@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace DwarfCorp
 {
-    public class VoxelTriggerHookAttribute : Attribute
+    public class VoxelEventHookAttribute : Attribute
     {
         public String Name;
 
-        public VoxelTriggerHookAttribute(String Name)
+        public VoxelEventHookAttribute(String Name)
         {
             this.Name = Name;
         }

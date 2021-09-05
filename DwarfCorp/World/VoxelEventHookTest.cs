@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace DwarfCorp
 {
-    public static class VoxelTriggerHookTest
+    public static class VoxelEventHookTest
     {
-        [VoxelTriggerHook("TEST")]
+        [VoxelEventHook("TEST")]
         private static void _hook(VoxelEvent Event, WorldManager World)
         {
             if (Event.Type == VoxelEventType.SteppedOn)

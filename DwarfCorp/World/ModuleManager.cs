@@ -102,7 +102,7 @@ namespace DwarfCorp
         public virtual void VoxelChange(List<VoxelEvent> Events, WorldManager World)
         {
             foreach (var module in GetModulesThatWantUpdates(UpdateTypes.VoxelChange))
-                module.VoxelChange(Events, World);
+                module.VoxelEvent(Events, World);
         }
     }
 }

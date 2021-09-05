@@ -171,7 +171,7 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public override void VoxelChange(List<VoxelEvent> Events, WorldManager World)
+        public override void VoxelEvent(List<VoxelEvent> Events, WorldManager World)
         {
             foreach (var Event in Events)
             {

@@ -14,6 +14,6 @@ namespace DwarfCorp
         public virtual void ComponentDestroyed(GameComponent C) { }
         public virtual void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect) { }
         public virtual void Shutdown() { }
-        public virtual void VoxelChange(List<VoxelEvent> Events, WorldManager World) { }
+        public virtual void VoxelEvent(List<VoxelEvent> Events, WorldManager World) { }
     }
 }

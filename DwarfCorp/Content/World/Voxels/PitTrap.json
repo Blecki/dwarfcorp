@@ -1,6 +1,6 @@
 {
   "ID": 0,
-  "Name": "VoxelTriggerHookTest",
+  "Name": "PitTrap",
   "Top": "0, 10",
   "Bottom": "0, 10",
   "Sides": "0, 10",
@@ -35,5 +35,5 @@
     "Audio\\pick"
   ],
   "MinimapColor": "26,227,194,255",
-  "Trigger": "TEST"
+  "EventHook": "pittrap_hook"
 }

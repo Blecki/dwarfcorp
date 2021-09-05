@@ -90,6 +90,7 @@
     <Compile Include="Entities\Fixtures\Jack-O-Lantern.cs" />
     <Compile Include="Entities\Fixtures\TrainingEquipment\TrainingEquipment.cs" />
     <Compile Include="Entities\Plants\Cotton.cs" />
+    <Compile Include="Entities\Traps\PitTrap\PitTrapEventHook.cs" />
     <Compile Include="GameStates\DebugStates\GuiTextDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\DwarfCompositeTextureDebugPanel.cs" />
     <Compile Include="GameStates\DebugStates\TiledCompositeTextureDebugPanel.cs" />
@@ -630,7 +631,7 @@
     <Compile Include="World\Overworld\OverworldGenerator.cs" />
     <Compile Include="World\Potions\GatherPotionsTask.cs" />
     <Compile Include="World\Potions\Potion.cs" />
-    <Compile Include="World\VoxelTriggerModule.cs" />
+    <Compile Include="World\VoxelEventModule.cs" />
     <Compile Include="World\Voxels\ChunkBuilder\TemplateSolidLibrary.cs" />
     <Compile Include="World\Voxels\ChunkBuilder\TemplateTypes.cs" />
     <Compile Include="World\Voxels\ChunkBuilder\GeometryBuilder-Fringe.cs" />
@@ -806,8 +807,8 @@
     <Compile Include="World\Voxels\VoxelModel.cs" />
     <Compile Include="World\Voxels\VoxelUpdateHookTest.cs" />
     <Compile Include="World\Voxels\VoxelUpdateHookAttribute.cs" />
-    <Compile Include="World\VoxelTriggerHookAttribute.cs" />
-    <Compile Include="World\VoxelTriggerHookTest.cs" />
+    <Compile Include="World\VoxelEventHookAttribute.cs" />
+    <Compile Include="World\VoxelEventHookTest.cs" />
     <Compile Include="World\Water\LiquidType.cs" />
     <Compile Include="World\Voxels\VoxelChunk-Motes.cs" />
     <Compile Include="World\Voxels\VoxelHelpers\GetVoxelBoundingBox.cs" />
@@ -1038,6 +1039,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
   <PropertyGroup>
