@@ -347,13 +347,13 @@ namespace DwarfCorp.Play
                 new HorizontalMenuTray.MenuItem
                 {
                     Text = "FILL WATER",
-                    OnClick = (sender, args) => ActivateGodTool("Fill Water")
+                    OnClick = (sender, args) => ActivateGodTool("Liquid/Water")
                 },
 
                 new HorizontalMenuTray.MenuItem
                 {
                     Text = "FILL LAVA",
-                    OnClick = (sender, args) => ActivateGodTool("Fill Lava")
+                    OnClick = (sender, args) => ActivateGodTool("Liquid/Lava")
                 },
 
                 new HorizontalMenuTray.MenuItem

@@ -550,6 +550,9 @@ namespace DwarfCorp
                 if (enemy.Stats.IsFleeing)
                     continue;
 
+                if (VoxelHelpers.DoesRayHitSolidVoxel(Manager.World.ChunkManager, this.Position, enemy.Position))
+                    continue;
+
                 Task task = new KillEntityTask(enemy.Physics, KillEntityTask.KillType.Auto);
                 if (!HasTaskWithName(task))
                 {

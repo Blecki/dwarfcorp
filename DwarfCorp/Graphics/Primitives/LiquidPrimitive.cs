@@ -12,7 +12,7 @@ namespace DwarfCorp
     /// </summary>
     public class LiquidPrimitive : VoxelListPrimitive // GeometricPrimitive
     {
-        public LiquidType LiqType { get; set; }
+        public byte LiqType { get; set; }
         public bool IsBuilding = false;
 
         // The primitive everything will be based on.
@@ -83,7 +83,7 @@ namespace DwarfCorp
         [ThreadStatic]
         private static LiquidRebuildCache cache;
 
-        public LiquidPrimitive(LiquidType type) :
+        public LiquidPrimitive(byte type) :
             base()
         {
             LiqType = type;
@@ -117,106 +117,68 @@ namespace DwarfCorp
             }
         }
 
-        private static bool AddCaches(List<LiquidPrimitive> primitivesToInit, ref LiquidPrimitive[] lps)
+        private static LiquidRebuildCache GetCache()
         {
-            // We are going to first set up the internal array.
-            foreach (LiquidPrimitive lp in primitivesToInit)
-            {
-                if (lp != null) lps[(int)lp.LiqType] = lp;
-            }
-
             // We are going to lock around the IsBuilding check/set to avoid the situation where two threads could both pass through
             // if they both checked IsBuilding at the same time before either of them set IsBuilding.
             lock (caches)
             {
-                // We check all parts of the array before setting any to avoid somehow setting a few then leaving before we can unset them.
-                for (int i = 0; i < lps.Length; i++)
-                {
-                    if (lps[i] != null && lps[i].IsBuilding) return false;
-                }
-
-                // Now we know we are safe so we can set IsBuilding.
-                for (int i = 0; i < lps.Length; i++)
-                {
-                    if (lps[i] != null) lps[i].IsBuilding = true;
-                }
-
                 // Now we have to get a valid cache object.
-                bool cacheSet = false;
                 for (int i = 0; i < caches.Count; i++)
                 {
                     if (!caches[i].inUse)
                     {
-                        cache = caches[i];
-                        cache.inUse = true;
-                        cacheSet = true;
+                        caches[i].inUse = true;
+                        return caches[i];
                     }
                 }
-                if (!cacheSet)
-                {
-                    cache = new LiquidRebuildCache();
-                    cache.inUse = true;
-                    caches.Add(cache);
-                }
-            }
 
-            return true;
+                var cache = new LiquidRebuildCache();
+                cache.inUse = true;
+                caches.Add(cache);
+                return cache;
+            }
         }
 
         // This will loop through the whole world and draw out all liquid primatives that are handed to the function.
         public static void InitializePrimativesFromChunk(VoxelChunk chunk, List<LiquidPrimitive> primitivesToInit)
         {
-            LiquidPrimitive[] lps = new LiquidPrimitive[(int)LiquidType.Count];
+            cache = GetCache();
 
-            if(!AddCaches(primitivesToInit, ref lps))
-                return;
-
-            LiquidType curLiqType = LiquidType.None;
-            LiquidPrimitive curPrimitive = null;
-            ExtendedVertex[] curVertices = null;
-            ushort[] curIndexes = null;
-            int[] maxVertices = new int[lps.Length];
-            int[] maxIndexes = new int[lps.Length];
-
-            int maxVertex = 0;
-            int maxIndex = 0;
-            int totalFaces = 6;
-            bool fogOfWar = GameSettings.Current.FogofWar;
-
-            for (int globalY = chunk.Origin.Y; globalY < Math.Min(chunk.Manager.World.Renderer.PersistentSettings.MaxViewingLevel + 1, chunk.Origin.Y + VoxelConstants.ChunkSizeY); globalY++)
+            foreach (var primitive in primitivesToInit)
             {
-                var y = globalY - chunk.Origin.Y;
-                if (chunk.Data.LiquidPresent[y] == 0) continue;
-
-                for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
+                lock (primitive.VertexLock)
                 {
-                    for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
+                    if (primitive.IsBuilding) continue;
+                    primitive.IsBuilding = true;
+                }
+
+                // Need to build in temp buffers and copy over to primitive.
+                int vertexCount = 0;
+                int indexCount = 0;
+                var vertices = new ExtendedVertex[256];
+                var indexes = new ushort[256];
+
+                
+                primitive.VertexCount = 0;
+                primitive.IndexCount = 0;
+
+                int totalFaces = 6;
+
+                for (int globalY = chunk.Origin.Y; globalY < Math.Min(chunk.Manager.World.Renderer.PersistentSettings.MaxViewingLevel + 1, chunk.Origin.Y + VoxelConstants.ChunkSizeY); globalY++)
+                {
+                    var y = globalY - chunk.Origin.Y;
+                    if (chunk.Data.LiquidPresent[y] == 0) continue;
+
+                    for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
                     {
-                        var voxel = VoxelHandle.UnsafeCreateLocalHandle(chunk, new LocalVoxelCoordinate(x, y, z));
-                        if (fogOfWar && !voxel.IsExplored) continue;
-
-                        if (voxel.LiquidLevel > 0)
+                        for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                         {
-                            var liqType = voxel.LiquidType;
+                            var voxel = VoxelHandle.UnsafeCreateLocalHandle(chunk, new LocalVoxelCoordinate(x, y, z));
+                            if (GameSettings.Current.FogofWar && !voxel.IsExplored) continue;
 
-                            // We need to see if we changed types and should change the data we are writing to.
-                            if (liqType != curLiqType)
-                            {
-                                LiquidPrimitive newPrimitive = lps[(int)liqType];
-                                // We weren't passed a LiquidPrimitive object to work with for this type so we'll skip it.
-                                if (newPrimitive == null) continue;
-
-                                maxVertices[(int)curLiqType] = maxVertex;
-                                maxIndexes[(int)curLiqType] = maxIndex;
-
-                                curVertices = newPrimitive.Vertices;
-                                curIndexes = newPrimitive.Indexes;
-
-                                curLiqType = liqType;
-                                curPrimitive = newPrimitive;
-                                maxVertex = maxVertices[(int)liqType];
-                                maxIndex = maxIndexes[(int)liqType];
-                            }
+                            if (voxel.LiquidLevel == 0 || voxel.LiquidType != primitive.LiqType)
+                                continue;
 
                             int facesToDraw = 0;
                             for (int i = 0; i < totalFaces; i++)
@@ -259,109 +221,67 @@ namespace DwarfCorp
                                 cache.drawFace[(int)face] = true;
                                 facesToDraw++;
                             }
-                            
+
                             // There's no faces to draw on this voxel.  Let's go to the next one.
                             if (facesToDraw == 0) continue;
 
                             // Now we check to see if we need to resize the current Vertex array.
                             int vertexSizeIncrease = facesToDraw * 4;
-                            int indexSizeIncrease  = facesToDraw * 6;
+                            int indexSizeIncrease = facesToDraw * 6;
 
-                            lock (curPrimitive.VertexLock)
-                            {
                                 // Check vertex array size
-                                if (curVertices == null)
+                                if (vertices.Length <= vertexCount + vertexSizeIncrease)
                                 {
+                                    var newVerts = new ExtendedVertex[MathFunctions.NearestPowerOf2(vertexCount + vertexSizeIncrease)];
 
-                                    curVertices = new ExtendedVertex[256];
-                                    curPrimitive.Vertices = curVertices;
-                                }
-                                else if (curVertices.Length <= maxVertex + vertexSizeIncrease)
-                                {
-                                    ExtendedVertex[] newVerts = new ExtendedVertex[MathFunctions.NearestPowerOf2(maxVertex + vertexSizeIncrease)];
-
-                                    curVertices.CopyTo(newVerts, 0);
-                                    curVertices = newVerts;
-                                    curPrimitive.Vertices = curVertices;
+                                    vertices.CopyTo(newVerts, 0);
+                                    vertices = newVerts;
                                 }
 
                                 // Check index array size
-                                if (curIndexes == null)
+                                if (indexes == null)
+                                    indexes = new ushort[256];
+                                else if (indexes.Length <= indexCount + indexSizeIncrease)
                                 {
-                                    curIndexes = new ushort[256];
-                                    curPrimitive.Indexes = curIndexes;
-                                }
-                                else if (curIndexes.Length <= maxIndex + indexSizeIncrease)
-                                {
-                                    ushort[] newIdxs = new ushort[MathFunctions.NearestPowerOf2(maxIndex + indexSizeIncrease)];
+                                    var newIdxs = new ushort[MathFunctions.NearestPowerOf2(indexCount + indexSizeIncrease)];
 
-                                    curIndexes.CopyTo(newIdxs, 0);
-                                    curIndexes = newIdxs;
-                                    curPrimitive.Indexes = curIndexes;
+                                    indexes.CopyTo(newIdxs, 0);
+                                    indexes = newIdxs;
                                 }
-                            }
 
                             // Now we have a list of all the faces that will need to be drawn.  Let's draw  them.
-                            CreateWaterFaces(voxel, chunk, x, y, z, curVertices, curIndexes, maxVertex, maxIndex);
+                            CreateWaterFaces(voxel, chunk, x, y, z, vertices, indexes, vertexCount, indexCount);
 
                             // Finally increase the size so we can move on.
-                            maxVertex += vertexSizeIncrease;
-                            maxIndex  += indexSizeIncrease;
+                            vertexCount += vertexSizeIncrease;
+                            indexCount += indexSizeIncrease;
                         }
                     }
                 }
-            }
 
-            // The last thing we need to do is make sure we set the current primative's maxVertices to the right value.
-            maxVertices[(int)curLiqType] = maxVertex;
-            maxIndexes[(int)curLiqType] = maxIndex;
-
-            // Now actually force the VertexBuffer to be recreated in each primative we worked with.
-            for (int i = 0; i < lps.Length; i++)
-            {
-                LiquidPrimitive updatedPrimative = lps[i];
-                if (updatedPrimative == null) continue;
-
-                maxVertex = maxVertices[i];
-                maxIndex = maxIndexes[i];
-
-                if (maxVertex > 0)
+                try
                 {
-                    try
+                    lock (primitive.VertexLock)
                     {
-                        lock (updatedPrimative.VertexLock)
-                        {
-                            updatedPrimative.VertexCount = maxVertex;
-                            updatedPrimative.IndexCount = maxIndex;
-                            updatedPrimative.VertexBuffer = null;
-                            updatedPrimative.IndexBuffer = null;
-                        }
-                    }
-                    catch (global::System.Threading.AbandonedMutexException e)
-                    {
-                        Console.Error.WriteLine(e.Message);
+                        if (primitive.VertexBuffer != null)
+                            primitive.VertexBuffer.Dispose();
+                        primitive.VertexBuffer = null;
+                        if (primitive.IndexBuffer != null)
+                            primitive.IndexBuffer.Dispose();
+                        primitive.IndexBuffer = null;
+
+                        primitive.Vertices = vertices;
+                        primitive.VertexCount = vertexCount;
+                        primitive.Indexes = indexes;
+                        primitive.IndexCount = indexCount;
                     }
                 }
-                else
+                catch (global::System.Threading.AbandonedMutexException e)
                 {
-                    try
-                    {
-                        lock (updatedPrimative.VertexLock)
-                        {
-                            updatedPrimative.VertexBuffer = null;
-                            updatedPrimative.Vertices = null;
-                            updatedPrimative.IndexBuffer = null;
-                            updatedPrimative.Indexes = null;
-                            updatedPrimative.VertexCount = 0;
-                            updatedPrimative.IndexCount = 0;
-                        }
-                    }
-                    catch (global::System.Threading.AbandonedMutexException e)
-                    {
-                        Console.Error.WriteLine(e.Message);
-                    }
+                    Console.Error.WriteLine(e.Message);
                 }
-                updatedPrimative.IsBuilding = false;
+
+                primitive.IsBuilding = false;
             }
 
             cache.inUse = false;
@@ -433,7 +353,6 @@ namespace DwarfCorp
                     // These will be filled out before being used   lh  .
                     //float foaminess1;
                     foaminess[vertOffset] = 0.0f;
-                    bool shoreLine = false;
 
                     Vector3 pos = Vector3.Zero;
                     Vector3 rampOffset = Vector3.Zero;
@@ -458,37 +377,30 @@ namespace DwarfCorp
                             // Now actually do the math.
                             count++;
                             if (neighborVoxel.LiquidLevel < 1) emptyNeighbors++;
-                            if (neighborVoxel.LiquidType == LiquidType.None && !neighborVoxel.IsEmpty) shoreLine = true;
                         }
 
                         foaminess[vertOffset] = emptyNeighbors / count;
 
                         if (foaminess[vertOffset] <= 0.5f)
-                        {
                             foaminess[vertOffset] = 0.0f;
-                        }
-                        // Check if it should ramp.
-                        else if (!shoreLine)
-                        {
-                            //rampOffset.Y = -0.4f;
-                        }
 
                         pos = primitive.Vertices[vertOffset + faceDescriptor.VertexOffset].Position;
                         if ((currentVertex & VoxelVertex.Top) == VoxelVertex.Top)
                         {
-                            if (belowFilled)
-                                pos.Y -= 0.6f;// Minimum ramp position 
+                            //if (belowFilled)
+                            //    pos.Y -= 0.6f;// Minimum ramp position 
 
-                            var neighbors = VoxelHelpers.EnumerateVertexNeighbors2D(voxel.Coordinate, currentVertex)
-                                .Select(c => new VoxelHandle(chunk.Manager, c))
-                                .Where(h => h.IsValid)
-                                .Select(h => MathFunctions.Clamp((float)h.LiquidLevel / 8.0f, 0.25f, 1.0f));
+                             var neighbors = VoxelHelpers.EnumerateVertexNeighbors2D(voxel.Coordinate, currentVertex)
+                                 .Select(c => new VoxelHandle(chunk.Manager, c))
+                                 .Where(h => h.IsValid)
+                                 .Select(h => MathFunctions.Clamp((float)h.LiquidLevel / (float)WaterManager.maxWaterLevel, 0.1f, 1.0f));
 
-                            if (neighbors.Count() > 0)
-                            {
-                                if (belowFilled)
-                                    pos.Y *= neighbors.Average();
-                            }
+                             if (neighbors.Count() > 0)
+                             {
+                                 if (belowFilled)
+                                     pos.Y *= neighbors.Average();
+                             }
+                            //pos.Y *= (float)voxel.LiquidLevel / (float)WaterManager.maxWaterLevel;
                         }
                         else
                         {
@@ -551,7 +463,6 @@ namespace DwarfCorp
                     startIndex++;
                 }
             }
-            // End cache.drawFace loop
         }
     }
 

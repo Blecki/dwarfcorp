@@ -308,15 +308,15 @@ namespace DwarfCorp
         }
 
         [JsonIgnore]
-        public LiquidType LiquidType
+        public byte LiquidType
         {
-            get { return (LiquidType)((_cache_Chunk.Data.Liquid[_cache_Index] & VoxelConstants.LiquidTypeMask) >> VoxelConstants.LiquidTypeShift); }
+            get { return (byte)((_cache_Chunk.Data.Liquid[_cache_Index] & VoxelConstants.LiquidTypeMask) >> VoxelConstants.LiquidTypeShift); }
             set
             {
-                var existingLiquid = (LiquidType)((_cache_Chunk.Data.Liquid[_cache_Index] & VoxelConstants.LiquidTypeMask) >> VoxelConstants.LiquidTypeShift);
-                if (existingLiquid != LiquidType.None && value == LiquidType.None)
+                var existingLiquid = (byte)((_cache_Chunk.Data.Liquid[_cache_Index] & VoxelConstants.LiquidTypeMask) >> VoxelConstants.LiquidTypeShift);
+                if (existingLiquid != 0 && value == 0)
                     _cache_Chunk.Data.LiquidPresent[_cache_Local_Y] -= 1;
-                if (existingLiquid == LiquidType.None && value != LiquidType.None)
+                if (existingLiquid == 0 && value != 0)
                     _cache_Chunk.Data.LiquidPresent[_cache_Local_Y] += 1;
 
                 _cache_Chunk.Data.Liquid[_cache_Index] = (byte)((_cache_Chunk.Data.Liquid[_cache_Index] & VoxelConstants.InverseLiquidTypeMask) 
@@ -339,12 +339,12 @@ namespace DwarfCorp
         /// </summary>
         /// <param name="Type"></param>
         /// <param name="Level"></param>
-        public void QuickSetLiquid(LiquidType Type, byte Level)
+        public void QuickSetLiquid(byte Type, byte Level)
         {
-            var existingLiquid = (LiquidType)((_cache_Chunk.Data.Liquid[_cache_Index] & VoxelConstants.LiquidTypeMask) >> VoxelConstants.LiquidTypeShift);
-            if (existingLiquid != LiquidType.None && Type == LiquidType.None)
+            var existingLiquid = (byte)((_cache_Chunk.Data.Liquid[_cache_Index] & VoxelConstants.LiquidTypeMask) >> VoxelConstants.LiquidTypeShift);
+            if (existingLiquid != 0 && Type == 0)
                 _cache_Chunk.Data.LiquidPresent[_cache_Local_Y] -= 1;
-            if (existingLiquid == LiquidType.None && Type != LiquidType.None)
+            if (existingLiquid == 0 && Type != 0)
                 _cache_Chunk.Data.LiquidPresent[_cache_Local_Y] += 1;
 
             _cache_Chunk.Data.Liquid[_cache_Index] = (byte)(((byte)Type << VoxelConstants.LiquidTypeShift) | (Level & VoxelConstants.LiquidLevelMask));

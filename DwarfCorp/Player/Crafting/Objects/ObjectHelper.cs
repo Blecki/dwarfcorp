@@ -89,7 +89,7 @@ namespace DwarfCorp
                     });
 
                 var current = new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(PreviewBody.Position));
-                bool underwater = current.IsValid && current.LiquidType != LiquidType.None;
+                bool underwater = current.IsValid && current.LiquidType != 0;
 
                 if (underwater)
                 {

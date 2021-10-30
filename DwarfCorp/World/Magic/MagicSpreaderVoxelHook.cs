@@ -6,17 +6,12 @@ using System.Threading.Tasks;
 
 namespace DwarfCorp
 {
-    public static class OceanVoxelHook
+    public static class MagicSpreaderVoxelHook
     {
-        [VoxelUpdateHook("OCEAN")]
+        [VoxelUpdateHook("MAGICSPREADER")]
         private static void _hook(VoxelHandle Voxel, WorldManager World)
         {
-            // Water update should take care of this part.
-            Voxel.LiquidLevel = WaterManager.maxWaterLevel;
-            Voxel.LiquidType = LiquidType.Water;
-
-            
-            if (Library.GetVoxelType("Ocean").HasValue(out var ocean))
+            if (Library.GetVoxelType("MagicSpreader").HasValue(out var ocean))
             {
                 foreach (var voxel in VoxelHelpers.EnumerateManhattanNeighbors2D_Y(Voxel.Coordinate).Select(c => World.ChunkManager.CreateVoxelHandle(c)))
                 {
@@ -24,6 +19,8 @@ namespace DwarfCorp
                     {
                         var lv = voxel;
                         lv.Type = ocean;
+                        lv.LiquidLevel = 0;
+                        lv.LiquidType = 0;
                     }
                 }
 

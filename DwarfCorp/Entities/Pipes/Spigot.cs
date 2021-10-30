@@ -7,21 +7,38 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp.SteamPipes
 {
-    public class SteamPipe : CraftedBody
+    public class Spigot : CraftedBody
     {
-        [EntityFactory("Steam Pipe")]
+        public class SpigotPipeObject : PipeNetworkObject
+        {
+            public SpigotPipeObject(ComponentManager Manager) : base(Manager) { }
+
+            public override void OnPipeNetworkUpdate()
+            {
+                var voxel = World.ChunkManager.CreateVoxelHandle(this.Coordinate);
+                if (voxel.IsValid && this.Pressure > 0.1f && voxel.LiquidLevel < WaterManager.maxWaterLevel && Library.GetLiquid("Water").HasValue(out var water))
+                {
+
+                    this.Pressure = 0.0f;
+                    voxel.LiquidType = water.ID;
+                    voxel.LiquidLevel += 1;
+                }
+            }
+        }
+
+        [EntityFactory("Spigot")]
         private static GameComponent __factory6(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new SteamPipe(Manager, Position, Data.GetData<Resource>("Resource", null));
+            return new Spigot(Manager, Position, Data.GetData<Resource>("Resource", null));
         }
 
-        public SteamPipe()
+        public Spigot()
         {
 
         }
 
-        public SteamPipe(ComponentManager manager, Vector3 position, Resource Resource) :
-            base(manager, "Steam Pipe", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new DwarfCorp.CraftDetails(manager, Resource))
+         public Spigot(ComponentManager manager, Vector3 position, Resource Resource) :
+            base(manager, "Spigot", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(manager, Resource))
         {
             var matrix = Matrix.CreateRotationY((float)Math.PI * 0.5f);
             matrix.Translation = position;
@@ -30,7 +47,7 @@ namespace DwarfCorp.SteamPipes
             Tags.Add("Steam");
             CollisionType = CollisionType.Static;
 
-            AddChild(new SteamPoweredObject(manager));
+            AddChild(new SpigotPipeObject(manager) {  });
 
             CreateCosmeticChildren(Manager);
         }
@@ -53,5 +70,11 @@ namespace DwarfCorp.SteamPipes
                     Die();
             })).SetFlag(Flag.ShouldSerialize, false);
         }
+
+        public override void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
+        {
+            base.Update(Time, Chunks, Camera);
+        }
+        
     }
 }

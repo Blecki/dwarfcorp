@@ -32,9 +32,6 @@ namespace DwarfCorp.Gui.Widgets.Minimap
 
             SurfaceVoxel = V.Chunk.Manager.CreateVoxelHandle(V.Coordinate + new GlobalVoxelOffset(0, -1, 0));
 
-            VoxelType water, lava;
-            if (!Library.GetVoxelType("water").HasValue(out water)) return;
-            if (!Library.GetVoxelType("lava").HasValue(out lava)) return;
 
             while (true)
             {
@@ -56,14 +53,9 @@ namespace DwarfCorp.Gui.Widgets.Minimap
                         Color = Color.Black;
                         return;
                     }
-                    else if (SurfaceVoxel.LiquidType == LiquidType.Water)
+                    else if (SurfaceVoxel.LiquidType != 0 && Library.GetLiquid(SurfaceVoxel.LiquidType).HasValue(out var liquid))
                     {
-                        Color = water.MinimapColor;
-                        return;
-                    }
-                    else if (SurfaceVoxel.LiquidType == LiquidType.Lava)
-                    {
-                        Color = lava.MinimapColor;
+                        Color = liquid.MinimapColor;
                         return;
                     }
                     else if (SurfaceVoxel.GrassType != 0)

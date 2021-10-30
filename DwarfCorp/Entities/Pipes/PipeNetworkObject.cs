@@ -7,38 +7,42 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp.SteamPipes
 {
-    public class SteamPoweredObject : GameComponent
+    public class PipeNetworkObject : GameComponent
     {
         [JsonIgnore]
         public List<UInt32> NeighborPipes = new List<UInt32>();
 
-        public float SteamPressure = 0.0f;
-        public float GeneratedSteam = 0.0f;
-        public bool Generator = false;
+        public float Pressure = 0.0f;
         public bool DrawPipes = true;
         public Orientation Orientation = Orientation.North;
+        public GlobalVoxelCoordinate Coordinate = new GlobalVoxelCoordinate(-1, -1, -1);
 
         public RawPrimitive Primitive;
         private Color VertexColor = Color.White;
         private Color LightRamp = Color.White;
         private SpriteSheet Sheet;
 
-        public virtual bool CanSendSteam(SteamPoweredObject Other)
+        public virtual void OnPipeNetworkUpdate()
+        {
+
+        }
+
+        public virtual bool CanSendSteam(PipeNetworkObject Other)
         {
             return true;
         }
 
-        public virtual bool CanReceiveSteam(SteamPoweredObject Other)
+        public virtual bool CanReceiveSteam(PipeNetworkObject Other)
         {
             return true;
         }
         
-        public SteamPoweredObject()
+        public PipeNetworkObject()
         {
             CollisionType = CollisionType.Static;
         }
 
-        public SteamPoweredObject(
+        public PipeNetworkObject(
             ComponentManager Manager) :
             base(Manager, "Steam Powered", Matrix.Identity, 
                 Vector3.One,
@@ -94,7 +98,7 @@ namespace DwarfCorp.SteamPipes
                     if (neighbor == null)
                         Drawer3D.DrawLine(Position, Position + Vector3.UnitY, Color.CornflowerBlue, 0.1f);
                     else
-                        Drawer3D.DrawLine(Position + new Vector3(0.0f, 0.5f, 0.0f), (neighbor as GameComponent).Position + new Vector3(0.0f, 0.5f, 0.0f), new Color(SteamPressure, 0.0f, 0.0f, 1.0f), 0.1f);
+                        Drawer3D.DrawLine(Position + new Vector3(0.0f, 0.5f, 0.0f), (neighbor as GameComponent).Position + new Vector3(0.0f, 0.5f, 0.0f), new Color(Pressure, 0.0f, 0.0f, 1.0f), 0.1f);
                 }
 
                 Drawer3D.DrawBox(GetBoundingBox(), Color.Red, 0.01f, false);
@@ -200,7 +204,7 @@ namespace DwarfCorp.SteamPipes
         {
             foreach (var neighbor in NeighborPipes.Select(connection => Manager.FindComponent(connection)))
             {
-                if (neighbor is SteamPoweredObject neighborPipe)
+                if (neighbor is PipeNetworkObject neighborPipe)
                     neighborPipe.DetachNeighbor(this.GlobalID);
             }
 
@@ -220,7 +224,7 @@ namespace DwarfCorp.SteamPipes
 
             foreach (var entity in Manager.World.EnumerateIntersectingRootObjects(this.BoundingBox.Expand(0.1f), CollisionType.Static))
             {
-                if (entity.GetComponent<SteamPoweredObject>().HasValue(out var neighborPipe))
+                if (entity.GetComponent<PipeNetworkObject>().HasValue(out var neighborPipe))
                 {
                     if (Object.ReferenceEquals(neighborPipe, this)) continue;
 

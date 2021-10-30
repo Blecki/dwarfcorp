@@ -9,6 +9,15 @@ namespace DwarfCorp.SteamPipes
 {
     public class SteamGenerator : CraftedBody
     {
+        public class SteamGeneratorPipeObject : PipeNetworkObject
+        {
+            public SteamGeneratorPipeObject(ComponentManager Manager) : base(Manager) { }
+
+            public override void OnPipeNetworkUpdate()
+            {
+                this.Pressure = 1.0f;
+            }
+        }
 
         [EntityFactory("Steam Generator")]
         private static GameComponent __factory6(ComponentManager Manager, Vector3 Position, Blackboard Data)
@@ -31,7 +40,7 @@ namespace DwarfCorp.SteamPipes
             Tags.Add("Steam");
             CollisionType = CollisionType.Static;
 
-            AddChild(new SteamPoweredObject(manager) { GeneratedSteam = 1.0f, Generator = true });
+            AddChild(new SteamGeneratorPipeObject(manager) {  });
 
             CreateCosmeticChildren(Manager);
         }
@@ -59,5 +68,6 @@ namespace DwarfCorp.SteamPipes
         {
             base.Update(Time, Chunks, Camera);
         }
+        
     }
 }

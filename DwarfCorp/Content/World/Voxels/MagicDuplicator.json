@@ -1,6 +1,6 @@
 {
   "ID": 0,
-  "Name": "Ocean",
+  "Name": "MagicDuplicator",
   "Top": "0, 10",
   "Bottom": "0, 10",
   "Sides": "0, 10",
@@ -11,12 +11,13 @@
     "15, 10",
     "15, 10"
   ],
-  "ReleasesResource": false,
+  "ReleasesResource": true,
   "ResourceToRelease": "Mana",
+  "BuildRequirements": [ "Mana", "Mana", "Mana" ],
   "StartingHealth": 1.0,
   "ProbabilityOfRelease": 0.0,
   "CanRamp": false,
-  "IsBuildable": false,
+  "IsBuildable": true,
   "ParticleType": "star_particle",
   "EmitsLight": true,
   "MinSpawnHeight": -999.0,
@@ -34,5 +35,6 @@
   "HitSoundResources": [
     "Audio\\pick"
   ],
-  "MinimapColor": "26,227,194,255"
+  "MinimapColor": "26,227,194,255",
+  "UpdateHook": "MAGICDUPLICATOR"
 }

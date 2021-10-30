@@ -172,21 +172,31 @@ namespace DwarfCorp
             {
                 foreach (var vox in refs.Where(vox => vox.IsValid))
                 {
-                    if (Command.Contains("Place/"))
+                    if (Command.StartsWith("Place/"))
                     {
                         string type = Command.Substring(6);
                         var v = vox;
                         if (Library.GetVoxelType(type).HasValue(out VoxelType vType))
                             v.Type = vType;
-                        v.QuickSetLiquid(LiquidType.None, 0);
+                        v.QuickSetLiquid(0, 0);
 
-                        if (type == "Magic")
+                        if (type == "Magic") // Todo: WTF?? If I keep this it needs to be implemented properly!!
                         {
                             World.ComponentManager.RootComponent.AddChild(
                                 new DestroyOnTimer(World.ComponentManager, World.ChunkManager, vox)
                                 {
                                     DestroyTimer = new Timer(5.0f + MathFunctions.Rand(-0.5f, 0.5f), true)
                                 });
+                        }
+                    }
+                    else if (Command.StartsWith("Liquid/"))
+                    {
+                        string type = Command.Substring(7);
+                        var v = vox;
+                        if (Library.GetLiquid(type).HasValue(out var lType))
+                        {
+                            v.LiquidType = lType.ID;
+                            v.LiquidLevel = WaterManager.maxWaterLevel;
                         }
                     }
                     else switch (Command)
@@ -196,7 +206,7 @@ namespace DwarfCorp
                                     var v = vox;
                                     World.OnVoxelDestroyed(vox);
                                     v.Type = Library.EmptyVoxelType;
-                                    v.QuickSetLiquid(LiquidType.None, 0);
+                                    v.QuickSetLiquid(0, 0);
                                 }
                                 break;
                             case "Nuke Column":
@@ -205,7 +215,7 @@ namespace DwarfCorp
                                     {
                                         var v = World.ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(vox.Coordinate.X, y, vox.Coordinate.Z));
                                         v.Type = Library.EmptyVoxelType;
-                                        v.QuickSetLiquid(LiquidType.None, 0);
+                                        v.QuickSetLiquid(0, 0);
                                     }
                                 }
                                 break;
@@ -214,24 +224,6 @@ namespace DwarfCorp
                                 {
                                     if (!selected.IsEmpty)
                                         VoxelHelpers.KillVoxel(World, selected);
-                                }
-                                break;
-                            case "Fill Water":
-                                {
-                                    if (vox.IsEmpty)
-                                    {
-                                        var v = vox;
-                                        v.QuickSetLiquid(LiquidType.Water, WaterManager.maxWaterLevel);
-                                    }
-                                }
-                                break;
-                            case "Fill Lava":
-                                {
-                                    if (vox.IsEmpty)
-                                    {
-                                        var v = vox;
-                                        v.QuickSetLiquid(LiquidType.Lava, WaterManager.maxWaterLevel);
-                                    }
                                 }
                                 break;
                             case "Fire":

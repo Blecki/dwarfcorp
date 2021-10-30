@@ -1,9 +1,9 @@
 {
   "ID": 0,
   "Name": "PitTrap",
-  "Top": "0, 10",
-  "Bottom": "0, 10",
-  "Sides": "0, 10",
+  "Top": "1, 6",
+  "Bottom": "1, 6",
+  "Sides": "1, 6",
   "Transitions": 1,
   "HasTransitionTextures": false,
   "TransitionTiles": [

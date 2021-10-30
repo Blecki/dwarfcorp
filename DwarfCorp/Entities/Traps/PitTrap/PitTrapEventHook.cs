@@ -17,7 +17,10 @@ namespace DwarfCorp
                 {
                     var politics = World.Overworld.GetPolitics(Event.Creature.Faction.ParentFaction, World.PlayerFaction.ParentFaction);
                     if (politics.GetCurrentRelationship() == Relationship.Hateful)
+                    {
+                        World.ParticleManager.Trigger("dwarf_puff", Event.Voxel.Center, Microsoft.Xna.Framework.Color.White, 90);
                         Event.Voxel.Type = Library.EmptyVoxelType;
+                    }
                 }
             }
         }

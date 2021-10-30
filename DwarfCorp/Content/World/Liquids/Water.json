@@ -1,0 +1,20 @@
+{
+  "Name": "Water",
+  "ID": 1,
+  "SplashName": "splat",
+  "SplashCount": 2,
+  "SplashSound": "Audio/river",
+  "SpreadRate": 0.1,
+  "TemperatureIncrease": -25.0,
+  "MinimapColor": "99,138,206,255",
+  "Opactiy": 0.8,
+  "Reflection": 1.0,
+  "WaveHeight": 0.1,
+  "WaveLength": 0.05,
+  "WindForce": 0.001,
+  "BumpTexturePath": "Terrain/water_normal",
+  "BaseTexturePath": "Terrain/cartoon_water",
+  "MinOpacity": 0.4,
+  "RippleColor": "200,200,200,0",
+  "FlatColor": "100,100,230,255"
+}

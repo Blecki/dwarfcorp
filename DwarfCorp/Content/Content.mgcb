@@ -6061,6 +6061,12 @@
 #begin World/GrassTypes/SnowHauntedGrass.json
 /copy:World/GrassTypes/SnowHauntedGrass.json
 
+#begin World/Liquids/Lava.json
+/copy:World/Liquids/Lava.json
+
+#begin World/Liquids/Water.json
+/copy:World/Liquids/Water.json
+
 #begin World/Loadouts/Crafter.json
 /copy:World/Loadouts/Crafter.json
 
@@ -6427,6 +6433,9 @@
 #begin World/ResourceItems/PineCone.json
 /copy:World/ResourceItems/PineCone.json
 
+#begin World/ResourceItems/Pipe.json
+/copy:World/ResourceItems/Pipe.json
+
 #begin World/ResourceItems/PotionOfCuring.json
 /copy:World/ResourceItems/PotionOfCuring.json
 
@@ -6447,6 +6456,9 @@
 
 #begin World/ResourceItems/PowerAnvil.json
 /copy:World/ResourceItems/PowerAnvil.json
+
+#begin World/ResourceItems/Pump.json
+/copy:World/ResourceItems/Pump.json
 
 #begin World/ResourceItems/Pumpkin.json
 /copy:World/ResourceItems/Pumpkin.json
@@ -6490,11 +6502,11 @@
 #begin World/ResourceItems/Slate.json
 /copy:World/ResourceItems/Slate.json
 
+#begin World/ResourceItems/Spigot.json
+/copy:World/ResourceItems/Spigot.json
+
 #begin World/ResourceItems/SteamGenerator.json
 /copy:World/ResourceItems/SteamGenerator.json
-
-#begin World/ResourceItems/SteamPipe.json
-/copy:World/ResourceItems/SteamPipe.json
 
 #begin World/ResourceItems/Stone.json
 /copy:World/ResourceItems/Stone.json
@@ -6873,6 +6885,12 @@
 
 #begin World/Voxels/Magic.json
 /copy:World/Voxels/Magic.json
+
+#begin World/Voxels/MagicDuplicator.json
+/copy:World/Voxels/MagicDuplicator.json
+
+#begin World/Voxels/MagicSpreader.json
+/copy:World/Voxels/MagicSpreader.json
 
 #begin World/Voxels/Mana.json
 /copy:World/Voxels/Mana.json

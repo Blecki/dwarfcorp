@@ -1,6 +1,6 @@
 {
   "ID": 0,
-  "Name": "Ocean",
+  "Name": "MagicSpreader",
   "Top": "0, 10",
   "Bottom": "0, 10",
   "Sides": "0, 10",
@@ -34,5 +34,6 @@
   "HitSoundResources": [
     "Audio\\pick"
   ],
-  "MinimapColor": "26,227,194,255"
+  "MinimapColor": "26,227,194,255",
+  "UpdateHook": "MAGICSPREADER"
 }

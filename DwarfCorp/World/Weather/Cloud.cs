@@ -221,7 +221,7 @@ namespace DwarfCorp
 
                 if (!above.IsValid || !above.IsEmpty) continue;
                 if (TypeofStorm == StormType.RainStorm &&
-                    (above.LiquidLevel < WaterManager.maxWaterLevel && (above.LiquidType == LiquidType.Water)))
+                    (above.LiquidLevel < WaterManager.maxWaterLevel && (above.LiquidType == 1))) // 1 = water
                 {
                     above.LiquidLevel = (byte)Math.Min(WaterManager.maxWaterLevel, above.LiquidLevel + WaterManager.rainFallAmount);
                     above.LiquidType = stormProperties.LiquidToCreate;

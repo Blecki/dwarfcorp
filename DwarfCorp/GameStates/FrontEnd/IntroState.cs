@@ -78,6 +78,7 @@ namespace DwarfCorp.GameStates
             Library.EnumerateSpecies();
             Library.EnumerateVoxelTypes();
             Library.EnumerateZoneTypes();
+            Library.EnumerateLiquids();
             LoadFinished = true;
         }
     }

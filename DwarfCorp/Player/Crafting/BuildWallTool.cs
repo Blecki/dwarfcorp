@@ -58,7 +58,7 @@ namespace DwarfCorp
                                     continue;
 
                                 var above = VoxelHelpers.GetVoxelAbove(r);
-                                if (above.IsValid && above.LiquidType != LiquidType.None)
+                                if (above.IsValid && above.LiquidType != 0)
                                     continue;
 
                                 if (World.PersistentData.Designations.GetVoxelDesignation(r, DesignationType.Put).HasValue(out var existingDesignation))

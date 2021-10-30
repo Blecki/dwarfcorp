@@ -7,37 +7,36 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp.SteamPipes
 {
-    public class CheckValve : CraftedBody
+    public class Pump : CraftedBody
     {
-        [EntityFactory("Check Valve")]
+        public class PumpPipeObject : PipeNetworkObject
+        {
+            public PumpPipeObject(ComponentManager Manager) : base(Manager) { }
+
+            public override void OnPipeNetworkUpdate()
+            {
+                var voxel = World.ChunkManager.CreateVoxelHandle(this.Coordinate);
+                if (voxel.IsValid && voxel.LiquidLevel > 0 && this.Pressure < 0.25f)
+                {
+                    this.Pressure = 1.0f;
+                    voxel.LiquidLevel -= 1;
+                }
+            }
+        }
+
+        [EntityFactory("Pump")]
         private static GameComponent __factory6(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new CheckValve(Manager, Position, Data.GetData<Resource>("Resource", null));
+            return new Pump(Manager, Position, Data.GetData<Resource>("Resource", null));
         }
 
-        public class CheckValveSteamObject : SteamPoweredObject
-        {
-            public override bool CanReceiveSteam(SteamPoweredObject Other)
-            {
-                return Orientation != OrientationHelper.DetectOrientationFromVector(Other.Position - Position);
-            }
-
-            public override bool CanSendSteam(SteamPoweredObject Other)
-            {
-                return Orientation == OrientationHelper.DetectOrientationFromVector(Other.Position - Position);
-            }
-
-            public CheckValveSteamObject(ComponentManager Manager) : base(Manager)
-            { }
-        }
-
-        public CheckValve()
+        public Pump()
         {
 
         }
 
-        public CheckValve(ComponentManager manager, Vector3 position, Resource Resource) :
-            base(manager, "Steam Pipe", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(manager, Resource))
+         public Pump(ComponentManager manager, Vector3 position, Resource Resource) :
+            base(manager, "Pump", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(manager, Resource))
         {
             var matrix = Matrix.CreateRotationY((float)Math.PI * 0.5f);
             matrix.Translation = position;
@@ -46,7 +45,7 @@ namespace DwarfCorp.SteamPipes
             Tags.Add("Steam");
             CollisionType = CollisionType.Static;
 
-            AddChild(new CheckValveSteamObject(manager));
+            AddChild(new PumpPipeObject(manager) {  });
 
             CreateCosmeticChildren(Manager);
         }
@@ -69,5 +68,11 @@ namespace DwarfCorp.SteamPipes
                     Die();
             })).SetFlag(Flag.ShouldSerialize, false);
         }
+
+        public override void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
+        {
+            base.Update(Time, Chunks, Camera);
+        }
+        
     }
 }

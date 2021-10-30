@@ -40,7 +40,7 @@ namespace DwarfCorp.Generation
                         var v = chunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(baseVoxel.Coordinate.X, y, baseVoxel.Coordinate.Z));
                         v.RawSetType(Library.EmptyVoxelType);
                         v.RawSetIsExplored();
-                        v.QuickSetLiquid(LiquidType.None, 0);
+                        v.QuickSetLiquid(0, 0);
                     }
 
                     if (stockpileYPosition < groundYPosition)
@@ -87,7 +87,7 @@ namespace DwarfCorp.Generation
                             v.RawSetType(Library.GetVoxelType("Scaffold"));
 
                         v.IsPlayerBuilt = true;
-                        v.QuickSetLiquid(LiquidType.None, 0);
+                        v.QuickSetLiquid(0, 0);
                         v.Sunlight = false;
 
                         if (hasLadder)

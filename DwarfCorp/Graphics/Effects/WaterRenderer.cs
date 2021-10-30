@@ -21,8 +21,6 @@ namespace DwarfCorp
         public Texture2D ReflectionMap = null;
         public Texture2D ShoreMap = null;
 
-        public Dictionary<LiquidType, LiquidAsset> LiquidAssets = new Dictionary<LiquidType, LiquidAsset>();
-
 
         public bool DrawTerrainReflected
         {
@@ -47,20 +45,13 @@ namespace DwarfCorp
             get { return DrawSkyReflected || DrawTerrainReflected || DrawComponentsReflected; }
         }
 
-
-        public void AddLiquidAsset(LiquidAsset asset)
-        {
-            LiquidAssets[asset.Type] = asset;
-        }
-
         public WaterRenderer(GraphicsDevice device)
         {
 
         }
-        
+
         public void CreateContent(GraphicsDevice device)
         {
-            LiquidAssets.Clear();
             PresentationParameters pp = device.PresentationParameters;
 
             int width = Math.Min(pp.BackBufferWidth / 4, 4096);
@@ -69,39 +60,11 @@ namespace DwarfCorp
             reflectionRenderTarget = new RenderTarget2D(device, width, height, false, pp.BackBufferFormat, pp.DepthStencilFormat);
             ShoreMap = AssetManager.GetContentTexture(ContentPaths.Gradients.shoregradient);
 
-            LiquidAsset waterAsset = new LiquidAsset
+            foreach (var liquid in Library.EnumerateLiquids())
             {
-                Type = LiquidType.Water,
-                Opactiy = 0.8f,
-                Reflection = 1.0f,
-                WaveHeight = 0.1f,
-                WaveLength = 0.05f,
-                WindForce = 0.001f,
-                BumpTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.water_normal),
-                BaseTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.cartoon_water),
-                MinOpacity = 0.4f,
-                RippleColor = new Vector4(0.6f, 0.6f, 0.6f, 0.0f),
-                FlatColor = new Vector4(0.3f, 0.3f, 0.9f, 1.0f)
-            };
-            AddLiquidAsset(waterAsset);
-
-
-            LiquidAsset lavaAsset = new LiquidAsset
-            {
-                Type = LiquidType.Lava,
-                Opactiy = 0.95f,
-                Reflection = 0.0f,
-                WaveHeight = 0.1f,
-                WaveLength = 0.05f,
-                WindForce = 0.001f,
-                MinOpacity = 0.8f,
-                BumpTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.water_normal),
-                BaseTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.lava),
-                RippleColor = new Vector4(0.5f, 0.4f, 0.04f, 0.0f),
-                FlatColor = new Vector4(0.9f, 0.7f, 0.2f, 1.0f)
-            };
-
-            AddLiquidAsset(lavaAsset);
+                liquid.BaseTexture = AssetManager.GetContentTexture(liquid.BaseTexturePath);
+                liquid.BumpTexture = AssetManager.GetContentTexture(liquid.BumpTexturePath);
+            }
         }
 
         public Plane CreatePlane(float height, Vector3 planeNormalDirection, Matrix currentViewMatrix, bool clipSide)
@@ -263,27 +226,27 @@ namespace DwarfCorp
                 effect.CameraPosition = camera.Position;
 
 
-                foreach (KeyValuePair<LiquidType, LiquidAsset> asset in LiquidAssets)
+                foreach (var liquid in Library.EnumerateLiquids())
                 {
 
-                    effect.WaveLength = asset.Value.WaveLength;
-                    effect.WaveHeight = asset.Value.WaveHeight;
+                    effect.WaveLength = liquid.WaveLength;
+                    effect.WaveHeight = liquid.WaveHeight;
                     if (DrawReflections)
                     {
-                        effect.WaterBumpMap = asset.Value.BumpTexture;
-                        effect.WaterReflectance = asset.Value.Reflection;
+                        effect.WaterBumpMap = liquid.BumpTexture;
+                        effect.WaterReflectance = liquid.Reflection;
                     }
-                    effect.MainTexture = asset.Value.BaseTexture;
-                    effect.WaterOpacity = asset.Value.Opactiy;
-                    effect.MinWaterOpacity = asset.Value.MinOpacity;
-                    effect.RippleColor = new Color(asset.Value.RippleColor);
+                    effect.MainTexture = liquid.BaseTexture;
+                    effect.WaterOpacity = liquid.Opactiy;
+                    effect.MinWaterOpacity = liquid.MinOpacity;
+                    effect.RippleColor = new Color(liquid.RippleColor);
 
 
                     foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                     {
                         pass.Apply();
                         foreach (var chunk in chunks.World.Renderer.ChunkRenderer.RenderList)
-                            chunk.Liquids[asset.Key].Render(device);
+                            chunk.Liquids[liquid.ID].Render(device);
                     }
                 }
                 device.BlendState = origState;

@@ -33,10 +33,8 @@ namespace DwarfCorp
             foreach (var splash in Splashes)
             {
                 Chunks.World.ParticleManager.Trigger(splash.name, splash.position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, splash.numSplashes);
-                if (splash.entity != null)
-                {
+                if (!String.IsNullOrEmpty(splash.entity))
                     EntityFactory.CreateEntity<GameComponent>(splash.entity, splash.position + Vector3.One * 0.5f);
-                }
                 if (splashNoiseLimiter[splash.name].HasTriggered)
                     SoundManager.PlaySound(splash.sound, splash.position + new Vector3(0.5f, 0.5f, 0.5f), true);
             }

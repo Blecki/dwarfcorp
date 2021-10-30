@@ -1,14 +1,15 @@
 {
-  "TypeName": "Steam Pipe",
+  "TypeName": "Pipe",
   "MoneyValue": 15.0,
-  "Description": "Carries steam.",
-  "Category": "Steam",
-  "Disable": true,
+  "Description": "Carries liquids.",
+  "Category": "Pipes",
+  "Disable": false,
   "Tags": [
-    "Steam"
+    "Steam",
+    "Pipe"
   ],
   "FoodContent": 0.0,
-  "DisplayName": "Steam Pipe",
+  "DisplayName": "Pipe",
   "PlantToGenerate": null,
   "Tint": [
     255,
@@ -19,7 +20,7 @@
   "AleName": null,
 
   "Placement_Placeable": true,
-  "Placement_EntityToCreate": "Steam Pipe",
+  "Placement_EntityToCreate": "Pipe",
   "Placement_AllowRotation": true,
   "Placement_PlaceTime": 5.0,
   "Placement_SpawnOffset": "0, 0.5, 0",

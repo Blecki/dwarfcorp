@@ -24,7 +24,7 @@ namespace DwarfCorp
             public float RainSpeed { get; set; }
             public float RainRandom { get; set; }
             public bool CreatesLiquid { get; set; }
-            public LiquidType LiquidToCreate { get; set; }
+            public byte LiquidToCreate { get; set; }
         }
 
         public static Dictionary<StormType, StormProperties> Properties { get; set; }
@@ -47,7 +47,7 @@ namespace DwarfCorp
                             HitEffect = "splat",//particles.Effects["splat"],
                             RainSpeed = 30,
                             CreatesLiquid = true,
-                            LiquidToCreate = LiquidType.Water
+                            LiquidToCreate = 1
                         }
                     },
                     {

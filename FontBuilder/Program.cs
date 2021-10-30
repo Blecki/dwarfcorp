@@ -76,11 +76,6 @@ namespace FontBuilder
 
                 foreach (var c in characters)
                 {
-                    if (c == 'W')
-                    {
-                        var x = 5;
-                    }
-
                     if (baseFontGlyphs.ContainsKey(c)) continue;
 
                     try

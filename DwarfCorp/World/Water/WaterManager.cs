@@ -15,13 +15,9 @@ namespace DwarfCorp
         private ChunkManager Chunks { get; set; }
         public byte EvaporationLevel { get; set; }
 
-        public static byte maxWaterLevel = 8;
-        public static byte threeQuarterWaterLevel = 6;
-        public static byte oneHalfWaterLevel = 4;
-        public static byte oneQuarterWaterLevel = 2;
+        public static byte maxWaterLevel = 63;
         public static byte rainFallAmount = 1;
-        public static byte inWaterThreshold = 5;
-        public static byte waterMoveThreshold = 1;
+        public static byte inWaterThreshold = 32;
 
         private int[][] SlicePermutations;
         private int[][] NeighborPermutations = new int[][]
@@ -75,67 +71,41 @@ namespace DwarfCorp
             }
         }
 
-        public void HandleLiquidInteraction(VoxelHandle Vox, LiquidType From, LiquidType To)
+        public void HandleLiquidInteraction(VoxelHandle Vox, byte From, byte To)
         {
-            if ((From == LiquidType.Lava && To == LiquidType.Water)
-                || (From == LiquidType.Water && To == LiquidType.Lava))
+            if (From != 0 && To != 0 && From != To)
             {
                 if (Library.GetVoxelType("Stone").HasValue(out VoxelType vType))
                     Vox.Type = vType;
-                Vox.QuickSetLiquid(LiquidType.None, 0);
+                Vox.QuickSetLiquid(0, 0);
             }            
         }
 
-        public void CreateSplash(Vector3 pos, LiquidType liquid)
+        public void CreateSplash(Vector3 pos, int liquid)
         {
             if (MathFunctions.RandEvent(0.25f)) return;
 
-            LiquidSplash splash;
-
-            switch(liquid)
+            if (Library.GetLiquid(liquid).HasValue(out var liquidType))
             {
-                case LiquidType.Water:
+                var splash = new LiquidSplash
                 {
-                    splash = new LiquidSplash
-                    {
-                        name = "splat",
-                        numSplashes = 2,
-                        position = pos,
-                        sound = ContentPaths.Audio.river
-                    };
-                }
-                    break;
-                case LiquidType.Lava:
-                {
-                    splash = new LiquidSplash
-                    {
-                        name = "flame",
-                        numSplashes = 5,
-                        position = pos,
-                        sound = ContentPaths.Audio.Oscar.sfx_env_lava_spread,
-                        entity =  "Fire"
-                    };
-                }
-                    break;
-                default:
-                    throw new InvalidOperationException();
-            }
+                    name = liquidType.SplashName,
+                    numSplashes = liquidType.SplashCount,
+                    position = pos,
+                    sound = liquidType.SplashSound,
+                    entity = liquidType.SplashEntity
+                };
 
-            SplashLock.WaitOne();
-            Splashes.AddFirst(splash);
-            SplashLock.ReleaseMutex();
+                SplashLock.WaitOne();
+                Splashes.AddFirst(splash);
+                SplashLock.ReleaseMutex();
+            }
         }
 
-        public float GetSpreadRate(LiquidType type)
+        public float GetSpreadRate(int type)
         {
-            switch (type)
-            {
-                case LiquidType.Lava:
-                    return 0.1f + MathFunctions.Rand() * 0.1f;
-                case LiquidType.Water:
-                    return 0.5f;
-            }
-
+            if (Library.GetLiquid(type).HasValue(out var liquidType))
+                return liquidType.SpreadRate;
             return 1.0f;
         }
 
@@ -147,7 +117,7 @@ namespace DwarfCorp
             foreach(var chunk in Chunks.GetChunkEnumerator())
             {
                 DiscreteUpdate(Chunks, chunk);
-                chunk.RebuildLiquids();
+                chunk.RebuildLiquidGeometry();
             }
         }
 
@@ -169,17 +139,21 @@ namespace DwarfCorp
                     if (currentVoxel.TypeID != 0)
                         continue;
 
-                    if (currentVoxel.LiquidType == LiquidType.None || currentVoxel.LiquidLevel < 1)
+                    if (currentVoxel.LiquidType == 0 || currentVoxel.LiquidLevel < 1)
+                        continue;
+
+                    LiquidType_ currentVoxelLiquidType;
+                    if (!Library.GetLiquid(currentVoxel.LiquidType).HasValue(out currentVoxelLiquidType))
                         continue;
 
                     // Evaporate.
                     if (currentVoxel.LiquidLevel <= EvaporationLevel && MathFunctions.RandEvent(0.01f))
                     {
-                        if (currentVoxel.LiquidType == LiquidType.Lava && Library.GetVoxelType("Stone").HasValue(out VoxelType stone))
+                        if (currentVoxelLiquidType.EvaporateToStone && Library.GetVoxelType("Stone").HasValue(out VoxelType stone))
                             currentVoxel.Type = stone;
 
                         NeedsMinimapUpdate = true;
-                        currentVoxel.QuickSetLiquid(LiquidType.None, 0);
+                        currentVoxel.QuickSetLiquid(0, 0);
                         continue;
                     }
 
@@ -190,12 +164,12 @@ namespace DwarfCorp
                         // Fall into the voxel below.
 
                         // Special case: No liquid below, just drop down.
-                        if (voxBelow.LiquidType == LiquidType.None)
+                        if (voxBelow.LiquidType == 0)
                         {
                             NeedsMinimapUpdate = true;
                             CreateSplash(currentVoxel.Coordinate.ToVector3(), currentVoxel.LiquidType);
                             voxBelow.QuickSetLiquid(currentVoxel.LiquidType, currentVoxel.LiquidLevel);
-                            currentVoxel.QuickSetLiquid(LiquidType.None, 0);
+                            currentVoxel.QuickSetLiquid(0, 0);
                             continue;
                         }
 
@@ -208,7 +182,7 @@ namespace DwarfCorp
                             NeedsMinimapUpdate = true;
                             CreateSplash(currentVoxel.Coordinate.ToVector3(), aboveType);
                             voxBelow.LiquidLevel += currentVoxel.LiquidLevel;
-                            currentVoxel.QuickSetLiquid(LiquidType.None, 0);
+                            currentVoxel.QuickSetLiquid(0, 0);
                             HandleLiquidInteraction(voxBelow, aboveType, belowType);
                             continue;
                         }
@@ -223,7 +197,7 @@ namespace DwarfCorp
                             continue;
                         }
                     }
-                    else if (voxBelow.IsValid && currentVoxel.LiquidType == LiquidType.Lava && !voxBelow.IsEmpty && voxBelow.GrassType > 0)
+                    else if (voxBelow.IsValid && currentVoxelLiquidType.ClearsGrass && !voxBelow.IsEmpty && voxBelow.GrassType > 0)
                     {
                         voxBelow.GrassType = 0;
                     }
@@ -249,16 +223,14 @@ namespace DwarfCorp
                                     amountToMove = maxWaterLevel - neighborVoxel.LiquidLevel;
 
                                 if (amountToMove > 2)
-                                {
                                     CreateSplash(neighborVoxel.Coordinate.ToVector3(), currentVoxel.LiquidType);
-                                }
 
                                 var newWater = currentVoxel.LiquidLevel - amountToMove;
 
                                 var sourceType = currentVoxel.LiquidType;
                                 var destType = neighborVoxel.LiquidType;
-                                currentVoxel.QuickSetLiquid(newWater == 0 ? LiquidType.None : sourceType, (byte)newWater);
-                                neighborVoxel.QuickSetLiquid(destType == LiquidType.None ? sourceType : destType, (byte)(neighborVoxel.LiquidLevel + amountToMove));
+                                currentVoxel.QuickSetLiquid(newWater == 0 ? (byte)0 : sourceType, (byte)newWater);
+                                neighborVoxel.QuickSetLiquid(destType == 0 ? sourceType : destType, (byte)(neighborVoxel.LiquidLevel + amountToMove));
                                 HandleLiquidInteraction(neighborVoxel, sourceType, destType);
                                 break; 
                             }

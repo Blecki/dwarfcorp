@@ -409,12 +409,22 @@ namespace DwarfCorp
                     }
 
                     // If no object blocked us, we can move freely as normal.
-                    if (!blockedByObject && n.LiquidType != LiquidType.Lava)
+                    if (!blockedByObject)
                     {
-                        var newAction = v;
-                        newAction.SourceState = state;
-                        newAction.DestinationVoxel = n;
-                        yield return newAction;
+                        if (n.LiquidType == 0)
+                        {
+                            var newAction = v;
+                            newAction.SourceState = state;
+                            newAction.DestinationVoxel = n;
+                            yield return newAction;
+                        }
+                        else if (Library.GetLiquid(n.LiquidType).HasValue(out var liquid) && !liquid.CausesDamage)
+                        {
+                            var newAction = v;
+                            newAction.SourceState = state;
+                            newAction.DestinationVoxel = n;
+                            yield return newAction;
+                        }
                     }
                 }
             }

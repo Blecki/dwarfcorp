@@ -179,30 +179,33 @@ namespace DwarfCorp
 
         public void Trigger(int num, Vector3 origin, Color tint)
         {
-            for(int i = 0; i < num; i++)
+            lock (Particles)
             {
-                if(Particles.Count < Data.MaxParticles)
+                for (int i = 0; i < num; i++)
                 {
-                    bool sampleFound = false;
-
-                    Vector3 sample = new Vector3(99999, 99999, 9999);
-
-                    while(!sampleFound)
+                    if (Particles.Count < Data.MaxParticles)
                     {
-                        sample = RandVec(Data.EmissionRadius);
+                        bool sampleFound = false;
 
-                        if(sample.Length() < Data.EmissionRadius)
+                        Vector3 sample = new Vector3(99999, 99999, 9999);
+
+                        while (!sampleFound)
                         {
-                            sampleFound = true;
+                            sample = RandVec(Data.EmissionRadius);
+
+                            if (sample.Length() < Data.EmissionRadius)
+                            {
+                                sampleFound = true;
+                            }
                         }
+
+
+                        Vector3 position = sample + origin;
+                        Vector3 velocity = (sample);
+                        velocity.Normalize();
+                        velocity *= Data.EmissionSpeed;
+                        CreateParticle(position, velocity, tint);
                     }
-
-
-                    Vector3 position = sample + origin;
-                    Vector3 velocity = (sample);
-                    velocity.Normalize();
-                    velocity *= Data.EmissionSpeed;
-                    CreateParticle(position, velocity, tint);
                 }
             }
         }
@@ -249,7 +252,10 @@ namespace DwarfCorp
             };
             toAdd.InstanceData = new InstanceData(Matrix.Identity, toAdd.LightRamp, true);
 
-            Particles.Add(toAdd);
+            lock (Particles)
+            {
+                Particles.Add(toAdd);
+            }
 
             if (toAdd.InstanceData != null)
             {
@@ -283,144 +289,146 @@ namespace DwarfCorp
 
             bool particlePhysics = GameSettings.Current.ParticlePhysics;
 
-            foreach (Particle p in Particles)
+            lock (Particles)
             {
-                float vel = p.Velocity.LengthSquared();
-                if (Data.EmitsLight && p.Scale > 0.1f)
+                foreach (var p in Particles)
                 {
-                    DynamicLight.TempLights.Add(new DynamicLight(10.0f, 255.0f, false) { Position = p.Position });
-                }
-                p.Position += p.Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-                if (Data.RotatesWithVelocity)
-                {
-                    Vector3 cameraVel = camera.Project(p.Velocity + camera.Position);
-                    float projectionX = cameraVel.X;
-                    float projectionY = cameraVel.Y;
-
-                    p.Angle = (float)Math.Atan2(projectionY, projectionX);
-                }
-                else
-                {
-                    p.Angle += (float)(p.AngularVelocity * gameTime.ElapsedGameTime.TotalSeconds);
-                }
-                if (!Data.Sleeps || vel > 0.01f)
-                    p.Velocity += Data.ConstantAccel * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                p.Velocity *= Data.LinearDamping;
-                p.AngularVelocity *= Data.AngularDamping;
-
-
-                if (!Data.UseManualControl)
-                {
-                    p.LifeRemaining -= Data.ParticleDecay * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                }
-                else if (p.TimeAlive > 60)
-                {
-                    p.LifeRemaining = 0;
-                }
-
-                p.Scale += Data.GrowthSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-                p.Scale = Math.Max(p.Scale, 0.0f);
-
-                var v = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(p.Position));
-
-                if (Data.HasLighting)
-                {
-                    if (v.IsValid)
-                        p.LightRamp = new Color(v.Sunlight ? 255 : 0, 255, 0);
-                }
-                else
-                {
-                    p.LightRamp = new Color(255, 255, 0);
-                }
-
-                if (Data.CollidesWorld && particlePhysics && vel > 0.2f)
-                {
-                    if (v.IsValid && !v.IsEmpty)
+                    float vel = p.Velocity.LengthSquared();
+                    if (Data.EmitsLight && p.Scale > 0.1f)
                     {
-                        BoundingBox b = new BoundingBox(p.Position - Vector3.One * p.Scale * 0.5f, p.Position + Vector3.One * p.Scale * 0.5f);
-                        BoundingBox vBox = v.GetBoundingBox();
-                        var contact = new Collision.Contact();
-                        if (Collision.TestStaticAABBAABB(b, vBox, ref contact))
-                        {
-                            p.Position += contact.NEnter * contact.Penetration;
-                            Vector3 newVelocity = Vector3.Reflect(p.Velocity, -contact.NEnter);
-                            p.Velocity = newVelocity * Data.Damping;
-                            p.AngularVelocity *= 0.5f;
-                            if (Data.Sleeps)
-                            {
-                                p.Velocity = Vector3.Zero;
-                                p.AngularVelocity = 0.0f;
-                                vel = 0.0f;
-                            }
-                            if (!String.IsNullOrEmpty(Data.SpatterType))
-                            {
-                                var above = VoxelHelpers.GetVoxelAbove(v);
-                                if (!above.IsValid || above.IsEmpty)
-                                {
-                                    float x = MathFunctions.Clamp(p.Position.X, vBox.Min.X + 0.1f, vBox.Max.X - 0.1f);
-                                    float z = MathFunctions.Clamp(p.Position.Z, vBox.Min.Z + 0.1f, vBox.Max.Z - 0.1f);
-                                    manager.Create(Data.SpatterType,
-                                        VertexNoise.Warp(new Vector3(x, v.RampType == RampType.None ? v.WorldPosition.Y + 1.02f : v.WorldPosition.Y + 0.6f, z)), Vector3.Zero, Color.White, Vector3.Up);
-                                }
-                                else
-                                {
-                                    manager.Create(Data.SpatterType, p.Position - contact.NEnter * contact.Penetration * 0.95f, Vector3.Zero, Color.White, contact.NEnter);
-                                }
-                                p.LifeRemaining = -1.0f;
-                            }
+                        DynamicLight.TempLights.Add(new DynamicLight(10.0f, 255.0f, false) { Position = p.Position });
+                    }
+                    p.Position += p.Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+                    if (Data.RotatesWithVelocity)
+                    {
+                        Vector3 cameraVel = camera.Project(p.Velocity + camera.Position);
+                        float projectionX = cameraVel.X;
+                        float projectionY = cameraVel.Y;
+
+                        p.Angle = (float)Math.Atan2(projectionY, projectionX);
+                    }
+                    else
+                    {
+                        p.Angle += (float)(p.AngularVelocity * gameTime.ElapsedGameTime.TotalSeconds);
+                    }
+                    if (!Data.Sleeps || vel > 0.01f)
+                        p.Velocity += Data.ConstantAccel * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    p.Velocity *= Data.LinearDamping;
+                    p.AngularVelocity *= Data.AngularDamping;
+
+
+                    if (!Data.UseManualControl)
+                    {
+                        p.LifeRemaining -= Data.ParticleDecay * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    }
+                    else if (p.TimeAlive > 60)
+                    {
+                        p.LifeRemaining = 0;
+                    }
+
+                    p.Scale += Data.GrowthSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                    p.Scale = Math.Max(p.Scale, 0.0f);
+
+                    var v = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(p.Position));
+
+                    if (Data.HasLighting)
+                    {
+                        if (v.IsValid)
+                            p.LightRamp = new Color(v.Sunlight ? 255 : 0, 255, 0);
+                    }
+                    else
+                    {
+                        p.LightRamp = new Color(255, 255, 0);
+                    }
+
+                    if (Data.CollidesWorld && particlePhysics && vel > 0.2f)
+                    {
+                        if (v.IsValid && !v.IsEmpty)
+                        {
+                            BoundingBox b = new BoundingBox(p.Position - Vector3.One * p.Scale * 0.5f, p.Position + Vector3.One * p.Scale * 0.5f);
+                            BoundingBox vBox = v.GetBoundingBox();
+                            var contact = new Collision.Contact();
+                            if (Collision.TestStaticAABBAABB(b, vBox, ref contact))
+                            {
+                                p.Position += contact.NEnter * contact.Penetration;
+                                Vector3 newVelocity = Vector3.Reflect(p.Velocity, -contact.NEnter);
+                                p.Velocity = newVelocity * Data.Damping;
+                                p.AngularVelocity *= 0.5f;
+                                if (Data.Sleeps)
+                                {
+                                    p.Velocity = Vector3.Zero;
+                                    p.AngularVelocity = 0.0f;
+                                    vel = 0.0f;
+                                }
+                                if (!String.IsNullOrEmpty(Data.SpatterType))
+                                {
+                                    var above = VoxelHelpers.GetVoxelAbove(v);
+                                    if (!above.IsValid || above.IsEmpty)
+                                    {
+                                        float x = MathFunctions.Clamp(p.Position.X, vBox.Min.X + 0.1f, vBox.Max.X - 0.1f);
+                                        float z = MathFunctions.Clamp(p.Position.Z, vBox.Min.Z + 0.1f, vBox.Max.Z - 0.1f);
+                                        manager.Create(Data.SpatterType,
+                                            VertexNoise.Warp(new Vector3(x, v.RampType == RampType.None ? v.WorldPosition.Y + 1.02f : v.WorldPosition.Y + 0.6f, z)), Vector3.Zero, Color.White, Vector3.Up);
+                                    }
+                                    else
+                                    {
+                                        manager.Create(Data.SpatterType, p.Position - contact.NEnter * contact.Penetration * 0.95f, Vector3.Zero, Color.White, contact.NEnter);
+                                    }
+                                    p.LifeRemaining = -1.0f;
+                                }
+
+                            }
                         }
                     }
-                }
 
-                if (p.LifeRemaining <= 0)
-                {
+                    if (p.LifeRemaining <= 0)
+                    {
+                        if (p.InstanceData != null)
+                        {
+                            p.InstanceData.ShouldDraw = false;
+                            p.InstanceData.Transform = Matrix.CreateTranslation(camera.Position + new Vector3(-1000, -1000, -1000));
+                            Sprites[p.Frame].Remove(p.InstanceData);
+                        }
+
+                        toRemove.Add(p);
+                    }
+
+                    else
                     if (p.InstanceData != null)
                     {
-                        p.InstanceData.ShouldDraw = false;
-                        p.InstanceData.Transform = Matrix.CreateTranslation(camera.Position + new Vector3(-1000, -1000, -1000));
-                        Sprites[p.Frame].Remove(p.InstanceData);
+                        p.TimeAlive += (float)gameTime.ElapsedGameTime.TotalSeconds + MathFunctions.Rand() * 0.01f;
+                        int prevFrame = p.Frame;
+                        int newFrame = AnimPlayer.GetFrame(p.TimeAlive);
+                        if (vel < 0.2f && Data.Sleeps)
+                        {
+                            newFrame = prevFrame;
+                        }
+                        if (newFrame != prevFrame)
+                        {
+                            p.Frame = newFrame;
+                            if (Sprites.Count > 0)
+                            {
+                                Sprites[prevFrame].Remove(p.InstanceData);
+                                Sprites[newFrame].Add(p.InstanceData);
+                            }
+                            if (/*!Data.Animation.Loops && */p.Frame == Data.Animation.Frames.Count - 1)
+                            {
+                                p.LifeRemaining *= 0.1f;
+                            }
+                        }
+                        p.InstanceData.ShouldDraw = true;
+                        p.InstanceData.Transform = MatrixFromParticle(Data, p);
+                        p.InstanceData.LightRamp = p.LightRamp;
                     }
-
-                    toRemove.Add(p);
                 }
 
-                else
-                if (p.InstanceData != null)
+                foreach (Particle p in toRemove)
                 {
-                    p.TimeAlive += (float)gameTime.ElapsedGameTime.TotalSeconds + MathFunctions.Rand() * 0.01f;
-                    int prevFrame = p.Frame;
-                    int newFrame = AnimPlayer.GetFrame(p.TimeAlive);
-                    if (vel < 0.2f && Data.Sleeps)
-                    {
-                        newFrame = prevFrame;
-                    }
-                    if (newFrame != prevFrame)
-                    {
-                        p.Frame = newFrame;
-                        if (Sprites.Count > 0)
-                        {
-                            Sprites[prevFrame].Remove(p.InstanceData);
-                            Sprites[newFrame].Add(p.InstanceData);
-                        }
-                        if (/*!Data.Animation.Loops && */p.Frame == Data.Animation.Frames.Count - 1)
-                        {
-                            p.LifeRemaining *= 0.1f;
-                        }
-                    }
-                    p.InstanceData.ShouldDraw = true;
-                    p.InstanceData.Transform = MatrixFromParticle(Data, p);
-                    p.InstanceData.LightRamp = p.LightRamp;
+                    Particles.Remove(p);
                 }
             }
-
-            foreach(Particle p in toRemove)
-            {
-                Particles.Remove(p);
-            }
-
 
             foreach (var sprites in Sprites)
             {

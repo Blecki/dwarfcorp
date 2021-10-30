@@ -75,7 +75,7 @@ namespace DwarfCorp
                         {
                             if (neighbor.IsValid && neighbor.Chunk != null)
                             {
-                                if (neighbor.LiquidType == LiquidType.Lava)
+                                if (neighbor.LiquidType != 0 && Library.GetLiquid(neighbor.LiquidType).HasValue(out var liquid) && liquid.CausesDamage == true)
                                 {
                                     foundLava = true;
                                 }

@@ -118,11 +118,9 @@ namespace DwarfCorp
                     }
                 }
 
-                if (voxel.LiquidLevel <= 0) continue;
-                if (voxel.LiquidType == LiquidType.Lava)
-                    Heat += 100.0f;
-                else if (voxel.LiquidType == LiquidType.Water)
-                    Heat = Heat * 0.25f;
+                if (voxel.LiquidLevel <= 0 || voxel.LiquidType == 0) continue;
+                if (Library.GetLiquid(voxel.LiquidType).HasValue(out var liquid))
+                    Heat += liquid.TemperatureIncrease;
             }
         }
 
