@@ -98,6 +98,11 @@ namespace DwarfCorp
             return new VoxelHandle(this, Coordinate);
         }
 
+        public LiquidCellHandle CreateLiquidCellHandle(GlobalLiquidCoordinate Coordinate)
+        {
+            return new LiquidCellHandle(this, Coordinate);
+        }
+
         public ChunkManager(ContentManager Content, WorldManager World)
         {
             this.Content = Content;

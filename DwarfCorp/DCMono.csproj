@@ -773,6 +773,10 @@
     <Compile Include="Graphics\Primitives\ExtendedVertex.cs" />
     <Compile Include="Graphics\Primitives\GeometricPrimitive.cs" />
     <Compile Include="Graphics\Primitives\LiquidPrimitive.cs" />
+    <Compile Include="World\Water\GetLiquidCellAbove.cs" />
+    <Compile Include="World\Water\EnumerateCellsInVoxel.cs" />
+    <Compile Include="World\Water\GetLiquidCellBelow.cs" />
+    <Compile Include="World\Water\LiquidCoordinate.cs" />
     <Compile Include="World\Voxels\DecalType.cs" />
     <Compile Include="World\Voxels\DecalLibrary.cs" />
     <Compile Include="World\Voxels\VoxelHelpers\FindFirstVoxelBelowIncludingWater.cs" />
@@ -833,6 +837,7 @@
     <Compile Include="World\Voxels\VoxelData.cs" />
     <Compile Include="World\Voxels\VoxelHelpers\FindFirstVoxelBelow.cs" />
     <Compile Include="World\Voxels\VoxelHelpers\FindFirstVoxelAbove.cs" />
+    <Compile Include="World\Water\LiquidCellNeighbors.cs" />
     <Compile Include="World\Water\Splasher.cs" />
     <Compile Include="World\Voxels\GrassLibrary.cs" />
     <Compile Include="World\Voxels\ChunkUpdate.cs" />
@@ -950,6 +955,7 @@
     <Compile Include="World\Voxels\VoxelChunk.cs" />
     <Compile Include="World\Voxels\VoxelType.cs" />
     <Compile Include="World\Magic\MagicSpreaderVoxelHook.cs" />
+    <Compile Include="World\Water\LiquidCellHandle.cs" />
     <Compile Include="World\Water\WaterManager.cs" />
     <Compile Include="Graphics\Effects\WaterRenderer.cs" />
     <Compile Include="World\DetailMoteData.cs" />

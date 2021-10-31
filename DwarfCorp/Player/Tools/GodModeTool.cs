@@ -194,10 +194,12 @@ namespace DwarfCorp
                         string type = Command.Substring(7);
                         var v = vox;
                         if (Library.GetLiquid(type).HasValue(out var lType))
-                        {
-                            v.LiquidType = lType.ID;
-                            v.LiquidLevel = WaterManager.maxWaterLevel;
-                        }
+                            foreach (var liquidCell in LiquidCellHelpers.EnumerateCellsInVoxel(vox))
+                            {
+                                var l = liquidCell;
+                                l.LiquidType = lType.ID;
+                                l.LiquidLevel = WaterManager.maxWaterLevel;
+                            }
                     }
                     else switch (Command)
                         {

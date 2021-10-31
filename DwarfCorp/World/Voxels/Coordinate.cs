@@ -134,6 +134,11 @@ namespace DwarfCorp
             return String.Format("{0} {1} {2}", X, Y, Z);
         }
 
+        public GlobalLiquidCoordinate ToGlobalLiquidCoordinate()
+        {
+            return new GlobalLiquidCoordinate(X * 2, Y * 2, Z * 2);
+        }
+
         public static GlobalVoxelCoordinate Parse(String In)
         {
             var parts = In.Split(' ');
@@ -242,6 +247,11 @@ namespace DwarfCorp
             return new GlobalVoxelCoordinate(A, B);
         }
 
+        public static GlobalLiquidCoordinate operator + (GlobalChunkCoordinate A, LocalLiquidCoordinate B)
+        {
+            return new GlobalLiquidCoordinate(A, B);
+        }
+
         public static bool operator ==(GlobalChunkCoordinate A, GlobalChunkCoordinate B)
         {
             return A.X == B.X && A.Y == B.Y && A.Z == B.Z;
@@ -318,5 +328,11 @@ namespace DwarfCorp
         {
             return String.Format("{0} {1} {2}", X, Y, Z);
         }
+
+        public LocalLiquidCoordinate ToLocalLiquidCoordinate()
+        {
+            return new LocalLiquidCoordinate(X * 2, Y * 2, Z * 2);
+        }
+
     }
 }

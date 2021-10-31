@@ -19,7 +19,7 @@ namespace DwarfCorp
         private static BoxPrimitive primitive = null;
 
         // Easy successor lookup.
-        private static GlobalVoxelOffset[] faceDeltas = new GlobalVoxelOffset[6];
+        private static GlobalLiquidOffset[] faceDeltas = new GlobalLiquidOffset[6];
 
         // A flag to avoid reinitializing the static values.
         private static bool StaticsInitialized = false;
@@ -31,11 +31,11 @@ namespace DwarfCorp
             public LiquidRebuildCache()
             {
                 int euclidianNeighborCount = 27;
-                neighbors = new List<VoxelHandle>(euclidianNeighborCount);
+                neighbors = new List<LiquidCellHandle>(euclidianNeighborCount);
                 validNeighbors = new bool[euclidianNeighborCount];
                 retrievedNeighbors = new bool[euclidianNeighborCount];
 
-                for (int i = 0; i < 27; i++) neighbors.Add(VoxelHandle.InvalidHandle);
+                for (int i = 0; i < 27; i++) neighbors.Add(LiquidCellHandle.InvalidHandle);
 
                 int vertexCount = (int)VoxelVertex.Count;
                 vertexCalculated = new bool[vertexCount];
@@ -57,7 +57,7 @@ namespace DwarfCorp
             internal bool[] drawFace = new bool[6];
 
             // A list of unattached voxels we can change to the neighbors of the voxel who's faces we are drawing.
-            internal List<VoxelHandle> neighbors;
+            internal List<LiquidCellHandle> neighbors;
 
             // A list of which voxels are valid in the neighbors list.  We can't just set a neighbor to null as we reuse them so we use this.
             // Does not need to be cleared between sets of face drawing as retrievedNeighbors stops us from using a stale value.
@@ -95,12 +95,12 @@ namespace DwarfCorp
             if (!StaticsInitialized)
             { 
 
-                faceDeltas[(int)BoxFace.Back] = new GlobalVoxelOffset(0, 0, 1);
-                faceDeltas[(int)BoxFace.Front] = new GlobalVoxelOffset(0, 0, -1);
-                faceDeltas[(int)BoxFace.Left] = new GlobalVoxelOffset(-1, 0, 0);
-                faceDeltas[(int)BoxFace.Right] = new GlobalVoxelOffset(1, 0, 0);
-                faceDeltas[(int)BoxFace.Top] = new GlobalVoxelOffset(0, 1, 0);
-                faceDeltas[(int)BoxFace.Bottom] = new GlobalVoxelOffset(0, -1, 0);
+                faceDeltas[(int)BoxFace.Back] = new GlobalLiquidOffset(0, 0, 1);
+                faceDeltas[(int)BoxFace.Front] = new GlobalLiquidOffset(0, 0, -1);
+                faceDeltas[(int)BoxFace.Left] = new GlobalLiquidOffset(-1, 0, 0);
+                faceDeltas[(int)BoxFace.Right] = new GlobalLiquidOffset(1, 0, 0);
+                faceDeltas[(int)BoxFace.Top] = new GlobalLiquidOffset(0, 1, 0);
+                faceDeltas[(int)BoxFace.Bottom] = new GlobalLiquidOffset(0, -1, 0);
 
                 caches = new List<LiquidRebuildCache>();
 
@@ -165,19 +165,22 @@ namespace DwarfCorp
 
                 int totalFaces = 6;
 
-                for (int globalY = chunk.Origin.Y; globalY < Math.Min(chunk.Manager.World.Renderer.PersistentSettings.MaxViewingLevel + 1, chunk.Origin.Y + VoxelConstants.ChunkSizeY); globalY++)
+                var chunkLiquidOrigin = new GlobalLiquidCoordinate(chunk.ID, new LocalLiquidCoordinate(0, 0, 0));
+
+                for (int globalY = chunkLiquidOrigin.Y; globalY < Math.Min((chunk.Manager.World.Renderer.PersistentSettings.MaxViewingLevel * 2) + 1, chunkLiquidOrigin.Y + VoxelConstants.LiquidChunkSizeY); globalY++)
                 {
-                    var y = globalY - chunk.Origin.Y;
+                    var y = globalY - chunkLiquidOrigin.Y;
                     if (chunk.Data.LiquidPresent[y] == 0) continue;
 
-                    for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
+                    for (int x = 0; x < VoxelConstants.LiquidChunkSizeX; x++)
                     {
-                        for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
+                        for (int z = 0; z < VoxelConstants.LiquidChunkSizeZ; z++)
                         {
-                            var voxel = VoxelHandle.UnsafeCreateLocalHandle(chunk, new LocalVoxelCoordinate(x, y, z));
-                            if (GameSettings.Current.FogofWar && !voxel.IsExplored) continue;
+                            var cell = LiquidCellHandle.UnsafeCreateLocalHandle(chunk, new LocalLiquidCoordinate(x, y, z));
+                            var _voxel = chunk.Manager.CreateVoxelHandle(cell.Coordinate.ToGlobalVoxelCoordinate());
+                            if (GameSettings.Current.FogofWar && !_voxel.IsExplored) continue;
 
-                            if (voxel.LiquidLevel == 0 || voxel.LiquidType != primitive.LiqType)
+                            if (cell.LiquidLevel == 0 || cell.LiquidType != primitive.LiqType)
                                 continue;
 
                             int facesToDraw = 0;
@@ -191,7 +194,7 @@ namespace DwarfCorp
 
                                 // Pull the current neighbor DestinationVoxel based on the face it would be touching.
 
-                                var vox = VoxelHelpers.GetNeighbor(voxel, delta);
+                                var vox = LiquidCellHelpers.GetNeighbor(cell, delta);
 
                                 if (vox.IsValid)
                                 {
@@ -205,7 +208,8 @@ namespace DwarfCorp
                                     }
                                     else
                                     {
-                                        if (vox.LiquidLevel != 0 || !vox.IsEmpty)
+                                        var _vox = chunk.Manager.CreateVoxelHandle(vox.Coordinate.ToGlobalVoxelCoordinate());
+                                        if (vox.LiquidLevel != 0 || !_vox.IsEmpty)
                                         {
                                             cache.drawFace[(int)face] = false;
                                             continue;
@@ -250,7 +254,7 @@ namespace DwarfCorp
                                 }
 
                             // Now we have a list of all the faces that will need to be drawn.  Let's draw  them.
-                            CreateWaterFaces(voxel, chunk, x, y, z, vertices, indexes, vertexCount, indexCount);
+                            CreateWaterFaces(cell, chunk, x, y, z, vertices, indexes, vertexCount, indexCount);
 
                             // Finally increase the size so we can move on.
                             vertexCount += vertexSizeIncrease;
@@ -312,7 +316,7 @@ namespace DwarfCorp
         }
 
         private static void CreateWaterFaces(
-            VoxelHandle voxel, 
+            LiquidCellHandle voxel, 
             VoxelChunk chunk,
             int x, int y, int z,
                                             ExtendedVertex[] vertices,
@@ -327,11 +331,12 @@ namespace DwarfCorp
             var origin = voxel.WorldPosition;
             float centerWaterlevel = voxel.LiquidLevel;
 
-            var below = VoxelHelpers.GetVoxelBelow(voxel);
+            var below = LiquidCellHelpers.GetLiquidCellBelow(voxel);
+            var _below = chunk.Manager.CreateVoxelHandle(below.Coordinate.ToGlobalVoxelCoordinate());
             bool belowFilled = false;
             bool belowLiquid = below.IsValid && below.LiquidLevel > 0;
-            bool belowRamps = below.IsValid && below.RampType != RampType.None;
-            if ((below.IsValid && !below.IsEmpty) || belowLiquid)
+            bool belowRamps = _below.IsValid && _below.RampType != RampType.None;
+            if ((_below.IsValid && !_below.IsEmpty) || belowLiquid)
             {
                 belowFilled = true;
             }
@@ -366,12 +371,12 @@ namespace DwarfCorp
                         float emptyNeighbors = 0.0f;
                         float averageWaterLevel = centerWaterlevel;
 
-                        var vertexSucc = VoxelHelpers.VertexNeighbors[(int)currentVertex];
+                        var vertexSucc = LiquidCellHelpers.VertexNeighbors[(int)currentVertex];
 
                         // Run through the successors and count up the water in each voxel.
                         for (int v = 0; v < vertexSucc.Length; v++)
                         {
-                            var neighborVoxel = new VoxelHandle(chunk.Manager, voxel.Coordinate + vertexSucc[v]);
+                            var neighborVoxel = new LiquidCellHandle(chunk.Manager, voxel.Coordinate + vertexSucc[v]);
                             if (!neighborVoxel.IsValid) continue;
 
                             // Now actually do the math.
@@ -390,16 +395,16 @@ namespace DwarfCorp
                             //if (belowFilled)
                             //    pos.Y -= 0.6f;// Minimum ramp position 
 
-                             var neighbors = VoxelHelpers.EnumerateVertexNeighbors2D(voxel.Coordinate, currentVertex)
-                                 .Select(c => new VoxelHandle(chunk.Manager, c))
-                                 .Where(h => h.IsValid)
-                                 .Select(h => MathFunctions.Clamp((float)h.LiquidLevel / (float)WaterManager.maxWaterLevel, 0.1f, 1.0f));
+                             //var neighbors = LiquidCellHelpers.EnumerateVertexNeighbors2D(voxel.Coordinate, currentVertex)
+                             //    .Select(c => new LiquidCellHandle(chunk.Manager, c))
+                             //    .Where(h => h.IsValid)
+                             //    .Select(h => MathFunctions.Clamp((float)h.LiquidLevel / (float)WaterManager.maxWaterLevel, 0.1f, 1.0f));
 
-                             if (neighbors.Count() > 0)
-                             {
-                                 if (belowFilled)
-                                     pos.Y *= neighbors.Average();
-                             }
+                             //if (neighbors.Count() > 0)
+                             //{
+                             //    if (belowFilled)
+                             //        pos.Y *= neighbors.Average();
+                             //}
                             //pos.Y *= (float)voxel.LiquidLevel / (float)WaterManager.maxWaterLevel;
                         }
                         else
@@ -442,7 +447,7 @@ namespace DwarfCorp
                         pos = cache.vertexPositions[(int)currentVertex];
                     }
 
-                    vertices[startVertex].Set(pos,
+                    vertices[startVertex].Set(pos * 0.5f,
                         new Color(foaminess[vertOffset], 0.0f, 1.0f, 1.0f),
                         Color.White,
                         uv,

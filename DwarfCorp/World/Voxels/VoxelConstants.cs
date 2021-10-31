@@ -12,6 +12,12 @@ namespace DwarfCorp
         public const Int32 ChunkSizeZ = 16;
         public const Int32 ChunkVoxelCount = ChunkSizeX * ChunkSizeY * ChunkSizeZ;
 
+        public const Int32 LiquidChunkSizeX = 32;
+        public const Int32 LiquidChunkSizeY = 32;
+        public const Int32 LiquidChunkSizeZ = 32;
+        public const Int32 LiquidChunkVoxelCount = LiquidChunkSizeX * LiquidChunkSizeY * LiquidChunkSizeZ;
+
+
         public const Int32 OverworldScale = 4;
 
         public const Int32 XDivShift = 4;
@@ -22,9 +28,22 @@ namespace DwarfCorp
         public const Int32 YModMask = 0x0000000F;
         public const Int32 ZModMask = 0x0000000F;
 
+        public const Int32 XLiquidDivShift = 5;
+        public const Int32 YLiquidDivShift = 5;
+        public const Int32 ZLiquidDivShift = 5;
+
+        public const Int32 XLiquidModMask = 0x0000001F;
+        public const Int32 YLiquidModMask = 0x0000001F;
+        public const Int32 ZLiquidModMask = 0x0000001F;
+
         public static Int32 DataIndexOf(LocalVoxelCoordinate C)
         {
             return (C.Y * ChunkSizeX * ChunkSizeZ) + (C.Z * ChunkSizeX) + C.X;
+        }
+
+        public static Int32 DataIndexOf(LocalLiquidCoordinate C)
+        {
+            return (C.Y * LiquidChunkSizeX * LiquidChunkSizeZ) + (C.Z * LiquidChunkSizeX) + C.X;
         }
 
         public const Int32 MaximumVoxelTypes = 256;

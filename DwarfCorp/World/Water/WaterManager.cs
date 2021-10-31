@@ -123,7 +123,7 @@ namespace DwarfCorp
 
         private void DiscreteUpdate(ChunkManager ChunkManager, VoxelChunk chunk)
         {
-            for (var y = 0; y < VoxelConstants.ChunkSizeY; ++y)
+            for (var y = 0; y < VoxelConstants.LiquidChunkSizeY; ++y)
             {
                 // Apply 'liquid present' tracking in voxel data to skip entire slices.
                 if (chunk.Data.LiquidPresent[y] == 0) continue;
@@ -132,11 +132,11 @@ namespace DwarfCorp
 
                 for (var i = 0; i < layerOrder.Length; ++i)
                 {
-                    var x = layerOrder[i] % VoxelConstants.ChunkSizeX;
-                    var z = (layerOrder[i] >> VoxelConstants.XDivShift) % VoxelConstants.ChunkSizeZ;
-                    var currentVoxel = VoxelHandle.UnsafeCreateLocalHandle(chunk, new LocalVoxelCoordinate(x, y, z));
-
-                    if (currentVoxel.TypeID != 0)
+                    var x = layerOrder[i] % VoxelConstants.LiquidChunkSizeX;
+                    var z = (layerOrder[i] >> VoxelConstants.XLiquidDivShift) % VoxelConstants.LiquidChunkSizeZ;
+                    var currentVoxel = LiquidCellHandle.UnsafeCreateLocalHandle(chunk, new LocalLiquidCoordinate(x, y, z));
+                    var _currentVoxel = VoxelHandle.UnsafeCreateLocalHandle(chunk, currentVoxel.Coordinate.ToGlobalVoxelCoordinate().GetLocalVoxelCoordinate());
+                    if (_currentVoxel.TypeID != 0)
                         continue;
 
                     if (currentVoxel.LiquidType == 0 || currentVoxel.LiquidLevel < 1)
@@ -150,16 +150,17 @@ namespace DwarfCorp
                     if (currentVoxel.LiquidLevel <= EvaporationLevel && MathFunctions.RandEvent(0.01f))
                     {
                         if (currentVoxelLiquidType.EvaporateToStone && Library.GetVoxelType("Stone").HasValue(out VoxelType stone))
-                            currentVoxel.Type = stone;
+                            _currentVoxel.Type = stone;
 
                         NeedsMinimapUpdate = true;
                         currentVoxel.QuickSetLiquid(0, 0);
                         continue;
                     }
 
-                    var voxBelow = ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(currentVoxel.Coordinate.X, currentVoxel.Coordinate.Y - 1, currentVoxel.Coordinate.Z));
+                    var voxBelow = LiquidCellHelpers.GetLiquidCellBelow(currentVoxel);
+                    var _voxBelow = Chunks.CreateVoxelHandle(voxBelow.Coordinate.ToGlobalVoxelCoordinate());
 
-                    if (voxBelow.IsValid && voxBelow.IsEmpty)
+                    if (_voxBelow.IsValid && _voxBelow.IsEmpty)
                     {
                         // Fall into the voxel below.
 
@@ -183,7 +184,7 @@ namespace DwarfCorp
                             CreateSplash(currentVoxel.Coordinate.ToVector3(), aboveType);
                             voxBelow.LiquidLevel += currentVoxel.LiquidLevel;
                             currentVoxel.QuickSetLiquid(0, 0);
-                            HandleLiquidInteraction(voxBelow, aboveType, belowType);
+                            //HandleLiquidInteraction(voxBelow, aboveType, belowType);
                             continue;
                         }
 
@@ -193,13 +194,13 @@ namespace DwarfCorp
                             CreateSplash(currentVoxel.Coordinate.ToVector3(), aboveType);
                             currentVoxel.LiquidLevel = (byte)(currentVoxel.LiquidLevel - maxWaterLevel + voxBelow.LiquidLevel);
                             voxBelow.LiquidLevel = maxWaterLevel;
-                            HandleLiquidInteraction(voxBelow, aboveType, belowType);
+                            //HandleLiquidInteraction(voxBelow, aboveType, belowType);
                             continue;
                         }
                     }
-                    else if (voxBelow.IsValid && currentVoxelLiquidType.ClearsGrass && !voxBelow.IsEmpty && voxBelow.GrassType > 0)
+                    else if (_voxBelow.IsValid && currentVoxelLiquidType.ClearsGrass && !_voxBelow.IsEmpty && _voxBelow.GrassType > 0)
                     {
-                        voxBelow.GrassType = 0;
+                        _voxBelow.GrassType = 0;
                     }
 
                     if (currentVoxel.LiquidLevel <= 1) continue;
@@ -210,10 +211,10 @@ namespace DwarfCorp
 
                     for (var n = 0; n < NeighborScratch.Length; ++n)
                     {
-                        var neighborOffset = VoxelHelpers.ManhattanNeighbors2D[NeighborScratch[n]];
-                        var neighborVoxel = new VoxelHandle(Chunks, currentVoxel.Coordinate + neighborOffset);
-
-                        if (neighborVoxel.IsValid && neighborVoxel.IsEmpty)
+                        var neighborOffset = LiquidCellHelpers.ManhattanNeighbors2D[NeighborScratch[n]];
+                        var neighborVoxel = new LiquidCellHandle(Chunks, currentVoxel.Coordinate + neighborOffset);
+                        var _neighborVoxel = new VoxelHandle(Chunks, neighborVoxel.Coordinate.ToGlobalVoxelCoordinate());
+                        if (_neighborVoxel.IsValid && _neighborVoxel.IsEmpty)
                         {
                             if (neighborVoxel.LiquidLevel < currentVoxel.LiquidLevel)
                             {
@@ -231,7 +232,7 @@ namespace DwarfCorp
                                 var destType = neighborVoxel.LiquidType;
                                 currentVoxel.QuickSetLiquid(newWater == 0 ? (byte)0 : sourceType, (byte)newWater);
                                 neighborVoxel.QuickSetLiquid(destType == 0 ? sourceType : destType, (byte)(neighborVoxel.LiquidLevel + amountToMove));
-                                HandleLiquidInteraction(neighborVoxel, sourceType, destType);
+                                //HandleLiquidInteraction(neighborVoxel, sourceType, destType);
                                 break; 
                             }
 

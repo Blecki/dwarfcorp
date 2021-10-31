@@ -31,10 +31,10 @@ namespace DwarfCorp
                 Types = new byte[VoxelConstants.ChunkVoxelCount],
                 Grass = new byte[VoxelConstants.ChunkVoxelCount],
                 Decal = new byte[VoxelConstants.ChunkVoxelCount],
-                Liquid = new byte[VoxelConstants.ChunkVoxelCount],
+                Liquid = new byte[VoxelConstants.LiquidChunkVoxelCount],
                 RampsSunlightExploredPlayerBuilt = new byte[VoxelConstants.ChunkVoxelCount],
 
-                LiquidPresent = new int[VoxelConstants.ChunkSizeY],
+                LiquidPresent = new int[VoxelConstants.LiquidChunkSizeY],
                 VoxelsPresentInSlice = new int[VoxelConstants.ChunkSizeY],
                 SliceCache = new RawPrimitive[VoxelConstants.ChunkSizeY]
             };
