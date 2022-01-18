@@ -13,7 +13,11 @@ namespace DwarfCorp
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            throw new NotImplementedException();
+            var val = value as Point?;
+            if (val.HasValue)
+                writer.WriteValue(String.Format("{0},{1}", val.Value.X, val.Value.Y));
+            else
+                writer.WriteValue("0,0");
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -40,7 +44,7 @@ namespace DwarfCorp
 
         public override bool CanWrite
         {
-            get { return false; }
+            get { return true; }
         }
 
         public override bool CanConvert(Type objectType)

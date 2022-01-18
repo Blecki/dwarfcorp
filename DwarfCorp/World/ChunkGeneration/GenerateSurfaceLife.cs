@@ -37,11 +37,11 @@ namespace DwarfCorp.Generation
                             || voxel.Coordinate.Y >= worldDepth - Settings.TreeLine)
                             continue;
 
-                        if (voxel.LiquidLevel != 0)
+                        if (LiquidCellHelpers.AnyLiquidInVoxel(voxel))
                             continue;
 
                         var above = VoxelHelpers.GetVoxelAbove(voxel);
-                        if (above.IsValid && (above.LiquidLevel != 0 || !above.IsEmpty))
+                        if (above.IsValid && (LiquidCellHelpers.AnyLiquidInVoxel(above) || !above.IsEmpty))
                             continue;
 
                         foreach (var animal in biome.Fauna)

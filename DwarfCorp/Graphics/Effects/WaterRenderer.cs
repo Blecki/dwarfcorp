@@ -87,9 +87,11 @@ namespace DwarfCorp
             for (var y = vox.Coordinate.Y; y < ChunkManager.World.WorldSizeInVoxels.Y; y++)
             {
                 var v = ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(vox.Coordinate.X, y, vox.Coordinate.Z));
-                tot += v.LiquidLevel / (float)WaterManager.maxWaterLevel;
-                if (y > vox.Coordinate.Y && v.LiquidLevel == 0)
+                var liquidPresent = LiquidCellHelpers.AnyLiquidInVoxel(v);
+                if (y > vox.Coordinate.Y && liquidPresent == false)
                     return tot;
+                else if (liquidPresent)
+                    tot += 1;
             }
 
             return tot;

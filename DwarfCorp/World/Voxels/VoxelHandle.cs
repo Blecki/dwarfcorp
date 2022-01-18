@@ -307,6 +307,7 @@ namespace DwarfCorp
             }
         }
 
+        /*
         [JsonIgnore]
         public byte LiquidType
         {
@@ -349,6 +350,7 @@ namespace DwarfCorp
 
             _cache_Chunk.Data.Liquid[_cache_Index] = (byte)(((byte)Type << VoxelConstants.LiquidTypeShift) | (Level & VoxelConstants.LiquidLevelMask));
         }
+        */
         
         #endregion
 

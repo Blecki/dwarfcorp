@@ -89,8 +89,8 @@
     <Compile Include="Entities\Animals\Pumpking.cs" />
     <Compile Include="Entities\Fixtures\Jack-O-Lantern.cs" />
     <Compile Include="Entities\Fixtures\TrainingEquipment\TrainingEquipment.cs" />
-    <Compile Include="Entities\Pipes\Spigot.cs" />
-    <Compile Include="Entities\Pipes\Pump.cs" />
+    <Compile Include="World\Water\Pipes\Spigot.cs" />
+    <Compile Include="World\Water\Pipes\Pump.cs" />
     <Compile Include="Entities\Plants\Cotton.cs" />
     <Compile Include="Entities\Traps\PitTrap\PitTrapEventHook.cs" />
     <Compile Include="GameStates\DebugStates\GuiTextDebugPanel.cs" />
@@ -268,16 +268,16 @@
     <Compile Include="Entities\Monsters\Skeleton.cs" />
     <Compile Include="Entities\Monsters\SnowGolem.cs" />
     <Compile Include="Entities\Monsters\Troll.cs" />
-    <Compile Include="Entities\Pipes\OrientationHelper.cs" />
-    <Compile Include="Entities\Pipes\Orientation.cs" />
-    <Compile Include="Entities\Pipes\CheckValve.cs" />
-    <Compile Include="Entities\Pipes\SteamPoweredBuildBuff.cs" />
-    <Compile Include="Entities\Pipes\SteamGenerator.cs" />
-    <Compile Include="Entities\Pipes\PipeSystem.cs" />
-    <Compile Include="Entities\Pipes\PipeNetworkObject.cs" />
-    <Compile Include="Entities\Pipes\PowerAnvil.cs" />
-    <Compile Include="Entities\Pipes\BuildBuff.cs" />
-    <Compile Include="Entities\Pipes\Pipe.cs" />
+    <Compile Include="World\Water\Pipes\OrientationHelper.cs" />
+    <Compile Include="World\Water\Pipes\Orientation.cs" />
+    <Compile Include="World\Water\Pipes\CheckValve.cs" />
+    <Compile Include="World\Water\Pipes\SteamPoweredBuildBuff.cs" />
+    <Compile Include="World\Water\Pipes\SteamGenerator.cs" />
+    <Compile Include="World\Water\Pipes\PipeSystem.cs" />
+    <Compile Include="World\Water\Pipes\PipeNetworkObject.cs" />
+    <Compile Include="World\Water\Pipes\PowerAnvil.cs" />
+    <Compile Include="World\Water\Pipes\BuildBuff.cs" />
+    <Compile Include="World\Water\Pipes\Pipe.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\AllowedTaskFilter.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\EquipmentPanel.cs" />
     <Compile Include="GameStates\Play\EmployeeInfoPanel\PackPanel.cs" />
@@ -773,6 +773,8 @@
     <Compile Include="Graphics\Primitives\ExtendedVertex.cs" />
     <Compile Include="Graphics\Primitives\GeometricPrimitive.cs" />
     <Compile Include="Graphics\Primitives\LiquidPrimitive.cs" />
+    <Compile Include="World\Water\AnyLiquidInVoxel.cs" />
+    <Compile Include="World\Water\FillVoxelWithLiquid.cs" />
     <Compile Include="World\Water\GetLiquidCellAbove.cs" />
     <Compile Include="World\Water\EnumerateCellsInVoxel.cs" />
     <Compile Include="World\Water\GetLiquidCellBelow.cs" />
@@ -1008,9 +1010,8 @@
     <Reference Include="MonoGame.Framework">
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="SharpRaven">
       <HintPath>..\packages\SharpRaven.2.4.0\lib\net45\SharpRaven.dll</HintPath>
@@ -1022,9 +1023,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="app.manifest" />
     <MonoGameContentReference Include="Content\Content.mgcb" />
     <None Include="ControlSettings.settings" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LibNoise\LibNoise.csproj">

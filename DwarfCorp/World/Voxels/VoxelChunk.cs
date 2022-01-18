@@ -29,6 +29,7 @@ namespace DwarfCorp
         public HashSet<GameComponent> EntityAnchors = new HashSet<GameComponent>();
 
         public int UpdateDitherPattern = 0;
+        public int LiquidUpdateDitherPattern = 0;
 
         public void InvalidateSlice(int LocalY)
         {

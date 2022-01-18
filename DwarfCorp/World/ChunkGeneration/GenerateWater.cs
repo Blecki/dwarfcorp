@@ -34,7 +34,7 @@ namespace DwarfCorp.Generation
                                 if (globalY == Settings.NormalizedSeaLevel && biome.WaterSurfaceIce)
                                     voxel.RawSetType(iceID);
                                 else
-                                    voxel.QuickSetLiquid(biome.WaterIsLava ? (byte)2 : (byte)1, WaterManager.maxWaterLevel);
+                                    LiquidCellHelpers.FillVoxelWithLiquid(voxel, biome.WaterIsLava ? (byte)2 : (byte)1);
                                 // Todo: LIQUIDS Code water type into Biome instead; 2 is lava 1 is water
                             }
                         }

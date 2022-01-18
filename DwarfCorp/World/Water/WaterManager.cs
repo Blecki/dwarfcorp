@@ -13,34 +13,10 @@ namespace DwarfCorp
     public class WaterManager
     {
         private ChunkManager Chunks { get; set; }
-        public byte EvaporationLevel { get; set; }
 
-        public static byte maxWaterLevel = 63;
-        public static byte rainFallAmount = 1;
-        public static byte inWaterThreshold = 32;
+        public static byte maxWaterLevel = 1;
+        public static byte inWaterThreshold = 4;
 
-        private int[][] SlicePermutations;
-        private int[][] NeighborPermutations = new int[][]
-        {
-            new int[] { 0, 1, 2, 3 },
-            new int[] { 0, 1, 3, 2 },
-            new int[] { 0, 2, 1, 3 },
-            new int[] { 0, 2, 3, 1 },
-            new int[] { 0, 3, 1, 2 },
-            new int[] { 0, 3, 2, 1 }
-        };
-
-        private int[] NeighborScratch = new int[4];
-
-        private void RollArray(int[] from, int[] into, int offset)
-        {
-            for (var i = 0; i < 4; ++i)
-            {
-                into[offset] = from[i];
-                offset = (offset + 1) & 0x3;
-            }
-        }
-                
         private LinkedList<LiquidSplash> Splashes = new LinkedList<LiquidSplash>();
         private Mutex SplashLock = new Mutex();
         public bool NeedsMinimapUpdate = true;
@@ -57,17 +33,34 @@ namespace DwarfCorp
         public WaterManager(ChunkManager chunks)
         {
             Chunks = chunks;
-            EvaporationLevel = 1;
+        }
 
-            // Create permutation arrays for random update orders.
-            SlicePermutations = new int[16][];
-            var temp = new int[VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeZ];
-            for (var i = 0; i < temp.Length; ++i)
-                temp[i] = i;
-            for (var i = 0; i < 16; ++i)
+        public void FirstBuild() { 
+            foreach (var chunk in Chunks.GetChunkEnumerator())
+                EnqueueDirtyChunk(chunk);
+        }
+
+        private Queue<LiquidCellHandle> DirtyCells = new Queue<LiquidCellHandle>();
+
+        public void EnqueueDirtyCell(LiquidCellHandle Cell)
+        {
+            lock (DirtyCells)
             {
-                temp.Shuffle();
-                SlicePermutations[i] = temp.ToArray(); // Copies the array
+                if (!Cell.IsValid || DirtyCells.Contains(Cell)) return;
+                DirtyCells.Enqueue(Cell);
+
+                EnqueueDirtyChunk(Cell.Chunk);
+            }
+        }
+
+        private Queue<VoxelChunk> DirtyChunks = new Queue<VoxelChunk>();
+
+        private void EnqueueDirtyChunk(VoxelChunk Chunk)
+        {
+            lock (DirtyChunks)
+            {
+                if (DirtyChunks.Contains(Chunk)) return;
+                DirtyChunks.Enqueue(Chunk);
             }
         }
 
@@ -77,8 +70,8 @@ namespace DwarfCorp
             {
                 if (Library.GetVoxelType("Stone").HasValue(out VoxelType vType))
                     Vox.Type = vType;
-                Vox.QuickSetLiquid(0, 0);
-            }            
+                LiquidCellHelpers.ClearVoxelOfLiquid(Vox);
+            }
         }
 
         public void CreateSplash(Vector3 pos, int liquid)
@@ -113,133 +106,146 @@ namespace DwarfCorp
         {
             if(Chunks.World.Paused || Debugger.Switches.DisableWaterUpdate)
                 return;
-            
-            foreach(var chunk in Chunks.GetChunkEnumerator())
+
+            ClearDirtyQueue();
+
+            List<VoxelChunk> localDirty = null;
+            lock (DirtyChunks)
             {
-                DiscreteUpdate(Chunks, chunk);
-                chunk.RebuildLiquidGeometry();
+                localDirty = DirtyChunks.ToList();
+                DirtyChunks.Clear();
+            }
+            foreach (var chunk in localDirty)
+                if (chunk != null) chunk.RebuildLiquidGeometry();
+        }
+
+        private class OpenSearchNode
+        {
+            public LiquidCellHandle ParentCell;
+            public LiquidCellHandle ThisCell;
+            public int Cost;
+        }
+
+        private bool TestCell(ChunkManager ChunkManager, LiquidCellHandle SourceCell, LiquidCellHandle Cell)
+        {
+            if (Cell.LiquidType != 0 && Cell.LiquidType != SourceCell.LiquidType) return false;
+            var voxel = ChunkManager.CreateVoxelHandle(Cell.Coordinate.ToGlobalVoxelCoordinate());
+            if (voxel.IsValid && !voxel.IsEmpty)
+                return false;
+            return true;
+        }
+
+        private static List<GlobalLiquidOffset> ManhattanNeighbors2D = new List<GlobalLiquidOffset>
+        {
+            new GlobalLiquidOffset(0,0,-1),
+            new GlobalLiquidOffset(1,0,0),
+            new GlobalLiquidOffset(0,0,1),
+            new GlobalLiquidOffset(-1,0,0)
+        };
+
+        private static List<List<GlobalLiquidOffset>> NeighborOrders = EnumeratePermutations(ManhattanNeighbors2D).ToList();
+
+        private static IEnumerable<List<GlobalLiquidOffset>> EnumeratePermutations(List<GlobalLiquidOffset> Of)
+        {
+            if (Of.Count == 1)
+            {
+                yield return Of;
+                yield break;
+            }    
+
+            foreach (var head in Of)
+            {
+                var r = new List<GlobalLiquidOffset>();
+                r.Add(head);
+                foreach (var tail in EnumeratePermutations(Of.Where(i => i != head).ToList()))
+                    yield return r.Concat(tail).ToList();    
             }
         }
 
-        private void DiscreteUpdate(ChunkManager ChunkManager, VoxelChunk chunk)
+        private IEnumerable<OpenSearchNode> EnumerateOpenNeighbors(ChunkManager ChunkManager, LiquidCellHandle SourceCell, OpenSearchNode Of)
         {
-            for (var y = 0; y < VoxelConstants.LiquidChunkSizeY; ++y)
+            if (Of.Cost > 500)
+                yield break;
+
+            var below = LiquidCellHelpers.GetLiquidCellBelow(Of.ThisCell);
+            if (TestCell(ChunkManager, SourceCell, below)) yield return new OpenSearchNode { ParentCell = Of.ThisCell, ThisCell = below, Cost = Of.Cost - 1 };
+            if (below.LiquidType == 0) yield break;
+            var neighborOrder = MathFunctions.RandInt(0, NeighborOrders.Count);
+            foreach (var neighbor in LiquidCellHelpers.EnumerateNeighbors(NeighborOrders[neighborOrder], Of.ThisCell.Coordinate).Select(c => ChunkManager.CreateLiquidCellHandle(c)))
+                if (neighbor.IsValid && TestCell(ChunkManager, SourceCell, neighbor)) yield return new OpenSearchNode { ParentCell = Of.ThisCell, ThisCell = neighbor, Cost = Of.Cost + 10 };
+        }
+
+        private LiquidCellHandle FindEmptyCell(ChunkManager ChunkManager, LiquidCellHandle Source)
+        {
+            var openNodes = new PriorityQueue<OpenSearchNode, int>();
+            var closedNodes = new HashSet<GlobalLiquidCoordinate>();
+            openNodes.Enqueue(new OpenSearchNode { ParentCell = Source, ThisCell = Source, Cost = 0 }, 0);
+            
+
+            while (openNodes.Count > 0)
             {
-                // Apply 'liquid present' tracking in voxel data to skip entire slices.
-                if (chunk.Data.LiquidPresent[y] == 0) continue;
-
-                var layerOrder = SlicePermutations[MathFunctions.RandInt(0, SlicePermutations.Length)];
-
-                for (var i = 0; i < layerOrder.Length; ++i)
+                var current = openNodes.Dequeue();
+                if (current.ThisCell.IsValid && current.ThisCell.LiquidType == 0 && current.ThisCell.Coordinate.Y < Source.Coordinate.Y)
+                    return current.ThisCell;
+                
+                foreach (var neighbor in EnumerateOpenNeighbors(ChunkManager, Source, current))
                 {
-                    var x = layerOrder[i] % VoxelConstants.LiquidChunkSizeX;
-                    var z = (layerOrder[i] >> VoxelConstants.XLiquidDivShift) % VoxelConstants.LiquidChunkSizeZ;
-                    var currentVoxel = LiquidCellHandle.UnsafeCreateLocalHandle(chunk, new LocalLiquidCoordinate(x, y, z));
-                    var _currentVoxel = VoxelHandle.UnsafeCreateLocalHandle(chunk, currentVoxel.Coordinate.ToGlobalVoxelCoordinate().GetLocalVoxelCoordinate());
-                    if (_currentVoxel.TypeID != 0)
-                        continue;
+                    if (closedNodes.Contains(neighbor.ThisCell.Coordinate)) continue;
+                    closedNodes.Add(neighbor.ThisCell.Coordinate);
 
-                    if (currentVoxel.LiquidType == 0 || currentVoxel.LiquidLevel < 1)
-                        continue;
-
-                    LiquidType_ currentVoxelLiquidType;
-                    if (!Library.GetLiquid(currentVoxel.LiquidType).HasValue(out currentVoxelLiquidType))
-                        continue;
-
-                    // Evaporate.
-                    if (currentVoxel.LiquidLevel <= EvaporationLevel && MathFunctions.RandEvent(0.01f))
-                    {
-                        if (currentVoxelLiquidType.EvaporateToStone && Library.GetVoxelType("Stone").HasValue(out VoxelType stone))
-                            _currentVoxel.Type = stone;
-
-                        NeedsMinimapUpdate = true;
-                        currentVoxel.QuickSetLiquid(0, 0);
-                        continue;
-                    }
-
-                    var voxBelow = LiquidCellHelpers.GetLiquidCellBelow(currentVoxel);
-                    var _voxBelow = Chunks.CreateVoxelHandle(voxBelow.Coordinate.ToGlobalVoxelCoordinate());
-
-                    if (_voxBelow.IsValid && _voxBelow.IsEmpty)
-                    {
-                        // Fall into the voxel below.
-
-                        // Special case: No liquid below, just drop down.
-                        if (voxBelow.LiquidType == 0)
-                        {
-                            NeedsMinimapUpdate = true;
-                            CreateSplash(currentVoxel.Coordinate.ToVector3(), currentVoxel.LiquidType);
-                            voxBelow.QuickSetLiquid(currentVoxel.LiquidType, currentVoxel.LiquidLevel);
-                            currentVoxel.QuickSetLiquid(0, 0);
-                            continue;
-                        }
-
-                        var belowType = voxBelow.LiquidType;
-                        var aboveType = currentVoxel.LiquidType;
-                        var spaceLeftBelow = maxWaterLevel - voxBelow.LiquidLevel;
-
-                        if (spaceLeftBelow >= currentVoxel.LiquidLevel)
-                        {
-                            NeedsMinimapUpdate = true;
-                            CreateSplash(currentVoxel.Coordinate.ToVector3(), aboveType);
-                            voxBelow.LiquidLevel += currentVoxel.LiquidLevel;
-                            currentVoxel.QuickSetLiquid(0, 0);
-                            //HandleLiquidInteraction(voxBelow, aboveType, belowType);
-                            continue;
-                        }
-
-                        if (spaceLeftBelow > 0)
-                        {
-                            NeedsMinimapUpdate = true;
-                            CreateSplash(currentVoxel.Coordinate.ToVector3(), aboveType);
-                            currentVoxel.LiquidLevel = (byte)(currentVoxel.LiquidLevel - maxWaterLevel + voxBelow.LiquidLevel);
-                            voxBelow.LiquidLevel = maxWaterLevel;
-                            //HandleLiquidInteraction(voxBelow, aboveType, belowType);
-                            continue;
-                        }
-                    }
-                    else if (_voxBelow.IsValid && currentVoxelLiquidType.ClearsGrass && !_voxBelow.IsEmpty && _voxBelow.GrassType > 0)
-                    {
-                        _voxBelow.GrassType = 0;
-                    }
-
-                    if (currentVoxel.LiquidLevel <= 1) continue;
-
-                    // Nothing left to do but spread.
-
-                    RollArray(NeighborPermutations[MathFunctions.RandInt(0, NeighborPermutations.Length)], NeighborScratch, MathFunctions.RandInt(0, 4));
-
-                    for (var n = 0; n < NeighborScratch.Length; ++n)
-                    {
-                        var neighborOffset = LiquidCellHelpers.ManhattanNeighbors2D[NeighborScratch[n]];
-                        var neighborVoxel = new LiquidCellHandle(Chunks, currentVoxel.Coordinate + neighborOffset);
-                        var _neighborVoxel = new VoxelHandle(Chunks, neighborVoxel.Coordinate.ToGlobalVoxelCoordinate());
-                        if (_neighborVoxel.IsValid && _neighborVoxel.IsEmpty)
-                        {
-                            if (neighborVoxel.LiquidLevel < currentVoxel.LiquidLevel)
-                            {
-                                NeedsMinimapUpdate = true;
-                                var amountToMove = (int)(currentVoxel.LiquidLevel * GetSpreadRate(currentVoxel.LiquidType));
-                                if (neighborVoxel.LiquidLevel + amountToMove > maxWaterLevel)
-                                    amountToMove = maxWaterLevel - neighborVoxel.LiquidLevel;
-
-                                if (amountToMove > 2)
-                                    CreateSplash(neighborVoxel.Coordinate.ToVector3(), currentVoxel.LiquidType);
-
-                                var newWater = currentVoxel.LiquidLevel - amountToMove;
-
-                                var sourceType = currentVoxel.LiquidType;
-                                var destType = neighborVoxel.LiquidType;
-                                currentVoxel.QuickSetLiquid(newWater == 0 ? (byte)0 : sourceType, (byte)newWater);
-                                neighborVoxel.QuickSetLiquid(destType == 0 ? sourceType : destType, (byte)(neighborVoxel.LiquidLevel + amountToMove));
-                                //HandleLiquidInteraction(neighborVoxel, sourceType, destType);
-                                break; 
-                            }
-
-                        }
-                    }
+                    if (neighbor.ThisCell.IsValid)
+                        openNodes.Enqueue(neighbor, neighbor.Cost);
                 }
             }
+
+            return LiquidCellHandle.InvalidHandle;            
+        }
+
+        private void ClearDirtyQueue()
+        {
+            List<LiquidCellHandle> localDirty = null;
+            lock (DirtyCells)
+            {
+                localDirty = DirtyCells.ToList();
+                DirtyCells.Clear();
+            }
+            foreach (var cell in localDirty)
+                UpdateCell(Chunks, cell);
+        }
+
+        private void UpdateCell(ChunkManager ChunkManager, LiquidCellHandle dirtyCell)
+        {
+            if (!dirtyCell.IsValid)
+                return;
+
+            if (dirtyCell.LiquidType == 0)
+                return;
+
+            var above = LiquidCellHelpers.GetLiquidCellAbove(dirtyCell);
+            if (above.IsValid && above.LiquidType != 0 && above.LiquidType == dirtyCell.LiquidType) return;
+
+            var emptyNeighborCount = 0;
+            foreach (var neighbor in LiquidCellHelpers.EnumerateManhattanNeighbors2D_Y(dirtyCell.Coordinate).Select(c => ChunkManager.CreateLiquidCellHandle(c)))
+                if (neighbor.IsValid && neighbor.LiquidType == 0)
+                    emptyNeighborCount += 1;
+
+            if (emptyNeighborCount == 0)
+                return;
+
+            var destinationCell = FindEmptyCell(ChunkManager, dirtyCell);
+            if (!destinationCell.IsValid)
+                return;
+
+            CreateSplash(dirtyCell.Center * 0.5f, dirtyCell.LiquidType);
+
+            destinationCell.LiquidType = dirtyCell.LiquidType;
+            dirtyCell.LiquidType = 0;
+
+            EnqueueDirtyCell(LiquidCellHelpers.GetLiquidCellAbove(dirtyCell));
+            EnqueueDirtyCell(LiquidCellHelpers.GetLiquidCellBelow(dirtyCell));
+            foreach (var neighbor in LiquidCellHelpers.EnumerateManhattanNeighbors2D_Y(dirtyCell.Coordinate).Select(c => ChunkManager.CreateLiquidCellHandle(c)))
+                EnqueueDirtyCell(neighbor);
+            EnqueueDirtyCell(destinationCell);
         }
     }
 }

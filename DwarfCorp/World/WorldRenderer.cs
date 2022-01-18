@@ -137,7 +137,9 @@ namespace DwarfCorp
         public bool IsCameraUnderwater()
         {
             var handle = new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(Camera.Position + Vector3.Up));
-            return handle.IsValid && handle.LiquidLevel > 0 && handle.Coordinate.Y <= (PersistentSettings.MaxViewingLevel >= World.WorldSizeInVoxels.Y ? 1000.0f : PersistentSettings.MaxViewingLevel + 0.25f);
+            if (!handle.IsValid) return false;
+            var liquidPresent = LiquidCellHelpers.AnyLiquidInVoxel(handle);
+            return liquidPresent && handle.Coordinate.Y <= (PersistentSettings.MaxViewingLevel >= World.WorldSizeInVoxels.Y ? 1000.0f : PersistentSettings.MaxViewingLevel + 0.25f);
         }
 
         /// <summary>

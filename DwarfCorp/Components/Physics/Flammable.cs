@@ -118,8 +118,8 @@ namespace DwarfCorp
                     }
                 }
 
-                if (voxel.LiquidLevel <= 0 || voxel.LiquidType == 0) continue;
-                if (Library.GetLiquid(voxel.LiquidType).HasValue(out var liquid))
+                var medianLiquid = LiquidCellHelpers.MedianLiquidInVoxel(voxel);
+                if (medianLiquid != 0 && Library.GetLiquid(medianLiquid).HasValue(out var liquid))
                     Heat += liquid.TemperatureIncrease;
             }
         }

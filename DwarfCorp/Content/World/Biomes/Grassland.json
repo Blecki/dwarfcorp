@@ -1,8 +1,8 @@
 {
   "Name": "Grassland",
   "Icon": "0, 0",
-  "DayAmbience": "Audio/oscar/grassland_ambience_day",
-  "NightAmbience": "Audio/oscar/grassland_ambience_night",
+  "DayAmbience": "Audio/oscar/sfx_amb_grassland_day_1",
+  "NightAmbience": "Audio/oscar/sfx_amb_grassland_night_1",
   "RuinFloorType": "Cobble",
   "RuinWallType": "Shale",
   "Vegetation": [

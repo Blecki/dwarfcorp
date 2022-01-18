@@ -99,7 +99,7 @@ namespace DwarfCorp
 
                     // Don't generate motes if above is not empty
                     var voxelAbove = VoxelHelpers.GetVoxelAbove(v);
-                        if (voxelAbove.IsValid && (!voxelAbove.IsEmpty || voxelAbove.LiquidLevel != 0))
+                        if (voxelAbove.IsValid && (!voxelAbove.IsEmpty || LiquidCellHelpers.AnyLiquidInVoxel(voxelAbove)))
                             continue;
 
                     // Find biome type.

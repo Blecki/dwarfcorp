@@ -73,18 +73,11 @@ namespace DwarfCorp
                         bool foundLava = false;
                         foreach (VoxelHandle neighbor in VoxelHelpers.EnumerateAllNeighbors(voxel.Coordinate).Select(coord => new VoxelHandle(Agent.World.ChunkManager, coord)))
                         {
-                            if (neighbor.IsValid && neighbor.Chunk != null)
-                            {
-                                if (neighbor.LiquidType != 0 && Library.GetLiquid(neighbor.LiquidType).HasValue(out var liquid) && liquid.CausesDamage == true)
-                                {
-                                    foundLava = true;
-                                }
-                            }
+                            if (neighbor.IsValid && neighbor.Chunk != null && Library.GetLiquid("Lava").HasValue(out var liquid) && LiquidCellHelpers.AnyLiquidInVoxel(neighbor, liquid.ID))
+                                foundLava = true;
                         }
                         if (!foundLava)
-                        {
                             break;
-                        }
                     }
 
                     if (iters == 100)

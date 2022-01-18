@@ -86,12 +86,9 @@ namespace DwarfCorp
         public const Int32 InversePlayerBuiltVoxelMask = 0x7F;
 
         // Byte - [1100 0000] Liquid Type
-        //        [0011 1111] Liquid Level
         public const Int32 LiquidTypeShift = 6;
         public const Int32 LiquidTypeMask = 0xC0;
         public const Int32 InverseLiquidTypeMask = 0x3F;
-        public const Int32 LiquidLevelMask = 0x3F;
-        public const Int32 InverseLiquidLevelMask = 0xC0;
 
         public const UInt32 SelectionIDBit = 0x80000000;
         public const UInt32 SelectionIDYMask = 0x7F;

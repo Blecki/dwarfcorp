@@ -334,7 +334,7 @@ namespace DwarfCorp
 
             GetNeighborhood(state.Voxel.Chunk.Manager, state.Voxel, Storage.Neighborhood);
 
-            bool inWater = (Storage.Neighborhood[1, 1, 1].IsValid && Storage.Neighborhood[1, 1, 1].LiquidLevel > WaterManager.inWaterThreshold);
+            bool inWater = (Storage.Neighborhood[1, 1, 1].IsValid && LiquidCellHelpers.CountCellsWithWater(Storage.Neighborhood[1,1,1]) > 4);
             bool standingOnGround = (Storage.Neighborhood[1, 0, 1].IsValid && !Storage.Neighborhood[1, 0, 1].IsEmpty);
             bool topCovered = (Storage.Neighborhood[1, 2, 1].IsValid && !Storage.Neighborhood[1, 2, 1].IsEmpty);
             bool hasNeighbors = HasNeighbors(Storage.Neighborhood);
@@ -370,7 +370,7 @@ namespace DwarfCorp
 #endif
 
                 var n = v.DestinationVoxel.IsValid ? v.DestinationVoxel : Storage.Neighborhood[(int)v.Diff.X, (int)v.Diff.Y, (int)v.Diff.Z];
-                if (n.IsValid && (v.MoveType == MoveType.Dig || isRiding || n.IsEmpty || n.LiquidLevel > 0))
+                if (n.IsValid && (v.MoveType == MoveType.Dig || isRiding || n.IsEmpty || LiquidCellHelpers.AnyLiquidInVoxel(n)))
                 {
                     // Do one final check to see if there is an object blocking the motion.
                     bool blockedByObject = false;
@@ -411,19 +411,28 @@ namespace DwarfCorp
                     // If no object blocked us, we can move freely as normal.
                     if (!blockedByObject)
                     {
-                        if (n.LiquidType == 0)
+                        bool liquidInVoxel = LiquidCellHelpers.AnyLiquidInVoxel(n);
+                        if (!liquidInVoxel)
                         {
                             var newAction = v;
                             newAction.SourceState = state;
                             newAction.DestinationVoxel = n;
                             yield return newAction;
                         }
-                        else if (Library.GetLiquid(n.LiquidType).HasValue(out var liquid) && !liquid.CausesDamage)
+                        else
                         {
-                            var newAction = v;
-                            newAction.SourceState = state;
-                            newAction.DestinationVoxel = n;
-                            yield return newAction;
+                            var painfulLiquid = false;
+                            foreach (var cell in LiquidCellHelpers.EnumerateCellsInVoxel(n))
+                               if (cell.LiquidType != 0 && Library.GetLiquid(cell.LiquidType).HasValue(out var l) && l.CausesDamage)
+                                    painfulLiquid = true;
+
+                            if (painfulLiquid)
+                            {
+                                var newAction = v;
+                                newAction.SourceState = state;
+                                newAction.DestinationVoxel = n;
+                                yield return newAction;
+                            }
                         }
                     }
                 }

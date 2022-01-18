@@ -359,7 +359,7 @@ namespace DwarfCorp
                         Velocity += -dt * Gravity * subStepLength * 4;
                     }
 
-                    if (currentVoxel.IsValid && currentVoxel.LiquidLevel > 0)
+                    if (currentVoxel.IsValid && LiquidCellHelpers.AnyLiquidInVoxel(currentVoxel))
                     {
                         Velocity += -dt * Gravity * subStepLength * 0.999f;
 

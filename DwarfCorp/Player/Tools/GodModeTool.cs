@@ -178,7 +178,7 @@ namespace DwarfCorp
                         var v = vox;
                         if (Library.GetVoxelType(type).HasValue(out VoxelType vType))
                             v.Type = vType;
-                        v.QuickSetLiquid(0, 0);
+                        LiquidCellHelpers.ClearVoxelOfLiquid(v);
 
                         if (type == "Magic") // Todo: WTF?? If I keep this it needs to be implemented properly!!
                         {
@@ -192,14 +192,8 @@ namespace DwarfCorp
                     else if (Command.StartsWith("Liquid/"))
                     {
                         string type = Command.Substring(7);
-                        var v = vox;
                         if (Library.GetLiquid(type).HasValue(out var lType))
-                            foreach (var liquidCell in LiquidCellHelpers.EnumerateCellsInVoxel(vox))
-                            {
-                                var l = liquidCell;
-                                l.LiquidType = lType.ID;
-                                l.LiquidLevel = WaterManager.maxWaterLevel;
-                            }
+                            LiquidCellHelpers.FillVoxelWithLiquidAndWake(World, vox, lType.ID);
                     }
                     else switch (Command)
                         {
@@ -208,7 +202,7 @@ namespace DwarfCorp
                                     var v = vox;
                                     World.OnVoxelDestroyed(vox);
                                     v.Type = Library.EmptyVoxelType;
-                                    v.QuickSetLiquid(0, 0);
+                                    LiquidCellHelpers.ClearVoxelOfLiquid(v);
                                 }
                                 break;
                             case "Nuke Column":
@@ -217,7 +211,7 @@ namespace DwarfCorp
                                     {
                                         var v = World.ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(vox.Coordinate.X, y, vox.Coordinate.Z));
                                         v.Type = Library.EmptyVoxelType;
-                                        v.QuickSetLiquid(0, 0);
+                                        LiquidCellHelpers.ClearVoxelOfLiquid(v);
                                     }
                                 }
                                 break;

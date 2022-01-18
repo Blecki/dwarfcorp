@@ -266,7 +266,7 @@ namespace DwarfCorp
 
         public void CheckLiquids(float dt)
         {
-            if (CurrentVoxel.IsValid && CurrentVoxel.LiquidLevel > WaterManager.inWaterThreshold)
+            if (CurrentVoxel.IsValid && LiquidCellHelpers.CountCellsWithWater(CurrentVoxel) > WaterManager.inWaterThreshold)
             {
                 ApplyForce(new Vector3(0, 25, 0), dt);
                 Velocity = new Vector3(Velocity.X * 0.9f, Velocity.Y * 0.5f, Velocity.Z * 0.9f);

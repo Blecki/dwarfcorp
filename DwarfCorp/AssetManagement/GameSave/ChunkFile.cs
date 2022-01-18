@@ -42,7 +42,7 @@ namespace DwarfCorp
             {
                 ID = chunk.ID,
                 Types = new byte[VoxelConstants.ChunkVoxelCount],
-                Liquid = new byte[VoxelConstants.ChunkVoxelCount],
+                Liquid = new byte[VoxelConstants.LiquidChunkVoxelCount],
                 GrassType = new byte[VoxelConstants.ChunkVoxelCount],
                 RampsSunlightExplored = new byte[VoxelConstants.ChunkVoxelCount],
                 Decals = new byte[VoxelConstants.ChunkVoxelCount],
@@ -110,10 +110,10 @@ namespace DwarfCorp
             if (Liquid != null)
             {
                 Liquid.CopyTo(c.Data.Liquid, 0);
-                for (int y = 0; y < VoxelConstants.ChunkSizeY; y++)
-                    for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
-                        for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
-                            c.Data.LiquidPresent[y] += VoxelHandle.UnsafeCreateLocalHandle(c, new LocalVoxelCoordinate(x, y, z)).LiquidLevel;
+                for (int y = 0; y < VoxelConstants.LiquidChunkSizeY; y++)
+                    for (int x = 0; x < VoxelConstants.LiquidChunkSizeX; x++)
+                        for (int z = 0; z < VoxelConstants.LiquidChunkSizeZ; z++)
+                            c.Data.LiquidPresent[y] += LiquidCellHandle.UnsafeCreateLocalHandle(c, new LocalLiquidCoordinate(x, y, z)).LiquidType == 0 ? 0 : 1;
             }
 
             if (RampsSunlightExplored != null)

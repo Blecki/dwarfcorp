@@ -19,8 +19,7 @@ namespace DwarfCorp
                     {
                         var lv = voxel;
                         lv.Type = ocean;
-                        lv.LiquidLevel = 0;
-                        lv.LiquidType = 0;
+                        LiquidCellHelpers.ClearVoxelOfLiquid(voxel);
                     }
                 }
 

@@ -15,7 +15,7 @@ namespace DwarfCorp
             while (true)
             {
                 if (!V.IsValid) return VoxelHandle.InvalidHandle;
-                if (!V.IsEmpty || V.LiquidLevel > 0) return V;
+                if (!V.IsEmpty || LiquidCellHelpers.AnyLiquidInVoxel(V)) return V;
                 V = V.Chunk.Manager.CreateVoxelHandle(V.Coordinate + new GlobalVoxelOffset(0, -1, 0));
             }
         }        

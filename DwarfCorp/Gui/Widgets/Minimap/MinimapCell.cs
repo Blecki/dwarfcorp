@@ -48,12 +48,14 @@ namespace DwarfCorp.Gui.Widgets.Minimap
                         }
                     }
 
+                    var medianLiquid = LiquidCellHelpers.MedianLiquidInVoxel(SurfaceVoxel);
+
                     if (!SurfaceVoxel.IsExplored)
                     {
                         Color = Color.Black;
                         return;
                     }
-                    else if (SurfaceVoxel.LiquidType != 0 && Library.GetLiquid(SurfaceVoxel.LiquidType).HasValue(out var liquid))
+                    else if (medianLiquid != 0 && Library.GetLiquid(medianLiquid).HasValue(out var liquid))
                     {
                         Color = liquid.MinimapColor;
                         return;

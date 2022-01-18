@@ -181,7 +181,7 @@ namespace DwarfCorp
                             yield return Act.Status.Running;
                             continue;
                         }
-                        if (vox.IsValid && vox.LiquidLevel > 0)
+                        if (vox.IsValid && LiquidCellHelpers.AnyLiquidInVoxel(vox))
                         {
                             LocalTarget += Vector3.Up * 0.1f;
                             yield return Act.Status.Running;
@@ -194,7 +194,7 @@ namespace DwarfCorp
                             var below = new VoxelHandle(Creature.World.ChunkManager,
                                 vox.Coordinate + new GlobalVoxelOffset(0, -1, 0));
 
-                            if (below.IsValid && !below.IsEmpty && below.LiquidLevel == 0)
+                            if (below.IsValid && !below.IsEmpty && LiquidCellHelpers.AnyLiquidInVoxel(below))
                             {
                                 State = FlyState.Perching;
                                 continue;

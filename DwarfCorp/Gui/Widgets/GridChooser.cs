@@ -67,7 +67,13 @@ namespace DwarfCorp.Gui.Widgets
 
             Border = "border-one";
 
-            AddChild(new Button
+            var buttonPanel = AddChild(new Widget
+            {
+                AutoLayout = AutoLayout.DockBottom,
+                MinimumSize = new Point(0, 36)
+            });
+
+            buttonPanel.AddChild(new Button
             {
                 Text = OkayText,
                 TextHorizontalAlign = HorizontalAlign.Center,
@@ -81,7 +87,7 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.FloatBottomRight
             });
 
-            AddChild(new Button
+            buttonPanel.AddChild(new Button
             {
                 Text = CancelText,
                 TextHorizontalAlign = HorizontalAlign.Center,
@@ -96,14 +102,17 @@ namespace DwarfCorp.Gui.Widgets
             });
 
             Panel = AddChild(new GridPanel
-                {
-                    AutoLayout = Gui.AutoLayout.DockFill,
-                    OnLayout = (sender) => sender.Rect.Height -= 36,
+            {
+                AutoLayout = Gui.AutoLayout.DockFill,
+                //InteriorMargin = new Margin(0, 36, 0, 0),
+                //Padding = new Margin(0, 36, 0, 0),
+                   // OnLayout = (sender) => sender.Rect.Height -= 36,
                     ItemSize = ItemSize,
                     ItemSpacing = ItemSpacing
                 }) as GridPanel;
 
-            var index = 0;
+            var index = 1;
+            
             foreach (var item in ItemSource)
             {
                 var lambdaIndex = index;

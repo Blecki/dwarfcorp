@@ -30,7 +30,7 @@ namespace DwarfCorp
                 coord =>
                 {
                     var v = new VoxelHandle(Data, coord);
-                    if (!v.IsValid || !v.IsEmpty || v.LiquidLevel > 0) return false;
+                    if (!v.IsValid || !v.IsEmpty || LiquidCellHelpers.AnyLiquidInVoxel(v)) return false;
                     var below = new VoxelHandle(Data,
                         new GlobalVoxelCoordinate(coord.X, coord.Y - 1, coord.Z));
                     return below.IsValid && !below.IsEmpty;
@@ -51,7 +51,7 @@ namespace DwarfCorp
                 c =>
                 {
                     var v = new VoxelHandle(Data, c);
-                    if (!v.IsValid || !v.IsEmpty || v.LiquidLevel > 0) return false;
+                    if (!v.IsValid || !v.IsEmpty || LiquidCellHelpers.AnyLiquidInVoxel(v)) return false;
                     var below = new VoxelHandle(Data,
                         new GlobalVoxelCoordinate(c.X, c.Y - 1, c.Z));
                     return below.IsValid && !below.IsEmpty;
@@ -106,7 +106,7 @@ namespace DwarfCorp
         public override MaybeNull<Act> CreateScript(Creature creature)
         {
             var above = VoxelHelpers.GetVoxelAbove(creature.Physics.CurrentVoxel);
-            if ((above.IsValid && above.LiquidLevel > 0 ) || creature.AI.Movement.CanFly)
+            if ((above.IsValid && LiquidCellHelpers.AnyLiquidInVoxel(above)) || creature.AI.Movement.CanFly)
             {
                 return new Wrap(() => SwimUp(creature)) { Name = "Swim up"};
             }

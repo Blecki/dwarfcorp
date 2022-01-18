@@ -114,7 +114,7 @@ namespace DwarfCorp
         {
             Vox.IsPlayerBuilt = true;
             Vox.Type = Type;
-            Vox.QuickSetLiquid(0, 0);
+            LiquidCellHelpers.ClearVoxelOfLiquid(Vox);
 
             for (int i = 0; i < 4; i++)
                 World.ParticleManager.Trigger("puff", MathFunctions.RandVector3Box(Vox.GetBoundingBox().Expand(0.25f)), Color.White, 5);

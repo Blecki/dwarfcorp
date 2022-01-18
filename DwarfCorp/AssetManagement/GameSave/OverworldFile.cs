@@ -84,7 +84,7 @@ namespace DwarfCorp
 
                 return Program.CompatibleVersions.Contains(metadata.Version);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return false;
             }

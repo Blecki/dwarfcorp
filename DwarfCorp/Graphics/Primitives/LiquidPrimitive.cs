@@ -180,7 +180,7 @@ namespace DwarfCorp
                             var _voxel = chunk.Manager.CreateVoxelHandle(cell.Coordinate.ToGlobalVoxelCoordinate());
                             if (GameSettings.Current.FogofWar && !_voxel.IsExplored) continue;
 
-                            if (cell.LiquidLevel == 0 || cell.LiquidType != primitive.LiqType)
+                            if (cell.LiquidType != primitive.LiqType)
                                 continue;
 
                             int facesToDraw = 0;
@@ -200,7 +200,7 @@ namespace DwarfCorp
                                 {
                                     if (face == BoxFace.Top)
                                     {
-                                        if (!(vox.LiquidLevel == 0 || y == (int)chunk.Manager.World.Renderer.PersistentSettings.MaxViewingLevel))
+                                        if (!(vox.LiquidType == 0 || y == (int)chunk.Manager.World.Renderer.PersistentSettings.MaxViewingLevel))
                                         {
                                             cache.drawFace[(int)face] = false;
                                             continue;
@@ -209,7 +209,7 @@ namespace DwarfCorp
                                     else
                                     {
                                         var _vox = chunk.Manager.CreateVoxelHandle(vox.Coordinate.ToGlobalVoxelCoordinate());
-                                        if (vox.LiquidLevel != 0 || !_vox.IsEmpty)
+                                        if (vox.LiquidType != 0 || !_vox.IsEmpty)
                                         {
                                             cache.drawFace[(int)face] = false;
                                             continue;
@@ -329,17 +329,10 @@ namespace DwarfCorp
 
             // These are reused for every face.
             var origin = voxel.WorldPosition;
-            float centerWaterlevel = voxel.LiquidLevel;
 
             var below = LiquidCellHelpers.GetLiquidCellBelow(voxel);
             var _below = chunk.Manager.CreateVoxelHandle(below.Coordinate.ToGlobalVoxelCoordinate());
-            bool belowFilled = false;
-            bool belowLiquid = below.IsValid && below.LiquidLevel > 0;
-            bool belowRamps = _below.IsValid && _below.RampType != RampType.None;
-            if ((_below.IsValid && !_below.IsEmpty) || belowLiquid)
-            {
-                belowFilled = true;
-            }
+            bool belowLiquid = below.IsValid && below.LiquidType != 0;
 
             float[] foaminess = new float[4];
 
@@ -369,7 +362,6 @@ namespace DwarfCorp
                     {
                         float count = 1.0f;
                         float emptyNeighbors = 0.0f;
-                        float averageWaterLevel = centerWaterlevel;
 
                         var vertexSucc = LiquidCellHelpers.VertexNeighbors[(int)currentVertex];
 
@@ -381,7 +373,7 @@ namespace DwarfCorp
 
                             // Now actually do the math.
                             count++;
-                            if (neighborVoxel.LiquidLevel < 1) emptyNeighbors++;
+                            if (neighborVoxel.LiquidType == 0) emptyNeighbors++;
                         }
 
                         foaminess[vertOffset] = emptyNeighbors / count;
@@ -390,6 +382,7 @@ namespace DwarfCorp
                             foaminess[vertOffset] = 0.0f;
 
                         pos = primitive.Vertices[vertOffset + faceDescriptor.VertexOffset].Position;
+                        /*
                         if ((currentVertex & VoxelVertex.Top) == VoxelVertex.Top)
                         {
                             //if (belowFilled)
@@ -410,11 +403,12 @@ namespace DwarfCorp
                         else
                         {
                             uv.Y -= 0.6f;
-                        }
+                        }*/
 
-                        pos += VertexNoise.GetNoiseVectorFromRepeatingTexture(voxel.WorldPosition +
-                            primitive.Vertices[vertOffset + faceDescriptor.VertexOffset].Position);
+                        pos += VertexNoise.GetNoiseVectorFromRepeatingTexture((voxel.WorldPosition +
+                            primitive.Vertices[vertOffset + faceDescriptor.VertexOffset].Position) / 2.0f);
 
+                        /*
                         if (!belowFilled)
                         {
                             pos = (pos - Vector3.One * 0.5f);
@@ -433,6 +427,7 @@ namespace DwarfCorp
                                 pos -= Vector3.Up * 0.8f;
                             }
                         }
+                        */
 
                         pos += origin + rampOffset;
                         // Store the vertex information for future use when we need it again on this or another face.

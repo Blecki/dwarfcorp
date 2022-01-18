@@ -19,5 +19,27 @@ namespace DwarfCorp
             yield return LiquidCellHandle.UnsafeCreateLocalHandle(V.Chunk, V.Coordinate.GetLocalVoxelCoordinate().ToLocalLiquidCoordinate().Offset(0, 1, 1));
             yield return LiquidCellHandle.UnsafeCreateLocalHandle(V.Chunk, V.Coordinate.GetLocalVoxelCoordinate().ToLocalLiquidCoordinate().Offset(1, 1, 1));
         }
+
+        public static IEnumerable<LiquidCellHandle> EnumerateCellsInTopOfVoxel(VoxelHandle V)
+        {
+            yield return LiquidCellHandle.UnsafeCreateLocalHandle(V.Chunk, V.Coordinate.GetLocalVoxelCoordinate().ToLocalLiquidCoordinate().Offset(0, 1, 0));
+            yield return LiquidCellHandle.UnsafeCreateLocalHandle(V.Chunk, V.Coordinate.GetLocalVoxelCoordinate().ToLocalLiquidCoordinate().Offset(1, 1, 0));
+            yield return LiquidCellHandle.UnsafeCreateLocalHandle(V.Chunk, V.Coordinate.GetLocalVoxelCoordinate().ToLocalLiquidCoordinate().Offset(0, 1, 1));
+            yield return LiquidCellHandle.UnsafeCreateLocalHandle(V.Chunk, V.Coordinate.GetLocalVoxelCoordinate().ToLocalLiquidCoordinate().Offset(1, 1, 1));
+        }
+
+        public static IEnumerable<LiquidCellHandle> EnumerateEmptyCellsInVoxel(VoxelHandle V)
+        {
+            foreach (var liquidCell in EnumerateCellsInVoxel(V))
+                if (liquidCell.LiquidType == 0)
+                    yield return liquidCell;
+        }
+
+        public static IEnumerable<LiquidCellHandle> EnumerateFilledCellsInVovel(VoxelHandle V)
+        {
+            foreach (var liquidCell in EnumerateCellsInVoxel(V))
+                if (liquidCell.LiquidType != 0)
+                    yield return liquidCell;
+        }
     }
 }

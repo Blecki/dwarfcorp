@@ -72,7 +72,7 @@ namespace DwarfCorp
 
         public override int GetHashCode()
         {
-            return (((Z << VoxelConstants.ZDivShift) + Y) << VoxelConstants.YDivShift) + X;
+            return (((Z << VoxelConstants.ZLiquidDivShift) + Y) << VoxelConstants.YLiquidDivShift) + X;
         }
 
         /// <summary>

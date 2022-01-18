@@ -63,13 +63,13 @@ namespace DwarfCorp
                         var timeNow = DateTime.Now;
                         var delta = timeNow - LastRan;
 
-                        if (delta.TotalSeconds >= Frequency)
+                        //if (delta.TotalSeconds >= Frequency)
                         {
                             LastRan = timeNow;
 
                             Worker(1.0f);
 
-                            var endTime = DateTime.Now;
+                            /*var endTime = DateTime.Now;
 
                             RecentRuns.AddLast(new Run
                             {
@@ -90,13 +90,13 @@ namespace DwarfCorp
                             else if (timeUsed < TimeBudget)
                             {
                                 Frequency = Math.Max(Frequency * (1.0f - FrequencyStep), MinFrequency);
-                            }
+                            }*/
                         }
-                        else
+                        /*else
                         {
                             var sleepTime = (Frequency - delta.TotalSeconds) * 1000;
-                            Thread.Sleep((int)sleepTime);
-                        }
+                            //Thread.Sleep((int)sleepTime);
+                        }*/
                     }
 
                 }

@@ -177,32 +177,7 @@ namespace DwarfCorp
             }
         }
 
-        [JsonIgnore]
-        public byte LiquidLevel
-        {
-            get { return (byte)(_cache_Chunk.Data.Liquid[_cache_Index] & VoxelConstants.LiquidLevelMask); }
-            set {
-                _cache_Chunk.Data.Liquid[_cache_Index] = (byte)((_cache_Chunk.Data.Liquid[_cache_Index] & VoxelConstants.InverseLiquidLevelMask) 
-                    | (value & VoxelConstants.LiquidLevelMask));
-            }
-        }
 
-        /// <summary>
-        /// Use when setting both type and level at once. Slightly faster.
-        /// </summary>
-        /// <param name="Type"></param>
-        /// <param name="Level"></param>
-        public void QuickSetLiquid(byte Type, byte Level)
-        {
-            var existingLiquid = (byte)((_cache_Chunk.Data.Liquid[_cache_Index] & VoxelConstants.LiquidTypeMask) >> VoxelConstants.LiquidTypeShift);
-            if (existingLiquid != 0 && Type == 0)
-                _cache_Chunk.Data.LiquidPresent[_cache_Local_Y] -= 1;
-            if (existingLiquid == 0 && Type != 0)
-                _cache_Chunk.Data.LiquidPresent[_cache_Local_Y] += 1;
-
-            _cache_Chunk.Data.Liquid[_cache_Index] = (byte)(((byte)Type << VoxelConstants.LiquidTypeShift) | (Level & VoxelConstants.LiquidLevelMask));
-        }
-        
         #endregion
 
         public override string ToString()

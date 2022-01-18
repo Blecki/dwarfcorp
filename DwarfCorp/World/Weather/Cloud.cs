@@ -190,7 +190,7 @@ namespace DwarfCorp
                 }
 
                 var test = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(RainDrops[i].Pos));
-                if (!test.IsValid || (test.IsEmpty && test.LiquidLevel == 0)) continue;
+                //if (!test.IsValid || (test.IsEmpty && test.LiquidLevel == 0)) continue;
 
                 RainDrops[i].IsAlive = false;
 
@@ -220,30 +220,30 @@ namespace DwarfCorp
                 var above = test.IsEmpty ? test : VoxelHelpers.GetVoxelAbove(test);
 
                 if (!above.IsValid || !above.IsEmpty) continue;
-                if (TypeofStorm == StormType.RainStorm &&
-                    (above.LiquidLevel < WaterManager.maxWaterLevel && (above.LiquidType == 1))) // 1 = water
-                {
-                    above.LiquidLevel = (byte)Math.Min(WaterManager.maxWaterLevel, above.LiquidLevel + WaterManager.rainFallAmount);
-                    above.LiquidType = stormProperties.LiquidToCreate;
-                }
-                else if (TypeofStorm == StormType.SnowStorm && above.IsEmpty && above.LiquidLevel == 0)
-                {
-                    if (test.GrassType == 0)
-                    {
-                        test.GrassType = Library.GetGrassType("snow").ID;
-                        test.GrassDecay = Library.GetGrassType("snow").InitialDecayValue;
-                    }
-                    else
-                    {
-                        var existingGrass = Library.GetGrassType((byte)test.GrassType);
-                        if (!String.IsNullOrEmpty(existingGrass.BecomeWhenSnowedOn))
-                        {
-                            var newGrass = Library.GetGrassType(existingGrass.BecomeWhenSnowedOn);
-                            test.GrassType = newGrass.ID;
-                            test.GrassDecay = newGrass.InitialDecayValue;
-                        }
-                    }
-                }
+                //if (TypeofStorm == StormType.RainStorm &&
+                //    (above.LiquidLevel < WaterManager.maxWaterLevel && (above.LiquidType == 1))) // 1 = water
+                //{
+                //    above.LiquidLevel = (byte)Math.Min(WaterManager.maxWaterLevel, above.LiquidLevel + WaterManager.rainFallAmount);
+                //    above.LiquidType = stormProperties.LiquidToCreate;
+                //}
+                //else if (TypeofStorm == StormType.SnowStorm && above.IsEmpty && above.LiquidLevel == 0)
+                //{
+                //    if (test.GrassType == 0)
+                //    {
+                //        test.GrassType = Library.GetGrassType("snow").ID;
+                //        test.GrassDecay = Library.GetGrassType("snow").InitialDecayValue;
+                //    }
+                //    else
+                //    {
+                //        var existingGrass = Library.GetGrassType((byte)test.GrassType);
+                //        if (!String.IsNullOrEmpty(existingGrass.BecomeWhenSnowedOn))
+                //        {
+                //            var newGrass = Library.GetGrassType(existingGrass.BecomeWhenSnowedOn);
+                //            test.GrassType = newGrass.ID;
+                //            test.GrassDecay = newGrass.InitialDecayValue;
+                //        }
+                //    }
+                //}
             }
 
             Matrix tf = LocalTransform;

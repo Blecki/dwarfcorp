@@ -18,6 +18,14 @@ namespace DwarfCorp
         public short[] Indexes = new short[6];
         public ExtendedVertex[] Vertices = new ExtendedVertex[4];
 
+        public RawPrimitive Transform(Matrix M)
+        {
+            for (var x = 0; x < VertexCount; ++x)
+                Vertices[x].Position = Vector3.Transform(Vertices[x].Position, M);                
+
+            return this;
+        }
+
         private static void EnsureSpace<T>(ref T[] In, int Size)
         {
             if (In == null)
@@ -141,6 +149,18 @@ namespace DwarfCorp
                 iBase += primitive.IndexCount;
             }
 
+            return r;
+        }
+
+        public static RawPrimitive Cube(Color Color, Color VertColor, Vector2[] FaceUVs, Vector4 TextureBounds)
+        {
+            var r = new RawPrimitive();
+            r.AddQuad(Matrix.CreateTranslation(0.0f, 0.5f, 0.0f), Color, VertColor, FaceUVs, TextureBounds);
+            r.AddQuad(Matrix.CreateTranslation(0.0f, -0.5f, 0.0f), Color, VertColor, FaceUVs, TextureBounds);
+            r.AddQuad(Matrix.CreateRotationX((float)Math.PI / 2) * Matrix.CreateTranslation(0.0f, 0.0f, 0.5f), Color, VertColor, FaceUVs, TextureBounds);
+            r.AddQuad(Matrix.CreateRotationX((float)Math.PI / 2) * Matrix.CreateTranslation(0.0f, 0.0f, -0.5f), Color, VertColor, FaceUVs, TextureBounds);
+            r.AddQuad(Matrix.CreateRotationX((float)Math.PI / 2) * Matrix.CreateRotationY((float)Math.PI / 2) * Matrix.CreateTranslation(0.5f, 0.0f, 0.0f), Color, VertColor, FaceUVs, TextureBounds);
+            r.AddQuad(Matrix.CreateRotationX((float)Math.PI / 2) * Matrix.CreateRotationY((float)Math.PI / 2) * Matrix.CreateTranslation(-0.5f, 0.0f, 0.0f), Color, VertColor, FaceUVs, TextureBounds);
             return r;
         }
     }

@@ -167,6 +167,7 @@ namespace DwarfCorp
 
             SetLoadingMessage("Loading Terrain...");
             ChunkManager.LoadChunks(gameFile.LoadChunks(), ChunkManager);
+            ChunkManager.Water.FirstBuild();
 
             SetLoadingMessage("Loading Entities...");
             gameFile.LoadPlayData(Overworld.GetInstancePath(), this);
@@ -395,6 +396,7 @@ namespace DwarfCorp
                 SetLoadingMessage("Reticulating Splines...");
 
             ChunkManager.StartThreads();
+            ChunkManager.Water.FirstBuild();
             SetLoadingMessage("Presimulating ...");
             ShowingWorld = false;
             OnLoadedEvent();
