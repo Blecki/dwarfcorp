@@ -107,11 +107,12 @@ namespace DwarfCorp.Rail
             else
                 World.UserInterface.SetMouse(new Gui.MousePointer("mouse", 1, 4));
 
-            // Don't attempt any camera control if the user is trying to type intoa focus item.
+            // Don't attempt any camera control if the user is trying to type intona focus item.
             if (World.UserInterface.Gui.FocusItem != null && !World.UserInterface.Gui.FocusItem.IsAnyParentTransparent() && !World.UserInterface.Gui.FocusItem.IsAnyParentHidden())
             {
                 return;
             }
+
             KeyboardState state = Keyboard.GetState();
             bool leftKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectLeft);
             bool rightKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectRight);

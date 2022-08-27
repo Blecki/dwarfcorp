@@ -7,9 +7,6 @@ using System.Threading;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// Handles the water simulation in the game.
-    /// </summary>
     public class WaterManager
     {
         private ChunkManager Chunks { get; set; }
