@@ -473,23 +473,27 @@ namespace DwarfCorp
                 {
                     foreach (var neighbor in Rail.RailHelper.EnumerateForwardNetworkConnections(state.PrevRail, state.Rail))
                     {
-                        var neighborRail = Creature.Manager.FindComponent(neighbor) as Rail.RailEntity;
-                        if (neighborRail == null || !neighborRail.Active)
-                            continue;
-
-                        yield return (new MoveAction()
+                        if (Creature.Manager.FindComponent(neighbor).HasValue(out var c) && c is Rail.RailEntity neighborRail)
                         {
-                            SourceState = state,
-                            DestinationState = new MoveState()
+                            if (!neighborRail.Active)
+                                continue;
+
+                            yield return (new MoveAction()
                             {
-                                Voxel = neighborRail.GetContainingVoxel(),
-                                Rail = neighborRail,
-                                PrevRail = state.Rail,
-                                VehicleType = VehicleTypes.Rail
-                            },
-                            MoveType = MoveType.RideVehicle,
-                            CostMultiplier = 1.0f
-                        });
+                                SourceState = state,
+                                DestinationState = new MoveState()
+                                {
+                                    Voxel = neighborRail.GetContainingVoxel(),
+                                    Rail = neighborRail,
+                                    PrevRail = state.Rail,
+                                    VehicleType = VehicleTypes.Rail
+                                },
+                                MoveType = MoveType.RideVehicle,
+                                CostMultiplier = 1.0f
+                            });
+                        }
+                        else
+                            continue;
                     }
                 }
 

@@ -173,22 +173,24 @@ namespace DwarfCorp
 
         public virtual void OnOutsideWorld()
         {
-            this.Die();
+            if (!this.IsFlagSet(Flag.PreserveOutsideWorld))
+                this.Die();
         }
 
         public void UpdateTransform()
         {
             HasMoved = false;
 
-            if (Parent != null)
-                globalTransform = LocalTransform * Parent.GlobalTransform;
+            if (Parent.HasValue(out var parent))
+                globalTransform = LocalTransform * parent.GlobalTransform;
             else
                 globalTransform = LocalTransform;
 
             UpdateBoundingBox();
 
-            if (NeedsSpacialStorageUpdate(LastBounds, BoundingBox))
+            if (NeedsSpacialStorageUpdate(LastBounds, BoundingBox) || IsFlagSet(Flag.ForceSpacialUpdate))
             {
+                SetFlag(Flag.ForceSpacialUpdate, false);
                 if (IsRoot() && !IsFlagSet(Flag.DontUpdate))
                 {
                     Manager.World.RemoveRootGameObject(this, LastBounds);

@@ -84,7 +84,7 @@ namespace DwarfCorp
                 // Instead heirarchy should be creature -> physics -> everything else.
                 // Todo: Make creature factories return their physics component, handily solving this issue.
                 // Todo: Why is the component manager a static member, rather than being passed in?
-                Components.RootComponent.AddChild(r.Parent == null ? r : r.Parent);
+                Components.RootComponent.AddChild(r.Parent.HasValue(out var p) ? p : r);
                 return r as T;
             }
             else

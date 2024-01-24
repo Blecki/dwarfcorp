@@ -1,9 +1,9 @@
 {
   "ID": 0,
   "Name": "Scaffold",
-  "Top": "7, 0",
-  "Bottom": "7, 0",
-  "Sides": "7, 0",
+  "Top": "4, 0",
+  "Bottom": "2, 6",
+  "Sides": "2, 6",
   "Transitions": 1,
   "HasTransitionTextures": false,
   "TransitionTiles": null,
@@ -27,7 +27,7 @@
   "IsInvincible": false,
   "Tint": "255, 255, 255, 255",
   "SpawnOnSurface": false,
-  "IsTransparent": false,
+  "IsTransparent": true,
   "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_wood_destroy",
   "HitSoundResources": [
     "Audio\\oscar\\sfx_ic_dwarf_pick_wood_1",

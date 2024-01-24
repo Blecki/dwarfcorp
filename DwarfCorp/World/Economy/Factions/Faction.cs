@@ -65,7 +65,7 @@ namespace DwarfCorp
                 HandleThreats();
 
             if (World.ComponentManager.NumComponents() > 0)
-                OwnedObjects.RemoveAll(obj => obj.IsDead || obj.Parent == null || !obj.Manager.HasComponent(obj.GlobalID));
+                OwnedObjects.RemoveAll(obj => obj.IsDead || !obj.Parent.HasValue() || !obj.Manager.HasComponent(obj.GlobalID));
 
             #region Update Expeditions
 

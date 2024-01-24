@@ -43,7 +43,8 @@ namespace DwarfCorp
             return Component.Tags.Contains("Resource") &&
                 Component.Active &&
                 Component.IsVisible &&
-                Component.Parent == World.ComponentManager.RootComponent;
+                Component.Parent.HasValue(out var parent) &&
+                parent == World.ComponentManager.RootComponent;
         }
 
         public override void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)

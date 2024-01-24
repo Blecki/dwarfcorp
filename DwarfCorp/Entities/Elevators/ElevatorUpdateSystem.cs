@@ -102,13 +102,11 @@ namespace DwarfCorp.Elevators
 
         private void RemoveSegmentFromShaft(ElevatorShaft Track)
         {
-            var above = Track.Manager.FindComponent(Track.TrackAbove) as ElevatorShaft;
-            if (above != null)
-                BuildShaftUpward(above);
+            if (Track.Manager.FindComponent(Track.TrackAbove).HasValue(out var above) && above is ElevatorShaft shaftAbove)
+                BuildShaftUpward(shaftAbove);
 
-            var below = Track.Manager.FindComponent(Track.TrackBelow) as ElevatorShaft;
-            if (below != null)
-                BuildShaftDownward(below);
+            if (Track.Manager.FindComponent(Track.TrackBelow).HasValue(out var below) && above is ElevatorShaft shaftBelow)
+                BuildShaftDownward(shaftBelow);
 
             CreateNewShaft(new ElevatorShaft[] { Track });
         }
@@ -121,8 +119,7 @@ namespace DwarfCorp.Elevators
 
             while (true)
             {
-                var upper = Track.Manager.FindComponent(Track.TrackAbove) as ElevatorShaft;
-                if (upper != null)
+                if (Track.Manager.FindComponent(Track.TrackAbove).HasValue(out var above) && above is ElevatorShaft upper)
                 {
                     segments.Add(upper);
                     Track = upper;
@@ -156,8 +153,7 @@ namespace DwarfCorp.Elevators
 
             while (true)
             {
-                var lower = Track.Manager.FindComponent(Track.TrackBelow) as ElevatorShaft;
-                if (lower != null)
+                if (Track.Manager.FindComponent(Track.TrackBelow).HasValue(out var below) && below is ElevatorShaft lower)
                 {
                     segments.Add(lower);
                     Track = lower;
@@ -175,8 +171,7 @@ namespace DwarfCorp.Elevators
             var bottom = Track;
             while (true)
             {
-                var lower = Track.Manager.FindComponent(bottom.TrackBelow) as ElevatorShaft;
-                if (lower != null)
+                if (Track.Manager.FindComponent(bottom.TrackBelow).HasValue(out var below) && below is ElevatorShaft lower)
                     bottom = lower;
                 else
                     break;
@@ -221,9 +216,9 @@ namespace DwarfCorp.Elevators
 
         public void DetachFromNeighbors(ComponentManager Manager, ElevatorShaft Segment)
         {
-            if (Manager.FindComponent(Segment.TrackAbove) is ElevatorShaft neighbor)
+            if (Manager.FindComponent(Segment.TrackAbove).HasValue(out var above) && above is ElevatorShaft neighbor)
                 neighbor.TrackBelow = ComponentManager.InvalidID;
-            if (Manager.FindComponent(Segment.TrackBelow) is ElevatorShaft neighbor2)
+            if (Manager.FindComponent(Segment.TrackBelow).HasValue(out var below) && below is ElevatorShaft neighbor2)
                 neighbor2.TrackAbove = ComponentManager.InvalidID;
 
             Segment.TrackAbove = ComponentManager.InvalidID;

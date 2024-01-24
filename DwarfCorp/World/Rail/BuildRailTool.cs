@@ -50,7 +50,7 @@ namespace DwarfCorp.Rail
                 {
                     RailHelper.Place(World, PreviewBodies, GodModeSwitch);
                     PreviewBodies.Clear();
-                    CreatePreviewBodies(World.ComponentManager, World.UserInterface.VoxSelector.VoxelUnderMouse);
+                    CreatePreviewBodies(World.ComponentManager, new VoxelHandle(World.ChunkManager, new GlobalVoxelCoordinate(0, 0, 0)));
                 }
         }
 
@@ -133,6 +133,9 @@ namespace DwarfCorp.Rail
             RightPressed = rightKey;
 
             var tint = Color.White;
+
+            if (PreviewBodies.Count != Pattern.Pieces.Count) // The fuck?
+                CreatePreviewBodies(World.ComponentManager, new VoxelHandle(World.ChunkManager, new GlobalVoxelCoordinate(0, 0, 0)));
 
             for (var i = 0; i < PreviewBodies.Count && i < Pattern.Pieces.Count; ++i)
                 PreviewBodies[i].UpdatePiece(Pattern.Pieces[i], World.UserInterface.VoxSelector.VoxelUnderMouse);

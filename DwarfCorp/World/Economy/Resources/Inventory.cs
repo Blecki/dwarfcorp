@@ -122,9 +122,14 @@ namespace DwarfCorp
             }
 
             item.SetFlag(Flag.Active, false);
-            var toss = new BodyTossMotion(0.5f + MathFunctions.Rand(0.05f, 0.08f), 1.0f, item.GlobalTransform, Parent);
-            item.AnimationQueue.Add(toss);
-            toss.OnComplete += () => item.GetRoot().Delete();
+            if (Parent.HasValue(out var parent))
+            {
+                var toss = new BodyTossMotion(0.5f + MathFunctions.Rand(0.05f, 0.08f), 1.0f, item.GlobalTransform, parent);
+                item.AnimationQueue.Add(toss);
+                toss.OnComplete += () => item.GetRoot().Delete();
+            }
+            else
+                item.GetRoot().Delete();
 
             return true;
         }

@@ -24,8 +24,7 @@ namespace DwarfCorp
             {
                 if (UInt32.TryParse(Name, out uint id))
                 {
-                    var entity = World.ComponentManager.FindComponent(id);
-                    if (entity != null)
+                    if (World.ComponentManager.FindComponent(id).HasValue(out var entity))
                     {
                         World.Renderer.Camera.SetZoomTarget(entity.Position);
                         World.UserInterface.BodySelector.Selected(new List<GameComponent> { entity.GetRoot() }, InputManager.MouseButton.Left);
@@ -48,8 +47,7 @@ namespace DwarfCorp
             {
                 if (UInt32.TryParse(Name, out uint id))
                 {
-                    var entity = World.ComponentManager.FindComponent(id);
-                    if (entity != null)
+                    if (World.ComponentManager.FindComponent(id).HasValue(out var entity))
                     {
                         entity.GetRoot().Delete();
                         return "Deleted.";

@@ -229,6 +229,11 @@ namespace DwarfCorp.Rail
                         currentVoxel = nextCoordinate;
                     }
 
+                    if (Debugger.Switches.DrawToolDebugInfo)
+                        foreach (var voxel in PathVoxels)
+                            Drawer3D.DrawBox(new BoundingBox(voxel.ToVector3(), voxel.ToVector3() + Vector3.One), Color.Yellow, 0.1f, false);
+
+
                     // Iterate PathVoxels, determining deltas and using them to decide which piece to create.
                     var pathCompassConnections = new List<CompassConnection>();
 
@@ -238,25 +243,45 @@ namespace DwarfCorp.Rail
                         pathCompassConnections.Add(new CompassConnection(OverrideStartingOrientation ? StartingOppositeOrientation : CompassOrientationHelper.Opposite(firstDelta), firstDelta));
 
                         for (var i = 1; i < PathVoxels.Count - 1; ++i)
-                            pathCompassConnections.Add(new CompassConnection(
-                                CompassOrientationHelper.GetVoxelDelta(PathVoxels[i], PathVoxels[i - 1]),
-                                CompassOrientationHelper.GetVoxelDelta(PathVoxels[i], PathVoxels[i + 1])));
+                        {
+                            var firstOrient = CompassOrientationHelper.GetVoxelDelta(PathVoxels[i], PathVoxels[i - 1]);
+                            var secondOrient = CompassOrientationHelper.GetVoxelDelta(PathVoxels[i], PathVoxels[i + 1]);
+
+                            if (Debugger.Switches.DrawToolDebugInfo)
+                            {
+                                Drawer3D.DrawLine(PathVoxels[i].ToVector3(), PathVoxels[i].ToVector3() + CompassOrientationHelper.GetOffset(firstOrient).AsVector3() + new Vector3(0, 1, 0), Color.Teal, 0.1f);
+                                Drawer3D.DrawLine(PathVoxels[i].ToVector3(), PathVoxels[i].ToVector3() + CompassOrientationHelper.GetOffset(secondOrient).AsVector3() + new Vector3(0, 1, 0), Color.Fuchsia, 0.1f);
+
+                            }
+
+                            pathCompassConnections.Add(new CompassConnection(firstOrient, secondOrient));                        
+                        }
 
                         var lastDelta = CompassOrientationHelper.GetVoxelDelta(PathVoxels[PathVoxels.Count - 1], PathVoxels[PathVoxels.Count - 2]);
                         pathCompassConnections.Add(new CompassConnection(lastDelta, OverrideEndingOrientation ? EndingOppositeOrientation : CompassOrientationHelper.Opposite(lastDelta)));
+
+                        if (PathVoxels.Count != pathCompassConnections.Count)
+                        {
+                            var x = 5;
+                        }
                     }
 
                     var bodyCounter = 0;
                     var previousPieceAddedTrailingDiagonals = false;
 
+                    foreach (var body in PreviewBodies)
+                        body.GetRoot().Delete();
+                    PreviewBodies.Clear();
+
                     for (var i = 0; i < pathCompassConnections.Count; ++i)
                     {
                         var pieceAdded = false;
+                        RailPiece matchingPiece = null;
+                        var matchedOrientation = PieceOrientation.North;
+                        CompassConnection matchedConnection = new CompassConnection();
 
                         foreach (var piece in Library.EnumerateRailPieces().Where(p => p.CompassConnections.Count != 0))
                         {
-                            var matchedOrientation = PieceOrientation.North;
-                            CompassConnection matchedConnection = new CompassConnection();
                             bool matched = false;
                             for (int j = 0; j < 4 && !matched; ++j)
                             {
@@ -268,57 +293,73 @@ namespace DwarfCorp.Rail
                                         matched = true;
                                         matchedOrientation = (PieceOrientation)j;
                                         matchedConnection = pathCompassConnections[i];
+                                        matchingPiece = piece;
                                         break;
                                     }
                                 }
                             }
 
-                            if (matched)
-                            {
-                                var newPiece = new JunctionPiece
-                                {
-                                    Offset = new Point(PathVoxels[i].X - DragStartVoxel.Coordinate.X, PathVoxels[i].Z - DragStartVoxel.Coordinate.Z),
-                                    RailPiece = piece.Name,
-                                    Orientation = matchedOrientation
-                                };
-
-                                if (PreviewBodies.Count <= bodyCounter)
-                                   PreviewBodies.Add(RailHelper.CreatePreviewBody(World.ComponentManager, DragStartVoxel, newPiece));
-                                else
-                                    PreviewBodies[bodyCounter].UpdatePiece(newPiece, DragStartVoxel);
-
-                                bodyCounter += 1;
-                                pieceAdded = true;
-
-                                if (!previousPieceAddedTrailingDiagonals &&
-                                    (matchedConnection.A == CompassOrientation.Northeast || matchedConnection.A == CompassOrientation.Southeast || matchedConnection.A == CompassOrientation.Southwest
-                                    || matchedConnection.A == CompassOrientation.Northwest))
-                                {
-                                    bodyCounter = AddDiagonal(bodyCounter, matchedConnection.A, newPiece, 7, 5);
-                                    bodyCounter = AddDiagonal(bodyCounter, matchedConnection.A, newPiece, 1, 1);
-                                }
-
-                                if (matchedConnection.B == CompassOrientation.Northeast || matchedConnection.B == CompassOrientation.Southeast || matchedConnection.B == CompassOrientation.Southwest
-                                    || matchedConnection.B == CompassOrientation.Northwest)
-                                {
-                                    previousPieceAddedTrailingDiagonals = true;
-
-                                    bodyCounter = AddDiagonal(bodyCounter, matchedConnection.B, newPiece, 7, 5);
-                                    bodyCounter = AddDiagonal(bodyCounter, matchedConnection.B, newPiece, 1, 1);
-                                }
-                                else
-                                    previousPieceAddedTrailingDiagonals = false;
-
-                                break;
-                            }
+                            if (matched) break;
                         }
 
-                        if (!pieceAdded)
-                            break;
+                        if (matchingPiece != null)
+                        {
+                            if (Debugger.Switches.DrawToolDebugInfo)
+                                Drawer3D.DrawLine(PathVoxels[i].ToVector3() + new Vector3(0, 1, 0), PathVoxels[i].ToVector3() + new Vector3(0, 2, 0), Color.Red, 0.1f);
+
+                            var newPiece = new JunctionPiece
+                            {
+                                Offset = new Point(PathVoxels[i].X - DragStartVoxel.Coordinate.X, PathVoxels[i].Z - DragStartVoxel.Coordinate.Z),
+                                //Offset = new Point(0, 0),
+                                RailPiece = matchingPiece.Name,
+                                Orientation = matchedOrientation
+                            };
+
+                            //if (PreviewBodies.Count <= bodyCounter)
+                            var preview = RailHelper.CreatePreviewBody(World.ComponentManager, DragStartVoxel, newPiece);
+                            PreviewBodies.Add(preview);
+
+                            if (preview == null)
+                            {
+                                var x = 5;
+                            }
+                            //else
+                            //    PreviewBodies[bodyCounter].UpdatePiece(newPiece, DragStartVoxel);
+
+                            bodyCounter += 1;
+                            pieceAdded = true;
+
+                            //*
+                            if (!previousPieceAddedTrailingDiagonals &&
+                                (matchedConnection.A == CompassOrientation.Northeast || matchedConnection.A == CompassOrientation.Southeast || matchedConnection.A == CompassOrientation.Southwest
+                                || matchedConnection.A == CompassOrientation.Northwest))
+                            {
+                                bodyCounter = AddDiagonal(bodyCounter, matchedConnection.A, newPiece, 7, 5);
+                                bodyCounter = AddDiagonal(bodyCounter, matchedConnection.A, newPiece, 1, 1);
+                            }
+
+                            if (matchedConnection.B == CompassOrientation.Northeast || matchedConnection.B == CompassOrientation.Southeast || matchedConnection.B == CompassOrientation.Southwest
+                                || matchedConnection.B == CompassOrientation.Northwest)
+                            {
+                                previousPieceAddedTrailingDiagonals = true;
+
+                                bodyCounter = AddDiagonal(bodyCounter, matchedConnection.B, newPiece, 7, 5);
+                                bodyCounter = AddDiagonal(bodyCounter, matchedConnection.B, newPiece, 1, 1);
+                            }
+                            else
+                                previousPieceAddedTrailingDiagonals = false;
+                            //*/
+
+
+                        }
+
+                        //if (!pieceAdded)
+                        //    break;
                     }
-                                        
+
+                                       
                     // Clean up any excess preview entities.
-                    var lineSize = bodyCounter;
+                    /*var lineSize = bodyCounter;
 
                     while (bodyCounter < PreviewBodies.Count)
                     {
@@ -326,7 +367,7 @@ namespace DwarfCorp.Rail
                         bodyCounter += 1;
                     }
 
-                    PreviewBodies = PreviewBodies.Take(lineSize).ToList();
+                    PreviewBodies = PreviewBodies.Take(lineSize).ToList();*/
                 }
             }
 
@@ -350,10 +391,10 @@ namespace DwarfCorp.Rail
                 Orientation = (PieceOrientation)((int)CompassOrientationHelper.Rotate(B, PieceRotation) / 2)
             };
 
-            if (PreviewBodies.Count <= bodyCounter)
+            //if (PreviewBodies.Count <= bodyCounter)
                 PreviewBodies.Add(RailHelper.CreatePreviewBody(World.ComponentManager, DragStartVoxel, firstEdgePiece));
-            else
-                PreviewBodies[bodyCounter].UpdatePiece(firstEdgePiece, DragStartVoxel);
+            //else
+            //    PreviewBodies[bodyCounter].UpdatePiece(firstEdgePiece, DragStartVoxel);
 
             bodyCounter += 1;
             return bodyCounter;

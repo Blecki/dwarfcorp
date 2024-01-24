@@ -28,6 +28,14 @@ namespace DwarfCorp
             yield return LiquidCellHandle.UnsafeCreateLocalHandle(V.Chunk, V.Coordinate.GetLocalVoxelCoordinate().ToLocalLiquidCoordinate().Offset(1, 1, 1));
         }
 
+        public static IEnumerable<LiquidCellHandle> EnumerateCellsInBottomOfVoxel(VoxelHandle V)
+        {
+            yield return LiquidCellHandle.UnsafeCreateLocalHandle(V.Chunk, V.Coordinate.GetLocalVoxelCoordinate().ToLocalLiquidCoordinate().Offset(0, 0, 0));
+            yield return LiquidCellHandle.UnsafeCreateLocalHandle(V.Chunk, V.Coordinate.GetLocalVoxelCoordinate().ToLocalLiquidCoordinate().Offset(1, 0, 0));
+            yield return LiquidCellHandle.UnsafeCreateLocalHandle(V.Chunk, V.Coordinate.GetLocalVoxelCoordinate().ToLocalLiquidCoordinate().Offset(0, 0, 1));
+            yield return LiquidCellHandle.UnsafeCreateLocalHandle(V.Chunk, V.Coordinate.GetLocalVoxelCoordinate().ToLocalLiquidCoordinate().Offset(1, 0, 1));
+        }
+
         public static IEnumerable<LiquidCellHandle> EnumerateEmptyCellsInVoxel(VoxelHandle V)
         {
             foreach (var liquidCell in EnumerateCellsInVoxel(V))

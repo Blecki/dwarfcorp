@@ -89,6 +89,18 @@
     <Compile Include="Entities\Animals\Pumpking.cs" />
     <Compile Include="Entities\Fixtures\Jack-O-Lantern.cs" />
     <Compile Include="Entities\Fixtures\TrainingEquipment\TrainingEquipment.cs" />
+    <Compile Include="Graphics\Primitives\CSG\Plane.cs" />
+    <Compile Include="Graphics\Primitives\CSG\Polygon.cs" />
+    <Compile Include="Graphics\Primitives\CSG\Solid.cs" />
+    <Compile Include="Graphics\Primitives\CSG\Solids.cs" />
+    <Compile Include="Graphics\Primitives\CSG\Tree.cs" />
+    <Compile Include="Graphics\Primitives\CSG\Vector.cs" />
+    <Compile Include="Graphics\Primitives\CSG\Vertex.cs" />
+    <Compile Include="Graphics\Primitives\PrimitiveBuilder-Cylinder.cs" />
+    <Compile Include="Graphics\Primitives\PrimitiveBuilder.cs" />
+    <Compile Include="World\Indicators\Indicator.cs" />
+    <Compile Include="World\Indicators\AnimatedIndicator.cs" />
+    <Compile Include="World\Indicators\TextIndicator.cs" />
     <Compile Include="World\Water\Pipes\Spigot.cs" />
     <Compile Include="World\Water\Pipes\Pump.cs" />
     <Compile Include="Entities\Plants\Cotton.cs" />
@@ -849,7 +861,7 @@
     <Compile Include="Library\CraftLibrary.cs" />
     <Compile Include="World\EngineModule.cs" />
     <Compile Include="World\CompanyInformation.cs" />
-    <Compile Include="World\IndicatorManager.cs" />
+    <Compile Include="World\Indicators\IndicatorManager.cs" />
     <Compile Include="Gui\Enums.cs" />
     <Compile Include="Gui\Geo\CreateQuad.cs" />
     <Compile Include="Gui\Geo\CreateScale9Background.cs" />

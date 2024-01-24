@@ -92,13 +92,6 @@ namespace DwarfCorp
             }
         }
 
-        public float GetSpreadRate(int type)
-        {
-            if (Library.GetLiquid(type).HasValue(out var liquidType))
-                return liquidType.SpreadRate;
-            return 1.0f;
-        }
-
         public void UpdateWater()
         {
             if(Chunks.World.Paused || Debugger.Switches.DisableWaterUpdate)
@@ -167,9 +160,13 @@ namespace DwarfCorp
             var below = LiquidCellHelpers.GetLiquidCellBelow(Of.ThisCell);
             if (TestCell(ChunkManager, SourceCell, below)) yield return new OpenSearchNode { ParentCell = Of.ThisCell, ThisCell = below, Cost = Of.Cost - 1 };
             if (below.LiquidType == 0) yield break;
+
             var neighborOrder = MathFunctions.RandInt(0, NeighborOrders.Count);
             foreach (var neighbor in LiquidCellHelpers.EnumerateNeighbors(NeighborOrders[neighborOrder], Of.ThisCell.Coordinate).Select(c => ChunkManager.CreateLiquidCellHandle(c)))
                 if (neighbor.IsValid && TestCell(ChunkManager, SourceCell, neighbor)) yield return new OpenSearchNode { ParentCell = Of.ThisCell, ThisCell = neighbor, Cost = Of.Cost + 10 };
+
+            //var above = LiquidCellHelpers.GetLiquidCellAbove(Of.ThisCell);
+            //if (TestCell(ChunkManager, SourceCell, above)) yield return new OpenSearchNode { ParentCell = Of.ThisCell, ThisCell = above, Cost = Of.Cost + 100 };
         }
 
         private LiquidCellHandle FindEmptyCell(ChunkManager ChunkManager, LiquidCellHandle Source)
@@ -182,7 +179,20 @@ namespace DwarfCorp
             while (openNodes.Count > 0)
             {
                 var current = openNodes.Dequeue();
+                //if (current.ThisCell.Coordinate.Y >= Source.Coordinate.Y)
+                //{
+                 //   closedNodes.Add(current.ThisCell.Coordinate);
+                //    continue;
+                //}
+
                 if (current.ThisCell.IsValid && current.ThisCell.LiquidType == 0 && current.ThisCell.Coordinate.Y < Source.Coordinate.Y)
+                    return current.ThisCell;
+
+                // Did we find a matching ocean cell? Flow into it!
+                if (current.ThisCell.IsValid 
+                        && current.ThisCell.Coordinate != Source.Coordinate 
+                        && current.ThisCell.LiquidType == Source.LiquidType 
+                        && current.ThisCell.OceanFlag == 1)
                     return current.ThisCell;
                 
                 foreach (var neighbor in EnumerateOpenNeighbors(ChunkManager, Source, current))
@@ -218,6 +228,9 @@ namespace DwarfCorp
             if (dirtyCell.LiquidType == 0)
                 return;
 
+            if (dirtyCell.OceanFlag == 1)
+                return;
+
             var above = LiquidCellHelpers.GetLiquidCellAbove(dirtyCell);
             if (above.IsValid && above.LiquidType != 0 && above.LiquidType == dirtyCell.LiquidType) return;
 
@@ -236,13 +249,16 @@ namespace DwarfCorp
             CreateSplash(dirtyCell.Center * 0.5f, dirtyCell.LiquidType);
 
             destinationCell.LiquidType = dirtyCell.LiquidType;
-            dirtyCell.LiquidType = 0;
+            if (dirtyCell.OceanFlag == 0)
+                dirtyCell.LiquidType = 0;            
 
             EnqueueDirtyCell(LiquidCellHelpers.GetLiquidCellAbove(dirtyCell));
             EnqueueDirtyCell(LiquidCellHelpers.GetLiquidCellBelow(dirtyCell));
             foreach (var neighbor in LiquidCellHelpers.EnumerateManhattanNeighbors2D_Y(dirtyCell.Coordinate).Select(c => ChunkManager.CreateLiquidCellHandle(c)))
                 EnqueueDirtyCell(neighbor);
-            EnqueueDirtyCell(destinationCell);
+
+            if (destinationCell.OceanFlag != 1)
+                EnqueueDirtyCell(destinationCell);
         }
     }
 }

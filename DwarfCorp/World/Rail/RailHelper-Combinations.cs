@@ -13,14 +13,19 @@ namespace DwarfCorp.Rail
     {
         public static RailEntity CreatePreviewBody(ComponentManager Manager, VoxelHandle Location, JunctionPiece Piece)
         {
-            var r = new RailEntity(Manager, Location, Piece);
+            var r = new RailEntity(Manager, VoxelHandle.InvalidHandle, Piece);
             Manager.RootComponent.AddChild(r);
             r.SetFlagRecursive(GameComponent.Flag.Active, false);
 
             foreach (var tinter in r.EnumerateAll().OfType<Tinter>())
                 tinter.Stipple = true;
 
+            r.PreviewMode = true;
             r.SetFlag(GameComponent.Flag.ShouldSerialize, false);
+            r.SetFlag(GameComponent.Flag.ForceSpacialUpdate, true);
+            r.HasMoved = true;
+            r.PropogateTransforms();
+            r.UpdatePiece(Piece, Location);
             //Todo: Add craft details component.
             return r;
         }
@@ -74,6 +79,10 @@ namespace DwarfCorp.Rail
 
                     PreviewEntity.UpdatePiece(combinedPiece, PreviewEntity.GetContainingVoxel());
                     return true;
+                } else if (entity is RailEntity)
+                {
+                    World.UserInterface.ShowTooltip("No way to combine rails.");
+                    return false;
                 }
 
                 if (Debugger.Switches.DrawToolDebugInfo)
@@ -124,6 +133,7 @@ namespace DwarfCorp.Rail
                 var addNewDesignation = true;
                 var hasResources = false;
                 var finalEntity = body;
+                
 
                 foreach (var entity in World.EnumerateIntersectingRootObjects(actualPosition.GetBoundingBox().Expand(-0.2f), CollisionType.Static))
                 {
@@ -136,6 +146,7 @@ namespace DwarfCorp.Rail
                     if (Object.ReferenceEquals(entity, body)) continue;
 
                     var existingDesignation = World.PersistentData.Designations.EnumerateEntityDesignations(DesignationType.PlaceObject).FirstOrDefault(d => Object.ReferenceEquals(d.Body, entity));
+
                     if (existingDesignation != null)
                     {
                         (entity as RailEntity).UpdatePiece(piece, actualPosition);
@@ -200,7 +211,15 @@ namespace DwarfCorp.Rail
                     World.PlayerFaction.OwnedObjects.Add(finalEntity);
                     foreach (var tinter in finalEntity.EnumerateAll().OfType<Tinter>())
                         tinter.Stipple = false;
+
                 }
+
+                foreach (var railEntity in finalEntity.EnumerateAll().OfType<RailEntity>())
+                {
+                    railEntity.Reattach();
+                    railEntity.PreviewMode = false;
+                }
+
             }
 
             if (!GodModeSwitch && assignments.Count > 0)

@@ -209,7 +209,7 @@ namespace DwarfCorp
                                     else
                                     {
                                         var _vox = chunk.Manager.CreateVoxelHandle(vox.Coordinate.ToGlobalVoxelCoordinate());
-                                        if (vox.LiquidType != 0 || !_vox.IsEmpty)
+                                        if (vox.LiquidType != 0)// || !_vox.IsEmpty)
                                         {
                                             cache.drawFace[(int)face] = false;
                                             continue;

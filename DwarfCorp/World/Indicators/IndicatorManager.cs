@@ -1,115 +1,11 @@
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Security.AccessControl;
-using System.Text;
-using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
 using Color = Microsoft.Xna.Framework.Color;
-using System.Runtime.Serialization;
 
 namespace DwarfCorp
 {
-
-    public class Indicator
-    {
-        public NamedImageFrame Image;
-        public Vector3 Position;
-        public Timer CurrentTime;
-        public float MaxScale;
-        public Vector2 Offset { get; set; }
-        public Color Tint { get; set; }
-        public bool Grow = true;
-        public bool Flip = false;
-        public float Scale { get; set; }
-
-        public bool ShouldDelete { get; set; }
-
-        public Indicator()
-        {
-            ShouldDelete = false;
-        }
-
-        public virtual void Update(DwarfTime time)
-        {
-            float growTime = CurrentTime.TargetTimeSeconds * 0.5f;
-            float shrinkTime = CurrentTime.TargetTimeSeconds * 0.5f;
-
-            if (CurrentTime.CurrentTimeSeconds < growTime)
-            {
-                Scale = Easing.CubeInOut(CurrentTime.CurrentTimeSeconds, 0.0f, MaxScale, growTime);
-            }
-            else if (CurrentTime.CurrentTimeSeconds > shrinkTime)
-            {
-                Scale = Easing.CubeInOut(CurrentTime.CurrentTimeSeconds - shrinkTime, MaxScale, -MaxScale, CurrentTime.TargetTimeSeconds - shrinkTime);
-            }
-
-            if (!Grow)
-            {
-                Scale = MaxScale;
-            }
-            CurrentTime.Update(time);
-        }
-
-        public virtual void Render()
-        {
-            Drawer2D.DrawSprite(Image, Position, new Vector2(Scale, Scale), Offset, Tint, Flip);
-        }
-    }
-
-    public class TextIndicator : Indicator
-    {
-        public string Text { get; set; }
-        public SpriteFont Font { get; set; }
-        public float Speed { get; set; }
-
-        public TextIndicator(SpriteFont font)
-        {
-            Font = font;
-            Speed = MathFunctions.Rand(0.45f, 2.45f);
-        }
-
-        public override void Update(DwarfTime time)
-        {
-            Position += Speed * Vector3.Up * (float)time.ElapsedGameTime.TotalSeconds;
-            Tint = new Color(Tint.R, Tint.G, Tint.B, (byte)(255*(1.0f - CurrentTime.CurrentTimeSeconds/CurrentTime.TargetTimeSeconds)));
-            CurrentTime.Update(time);
-        }
-
-        public override void Render()
-        {
-            Drawer2D.DrawText(Text, Position, Tint, Color.Transparent);
-        }
-       
-    }
-
-    public class AnimatedIndicator : Indicator
-    {
-        public AnimationPlayer Player = new AnimationPlayer();
-        public Animation Animation;
-        public SpriteSheet SpriteSheet;
-        
-        public override void Update(DwarfTime time)
-        {
-            base.Update(time);
-
-            if (!Player.HasValidAnimation()) Player.Play(Animation);
-            Player.Update(time);
-
-            var frame = Animation.Frames[Player.CurrentFrame];
-            var frameRect = new Rectangle(frame.X * SpriteSheet.FrameWidth, frame.Y * SpriteSheet.FrameHeight, SpriteSheet.FrameWidth, SpriteSheet.FrameHeight);
-            Image = new NamedImageFrame(SpriteSheet.AssetName, frameRect);
-
-            if (Player.IsDone())
-                ShouldDelete = true;
-        }       
-    }
-
-
     /// <summary>
     /// This class exists to draw simple sprites (indicators) to the screen. Indicators
     /// are just a sprite at a location which grows, shrinks, and disappears over time.

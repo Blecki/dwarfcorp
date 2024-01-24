@@ -21,17 +21,17 @@ namespace DwarfCorp
         [JsonIgnore] public Gui.Widget GuiTag = null;
 
         [JsonProperty] private uint ParentID = ComponentManager.InvalidID;
-        [JsonIgnore] private GameComponent CachedParent = null;
+        [JsonIgnore] private MaybeNull<GameComponent> CachedParent = null;
 
         [JsonIgnore]
-        public GameComponent Parent
+        public MaybeNull<GameComponent> Parent
         {
             get
             {
                 if (World == null || ParentID == ComponentManager.InvalidID)
                     return null;
 
-                if (CachedParent == null)
+                if (!CachedParent.HasValue())
                     CachedParent = Manager.FindComponent(ParentID);
 
                 return CachedParent;
@@ -39,7 +39,10 @@ namespace DwarfCorp
             set
             {
                 CachedParent = value;
-                ParentID = value != null ? value.GlobalID : ComponentManager.InvalidID;
+                if (value.HasValue(out var p))
+                    ParentID = p.GlobalID;
+                else
+                    ParentID = ComponentManager.InvalidID;
             }
         }
 
@@ -67,8 +70,7 @@ namespace DwarfCorp
 
         public void PostSerialization(ComponentManager Manager)
         {
-            Children = SerializableChildren.Select(id => Manager.FindComponent(id)).ToList();
-            Children.RemoveAll(c => c == this || c == null);
+            Children = SerializableChildren.Select(id => Manager.FindComponent(id).HasValue(out var x) ? x : null).Where(x => x != null && x != this).ToList();
             SerializableChildren = null;
         }
 
@@ -97,6 +99,8 @@ namespace DwarfCorp
             ShouldSerialize = 8,
             RotateBoundingBox = 64,
             DontUpdate = 128,
+            PreserveOutsideWorld = 256,
+            ForceSpacialUpdate = 512
         }
 
         public bool IsFlagSet(Flag F)
@@ -239,7 +243,8 @@ namespace DwarfCorp
             foreach (var child in localList)
                 child.Delete();
 
-            if (Parent != null) Parent.RemoveChild(this);
+            if (Parent.HasValue(out var parent))
+                parent.RemoveChild(this);
 
             Active = false;
             IsVisible = false;
@@ -264,7 +269,8 @@ namespace DwarfCorp
             foreach (var child in localList)
                 if (child != null) child.Die();
 
-            if (Parent != null) Parent.RemoveChild(this);
+            if (Parent.HasValue(out var parent))
+                parent.RemoveChild(this);
 
             Active = false;
             IsVisible = false;
@@ -331,7 +337,7 @@ namespace DwarfCorp
             }
             lock (Children)
             {
-                global::System.Diagnostics.Debug.Assert(child.Parent == null, "Child was already added to another component. Child is a " + child.GetType().Name);
+                global::System.Diagnostics.Debug.Assert(!child.Parent.HasValue(), "Child was already added to another component. Child is a " + child.GetType().Name);
 
                 Children.Add(child);
 
@@ -368,8 +374,8 @@ namespace DwarfCorp
         {
             var p = this;
 
-            while(p.Parent != null && !Object.ReferenceEquals(p.Parent, Manager.RootComponent))
-                p = p.Parent;
+            while (p.Parent.HasValue(out var parent) && !Object.ReferenceEquals(parent, Manager.RootComponent))
+                p = parent;
 
             return p;
         }
@@ -377,7 +383,9 @@ namespace DwarfCorp
         public bool IsRoot()
         {
             if (Manager == null) return false;
-            return Object.ReferenceEquals(Parent, Manager.RootComponent);
+            if (Parent.HasValue(out var parent))
+                return Object.ReferenceEquals(parent, Manager.RootComponent);
+            return false;
         }
 
         public IEnumerable<GameComponent> EnumerateAll()

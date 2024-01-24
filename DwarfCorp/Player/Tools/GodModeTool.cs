@@ -211,7 +211,7 @@ namespace DwarfCorp
                                     {
                                         var v = World.ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(vox.Coordinate.X, y, vox.Coordinate.Z));
                                         v.Type = Library.EmptyVoxelType;
-                                        LiquidCellHelpers.ClearVoxelOfLiquid(v);
+                                        LiquidCellHelpers.ClearVoxelOfLiquid(World, v);
                                     }
                                 }
                                 break;

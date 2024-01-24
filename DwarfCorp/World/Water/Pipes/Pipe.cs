@@ -41,11 +41,12 @@ namespace DwarfCorp.SteamPipes
 
             var spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32);
 
-            AddChild(new SimpleSprite(Manager, "pipe", Matrix.CreateRotationX((float)Math.PI * 0.5f),
+            /*AddChild(new SimpleSprite(Manager, "pipe", Matrix.CreateRotationX((float)Math.PI * 0.5f),
                 spriteSheet, new Point(0, 6))
             {
                 OrientationType = SimpleSprite.OrientMode.Fixed,
             }).SetFlagRecursive(Flag.ShouldSerialize, false);
+            */
 
             AddChild(new GenericVoxelListener(Manager, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -1.0f, 0.0f), (changeEvent) =>
             {

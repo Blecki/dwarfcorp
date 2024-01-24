@@ -89,6 +89,10 @@ namespace DwarfCorp
         public const Int32 LiquidTypeShift = 6;
         public const Int32 LiquidTypeMask = 0xC0;
         public const Int32 InverseLiquidTypeMask = 0x3F;
+        // Byte - [0010 0000] Ocean Flag
+        public const Int32 LiquidOceanFlagShift = 5;
+        public const Int32 LiquidOceanFlagMask = 0x20;
+        public const Int32 InverseLiquidOceanFlagMask = 0xDF;
 
         public const UInt32 SelectionIDBit = 0x80000000;
         public const UInt32 SelectionIDYMask = 0x7F;

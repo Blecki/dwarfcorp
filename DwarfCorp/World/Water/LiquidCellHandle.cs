@@ -177,6 +177,19 @@ namespace DwarfCorp
             }
         }
 
+        [JsonIgnore]
+        public byte OceanFlag
+        {
+            get { return (byte)((_cache_Chunk.Data.Liquid[_cache_Index] & VoxelConstants.LiquidOceanFlagMask) >> VoxelConstants.LiquidOceanFlagShift); }
+            set
+            {
+                // This should only ever be set during generation.
+                _cache_Chunk.Data.Liquid[_cache_Index] = (byte)((_cache_Chunk.Data.Liquid[_cache_Index] & VoxelConstants.InverseLiquidOceanFlagMask)
+                    | ((byte)value << VoxelConstants.LiquidOceanFlagShift));
+            }
+        }
+
+
 
         #endregion
 

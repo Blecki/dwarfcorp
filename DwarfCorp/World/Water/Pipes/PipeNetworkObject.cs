@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Csg;
 
 namespace DwarfCorp.SteamPipes
 {
@@ -57,7 +58,7 @@ namespace DwarfCorp.SteamPipes
         {
             base.CreateCosmeticChildren(manager);
 
-            Sheet = new SpriteSheet("Terrain/lava", 32, 32);
+            Sheet = new SpriteSheet("Entities/DwarfObjects/bamboo-pipe", 16, 16);
         }
 
         public override void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
@@ -86,6 +87,11 @@ namespace DwarfCorp.SteamPipes
             return (B.Y * A.X) - (B.X * A.Y);
         }
 
+        public virtual RawPrimitive CreateCustomPrimitive(SpriteSheet Sheet)
+        {
+            return null;
+        }
+
         override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
@@ -94,8 +100,7 @@ namespace DwarfCorp.SteamPipes
             {
                 foreach (var neighborConnection in NeighborPipes)
                 {
-                    var neighbor = Manager.FindComponent(neighborConnection);
-                    if (neighbor == null)
+                    if (!Manager.FindComponent(neighborConnection).HasValue(out var neighbor))
                         Drawer3D.DrawLine(Position, Position + Vector3.UnitY, Color.CornflowerBlue, 0.1f);
                     else
                     {
@@ -107,40 +112,86 @@ namespace DwarfCorp.SteamPipes
                 }
 
                 Drawer3D.DrawBox(GetBoundingBox(), Color.Red, 0.01f, false);
-                Drawer3D.DrawLine(Position, Position + Vector3.Transform(new Vector3(1, 0, 0), Matrix.CreateRotationY((float)Math.PI / 2 * (float)Orientation)), new Color(0.0f, 1.0f, 1.0f), 0.03f);
+                //Drawer3D.DrawLine(Position, Position + Vector3.Transform(new Vector3(1, 0, 0), Matrix.CreateRotationY((float)Math.PI / 2 * (float)Orientation)), new Color(0.0f, 1.0f, 1.0f), 0.03f);
             }
 
             if (!DrawPipes) return;
+            //return;
 
             if (Primitive == null)
             {
                 var bounds = Vector4.Zero;
                 var uvs = Sheet.GenerateTileUVs(new Point(0,0), out bounds);
 
-                Primitive = RawPrimitive.Cube(Color.White, Color.White, uvs, bounds).Transform(Matrix.CreateScale(0.5f));
+                var primitives = new List<RawPrimitive>();
 
-                //foreach (var connection in NeighborPipes)
-                //{
-                //    var neighbor = Manager.FindComponent(connection) as GameComponent;
-                //    if (neighbor == null) continue;
+                var postPrim = PrimitiveBuilder.MakePrismFromSides(
+                    PrimitiveBuilder.MakeSpriteSheetCellPrimitive(Sheet, 3, 0, 1, 1),
+                    PrimitiveBuilder.MakeSpriteSheetCellPrimitive(Sheet, 2, 0, 1, 3),
+                    PrimitiveBuilder.MakeSpriteSheetCellPrimitive(Sheet, 2, 0, 1, 3),
+                    PrimitiveBuilder.MakeSpriteSheetCellPrimitive(Sheet, 2, 0, 1, 3),
+                    PrimitiveBuilder.MakeSpriteSheetCellPrimitive(Sheet, 2, 0, 1, 3),
+                    null);
 
-                //    var orientationToNeighbor = OrientationHelper.DetectOrientationFromVector(new Vector3(neighbor.Position.X - this.Position.X, 0.0f, neighbor.Position.Z - this.Position.Z));
-                //    var pipeAngle = Math.PI * 0.5f * ((float)Orientation - (float)orientationToNeighbor);
+                postPrim.Transform(Matrix.CreateScale(0.25f, 0.75f, 0.25f));
+                postPrim.Transform(Matrix.CreateTranslation(0.0f, -0.125f, 0.0f));
+                primitives.Add(postPrim);
 
-                    
-                //    Primitive.AddQuad(
-                //        Matrix.CreateTranslation(0.5f, 0.0f, 0.0f)
-                //        * Matrix.CreateScale(0.5f, 0.5f, 0.5f)
-                //        * Matrix.CreateRotationX((float)Math.PI * 0.5f)
-                //        * Matrix.CreateRotationY((float)pipeAngle),
-                //        Color.White, Color.White, uvs, bounds);
-                //    Primitive.AddQuad(
-                //         Matrix.CreateTranslation(-0.5f, 0.0f, 0.0f)
-                //         * Matrix.CreateScale(0.5f, 0.5f, 0.5f)
-                //         * Matrix.CreateRotationX((float)Math.PI * 0.5f)
-                //         * Matrix.CreateRotationY((float)pipeAngle),
-                //         Color.White, Color.White, uvs, bounds);
-                //}
+                foreach (var neighborConnection in NeighborPipes)
+                {
+                    if (Manager.FindComponent(neighborConnection).HasValue(out var neighbor))
+                    {
+                        var neighborOffset = neighbor.GlobalTransform.Translation - GlobalTransform.Translation;
+                        if (neighborOffset.X > 0 || neighborOffset.Z > 0) // By only drawing neighbors in one direction we avoid drawing the same pipe twice.
+                        {
+                            var neighborAngle = AngleBetweenVectors(new Vector2(0, 1), new Vector2(neighborOffset.X, neighborOffset.Z));
+
+                            var pipePrim = PrimitiveBuilder.MakePrismFromSides(
+                                PrimitiveBuilder.MakeSpriteSheetCellPrimitive(Sheet, 0, 0, 2, 1),
+                                PrimitiveBuilder.MakeSpriteSheetCellPrimitive(Sheet, 0, 1, 2, 1),
+                                PrimitiveBuilder.MakeSpriteSheetCellPrimitive(Sheet, 0, 1, 2, 1),
+                                null,
+                                null,
+                                PrimitiveBuilder.MakeSpriteSheetCellPrimitive(Sheet, 0, 2, 2, 1));
+
+                            if (neighborOffset.Y > 0)
+                                pipePrim.TransformEx(v =>
+                                {
+                                    var r = v;
+                                    r.Position.X += 0.5f;
+                                    r.Position.Y -= r.Position.X * 7;
+                                    r.Position.X -= 0.5f;
+                                    r.Position.Y += 7;
+                                    return r;
+                                });
+
+                            if (neighborOffset.Y < 0)
+                                pipePrim.TransformEx(v =>
+                                {
+                                    var r = v;
+                                    r.Position.X += 0.5f;
+                                    r.Position.Y += r.Position.X * 7;
+                                    r.Position.X -= 0.5f;
+                                    r.Position.Y -= 7;
+                                    return r;
+                                });
+
+                            pipePrim.Transform(
+                                    Matrix.CreateScale(0.75f, 0.15f, 0.15f)
+                                    * Matrix.CreateTranslation(-0.5f, 0.0f, 0.0f)
+                                    * Matrix.CreateRotationY(-neighborAngle));
+
+                            primitives.Add(pipePrim);
+                        }
+                        
+
+                        // Now what about slopes??
+                    }
+                }
+
+                primitives.Add(this.CreateCustomPrimitive(Sheet));
+                
+                Primitive = RawPrimitive.Concat(primitives);
             }
 
             if (Primitive.VertexCount == 0) return;
@@ -212,9 +263,9 @@ namespace DwarfCorp.SteamPipes
 
         public void DetachFromNeighbors()
         {
-            foreach (var neighbor in NeighborPipes.Select(connection => Manager.FindComponent(connection)))
+            foreach (var n in NeighborPipes.Select(connection => Manager.FindComponent(connection)))
             {
-                if (neighbor is PipeNetworkObject neighborPipe)
+                if (n.HasValue(out var neighbor) && neighbor is PipeNetworkObject neighborPipe)
                     neighborPipe.DetachNeighbor(this.GlobalID);
             }
 

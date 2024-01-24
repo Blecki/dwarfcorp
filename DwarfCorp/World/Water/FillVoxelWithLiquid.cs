@@ -17,6 +17,16 @@ namespace DwarfCorp
             }
         }
 
+
+        public static void FillBottomOfVoxelWithLiquid(VoxelHandle V, byte Liquid)
+        {
+            foreach (var liquidCell in EnumerateCellsInBottomOfVoxel(V))
+            {
+                var l = liquidCell;
+                l.LiquidType = Liquid;
+            }
+        }
+
         public static void FillVoxelWithLiquidAndWake(WorldManager World, VoxelHandle V, byte Liquid)
         {
             foreach (var liquidCell in EnumerateCellsInVoxel(V))
@@ -33,6 +43,19 @@ namespace DwarfCorp
             {
                 var l = liquidCell;
                 l.LiquidType = 0;
+                l.OceanFlag = 0;
+                
+            }
+        }
+
+        public static void ClearVoxelOfLiquid(WorldManager World, VoxelHandle V)
+        {
+            foreach (var liquidCell in EnumerateCellsInVoxel(V))
+            {
+                var l = liquidCell;
+                l.LiquidType = 0;
+                l.OceanFlag = 0;
+                World.ChunkManager.Water.EnqueueDirtyCell(liquidCell);
             }
         }
     }

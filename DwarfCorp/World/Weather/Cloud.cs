@@ -198,9 +198,6 @@ namespace DwarfCorp
 
                 foreach (var body in hitBodies)
                 {
-                    if (body.Parent != Manager.RootComponent)
-                        continue;
-
                     if (body.GetRoot().GetComponent<Flammable>().HasValue(out var flames))
                         flames.Heat *= 0.25f;
 

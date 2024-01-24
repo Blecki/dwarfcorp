@@ -36,16 +36,14 @@ namespace DwarfCorp
 
         public override void Die()
         {
-            if (!IsDead)
-                Parent.Die();
+            if (!IsDead && Parent.HasValue(out var parent))
+                parent.Die();
         }
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            var body = Parent as GameComponent;
-            global::System.Diagnostics.Debug.Assert(body != null);
-
-            Vector3 targetVelocity = TargetPosition - body.GlobalTransform.Translation;
+            if (Parent.HasValue(out var body)) { 
+                Vector3 targetVelocity = TargetPosition - body.GlobalTransform.Translation;
 
             if(targetVelocity.LengthSquared() > 0.0001f)
             {
@@ -59,58 +57,59 @@ namespace DwarfCorp
 
             body.HasMoved = true;
 
-            switch(State)
-            {
-                case BalloonState.DeliveringGoods:
-                    {
-                        var voxel = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(body.GlobalTransform.Translation));
-
-                        if (voxel.IsValid)
+                switch (State)
+                {
+                    case BalloonState.DeliveringGoods:
                         {
-                            var surfaceVoxel = VoxelHelpers.FindFirstVoxelBelow(voxel);
-                            var height = surfaceVoxel.Coordinate.Y + 1;
+                            var voxel = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(body.GlobalTransform.Translation));
 
-                            TargetPosition = new Vector3(body.GlobalTransform.Translation.X, height + 5, body.GlobalTransform.Translation.Z);
+                            if (voxel.IsValid)
+                            {
+                                var surfaceVoxel = VoxelHelpers.FindFirstVoxelBelow(voxel);
+                                var height = surfaceVoxel.Coordinate.Y + 1;
 
-                            Vector3 diff = body.GlobalTransform.Translation - TargetPosition;
+                                TargetPosition = new Vector3(body.GlobalTransform.Translation.X, height + 5, body.GlobalTransform.Translation.Z);
 
-                            if (diff.LengthSquared() < 2)
-                                State = BalloonState.Waiting;
+                                Vector3 diff = body.GlobalTransform.Translation - TargetPosition;
+
+                                if (diff.LengthSquared() < 2)
+                                    State = BalloonState.Waiting;
+                            }
+                            else
+                                State = BalloonState.Leaving;
                         }
+                        break;
+                    case BalloonState.Leaving:
+                        TargetPosition = Vector3.UnitY * 100 + body.GlobalTransform.Translation;
+
+                        if (body.GlobalTransform.Translation.Y > World.WorldSizeInVoxels.Y + 2)
+                            Die();
+
+                        break;
+                    case BalloonState.Waiting:
+                        TargetPosition = body.GlobalTransform.Translation;
+                        if (!WaitTimer.HasTriggered)
+                        {
+                            var voxel = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(body.GlobalTransform.Translation));
+
+                            if (voxel.IsValid)
+                            {
+                                var surfaceVoxel = VoxelHelpers.FindFirstVoxelBelow(voxel);
+                                var height = surfaceVoxel.Coordinate.Y + 6;
+
+                                TargetPosition = new Vector3(body.GlobalTransform.Translation.X, height + 0.5f * (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds), body.GlobalTransform.Translation.Z);
+                            }
+                            WaitTimer.Update(gameTime);
+                            break;
+                        }
+
+                        if (!shipmentGiven)
+                            shipmentGiven = true;
                         else
                             State = BalloonState.Leaving;
-                    }
-                    break;
-                case BalloonState.Leaving:
-                    TargetPosition = Vector3.UnitY * 100 + body.GlobalTransform.Translation;
 
-                    if(body.GlobalTransform.Translation.Y > World.WorldSizeInVoxels.Y + 2)
-                        Die();
-
-                    break;
-                case BalloonState.Waiting:
-                    TargetPosition = body.GlobalTransform.Translation;
-                    if (!WaitTimer.HasTriggered)
-                    {
-                        var voxel = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(body.GlobalTransform.Translation));
-
-                        if (voxel.IsValid)
-                        {
-                            var surfaceVoxel = VoxelHelpers.FindFirstVoxelBelow(voxel);
-                            var height = surfaceVoxel.Coordinate.Y + 6;
-
-                            TargetPosition = new Vector3(body.GlobalTransform.Translation.X, height + 0.5f * (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds), body.GlobalTransform.Translation.Z);
-                        }
-                        WaitTimer.Update(gameTime);
                         break;
-                    }
-
-                    if (!shipmentGiven)
-                        shipmentGiven = true;
-                    else
-                        State = BalloonState.Leaving;
-
-                    break;
+                }
             }
         }
     }

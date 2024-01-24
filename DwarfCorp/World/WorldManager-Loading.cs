@@ -183,8 +183,7 @@ namespace DwarfCorp
 
             foreach (var component in gameFile.PlayData.Components.SaveableComponents)
             {
-                if (!ComponentManager.HasComponent(component.GlobalID) &&
-                    ComponentManager.HasComponent(component.Parent.GlobalID))
+                if (!ComponentManager.HasComponent(component.GlobalID) && component.Parent.HasValue(out var p) && ComponentManager.HasComponent(p.GlobalID))
                 {
                     // Logically impossible.
                     throw new InvalidOperationException("Component exists in save data but not in manager.");

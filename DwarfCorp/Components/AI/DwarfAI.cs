@@ -385,19 +385,22 @@ namespace DwarfCorp
             PreEmptTasks();
 
             // Check for managerial buff
-            var managerBufferComponent = Parent.GetComponent<RadiusBuffer>();
-            if (Stats.IsManager && !managerBufferComponent.HasValue())
+            if (Parent.HasValue(out var parent))
             {
-                var managerBuffer = new RadiusBuffer(Manager, "Manager Buffer", Matrix.Identity, new Vector3(16, 16, 16), Vector3.Zero)
+                var managerBufferComponent = parent.GetComponent<RadiusBuffer>();
+                if (Stats.IsManager && !managerBufferComponent.HasValue())
                 {
-                    SenseRadius = 16,
-                    Buff = new ManagerMotivationStatusEffect(0.1f * Stats.Intelligence)
-                };
+                    var managerBuffer = new RadiusBuffer(Manager, "Manager Buffer", Matrix.Identity, new Vector3(16, 16, 16), Vector3.Zero)
+                    {
+                        SenseRadius = 16,
+                        Buff = new ManagerMotivationStatusEffect(0.1f * Stats.Intelligence)
+                    };
 
-                Parent.AddChild(managerBuffer);
+                    parent.AddChild(managerBuffer);
+                }
+                else if (!Stats.IsManager && managerBufferComponent.HasValue(out var outdatedBuff))
+                    outdatedBuff.Die();
             }
-            else if (!Stats.IsManager && managerBufferComponent.HasValue(out var outdatedBuff))
-                outdatedBuff.Die();
 
             if (Stats.IsManager)
                 Stats.AddBuff(new BaselineMotivationStatusEffect(1.0f)); // Managers are always highly motivated.

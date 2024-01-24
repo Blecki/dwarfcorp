@@ -31,11 +31,29 @@ namespace DwarfCorp.Generation
                             var voxel = VoxelHandle.UnsafeCreateLocalHandle(chunk, new LocalVoxelCoordinate(x, y, z));
                             if (voxel.IsEmpty && voxel.Sunlight)
                             {
-                                if (globalY == Settings.NormalizedSeaLevel && biome.WaterSurfaceIce)
-                                    voxel.RawSetType(iceID);
+                                if (globalY == Settings.NormalizedSeaLevel)
+                                {
+                                    if (biome.WaterSurfaceIce)
+                                        voxel.RawSetType(iceID);
+                                    else
+                                        LiquidCellHelpers.FillBottomOfVoxelWithLiquid(voxel, biome.WaterIsLava ? (byte)2 : (byte)1);
+                                    foreach (var liquidCell in LiquidCellHelpers.EnumerateCellsInBottomOfVoxel(voxel))
+                                    {
+                                        var l = liquidCell;
+                                        l.OceanFlag = 1;
+                                    }
+                                }
                                 else
+                                {
                                     LiquidCellHelpers.FillVoxelWithLiquid(voxel, biome.WaterIsLava ? (byte)2 : (byte)1);
-                                // Todo: LIQUIDS Code water type into Biome instead; 2 is lava 1 is water
+                                    foreach (var liquidCell in LiquidCellHelpers.EnumerateCellsInVoxel(voxel))
+                                    {
+                                        var l = liquidCell;
+                                        l.OceanFlag = 1;
+                                    }
+
+                                    // Todo: LIQUIDS Code water type into Biome instead; 2 is lava 1 is water
+                                }
                             }
                         }
         }

@@ -9,6 +9,8 @@ namespace DwarfCorp.Rail
 {
     public class RailEntity : CraftedBody, ITintable
     {
+        public bool PreviewMode = false;
+
         public class NeighborConnection
         {
             public uint NeighborID;
@@ -101,6 +103,7 @@ namespace DwarfCorp.Rail
         public RailEntity()
         {
             CollisionType = CollisionType.Static;
+            SetFlag(Flag.PreserveOutsideWorld, true);
         }
 
         public RailEntity(
@@ -116,22 +119,23 @@ namespace DwarfCorp.Rail
         {
             this.Piece = Piece;
             this.Location = Location;
+            SetFlag(Flag.PreserveOutsideWorld, true);
 
             CollisionType = CollisionType.Static;
             AddChild(new Health(Manager, "Hp", 100, 0, 100));
             
             PropogateTransforms();
-            CreateCosmeticChildren(Manager);
+            ImplementCreateCosmeticChildren(Manager);
         }
-        
-        public override void CreateCosmeticChildren(ComponentManager manager)
-        {
-            base.CreateCosmeticChildren(manager);
 
-            var piece = Library.GetRailPiece(Piece.RailPiece);
+        private void ImplementCreateCosmeticChildren(ComponentManager Manager)
+        {
+            base.CreateCosmeticChildren(Manager);
+
             Sheet = new SpriteSheet(ContentPaths.rail_tiles, 32, 32);
-            
-            AddChild(new GenericVoxelListener(manager, Matrix.Identity, new Vector3(0.8f, 1.5f, 0.8f), Vector3.Zero, (_event) =>
+
+            // This shouldn't be created for preview bodies until placement is performed.
+            AddChild(new GenericVoxelListener(Manager, Matrix.Identity, new Vector3(0.8f, 1.5f, 0.8f), Vector3.Zero, (_event) =>
             {
                 if (!Active) return;
 
@@ -148,8 +152,13 @@ namespace DwarfCorp.Rail
                     }
                 }
             })).SetFlag(Flag.ShouldSerialize, false);
+           
+        }
 
-            UpdatePiece(Piece, Location);
+        public override void CreateCosmeticChildren(ComponentManager manager)
+        {
+            ImplementCreateCosmeticChildren(manager);
+            UpdatePiece(Piece, Location); // Need to call this when loading from file but not when creating a preview body.
         }
 
         public Vector3 InterpolateSpline(float t, Vector3 origin, Vector3 destination)
@@ -220,7 +229,6 @@ namespace DwarfCorp.Rail
                 float idx = (selectedSpline.Count - 1) * t;
                 int k = MathFunctions.Clamp((int)idx, 0, selectedSpline.Count - 1);
                 float remainder = idx - k;
-                //Drawer3D.DrawLine(Vector3.Transform(selectedSpline[k], transform), Vector3.Transform(selectedSpline[k + 1], transform), isReversed ? Color.Red : Color.Blue, 0.1f);
                 var next = ((int)k + 1) >= selectedSpline.Count ? (int)k : ((int)k + 1);
                 return Vector3.Transform(selectedSpline[k] * (1.0f - remainder) + selectedSpline[next] * remainder, transform);
 
@@ -245,8 +253,6 @@ namespace DwarfCorp.Rail
 
             if (Debugger.Switches.DrawRailNetwork)
             {
-                //Drawer3D.DrawBox(GetContainingVoxel().GetBoundingBox(), Color.White, 0.01f, true);
-                //Drawer3D.DrawLine(GetContainingVoxel().GetBoundingBox().Center(), GlobalTransform.Translation, Color.White, 0.01f);
                 var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation) * GlobalTransform;
                 if (Library.GetRailPiece(Piece.RailPiece).HasValue(out var piece))
                 {
@@ -262,14 +268,6 @@ namespace DwarfCorp.Rail
                             Color.Brown, 0.1f);
 
 
-                    //foreach (var neighborConnection in NeighborRails)
-                    //{
-                    //    var neighbor = Manager.FindComponent(neighborConnection.NeighborID);
-                    //    if (neighbor == null)
-                    //        Drawer3D.DrawLine(Position, Position + Vector3.UnitY, Color.CornflowerBlue, 0.1f);
-                    //    else
-                    //        Drawer3D.DrawLine(Position + new Vector3(0.0f, 0.5f, 0.0f), (neighbor as Body).Position + new Vector3(0.0f, 0.5f, 0.0f), Color.Teal, 0.1f);
-                    //}
                 }
 
                 
@@ -331,79 +329,82 @@ namespace DwarfCorp.Rail
                         AddScaffoldGeometry(transform, sideBounds, sideUvs, 0.0f, false);
                     }
 
-                    // Todo: Make these static and avoid recalculating them constantly.
-                    var bumperBackBounds = Vector4.Zero;
-                    var bumperBackUvs = Sheet.GenerateTileUVs(new Point(0, 5), out bumperBackBounds);
-                    var bumperFrontBounds = Vector4.Zero;
-                    var bumperFrontUvs = Sheet.GenerateTileUVs(new Point(1, 5), out bumperFrontBounds);
-                    var bumperSideBounds = Vector4.Zero;
-                    var bumperSideUvs = Sheet.GenerateTileUVs(new Point(2, 5), out bumperSideBounds);
-
-                    foreach (var connection in GetTransformedConnections())
+                    if (!PreviewMode)
                     {
-                        var matchingNeighbor = NeighborRails.FirstOrDefault(n => (n.Position - connection.Item1).LengthSquared() < 0.001f);
-                        if (matchingNeighbor == null && rawPiece.AutoSlope)
-                            matchingNeighbor = NeighborRails.FirstOrDefault(n => (n.Position - connection.Item1 - new Vector3(0.0f, 1.0f, 0.0f)).LengthSquared() < 0.001f);
+                        // Todo: Make these static and avoid recalculating them constantly.
+                        var bumperBackBounds = Vector4.Zero;
+                        var bumperBackUvs = Sheet.GenerateTileUVs(new Point(0, 5), out bumperBackBounds);
+                        var bumperFrontBounds = Vector4.Zero;
+                        var bumperFrontUvs = Sheet.GenerateTileUVs(new Point(1, 5), out bumperFrontBounds);
+                        var bumperSideBounds = Vector4.Zero;
+                        var bumperSideUvs = Sheet.GenerateTileUVs(new Point(2, 5), out bumperSideBounds);
 
-                        if (matchingNeighbor == null)
+                        foreach (var connection in GetTransformedConnections())
                         {
-                            var bumperOffset = connection.Item1 - GlobalTransform.Translation;
-                            var bumperGap = Vector3.Normalize(bumperOffset) * 0.1f;
-                            var bumperAngle = AngleBetweenVectors(new Vector2(bumperOffset.X, bumperOffset.Z), new Vector2(0, 0.5f));
+                            var matchingNeighbor = NeighborRails.FirstOrDefault(n => (n.Position - connection.Item1).LengthSquared() < 0.001f);
+                            if (matchingNeighbor == null && rawPiece.AutoSlope)
+                                matchingNeighbor = NeighborRails.FirstOrDefault(n => (n.Position - connection.Item1 - new Vector3(0.0f, 1.0f, 0.0f)).LengthSquared() < 0.001f);
 
-                            var xDiag = bumperOffset.X < -0.001f || bumperOffset.X > 0.001f;
-                            var zDiag = bumperOffset.Z < -0.001f || bumperOffset.Z > 0.001f;
-
-                            if (xDiag && zDiag)
+                            if (matchingNeighbor == null)
                             {
-                                var y = bumperOffset.Y;
-                                bumperOffset *= sqrt2;
-                                bumperOffset.Y = y;
+                                var bumperOffset = connection.Item1 - GlobalTransform.Translation;
+                                var bumperGap = Vector3.Normalize(bumperOffset) * 0.1f;
+                                var bumperAngle = AngleBetweenVectors(new Vector2(bumperOffset.X, bumperOffset.Z), new Vector2(0, 0.5f));
 
-                                var endBounds = Vector4.Zero;
-                                var endUvs = Sheet.GenerateTileUVs(new Point(6, 2), out endBounds);
-                                Primitive.AddQuad(
-                                    Matrix.CreateRotationY((float)Math.PI * 1.25f)
-                                    * Matrix.CreateRotationY(bumperAngle)
-                                    // This offset would not be correct if diagonals could slope.
-                                    * Matrix.CreateTranslation(new Vector3(Sign(bumperOffset.X), 0.0f, Sign(bumperOffset.Z))),
-                                    Color.White, Color.White, endUvs, endBounds);
-                            }
+                                var xDiag = bumperOffset.X < -0.001f || bumperOffset.X > 0.001f;
+                                var zDiag = bumperOffset.Z < -0.001f || bumperOffset.Z > 0.001f;
 
-                            Primitive.AddQuad(
-                                Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
-                                * Matrix.CreateTranslation(0.0f, 0.3f, -0.2f)
-                                * Matrix.CreateRotationY(bumperAngle)
-                                * Matrix.CreateTranslation(bumperOffset + bumperGap),
-                                Color.White, Color.White, bumperBackUvs, bumperBackBounds);
+                                if (xDiag && zDiag)
+                                {
+                                    var y = bumperOffset.Y;
+                                    bumperOffset *= sqrt2;
+                                    bumperOffset.Y = y;
 
-                            Primitive.AddQuad(
-                                Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
-                                * Matrix.CreateTranslation(0.0f, 0.3f, -0.2f)
-                                * Matrix.CreateRotationY(bumperAngle)
-                                * Matrix.CreateTranslation(bumperOffset),
-                                Color.White, Color.White, bumperFrontUvs, bumperFrontBounds);
-
-                            var firstVoxelBelow = VoxelHelpers.FindFirstVoxelBelow(GetContainingVoxel());
-                            if (firstVoxelBelow.IsValid && firstVoxelBelow.RampType == RampType.None)
-
-                           //     if (VoxelHelpers.FindFirstVoxelBelow(GetContainingVoxel()).RampType == RampType.None)
-                            {
-                                Primitive.AddQuad(
-                                    Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
-                                    * Matrix.CreateRotationY(-(float)Math.PI * 0.5f)
-                                    * Matrix.CreateTranslation(0.3f, 0.3f, 0.18f)
-                                    * Matrix.CreateRotationY(bumperAngle)
-                                    * Matrix.CreateTranslation(bumperOffset),
-                                    Color.White, Color.White, bumperSideUvs, bumperSideBounds);
+                                    var endBounds = Vector4.Zero;
+                                    var endUvs = Sheet.GenerateTileUVs(new Point(6, 2), out endBounds);
+                                    Primitive.AddQuad(
+                                        Matrix.CreateRotationY((float)Math.PI * 1.25f)
+                                        * Matrix.CreateRotationY(bumperAngle)
+                                        // This offset would not be correct if diagonals could slope.
+                                        * Matrix.CreateTranslation(new Vector3(Sign(bumperOffset.X), 0.0f, Sign(bumperOffset.Z))),
+                                        Color.White, Color.White, endUvs, endBounds);
+                                }
 
                                 Primitive.AddQuad(
                                     Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
-                                    * Matrix.CreateRotationY(-(float)Math.PI * 0.5f)
-                                    * Matrix.CreateTranslation(-0.3f, 0.3f, 0.18f)
+                                    * Matrix.CreateTranslation(0.0f, 0.3f, -0.2f)
+                                    * Matrix.CreateRotationY(bumperAngle)
+                                    * Matrix.CreateTranslation(bumperOffset + bumperGap),
+                                    Color.White, Color.White, bumperBackUvs, bumperBackBounds);
+
+                                Primitive.AddQuad(
+                                    Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
+                                    * Matrix.CreateTranslation(0.0f, 0.3f, -0.2f)
                                     * Matrix.CreateRotationY(bumperAngle)
                                     * Matrix.CreateTranslation(bumperOffset),
-                                    Color.White, Color.White, bumperSideUvs, bumperSideBounds);
+                                    Color.White, Color.White, bumperFrontUvs, bumperFrontBounds);
+
+                                var firstVoxelBelow = VoxelHelpers.FindFirstVoxelBelow(GetContainingVoxel());
+                                if (firstVoxelBelow.IsValid && firstVoxelBelow.RampType == RampType.None)
+
+                                //     if (VoxelHelpers.FindFirstVoxelBelow(GetContainingVoxel()).RampType == RampType.None)
+                                {
+                                    Primitive.AddQuad(
+                                        Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
+                                        * Matrix.CreateRotationY(-(float)Math.PI * 0.5f)
+                                        * Matrix.CreateTranslation(0.3f, 0.3f, 0.18f)
+                                        * Matrix.CreateRotationY(bumperAngle)
+                                        * Matrix.CreateTranslation(bumperOffset),
+                                        Color.White, Color.White, bumperSideUvs, bumperSideBounds);
+
+                                    Primitive.AddQuad(
+                                        Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
+                                        * Matrix.CreateRotationY(-(float)Math.PI * 0.5f)
+                                        * Matrix.CreateTranslation(-0.3f, 0.3f, 0.18f)
+                                        * Matrix.CreateRotationY(bumperAngle)
+                                        * Matrix.CreateTranslation(bumperOffset),
+                                        Color.White, Color.White, bumperSideUvs, bumperSideBounds);
+                                }
                             }
                         }
                     }
@@ -525,12 +526,18 @@ namespace DwarfCorp.Rail
                 return new List<Tuple<Vector3, Vector3>>();
         }
 
+        public void Reattach()
+        {
+            DetachFromNeighbors();
+            AttachToNeighbors();
+        }
+
         private void DetachFromNeighbors()
         {
             foreach (var neighbor in NeighborRails.Select(connection => Manager.FindComponent(connection.NeighborID)))
             {
-                if (neighbor is RailEntity)
-                    (neighbor as RailEntity).DetachNeighbor(this.GlobalID);
+                if (neighbor.HasValue(out var nrail) && nrail is RailEntity rentity)
+                    rentity.DetachNeighbor(this.GlobalID);
             }
 
             NeighborRails.Clear();
@@ -592,6 +599,11 @@ namespace DwarfCorp.Rail
                     }
                     __CONTINUE:;
                 }
+            }
+            else
+            {
+                var x = 5;
+
             }
         }
 

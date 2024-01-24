@@ -182,7 +182,10 @@ namespace DwarfCorp.Gui.Widgets.Minimap
                     if (World.ModuleManager.GetModule<MinimapIconModule>().HasValue(out var iconModule))
                         foreach (var icon in iconModule.GetMinimapIcons())
                         {
-                            if (!icon.Parent.IsVisible)
+                            if (!icon.Parent.HasValue(out var iconParent))
+                                continue;
+
+                            if (!iconParent.IsVisible)
                                 continue;
 
                             var screenPos = viewPort.Project(icon.GlobalTransform.Translation, Camera.ProjectionMatrix, Camera.ViewMatrix, Matrix.Identity);
@@ -190,15 +193,11 @@ namespace DwarfCorp.Gui.Widgets.Minimap
                             if (RenderTarget.Bounds.Contains((int)screenPos.X, (int)screenPos.Y))
                             {
 
-                                var parentBody = icon.Parent;
-                                if (icon.Parent != null)
-                                {
-                                    if (icon.Parent.Position.Y > World.Renderer.PersistentSettings.MaxViewingLevel + 1)
-                                        continue;
-                                    var firstVisible = VoxelHelpers.FindFirstVisibleVoxelOnRay(World.ChunkManager, parentBody.Position, parentBody.Position + Vector3.Up * World.WorldSizeInVoxels.Y);
-                                    if (firstVisible.IsValid)
-                                        continue;
-                                }
+                                if (iconParent.Position.Y > World.Renderer.PersistentSettings.MaxViewingLevel + 1)
+                                    continue;
+                                var firstVisible = VoxelHelpers.FindFirstVisibleVoxelOnRay(World.ChunkManager, iconParent.Position, iconParent.Position + Vector3.Up * World.WorldSizeInVoxels.Y);
+                                if (firstVisible.IsValid)
+                                    continue;
 
                                 DwarfGame.SpriteBatch.Draw(icon.Icon.SafeGetImage(), new Vector2(screenPos.X, screenPos.Y), icon.Icon.SourceRect, Color.White, 0.0f, new Vector2(icon.Icon.SourceRect.Width / 2.0f, icon.Icon.SourceRect.Height / 2.0f), icon.IconScale, SpriteEffects.None, 0);
                             }

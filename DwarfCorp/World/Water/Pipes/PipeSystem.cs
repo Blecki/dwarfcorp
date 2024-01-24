@@ -82,8 +82,9 @@ namespace DwarfCorp.SteamPipes
             if (Of.Cost > 25)
                 yield break;
 
-            foreach (var neighbor in Of.ThisCell.NeighborPipes.Select(n => World.ComponentManager.FindComponent(n) as PipeNetworkObject))
-                if (neighbor != null) yield return new OpenSearchNode { ParentCell = Of.ThisCell, ThisCell = neighbor, Cost = Of.Cost + 1 };
+            foreach (var neighbor in Of.ThisCell.NeighborPipes.Select(n => World.ComponentManager.FindComponent(n)))
+                if (neighbor.HasValue(out var v) && v is PipeNetworkObject pipe)
+                    yield return new OpenSearchNode { ParentCell = Of.ThisCell, ThisCell = pipe, Cost = Of.Cost + 1 };
         }
 
         public PipeNetworkObject SearchNetwork(WorldManager World, PipeNetworkObject Source, Func<PipeNetworkObject, bool> Test)

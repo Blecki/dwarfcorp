@@ -81,8 +81,8 @@ namespace DwarfCorp
 
         private T _get<T>(ref T cached)
         {
-            if (cached == null)
-                cached = Parent.EnumerateAll().OfType<T>().FirstOrDefault();
+            if (cached == null && Parent.HasValue(out var parent))
+                cached = parent.EnumerateAll().OfType<T>().FirstOrDefault();
             return cached;
         }
 
@@ -99,7 +99,7 @@ namespace DwarfCorp
                 if (OverrideCharacterMode) return;
 
                 _currentCharacterMode = value;
-                if (Parent != null && Sprite != null)
+                if (Sprite != null)
                 {
                     if (Sprite.HasAnimation(_currentCharacterMode, SpriteOrientation.Forward))
                         Sprite.SetCurrentAnimation(_currentCharacterMode.ToString(), false);
@@ -282,10 +282,13 @@ namespace DwarfCorp
                     Sprite.Blink(0.5f);
                     AddThought("I got hurt recently.", new TimeSpan(2, 0, 0, 0), -5.0f);
 
-                    var deathParticleTriggers = Parent.EnumerateAll().OfType<ParticleTrigger>().Where(p => p.Name == "Death Gibs");
+                    if (Parent.HasValue(out var parent))
+                    {
+                        var deathParticleTriggers = parent.EnumerateAll().OfType<ParticleTrigger>().Where(p => p.Name == "Death Gibs");
 
-                    foreach (var trigger in deathParticleTriggers)
-                        Manager.World.ParticleManager.Trigger(trigger.EmitterName, AI.Position, Color.White, 2);
+                        foreach (var trigger in deathParticleTriggers)
+                            Manager.World.ParticleManager.Trigger(trigger.EmitterName, AI.Position, Color.White, 2);
+                    }
                     break;
             }
 
@@ -432,10 +435,13 @@ namespace DwarfCorp
                 Sprite.Blink(0.5f);
                 AddThought("I got hurt recently.", new TimeSpan(2, 0, 0, 0), -5.0f);
 
-                var deathParticleTriggers = Parent.EnumerateAll().OfType<ParticleTrigger>().Where(p => p.Name == "Death Gibs");
+                if (Parent.HasValue(out var parent))
+                {
+                    var deathParticleTriggers = parent.EnumerateAll().OfType<ParticleTrigger>().Where(p => p.Name == "Death Gibs");
 
-                foreach (var trigger in deathParticleTriggers)
-                    Manager.World.ParticleManager.Trigger(trigger.EmitterName, AI.Position, Color.White, 2);
+                    foreach (var trigger in deathParticleTriggers)
+                        Manager.World.ParticleManager.Trigger(trigger.EmitterName, AI.Position, Color.White, 2);
+                }
                 DrawLifeTimer.Reset();
             }
 

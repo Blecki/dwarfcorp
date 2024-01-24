@@ -113,7 +113,7 @@ namespace DwarfCorp
             var oldWind = effect.WindDirection;
             var oldWindForce = effect.WindForce;
             
-            if (Parent.GetRoot().GetComponent<Physics>().HasValue(out var phys))
+            if (Parent.HasValue(out var parent) && parent.GetRoot().GetComponent<Physics>().HasValue(out var phys))
             {
                 Vector3 vel = -phys.Velocity;
                 if (vel.LengthSquared() > 0.001f)

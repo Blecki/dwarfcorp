@@ -19,8 +19,11 @@ namespace DwarfCorp
             {
                 if (_health == null)
                 {
-                    _health = Parent.EnumerateAll().Where(c => c is Health).FirstOrDefault() as Health;
-                    global::System.Diagnostics.Debug.Assert(_health != null, "Flammable could not find a Health component.");
+                    if (Parent.HasValue(out var parent))
+                    {
+                        _health = parent.EnumerateAll().Where(c => c is Health).FirstOrDefault() as Health;
+                        global::System.Diagnostics.Debug.Assert(_health != null, "Flammable could not find a Health component.");
+                    }
                 }
 
                 return _health;
@@ -69,8 +72,8 @@ namespace DwarfCorp
             if (Heat > Flashpoint)
             {
                 var insideBodies = World.EnumerateIntersectingRootObjects(Body.GetBoundingBox());
-
-                foreach (var body in insideBodies.Where(b => b != Parent && b.Active))
+                var root = GetRoot();
+                foreach (var body in insideBodies.Where(b => !Object.ReferenceEquals(b, root) && b.Active))
                     if (body.GetComponent<Flammable>().HasValue(out var flames))
                         flames.Heat += 100;
 
@@ -134,81 +137,86 @@ namespace DwarfCorp
 
         private void CreateFlameSprite(Vector3 pos)
         {
-            var tf = Matrix.CreateTranslation(pos - (Parent as GameComponent).Position);
-            SoundManager.PlaySound(ContentPaths.Audio.fire, pos, true, 1.0f);
-            var sprite = Parent.AddChild(new AnimatedSprite(Manager, "Flame", tf)
+            if (Parent.HasValue(out var parent))
             {
-                OrientationType = AnimatedSprite.OrientMode.Spherical,
-                LightsWithVoxels = false
-            }) as AnimatedSprite;
-            var frames = new List<Point>() { new Point(0, 0), new Point(1, 0), new Point(2, 0), new Point(3, 0) };
-            frames.Shuffle();
-            var spriteSheet = new SpriteSheet("Particles\\moreflames", 32);
-            var animation = Library.CreateAnimation(frames, "Flames");
-            animation.FrameHZ = MathFunctions.Rand(8.0f, 20.0f);
-            animation.Loops = true;
-            sprite.AddAnimation(animation);
-            sprite.SetCurrentAnimation("Flames", true);
-            sprite.SetFlag(Flag.ShouldSerialize, false);
-            sprite.SpriteSheet = spriteSheet;
-            sprite.AnimPlayer.Play(animation);
-            FlameSprites.Add(sprite);
+                var tf = Matrix.CreateTranslation(pos - parent.Position);
+                SoundManager.PlaySound(ContentPaths.Audio.fire, pos, true, 1.0f);
+                var sprite = parent.AddChild(new AnimatedSprite(Manager, "Flame", tf)
+                {
+                    OrientationType = AnimatedSprite.OrientMode.Spherical,
+                    LightsWithVoxels = false
+                }) as AnimatedSprite;
+                var frames = new List<Point>() { new Point(0, 0), new Point(1, 0), new Point(2, 0), new Point(3, 0) };
+                frames.Shuffle();
+                var spriteSheet = new SpriteSheet("Particles\\moreflames", 32);
+                var animation = Library.CreateAnimation(frames, "Flames");
+                animation.FrameHZ = MathFunctions.Rand(8.0f, 20.0f);
+                animation.Loops = true;
+                sprite.AddAnimation(animation);
+                sprite.SetCurrentAnimation("Flames", true);
+                sprite.SetFlag(Flag.ShouldSerialize, false);
+                sprite.SpriteSheet = spriteSheet;
+                sprite.AnimPlayer.Play(animation);
+                FlameSprites.Add(sprite);
+            }
         }
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (!Active) return;
             base.Update(gameTime, chunks, camera);
-            var body = Parent as GameComponent;
-            global::System.Diagnostics.Debug.Assert(body != null);
-
-            DamageTimer.Update(gameTime);
-            CheckLavaTimer.Update(gameTime);
-            SoundTimer.Update(gameTime);
-
-            if (CheckLavaTimer.HasTriggered)
-                CheckSurroundings(body, gameTime, chunks);
-
-            Heat *= 0.999f;
-
-            if(Heat > Flashpoint)
+            if (Parent.HasValue(out var body))
             {
-                if(DamageTimer.HasTriggered && Health != null)
-                    Health.Damage(gameTime, Damage, Health.DamageType.Fire);
+                global::System.Diagnostics.Debug.Assert(body != null);
 
-                if(SoundTimer.HasTriggered)
-                    SoundManager.PlaySound(ContentPaths.Audio.fire, body.Position, true, 1.0f);
+                DamageTimer.Update(gameTime);
+                CheckLavaTimer.Update(gameTime);
+                SoundTimer.Update(gameTime);
 
-                double totalSize = (body.BoundingBox.Max - body.BoundingBox.Min).Length();
-                int numFlames = (int) (totalSize / 4.0f) + 1;
+                if (CheckLavaTimer.HasTriggered)
+                    CheckSurroundings(body, gameTime, chunks);
 
-                for (int i = FlameSprites.Count; i < numFlames; i++)
-                    CreateFlameSprite(MathFunctions.RandVector3Box(body.BoundingBox));
+                Heat *= 0.999f;
 
-                if (MathFunctions.RandEvent(0.06f))
-                    foreach (var sprite in FlameSprites)
+                if (Heat > Flashpoint)
+                {
+                    if (DamageTimer.HasTriggered && Health != null)
+                        Health.Damage(gameTime, Damage, Health.DamageType.Fire);
+
+                    if (SoundTimer.HasTriggered)
+                        SoundManager.PlaySound(ContentPaths.Audio.fire, body.Position, true, 1.0f);
+
+                    double totalSize = (body.BoundingBox.Max - body.BoundingBox.Min).Length();
+                    int numFlames = (int)(totalSize / 4.0f) + 1;
+
+                    for (int i = FlameSprites.Count; i < numFlames; i++)
+                        CreateFlameSprite(MathFunctions.RandVector3Box(body.BoundingBox));
+
+                    if (MathFunctions.RandEvent(0.06f))
+                        foreach (var sprite in FlameSprites)
+                        {
+                            Manager.World.ParticleManager.Trigger("smoke", sprite.Position + Vector3.Up * 0.5f, Color.Black, 1);
+                            Manager.World.ParticleManager.Trigger("flame", sprite.Position + Vector3.Up * 0.5f, Color.Black, 1);
+                        }
+
+                    if (MathFunctions.RandEvent(0.01f))
                     {
-                        Manager.World.ParticleManager.Trigger("smoke", sprite.Position + Vector3.Up * 0.5f, Color.Black, 1);
-                        Manager.World.ParticleManager.Trigger("flame", sprite.Position + Vector3.Up * 0.5f, Color.Black, 1);
+                        foreach (var sprite in FlameSprites)
+                            sprite.Die();
+
+                        FlameSprites.Clear();
                     }
 
-                if (MathFunctions.RandEvent(0.01f))
+                    if (body.GetComponent<InstanceMesh>().HasValue(out var mesh))
+                        mesh.VertexColorTint = Color.DarkGray;
+                }
+                else
                 {
                     foreach (var sprite in FlameSprites)
                         sprite.Die();
 
                     FlameSprites.Clear();
                 }
-
-                if (Parent.GetComponent<InstanceMesh>().HasValue(out var mesh))
-                    mesh.VertexColorTint = Color.DarkGray;
-            }
-            else
-            {
-                foreach (var sprite in FlameSprites)
-                    sprite.Die();
-
-                FlameSprites.Clear();
             }
         }
     }

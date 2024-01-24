@@ -96,8 +96,7 @@ namespace DwarfCorp.Elevators
         private void DrawNeighborConnection(UInt32 NeighborID)
         {
             if (NeighborID == ComponentManager.InvalidID) return;
-            var neighbor = Manager.FindComponent(NeighborID);
-            if (neighbor is ElevatorShaft neighborElevator)
+            if (Manager.FindComponent(NeighborID).HasValue(out var neighbor) && neighbor is ElevatorShaft neighborElevator)
                 Drawer3D.DrawLine(Position, neighborElevator.Position, new Color(0.0f, 1.0f, 1.0f), 0.1f);
         }
 
@@ -202,12 +201,16 @@ namespace DwarfCorp.Elevators
 
         public ElevatorShaft GetShaftAbove()
         {
-            return Manager.FindComponent(TrackAbove) as ElevatorShaft;
+            if (Manager.FindComponent(TrackAbove).HasValue(out var shaft) && shaft is ElevatorShaft r)
+                return r;
+            return null;
         }
 
         public ElevatorShaft GetShaftBelow()
         {
-            return Manager.FindComponent(TrackBelow) as ElevatorShaft;
+            if (Manager.FindComponent(TrackBelow).HasValue(out var shaft) && shaft is ElevatorShaft r)
+                return r;
+            return null;
         }
 
         public IEnumerable<VoxelHandle> EnumerateExits()

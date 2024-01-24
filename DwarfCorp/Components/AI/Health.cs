@@ -80,9 +80,9 @@ namespace DwarfCorp
 
             // Only die when damaged after health already reached (integer) zero.
             // otherwise, go unconscious. This is similar to D&D rules.
-            if (wasHealthNegative && amount < 0 && Parent != null)
+            if (wasHealthNegative && amount < 0 && Parent.HasValue(out var parent))
             {
-                Parent.Die();
+                parent.Die();
             }
         }
 
@@ -93,7 +93,8 @@ namespace DwarfCorp
                 float damage = Math.Max(amount - Resistances[type], 0.0f);
                 Heal(-damage);
                 // Todo: Implement this using a callback to get rid of this messaging system once and for all.
-                Parent.ReceiveMessageRecursive(new Message(Message.MessageType.OnHurt, damage.ToString(CultureInfo.InvariantCulture)), Time);
+                if (Parent.HasValue(out var parent))
+                    parent.ReceiveMessageRecursive(new Message(Message.MessageType.OnHurt, damage.ToString(CultureInfo.InvariantCulture)), Time);
                 return damage;
             }
 

@@ -30,11 +30,17 @@ namespace DwarfCorp.SteamPipes
                         {
                             destinationCell.LiquidType = l.LiquidType;
                             l.LiquidType = 0;
+                            l.OceanFlag = 0;
                             foreach (var cell in LiquidCellHelpers.EnumerateAllNeighbors(l.Coordinate).Select(c => World.ChunkManager.CreateLiquidCellHandle(c)))
                                 if (cell.IsValid) World.ChunkManager.Water.EnqueueDirtyCell(cell);
                         }
                     }
                 }
+            }
+
+            public override RawPrimitive CreateCustomPrimitive(SpriteSheet Sheet)
+            {
+                return PrimitiveBuilder.MakeSpriteCellMappedCylinder(Sheet, 3, 1, 2, 2, 16);
             }
         }
 
@@ -87,6 +93,7 @@ namespace DwarfCorp.SteamPipes
         {
             base.Update(Time, Chunks, Camera);
         }
+        
         
     }
 }

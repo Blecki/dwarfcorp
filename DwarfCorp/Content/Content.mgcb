@@ -2377,6 +2377,18 @@
 /processorParam:TextureFormat=Color
 /build:Entities/Dwarf/ToolIcons/unknown.png
 
+#begin Entities/DwarfObjects/bamboo-pipe.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Entities/DwarfObjects/bamboo-pipe.png
+
 #begin Entities/DwarfObjects/beartrap.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -6937,6 +6949,9 @@
 
 #begin World/Voxels/Plank.json
 /copy:World/Voxels/Plank.json
+
+#begin World/Voxels/RailScaffold.json
+/copy:World/Voxels/RailScaffold.json
 
 #begin World/Voxels/Red Tile.json
 /copy:World/Voxels/Red Tile.json

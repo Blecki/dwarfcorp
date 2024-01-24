@@ -206,14 +206,10 @@ namespace DwarfCorp
 
                     Velocity += dampingForce * FixedDT;
 
-                    // These will get called next time around anyway... -@blecki
-                    // No they won't @blecki, this broke everything!! -@mklingen
-                    // Remove check so that it is ALWAYS called when an object moves. Call removed
-                    //   from component update in ComponentManager. -@blecki
                     if (numTimesteps * velocityLength > 1)
                     {
-                        if (Parent != null)
-                            globalTransform = LocalTransform * Parent.GlobalTransform;
+                        if (Parent.HasValue(out var parent))
+                            globalTransform = LocalTransform * parent.GlobalTransform;
                         else
                             globalTransform = LocalTransform;
                         UpdateBoundingBox();

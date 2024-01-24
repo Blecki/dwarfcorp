@@ -109,7 +109,7 @@ namespace DwarfCorp
 
             RootComponent.ProcessTransformChange();
 
-            var removals = SaveData.SaveableComponents.Where(p => p.Parent == null && p != RootComponent).ToList();
+            var removals = SaveData.SaveableComponents.Where(p => !p.Parent.HasValue() && p != RootComponent).ToList();
 
             foreach(var component in removals)
             {
@@ -283,7 +283,7 @@ namespace DwarfCorp
             AddRemove();
         }
 
-        public GameComponent FindComponent(uint ID)
+        public MaybeNull<GameComponent> FindComponent(uint ID)
         {
             if (Components.TryGetValue(ID, out GameComponent result))
                 return result;

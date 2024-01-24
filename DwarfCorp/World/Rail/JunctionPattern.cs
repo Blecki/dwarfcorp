@@ -11,6 +11,16 @@ namespace DwarfCorp.Rail
         public Point Offset;
         public String RailPiece;
         public PieceOrientation Orientation;
+
+        public JunctionPiece Clone()
+        {
+            return new JunctionPiece
+            {
+                Offset = Offset,
+                RailPiece = RailPiece,
+                Orientation = Orientation
+            };
+        }
     }
 
     public class JunctionPortal

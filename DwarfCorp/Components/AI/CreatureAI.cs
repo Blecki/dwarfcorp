@@ -83,11 +83,14 @@ namespace DwarfCorp
         {
             get
             {
-                if (Parent == null)
+                if (!Parent.HasValue(out var parent))
                     return null;
+
                 if (_cachedCreature == null)
-                    _cachedCreature = Parent.EnumerateAll().OfType<Creature>().FirstOrDefault();
+                    _cachedCreature = parent.EnumerateAll().OfType<Creature>().FirstOrDefault();
+
                 System.Diagnostics.Debug.Assert(_cachedCreature != null, "AI Could not find creature");
+
                 return _cachedCreature;
             }
         }
